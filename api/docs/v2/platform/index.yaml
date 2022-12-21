@@ -15490,6 +15490,7 @@ paths:
                         email: ivonne.braun@smith.biz
                         first_name: Liberty
                         last_name: Becker
+                        selected_locale: nil
                         created_at: '2022-11-08T19:35:53.726Z'
                         updated_at: '2022-11-08T19:35:53.726Z'
                         public_metadata: {}
@@ -15508,6 +15509,7 @@ paths:
                         email: lenita.mayer@kulas.us
                         first_name: Chasidy
                         last_name: Strosin
+                        selected_locale: 'fr'
                         created_at: '2022-11-08T19:35:53.730Z'
                         updated_at: '2022-11-08T19:35:53.730Z'
                         public_metadata: {}
@@ -15526,6 +15528,7 @@ paths:
                         email: dewayne@terrybarton.info
                         first_name: Ruben
                         last_name: Schmidt
+                        selected_locale: 'de'
                         created_at: '2022-11-08T19:35:53.732Z'
                         updated_at: '2022-11-08T19:35:53.732Z'
                         public_metadata: {}
@@ -15591,6 +15594,7 @@ paths:
                         email: rex_champlin@breitenberg.com
                         first_name: Zenia
                         last_name: King
+                        selected_locale: 'pl'
                         created_at: '2022-11-08T19:35:54.351Z'
                         updated_at: '2022-11-08T19:35:54.351Z'
                         public_metadata: {}
@@ -15660,6 +15664,7 @@ paths:
                         email: gaynell@parisian.biz
                         first_name: Irwin
                         last_name: DuBuque
+                        selected_locale: 'en'
                         created_at: '2022-11-08T19:35:54.635Z'
                         updated_at: '2022-11-08T19:35:54.635Z'
                         public_metadata: {}
@@ -15730,6 +15735,7 @@ paths:
                         email: john@example.com
                         first_name: Astrid
                         last_name: Kohler
+                        selected_locale: 'fr'
                         created_at: '2022-11-08T19:35:55.180Z'
                         updated_at: '2022-11-08T19:35:55.414Z'
                         public_metadata: {}
@@ -21338,6 +21344,8 @@ components:
               type: string
             password_confirmation:
               type: string
+            selected_locale:
+              type: string
             ship_address_id:
               type: string
             bill_address_id:
@@ -21364,6 +21372,8 @@ components:
             password:
               type: string
             password_confirmation:
+              type: string
+            selected_locale:
               type: string
             ship_address_id:
               type: string

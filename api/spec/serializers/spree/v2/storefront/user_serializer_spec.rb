@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::V2::Platform::UserSerializer do
+describe Spree::V2::Storefront::UserSerializer do
   subject { described_class.new(user, params: serializer_params) }
 
   include_context 'API v2 serializers params'
@@ -16,26 +16,22 @@ describe Spree::Api::V2::Platform::UserSerializer do
           id: user.id.to_s,
           type: :user,
           attributes: {
+            completed_orders: 0,
             email: user.email,
             first_name: user.first_name,
             last_name: user.last_name,
-            average_order_value: [],
-            lifetime_value: [],
-            selected_locale: nil,
-            store_credits: [],
-            created_at: user.created_at,
-            updated_at: user.updated_at,
             public_metadata: {},
-            private_metadata: {}
+            selected_locale: nil,
+            store_credits: 0
           },
           relationships: {
-            bill_address: {
+            default_billing_address: {
               data: {
                 id: user.bill_address.id.to_s,
                 type: :address
               }
             },
-            ship_address: {
+            default_shipping_address: {
               data: {
                 id: user.ship_address.id.to_s,
                 type: :address
@@ -57,17 +53,13 @@ describe Spree::Api::V2::Platform::UserSerializer do
 
     it do
       expect(subject.serializable_hash[:data][:attributes]).to eq({
+        completed_orders: 2,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        average_order_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
-        lifetime_value: [{ amount: '110.00', currency: 'USD' }, { amount: '110.00', currency: 'EUR' }],
-        selected_locale: nil,
-        store_credits: [{ amount: '100.00', currency: 'USD' }, { amount: '90.00', currency: 'EUR' }],
-        created_at: user.created_at,
-        updated_at: user.updated_at,
         public_metadata: {},
-        private_metadata: {}
+        selected_locale: nil,
+        store_credits: 0.1e3
       })
     end
   end

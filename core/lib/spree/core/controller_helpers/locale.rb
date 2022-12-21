@@ -22,13 +22,27 @@ module Spree
         end
 
         def current_locale
-          @current_locale ||= if params[:locale].present? && supported_locale?(params[:locale])
+          @current_locale ||= if user_locale?
+                                spree_current_user.selected_locale
+                              elsif params_locale?
                                 params[:locale]
-                              elsif respond_to?(:config_locale, true) && config_locale.present?
+                              elsif config_locale?
                                 config_locale
                               else
                                 current_store&.default_locale || Rails.application.config.i18n.default_locale || I18n.default_locale
                               end
+        end
+
+        def config_locale?
+          respond_to?(:config_locale, true) && config_locale.present?
+        end
+
+        def params_locale?
+          params[:locale].present? && supported_locale?(params[:locale])
+        end
+
+        def user_locale?
+          Spree::Config.use_user_locale && spree_current_user && supported_locale?(spree_current_user.selected_locale)
         end
 
         def supported_locales

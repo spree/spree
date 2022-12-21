@@ -16,56 +16,78 @@ end
 describe Spree::Core::ControllerHelpers::Locale, type: :controller do
   controller(FakesController) {}
 
+  let(:user) { build(:user, selected_locale: 'pl') }
+
+  before { allow(controller).to receive(:spree_current_user).and_return(user) }
+
   describe '#current_locale' do
-    context 'store with locale set' do
-      let!(:store) { create :store, default: true, default_locale: 'fr', supported_locales: 'fr,de' }
+    context 'taking locale from user and store with locale set' do
+      before { allow(Spree::Config).to receive(:use_user_locale).and_return(true) }
 
-      it 'returns current store default locale' do
-        expect(controller.current_locale.to_s).to eq('fr')
-      end
+      let!(:store) { create :store, default: true, default_locale: 'fr', supported_locales: 'fr,de,pl' }
 
-      it 'return supported locale when passed as param' do
-        controller.params = { locale: 'de' }
-        expect(controller.current_locale.to_s).to eq('de')
+      it 'returns locale set within user' do
+        expect(controller.current_locale.to_s).to eq('pl')
       end
     end
 
-    context 'config_locale present' do
-      controller(FakesControllerWithLocale) {}
+    context 'not taking locale from user' do
+      before { allow(Spree::Config).to receive(:use_user_locale).and_return(false) }
 
-      let!(:store) { create :store, default: true, default_locale: 'fr' }
+      context 'store with locale set' do
+        let!(:store) { create :store, default: true, default_locale: 'fr', supported_locales: 'fr,de' }
 
-      it 'returns config_locale if present' do
-        expect(controller.current_locale.to_s).to eq('en')
+        it 'returns current store default locale' do
+          expect(controller.current_locale.to_s).to eq('fr')
+        end
+
+        it 'return supported locale when passed as param' do
+          controller.params = { locale: 'de' }
+          expect(controller.current_locale.to_s).to eq('de')
+        end
       end
-    end
 
-    context 'store without locale set' do
-      let!(:store) { create :store, default: true, default_locale: nil }
+      context 'config_locale present' do
+        controller(FakesControllerWithLocale) {}
 
-      context 'without I18n.default_locale set' do
-        it 'fallbacks to english' do
+        let!(:store) { create :store, default: true, default_locale: 'fr' }
+
+        it 'returns config_locale if present' do
           expect(controller.current_locale.to_s).to eq('en')
         end
       end
 
-      context 'with I18n.default_locale set' do
-        before { I18n.default_locale = :de }
+      context 'store without locale set' do
+        let!(:store) { create :store, default: true, default_locale: nil }
 
-        after { I18n.default_locale = :en }
+        context 'without I18n.default_locale set' do
+          it 'fallbacks to english' do
+            expect(controller.current_locale.to_s).to eq('en')
+          end
+        end
 
-        it 'fallbacks to the default application locale' do
-          expect(controller.current_locale.to_s).to eq('de')
+        context 'with I18n.default_locale set' do
+          before { I18n.default_locale = :de }
+
+          after { I18n.default_locale = :en }
+
+          it 'fallbacks to the default application locale' do
+            expect(controller.current_locale.to_s).to eq('de')
+          end
         end
       end
     end
   end
 
   describe '#supported_locales' do
-    let!(:store) { create :store, default: true, default_locale: 'de' }
+    let!(:store) { create :store, default: true, default_locale: 'de', supported_locales: 'de, pl' }
 
     it 'returns supported currencies' do
       expect(controller.supported_locales.to_s).to include('de')
+    end
+
+    it 'returns supported locales' do
+      expect(controller.supported_locales.to_s).to include('pl')
     end
   end
 

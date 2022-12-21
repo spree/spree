@@ -63,6 +63,9 @@ paths:
                     last_name:
                       type: string
                       example: Snow
+                    selected_locale:
+                      type: string
+                      example: 'en'
                     password:
                       type: string
                       example: spree123
@@ -110,6 +113,9 @@ paths:
                     last_name:
                       type: string
                       example: Snow
+                    selected_locale:
+                      type: string
+                      example: 'fr'
                     bill_address_id:
                       type: string
                       example: '1'
@@ -3650,6 +3656,9 @@ components:
             last_name:
               type: string
               example: Doe
+            selected_locale:
+              type: string
+              example: 'fr'
             store_credits:
               type: number
               example: 150.75
@@ -5109,6 +5118,7 @@ components:
                     email: spree@example.com
                     first_name: John
                     last_name: Snow
+                    selected_locale: 'en'
                     store_credits: 0
                     completed_orders: 0
                     public_metadata:
