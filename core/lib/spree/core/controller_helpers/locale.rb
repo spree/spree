@@ -42,7 +42,7 @@ module Spree
         end
 
         def user_locale?
-          Spree::Config.use_user_locale && spree_current_user && supported_locale?(spree_current_user.selected_locale)
+          Spree::Config.use_user_locale && try_spree_current_user && supported_locale?(try_spree_current_user.selected_locale)
         end
 
         def supported_locales
