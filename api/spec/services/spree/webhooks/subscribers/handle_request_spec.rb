@@ -35,6 +35,10 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
           ).to_json
         end
 
+        let(:event_signature) do
+          Spree::Webhooks::EventSignature.new(event, body_with_event_metadata).computed_signature
+        end
+
         it 'debug logs' do
           allow(Rails.logger).to receive(:debug)
           allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
@@ -43,9 +47,14 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
           message_snd = "[SPREE WEBHOOKS] 'order.canceled' webhook_payload_body: #{body_with_event_metadata}"
           expect(Rails.logger).to have_received(:debug).with(message_fst)
           expect(Rails.logger).to have_received(:debug).with(message_snd)
-          expect(Spree::Webhooks::Subscribers::MakeRequest).to(
-            have_received(:new).with(webhook_payload_body: body_with_event_metadata, url: url)
-          )
+
+          expect(Spree::Webhooks::Subscribers::MakeRequest).to \
+            have_received(:new).
+            with(
+              signature: event_signature,
+              url: url,
+              webhook_payload_body: body_with_event_metadata
+            )
         end
 
         it "#{with_log_level} logs" do
@@ -171,13 +180,21 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
           ).to_json
         end
 
+        let(:event_signature) do
+          Spree::Webhooks::EventSignature.new(event, body_with_event_metadata).computed_signature
+        end
+
         it 'adds the event data to the body' do
           with_webhooks_enabled do
             allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
             order.finalize!
-            expect(Spree::Webhooks::Subscribers::MakeRequest).to(
-              have_received(:new).with(webhook_payload_body: body_with_event_metadata, url: url)
-            )
+            expect(Spree::Webhooks::Subscribers::MakeRequest).to \
+              have_received(:new).
+              with(
+                signature: event_signature,
+                url: url,
+                webhook_payload_body: body_with_event_metadata
+              )
           end
         end
       end
