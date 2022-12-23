@@ -25,9 +25,9 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
     end
 
-    let(:user) { build(:user) }
-
-    before { allow(controller).to receive(:spree_current_user).and_return(user) }
+    # let(:user) { build(:user) }
+    #
+    # before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
     it 'redirects to session url' do
       session[:spree_user_return_to] = '/redirect'
@@ -96,13 +96,13 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
     end
 
-    let(:user) { build(:user, selected_locale: 'pl') }
-
-    before { allow(controller).to receive(:spree_current_user).and_return(user) }
+    # let(:user) { build(:user, selected_locale: 'pl') }
+    #
+    # before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
     context 'when logged in' do
       before do
-        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil))
+        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil, selected_locale: nil))
       end
 
       it 'redirects forbidden path' do
