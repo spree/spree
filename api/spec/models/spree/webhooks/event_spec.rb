@@ -15,7 +15,7 @@ describe Spree::Webhooks::Event do
       end
     end
 
-    context 'susbcriber' do
+    context 'subscriber' do
       it 'is invalid without a subscriber' do
         event = build(:event, :successful, subscriber_id: nil)
         expect(event.valid?).to be(false)
