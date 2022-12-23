@@ -28,4 +28,16 @@ describe Spree::Webhooks::Event do
       end
     end
   end
+
+  describe '#signature_for' do
+    subject(:signature) { event.signature_for(payload) }
+
+    let(:event) { create(:event) }
+    let(:payload) { { id: 123 }.to_json }
+
+    it 'computes a signature for the JSON payload' do
+      expect(signature).to \
+        eq(Spree::Webhooks::EventSignature.new(event, payload).computed_signature)
+    end
+  end
 end
