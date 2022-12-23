@@ -25,10 +25,6 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       end
     end
 
-    # let(:user) { build(:user) }
-    #
-    # before { allow(controller).to receive(:spree_current_user).and_return(user) }
-
     it 'redirects to session url' do
       session[:spree_user_return_to] = '/redirect'
       get :index
@@ -52,10 +48,6 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         render plain: 'index'
       end
     end
-
-    let(:user) { build(:user) }
-
-    before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
     it 'sends cookie header' do
       get :index
@@ -95,10 +87,6 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         redirect_unauthorized_access
       end
     end
-
-    # let(:user) { build(:user, selected_locale: 'pl') }
-    #
-    # before { allow(controller).to receive(:spree_current_user).and_return(user) }
 
     context 'when logged in' do
       before do
