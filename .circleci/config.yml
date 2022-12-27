@@ -136,7 +136,7 @@ jobs:
       - run:
           name: Run Brakeman spree/api
           command: |
-            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
+            bundle exec brakeman -p api/ --ignore-config api/brakeman.ignore --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
       - run:
           name: Run Brakeman spree/core
           command: |
