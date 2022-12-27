@@ -1,20 +1,121 @@
 {
-    "ignored_warnings": [
-        {
-          "fingerprint": "011b2643940ba1112f7a737e403abe3616ad91764703c801cc35a48d36b721da",
-          "note": "interpolating table name"
-        },
-        {
-          "fingerprint": "965d3919f811ab63b7b8d62da528559a7f38dc122c57efea7136e7ec5ef1f062",
-          "note": "interpolating table name"
-        },
-        {
-          "fingerprint": "abd8e90e7a7dfbcdcd6d44fd3fb550598aee6d7a9ef2bb132ad1a18a3c50be30",
-          "note": "interpolating table name"
-        },
-        {
-          "fingerprint": "efcc57e1a5648d7db59d1beaf5e399d2278539a8667b19c520b305a6ca7e15e8",
-          "note": "interpolating table name"
-        }
-    ]
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "011b2643940ba1112f7a737e403abe3616ad91764703c801cc35a48d36b721da",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 63,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"#{price_table_name}.amount <= ?\", price)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree",
+        "method": null
+      },
+      "user_input": "price_table_name",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "interpolating table name"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "1061d418cc95f86403b641d74be4e43a9480329ae327da5a2f73b6869119697c",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/spree/variant.rb",
+      "line": 125,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale.to_s}'\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Variant",
+        "method": "Spree::Variant.product_name_or_sku_cont"
+      },
+      "user_input": "Product.translation_table_alias",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "965d3919f811ab63b7b8d62da528559a7f38dc122c57efea7136e7ec5ef1f062",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 67,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"#{price_table_name}.amount >= ?\", price)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::ProductScopes",
+        "method": null
+      },
+      "user_input": "price_table_name",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "interpolating table name"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "abd8e90e7a7dfbcdcd6d44fd3fb550598aee6d7a9ef2bb132ad1a18a3c50be30",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 63,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"#{price_table_name}.amount <= ?\", price)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::ProductScopes",
+        "method": null
+      },
+      "user_input": "price_table_name",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "interpolating table name"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "efcc57e1a5648d7db59d1beaf5e399d2278539a8667b19c520b305a6ca7e15e8",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 67,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "where(\"#{price_table_name}.amount >= ?\", price)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree",
+        "method": null
+      },
+      "user_input": "price_table_name",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "interpolating table name"
+    }
+  ],
+  "updated": "2022-12-27 17:37:14 +0100",
+  "brakeman_version": "5.4.0"
 }
