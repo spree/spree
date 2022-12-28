@@ -56,9 +56,9 @@ module Spree
 
         # if sorting by 'sku' or 'price', spree_products.* is already included in SELECT statement
         if sort_by?('sku') || sort_by?('price')
-          scope.i18n.select(translatable_fields)
+          scope.i18n.select(*translatable_fields)
         else
-          scope.i18n.select("#{Product.table_name}.*").select(translatable_fields)
+          scope.i18n.select("#{Product.table_name}.*").select(*translatable_fields)
         end
       end
 
