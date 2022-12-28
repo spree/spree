@@ -145,6 +145,7 @@ module Spree
 
       def by_name(products)
         return products unless name?
+
         product_name = name
 
         # i18n scope doesn't automatically get set here (mobility gem bug?) set it explicitly
@@ -214,12 +215,10 @@ module Spree
           end
         when 'name-a-z'
           products.i18n.
-            select("#{Product.table_name}.*, #{Product.translation_table_alias}.name").
-            order(name: :asc)
+            select("#{Product.table_name}.*").select(:name).order(name: :asc)
         when 'name-z-a'
           products.i18n.
-            select("#{Product.table_name}.*, #{Product.translation_table_alias}.name").
-            order(name: :desc)
+            select("#{Product.table_name}.*").select(:name).order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'

@@ -86,6 +86,7 @@ module Spree
 
       def by_name(taxons)
         return taxons unless name?
+
         taxon_name = name
 
         # i18n scope doesn't automatically get set here (mobility gem bug?) set it explicitly

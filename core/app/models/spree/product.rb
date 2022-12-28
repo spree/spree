@@ -38,7 +38,7 @@ module Spree
                           purchasable? in_stock? backorderable?]
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
-    translates *TRANSLATABLE_FIELDS
+    translates(*TRANSLATABLE_FIELDS)
     Product::Translation.class_eval { acts_as_paranoid }
 
     friendly_id :slug_candidates, use: [:history, :mobility]

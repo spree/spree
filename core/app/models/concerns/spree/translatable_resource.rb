@@ -14,11 +14,11 @@ module Spree
 
     class_methods do
       def translatable_fields
-        self.const_get(:TRANSLATABLE_FIELDS)
+        const_get(:TRANSLATABLE_FIELDS)
       end
 
       def translation_table_alias
-        "#{self::Translation.table_name}_#{Mobility.locale.to_s}"
+        "#{self::Translation.table_name}_#{Mobility.locale}"
       end
     end
   end
