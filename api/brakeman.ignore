@@ -1,29 +1,7 @@
 {
   "ignored_warnings": [
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
-      "fingerprint": "eb7ab081774ab6402753f904f274f78263f865888155d952168e1f2e47f2b114",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/controllers/spree/api/v2/platform/variants_controller.rb",
-      "line": 20,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "scope.joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                                           ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                                           AND #{Product.translation_table_alias}.locale = '#{Mobility.locale.to_s}'\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Spree::Api::V2::Platform::VariantsController",
-        "method": "collection"
-      },
-      "user_input": "Product.translation_table_alias",
-      "confidence": "Weak",
-      "cwe_id": [
-        89
-      ],
-      "note": ""
-    }
+
   ],
-  "updated": "2022-12-27 17:24:34 +0100",
+  "updated": "2022-12-29 09:29:46 +0100",
   "brakeman_version": "5.4.0"
 }

@@ -26,18 +26,18 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "1061d418cc95f86403b641d74be4e43a9480329ae327da5a2f73b6869119697c",
+      "fingerprint": "67e80bcfa8898315b0f8642bc61990c8319bc7a468453efc048757a439e53e0b",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/spree/variant.rb",
-      "line": 125,
+      "line": 131,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale.to_s}'\")",
+      "code": "joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale}'\")",
       "render_path": null,
       "location": {
         "type": "method",
         "class": "Spree::Variant",
-        "method": "Spree::Variant.product_name_or_sku_cont"
+        "method": "Spree::Variant.join_product_translations"
       },
       "user_input": "Product.translation_table_alias",
       "confidence": "Weak",
@@ -95,6 +95,29 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "e6bb08c012af19589f796e26b4dc2230ea1c1949c7cd6464ca025939513d8b3d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/spree/variant.rb",
+      "line": 126,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "join_product_translations.where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Variant",
+        "method": "Spree::Variant.product_name_or_sku_cont"
+      },
+      "user_input": "Product.translation_table_alias",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "efcc57e1a5648d7db59d1beaf5e399d2278539a8667b19c520b305a6ca7e15e8",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -116,6 +139,6 @@
       "note": "interpolating table name"
     }
   ],
-  "updated": "2022-12-27 17:37:14 +0100",
+  "updated": "2022-12-29 09:32:26 +0100",
   "brakeman_version": "5.4.0"
 }
