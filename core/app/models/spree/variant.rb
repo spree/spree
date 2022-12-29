@@ -134,12 +134,7 @@ module Spree
     end
 
     def self.search_by_product_name_or_sku(query)
-      if defined?(SpreeGlobalize)
-        joins(product: :translations).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)",
-                                            query: "%#{query}%")
-      else
-        product_name_or_sku_cont(query)
-      end
+      product_name_or_sku_cont(query)
     end
 
     def available?

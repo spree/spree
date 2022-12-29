@@ -295,21 +295,10 @@ module Spree
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
-
-        if defined?(SpreeGlobalize)
-          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: { tsearch: { any_word: true, prefix: true } }
-        else
-          pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
-        end
+        pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
       else
         def self.search_by_name(query)
-          if defined?(SpreeGlobalize)
-            joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
-          elsif defined?(Mobility)
-            i18n { name.lower.matches("%#{query.downcase}%") }
-          else
-            where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
-          end
+          i18n { name.lower.matches("%#{query.downcase}%") }
         end
       end
       search_scopes << :search_by_name
