@@ -206,6 +206,9 @@ Spree::Core::Engine.add_routes do
           resources :events, only: :index
           resources :subscribers
         end
+
+        # google export API
+        get '/rss/:store_id', to: 'google_export_options#show'
       end
     end
   end
