@@ -3,9 +3,12 @@ class CreateSpreeGoogleExportOptions < ActiveRecord::Migration[6.0]
     create_table :spree_google_export_options do |t|
       t.integer :store
 
-      t.boolean :material, default: false
-      t.boolean :brand, default: false
-      t.boolean :gender, default: false
+      keys = [:material, :brand, :gender, :condition, :gtin, :mpn, :adult, :multipack, :is_bundle, :color, :pattern,
+              :size, :item_group_id]
+
+      keys.each do |key|
+        t.boolean key, default: false
+      end
 
       t.timestamps
     end
