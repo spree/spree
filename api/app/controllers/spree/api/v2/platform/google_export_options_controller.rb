@@ -5,8 +5,8 @@ module Spree
         class GoogleExportOptionsController < ResourceController
           def show
             @options = GoogleExportOption.find_by store: params[:store_id]
-            @options.export
-            send_file @options.filename
+
+            send_data @options.export, filename: 'products.rss', type: 'text/xml'
           end
         end
       end

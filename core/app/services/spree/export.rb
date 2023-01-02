@@ -4,7 +4,7 @@ module Spree
   class Export
     prepend Spree::ServiceModule::Base
 
-    def export_google_rss(options, filename)
+    def export_google_rss(options)
       store = Spree::Store.find(options.store)
       @options = options
 
@@ -28,7 +28,7 @@ module Spree
         end
       end
 
-      File.write(filename, builder.to_xml)
+      builder.to_xml
     end
 
     def required_product_information(xml, variant, product)
