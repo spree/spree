@@ -6,7 +6,7 @@ module Spree
           def show
             @options = GoogleExportOption.find_by store: params[:store_id]
             @options.export
-            send_file '/Users/weronika/Documents/export/spree_starter/products.rss'
+            send_file @options.filename
           end
         end
       end
