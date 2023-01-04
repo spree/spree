@@ -1,14 +1,14 @@
 module Spree
   class GoogleExportOption < Base
-    belongs_to :spree_store
+    belongs_to :store, class_name: "Spree::Store"
 
-    validates :spree_store_id, presence: true
+    validates :store, presence: true
 
     def export
       Spree::Dependencies.export_rss_google.constantize.new.call(self)
     end
 
-    def true_keys
+    def enabled_keys
       keys = []
 
       attributes.each do |key, value|
