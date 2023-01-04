@@ -2,10 +2,9 @@ require 'nokogiri'
 
 module Spree
   class Export
-    prepend Spree::ServiceModule::Base
 
-    def export_google_rss(options)
-      store = Spree::Store.find(options.store)
+    def call(options)
+      store = Spree::Store.find(options.spree_store_id)
       @options = options
 
       builder = Nokogiri::XML::Builder.new do |xml|
@@ -30,6 +29,8 @@ module Spree
 
       builder.to_xml
     end
+
+    private
 
     def required_product_information(xml, variant, product)
       xml['g'].id variant.id
@@ -81,13 +82,10 @@ module Spree
     end
 
     def get_availability(product)
-      if product.available_on.past?
-        'in stock'
-      elsif !product.available_on.nil?
-        'backorder'
-      else
-        'out of stock'
-      end
+      return 'in stock' if product.available_on.past?
+      return 'backorder' unless product.available_on.nil?
+
+      'out of stock'
     end
 
     def format_price(variant)
