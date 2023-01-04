@@ -11,9 +11,9 @@ module Spree
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
             xml.channel do
               store_information(xml, store)
-              Spree::Product.find_each do |product|
-                product.variants.each do |variant|
-                  next unless validate_variant(variant, product)
+              Spree::Product.where('(description = \'\') IS FALSE').find_each do |product|
+                product.variants.where('(sku = \'\') IS FALSE AND deleted_at is null').each do |variant|
+                  next if get_image_link(variant, product).nil?
 
                   xml.item do
                     required_product_information(xml, variant, product)
@@ -47,24 +47,6 @@ module Spree
             xml['g'].send(key, product.property(key.to_s))
           end
         end
-      end
-
-      def validate_product(product)
-        unless product.deleted_at.nil?
-          false
-        end
-        true
-      end
-
-      def validate_variant(variant, product)
-        unless variant.deleted_at.nil?
-          false
-        end
-        # TODO: make variant sku and description fallback to product's if they are nil
-        if variant.id.nil? || variant.sku.nil? || variant.description.nil? || variant.slug.nil? || get_image_link(variant, product).nil?
-          false
-        end
-        true
       end
 
       def get_image_link(variant, product)
