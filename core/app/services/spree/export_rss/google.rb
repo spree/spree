@@ -12,8 +12,6 @@ module Spree
             xml.channel do
               store_information(xml, store)
               Spree::Product.find_each do |product|
-                next unless validate_product(product)
-
                 product.variants.each do |variant|
                   next unless validate_variant(variant, product)
 
