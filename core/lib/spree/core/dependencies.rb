@@ -112,7 +112,7 @@ module Spree
         @error_handler = 'Spree::ErrorReporter'
 
         # export
-        @export_google_rss = 'Spree::Export::GoogleRSS'
+        @export_google_rss = 'Spree::Export::GoogleRss'
       end
 
       def set_default_finders

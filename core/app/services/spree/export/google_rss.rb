@@ -2,7 +2,7 @@ require 'nokogiri'
 
 module Spree
   module Export
-    class GoogleRSS
+    class GoogleRss
       def call(options)
         store = Spree::Store.find(options.spree_store_id)
         @options = options

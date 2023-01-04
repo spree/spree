@@ -5,7 +5,7 @@ module Spree
     validates :store, presence: true
 
     def export
-      Spree::Dependencies.export_google_rss.constantize.new.call(self)
+      Spree::Dependencies.export_google_rss_service.constantize.new.call(self)
     end
 
     def enabled_keys
