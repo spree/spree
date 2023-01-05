@@ -24,6 +24,7 @@ module Spree
     include ProductScopes
     include MultiStoreResource
     include TranslatableResource
+    include TranslatableResourceScopes
     include MemoizedData
     include Metadata
     if defined?(Spree::Webhooks)
@@ -294,13 +295,7 @@ module Spree
       where conditions.inject(:or)
     end
 
-    # To be used when joining on option value does not automatically join option value translations
-    # This method is to be used when you've already joined on the option values table
-    def self.join_option_value_translations
-      joins("LEFT OUTER JOIN #{OptionValue::Translation.table_name} #{OptionValue.translation_table_alias}
-             ON #{OptionValue.translation_table_alias}.spree_option_value_id = #{OptionValue.table_name}.id
-             AND #{OptionValue.translation_table_alias}.locale = '#{Mobility.locale}'")
-    end
+
 
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it

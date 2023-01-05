@@ -151,7 +151,9 @@ module Spree
         elsif OptionType.column_for_attribute('id').type == :uuid
           joins(:option_types).where(spree_option_types: { name: option }).or(Product.joins(:option_types).where(spree_option_types: { id: option }))
         else
-          joins(:option_types).where(spree_option_types: { name: option })
+          joins(:option_types).
+            join_translation_table(OptionType).
+            where(OptionType.translation_table_alias => { name: option })
         end
       end
 
@@ -164,6 +166,7 @@ module Spree
                              OptionType.where(id: option).or(OptionType.where(name: option))&.first&.id
                            else
                              OptionType.where(name: option)&.first&.id
+                             OptionType.where(name: option)&.first&.id
                            end
                          end
 
@@ -171,7 +174,7 @@ module Spree
 
         group("#{Spree::Product.table_name}.id").
           joins(variants_including_master: :option_values).
-          join_option_value_translations.
+          join_translation_table(Spree::OptionValue).
           where(Spree::OptionValue.translation_table_alias => { name: value },
                 Spree::OptionValue.table_name => { option_type_id: option_type_id })
       end
