@@ -8,9 +8,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let(:product_with_taxon)         { create(:product, taxons: [taxon], stores: [store]) }
   let(:product_with_name)          { create(:product, name: 'Test Product', stores: [store]) }
   let(:product_with_price)         { create(:product, price: 13.44, stores: [store]) }
-  let!(:option_type)               { create(:option_type) }
+  let!(:option_type)               { create(:option_type, name: 'test option type') }
   let!(:option_value)              { create(:option_value, option_type: option_type) }
-  let(:product_with_option)        { create(:product, option_types: [option_type], stores: [store]) }
+  let(:product_with_option)        { create(:product, name: 'Product with Option', option_types: [option_type], stores: [store]) }
   let!(:variant)                   { create(:variant, product: product_with_option, option_values: [option_value]) }
   let(:product)                    { create(:product, stores: [store]) }
   let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day, stores: [store]) }
@@ -23,12 +23,6 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:product_with_property)     { create(:product, stores: [store]) }
   let!(:product_property)          { create(:product_property, property: new_property, product: product_with_property, value: 'Some Value') }
   let!(:product_property2)          { create(:product_property, property: property, product: product_with_property, value: 'Some Value 2') }
-
-  # create translated resources
-  let!(:option_type_pl_locale)     { Mobility.with_locale(:pl) { create(:option_type) } }
-  let!(:option_value_pl_locale)    { Mobility.with_locale(:pl) { create(:option_value, option_type: option_type_pl_locale) } }
-  let!(:product_pl_locale)         { Mobility.with_locale(:pl) { create(:product, name: 'Produkt Superowy', option_types: [option_type_pl_locale], stores: [store]) } }
-  let!(:variant_pl_locale)         { Mobility.with_locale(:pl) { create(:variant, product: product_pl_locale, option_values: [option_value_pl_locale]) } }
 
 
   before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
@@ -159,7 +153,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with specified options' do
       context 'with no locale set' do
-        before { get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}&include=option_types,variants.option_values" }
+        before {
+          get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}&include=option_types,variants.option_values"
+        }
 
         it_behaves_like 'returns 200 HTTP status'
 
@@ -171,6 +167,12 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'with locale set to polish' do
+        # create translated resources
+        let!(:option_type_pl_locale)     { Mobility.with_locale(:pl) { create(:option_type) } }
+        let!(:option_value_pl_locale)    { Mobility.with_locale(:pl) { create(:option_value, option_type: option_type_pl_locale) } }
+        let!(:product_pl_locale)         { Mobility.with_locale(:pl) { create(:product, name: 'Produkt Superowy', option_types: [option_type_pl_locale], stores: [store]) } }
+        let!(:variant_pl_locale)         { Mobility.with_locale(:pl) { create(:variant, product: product_pl_locale, option_values: [option_value_pl_locale]) } }
+
         before do
           store.update_column(:supported_locales, 'en,pl')
           get "/api/v2/storefront/products?filter[options][#{option_type_pl_locale.name(locale: :pl)}]=#{option_value_pl_locale.name(locale: :pl)}&include=option_types,variants.option_values&locale=pl"
