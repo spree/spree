@@ -171,7 +171,9 @@ module Spree
 
         group("#{Spree::Product.table_name}.id").
           joins(variants_including_master: :option_values).
-          where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
+          join_option_value_translations.
+          where(Spree::OptionValue.translation_table_alias => { name: value },
+                Spree::OptionValue.table_name => { option_type_id: option_type_id })
       end
 
       # Finds all products which have either:
