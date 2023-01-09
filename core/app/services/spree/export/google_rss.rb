@@ -11,7 +11,7 @@ module Spree
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
             xml.channel do
               add_store_information_to_xml(xml, store)
-              Spree::Product.where('(description = \'\') IS FALSE').find_each do |product|
+              Spree::Product.find_each do |product|
                 product.variants.where('(sku = \'\') IS FALSE AND deleted_at is null').each do |variant|
                   add_variant_information_to_xml(xml, product, variant)
                 end
@@ -25,6 +25,14 @@ module Spree
 
       private
 
+      def format_title(product, variant)
+        title = product.name
+        variant.option_values.find_each do |option_value|
+          title << " - #{option_value.name}"
+        end
+        title
+      end
+
       def add_variant_information_to_xml(xml, product, variant)
         #return if get_image_link(variant, product).nil? # comment for testing purposes since demo doesn't have images
 
@@ -35,8 +43,8 @@ module Spree
 
       def add_product_information_to_xml(xml, variant, product)
         xml['g'].id variant.id
-        xml['g'].title variant.sku
-        xml['g'].description product.description
+        xml['g'].title format_title(product, variant)
+        xml['g'].description get_description(product, variant)
         xml['g'].link product.slug
         xml['g'].image_link get_image_link(variant, product)
         xml['g'].price format_price(variant)
@@ -44,6 +52,12 @@ module Spree
         xml['g'].availability_date product.available_on.xmlschema
 
         add_optional_information(xml, product)
+      end
+
+      def get_description(product, variant)
+        return product.description unless product.description.nil?
+
+        format_title(product, variant)
       end
 
       def add_optional_information(xml, product)
