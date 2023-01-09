@@ -1,4 +1,4 @@
-class TransferPropertyDataToTranslatableTables < ActiveRecord::Migration[7.0]
+class TransferPropertyDataToTranslatableTables < ActiveRecord::Migration[6.1]
   DEFAULT_LOCALE = 'en'
 
   def up

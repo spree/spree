@@ -1,4 +1,4 @@
-class CreatePropertyTranslations < ActiveRecord::Migration[7.0]
+class CreatePropertyTranslations < ActiveRecord::Migration[6.1]
   def change
     create_table :spree_property_translations do |t|
       # Translated attribute(s)
