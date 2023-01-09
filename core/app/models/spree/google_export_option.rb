@@ -1,12 +1,8 @@
 module Spree
   class GoogleExportOption < Base
-    belongs_to :store, class_name: "Spree::Store"
+    belongs_to :store, class_name: "Spree::Store", foreign_key: "spree_store_id"
 
     validates :store, presence: true
-
-    def export
-      Spree::Dependencies.export_google_rss_service.constantize.new.call(self)
-    end
 
     def enabled_keys
       keys = []

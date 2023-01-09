@@ -26,7 +26,7 @@ module Spree
       private
 
       def add_variant_information_to_xml(xml, product, variant)
-        return if get_image_link(variant, product).nil?
+        #return if get_image_link(variant, product).nil? # comment for testing purposes since demo doesn't have images
 
         xml.item do
           add_product_information_to_xml(xml, variant, product)
