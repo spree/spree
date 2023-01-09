@@ -1,5 +1,5 @@
 module Spree
-  class GoogleExportOption < Base
+  class GoogleFeedSetting < Base
     belongs_to :store, class_name: "Spree::Store", foreign_key: "spree_store_id"
 
     validates :store, presence: true

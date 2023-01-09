@@ -1,6 +1,6 @@
-class CreateSpreeGoogleExportOptions < ActiveRecord::Migration[6.0]
+class CreateSpreeGoogleFeedSettings < ActiveRecord::Migration[6.0]
   def change
-    create_table :spree_google_export_options do |t|
+    create_table :spree_google_feed_settings do |t|
       t.references :spree_store
 
       keys = [:material, :brand, :gender, :condition, :gtin, :mpn, :adult, :multipack, :is_bundle, :color, :pattern,

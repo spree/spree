@@ -9,14 +9,14 @@ module Spree
             render_serialized_payload { serialize_resource(current_store) }
           end
 
-          def export_rss_feed
+          def export_google_rss_feed
             send_data export_google_rss, filename: 'products.rss', type: 'text/xml'
           end
 
           private
 
           def update_options
-            @options = GoogleExportOption.find_by(spree_store_id: current_store)
+            @options = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
           end
 
           def export_google_rss
