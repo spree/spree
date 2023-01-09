@@ -1,6 +1,7 @@
 module Spree
   class Menu < Spree::Base
     include SingleStoreResource
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -12,6 +13,9 @@ module Spree
       parameterize_location = location.parameterize(separator: '_')
       MENU_LOCATIONS_PARAMETERIZED << parameterize_location
     end
+
+    TRANSLATABLE_FIELDS = %i[name]
+    translates *TRANSLATABLE_FIELDS
 
     has_many :menu_items, dependent: :destroy, class_name: 'Spree::MenuItem'
     belongs_to :store, touch: true, class_name: 'Spree::Store'
