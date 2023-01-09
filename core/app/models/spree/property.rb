@@ -2,9 +2,13 @@ module Spree
   class Property < Spree::Base
     include Spree::FilterParam
     include Metadata
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+
+    TRANSLATABLE_FIELDS = %i[name presentation filter_param].freeze
+    translates(*TRANSLATABLE_FIELDS)
 
     auto_strip_attributes :name, :presentation
 

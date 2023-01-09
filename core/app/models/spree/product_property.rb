@@ -1,6 +1,10 @@
 module Spree
   class ProductProperty < Spree::Base
     include Spree::FilterParam
+    include TranslatableResource
+
+    TRANSLATABLE_FIELDS = %i[value filter_param].freeze
+    translates(*TRANSLATABLE_FIELDS)
 
     auto_strip_attributes :value
 

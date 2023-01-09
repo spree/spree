@@ -32,15 +32,16 @@ module Spree
       end
 
       def self.property_conditions(property)
-        properties = Property.table_name
+        properties_table = Property.table_name
+        property_translations_table = Property.translation_table_alias
         case property
-        when Property then { "#{properties}.id" => property.id }
-        when Integer  then { "#{properties}.id" => property }
+        when Property then { "#{properties_table}.id" => property.id }
+        when Integer  then { "#{properties_table}.id" => property }
         else
           if Property.column_for_attribute('id').type == :uuid
-            ["#{properties.name} = ? OR #{properties.id} = ?", property, property]
+            ["#{property_translations_table.name} = ? OR #{properties_table.id} = ?", property, property]
           else
-            { "#{properties}.name" => property }
+            { "#{property_translations_table}.name" => property }
           end
         end
       end
@@ -126,21 +127,25 @@ module Spree
 
       # a scope that finds all products having property specified by name, object or id
       add_search_scope :with_property do |property|
-        joins(:properties).where(property_conditions(property))
+        joins(:properties).join_translation_table(Property).where(property_conditions(property))
       end
 
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
       add_search_scope :with_property_value do |property, value|
         joins(:properties).
-          where("#{ProductProperty.table_name}.value = ?", value).
+          join_translation_table(Property).
+          join_translation_table(ProductProperty).
+          where("#{ProductProperty.translation_table_alias}.value = ?", value).
           where(property_conditions(property))
       end
 
       add_search_scope :with_property_values do |property_filter_param, property_values|
         joins(product_properties: :property).
-          where(Property.table_name => { filter_param: property_filter_param }).
-          where(ProductProperty.table_name => { filter_param: property_values.map(&:parameterize) })
+          join_translation_table(Property).
+          join_translation_table(ProductProperty).
+          where(Property.translation_table_alias => { filter_param: property_filter_param }).
+          where(ProductProperty.translation_table_alias => { filter_param: property_values.map(&:parameterize) })
       end
 
       add_search_scope :with_option do |option|
