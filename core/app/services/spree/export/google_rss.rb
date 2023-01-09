@@ -42,7 +42,7 @@ module Spree
           xml['g'].image_link get_image_link(variant, product)
           xml['g'].price format_price(variant)
           xml['g'].availability get_availability(product)
-          xml['g'].availability_date product.available_on.xmlschema
+          xml['g'].availability_date product.available_on&.xmlschema unless product.available_on.nil?
 
           add_optional_information(xml, product)
         end
@@ -77,11 +77,11 @@ module Spree
       end
 
       def format_price(variant)
-        "#{variant.cost_price} #{variant.cost_currency}"
+        "#{variant.price} #{variant.cost_currency}"
       end
 
       def get_availability(product)
-        return 'in stock' if product.available_on.past?
+        return 'in stock' if product.available_on&.past?
         return 'backorder' unless product.available_on.nil?
 
         'out of stock'
