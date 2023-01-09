@@ -4,13 +4,13 @@ module Spree
   module Export
     class GoogleRss
       def call(options)
-        store = Spree::Store.find(options.spree_store_id)
+        @store = Spree::Store.find(options.spree_store_id)
         @options = options
 
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
             xml.channel do
-              add_store_information_to_xml(xml, store)
+              add_store_information_to_xml(xml)
               Spree::Product.find_each do |product|
                 product.variants.active.each do |variant|
                   add_variant_information_to_xml(xml, product, variant)
@@ -45,7 +45,7 @@ module Spree
         xml['g'].id variant.id
         xml['g'].title format_title(product, variant)
         xml['g'].description get_description(product, variant)
-        xml['g'].link product.slug
+        xml['g'].link "#{@store.url}/#{product.slug}"
         xml['g'].image_link get_image_link(variant, product)
         xml['g'].price format_price(variant)
         xml['g'].availability get_availability(product)
@@ -91,10 +91,10 @@ module Spree
         "#{variant.cost_price} #{variant.cost_currency}"
       end
 
-      def add_store_information_to_xml(xml, store)
-        xml.title store.name
-        xml.link store.url
-        xml.description store.meta_description
+      def add_store_information_to_xml(xml)
+        xml.title @store.name
+        xml.link @store.url
+        xml.description @store.meta_description
       end
     end
   end
