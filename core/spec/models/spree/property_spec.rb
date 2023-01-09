@@ -84,8 +84,10 @@ describe Spree::Property, type: :model do
     let(:product_property_2) { create(:product_property, property: property, product: product_2, value: 'Test Test') }
 
     before do
-      product_property.update_column(:filter_param, nil)
-      product_property.update_column(:value, 'some value')
+      product_property.translations.each do |t|
+        t.update_column(:filter_param, nil)
+        t.update_column(:value, 'some_value')
+      end
     end
 
     context 'filterable property' do

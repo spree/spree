@@ -6,7 +6,9 @@ module Spree
     TRANSLATABLE_FIELDS = %i[value filter_param].freeze
     translates(*TRANSLATABLE_FIELDS)
 
-    auto_strip_attributes :value
+    self::Translation.class_eval do
+      auto_strip_attributes :value
+    end
 
     acts_as_list scope: :product
 
