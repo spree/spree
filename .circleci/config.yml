@@ -17,6 +17,12 @@ defaults_3_0: &defaults_3_0
   <<: *defaults
   docker:
     - image: &ruby_3_0_image circleci/ruby:3.0-node-browsers
+    - image: &redis_image circleci/redis:6.2-alpine
+
+defaults_3_1: &defaults_3_1
+  <<: *defaults
+  docker:
+    - image: &ruby_3_1_image cimg/ruby:3.1.3-browsers
     - image: *redis_image
 
 run_tests_2_7: &run_tests_2_7
@@ -77,6 +83,35 @@ run_tests_3_0: &run_tests_3_0
     - store_test_results:
         path: /tmp/test-results
 
+run_tests_3_1: &run_tests_3_1
+  <<: *defaults_3_1
+  parallelism: 3
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v10-ruby-3-1-{{ .Branch }}
+          - spree-bundle-v10-ruby-3-1
+    - run:
+        name: Install libvips
+        command: sudo apt-get update && sudo apt-get install libvips42
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./bin/build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: ./bin/build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
 jobs:
   bundle_ruby_2_7:
     <<: *defaults
@@ -100,7 +135,7 @@ jobs:
             - ~/spree/vendor/bundle
 
   bundle_ruby_3_0:
-    <<: *defaults_3_0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -120,8 +155,29 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
+  bundle_ruby_3_1:
+    <<: *defaults_3_1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v10-ruby-3-1-{{ .Branch }}
+            - spree-bundle-v10-ruby-3-1
+      - run:
+          name: Install libvips
+          command: sudo apt-get update && sudo apt-get install libvips42
+      - run:
+          name: Bundle Install
+          command: |
+            bundle check || bundle install
+            ./bin/build-ci.rb install
+      - save_cache:
+          key: spree-bundle-v10-ruby-3-1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/spree/vendor/bundle
+
   brakeman:
-    <<: *defaults_3_0
+    <<: *defaults_3_1
     steps:
       - checkout
       - restore_cache:
@@ -166,6 +222,15 @@ jobs:
       <<: *postgres_environment
     docker:
       - image: *ruby_3_0_image
+      - image: *postgres_image
+      - image: *redis_image
+
+  tests_ruby_3_1_rails_7_0_postgres:
+    <<: *run_tests_3_1
+    environment:
+      <<: *postgres_environment
+    docker:
+      - image: *ruby_3_1_image
       - image: *postgres_image
       - image: *redis_image
 
@@ -255,9 +320,13 @@ workflows:
     jobs:
       - bundle_ruby_2_7
       - bundle_ruby_3_0
+      - bundle_ruby_3_1
       - brakeman:
           requires:
-            - bundle_ruby_3_0
+            - bundle_ruby_3_1
+      - tests_ruby_3_1_rails_7_0_postgres:
+          requires:
+            - bundle_ruby_3_1
       - tests_ruby_3_0_rails_7_0_postgres:
           requires:
             - bundle_ruby_3_0
