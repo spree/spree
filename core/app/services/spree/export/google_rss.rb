@@ -12,7 +12,7 @@ module Spree
             xml.channel do
               add_store_information_to_xml(xml, store)
               Spree::Product.find_each do |product|
-                product.variants.where('(sku = \'\') IS FALSE AND deleted_at is null').each do |variant|
+                product.variants.active.each do |variant|
                   add_variant_information_to_xml(xml, product, variant)
                 end
               end
