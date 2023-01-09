@@ -26,29 +26,6 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "67e80bcfa8898315b0f8642bc61990c8319bc7a468453efc048757a439e53e0b",
-      "check_name": "SQL",
-      "message": "Possible SQL injection",
-      "file": "app/models/spree/variant.rb",
-      "line": 131,
-      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale}'\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Spree::Variant",
-        "method": "Spree::Variant.join_product_translations"
-      },
-      "user_input": "Product.translation_table_alias",
-      "confidence": "Weak",
-      "cwe_id": [
-        89
-      ],
-      "note": ""
-    },
-    {
-      "warning_type": "SQL Injection",
-      "warning_code": 0,
       "fingerprint": "965d3919f811ab63b7b8d62da528559a7f38dc122c57efea7136e7ec5ef1f062",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -95,13 +72,13 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "e6bb08c012af19589f796e26b4dc2230ea1c1949c7cd6464ca025939513d8b3d",
+      "fingerprint": "c2bc48d98076b7c4fc3314c6a85f7bd1132efe5fcc346da4d28df7c25f93633f",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/spree/variant.rb",
-      "line": 126,
+      "line": 127,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "join_product_translations.where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
+      "code": "joins(:product).join_translation_table(Product).where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
       "render_path": null,
       "location": {
         "type": "method",
@@ -110,6 +87,29 @@
       },
       "user_input": "Product.translation_table_alias",
       "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "e7aa61c87f26af5f63f00e9791954d787a559dab1eadf8926861796237bd431d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/translatable_resource_scopes.rb",
+      "line": 10,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(\"LEFT OUTER JOIN #{translatable_class::Translation.table_name} #{translatable_class.translation_table_alias}\\n             ON #{translatable_class.translation_table_alias}.#{\"#{translatable_class.table_name.singularize}_id\"} = #{translatable_class.table_name}.id\\n             AND #{translatable_class.translation_table_alias}.locale = '#{Mobility.locale}'\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslatableResourceScopes",
+        "method": "join_translation_table"
+      },
+      "user_input": "translatable_class.translation_table_alias",
+      "confidence": "Medium",
       "cwe_id": [
         89
       ],
@@ -139,6 +139,6 @@
       "note": "interpolating table name"
     }
   ],
-  "updated": "2022-12-29 09:32:26 +0100",
+  "updated": "2023-01-09 09:40:32 +0100",
   "brakeman_version": "5.4.0"
 }
