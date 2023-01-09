@@ -16,11 +16,11 @@ module Spree
           private
 
           def update_options
-            @options = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
+            @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
           end
 
           def export_google_rss
-            Spree::Dependencies.export_google_rss_service.constantize.new.call(@options)
+            Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
           end
 
           def model_class
