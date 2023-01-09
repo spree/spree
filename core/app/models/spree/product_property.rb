@@ -2,6 +2,7 @@ module Spree
   class ProductProperty < Spree::Base
     include Spree::FilterParam
     include TranslatableResource
+    include TranslatableResourceScopes
 
     TRANSLATABLE_FIELDS = %i[value filter_param].freeze
     translates(*TRANSLATABLE_FIELDS)
@@ -37,8 +38,11 @@ module Spree
         `ProductProperty#property_name=` is deprecated and will be removed in Spree 5.0.
       DEPRECATION
       if name.present?
-        # don't use `find_by :name` to workaround globalize/globalize#423 bug
-        self.property = Property.where(name: name).first_or_create(presentation: name)
+        self.property = if Property.where(name: name).exists?
+                          Property.where(name: name).first
+                        else
+                          Property.create(name: name, presentation: name)
+                        end
       end
     end
 

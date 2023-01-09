@@ -433,7 +433,7 @@ describe Spree::Product, type: :model do
 
     # Regression test for #2455
     it "does not overwrite properties' presentation names" do
-      Spree::Property.where(name: 'foo').first_or_create!(presentation: "Foo's Presentation Name")
+      Spree::Property.create!(name: 'foo', presentation: "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
       expect(Spree::Property.where(name: 'foo').first.presentation).to eq("Foo's Presentation Name")
