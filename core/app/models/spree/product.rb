@@ -296,8 +296,6 @@ module Spree
       where conditions.inject(:or)
     end
 
-
-
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it
     # all option values. At that point all variants associated with only those
@@ -315,8 +313,8 @@ module Spree
 
     def property(property_name)
       product_properties.joins(:property).
-                        join_translation_table(Property).
-                        find_by(Property.translation_table_alias => { name: property_name }).try(:value)
+        join_translation_table(Property).
+        find_by(Property.translation_table_alias => { name: property_name }).try(:value)
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
