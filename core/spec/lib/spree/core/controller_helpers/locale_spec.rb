@@ -67,9 +67,9 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
         end
 
         context 'with I18n.default_locale set' do
-          before { I18n.default_locale = :de }
-
-          after { I18n.default_locale = :en }
+          before do
+            allow(I18n).to receive(:default_locale).and_return(:de)
+          end
 
           it 'fallbacks to the default application locale' do
             expect(controller.current_locale.to_s).to eq('de')
@@ -95,15 +95,17 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
     let!(:store) { create :store, default: true, default_locale: 'en', supported_locales: 'en,de,fr' }
 
     context 'same as store default locale' do
-      before { I18n.locale = :en }
+      before do
+        allow(I18n).to receive(:locale).and_return(:en)
+      end
 
       it { expect(controller.locale_param).to eq(nil) }
     end
 
     context 'different than store locale' do
-      before { I18n.locale = :de }
-
-      after { I18n.locale = :en }
+      before do
+        allow(I18n).to receive(:locale).and_return(:de)
+      end
 
       it { expect(controller.locale_param).to eq('de') }
     end
