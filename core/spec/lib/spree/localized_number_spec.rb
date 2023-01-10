@@ -21,6 +21,8 @@ describe Spree::LocalizedNumber do
     context 'with decimal comma' do
       it 'captures the proper amount for a formatted price' do
         allow(I18n).to receive(:locale).and_return(:de)
+        allow(I18n.config).to receive(:locale).and_return(:de)
+
         expect(subject.class.parse('1.599,99')).to eq 1599.99
       end
     end
@@ -28,6 +30,8 @@ describe Spree::LocalizedNumber do
     context 'with a numeric price' do
       it 'uses the price as is' do
         allow(I18n).to receive(:locale).and_return(:de)
+        allow(I18n.config).to receive(:locale).and_return(:de)
+
         expect(subject.class.parse(1599.99)).to eq 1599.99
       end
     end

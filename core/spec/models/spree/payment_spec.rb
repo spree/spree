@@ -856,6 +856,8 @@ describe Spree::Payment, type: :model do
       before do
         I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
         allow(I18n).to receive(:locale).and_return(:fr)
+        allow(I18n.config).to receive(:locale).and_return(:fr)
+
         subject.amount = amount
       end
 
