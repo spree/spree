@@ -184,7 +184,7 @@ describe Spree::BaseHelper, type: :helper do
       let(:current_currency) { 'USD' }
 
       before do
-        allow(I18n).to receive(:locale) { I18n.default_locale }
+        allow(I18n).to receive(:locale).and_return(I18n.default_locale)
       end
 
       it 'returns base cache key' do
