@@ -6,24 +6,30 @@ class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
   TAXON_TRANSLATIONS_TABLE = 'spree_taxon_translations'
 
   def up
+    # Only transfer data if translation tables are being newly created / no translations exist
+    # Otherwise, assume translation data is already in place from spree_globalize
+
     # Products
-    ActiveRecord::Base.connection.execute("
+    if Spree::Product::Translation.empty?
+      ActiveRecord::Base.connection.execute("
       INSERT INTO #{PRODUCT_TRANSLATIONS_TABLE} (name, description, locale, spree_product_id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug)
-      SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug FROM #{PRODUCTS_TABLE}
-                                          ")
-    ActiveRecord::Base.connection.execute("
+      SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug FROM #{PRODUCTS_TABLE};
+
       UPDATE #{PRODUCTS_TABLE}
       SET name=null, description=null, meta_description=null, meta_keywords=null, meta_title=null, slug=null;
                                           ")
-    #Taxons
-    ActiveRecord::Base.connection.execute("
+    end
+
+    # Taxons
+    if Spree::Taxon::Translation.empty?
+      ActiveRecord::Base.connection.execute("
       INSERT INTO #{TAXON_TRANSLATIONS_TABLE} (name, description, locale, spree_taxon_id, created_at, updated_at)
-      SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at FROM #{TAXONS_TABLE}
-                                          ")
-    ActiveRecord::Base.connection.execute("
+      SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at FROM #{TAXONS_TABLE};
+
       UPDATE #{TAXONS_TABLE}
-      SET name=null, description=null
+      SET name=null, description=null;
                                           ")
+    end
   end
 
   def down
