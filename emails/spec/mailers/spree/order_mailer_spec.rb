@@ -196,7 +196,9 @@ describe Spree::OrderMailer, type: :mailer do
       end
 
       context 'via I18n' do
-        before { I18n.locale = :'pt-BR' }
+        before do
+          allow(I18n).to receive(:locale).and_return(:'pt-BR')
+        end
 
         it_behaves_like 'translates emails'
       end
