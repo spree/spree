@@ -1,4 +1,4 @@
-class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
+class TransferProductAndTaxonDataToTranslatableTables < ActiveRecord::Migration[6.1]
   DEFAULT_LOCALE = 'en'
   PRODUCTS_TABLE = 'spree_products'
   PRODUCT_TRANSLATIONS_TABLE = 'spree_product_translations'
@@ -10,7 +10,7 @@ class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
     # Otherwise, assume translation data is already in place from spree_globalize
 
     # Products
-    if Spree::Product::Translation.empty?
+    if not Spree::Product::Translation.exists?
       ActiveRecord::Base.connection.execute("
       INSERT INTO #{PRODUCT_TRANSLATIONS_TABLE} (name, description, locale, spree_product_id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug)
       SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug FROM #{PRODUCTS_TABLE};
@@ -21,13 +21,13 @@ class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
     end
 
     # Taxons
-    if Spree::Taxon::Translation.empty?
+    if not Spree::Taxon::Translation.exists?
       ActiveRecord::Base.connection.execute("
-      INSERT INTO #{TAXON_TRANSLATIONS_TABLE} (name, description, locale, spree_taxon_id, created_at, updated_at)
-      SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at FROM #{TAXONS_TABLE};
+      INSERT INTO #{TAXON_TRANSLATIONS_TABLE} (name, description, meta_title, meta_description, meta_keywords, permalink, locale, spree_taxon_id, created_at, updated_at)
+      SELECT name, description, meta_title, meta_description, meta_keywords, permalink, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at FROM #{TAXONS_TABLE};
 
       UPDATE #{TAXONS_TABLE}
-      SET name=null, description=null;
+      SET name=null, description=null, meta_title=null, meta_description=null, meta_keywords=null, permalink=null;
                                           ")
     end
   end
@@ -58,9 +58,17 @@ class TransferDataToTranslatableTables < ActiveRecord::Migration[6.1]
     ActiveRecord::Base.connection.execute("
       UPDATE #{TAXONS_TABLE} as taxons
       SET (name,
-           description) =
+           description,
+           meta_title,
+           meta_description,
+           meta_keywords,
+           permalink) =
           (t_taxons.name,
-           t_taxons.description)
+           t_taxons.description,
+           t_taxons.meta_title,
+           t_taxons.meta_description,
+           t_taxons.meta_keywords,
+           t_taxons.permalink)
       FROM #{TAXON_TRANSLATIONS_TABLE} AS t_taxons
       WHERE t_taxons.spree_taxon_id = taxons.id
     ")
