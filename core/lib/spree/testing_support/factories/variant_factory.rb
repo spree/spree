@@ -25,6 +25,10 @@ FactoryBot.define do
     factory :variant do
       # on_hand 5
       product { |p| p.association(:product, stores: [create(:store)]) }
+
+      factory :with_image_variant do
+        images { create_list(:image, 1) }
+      end
     end
 
     factory :master_variant do
