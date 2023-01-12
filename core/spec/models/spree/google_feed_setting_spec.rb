@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::GoogleFeedSetting, type: :model do
-  let(:google_feed_setting) { create(:google_feed_setting) }
+  let(:store) { create(:store) }
+  let(:google_feed_setting) { create(:google_feed_setting, store: store) }
 
   describe '#enabled_keys' do
     it 'returns enabled key' do
