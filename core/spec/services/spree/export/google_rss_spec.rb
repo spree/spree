@@ -16,16 +16,16 @@ module Spree
         allow(subject).to receive(:store).and_return(store)
       end
 
-      it 'store name' do
-        expect(result).to include("<title>#{store.name}</title>").once
+      it 'include store name' do
+        expect(result.value[:file]).to include("<title>#{store.name}</title>").once
       end
 
-      it 'store url' do
-        expect(result).to include("<link>#{store.url}</link>").once
+      it 'includes store url' do
+        expect(result.value[:file]).to include("<link>#{store.url}</link>").once
       end
 
-      it 'store description' do
-        expect(result).to include("<description>#{store.meta_description}</description>").once
+      it 'includes store description' do
+        expect(result.value[:file]).to include("<description>#{store.meta_description}</description>").once
       end
     end
 
@@ -34,57 +34,57 @@ module Spree
         allow(subject).to receive(:store).and_return(store)
       end
 
-      it 'id' do
-        expect(result).to include("<g:id>#{variant.id}</g:id>").once
+      it 'includes id' do
+        expect(result.value[:file]).to include("<g:id>#{variant.id}</g:id>").once
       end
 
-      it 'title' do
-        expect(result).to include("<g:title>#{product.name} - #{variant.option_values.first.name}</g:title>").once
+      it 'includes title' do
+        expect(result.value[:file]).to include("<g:title>#{product.name} - #{variant.option_values.first.name}</g:title>").once
       end
 
-      it 'description' do
-        expect(result).to include("<g:description>#{product.description}</g:description>").once
+      it 'includes description' do
+        expect(result.value[:file]).to include("<g:description>#{product.description}</g:description>").once
       end
 
-      it 'link' do
-        expect(result).to include("<g:link>#{store.url}/#{product.slug}</g:link>").once
+      it 'includes link' do
+        expect(result.value[:file]).to include("<g:link>#{store.url}/#{product.slug}</g:link>").once
       end
 
-      it 'image link' do
-        expect(result).to include("<g:image_link>#{variant.images.first.plp_url}</g:image_link>").once
+      it 'includes image link' do
+        expect(result.value[:file]).to include("<g:image_link>#{variant.images.first.plp_url}</g:image_link>").once
       end
 
-      it 'price' do
-        expect(result).to include("<g:price>#{variant.price} #{variant.cost_currency}</g:price>").once
+      it 'includes price' do
+        expect(result.value[:file]).to include("<g:price>#{variant.price} #{variant.cost_currency}</g:price>").once
       end
 
       context 'availability date is in the past' do
-        it 'product is in stock' do
-          expect(result).to include('<g:availability>in stock</g:availability>')
+        it 'shows that product is in stock' do
+          expect(result.value[:file]).to include('<g:availability>in stock</g:availability>')
         end
 
-        it 'product availability date is the same' do
-          expect(result).to include("<g:availability_date>#{product.available_on.xmlschema}</g:availability_date>")
+        it 'shows that product availability date is the same' do
+          expect(result.value[:file]).to include("<g:availability_date>#{product.available_on.xmlschema}</g:availability_date>")
         end
       end
 
       context 'availability date is in the future' do
         let(:product) { create(:product, stores: [store], available_on: 1.year.from_now) }
 
-        it 'product is on backorder' do
-          expect(result).to include('<g:availability>backorder</g:availability>')
+        it 'shows that product is on backorder' do
+          expect(result.value[:file]).to include('<g:availability>backorder</g:availability>')
         end
       end
 
       context 'availability date is nil' do
         let(:product) { create(:product, stores: [store], available_on: nil) }
 
-        it 'product is out of stock' do
-          expect(result).to include('<g:availability>out of stock</g:availability>')
+        it 'shows that product is out of stock' do
+          expect(result.value[:file]).to include('<g:availability>out of stock</g:availability>')
         end
 
-        it 'product availability date is nil' do
-          expect(result).not_to include('<g:availability_date>')
+        it 'shows that product availability date is nil' do
+          expect(result.value[:file]).not_to include('<g:availability_date>')
         end
       end
     end
@@ -97,14 +97,14 @@ module Spree
       end
 
       it 'adds brand to item attributes' do
-        expect(result).to include("<g:brand>#{product.property('brand')}</g:brand>")
+        expect(result.value[:file]).to include("<g:brand>#{product.property('brand')}</g:brand>")
       end
 
       context 'brand option is set to false' do
         let(:setting) { create(:google_feed_setting, store: store, brand: false) }
 
         it 'does not add brand to item attributes' do
-          expect(result).not_to include('<g:brand>')
+          expect(result.value[:file]).not_to include('<g:brand>')
         end
       end
     end

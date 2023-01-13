@@ -8,7 +8,7 @@ module Spree
       keys = []
 
       attributes.each do |key, value|
-        if value.instance_of?(TrueClass)
+        if value == true
           keys.append(key.to_sym)
         end
       end

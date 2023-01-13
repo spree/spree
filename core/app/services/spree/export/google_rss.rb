@@ -3,15 +3,18 @@ require 'nokogiri'
 module Spree
   module Export
     class GoogleRss
-      def call(options)
-        @store = Spree::Store.find(options.spree_store_id)
-        @options = options
+      prepend Spree::ServiceModule::Base
+
+      def call(settings)
+        @settings = settings
+
+        return failure(store, error: "Store with id: #{settings.spree_store_id} does not exist.") if store.nil?
 
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
             xml.channel do
               add_store_information_to_xml(xml)
-              Spree::Product.find_each do |product|
+              store.products.active.each do |product|
                 product.variants.active.each do |variant|
                   add_variant_information_to_xml(xml, product, variant)
                 end
@@ -20,15 +23,21 @@ module Spree
           end
         end
 
-        builder.to_xml
+        success(file: builder.to_xml)
       end
 
       private
 
+      def store
+        return @store if defined? @store
+
+        @store ||= Spree::Store.find_by(id: @settings.spree_store_id)
+      end
+
       def add_store_information_to_xml(xml)
-        xml.title @store.name
-        xml.link @store.url
-        xml.description @store.meta_description
+        xml.title store.name
+        xml.link store.url
+        xml.description store.meta_description
       end
 
       def add_variant_information_to_xml(xml, product, variant)
@@ -38,7 +47,7 @@ module Spree
           xml['g'].id variant.id
           xml['g'].title format_title(product, variant)
           xml['g'].description get_description(product, variant)
-          xml['g'].link "#{@store.url}/#{product.slug}"
+          xml['g'].link "#{store.url}/#{product.slug}"
           xml['g'].image_link get_image_link(variant, product)
           xml['g'].price format_price(variant)
           xml['g'].availability get_availability(product)
@@ -88,14 +97,14 @@ module Spree
       end
 
       def add_optional_information(xml, product)
-        @options.enabled_keys.each do |key|
-          if @options.send(key) && !product.property(key.to_s).nil?
+        @settings.enabled_keys.each do |key|
+          if @settings.send(key) && !product.property(key.to_s).nil?
             xml['g'].send(key, product.property(key.to_s))
           end
         end
       end
 
-      # example of modifing optional information
+      # example of modifying optional information
       #
       # By default, this code assumes that any information that is not required by Google
       # (see https://support.google.com/merchants/answer/160589?hl=en) is stored in Spree::Products's properties.
