@@ -2,8 +2,12 @@ class TransferOptionsDataToTranslatableTables < ActiveRecord::Migration[6.1]
   DEFAULT_LOCALE = 'en'
 
   def up
+    # Only transfer data if translation tables are being newly created / no translations exist
+    # Otherwise, assume translation data is already in place from spree_globalize
+
     # Option Types
-    ActiveRecord::Base.connection.execute("
+    if not Spree::OptionType::Translation.exists?
+      ActiveRecord::Base.connection.execute("
       INSERT INTO spree_option_type_translations (name, presentation, locale, spree_option_type_id, created_at, updated_at)
       SELECT name, presentation, '#{DEFAULT_LOCALE}', id, created_at, updated_at
       FROM spree_option_types;
@@ -11,9 +15,11 @@ class TransferOptionsDataToTranslatableTables < ActiveRecord::Migration[6.1]
       UPDATE spree_option_types
       SET name=null, presentation=null;
     ")
+    end
 
     # Option Values
-    ActiveRecord::Base.connection.execute("
+    if not Spree::OptionValue::Translation.exists?
+      ActiveRecord::Base.connection.execute("
       INSERT INTO spree_option_value_translations (name, presentation, locale, spree_option_value_id, created_at, updated_at)
       SELECT name, presentation, '#{DEFAULT_LOCALE}', id, created_at, updated_at
       FROM spree_option_values;
@@ -21,6 +27,7 @@ class TransferOptionsDataToTranslatableTables < ActiveRecord::Migration[6.1]
       UPDATE spree_option_values
       SET name=null, presentation=null;
     ")
+    end
   end
 
   def down
