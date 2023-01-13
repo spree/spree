@@ -3,8 +3,6 @@ module Spree
     module V2
       module Storefront
         class StoresController < ::Spree::Api::V2::ResourceController
-          before_action :update_options
-
           def current
             render_serialized_payload { serialize_resource(current_store) }
           end
@@ -15,11 +13,12 @@ module Spree
 
           private
 
-          def update_options
+          def update_settings
             @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
           end
 
           def export_google_rss
+            update_settings
             Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
           end
 
