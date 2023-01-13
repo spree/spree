@@ -3,9 +3,15 @@ require 'nokogiri'
 module Spree
   module Export
     class GoogleRss
+      class MissingStore < ActiveRecord::RecordNotFound
+        def initialize(msg="Store with id #{options.spree_store_id} does not exist.")
+          super(msg)
+        end
+      end
+
       def call(options)
         if Spree::Store.where(id: options.spree_store_id).nil?
-          raise ActiveRecord::RecordNotFound.new "Store with id #{options.spree_store_id} does not exist."
+          raise MissingStore.new
         end
 
         @store = Spree::Store.find(options.spree_store_id)
