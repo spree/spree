@@ -3,20 +3,22 @@ require 'nokogiri'
 module Spree
   module Export
     class GoogleRss
+      prepend Spree::ServiceModule::Base
+
       class MissingStore < ActiveRecord::RecordNotFound
         def initialize(msg="Store with id #{options.spree_store_id} does not exist.")
           super(msg)
         end
       end
 
-      def call(options)
-        if Spree::Store.where(id: options.spree_store_id).nil?
+      def call(settings)
+        if Spree::Store.where(id: settings.spree_store_id).nil?
           raise MissingStore.new
         end
 
-        @store = Spree::Store.find(options.spree_store_id)
+        @store = Spree::Store.find(settings.spree_store_id)
 
-        @options = options
+        @settings = settings
 
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
@@ -31,7 +33,7 @@ module Spree
           end
         end
 
-        builder.to_xml
+        success(file: builder.to_xml)
       end
 
       private
@@ -43,7 +45,7 @@ module Spree
       end
 
       def add_variant_information_to_xml(xml, product, variant)
-        return if get_image_link(variant, product).nil?
+        #return if get_image_link(variant, product).nil?
 
         xml.item do
           xml['g'].id variant.id
@@ -99,8 +101,8 @@ module Spree
       end
 
       def add_optional_information(xml, product)
-        @options.enabled_keys.each do |key|
-          if @options.send(key) && !product.property(key.to_s).nil?
+        @settings.enabled_keys.each do |key|
+          if @settings.send(key) && !product.property(key.to_s).nil?
             xml['g'].send(key, product.property(key.to_s))
           end
         end

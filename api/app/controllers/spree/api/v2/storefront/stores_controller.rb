@@ -10,7 +10,7 @@ module Spree
           end
 
           def export_google_rss_feed
-            send_data export_google_rss, filename: 'products.rss', type: 'text/xml'
+            send_data export_google_rss.value[:file], filename: 'products.rss', type: 'text/xml'
           end
 
           private
