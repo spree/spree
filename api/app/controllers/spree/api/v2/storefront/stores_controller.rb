@@ -8,7 +8,7 @@ module Spree
           end
 
           def export_google_rss_feed
-            send_data export_google_rss.value[:file], filename: 'products.rss', type: 'text/xml'
+            send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
           end
 
           private
@@ -17,7 +17,7 @@ module Spree
             @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
           end
 
-          def export_google_rss
+          def export_google_rss_service
             update_settings
             Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
           end
