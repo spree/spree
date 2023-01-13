@@ -4,7 +4,12 @@ module Spree
   module Export
     class GoogleRss
       def call(options)
+        if Spree::Store.where(id: options.spree_store_id).nil?
+          raise ActiveRecord::RecordNotFound.new "Store with id #{options.spree_store_id} does not exist."
+        end
+
         @store = Spree::Store.find(options.spree_store_id)
+
         @options = options
 
         builder = Nokogiri::XML::Builder.new do |xml|
