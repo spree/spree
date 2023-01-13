@@ -36,7 +36,7 @@ module Spree
       end
 
       def add_variant_information_to_xml(xml, product, variant)
-        #return if get_image_link(variant, product).nil?
+        return if get_image_link(variant, product).nil?
 
         xml.item do
           xml['g'].id variant.id
@@ -99,7 +99,7 @@ module Spree
         end
       end
 
-      # example of modifing optional information
+      # example of modifying optional information
       #
       # By default, this code assumes that any information that is not required by Google
       # (see https://support.google.com/merchants/answer/160589?hl=en) is stored in Spree::Products's properties.
