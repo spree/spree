@@ -5,20 +5,11 @@ module Spree
     class GoogleRss
       prepend Spree::ServiceModule::Base
 
-      class MissingStore < ActiveRecord::RecordNotFound
-        def initialize(msg="Store with id #{options.spree_store_id} does not exist.")
-          super(msg)
-        end
-      end
-
       def call(settings)
-        if Spree::Store.where(id: settings.spree_store_id).nil?
-          raise MissingStore.new
-        end
+        @store ||= Spree::Store.find_by(id: settings.spree_store_id)
+        return failure(@store, error: "Store with id: #{settings.spree_store_id} does not exist.") if @store.nil?
 
-        @store = Spree::Store.find(settings.spree_store_id)
-
-        @settings = settings
+        @settings ||= settings
 
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
