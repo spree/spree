@@ -14,10 +14,11 @@ class TransferProductAndTaxonDataToTranslatableTables < ActiveRecord::Migration[
       ActiveRecord::Base.connection.execute("
       INSERT INTO #{PRODUCT_TRANSLATIONS_TABLE} (name, description, locale, spree_product_id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug)
       SELECT name, description, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at, meta_description, meta_keywords, meta_title, slug FROM #{PRODUCTS_TABLE};
-
+                                            ")
+      ActiveRecord::Base.connection.execute("
       UPDATE #{PRODUCTS_TABLE}
       SET name=null, description=null, meta_description=null, meta_keywords=null, meta_title=null, slug=null;
-                                          ")
+                                            ")
     end
 
     # Taxons
@@ -25,10 +26,11 @@ class TransferProductAndTaxonDataToTranslatableTables < ActiveRecord::Migration[
       ActiveRecord::Base.connection.execute("
       INSERT INTO #{TAXON_TRANSLATIONS_TABLE} (name, description, meta_title, meta_description, meta_keywords, permalink, locale, spree_taxon_id, created_at, updated_at)
       SELECT name, description, meta_title, meta_description, meta_keywords, permalink, '#{DEFAULT_LOCALE}' as locale, id, created_at, updated_at FROM #{TAXONS_TABLE};
-
+                                            ")
+      ActiveRecord::Base.connection.execute("
       UPDATE #{TAXONS_TABLE}
       SET name=null, description=null, meta_title=null, meta_description=null, meta_keywords=null, permalink=null;
-                                          ")
+                                            ")
     end
   end
 
