@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'pry'
 
 module Spree
   describe Export::GoogleRss do
@@ -90,7 +89,7 @@ module Spree
     end
 
     context 'optional item attributes are generated correctly' do
-      let(:product) { create(:product_with_properties) }
+      let(:product) { create(:product_with_properties, stores: [store]) }
 
       before do
         allow(subject).to receive(:store).and_return(store)
