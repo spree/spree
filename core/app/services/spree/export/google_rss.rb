@@ -6,7 +6,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(settings)
-        @settings ||= settings
+        @settings = settings
 
         return failure(store, error: "Store with id: #{settings.spree_store_id} does not exist.") if store.nil?
 
@@ -30,6 +30,7 @@ module Spree
 
       def store
         return @store if defined? @store
+
         @store ||= Spree::Store.find_by(id: @settings.spree_store_id)
       end
 
