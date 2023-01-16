@@ -82,6 +82,8 @@ module Spree
           @spree_current_user ||= doorkeeper_token.resource_owner
         end
 
+        alias try_spree_current_user spree_current_user  # for compatibility with spree_legacy_frontend
+
         def spree_authorize!(action, subject, *args)
           authorize!(action, subject, *args)
         end

@@ -24,6 +24,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         redirect_back_or_default('/')
       end
     end
+
     it 'redirects to session url' do
       session[:spree_user_return_to] = '/redirect'
       get :index
@@ -47,6 +48,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         render plain: 'index'
       end
     end
+
     it 'sends cookie header' do
       get :index
       expect(response.cookies['token']).not_to be_nil
@@ -85,9 +87,10 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
         redirect_unauthorized_access
       end
     end
+
     context 'when logged in' do
       before do
-        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil))
+        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil, selected_locale: nil))
       end
 
       it 'redirects forbidden path' do

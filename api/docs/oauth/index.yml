@@ -139,7 +139,7 @@ components:
         - expires_in
         - refresh_token
         - created_at
-      x-internal: true
+      x-internal: false
     CreateTokenBody:
       type: object
       x-examples:
@@ -152,7 +152,7 @@ components:
           username: spree@example.com
           password: spree123
           scope: admin
-      x-internal: true
+      x-internal: false
       title: 'Create a new token (grant_type: password)'
       description: ''
       properties:
@@ -186,7 +186,7 @@ components:
         example-1:
           grant_type: refresh_token
           refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
-      x-internal: true
+      x-internal: false
       title: 'Create a new token (grant_type: client_credentials)'
       description: ''
       properties:
@@ -213,7 +213,7 @@ components:
         example-1:
           grant_type: refresh_token
           refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
-      x-internal: true
+      x-internal: false
       title: 'Refresh an existing token (grant_type: refresh_token)'
       description: ''
       properties:

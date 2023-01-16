@@ -63,6 +63,9 @@ paths:
                     last_name:
                       type: string
                       example: Snow
+                    selected_locale:
+                      type: string
+                      example: 'en'
                     password:
                       type: string
                       example: spree123
@@ -110,6 +113,9 @@ paths:
                     last_name:
                       type: string
                       example: Snow
+                    selected_locale:
+                      type: string
+                      example: 'fr'
                     bill_address_id:
                       type: string
                       example: '1'
@@ -1913,7 +1919,7 @@ components:
         - id
         - type
         - attributes
-      x-internal: true
+      x-internal: false
     AddressPayload:
       example:
         firstname: John
@@ -1926,7 +1932,7 @@ components:
         state_name: MD
         country_iso: US
       type: object
-      x-internal: true
+      x-internal: false
       title: ''
       x-examples: {}
       description: ''
@@ -1973,7 +1979,7 @@ components:
       description: 'The Cart provides a central place to collect information about an order, including line items, adjustments, payments, addresses, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
       type: object
       title: Cart
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2181,7 +2187,7 @@ components:
         - attributes
         - relationships
     CartIncludes:
-      x-internal: true
+      x-internal: false
       title: Cart Includes
       anyOf:
         - $ref: '#/components/schemas/LineItem'
@@ -2197,7 +2203,7 @@ components:
       type: object
       title: CMS Page
       description: 'The CMS Page model contains page data for Standard pages, Feature Pages and Homepages.'
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2250,7 +2256,7 @@ components:
         - attributes
         - relationships
     CmsPageIncludes:
-      x-internal: true
+      x-internal: false
       title: CMS Page Includes
       allOf:
         - $ref: '#/components/schemas/CmsSection'
@@ -2259,7 +2265,7 @@ components:
       type: object
       title: CMS Section
       description: The CMS Section model represents a single section belonging to a CMS Page. CMS Sections can link to other resources through the `linked_resource`.
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2361,7 +2367,7 @@ components:
       title: Country
       description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/internals/addresses#countries)'
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2407,14 +2413,14 @@ components:
         - attributes
         - relationships
     CountryIncludes:
-      x-internal: true
+      x-internal: false
       title: Country Includes
       oneOf:
         - $ref: '#/components/schemas/State'
     CreditCard:
       title: Credit Card
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2467,12 +2473,12 @@ components:
         - attributes
         - relationships
     CreditCardIncludes:
-      x-internal: true
+      x-internal: false
       title: Credit Card Includes
       allOf:
         - $ref: '#/components/schemas/PaymentMethod'
     Error:
-      x-internal: true
+      x-internal: false
       title: Error
       type: object
       properties:
@@ -2482,7 +2488,7 @@ components:
       type: object
       description: 'The Icon object contains a url attribute pointing to an Active Storage asset. '
       title: Icon
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2526,9 +2532,9 @@ components:
         - type
         - attributes
       title: Image
-      x-internal: true
+      x-internal: false
     ImageStyle:
-      x-internal: true
+      x-internal: false
       title: Image Style
       type: object
       properties:
@@ -2545,7 +2551,7 @@ components:
           example: 1080
           description: Actual height of image
     ListLinks:
-      x-internal: true
+      x-internal: false
       type: object
       title: Pagination Links
       properties:
@@ -2566,7 +2572,7 @@ components:
           description: URL to the first page of the listing
     ListMeta:
       type: object
-      x-internal: true
+      x-internal: false
       title: Pagination Meta
       properties:
         count:
@@ -2584,7 +2590,7 @@ components:
     LineItem:
       title: Line Item
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2693,7 +2699,7 @@ components:
     Menu:
       type: object
       title: Menu
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2734,7 +2740,7 @@ components:
     MenuItem:
       title: Menu Item
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2823,7 +2829,7 @@ components:
         - attributes
         - relationships
     MenuIncludes:
-      x-internal: true
+      x-internal: false
       title: Menu Includes
       anyOf:
         - $ref: '#/components/schemas/MenuItem'
@@ -2834,7 +2840,7 @@ components:
     OptionType:
       title: Option Type
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2862,7 +2868,7 @@ components:
       title: Payment
       type: object
       description: ''
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2918,7 +2924,7 @@ components:
       title: Payment Method
       description: ''
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -2948,7 +2954,7 @@ components:
     Product:
       type: object
       title: Product
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3077,7 +3083,7 @@ components:
         - attributes
         - relationships
     ProductIncludes:
-      x-internal: true
+      x-internal: false
       title: Product Includes
       anyOf:
         - $ref: '#/components/schemas/OptionType'
@@ -3086,7 +3092,7 @@ components:
         - $ref: '#/components/schemas/Image'
         - $ref: '#/components/schemas/Taxon'
     StoreIncludes:
-      x-internal: true
+      x-internal: false
       title: Store Includes
       anyOf:
         - $ref: '#/components/schemas/Country'
@@ -3121,7 +3127,7 @@ components:
         - id
         - type
         - attributes
-      x-internal: true
+      x-internal: false
     Promotion:
       type: object
       title: Promotion
@@ -3154,7 +3160,7 @@ components:
         - id
         - type
         - attributes
-      x-internal: true
+      x-internal: false
     Relation:
       type: object
       nullable: true
@@ -3166,7 +3172,7 @@ components:
       required:
         - id
         - type
-      x-internal: true
+      x-internal: false
       description: ''
     State:
       type: object
@@ -3181,12 +3187,12 @@ components:
           type: string
           example: New York
           description: State name
-      x-internal: true
+      x-internal: false
     Store:
       type: object
       description: Stores are the center of the Spree ecosystem. Each Spree installation can have multiple Stores. Each Store operates on a different domain or subdomain.
       title: Store
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3301,7 +3307,7 @@ components:
     Shipment:
       type: object
       title: Shipment
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3371,7 +3377,7 @@ components:
         - attributes
         - relationships
     ShipmentIncludes:
-      x-internal: true
+      x-internal: false
       title: Shipment Includes
       allOf:
         - $ref: '#/components/schemas/ShippingRate'
@@ -3380,7 +3386,7 @@ components:
       type: object
       title: Shipping Rate
       description: ''
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3434,7 +3440,7 @@ components:
     StockLocation:
       title: Stock Location
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3455,7 +3461,7 @@ components:
     Taxon:
       title: Taxon
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3586,9 +3592,9 @@ components:
         - type
         - attributes
       title: Taxon Image
-      x-internal: true
+      x-internal: false
     TaxonIncludes:
-      x-internal: true
+      x-internal: false
       title: Taxon Includes
       anyOf:
         - $ref: '#/components/schemas/Product'
@@ -3597,7 +3603,7 @@ components:
     Taxonomy:
       type: object
       title: Taxonomy
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3622,7 +3628,7 @@ components:
       type: string
       format: date-time
       example: '2020-02-16T07:14:54.617Z'
-      x-internal: true
+      x-internal: false
       title: Time Stamp
       x-examples:
         example-1: '2020-02-16T07:14:54.617Z'
@@ -3630,7 +3636,7 @@ components:
       type: object
       title: User
       description: ' '
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3650,6 +3656,9 @@ components:
             last_name:
               type: string
               example: Doe
+            selected_locale:
+              type: string
+              example: 'fr'
             store_credits:
               type: number
               example: 150.75
@@ -3687,7 +3696,7 @@ components:
       description: 'Variant records track the individual variants of a Product. Variants are of two types: master variants and normal variants.'
       x-examples: {}
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3769,7 +3778,7 @@ components:
         - relationships
     WishedItem:
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3803,7 +3812,7 @@ components:
         - attributes
         - relationships
     WishedItemIncludes:
-      x-internal: true
+      x-internal: false
       title: Wished Item Includes
       allOf:
         - $ref: '#/components/schemas/Variant'
@@ -3811,7 +3820,7 @@ components:
       description: ''
       type: object
       title: Wishlist
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -3849,14 +3858,14 @@ components:
         - attributes
         - relationships
     WishlistIncludes:
-      x-internal: true
+      x-internal: false
       title: Wishlist Includes
       allOf:
         - $ref: '#/components/schemas/WishedItem'
     DigitalLink:
       title: Digital Link
       type: object
-      x-internal: true
+      x-internal: false
       properties:
         id:
           type: string
@@ -5109,6 +5118,7 @@ components:
                     email: spree@example.com
                     first_name: John
                     last_name: Snow
+                    selected_locale: 'en'
                     store_credits: 0
                     completed_orders: 0
                     public_metadata:

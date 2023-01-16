@@ -214,9 +214,11 @@ module Spree
             products
           end
         when 'name-a-z'
+          # workaround for Mobility issue #596 - explicitly select fields to avoid error when selecting distinct
           products.i18n.
             select("#{Product.table_name}.*").select(:name).order(name: :asc)
         when 'name-z-a'
+          # workaround for Mobility issue #596
           products.i18n.
             select("#{Product.table_name}.*").select(:name).order(name: :desc)
         when 'newest-first'

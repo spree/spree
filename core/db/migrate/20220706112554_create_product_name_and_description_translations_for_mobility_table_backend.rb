@@ -1,19 +1,25 @@
 class CreateProductNameAndDescriptionTranslationsForMobilityTableBackend < ActiveRecord::Migration[6.1]
   def change
-    create_table :spree_product_translations do |t|
+    # create translation table only if spree_globalize has not already created it
+    if ActiveRecord::Base.connection.table_exists? 'spree_product_translations'
+      # replacing this with index on spree_product_id and locale
+      remove_index :spree_product_translations, name: "index_spree_product_translations_on_spree_product_id", if_exists: true
+    else
+      create_table :spree_product_translations do |t|
 
-      # Translated attribute(s)
-      t.string :name
-      t.text :description
+        # Translated attribute(s)
+        t.string :name
+        t.text :description
 
-      t.string  :locale, null: false
-      t.references :spree_product, null: false, foreign_key: true, index: false
+        t.string  :locale, null: false
+        t.references :spree_product, null: false, foreign_key: true, index: false
 
-      t.timestamps null: false
+        t.timestamps null: false
+      end
+
+      add_index :spree_product_translations, :locale, name: :index_spree_product_translations_on_locale
     end
 
-    add_index :spree_product_translations, :locale, name: :index_spree_product_translations_on_locale
-    add_index :spree_product_translations, [:spree_product_id, :locale], name: :index_89f757462683439a75913375358673bb7f45ebe0, unique: true
-
+    add_index :spree_product_translations, [:spree_product_id, :locale], name: :unique_product_id_per_locale, unique: true
   end
 end

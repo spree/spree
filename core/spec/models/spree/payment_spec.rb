@@ -855,12 +855,10 @@ describe Spree::Payment, type: :model do
     context 'when the locale uses a coma as a decimal separator' do
       before do
         I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
-        I18n.locale = :fr
-        subject.amount = amount
-      end
+        allow(I18n).to receive(:locale).and_return(:fr)
+        allow(I18n.config).to receive(:locale).and_return(:fr)
 
-      after do
-        I18n.locale = I18n.default_locale
+        subject.amount = amount
       end
 
       context 'amount is a decimal' do
