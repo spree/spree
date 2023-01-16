@@ -26,7 +26,7 @@ module Spree
 
     def duplicate_product
       product.dup.tap do |new_product|
-        new_product.name = "COPY OF #{product.name}"
+        product.translations.each { |t| new_product.send(:name=, "COPY OF #{t.name}", locale: t.locale) }
         new_product.taxons = product.taxons
         new_product.stores = product.stores
         new_product.created_at = nil

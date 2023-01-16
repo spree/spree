@@ -295,19 +295,10 @@ module Spree
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
-
-        if defined?(SpreeGlobalize)
-          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: { tsearch: { any_word: true, prefix: true } }
-        else
-          pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
-        end
+        pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
       else
         def self.search_by_name(query)
-          if defined?(SpreeGlobalize)
-            joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
-          else
-            where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
-          end
+          i18n { name.lower.matches("%#{query.downcase}%") }
         end
       end
       search_scopes << :search_by_name
@@ -339,7 +330,10 @@ module Spree
           case t
           when ApplicationRecord then t
           else
-            Taxon.where(Taxon.arel_table[:name].eq(t)).or(Taxon.where(Taxon.arel_table[:id].eq(t))).or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
+            Taxon.where(name: t).
+              or(Taxon.where(Taxon.arel_table[:id].eq(t))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
           end
         end.compact.flatten.uniq
       end

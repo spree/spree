@@ -12,6 +12,16 @@ module Spree
           def spree_permitted_attributes
             super + [:option_value_ids, :price, :currency]
           end
+
+          def collection
+            # if filtering on products, manually join on product translation to workaround mobility-ransack issue
+            if params.key?(:filter) && params[:filter].keys.any? { |k| k.include? 'product' }
+              @collection ||= scope.join_product_translations.
+                              ransack(params[:filter]).result
+            else
+              super
+            end
+          end
         end
       end
     end

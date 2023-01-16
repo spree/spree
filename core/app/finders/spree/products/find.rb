@@ -146,7 +146,12 @@ module Spree
       def by_name(products)
         return products unless name?
 
-        products.like_any([:name], [name])
+        product_name = name
+
+        # i18n scope doesn't automatically get set here (mobility gem bug?) set it explicitly
+        products.i18n do
+          name.matches("%#{product_name}%")
+        end
       end
 
       def by_options(products)
@@ -209,21 +214,19 @@ module Spree
             products
           end
         when 'name-a-z'
-          products.order(name: :asc)
+          # workaround for Mobility issue #596 - explicitly select fields to avoid error when selecting distinct
+          products.i18n.
+            select("#{Product.table_name}.*").select(:name).order(name: :asc)
         when 'name-z-a'
-          products.order(name: :desc)
+          # workaround for Mobility issue #596
+          products.i18n.
+            select("#{Product.table_name}.*").select(:name).order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'
-          products.
-            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
-            reorder('').
-            send(:descend_by_master_price)
+          order_by_price(products, :descend_by_master_price)
         when 'price-low-to-high'
-          products.
-            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
-            reorder('').
-            send(:ascend_by_master_price)
+          order_by_price(products, :ascend_by_master_price)
         end
       end
 
@@ -264,6 +267,13 @@ module Spree
 
         taxons = store.taxons.where(id: taxons_ids.to_s.split(','))
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
+      end
+
+      def order_by_price(scope, order_type)
+        scope.
+          select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+          reorder('').
+          send(order_type)
       end
     end
   end

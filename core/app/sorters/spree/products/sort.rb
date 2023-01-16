@@ -11,6 +11,8 @@ module Spree
         products = by_price(products)
         products = by_sku(products)
 
+        products = select_translatable_fields(products)
+
         products.distinct
       end
 
@@ -45,6 +47,27 @@ module Spree
 
       def sort_by?(field)
         sort.detect { |s| s[0] == field }
+      end
+
+      # Add translatable fields to SELECT statement to avoid InvalidColumnReference error (Mobility bug workaround)
+      def select_translatable_fields(scope)
+        translatable_fields = translatable_sortable_fields
+        return scope if translatable_fields.empty?
+
+        # if sorting by 'sku' or 'price', spree_products.* is already included in SELECT statement
+        if sort_by?('sku') || sort_by?('price')
+          scope.i18n.select(*translatable_fields)
+        else
+          scope.i18n.select("#{Product.table_name}.*").select(*translatable_fields)
+        end
+      end
+
+      def translatable_sortable_fields
+        fields = []
+        Product.translatable_fields.each do |field|
+          fields << field if sort_by?(field.to_s)
+        end
+        fields
       end
     end
   end

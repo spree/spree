@@ -43,7 +43,6 @@ men_tshirts_properties = [
     'gender' => 'Men\'s'
   }
 ]
-
 Spree::Taxon.find_by!(name: 'Men').children.find_by!(name: 'T-shirts').products.each do |product|
   men_tshirts_properties.sample.each do |prop_name, prop_value|
     product.set_property(prop_name, prop_value, prop_name.gsub('_', ' ').capitalize)

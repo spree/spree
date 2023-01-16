@@ -69,6 +69,18 @@ describe Spree::Product, type: :model do
         expect(clone.images.size).to eq(product.images.size)
       end
 
+      context 'when translations exist for another locale' do
+        before do
+          Mobility.with_locale(:fr) { product.name = "french name" }
+          product.save!
+        end
+
+        it 'duplicates translations for all locales' do
+          clone = product.duplicate
+          expect(clone.name(locale: :fr)).to eq ('COPY OF ' + product.name(locale: :fr))
+        end
+      end
+
       it 'calls #duplicate_extra' do
         expect_any_instance_of(Spree::Product).to receive(:duplicate_extra).
           with(product)
@@ -236,7 +248,21 @@ describe Spree::Product, type: :model do
 
       context 'when product destroyed' do
         it 'renames slug' do
-          expect { product.destroy }.to change(product, :slug)
+          product.destroy
+          expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+        end
+
+        context 'when more than one translation exists' do
+          before {
+            product.send(:slug=, "french_slug", locale: :fr)
+            product.save!
+          }
+
+          it 'renames slug for all translations' do
+            product.destroy
+            expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+            expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/[0-9]+_french_slug/)
+          end
         end
 
         context 'when slug is already at or near max length' do

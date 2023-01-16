@@ -54,4 +54,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'image_processing', '~> 1.2'
   s.add_dependency 'active_storage_validations', '~> 0.9', '<= 0.9.5'
   s.add_dependency 'activerecord-typedstore'
+  s.add_dependency 'mobility', '~> 1.2.9'
+  # Upgrade mobility-ransack version to 1.2.0 after this issue is resolved
+  s.add_dependency 'mobility-ransack', '~> 1.0.1'
+  s.add_dependency 'friendly_id-mobility', '~> 1.0.3'
 end

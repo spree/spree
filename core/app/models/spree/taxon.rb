@@ -3,6 +3,7 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
+    include TranslatableResource
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -27,7 +28,7 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
+    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], case_sensitive: false }
     validates :taxonomy, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
@@ -53,6 +54,9 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[name permalink]
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+
+    TRANSLATABLE_FIELDS = %i[name description].freeze
+    translates(*TRANSLATABLE_FIELDS)
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site

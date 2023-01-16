@@ -23,6 +23,7 @@ module Spree
     extend FriendlyId
     include ProductScopes
     include MultiStoreResource
+    include TranslatableResource
     include MemoizedData
     include Metadata
     if defined?(Spree::Webhooks)
@@ -32,12 +33,15 @@ module Spree
       include Spree::VendorConcern
     end
 
-    MEMOIZED_METHODS = %w(total_on_hand taxonomy_ids taxon_and_ancestors category
+    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
-                          purchasable? in_stock? backorderable?)
+                          purchasable? in_stock? backorderable?]
 
-    friendly_id :slug_candidates, use: :history
+    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
+    translates(*TRANSLATABLE_FIELDS)
+    Product::Translation.class_eval { acts_as_paranoid }
 
+    friendly_id :slug_candidates, use: [:history, :mobility]
     acts_as_paranoid
     auto_strip_attributes :name
 
@@ -415,7 +419,11 @@ module Spree
 
     def punch_slug
       # punch slug with date prefix to allow reuse of original
-      update_column :slug, "#{Time.current.to_i}_#{slug}"[0..254] unless frozen?
+      return if frozen?
+
+      translations.with_deleted.each do |t|
+        t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]
+      end
     end
 
     def update_slug_history

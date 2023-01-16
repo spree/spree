@@ -50,10 +50,6 @@ module Spree
         name.present?
       end
 
-      def name_matcher
-        Spree::Taxon.arel_table[:name].matches("%#{name}%")
-      end
-
       def by_ids(taxons)
         return taxons unless ids?
 
@@ -91,7 +87,10 @@ module Spree
       def by_name(taxons)
         return taxons unless name?
 
-        taxons.where(name_matcher)
+        taxon_name = name
+
+        # i18n mobility scope doesn't automatically get set for query blocks (Mobility issue #599) - set it explicitly
+        taxons.i18n { name.matches("%#{taxon_name}%") }
       end
     end
   end
