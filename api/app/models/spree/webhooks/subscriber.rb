@@ -5,11 +5,11 @@ module Spree
         include Spree::VendorConcern
       end
 
+      has_secure_token :secret_key
+
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
-      validates :secret_key, presence: true
-
       validate :check_uri_path
 
       self.whitelisted_ransackable_attributes = %w[active subscriptions url]
@@ -18,7 +18,6 @@ module Spree
       scope :active, -> { where(active: true) }
       scope :inactive, -> { where(active: false) }
 
-      before_validation :generate_secret_key, unless: :secret_key?
       before_save :parse_subscriptions
 
       def self.with_urls_for(event)
@@ -51,10 +50,6 @@ module Spree
         end
 
         errors.add(:url, 'the URL must have a path') if uri.blank? || uri.path.blank?
-      end
-
-      def generate_secret_key
-        self.secret_key = SecureRandom.urlsafe_base64(32)
       end
 
       def parse_subscriptions
