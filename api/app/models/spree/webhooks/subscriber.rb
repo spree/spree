@@ -54,7 +54,7 @@ module Spree
       end
 
       def generate_secret_key
-        assign_attributes(secret_key: SecureRandom.urlsafe_base64(32))
+        self.secret_key = SecureRandom.urlsafe_base64(32)
       end
 
       def parse_subscriptions
