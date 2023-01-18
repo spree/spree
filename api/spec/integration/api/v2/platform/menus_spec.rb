@@ -33,7 +33,14 @@ describe 'Menus API', swagger: true do
     create(:menu_item, menu: menu_2)
     create(:menu_item, menu: menu_2)
   end
-  let(:valid_create_param_value) { build(:menu, name: 'Main Menu').attributes }
+  let(:valid_create_param_value) do
+    {
+      name: 'Special Menu',
+      locale: 'en',
+      location: 'Header',
+      store: Spree::Store.default
+    }
+  end
   let(:valid_update_param_value) do
     {
       name: 'Main Menu',
