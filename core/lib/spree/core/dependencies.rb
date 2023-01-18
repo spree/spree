@@ -21,7 +21,8 @@ module Spree
         :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service,
         :shipment_create_service, :shipment_add_item_service, :shipment_remove_item_service,
         :payment_create_service, :address_create_service, :address_update_service,
-        :checkout_select_shipping_method_service, :export_google_rss_service
+        :checkout_select_shipping_method_service, :export_google_rss_service, :export_get_optional_information_service,
+        :export_get_required_information_service
       ].freeze
 
       attr_accessor *INJECTION_POINTS
@@ -113,6 +114,8 @@ module Spree
 
         # export
         @export_google_rss_service = 'Spree::Export::GoogleRss'
+        @export_get_optional_information_service = 'Spree::Export::GetOptionalInformation'
+        @export_get_required_information_service = 'Spree::Export::GetRequiredInformation'
       end
 
       def set_default_finders
