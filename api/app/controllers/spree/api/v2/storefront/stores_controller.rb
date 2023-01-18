@@ -7,19 +7,18 @@ module Spree
             render_serialized_payload { serialize_resource(current_store) }
           end
 
-          def export_google_rss_feed
-            send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
+          def data_feeds_google_rss_feed
+            send_data data_feeds_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
           end
 
           private
 
-          def update_settings
-            @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
+          def settings
+            @settings ||= Spree::DataFeedSetting.find_by!(spree_store_id: current_store, uuid: params[:unique_url], enabled: true)
           end
 
-          def export_google_rss_service
-            update_settings
-            Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
+          def data_feeds_google_rss_service
+            Spree::Dependencies.data_feeds_google_rss_service.constantize.new.call(settings)
           end
 
           def model_class

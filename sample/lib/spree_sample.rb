@@ -32,7 +32,7 @@ module SpreeSample
       Spree::Sample.load_sample('reimbursements')
       Spree::Sample.load_sample('return_authorization_reasons')
       Spree::Sample.load_sample('stores')
-      Spree::Sample.load_sample('google_feed_settings')
+      Spree::Sample.load_sample('data_feed_settings')
 
       Spree::Sample.load_sample('cms_standard_pages')
       Spree::Sample.load_sample('cms_feature_pages')

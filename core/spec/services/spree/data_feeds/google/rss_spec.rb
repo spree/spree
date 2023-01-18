@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 module Spree
-  describe Export::GoogleRss do
+  describe DataFeeds::Google::Rss do
     subject { described_class.new }
 
     let(:store) { create(:store) }
-    let(:setting) { create(:google_feed_setting, store: store) }
+    let(:setting) { create(:data_feed_setting, store: store) }
     let(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:with_image_variant, product: product) }
     let(:result) { subject.call(setting) }
@@ -57,7 +57,7 @@ module Spree
         expect(result.value[:file]).to include("<g:price>#{variant.price} #{variant.cost_currency}</g:price>").once
       end
 
-      context 'availability date is in the past' do
+      context 'product is set to available' do
         it 'shows that product is in stock' do
           expect(result.value[:file]).to include('<g:availability>in stock</g:availability>')
         end
@@ -67,7 +67,7 @@ module Spree
         end
       end
 
-      context 'availability date is in the future' do
+      context 'product is set to backorderable' do
         let(:product) { create(:product, stores: [store], available_on: 1.year.from_now) }
 
         it 'shows that product is on backorder' do
@@ -97,14 +97,6 @@ module Spree
 
       it 'adds brand to item attributes' do
         expect(result.value[:file]).to include("<g:brand>#{product.property('brand')}</g:brand>")
-      end
-
-      context 'brand option is set to false' do
-        let(:setting) { create(:google_feed_setting, store: store, brand: false) }
-
-        it 'does not add brand to item attributes' do
-          expect(result.value[:file]).not_to include('<g:brand>')
-        end
       end
     end
   end
