@@ -1,6 +1,6 @@
 module Spree
   module Export
-    class GetRequiredInformation
+    class RequiredAttributes
       prepend Spree::ServiceModule::Base
 
       def call(input)
@@ -19,6 +19,8 @@ module Spree
 
         success(information: information)
       end
+
+      private
 
       def format_title(product, variant)
         # Title of a variant is created by joining title of a product and variant's option_values, as they are

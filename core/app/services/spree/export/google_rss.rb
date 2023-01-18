@@ -42,7 +42,7 @@ module Spree
 
       def add_variant_information_to_xml(xml, product, variant)
         input = { product: product, variant: variant, settings: @settings, store: store }
-        result = export_get_required_information.call(input)
+        result = export_required_attributes.call(input)
 
         if result.success
           xml.item do
@@ -51,58 +51,40 @@ module Spree
             end
 
             add_optional_information(xml, product, variant)
+            add_optional_sub_attributes(xml, product, variant)
           end
         end
       end
 
       def add_optional_information(xml, product, variant)
         input = { product: product, variant: variant, settings: @settings, store: store }
-        export_get_optional_information.call(input).value[:information]&.each do |key, value|
+        export_optional_attributes.call(input).value[:information]&.each do |key, value|
           xml['g'].send(key, value)
         end
       end
 
-      def export_get_optional_information
-        Spree::Dependencies.export_get_optional_information_service.constantize.new
+      def add_optional_sub_attributes(xml, product, variant)
+        input = { product: product, variant: variant, settings: @settings, store: store }
+        export_optional_sub_attributes.call(input).value[:information]&.each do |key, value|
+          xml['g'].send(key) do
+            value.each do |subkey, subvalue|
+              xml['g'].send(subkey, subvalue)
+            end
+          end
+        end
       end
 
-      def export_get_required_information
-        Spree::Dependencies.export_get_required_information_service.constantize.new
+      def export_optional_attributes
+        Spree::Dependencies.export_optional_attributes_service.constantize.new
       end
 
-      # example of modifying optional information
-      #
-      # By default, this code assumes that any information that is not required by Google
-      # (see https://support.google.com/merchants/answer/160589?hl=en) is stored in Spree::Products's properties.
-      # If it's in other column you can modify add_optional_information like this:
-      # def add_optional_information(xml, product)
-      #         @options.enabled_keys.each do |key|
-      #           if @options.send(key) && !product.property(key.to_s).nil?
-      #             xml['g'].send(key, product.property(key.to_s))
-      #           end
-      #         end
-      #         if !product.column_name.nil?
-      #           xml['g'].attribute product.column_name
-      #         end
-      #       end
-      #
-      # If the column is part of variant or for example is option value, you will need to add variant to function's
-      # arguments and modify code analogically as above.
-      #
-      # def add_optional_information(xml, product, variant)
-      #   @options.enabled_keys.each do |key|
-      #     if @options.send(key) && !product.property(key.to_s).nil?
-      #       xml['g'].send(key, product.property(key.to_s))
-      #     end
-      #   end
-      #   if !variant.column_name.nil?
-      #     xml['g'].attribute variant.column_name
-      #   end
-      #   size_value = variant.option_value("size")
-      #   if !size_value.nil?
-      #     xml['g'].size size_value
-      #   end
-      # end
+      def export_required_attributes
+        Spree::Dependencies.export_required_attributes_service.constantize.new
+      end
+
+      def export_optional_sub_attributes
+        Spree::Dependencies.export_optional_sub_attributes_service.constantize.new
+      end
     end
   end
 end

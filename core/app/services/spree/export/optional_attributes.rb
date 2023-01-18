@@ -1,6 +1,6 @@
 module Spree
   module Export
-    class GetOptionalInformation
+    class OptionalAttributes
       prepend Spree::ServiceModule::Base
 
       def call(input)
