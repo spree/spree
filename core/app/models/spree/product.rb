@@ -355,11 +355,16 @@ module Spree
     end
 
     def brand
-      @brand ||= taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
+      @brand ||= taxons.joins(:taxonomy).
+                 join_translation_table(Taxonomy).
+                 find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
     end
 
     def category
-      @category ||= taxons.joins(:taxonomy).order(depth: :desc).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+      @category ||= taxons.joins(:taxonomy).
+                    join_translation_table(Taxonomy).
+                    order(depth: :desc).
+                    find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
     end
 
     def taxons_for_store(store)
