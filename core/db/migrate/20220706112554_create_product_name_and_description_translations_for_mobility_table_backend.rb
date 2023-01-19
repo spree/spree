@@ -2,8 +2,10 @@ class CreateProductNameAndDescriptionTranslationsForMobilityTableBackend < Activ
   def change
     # create translation table only if spree_globalize has not already created it
     if ActiveRecord::Base.connection.table_exists? 'spree_product_translations'
-      # replacing this with index on spree_product_id and locale
-      remove_index :spree_product_translations, name: "index_spree_product_translations_on_spree_product_id", if_exists: true
+      # manually check for index since Rails if_exists does not always work correctly
+      if ActiveRecord::Migration.connection.index_exists?(:spree_product_translations, :spree_product_id)
+        remove_index :spree_product_translations, name: "index_spree_product_translations_on_spree_product_id", if_exists: true
+      end
     else
       create_table :spree_product_translations do |t|
 
