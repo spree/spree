@@ -16,7 +16,7 @@ module Spree
           def collection
             # if filtering on products, manually join on product translation to workaround mobility-ransack issue
             if params.key?(:filter) && params[:filter].keys.any? { |k| k.include? 'product' }
-              @collection ||= scope.join_product_translations.
+              @collection ||= scope.joins(:product).join_translation_table(Product).
                               ransack(params[:filter]).result
             else
               super

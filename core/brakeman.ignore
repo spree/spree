@@ -7,7 +7,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/concerns/spree/product_scopes.rb",
-      "line": 63,
+      "line": 64,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "where(\"#{price_table_name}.amount <= ?\", price)",
       "render_path": null,
@@ -26,20 +26,43 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "67e80bcfa8898315b0f8642bc61990c8319bc7a468453efc048757a439e53e0b",
+      "fingerprint": "1f02952550c2f54d044c9577a45e7ba7c7990c8b8a59d1dac83a96790237f507",
       "check_name": "SQL",
       "message": "Possible SQL injection",
-      "file": "app/models/spree/variant.rb",
-      "line": 131,
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 139,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "joins(:product).joins(\"LEFT OUTER JOIN #{Product::Translation.table_name} #{Product.translation_table_alias}\\n                             ON #{Product.translation_table_alias}.spree_product_id = #{Product.table_name}.id\\n                             AND #{Product.translation_table_alias}.locale = '#{Mobility.locale}'\")",
+      "code": "joins(:properties).join_translation_table(Property).join_translation_table(ProductProperty).where(\"#{ProductProperty.translation_table_alias}.value = ?\", value)",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "Spree::Variant",
-        "method": "Spree::Variant.join_product_translations"
+        "class": "Spree::ProductScopes",
+        "method": null
       },
-      "user_input": "Product.translation_table_alias",
+      "user_input": "ProductProperty.translation_table_alias",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "7928c0813a0bf084ead091b4554ef6abea9ae9c7167936f5c62da9e328b9f736",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/product_scopes.rb",
+      "line": 139,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(:properties).join_translation_table(Property).join_translation_table(ProductProperty).where(\"#{ProductProperty.translation_table_alias}.value = ?\", value)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree",
+        "method": null
+      },
+      "user_input": "ProductProperty.translation_table_alias",
       "confidence": "Weak",
       "cwe_id": [
         89
@@ -53,7 +76,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/concerns/spree/product_scopes.rb",
-      "line": 67,
+      "line": 68,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "where(\"#{price_table_name}.amount >= ?\", price)",
       "render_path": null,
@@ -76,7 +99,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/concerns/spree/product_scopes.rb",
-      "line": 63,
+      "line": 64,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "where(\"#{price_table_name}.amount <= ?\", price)",
       "render_path": null,
@@ -95,13 +118,13 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "e6bb08c012af19589f796e26b4dc2230ea1c1949c7cd6464ca025939513d8b3d",
+      "fingerprint": "c2bc48d98076b7c4fc3314c6a85f7bd1132efe5fcc346da4d28df7c25f93633f",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/spree/variant.rb",
-      "line": 126,
+      "line": 127,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "join_product_translations.where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
+      "code": "joins(:product).join_translation_table(Product).where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
       "render_path": null,
       "location": {
         "type": "method",
@@ -118,11 +141,34 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "e7aa61c87f26af5f63f00e9791954d787a559dab1eadf8926861796237bd431d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/translatable_resource_scopes.rb",
+      "line": 10,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(\"LEFT OUTER JOIN #{translatable_class::Translation.table_name} #{translatable_class.translation_table_alias}\\n             ON #{translatable_class.translation_table_alias}.#{\"#{translatable_class.table_name.singularize}_id\"} = #{translatable_class.table_name}.id\\n             AND #{translatable_class.translation_table_alias}.locale = '#{Mobility.locale}'\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslatableResourceScopes",
+        "method": "join_translation_table"
+      },
+      "user_input": "translatable_class.translation_table_alias",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "efcc57e1a5648d7db59d1beaf5e399d2278539a8667b19c520b305a6ca7e15e8",
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/concerns/spree/product_scopes.rb",
-      "line": 67,
+      "line": 68,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "where(\"#{price_table_name}.amount >= ?\", price)",
       "render_path": null,
@@ -139,6 +185,6 @@
       "note": "interpolating table name"
     }
   ],
-  "updated": "2022-12-29 09:32:26 +0100",
+  "updated": "2023-01-13 11:44:19 +0100",
   "brakeman_version": "5.4.0"
 }

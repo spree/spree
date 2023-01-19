@@ -1,9 +1,13 @@
 module Spree
   class OptionValue < Spree::Base
     include Metadata
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
+
+    TRANSLATABLE_FIELDS = %i[name presentation].freeze
+    translates(*TRANSLATABLE_FIELDS)
 
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
 

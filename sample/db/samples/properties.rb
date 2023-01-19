@@ -14,7 +14,9 @@ properties = {
 }
 
 properties.each do |name, presentation|
-  Spree::Property.where(name: name, presentation: presentation).first_or_create!
+  unless Spree::Property.where(name: name, presentation: presentation).exists?
+    Spree::Property.create!(name: name, presentation: presentation)
+  end
 end
 
 Spree::Property.where(name: %w[brand manufacturer]).update(filterable: true)

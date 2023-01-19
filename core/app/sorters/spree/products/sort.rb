@@ -49,7 +49,7 @@ module Spree
         sort.detect { |s| s[0] == field }
       end
 
-      # Add translatable fields to SELECT statement to avoid InvalidColumnReference error (Mobility bug workaround)
+      # Add translatable fields to SELECT statement to avoid InvalidColumnReference error (workaround for Mobility issue #596)
       def select_translatable_fields(scope)
         translatable_fields = translatable_sortable_fields
         return scope if translatable_fields.empty?

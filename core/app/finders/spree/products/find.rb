@@ -148,10 +148,8 @@ module Spree
 
         product_name = name
 
-        # i18n scope doesn't automatically get set here (mobility gem bug?) set it explicitly
-        products.i18n do
-          name.matches("%#{product_name}%")
-        end
+        # i18n mobility scope doesn't automatically get set for query blocks (Mobility issue #599) - set it explicitly
+        products.i18n { name.matches("%#{product_name}%") }
       end
 
       def by_options(products)
