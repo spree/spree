@@ -40,7 +40,7 @@ module Spree
         end
       end
 
-      # Verifies the existance of the {#secret_key} attribute.
+      # Verifies the existence of the {#secret_key} attribute.
       #
       # @return [true, false]
       def secret_key?
