@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Export::GoogleRss do
+  describe Export::Google::Rss do
     subject { described_class.new }
 
     let(:store) { create(:store) }
