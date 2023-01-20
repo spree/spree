@@ -21,8 +21,8 @@ module Spree
         :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service,
         :shipment_create_service, :shipment_add_item_service, :shipment_remove_item_service,
         :payment_create_service, :address_create_service, :address_update_service,
-        :checkout_select_shipping_method_service, :export_google_rss_service, :export_optional_attributes_service,
-        :export_required_attributes_service, :export_optional_sub_attributes_service
+        :checkout_select_shipping_method_service, :export_google_rss_service, :export_google_optional_attributes_service,
+        :export_google_required_attributes_service, :export_google_optional_sub_attributes_service
       ].freeze
 
       attr_accessor *INJECTION_POINTS
@@ -112,11 +112,11 @@ module Spree
         # errors
         @error_handler = 'Spree::ErrorReporter'
 
-        # export
-        @export_google_rss_service = 'Spree::Export::GoogleRss'
-        @export_optional_attributes_service = 'Spree::Export::OptionalAttributes'
-        @export_required_attributes_service = 'Spree::Export::RequiredAttributes'
-        @export_optional_sub_attributes_service = 'Spree::Export::OptionalSubAttributes'
+        # export for Google
+        @export_google_rss_service = 'Spree::Export::Google::Rss'
+        @export_google_optional_attributes_service = 'Spree::Export::Google::OptionalAttributes'
+        @export_google_required_attributes_service = 'Spree::Export::Google::RequiredAttributes'
+        @export_google_optional_sub_attributes_service = 'Spree::Export::Google::OptionalSubAttributes'
       end
 
       def set_default_finders
