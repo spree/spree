@@ -7,7 +7,7 @@ module Spree
         def call(input)
           information = {}
 
-          return failure(nil, error: 'No image link') if get_image_link(input[:variant], input[:product]).nil?
+          #return failure(nil, error: 'No image link') if get_image_link(input[:variant], input[:product]).nil?
 
           information['id'] = input[:variant].id
           information['title'] = format_title(input[:product], input[:variant])

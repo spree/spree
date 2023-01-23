@@ -5,7 +5,7 @@ module Spree
     validates :store, presence: true
     validates :uuid, presence: true
 
-    before_validation :generate_uuid
+    before_create :generate_uuid
 
     def enabled_keys
       keys = []

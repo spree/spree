@@ -59,17 +59,25 @@ module Spree
 
         def add_optional_information(xml, product, variant)
           input = { product: product, variant: variant, settings: @settings, store: store }
-          export_optional_attributes.call(input).value[:information]&.each do |key, value|
-            xml['g'].send(key, value)
+          result = export_optional_attributes.call(input)
+          if result.success?
+            information = result.value[:information]
+            information.each do |key, value|
+              xml['g'].send(key, value)
+            end
           end
         end
 
         def add_optional_sub_attributes(xml, product, variant)
           input = { product: product, variant: variant, settings: @settings, store: store }
-          export_optional_sub_attributes.call(input).value[:information]&.each do |key, value|
-            xml['g'].send(key) do
-              value.each do |subkey, subvalue|
-                xml['g'].send(subkey, subvalue)
+          result = export_optional_sub_attributes.call(input)
+          if result.success?
+            information = result.value[:information]
+            information.each do |key, value|
+              xml['g'].send(key) do
+                value.each do |subkey, subvalue|
+                  xml['g'].send(subkey, subvalue)
+                end
               end
             end
           end

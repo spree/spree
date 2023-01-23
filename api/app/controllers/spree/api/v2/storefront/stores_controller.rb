@@ -9,8 +9,11 @@ module Spree
 
           def export_google_rss_feed
             settings
-            send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml' if @settings.enabled
-            send_data 'Export not enabled for those settings.'
+            if @settings.enabled
+              send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
+            else
+              send_data 'Export not enabled for those settings.'
+            end
           end
 
           private
