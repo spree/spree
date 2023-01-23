@@ -3,6 +3,9 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', foreign_key: 'spree_store_id'
 
     validates :store, presence: true
+    validates :uuid, presence: true
+
+    before_validation :generate_uuid
 
     def enabled_keys
       keys = []
@@ -14,6 +17,10 @@ module Spree
       end
 
       keys
+    end
+
+    def generate_uuid
+      write_attribute(:uuid, SecureRandom.uuid)
     end
   end
 end

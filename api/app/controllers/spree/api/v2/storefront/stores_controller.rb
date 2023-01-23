@@ -13,12 +13,13 @@ module Spree
 
           private
 
-          def update_settings
-            @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store)
+          def settings
+            puts params[:unique_url]
+            @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store, uuid: params[:unique_url])
           end
 
           def export_google_rss_service
-            update_settings
+            settings
             Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
           end
 

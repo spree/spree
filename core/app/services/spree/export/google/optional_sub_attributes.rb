@@ -7,8 +7,6 @@ module Spree
         def call(input)
           information = {}
 
-          return failure(information, error: 'Not implemented') if information.empty?
-
           # This is a place where you can put attributes that have sub-attributes, example for shipping:
           #
           # information['shipping'] = {}

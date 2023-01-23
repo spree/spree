@@ -65,7 +65,7 @@ Spree::Core::Engine.add_routes do
         get '/digitals/:token', to: 'digitals#download', as: 'digital'
 
         # export API
-        get '/export/google.rss', to: 'stores#export_google_rss_feed'
+        get '/export/google/:unique_url', to: 'stores#export_google_rss_feed'
       end
 
       namespace :platform do
