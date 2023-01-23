@@ -7,9 +7,11 @@ module Spree
         def call(input)
           information = {}
 
-          input[:settings].enabled_keys.each do |key|
-            if input[:settings].send(key) && !input[:product].property(key.to_s).nil?
-              information[key] = input[:product].property(key.to_s)
+          input[:product].property_ids.each do |key|
+            name = Spree::Property.find(key)&.name
+            value = input[:product].property(name)
+            unless value.nil?
+              information[name] = value
             end
           end
 
