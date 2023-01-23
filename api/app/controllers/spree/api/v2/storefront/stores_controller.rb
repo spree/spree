@@ -8,18 +8,18 @@ module Spree
           end
 
           def export_google_rss_feed
-            send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
+            settings
+            send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml' if @settings.enabled
+            send_data 'Export not enabled for those settings.'
           end
 
           private
 
           def settings
-            puts params[:unique_url]
             @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store, uuid: params[:unique_url])
           end
 
           def export_google_rss_service
-            settings
             Spree::Dependencies.export_google_rss_service.constantize.new.call(@settings)
           end
 
