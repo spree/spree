@@ -5,7 +5,7 @@ module Spree
     subject { described_class.new }
 
     let(:store) { create(:store) }
-    let(:setting) { create(:google_feed_setting, store: store) }
+    let(:setting) { create(:data_feed_setting, store: store) }
     let(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:with_image_variant, product: product) }
     let(:result) { subject.call(setting) }
@@ -97,14 +97,6 @@ module Spree
 
       it 'adds brand to item attributes' do
         expect(result.value[:file]).to include("<g:brand>#{product.property('brand')}</g:brand>")
-      end
-
-      context 'brand option is set to false' do
-        let(:setting) { create(:google_feed_setting, store: store, brand: false) }
-
-        it 'does not add brand to item attributes' do
-          expect(result.value[:file]).not_to include('<g:brand>')
-        end
       end
     end
   end

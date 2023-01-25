@@ -1,6 +1,6 @@
-class CreateSpreeGoogleFeedSettings < ActiveRecord::Migration[6.0]
+class CreateSpreeDataFeedSettings < ActiveRecord::Migration[6.0]
   def change
-    create_table :spree_google_feed_settings do |t|
+    create_table :spree_data_feed_settings do |t|
       t.references :spree_store
 
       t.string :uuid, unique: true

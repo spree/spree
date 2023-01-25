@@ -9,7 +9,9 @@ module Spree
 
           def export_google_rss_feed
             settings
-            if @settings.enabled
+            if @settings.nil?
+              raise ActionController::RoutingError, 'Not Found'
+            elsif @settings.enabled
               send_data export_google_rss_service.value[:file], filename: 'products.rss', type: 'text/xml'
             else
               send_data 'Export not enabled for those settings.'
@@ -19,7 +21,7 @@ module Spree
           private
 
           def settings
-            @settings = Spree::GoogleFeedSetting.find_by(spree_store_id: current_store, uuid: params[:unique_url])
+            @settings = Spree::DataFeedSetting.find_by(spree_store_id: current_store, uuid: params[:unique_url])
           end
 
           def export_google_rss_service
