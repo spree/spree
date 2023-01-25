@@ -15,9 +15,12 @@ module Spree
             xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
               xml.channel do
                 add_store_information_to_xml(xml)
-                store.products.active.each do |product|
-                  product.variants.active.each do |variant|
-                    add_variant_information_to_xml(xml, product, variant)
+                result = export_products_list.call(store)
+                if result.success?
+                  result.value[:products].find_each do |product|
+                    product.variants.active.find_each do |variant|
+                      add_variant_information_to_xml(xml, product, variant)
+                    end
                   end
                 end
               end
@@ -93,6 +96,10 @@ module Spree
 
         def export_optional_sub_attributes
           Spree::Dependencies.export_google_optional_sub_attributes_service.constantize.new
+        end
+
+        def export_products_list
+          Spree::Dependencies.export_google_products_list.constantize.new
         end
       end
     end

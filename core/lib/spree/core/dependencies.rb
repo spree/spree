@@ -22,7 +22,7 @@ module Spree
         :shipment_create_service, :shipment_add_item_service, :shipment_remove_item_service,
         :payment_create_service, :address_create_service, :address_update_service,
         :checkout_select_shipping_method_service, :export_google_rss_service, :export_google_optional_attributes_service,
-        :export_google_required_attributes_service, :export_google_optional_sub_attributes_service
+        :export_google_required_attributes_service, :export_google_optional_sub_attributes_service, :export_google_products_list
       ].freeze
 
       attr_accessor *INJECTION_POINTS
@@ -117,6 +117,7 @@ module Spree
         @export_google_optional_attributes_service = 'Spree::Export::Google::OptionalAttributes'
         @export_google_required_attributes_service = 'Spree::Export::Google::RequiredAttributes'
         @export_google_optional_sub_attributes_service = 'Spree::Export::Google::OptionalSubAttributes'
+        @export_google_products_list = 'Spree::Export::Google::ProductsList'
       end
 
       def set_default_finders
