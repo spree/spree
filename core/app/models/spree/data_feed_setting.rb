@@ -4,8 +4,10 @@ module Spree
 
     before_create :generate_uuid
 
-    validates :store, presence: true
-    validates :uuid, presence: true, uniqueness: true, on: :update
+    with_options presence: true do
+      validates :store
+      validates :uuid, uniqueness: true, on: :update
+    end
 
     def generate_uuid
       write_attribute(:uuid, SecureRandom.uuid)
