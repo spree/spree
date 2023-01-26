@@ -3,6 +3,8 @@ class CreateSpreeDataFeedSettings < ActiveRecord::Migration[6.0]
     create_table :spree_data_feed_settings do |t|
       t.references :spree_store
 
+      t.string :name
+      t.string :provider
       t.string :uuid, unique: true
       t.boolean :enabled, default: true
 

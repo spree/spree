@@ -6,8 +6,16 @@ module Spree
 
     with_options presence: true do
       validates :store
+      validates :name, uniqueness: true
+      validates :provider
       validates :uuid, uniqueness: true, on: :update
     end
+
+    def formatted_url
+      "#{store.formatted_url}/api/v2/data_feeds/#{provider}/#{uuid}.rss"
+    end
+
+    private
 
     def generate_uuid
       write_attribute(:uuid, SecureRandom.uuid)

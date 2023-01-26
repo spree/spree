@@ -3,5 +3,7 @@ FactoryBot.define do
     id             { 1 }
     enabled        { true }
     store          { create(:store) }
+    provider       { 'google' }
+    name           { 'test' }
   end
 end

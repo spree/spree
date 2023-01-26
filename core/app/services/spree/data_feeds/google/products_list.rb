@@ -6,10 +6,9 @@ module Spree
 
         def call(store)
           products = store.products.active
-          return success(products: products)
+          success(products: products)
         end
       end
     end
   end
 end
-
