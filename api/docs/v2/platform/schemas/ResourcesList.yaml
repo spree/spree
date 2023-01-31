@@ -1,0 +1,44 @@
+type: object
+properties:
+  data:
+    type: array
+    items:
+      allOf:
+      - "$ref": "ResourceProperties.yaml"
+  meta:
+    type: object
+    properties:
+      count:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+    required:
+    - count
+    - total_count
+    - total_pages
+  links:
+    type: object
+    properties:
+      self:
+        type: string
+      next:
+        type: string
+      prev:
+        type: string
+      last:
+        type: string
+      first:
+        type: string
+    required:
+    - self
+    - next
+    - prev
+    - last
+    - first
+required:
+- data
+- meta
+- links
+x-internal: false

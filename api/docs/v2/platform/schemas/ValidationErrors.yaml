@@ -1,0 +1,10 @@
+type: object
+properties:
+  error:
+    type: string
+  errors:
+    type: object
+required:
+- error
+- errors
+x-internal: false

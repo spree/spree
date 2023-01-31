@@ -10,448 +10,9 @@ info:
   version: v2
 paths:
   "/api/v2/platform/addresses":
-    get:
-      summary: Return a list of Addresses
-      tags:
-      - Addresses
-      security:
-      - bearer_auth: []
-      description: Returns a list of Addresses
-      operationId: addresses-list
-      parameters:
-      - name: page
-        in: query
-        example: 1
-        schema:
-          type: integer
-      - name: per_page
-        in: query
-        example: 50
-        schema:
-          type: integer
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: user,country,state
-        schema:
-          type: string
-      - name: filter[user_id_eq]
-        in: query
-        description: ''
-        example: '1'
-        schema:
-          type: string
-      - name: filter[firstname_cont]
-        in: query
-        description: ''
-        example: John
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Records returned
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                    - id: '1'
-                      type: address
-                      attributes:
-                        firstname: John
-                        lastname: Doe
-                        address1: 1 Lovely Street
-                        address2: Northwest
-                        city: Herndon
-                        zipcode: '35005'
-                        phone: 555-555-0199
-                        state_name:
-                        alternative_phone: 555-555-0199
-                        company: Company
-                        created_at: '2022-11-08T19:33:50.821Z'
-                        updated_at: '2022-11-08T19:33:50.821Z'
-                        deleted_at:
-                        label:
-                        public_metadata: {}
-                        private_metadata: {}
-                      relationships:
-                        country:
-                          data:
-                            id: '1'
-                            type: country
-                        state:
-                          data:
-                            id: '1'
-                            type: state
-                        user:
-                          data:
-                    - id: '2'
-                      type: address
-                      attributes:
-                        firstname: John
-                        lastname: Doe
-                        address1: 2 Lovely Street
-                        address2: Northwest
-                        city: Herndon
-                        zipcode: '35005'
-                        phone: 555-555-0199
-                        state_name:
-                        alternative_phone: 555-555-0199
-                        company: Company
-                        created_at: '2022-11-08T19:33:50.825Z'
-                        updated_at: '2022-11-08T19:33:50.825Z'
-                        deleted_at:
-                        label:
-                        public_metadata: {}
-                        private_metadata: {}
-                      relationships:
-                        country:
-                          data:
-                            id: '1'
-                            type: country
-                        state:
-                          data:
-                            id: '2'
-                            type: state
-                        user:
-                          data:
-                    meta:
-                      count: 2
-                      total_count: 2
-                      total_pages: 1
-                    links:
-                      self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter[user_id_eq]=&filter[firstname_cont]=
-                      next: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
-                      prev: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
-                      last: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
-                      first: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
-              schema:
-                "$ref": "#/components/schemas/resources_list"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
-    post:
-      summary: Create an Address
-      tags:
-      - Addresses
-      security:
-      - bearer_auth: []
-      description: Creates an Address
-      operationId: create-address
-      parameters:
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: user,country,state
-        schema:
-          type: string
-      responses:
-        '201':
-          description: Record created
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '5'
-                      type: address
-                      attributes:
-                        firstname: John
-                        lastname: Doe
-                        address1: 5 Lovely Street
-                        address2: Northwest
-                        city: Herndon
-                        zipcode: '35005'
-                        phone: 555-555-0199
-                        state_name:
-                        alternative_phone: 555-555-0199
-                        company: Company
-                        created_at: '2022-11-08T19:33:51.471Z'
-                        updated_at: '2022-11-08T19:33:51.471Z'
-                        deleted_at:
-                        label:
-                        public_metadata: {}
-                        private_metadata: {}
-                      relationships:
-                        country:
-                          data:
-                            id: '4'
-                            type: country
-                        state:
-                          data:
-                            id: '5'
-                            type: state
-                        user:
-                          data:
-                            id: '1'
-                            type: user
-              schema:
-                "$ref": "#/components/schemas/resource"
-        '422':
-          description: Invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: First Name can't be blank, Last Name can't be blank, Address
-                      can't be blank, City can't be blank, Country can't be blank,
-                      Zip Code can't be blank, and Phone can't be blank
-                    errors:
-                      firstname:
-                      - can't be blank
-                      lastname:
-                      - can't be blank
-                      address1:
-                      - can't be blank
-                      city:
-                      - can't be blank
-                      country:
-                      - can't be blank
-                      zipcode:
-                      - can't be blank
-                      phone:
-                      - can't be blank
-              schema:
-                "$ref": "#/components/schemas/validation_errors"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/create_address_params"
+    "$ref": "resources/addresses.yaml"
   "/api/v2/platform/addresses/{id}":
-    get:
-      summary: Return an Address
-      tags:
-      - Addresses
-      security:
-      - bearer_auth: []
-      description: Returns an Address
-      operationId: show-address
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: user,country,state
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Record found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '6'
-                      type: address
-                      attributes:
-                        firstname: John
-                        lastname: Doe
-                        address1: 6 Lovely Street
-                        address2: Northwest
-                        city: Herndon
-                        zipcode: '35005'
-                        phone: 555-555-0199
-                        state_name:
-                        alternative_phone: 555-555-0199
-                        company: Company
-                        created_at: '2022-11-08T19:33:51.740Z'
-                        updated_at: '2022-11-08T19:33:51.740Z'
-                        deleted_at:
-                        label:
-                        public_metadata: {}
-                        private_metadata: {}
-                      relationships:
-                        country:
-                          data:
-                            id: '6'
-                            type: country
-                        state:
-                          data:
-                            id: '6'
-                            type: state
-                        user:
-                          data:
-              schema:
-                "$ref": "#/components/schemas/resource"
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
-    patch:
-      summary: Update an Address
-      tags:
-      - Addresses
-      security:
-      - bearer_auth: []
-      description: Updates an Address
-      operationId: update-address
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: include
-        in: query
-        description: 'Select which associated resources you would like to fetch, see:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-        example: user,country,state
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Record updated
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '8'
-                      type: address
-                      attributes:
-                        firstname: Jack
-                        lastname: Doe
-                        address1: 8 Lovely Street
-                        address2: Northwest
-                        city: Herndon
-                        zipcode: '35005'
-                        phone: 555-555-0199
-                        state_name:
-                        alternative_phone: 555-555-0199
-                        company: Company
-                        created_at: '2022-11-08T19:33:52.269Z'
-                        updated_at: '2022-11-08T19:33:52.501Z'
-                        deleted_at:
-                        label:
-                        public_metadata: {}
-                        private_metadata: {}
-                      relationships:
-                        country:
-                          data:
-                            id: '9'
-                            type: country
-                        state:
-                          data:
-                            id: '8'
-                            type: state
-                        user:
-                          data:
-              schema:
-                "$ref": "#/components/schemas/resource"
-        '422':
-          description: Invalid request
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: First Name can't be blank and Last Name can't be blank
-                    errors:
-                      firstname:
-                      - can't be blank
-                      lastname:
-                      - can't be blank
-              schema:
-                "$ref": "#/components/schemas/validation_errors"
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              "$ref": "#/components/schemas/update_address_params"
-    delete:
-      summary: Delete an Address
-      tags:
-      - Addresses
-      security:
-      - bearer_auth: []
-      description: Deletes an Address
-      operationId: delete-address
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '204':
-          description: Record deleted
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+    "$ref": "resources/address.yaml"
   "/api/v2/platform/adjustments":
     get:
       summary: Return a list of Adjustments
@@ -561,15 +122,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create an Adjustment
       tags:
@@ -641,7 +194,7 @@ paths:
                       amount:
                       - is not a number
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -708,25 +261,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update an Adjustment
       tags:
@@ -798,27 +335,11 @@ paths:
                       label:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -842,25 +363,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/classifications":
     get:
       summary: Return a list of Classifications
@@ -946,15 +451,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Classification
       tags:
@@ -1011,7 +508,7 @@ paths:
                       product:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -1066,25 +563,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Classification
       tags:
@@ -1144,27 +625,11 @@ paths:
                       product:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -1188,25 +653,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/cms_pages":
     get:
       summary: Return a list of CMS Pages
@@ -1309,15 +758,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a CMS Page
       tags:
@@ -1380,7 +821,7 @@ paths:
                       type:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -1440,25 +881,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a CMS Page
       tags:
@@ -1520,27 +945,11 @@ paths:
                       title:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -1567,25 +976,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/cms_sections":
     get:
       summary: Return a list of CMS Sections
@@ -1754,15 +1147,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a CMS Section
       tags:
@@ -1830,7 +1215,7 @@ paths:
                       type:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -1899,25 +1284,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a CMS Section
       tags:
@@ -1985,27 +1354,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -2035,171 +1388,13 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/countries":
-    get:
-      summary: Returns a list of Countries
-      tags:
-      - Countries
-      security:
-      - bearer_auth: []
-      operationId: countries-list
-      description: Returns a list of Countries
-      responses:
-        '200':
-          description: Records returned
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                    - id: '72'
-                      type: country
-                      attributes:
-                        iso_name: UNITED STATES
-                        iso: US
-                        iso3: USA
-                        name: United States of America
-                        numcode: 840
-                        states_required: true
-                        updated_at: '2022-11-08T19:34:06.932Z'
-                        zipcode_required: true
-                        created_at: '2022-11-08T19:34:06.932Z'
-                      relationships:
-                        states:
-                          data: []
-                    - id: '73'
-                      type: country
-                      attributes:
-                        iso_name: ISO_NAME_2
-                        iso: I2
-                        iso3: IS2
-                        name: NAME_2
-                        numcode: 840
-                        states_required: false
-                        updated_at: '2022-11-08T19:34:06.937Z'
-                        zipcode_required: true
-                        created_at: '2022-11-08T19:34:06.937Z'
-                      relationships:
-                        states:
-                          data: []
-                    - id: '74'
-                      type: country
-                      attributes:
-                        iso_name: ISO_NAME_3
-                        iso: I3
-                        iso3: IS3
-                        name: NAME_3
-                        numcode: 840
-                        states_required: false
-                        updated_at: '2022-11-08T19:34:06.939Z'
-                        zipcode_required: true
-                        created_at: '2022-11-08T19:34:06.939Z'
-                      relationships:
-                        states:
-                          data: []
-                    meta:
-                      count: 3
-                      total_count: 3
-                      total_pages: 1
-                    links:
-                      self: http://www.example.com/api/v2/platform/countries
-                      next: http://www.example.com/api/v2/platform/countries?page=1
-                      prev: http://www.example.com/api/v2/platform/countries?page=1
-                      last: http://www.example.com/api/v2/platform/countries?page=1
-                      first: http://www.example.com/api/v2/platform/countries?page=1
-              schema:
-                "$ref": "#/components/schemas/resources_list"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+    "$ref": "resources/countries.yaml"
   "/api/v2/platform/countries/{id}":
-    get:
-      summary: Returns a Country
-      tags:
-      - Countries
-      security:
-      - bearer_auth: []
-      operationId: show-country
-      description: Returns a Country
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Record found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    data:
-                      id: '79'
-                      type: country
-                      attributes:
-                        iso_name: ISO_NAME_6
-                        iso: I6
-                        iso3: IS6
-                        name: NAME_6
-                        numcode: 840
-                        states_required: false
-                        updated_at: '2022-11-08T19:34:07.232Z'
-                        zipcode_required: true
-                        created_at: '2022-11-08T19:34:07.232Z'
-                      relationships:
-                        states:
-                          data: []
-              schema:
-                "$ref": "#/components/schemas/resource"
-        '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
-        '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+    "$ref": "resources/country.yaml"
   "/api/v2/platform/digital_links":
     get:
       summary: Return a list of Digital Links
@@ -2270,15 +1465,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Digital Link
       tags:
@@ -2330,7 +1517,7 @@ paths:
                       access_counter:
                       - is not a number
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -2377,25 +1564,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Digital Link
       tags:
@@ -2447,27 +1618,11 @@ paths:
                       access_counter:
                       - is not a number
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -2491,25 +1646,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/digital_links/{id}/reset":
     patch:
       summary: Reset a Digital Link
@@ -2551,25 +1690,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/digitals":
     get:
       summary: Return a list of Digital Assets
@@ -2655,15 +1778,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Digital Asset
       tags:
@@ -2717,7 +1832,7 @@ paths:
                       variant:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           multipart/form-data:
@@ -2769,25 +1884,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Digital Asset
       tags:
@@ -2844,27 +1943,11 @@ paths:
                       variant:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           multipart/form-data:
@@ -2888,25 +1971,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/line_items":
     get:
       summary: Return a list of Line Items
@@ -3058,15 +2125,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Line Item
       tags:
@@ -3159,7 +2218,7 @@ paths:
                       currency:
                       - Must match order currency
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -3247,25 +2306,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Line Item
       tags:
@@ -3358,27 +2401,11 @@ paths:
                       quantity:
                       - selected of "Product 1275645" is not available.
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -3402,25 +2429,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/menu_items":
     get:
       summary: Return a list of Menu Items
@@ -3782,15 +2793,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Menu Item
       tags:
@@ -3870,7 +2873,7 @@ paths:
                       item_type:
                       - is not included in the list
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -3947,25 +2950,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Menu Item
       tags:
@@ -4047,27 +3034,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -4091,25 +3062,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/menu_items/{id}/reposition":
     patch:
       summary: Reposition a Menu Item
@@ -4174,25 +3129,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -4293,15 +3232,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Menu
       tags:
@@ -4359,7 +3290,7 @@ paths:
                       location:
                       - is not included in the list
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -4412,25 +3343,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Menu
       tags:
@@ -4493,27 +3408,11 @@ paths:
                       location:
                       - is not included in the list
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -4537,25 +3436,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/option_types":
     get:
       summary: Return a list of Option Types
@@ -4638,15 +3521,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create an Option Type
       tags:
@@ -4695,7 +3570,7 @@ paths:
                       presentation:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -4742,25 +3617,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update an Option Type
       tags:
@@ -4812,27 +3671,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -4856,25 +3699,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/option_values":
     get:
       summary: Return a list of Option Values
@@ -4966,15 +3793,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create an Option Value
       tags:
@@ -5029,7 +3848,7 @@ paths:
                       presentation:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -5084,25 +3903,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update an Option Value
       tags:
@@ -5162,27 +3965,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -5206,25 +3993,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders":
     get:
       summary: Return a list of Orders
@@ -5454,15 +4225,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Creates an Order
       tags:
@@ -5713,25 +4476,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update an Order
       tags:
@@ -5869,27 +4616,11 @@ paths:
                       email:
                       - is invalid
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -5913,25 +4644,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/advance":
     patch:
       summary: Advances an Order
@@ -6061,25 +4776,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/next":
     patch:
       summary: Next an Order
@@ -6209,25 +4908,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/complete":
     patch:
       summary: Completes an Order
@@ -6367,25 +5050,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/empty":
     patch:
       summary: Empties an Order
@@ -6510,25 +5177,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/approve":
     patch:
       summary: Approves an Order
@@ -6657,25 +5308,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/cancel":
     patch:
       summary: Cancels an Order
@@ -6705,25 +5340,9 @@ paths:
         '422':
           description: cannot be canceled
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/orders/{id}/use_store_credit":
     patch:
       summary: Use Store Credit for an Order
@@ -6752,25 +5371,9 @@ paths:
         '422':
           description: user does not have store credit available
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -6804,25 +5407,9 @@ paths:
         '422':
           description: coupon code couldn't be applied
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -6994,15 +5581,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Payment Method
       tags:
@@ -7068,7 +5647,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -7132,25 +5711,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Payment Method
       tags:
@@ -7219,27 +5782,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -7265,25 +5812,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/payments":
     get:
       summary: Return a list of Payments
@@ -7421,15 +5952,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/payments/{id}":
     get:
       summary: Return a Payment
@@ -7501,25 +6024,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     delete:
       summary: Delete a Payment
       tags:
@@ -7538,25 +6045,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/products":
     get:
       summary: Return a list of Products
@@ -7721,15 +6212,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Product
       tags:
@@ -7823,7 +6306,7 @@ paths:
                       price:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -7918,25 +6401,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Product
       tags:
@@ -8037,27 +6504,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -8081,25 +6532,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/promotion_actions":
     get:
       summary: Return a list of Promotion Actions
@@ -8181,15 +6616,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Promotion Action
       tags:
@@ -8282,25 +6709,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Promotion Action
       tags:
@@ -8347,25 +6758,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -8389,25 +6784,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/promotion_categories":
     get:
       summary: Return a list of Promotion Categories
@@ -8489,15 +6868,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Promotion Category
       tags:
@@ -8547,7 +6918,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -8597,25 +6968,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Promotion Category
       tags:
@@ -8670,27 +7025,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -8714,25 +7053,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/promotion_rules":
     get:
       summary: Return a list of Promotion Rules
@@ -8814,15 +7137,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Promotion Rule
       tags:
@@ -8915,25 +7230,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Promotion Rule
       tags:
@@ -8980,25 +7279,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -9022,25 +7305,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/promotions":
     get:
       summary: Return a list of Promotions
@@ -9228,15 +7495,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Promotion
       tags:
@@ -9310,7 +7569,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -9384,25 +7643,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Promotion
       tags:
@@ -9481,27 +7724,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -9532,25 +7759,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/roles":
     get:
       summary: Return a list of Roles
@@ -9611,15 +7822,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Role
       tags:
@@ -9658,7 +7861,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -9697,25 +7900,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Role
       tags:
@@ -9759,27 +7946,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -9803,25 +7974,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments":
     get:
       summary: Return a list of Shipments
@@ -9977,15 +8132,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Shipment
       tags:
@@ -10071,7 +8218,7 @@ paths:
                     error: order_not_found
                     errors: {}
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -10163,25 +8310,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Shipment
       tags:
@@ -10278,27 +8409,11 @@ paths:
                       stock_location:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -10322,25 +8437,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments/{id}/add_item":
     patch:
       summary: Adds item (Variant) to an existing Shipment
@@ -10432,25 +8531,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -10547,25 +8630,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -10659,25 +8726,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments/{id}/ship":
     patch:
       summary: Mark Shipment as shipped
@@ -10766,25 +8817,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments/{id}/cancel":
     patch:
       summary: Cancels the Shipment
@@ -10873,25 +8908,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments/{id}/resume":
     patch:
       summary: Resumes the Shipment
@@ -10980,25 +8999,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipments/{id}/pend":
     patch:
       summary: Moves Shipment back to pending state
@@ -11087,25 +9090,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipping_categories":
     get:
       summary: Return a list of Shipping Categories
@@ -11166,15 +9153,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Shipping Category
       tags:
@@ -11213,7 +9192,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -11252,25 +9231,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Shipping Category
       tags:
@@ -11314,27 +9277,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -11358,25 +9305,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/shipping_methods":
     get:
       summary: Return a list of Shipping Methods
@@ -11490,15 +9421,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Shipping Method
       tags:
@@ -11574,7 +9497,7 @@ paths:
                       base:
                       - You must select at least one shipping category
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -11640,25 +9563,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Shipping Method
       tags:
@@ -11729,27 +9636,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -11773,25 +9664,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/states":
     get:
       summary: Returns a list of States
@@ -11871,15 +9746,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/states/{id}":
     get:
       summary: Returns a State
@@ -11919,25 +9786,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/stock_items":
     get:
       summary: Return a list of Stock Items
@@ -12027,15 +9878,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Stock Item
       tags:
@@ -12097,7 +9940,7 @@ paths:
                       variant:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -12157,25 +10000,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Stock Item
       tags:
@@ -12240,27 +10067,11 @@ paths:
                       variant:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -12284,25 +10095,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/stock_locations":
     get:
       summary: Return a list of Stock Locations
@@ -12396,15 +10191,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Stock Location
       tags:
@@ -12466,7 +10253,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -12528,25 +10315,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Stock Location
       tags:
@@ -12613,27 +10384,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -12657,25 +10412,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/store_credit_categories":
     get:
       summary: Return a list of Store Credit Categories
@@ -12736,15 +10475,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Store Credit Category
       tags:
@@ -12783,7 +10514,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -12822,25 +10553,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Store Credit Category
       tags:
@@ -12884,27 +10599,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -12928,25 +10627,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/store_credit_types":
     get:
       summary: Return a list of Store Credit Types
@@ -13003,15 +10686,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Store Credit Type
       tags:
@@ -13051,7 +10726,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -13091,25 +10766,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Store Credit Type
       tags:
@@ -13154,27 +10813,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -13198,25 +10841,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/store_credits":
     get:
       summary: Return a list of Store Credits
@@ -13364,15 +10991,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Store Credit
       tags:
@@ -13464,7 +11083,7 @@ paths:
                       amount_authorized:
                       - Exceeds total credits.
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -13541,25 +11160,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Store Credit
       tags:
@@ -13647,27 +11250,11 @@ paths:
                       amount_authorized:
                       - Exceeds total credits.
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -13691,25 +11278,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/tax_categories":
     get:
       summary: Return a list of Tax Categories
@@ -13804,15 +11375,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Tax Category
       tags:
@@ -13865,7 +11428,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -13919,25 +11482,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Tax Category
       tags:
@@ -13995,27 +11542,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -14039,25 +11570,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/tax_rates":
     get:
       summary: Return a list of Tax Rates
@@ -14167,15 +11682,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Tax Rate
       tags:
@@ -14241,7 +11748,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -14302,25 +11809,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Tax Rate
       tags:
@@ -14386,27 +11877,11 @@ paths:
                       amount:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -14430,25 +11905,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/taxonomies":
     get:
       summary: Return a list of Taxonomies
@@ -14540,15 +11999,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Taxonomy
       tags:
@@ -14606,7 +12057,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -14664,25 +12115,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Taxonomy
       tags:
@@ -14746,27 +12181,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -14790,25 +12209,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/taxons":
     get:
       summary: Return a list of Taxons
@@ -15020,15 +12423,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Taxon
       tags:
@@ -15105,7 +12500,7 @@ paths:
                       taxonomy:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -15184,25 +12579,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Taxon
       tags:
@@ -15285,27 +12664,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -15329,25 +12692,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/taxons/{id}/reposition":
     patch:
       summary: Reposition a Taxon
@@ -15412,25 +12759,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -15554,15 +12885,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a User
       tags:
@@ -15621,7 +12944,7 @@ paths:
                       bill_address_id:
                       - belongs to other user
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -15680,25 +13003,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a User
       tags:
@@ -15762,27 +13069,11 @@ paths:
                       bill_address_id:
                       - belongs to other user
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -15806,25 +13097,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/variants":
     get:
       summary: Return a list of Variants
@@ -16046,15 +13321,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/variants/{id}":
     get:
       summary: Return a Variant
@@ -16143,25 +13410,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     delete:
       summary: Delete a Variant
       tags:
@@ -16180,25 +13431,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/webhooks/events":
     get:
       summary: Return a list of Webhook Events
@@ -16310,15 +13545,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/webhooks/subscribers":
     get:
       summary: Return a list of Webhook Subscribers
@@ -16391,15 +13618,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Webhook Subscriber
       tags:
@@ -16444,7 +13663,7 @@ paths:
                       - can't be blank
                       - the URL must have a path
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -16486,25 +13705,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Webhook Subscriber
       tags:
@@ -16554,27 +13757,11 @@ paths:
                       - can't be blank
                       - the URL must have a path
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -16598,25 +13785,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/wished_items":
     get:
       summary: Return a list of Wished Items
@@ -16726,15 +13897,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Wished Item
       tags:
@@ -16794,7 +13957,7 @@ paths:
                       quantity:
                       - is not a number
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -16849,25 +14012,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Wished Item
       tags:
@@ -16927,27 +14074,11 @@ paths:
                       quantity:
                       - is not a number
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -16971,25 +14102,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/wishlists":
     get:
       summary: Return a list of Wishlists
@@ -17079,15 +14194,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Wishlist
       tags:
@@ -17142,7 +14249,7 @@ paths:
                       user:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -17195,25 +14302,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Wishlist
       tags:
@@ -17271,27 +14362,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -17315,25 +14390,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
   "/api/v2/platform/zones":
     get:
       summary: Return a list of Zones
@@ -17416,15 +14475,7 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resources_list"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     post:
       summary: Create a Zone
       tags:
@@ -17479,7 +14530,7 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
       requestBody:
         content:
           application/json:
@@ -17532,25 +14583,9 @@ paths:
               schema:
                 "$ref": "#/components/schemas/resource"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
     patch:
       summary: Update a Zone
       tags:
@@ -17608,27 +14643,11 @@ paths:
                       name:
                       - can't be blank
               schema:
-                "$ref": "#/components/schemas/validation_errors"
+                "$ref": "schemas/ValidationErrors.yaml"
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
       requestBody:
         content:
           application/json:
@@ -17652,25 +14671,9 @@ paths:
         '204':
           description: Record deleted
         '404':
-          description: Record not found
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The resource you were looking for could not be found.
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/RecordNotFoundError.yaml"
         '401':
-          description: Authentication Failed
-          content:
-            application/vnd.api+json:
-              examples:
-                Example:
-                  value:
-                    error: The access token is invalid
-              schema:
-                "$ref": "#/components/schemas/error"
+          "$ref": "responses/AuthenticationFailedError.yaml"
 servers:
 - url: http://{defaultHost}
   variables:
@@ -17680,7 +14683,7 @@ tags:
 - name: Addresses
 - name: Adjustments
 - name: Classifications
-- name: Countries
+- name: Countries 
 - name: CMS Pages
 - name: CMS Sections
 - name: Digital Assets
@@ -17725,130 +14728,6 @@ components:
       type: http
       scheme: bearer
   schemas:
-    create_address_params:
-      type: object
-      properties:
-        address:
-          type: object
-          required:
-          - country_id
-          - address1
-          - city
-          - zipcode
-          - phone
-          - firstname
-          - lastname
-          properties:
-            country_id:
-              type: string
-              example: '224'
-            state_id:
-              type: string
-              example: '516'
-            state_name:
-              type: string
-              example: New York
-            address1:
-              type: string
-              example: 5th ave
-            address2:
-              type: string
-              example: 1st suite
-            city:
-              type: string
-              example: NY
-            zipcode:
-              type: string
-              example: '10001'
-            phone:
-              type: string
-              example: "+1 123 456 789"
-            alternative_phone:
-              type: string
-            firstname:
-              type: string
-              example: John
-            lastname:
-              type: string
-              example: Snow
-            label:
-              type: string
-              example: My home address
-            company:
-              type: string
-              example: Vendo Cloud Inc
-            user_id:
-              type: string
-            public_metadata:
-              type: object
-              example:
-                distance_from_nearest_city_in_km: 10
-                location_type: building
-            private_metadata:
-              type: object
-              example:
-                close_to_shop: true
-      required:
-      - address
-      x-internal: false
-    update_address_params:
-      type: object
-      properties:
-        address:
-          type: object
-          properties:
-            country_id:
-              type: string
-              example: '224'
-            state_id:
-              type: string
-              example: '516'
-            state_name:
-              type: string
-              example: New York
-            address1:
-              type: string
-              example: 5th ave
-            address2:
-              type: string
-              example: 1st suite
-            city:
-              type: string
-              example: NY
-            zipcode:
-              type: string
-              example: '10001'
-            phone:
-              type: string
-              example: "+1 123 456 789"
-            alternative_phone:
-              type: string
-            firstname:
-              type: string
-              example: John
-            lastname:
-              type: string
-              example: Snow
-            label:
-              type: string
-              example: My home address
-            company:
-              type: string
-              example: Vendo Cloud Inc
-            user_id:
-              type: string
-            public_metadata:
-              type: object
-              example:
-                distance_from_city_in_km: 10
-                location_type: building
-            private_metadata:
-              type: object
-              example:
-                close_to_shop: true
-      required:
-      - address
-      x-internal: false
     create_adjustment_params:
       type: object
       properties:
@@ -19696,9 +16575,9 @@ components:
               example: true
               default: false
             bill_address_attributes:
-              "$ref": "#/components/schemas/update_address_params"
+              "$ref": "schemas/Address/UpdateParams.yaml"
             ship_address_attributes:
-              "$ref": "#/components/schemas/update_address_params"
+              "$ref": "schemas/Address/UpdateParams.yaml"
             line_items_attributes:
               type: array
               items:
@@ -21588,7 +18467,7 @@ components:
           type: array
           items:
             allOf:
-            - "$ref": "#/components/schemas/resource_properties"
+            - "$ref": "schemas/ResourceProperties.yaml"
         meta:
           type: object
           properties:
@@ -21626,46 +18505,11 @@ components:
       - meta
       - links
       x-internal: false
-    resource_properties:
-      type: object
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
-          type: object
-        relationships:
-          type: object
-      required:
-      - id
-      - type
-      - attributes
-      x-internal: false
     resource:
       type: object
       properties:
         data:
-          "$ref": "#/components/schemas/resource_properties"
+          "$ref": "schemas/ResourceProperties.yaml"
       required:
       - data
-      x-internal: false
-    error:
-      type: object
-      properties:
-        error:
-          type: string
-      required:
-      - error
-      x-internal: false
-    validation_errors:
-      type: object
-      properties:
-        error:
-          type: string
-        errors:
-          type: object
-      required:
-      - error
-      - errors
       x-internal: false

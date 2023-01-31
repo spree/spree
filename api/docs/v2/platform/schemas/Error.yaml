@@ -1,0 +1,7 @@
+type: object
+properties:
+  error:
+    type: string
+required:
+-  error
+x-internal: false

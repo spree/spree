@@ -1,0 +1,173 @@
+get:
+  summary: Return an Address
+  tags:
+  - Addresses
+  security:
+  - bearer_auth: []
+  description: Returns an Address
+  operationId: show-address
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,country,state
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '6'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 6 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2022-11-08T19:33:51.740Z'
+                    updated_at: '2022-11-08T19:33:51.740Z'
+                    deleted_at:
+                    label:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    country:
+                      data:
+                        id: '6'
+                        type: country
+                    state:
+                      data:
+                        id: '6'
+                        type: state
+                    user:
+                      data:
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update an Address
+  tags:
+  - Addresses
+  security:
+  - bearer_auth: []
+  description: Updates an Address
+  operationId: update-address
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,country,state
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '8'
+                  type: address
+                  attributes:
+                    firstname: Jack
+                    lastname: Doe
+                    address1: 8 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2022-11-08T19:33:52.269Z'
+                    updated_at: '2022-11-08T19:33:52.501Z'
+                    deleted_at:
+                    label:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    country:
+                      data:
+                        id: '9'
+                        type: country
+                    state:
+                      data:
+                        id: '8'
+                        type: state
+                    user:
+                      data:
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: First Name can't be blank and Last Name can't be blank
+                errors:
+                  firstname:
+                  - can't be blank
+                  lastname:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Address/UpdateParams.yaml"
+delete:
+  summary: Delete an Address
+  tags:
+  - Addresses
+  security:
+  - bearer_auth: []
+  description: Deletes an Address
+  operationId: delete-address
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

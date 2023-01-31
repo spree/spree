@@ -1,0 +1,9 @@
+description: Authentication Failed
+content:
+  application/vnd.api+json:
+    examples:
+      Example:
+        value:
+          error: The access token is invalid
+    schema:
+      "$ref": "../schemas/Error.yaml"

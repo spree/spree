@@ -1,0 +1,7 @@
+type: object
+properties:
+  data:
+    "$ref": "ResourceProperties.yaml"
+required:
+- data
+x-internal: false

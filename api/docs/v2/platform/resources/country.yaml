@@ -1,0 +1,44 @@
+get:
+  summary: Returns a Country
+  tags:
+  - Countries
+  security:
+  - bearer_auth: []
+  operationId: show-country
+  description: Returns a Country
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '79'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_6
+                    iso: I6
+                    iso3: IS6
+                    name: NAME_6
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2022-11-08T19:34:07.232Z'
+                    zipcode_required: true
+                    created_at: '2022-11-08T19:34:07.232Z'
+                  relationships:
+                    states:
+                      data: []
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

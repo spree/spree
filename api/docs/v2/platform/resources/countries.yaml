@@ -1,0 +1,76 @@
+get:
+  summary: Returns a list of Countries
+  tags:
+  - Countries
+  security:
+  - bearer_auth: []
+  operationId: countries-list
+  description: Returns a list of Countries
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '72'
+                  type: country
+                  attributes:
+                    iso_name: UNITED STATES
+                    iso: US
+                    iso3: USA
+                    name: United States of America
+                    numcode: 840
+                    states_required: true
+                    updated_at: '2022-11-08T19:34:06.932Z'
+                    zipcode_required: true
+                    created_at: '2022-11-08T19:34:06.932Z'
+                  relationships:
+                    states:
+                      data: []
+                - id: '73'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_2
+                    iso: I2
+                    iso3: IS2
+                    name: NAME_2
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2022-11-08T19:34:06.937Z'
+                    zipcode_required: true
+                    created_at: '2022-11-08T19:34:06.937Z'
+                  relationships:
+                    states:
+                      data: []
+                - id: '74'
+                  type: country
+                  attributes:
+                    iso_name: ISO_NAME_3
+                    iso: I3
+                    iso3: IS3
+                    name: NAME_3
+                    numcode: 840
+                    states_required: false
+                    updated_at: '2022-11-08T19:34:06.939Z'
+                    zipcode_required: true
+                    created_at: '2022-11-08T19:34:06.939Z'
+                  relationships:
+                    states:
+                      data: []
+                meta:
+                  count: 3
+                  total_count: 3
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/countries
+                  next: http://www.example.com/api/v2/platform/countries?page=1
+                  prev: http://www.example.com/api/v2/platform/countries?page=1
+                  last: http://www.example.com/api/v2/platform/countries?page=1
+                  first: http://www.example.com/api/v2/platform/countries?page=1
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

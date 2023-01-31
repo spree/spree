@@ -1,0 +1,212 @@
+get:
+  summary: Return a list of Addresses
+  tags:
+  - Addresses
+  security:
+  - bearer_auth: []
+  description: Returns a list of Addresses
+  operationId: addresses-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,country,state
+    schema:
+      type: string
+  - name: filter[user_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[firstname_cont]
+    in: query
+    description: ''
+    example: John
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 1 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2022-11-08T19:33:50.821Z'
+                    updated_at: '2022-11-08T19:33:50.821Z'
+                    deleted_at:
+                    label:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '1'
+                        type: state
+                    user:
+                      data:
+                - id: '2'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 2 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2022-11-08T19:33:50.825Z'
+                    updated_at: '2022-11-08T19:33:50.825Z'
+                    deleted_at:
+                    label:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    country:
+                      data:
+                        id: '1'
+                        type: country
+                    state:
+                      data:
+                        id: '2'
+                        type: state
+                    user:
+                      data:
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/addresses?page=1&per_page=&include=&filter[user_id_eq]=&filter[firstname_cont]=
+                  next: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/addresses?filter%5Bfirstname_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create an Address
+  tags:
+  - Addresses
+  security:
+  - bearer_auth: []
+  description: Creates an Address
+  operationId: create-address
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,country,state
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: address
+                  attributes:
+                    firstname: John
+                    lastname: Doe
+                    address1: 5 Lovely Street
+                    address2: Northwest
+                    city: Herndon
+                    zipcode: '35005'
+                    phone: 555-555-0199
+                    state_name:
+                    alternative_phone: 555-555-0199
+                    company: Company
+                    created_at: '2022-11-08T19:33:51.471Z'
+                    updated_at: '2022-11-08T19:33:51.471Z'
+                    deleted_at:
+                    label:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    country:
+                      data:
+                        id: '4'
+                        type: country
+                    state:
+                      data:
+                        id: '5'
+                        type: state
+                    user:
+                      data:
+                        id: '1'
+                        type: user
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: First Name can't be blank, Last Name can't be blank, Address
+                  can't be blank, City can't be blank, Country can't be blank,
+                  Zip Code can't be blank, and Phone can't be blank
+                errors:
+                  firstname:
+                  - can't be blank
+                  lastname:
+                  - can't be blank
+                  address1:
+                  - can't be blank
+                  city:
+                  - can't be blank
+                  country:
+                  - can't be blank
+                  zipcode:
+                  - can't be blank
+                  phone:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Address/CreateParams.yaml"

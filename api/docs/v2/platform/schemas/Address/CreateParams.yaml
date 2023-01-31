@@ -1,0 +1,65 @@
+type: object
+properties:
+  address:
+    type: object
+    required:
+    - country_id
+    - address1
+    - city
+    - zipcode
+    - phone
+    - firstname
+    - lastname
+    properties:
+      country_id:
+        type: string
+        example: '224'
+      state_id:
+        type: string
+        example: '516'
+      state_name:
+        type: string
+        example: New York
+      address1:
+        type: string
+        example: 5th ave
+      address2:
+        type: string
+        example: 1st suite
+      city:
+        type: string
+        example: NY
+      zipcode:
+        type: string
+        example: '10001'
+      phone:
+        type: string
+        example: "+1 123 456 789"
+      alternative_phone:
+        type: string
+      firstname:
+        type: string
+        example: John
+      lastname:
+        type: string
+        example: Snow
+      label:
+        type: string
+        example: My home address
+      company:
+        type: string
+        example: Vendo Cloud Inc
+      user_id:
+        type: string
+      public_metadata:
+        type: object
+        example:
+          distance_from_nearest_city_in_km: 10
+          location_type: building
+      private_metadata:
+        type: object
+        example:
+          close_to_shop: true
+required:
+- address
+x-internal: false

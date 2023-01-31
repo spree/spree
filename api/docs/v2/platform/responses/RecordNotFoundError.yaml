@@ -1,0 +1,9 @@
+description: Record not found
+content:
+  application/vnd.api+json:
+    examples:
+      Example:
+        value:
+          error: The resource you were looking for could not be found.
+    schema:
+      "$ref": "../schemas/Error.yaml"

@@ -1,0 +1,15 @@
+type: object
+  properties:
+    id:
+      type: string
+    type:
+      type: string
+    attributes:
+      type: object
+    relationships:
+      type: object
+  required:
+  - id
+  - type
+  - attributes
+  x-internal: false
