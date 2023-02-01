@@ -1,0 +1,135 @@
+get:
+  summary: Return a Digital Asset
+  tags:
+  - Digital Assets
+  security:
+  - bearer_auth: []
+  description: Returns a Digital Asset
+  operationId: show-digital
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '28'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBMUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--0b80fde2e739c30ef5390b1ca35d677810a2d02c/thinking-cat.jpg"
+                    content_type: image/jpeg
+                    filename: thinking-cat.jpg
+                    byte_size: 18090
+                  relationships:
+                    variant:
+                      data:
+                        id: '112'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Digital Asset
+  tags:
+  - Digital Assets
+  security:
+  - bearer_auth: []
+  description: Updates a Digital Asset
+  operationId: update-digital
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '36'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBPQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--f87d494de28c18444adcd95623dbd33fd728c466/icon_256x256.jpg"
+                    content_type: image/png
+                    filename: icon_256x256.jpg
+                    byte_size: 818
+                  relationships:
+                    variant:
+                      data:
+                        id: '134'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Variant can't be blank
+                errors:
+                  variant:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          "$ref": "../schemas/Digitals/UpdateParams.yaml"
+delete:
+  summary: Delete a Digital Asset
+  tags:
+  - Digital Assets
+  security:
+  - bearer_auth: []
+  description: Deletes a Digital Asset
+  operationId: delete-digital
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

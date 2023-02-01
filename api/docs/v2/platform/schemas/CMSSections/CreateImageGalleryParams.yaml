@@ -1,0 +1,119 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    required:
+    - name
+    - cms_page_id
+    - type
+    properties:
+      name:
+        type: string
+        description: Give this section a name.
+      cms_page_id:
+        type: string
+        description: Set the `cms_page` ID that this section belongs to.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::ImageGallery
+        example: Spree::Cms::Sections::ImageGallery
+        description: Set the section type.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      link_type_one:
+        type: string
+        example: Spree::Taxon
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        description: Set the resource type that image one links to.
+      link_type_two:
+        type: string
+        example: Spree::Taxon
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        description: Set the resource type that image two links to.
+      link_type_three:
+        type: string
+        example: Spree::Taxon
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        description: Set the resource type that image three links to.
+      link_one:
+        type: string
+        example: men/shirts
+        nullable: true
+        description: Set the slug or path that image two links to.
+      link_two:
+        type: string
+        example: white-shirt
+        nullable: true
+        description: Set the slug or path that image two links to.
+      link_three:
+        type: string
+        example: red-shirt
+        nullable: true
+        description: Set the slug or path that image three links to.
+      title_one:
+        type: string
+        example: Shop Men's Shirts
+        nullable: true
+        description: Set the title used in image one.
+      title_two:
+        type: string
+        example: Buy This Men's Shirt
+        nullable: true
+        description: Set the title used in image two.
+      title_three:
+        type: string
+        example: Buy This Women's Skirt
+        nullable: true
+        description: Set the title used in image three.
+      fit:
+        type: string
+        example: Screen
+        enum:
+        - Screen
+        - Container
+        description: This value is used by front end developers to set CSS classes
+          for content that fits the screen edge-to-edge, or stays within the
+          boundaries of the central container.
+      layout_style:
+        type: string
+        example: Default
+        enum:
+        - Default
+        - Reversed
+        description: This value is used by front end developers for styling
+          the order the images appear.
+      display_labels:
+        type: string
+        example: Show
+        enum:
+        - Show
+        - Hide
+        description: This value is used by front end developers for showing
+          and hiding the label on the images.
+      cms_section[image_one]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+      cms_section[image_two]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+      cms_section[image_three]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+required:
+- cms_section
+title: Create an Image Gallery Section
+x-internal: false

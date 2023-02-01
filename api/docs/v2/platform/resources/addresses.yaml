@@ -209,4 +209,4 @@ post:
     content:
       application/json:
         schema:
-          "$ref": "../schemas/Address/CreateParams.yaml"
+          "$ref": "../schemas/Addresses/CreateParams.yaml"

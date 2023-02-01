@@ -1,0 +1,53 @@
+type: object
+properties:
+  cms_page:
+    type: object
+    properties:
+      title:
+        type: string
+        example: About Us
+        description: Update the page title.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Pages::StandardPage
+        - Spree::Cms::Pages::Homepage
+        - Spree::Cms::Pages::FeaturePage
+        description: Change the type of page.
+      meta_title:
+        type: string
+        nullable: true
+        example: Learn More About Super-Shop
+        description: Update the meta title for this page, this appears in the
+          title bar of the browser.
+      content:
+        type: string
+        nullable: true
+        example: Lot's of text..
+        description: Update the text content of a standard page, this can be
+          HTML from a rich text editor.
+      meta_description:
+        type: string
+        nullable: true
+        example: Learn more about us on this page here...
+        description: Update the meta description, used for SEO and displayed
+          in search results.
+      visible:
+        type: boolean
+        enum:
+        - true
+        - false
+        description: This page is publicly visible when set to `true`.
+      slug:
+        type: string
+        nullable: true
+        example: about-us
+        description: Update the slug for this page.
+      locale:
+        type: string
+        example: en-US
+        description: Update the language of this page.
+required:
+- cms_page
+title: Update a Standard Page
+x-internal: false

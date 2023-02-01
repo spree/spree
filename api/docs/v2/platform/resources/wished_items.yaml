@@ -1,0 +1,174 @@
+get:
+  summary: Return a list of Wished Items
+  tags:
+  - Wished Items
+  security:
+  - bearer_auth: []
+  description: Returns a list of Wished Items
+  operationId: wished-items-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:01.546Z'
+                    updated_at: '2022-11-08T19:36:01.546Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '301'
+                        type: variant
+                - id: '2'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:01.616Z'
+                    updated_at: '2022-11-08T19:36:01.616Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '303'
+                        type: variant
+                - id: '3'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:01.685Z'
+                    updated_at: '2022-11-08T19:36:01.685Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '305'
+                        type: variant
+                - id: '4'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:01.752Z'
+                    updated_at: '2022-11-08T19:36:01.752Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '307'
+                        type: variant
+                meta:
+                  count: 4
+                  total_count: 4
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/wished_items?page=1&per_page=&include=
+                  next: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/wished_items?include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Wished Item
+  tags:
+  - Wished Items
+  security:
+  - bearer_auth: []
+  description: Creates a Wished Item
+  operationId: create-wished-item
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '9'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:02.710Z'
+                    updated_at: '2022-11-08T19:36:02.710Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '319'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Variant can't be blank, Wishlist can't be blank, and Quantity
+                  is not a number
+                errors:
+                  variant:
+                  - can't be blank
+                  wishlist:
+                  - can't be blank
+                  quantity:
+                  - is not a number
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/WishedItems/CreateParams.yaml"

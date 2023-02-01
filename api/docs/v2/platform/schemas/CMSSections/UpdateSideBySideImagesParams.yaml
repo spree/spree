@@ -1,0 +1,98 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Update this section name.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::HeroImage
+        - Spree::Cms::Sections::FeaturedArticle
+        - Spree::Cms::Sections::ProductCarousel
+        - Spree::Cms::Sections::ImageGallery
+        - Spree::Cms::Sections::SideBySideImages
+        - Spree::Cms::Sections::RichTextContent
+        example: Spree::Cms::Sections::ProductCarousel
+        description: Change the section type.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      link_type_one:
+        type: string
+        example: Spree::Taxon
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        description: Update the resource type that image one links to.
+      link_type_two:
+        type: string
+        example: Spree::Taxon
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        description: Update the resource type that image two links to.
+      link_one:
+        type: string
+        example: men/shirts
+        nullable: true
+        description: Update the slug or path that image two links to.
+      link_two:
+        type: string
+        example: white-shirt
+        nullable: true
+        description: Update the slug or path that image two links to.
+      title_one:
+        type: string
+        example: Shop Men's Shirts
+        nullable: true
+        description: Update the title used in image one.
+      title_two:
+        type: string
+        example: Buy This Men's Shirt
+        nullable: true
+        description: Update the title used in image two.
+      fit:
+        type: string
+        example: Screen
+        enum:
+        - Screen
+        - Container
+        description: This value is used by front end developers to set CSS classes
+          for content that fits the screen edge-to-edge, or stays within the
+          boundaries of the central container.
+      subtitle_one:
+        type: string
+        example: Save 50% today
+        nullable: true
+        description: Update the subtitle used in image one.
+      subtitle_two:
+        type: string
+        example: Save 50% today
+        nullable: true
+        description: Update the subtitle used in image two.
+      gutters:
+        type: string
+        example: No Gutters
+        enum:
+        - Gutters
+        - No Gutters
+        description: This value is used by front end developers for styling
+          the section padding.
+      cms_section[image_one]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+      cms_section[image_two]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+required:
+- cms_section
+title: Update a Side-by-Side Image Section
+x-internal: false

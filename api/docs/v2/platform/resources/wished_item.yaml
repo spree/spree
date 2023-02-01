@@ -1,0 +1,141 @@
+get:
+  summary: Return a Wished Item
+  tags:
+  - Wished Items
+  security:
+  - bearer_auth: []
+  description: Returns a Wished Item
+  operationId: show-wished-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '10'
+                  type: wished_item
+                  attributes:
+                    quantity: 1
+                    created_at: '2022-11-08T19:36:03.208Z'
+                    updated_at: '2022-11-08T19:36:03.208Z'
+                    display_total: "$19.99"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '19.99'
+                  relationships:
+                    variant:
+                      data:
+                        id: '325'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Wished Item
+  tags:
+  - Wished Items
+  security:
+  - bearer_auth: []
+  description: Updates a Wished Item
+  operationId: update-wished-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '12'
+                  type: wished_item
+                  attributes:
+                    quantity: 3
+                    created_at: '2022-11-08T19:36:04.166Z'
+                    updated_at: '2022-11-08T19:36:04.397Z'
+                    display_total: "$59.97"
+                    display_price: "$19.99"
+                    price: '19.99'
+                    total: '59.97'
+                  relationships:
+                    variant:
+                      data:
+                        id: '335'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Quantity is not a number
+                errors:
+                  quantity:
+                  - is not a number
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/WishedItems/UpdateParams.yaml"
+delete:
+  summary: Delete a Wished Item
+  tags:
+  - Wished Items
+  security:
+  - bearer_auth: []
+  description: Deletes a Wished Item
+  operationId: delete-wished-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

@@ -1,0 +1,125 @@
+get:
+  summary: Return a Digital Link
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  description: Returns a Digital Link
+  operationId: show-digital-link
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '6'
+                  type: digital_link
+                  attributes:
+                    token: vxRU3WSqXJ2J2WbjaC2kLHpg
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '6'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '14'
+                        type: line_item
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Digital Link
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  description: Updates a Digital Link
+  operationId: update-digital-link
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '8'
+                  type: digital_link
+                  attributes:
+                    token: hv6VNk8yK2oiZRPsB1pQnazN
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '8'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '16'
+                        type: line_item
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Access counter is not a number
+                errors:
+                  access_counter:
+                  - is not a number
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/DigitalLinks/UpdateParams.yaml"
+delete:
+  summary: Delete a Digital Link
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  description: Deletes a Digital Link
+  operationId: delete-digital-link
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

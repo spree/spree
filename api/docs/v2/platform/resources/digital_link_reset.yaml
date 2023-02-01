@@ -1,0 +1,43 @@
+patch:
+  summary: Reset a Digital Link
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  operationId: reset-digital-link
+  description: Resets a digital link, allowing further downloads.
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '13'
+                  type: digital_link
+                  attributes:
+                    token: NBDYF1WRkrnFJewp4PqjATdQ
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '13'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '21'
+                        type: line_item
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

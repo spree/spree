@@ -1,0 +1,247 @@
+get:
+  summary: Return a list of CMS Sections
+  tags:
+  - CMS Sections
+  security:
+  - bearer_auth: []
+  description: Returns a list of CMS Sections
+  operationId: cms-sections-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: Hero
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: cms_section
+                  attributes:
+                    name: Culpa natus incidunt nisi itaque quod harum quisquam
+                      nesciunt.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 1
+                    linked_resource_type: Spree::Taxon
+                    created_at: '2022-11-08T19:34:03.525Z'
+                    updated_at: '2022-11-08T19:34:03.525Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '13'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                - id: '2'
+                  type: cms_section
+                  attributes:
+                    name: Aperiam quo deserunt qui quidem unde ratione.
+                    content:
+                      link_type_one: Spree::Taxon
+                      link_type_two: Spree::Taxon
+                      link_type_three: Spree::Taxon
+                    settings:
+                      layout_style: Default
+                    fit: Container
+                    destination:
+                    type: Spree::Cms::Sections::ImageGallery
+                    position: 2
+                    linked_resource_type:
+                    created_at: '2022-11-08T19:34:03.529Z'
+                    updated_at: '2022-11-08T19:34:03.529Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '13'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                - id: '3'
+                  type: cms_section
+                  attributes:
+                    name: Molestiae quo distinctio enim dignissimos laborum cumque.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::FeaturedArticle
+                    position: 3
+                    linked_resource_type: Spree::Taxon
+                    created_at: '2022-11-08T19:34:03.534Z'
+                    updated_at: '2022-11-08T19:34:03.534Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '13'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                - id: '4'
+                  type: cms_section
+                  attributes:
+                    name: Quaerat ad enim consequuntur vitae.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 4
+                    linked_resource_type: Spree::Product
+                    created_at: '2022-11-08T19:34:03.539Z'
+                    updated_at: '2022-11-08T19:34:03.539Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '13'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                        id: '21'
+                        type: product
+                - id: '5'
+                  type: cms_section
+                  attributes:
+                    name: Quod saepe occaecati et eaque eum expedita ut.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 5
+                    linked_resource_type: Spree::Product
+                    created_at: '2022-11-08T19:34:03.543Z'
+                    updated_at: '2022-11-08T19:34:03.543Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '13'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                        id: '21'
+                        type: product
+                meta:
+                  count: 5
+                  total_count: 5
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/cms_sections?page=1&per_page=&include=&filter[name_eq]=
+                  next: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/cms_sections?filter%5Bname_eq%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a CMS Section
+  tags:
+  - CMS Sections
+  security:
+  - bearer_auth: []
+  description: Creates a CMS Section
+  operationId: create-cms-section
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '13'
+                  type: cms_section
+                  attributes:
+                    name: Hic iste cupiditate corrupti esse minima.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 3
+                    linked_resource_type: Spree::Product
+                    created_at: '2022-11-08T19:34:04.185Z'
+                    updated_at: '2022-11-08T19:34:04.185Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '15'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                        id: '23'
+                        type: product
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank, Cms page can't be blank, and Type
+                  can't be blank
+                errors:
+                  name:
+                  - can't be blank
+                  cms_page:
+                  - can't be blank
+                  type:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - "$ref": "../schemas/CMSSections/CreateHeroImageParams.yaml"
+          - "$ref": "../schemas/CMSSections/CreateProductCarouselParams.yaml"
+          - "$ref": "../schemas/CMSSections/CreateSideBySideImagesParams.yaml"
+          - "$ref": "../schemas/CMSSections/CreateFeaturedArticleParams.yaml"
+          - "$ref": "../schemas/CMSSections/CreateImageGalleryParams.yaml"
+          - "$ref": "../schemas/CMSSections/CreateRichTextParams.yaml"

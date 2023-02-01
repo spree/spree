@@ -1,0 +1,24 @@
+type: object
+properties:
+  zone:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: EU
+      description:
+        type: string
+        example: All countries in the EU
+      default_tax:
+        type: boolean
+      kind:
+        type: string
+        example: state
+        enum:
+        - state
+        - country
+required:
+- zone
+x-internal: false

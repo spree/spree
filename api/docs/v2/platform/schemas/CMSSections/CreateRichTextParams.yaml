@@ -1,0 +1,44 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    required:
+    - name
+    - cms_page_id
+    - type
+    properties:
+      name:
+        type: string
+        description: Give this section a name.
+      cms_page_id:
+        type: string
+        description: Set the `cms_page` ID that this section belongs to.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::RichTextContent
+        example: Spree::Cms::Sections::RichTextContent
+        description: Set the section type.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      fit:
+        type: string
+        example: Screen
+        enum:
+        - Screen
+        - Container
+        description: This value is used by front end developers to set CSS classes
+          for content that fits the screen edge-to-edge, or stays within the
+          boundaries of the central container.
+      rte_content:
+        type: string
+        example: Lots of text and content goes here.
+        description: Set the content, here, this can be rich text editor content.
+required:
+- cms_section
+title: Create a Rich Text Section
+x-internal: false

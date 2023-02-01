@@ -1,0 +1,17 @@
+type: object
+properties:
+  digital_link:
+    type: object
+    properties:
+      access_counter:
+        type: integer
+        example: 0
+      line_item_id:
+        type: string
+        example: '1'
+      digital_id:
+        type: string
+        example: '1'
+required:
+- digital_link
+x-internal: false

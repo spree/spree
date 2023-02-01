@@ -1,0 +1,37 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    required:
+    - name
+    - cms_page_id
+    - type
+    properties:
+      name:
+        type: string
+        description: Give this section a name.
+      cms_page_id:
+        type: string
+        description: Set the `cms_page` ID that this section belongs to.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::ProductCarousel
+        example: Spree::Cms::Sections::ProductCarousel
+        description: Set the section type.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      linked_resource_id:
+        type: string
+        example: '1'
+        nullable: true
+        description: Set the ID of the Taxon that you would like displayed as
+          a Product Carousel.
+required:
+- cms_section
+title: Create a Product Carousel Section
+x-internal: false

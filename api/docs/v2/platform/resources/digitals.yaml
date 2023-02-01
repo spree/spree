@@ -1,0 +1,144 @@
+get:
+  summary: Return a list of Digital Assets
+  tags:
+  - Digital Assets
+  security:
+  - bearer_auth: []
+  description: Returns a list of Digital Assets
+  operationId: digitals-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '15'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBJQT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--fd5f8cec8849d4ccb3d1b3142c05292c54a61183/thinking-cat.jpg"
+                    content_type: image/jpeg
+                    filename: thinking-cat.jpg
+                    byte_size: 18090
+                  relationships:
+                    variant:
+                      data:
+                        id: '80'
+                        type: variant
+                - id: '16'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBJUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--a5cdd34bda2b6ab554834bbebc5eabfe55065258/thinking-cat.jpg"
+                    content_type: image/jpeg
+                    filename: thinking-cat.jpg
+                    byte_size: 18090
+                  relationships:
+                    variant:
+                      data:
+                        id: '82'
+                        type: variant
+                - id: '17'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBJZz09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--86cfdf96a18ded007d9ec0ae05dd122cee26fef5/thinking-cat.jpg"
+                    content_type: image/jpeg
+                    filename: thinking-cat.jpg
+                    byte_size: 18090
+                  relationships:
+                    variant:
+                      data:
+                        id: '84'
+                        type: variant
+                meta:
+                  count: 3
+                  total_count: 3
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/digitals?page=1&per_page=&include=
+                  next: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/digitals?include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Digital Asset
+  tags:
+  - Digital Assets
+  security:
+  - bearer_auth: []
+  description: Creates a Digital Asset
+  operationId: create-digital
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: variant
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '24'
+                  type: digital
+                  attributes:
+                    url: "/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBLUT09IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--6cac9cd14eb0139474e42d68585bead023589c85/icon_256x256.jpg"
+                    content_type: image/png
+                    filename: icon_256x256.jpg
+                    byte_size: 818
+                  relationships:
+                    variant:
+                      data:
+                        id: '94'
+                        type: variant
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Attachment can't be blank and Variant can't be blank
+                errors:
+                  attachment:
+                  - can't be blank
+                  variant:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      multipart/form-data:
+        schema:
+          "$ref": "../schemas/Digitals/CreateParams.yaml"

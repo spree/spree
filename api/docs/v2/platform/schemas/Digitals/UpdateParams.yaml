@@ -1,0 +1,12 @@
+type: object
+properties:
+  digital[attachment]:
+    type: string
+    format: binary
+  digital[variant_id]:
+    type: string
+    example: '123'
+required:
+- digital[attachment]
+- digital[variant_id]
+x-internal: false

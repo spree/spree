@@ -1,0 +1,19 @@
+type: object
+properties:
+  wished_item:
+    type: object
+    required:
+    - wishlist_id
+    - variant_id
+    - quantity
+    properties:
+      wishlist_id:
+        type: string
+      variant_id:
+        type: string
+      quantity:
+        type: integer
+        description: Must be an integer greater than 0
+required:
+- wished_item
+x-internal: false

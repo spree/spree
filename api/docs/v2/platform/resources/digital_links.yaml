@@ -1,0 +1,127 @@
+get:
+  summary: Return a list of Digital Links
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  description: Returns a list of Digital Links
+  operationId: digital-links-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: digital_link
+                  attributes:
+                    token: K5s8uUkdD2TjL8MySKcT3d4Y
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '1'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '9'
+                        type: line_item
+                - id: '2'
+                  type: digital_link
+                  attributes:
+                    token: kCrqhTH4d6jUnzGnvx6vRjMH
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '2'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '10'
+                        type: line_item
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
+                  next: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/digital_links?page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Digital Link
+  tags:
+  - Digital Links
+  security:
+  - bearer_auth: []
+  description: Creates a Digital Link
+  operationId: create-digital-link
+  parameters: []
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: digital_link
+                  attributes:
+                    token: 6bPn1uP9HWaYecdMFkFAkcc3
+                    access_counter: 0
+                  relationships:
+                    digital:
+                      data:
+                        id: '5'
+                        type: digital
+                    line_item:
+                      data:
+                        id: '13'
+                        type: line_item
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Digital can't be blank, Line item can't be blank, and Access
+                  counter is not a number
+                errors:
+                  digital:
+                  - can't be blank
+                  line_item:
+                  - can't be blank
+                  access_counter:
+                  - is not a number
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/DigitalLinks/CreateParams.yaml"

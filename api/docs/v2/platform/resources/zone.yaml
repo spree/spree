@@ -1,0 +1,137 @@
+get:
+  summary: Return a Zone
+  tags:
+  - Zones
+  security:
+  - bearer_auth: []
+  description: Returns a Zone
+  operationId: show-zone
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone_members
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '118'
+                  type: zone
+                  attributes:
+                    name: Molestiae esse ab labore ratione nemo.
+                    description: Impedit vitae in modi quaerat qui quod quia.
+                    default_tax: false
+                    zone_members_count: 0
+                    created_at: '2022-11-08T19:36:10.198Z'
+                    updated_at: '2022-11-08T19:36:10.198Z'
+                    kind: state
+                  relationships:
+                    zone_members:
+                      data: []
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Zone
+  tags:
+  - Zones
+  security:
+  - bearer_auth: []
+  description: Updates a Zone
+  operationId: update-zone
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone_members
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '120'
+                  type: zone
+                  attributes:
+                    name: EU
+                    description: The zone containing all EU countries
+                    default_tax: false
+                    zone_members_count: 0
+                    created_at: '2022-11-08T19:36:10.716Z'
+                    updated_at: '2022-11-08T19:36:10.945Z'
+                    kind: state
+                  relationships:
+                    zone_members:
+                      data: []
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Zones/UpdateParams.yaml"
+delete:
+  summary: Delete a Zone
+  tags:
+  - Zones
+  security:
+  - bearer_auth: []
+  description: Deletes a Zone
+  operationId: delete-zone
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"

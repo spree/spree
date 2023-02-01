@@ -1,11 +1,11 @@
 get:
-  summary: Return an Address
+  summary: Return an Adjustment
   tags:
-  - Addresses
+  - Adjustments
   security:
   - bearer_auth: []
-  description: Returns an Address
-  operationId: show-address
+  description: Returns an Adjustment
+  operationId: show-adjustment
   parameters:
   - name: id
     in: path
@@ -16,7 +16,7 @@ get:
     in: query
     description: 'Select which associated resources you would like to fetch, see:
       <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-    example: user,country,state
+    example: order,adjustable
     schema:
       type: string
   responses:
@@ -29,35 +29,32 @@ get:
               value:
                 data:
                   id: '6'
-                  type: address
+                  type: adjustment
                   attributes:
-                    firstname: John
-                    lastname: Doe
-                    address1: 6 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2022-11-08T19:33:51.740Z'
-                    updated_at: '2022-11-08T19:33:51.740Z'
-                    deleted_at:
-                    label:
-                    public_metadata: {}
-                    private_metadata: {}
+                    source_type: Spree::TaxRate
+                    adjustable_type: Spree::LineItem
+                    amount: '1.0'
+                    label: Shipping
+                    mandatory:
+                    eligible: true
+                    created_at: '2022-11-08T19:33:54.871Z'
+                    updated_at: '2022-11-08T19:33:54.875Z'
+                    state: open
+                    included: false
+                    display_amount: "$1.00"
                   relationships:
-                    country:
+                    order:
                       data:
-                        id: '6'
-                        type: country
-                    state:
+                        id: '8'
+                        type: order
+                    adjustable:
                       data:
-                        id: '6'
-                        type: state
-                    user:
+                        id: '2'
+                        type: line_item
+                    source:
                       data:
+                        id: '5'
+                        type: tax_rate
           schema:
             "$ref": "../schemas/Resource.yaml"
     '404':
@@ -65,13 +62,13 @@ get:
     '401':
       "$ref": "../responses/AuthenticationFailedError.yaml"
 patch:
-  summary: Update an Address
+  summary: Update an Adjustment
   tags:
-  - Addresses
+  - Adjustments
   security:
   - bearer_auth: []
-  description: Updates an Address
-  operationId: update-address
+  description: Updates an Adjustment
+  operationId: update-adjustment
   parameters:
   - name: id
     in: path
@@ -82,7 +79,7 @@ patch:
     in: query
     description: 'Select which associated resources you would like to fetch, see:
       <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
-    example: user,country,state
+    example: order,adjustable
     schema:
       type: string
   responses:
@@ -95,35 +92,32 @@ patch:
               value:
                 data:
                   id: '8'
-                  type: address
+                  type: adjustment
                   attributes:
-                    firstname: Jack
-                    lastname: Doe
-                    address1: 8 Lovely Street
-                    address2: Northwest
-                    city: Herndon
-                    zipcode: '35005'
-                    phone: 555-555-0199
-                    state_name:
-                    alternative_phone: 555-555-0199
-                    company: Company
-                    created_at: '2022-11-08T19:33:52.269Z'
-                    updated_at: '2022-11-08T19:33:52.501Z'
-                    deleted_at:
-                    label:
-                    public_metadata: {}
-                    private_metadata: {}
+                    source_type: Spree::TaxRate
+                    adjustable_type: Spree::LineItem
+                    amount: '15.0'
+                    label: New label
+                    mandatory:
+                    eligible: true
+                    created_at: '2022-11-08T19:33:55.540Z'
+                    updated_at: '2022-11-08T19:33:55.775Z'
+                    state: open
+                    included: false
+                    display_amount: "$15.00"
                   relationships:
-                    country:
+                    order:
                       data:
-                        id: '9'
-                        type: country
-                    state:
+                        id: '10'
+                        type: order
+                    adjustable:
                       data:
-                        id: '8'
-                        type: state
-                    user:
+                        id: '4'
+                        type: line_item
+                    source:
                       data:
+                        id: '7'
+                        type: tax_rate
           schema:
             "$ref": "../schemas/Resource.yaml"
     '422':
@@ -133,11 +127,9 @@ patch:
           examples:
             Example:
               value:
-                error: First Name can't be blank and Last Name can't be blank
+                error: Label can't be blank
                 errors:
-                  firstname:
-                  - can't be blank
-                  lastname:
+                  label:
                   - can't be blank
           schema:
             "$ref": "../schemas/ValidationErrors.yaml"
@@ -149,15 +141,15 @@ patch:
     content:
       application/json:
         schema:
-          "$ref": "../schemas/Addresses/UpdateParams.yaml"
+          "$ref": "../schemas/Adjustments/UpdateParams.yaml"
 delete:
-  summary: Delete an Address
+  summary: Delete an Adjustment
   tags:
-  - Addresses
+  - Adjustments
   security:
   - bearer_auth: []
-  description: Deletes an Address
-  operationId: delete-address
+  description: Deletes an Adjustment
+  operationId: delete-adjustment
   parameters:
   - name: id
     in: path

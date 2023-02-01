@@ -1,0 +1,73 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Update this section name.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::HeroImage
+        - Spree::Cms::Sections::FeaturedArticle
+        - Spree::Cms::Sections::ProductCarousel
+        - Spree::Cms::Sections::ImageGallery
+        - Spree::Cms::Sections::SideBySideImages
+        - Spree::Cms::Sections::RichTextContent
+        example: Spree::Cms::Sections::ProductCarousel
+        description: Change the section type.
+      linked_resource_type:
+        type: string
+        example: Spree::Taxon
+        nullable: true
+        enum:
+        - Spree::Taxon
+        - Spree::Product
+        - Spree::CmsPage
+        description: Update the resource type that this section links to.
+      linked_resource_id:
+        type: string
+        example: '1'
+        nullable: true
+        description: Set the ID of the resource that you would like this section
+          to link to.
+      fit:
+        type: string
+        example: Screen
+        enum:
+        - Screen
+        - Container
+        description: This value is used by front end developers to set CSS classes
+          for content that fits the screen edge-to-edge, or stays within the
+          boundaries of the central container.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      gutters:
+        type: string
+        example: No Gutters
+        enum:
+        - Gutters
+        - No Gutters
+        description: This value is used by front end developers for styling
+          the section padding.
+      button_text:
+        type: string
+        example: Click Here
+        description: Update the text value of the button used in this section.
+      title:
+        type: string
+        example: Shop Today
+        description: Update the title for this section.
+      cms_section[image_one]:
+        type: string
+        format: binary
+        description: Use a `multipart/form-data` request to upload assets.
+required:
+- cms_section
+title: Update a Hero Image Section
+x-internal: false

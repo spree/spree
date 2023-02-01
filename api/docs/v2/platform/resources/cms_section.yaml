@@ -1,0 +1,163 @@
+get:
+  summary: Return a CMS Section
+  tags:
+  - CMS Sections
+  security:
+  - bearer_auth: []
+  description: Returns a CMS Section
+  operationId: show-cms-section
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '19'
+                  type: cms_section
+                  attributes:
+                    name: Debitis rerum nulla maiores quam ut impedit.
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 4
+                    linked_resource_type: Spree::Product
+                    created_at: '2022-11-08T19:34:04.573Z'
+                    updated_at: '2022-11-08T19:34:04.573Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '17'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                        id: '25'
+                        type: product
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a CMS Section
+  tags:
+  - CMS Sections
+  security:
+  - bearer_auth: []
+  description: Updates a CMS Section
+  operationId: update-cms-section
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '29'
+                  type: cms_section
+                  attributes:
+                    name: Super Hero
+                    content: {}
+                    settings:
+                      gutters: No Gutters
+                    fit: Screen
+                    destination:
+                    type: Spree::Cms::Sections::HeroImage
+                    position: 1
+                    linked_resource_type: Spree::Product
+                    created_at: '2022-11-08T19:34:05.290Z'
+                    updated_at: '2022-11-08T19:34:05.525Z'
+                  relationships:
+                    cms_page:
+                      data:
+                        id: '20'
+                        type: cms_page
+                    linked_resource:
+                      data:
+                        id: '28'
+                        type: product
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - "$ref": "../schemas/CMSSections/UpdateHeroImageParams.yaml"
+          - "$ref": "../schemas/CMSSections/UpdateProductCarouselParams.yaml"
+          - "$ref": "../schemas/CMSSections/UpdateSideBySideImagesParams.yaml"
+          - "$ref": "../schemas/CMSSections/UpdateFeaturedArticleParams.yaml"
+          - "$ref": "../schemas/CMSSections/UpdateImageGalleryParams.yaml"
+          - "$ref": "../schemas/CMSSections/UpdateRichTextParams.yaml"
+delete:
+  summary: Delete a CMS Section
+  tags:
+  - CMS Sections
+  security:
+  - bearer_auth: []
+  description: Deletes a CMS Section
+  operationId: delete-cms-section
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      "$ref": "../responses/RecordNotFoundError.yaml"
+    '401':
+          "$ref": "../responses/AuthenticationFailedError.yaml"

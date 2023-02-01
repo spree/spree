@@ -1,0 +1,173 @@
+get:
+  summary: Return a list of CMS Pages
+  tags:
+  - CMS Pages
+  security:
+  - bearer_auth: []
+  description: Returns a list of CMS Pages
+  operationId: cms-pages-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: cms_sections
+    schema:
+      type: string
+  - name: filter[type_eq]
+    in: query
+    description: ''
+    example: Spree::Cms::Pages::FeaturePage
+    schema:
+      type: string
+  - name: filter[locale_eq]
+    in: query
+    description: ''
+    example: en
+    schema:
+      type: string
+  - name: filter[title_cont]
+    in: query
+    description: ''
+    example: About Us
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: cms_page
+                  attributes:
+                    title: Modi soluta tenetur velit odit corporis aut.
+                    meta_title:
+                    content:
+                    meta_description:
+                    visible: true
+                    slug: modi-soluta-tenetur-velit-odit-corporis-aut
+                    type: Spree::Cms::Pages::StandardPage
+                    locale: en
+                    deleted_at:
+                    created_at: '2022-11-08T19:34:00.831Z'
+                    updated_at: '2022-11-08T19:34:00.831Z'
+                  relationships:
+                    cms_sections:
+                      data: []
+                - id: '2'
+                  type: cms_page
+                  attributes:
+                    title: Distinctio alias numquam porro corrupti enim perferendis
+                      fugiat.
+                    meta_title:
+                    content:
+                    meta_description:
+                    visible: true
+                    slug: distinctio-alias-numquam-porro-corrupti-enim-perferendis-fugiat
+                    type: Spree::Cms::Pages::StandardPage
+                    locale: en
+                    deleted_at:
+                    created_at: '2022-11-08T19:34:00.836Z'
+                    updated_at: '2022-11-08T19:34:00.836Z'
+                  relationships:
+                    cms_sections:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/cms_pages?page=1&per_page=&include=&filter[type_eq]=&filter[locale_eq]=&filter[title_cont]=
+                  next: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/cms_pages?filter%5Blocale_eq%5D=&filter%5Btitle_cont%5D=&filter%5Btype_eq%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a CMS Page
+  tags:
+  - CMS Pages
+  security:
+  - bearer_auth: []
+  description: Creates a CMS Page
+  operationId: create-cms-page
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: cms_sections
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: cms_page
+                  attributes:
+                    title: Eligendi recusandae hic magnam at voluptates delectus
+                      quis.
+                    meta_title:
+                    content:
+                    meta_description:
+                    visible: true
+                    slug: eligendi-recusandae-hic-magnam-at-voluptates-delectus-quis
+                    type: Spree::Cms::Pages::StandardPage
+                    locale: en
+                    deleted_at:
+                    created_at: '2022-11-08T19:34:01.378Z'
+                    updated_at: '2022-11-08T19:34:01.378Z'
+                  relationships:
+                    cms_sections:
+                      data: []
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Title can't be blank, Locale can't be blank, and Type can't
+                  be blank
+                errors:
+                  title:
+                  - can't be blank
+                  locale:
+                  - can't be blank
+                  type:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - "$ref": "../schemas/CMSPages/CreateStandardParams.yaml"
+          - "$ref": "../schemas/CMSPages/CreateHomepageParams.yaml"
+          - "$ref": "../schemas/CMSPages/CreateFeatureParams.yaml"

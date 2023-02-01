@@ -1,0 +1,17 @@
+type: object
+properties:
+  classification:
+    type: object
+    properties:
+      product_id:
+        type: string
+        example: '1'
+      taxon_id:
+        type: string
+        example: '1'
+      position:
+        type: integer
+        example: 1
+required:
+- classification
+x-internal: false

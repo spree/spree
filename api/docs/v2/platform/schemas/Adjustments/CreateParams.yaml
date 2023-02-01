@@ -1,0 +1,46 @@
+type: object
+properties:
+  adjustment:
+    type: object
+    required:
+    - order_id
+    - label
+    - adjustable_id
+    - adjustable_type
+    properties:
+      order_id:
+        type: string
+      label:
+        type: string
+        example: Shipping costs
+      adjustable_id:
+        type: string
+      adjustable_type:
+        type: string
+        example: Spree::LineItem
+      source_id:
+        type: string
+      source_type:
+        type: string
+        example: Spree::TaxRate
+      amount:
+        type: number
+        example: 10.9
+      mandatory:
+        type: boolean
+      eligible:
+        type: boolean
+      state:
+        type: string
+        example: closed
+        default: open
+        enum:
+        - closed
+        - open
+      included:
+        type: boolean
+        example: true
+        default: false
+required:
+- adjustment
+x-internal: false

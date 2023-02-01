@@ -1,0 +1,147 @@
+get:
+  summary: Return a list of Classifications
+  tags:
+  - Classifications
+  security:
+  - bearer_auth: []
+  description: Returns a list of Classifications
+  operationId: classifications-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product,taxon
+    schema:
+      type: string
+  - name: filter[taxon_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: classification
+                  attributes:
+                    position: 1
+                    created_at: '2022-11-08T19:33:57.238Z'
+                    updated_at: '2022-11-08T19:33:57.238Z'
+                  relationships:
+                    product:
+                      data:
+                        id: '9'
+                        type: product
+                    taxon:
+                      data:
+                        id: '2'
+                        type: taxon
+                - id: '2'
+                  type: classification
+                  attributes:
+                    position: 1
+                    created_at: '2022-11-08T19:33:57.322Z'
+                    updated_at: '2022-11-08T19:33:57.322Z'
+                  relationships:
+                    product:
+                      data:
+                        id: '10'
+                        type: product
+                    taxon:
+                      data:
+                        id: '4'
+                        type: taxon
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/classifications?page=1&per_page=&include=&filter[taxon_id_eq]=
+                  next: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/classifications?filter%5Btaxon_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Classification
+  tags:
+  - Classifications
+  security:
+  - bearer_auth: []
+  description: Creates a Classification
+  operationId: create-classification
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product,taxon
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: classification
+                  attributes:
+                    position: 1
+                    created_at: '2022-11-08T19:33:58.099Z'
+                    updated_at: '2022-11-08T19:33:58.099Z'
+                  relationships:
+                    product:
+                      data:
+                        id: '13'
+                        type: product
+                    taxon:
+                      data:
+                        id: '10'
+                        type: taxon
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Taxon can't be blank and Product can't be blank
+                errors:
+                  taxon:
+                  - can't be blank
+                  product:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Classifications/CreateParams.yaml"

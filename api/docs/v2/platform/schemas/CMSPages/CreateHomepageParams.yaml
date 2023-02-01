@@ -1,0 +1,44 @@
+type: object
+properties:
+  cms_page:
+    type: object
+    required:
+    - title
+    - locale
+    - type
+    properties:
+      title:
+        type: string
+        example: Our Flash Homepage
+        description: Give your page a title.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Pages::Homepage
+        description: Set the type of page.
+      meta_title:
+        type: string
+        nullable: true
+        example: Visit Our Store - Great Deals
+        description: Set the meta title for this page, this appears in the title
+          bar of the browser.
+      meta_description:
+        type: string
+        nullable: true
+        example: Discover great new products that we sell in this store...
+        description: Set a meta description, used for SEO and displayed in search
+          results.
+      visible:
+        type: boolean
+        enum:
+        - true
+        - false
+        description: This page is publicly visible when set to `true`.
+      locale:
+        type: string
+        example: en-US
+        description: The language this page is written in.
+required:
+- cms_page
+title: Create a Homepage
+x-internal: false

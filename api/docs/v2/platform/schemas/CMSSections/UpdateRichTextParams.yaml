@@ -1,0 +1,43 @@
+type: object
+properties:
+  cms_section:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Update this section name.
+      type:
+        type: string
+        enum:
+        - Spree::Cms::Sections::HeroImage
+        - Spree::Cms::Sections::FeaturedArticle
+        - Spree::Cms::Sections::ProductCarousel
+        - Spree::Cms::Sections::ImageGallery
+        - Spree::Cms::Sections::SideBySideImages
+        - Spree::Cms::Sections::RichTextContent
+        example: Spree::Cms::Sections::ProductCarousel
+        description: Change the section type.
+      position:
+        type: integer
+        example: 2
+        description: 'Pass the position that you want this section to appear
+          in. (The list is not zero indexed, so the first item is position:
+          `1`)'
+      fit:
+        type: string
+        example: Screen
+        enum:
+        - Screen
+        - Container
+        description: This value is used by front end developers to set CSS classes
+          for content that fits the screen edge-to-edge, or stays within the
+          boundaries of the central container.
+      rte_content:
+        type: string
+        example: Lots of text and content goes here.
+        description: Update the content, here, this can be rich text editor
+          content.
+required:
+- cms_section
+title: Update a Rich Text Section
+x-internal: false

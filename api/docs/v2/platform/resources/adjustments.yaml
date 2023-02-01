@@ -1,0 +1,186 @@
+get:
+  summary: Return a list of Adjustments
+  tags:
+  - Adjustments
+  security:
+  - bearer_auth: []
+  description: Returns a list of Adjustments
+  operationId: adjustments-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,adjustable
+    schema:
+      type: string
+  - name: filter[order_id]
+    in: query
+    description: ''
+    example: '1234'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: adjustment
+                  attributes:
+                    source_type: Spree::TaxRate
+                    adjustable_type: Spree::Order
+                    amount: '100.0'
+                    label: Shipping
+                    mandatory:
+                    eligible: true
+                    created_at: '2022-11-08T19:33:53.732Z'
+                    updated_at: '2022-11-08T19:33:53.732Z'
+                    state: open
+                    included: false
+                    display_amount: "$100.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '1'
+                        type: order
+                    adjustable:
+                      data:
+                        id: '2'
+                        type: order
+                    source:
+                      data:
+                        id: '1'
+                        type: tax_rate
+                - id: '2'
+                  type: adjustment
+                  attributes:
+                    source_type: Spree::TaxRate
+                    adjustable_type: Spree::Order
+                    amount: '100.0'
+                    label: Shipping
+                    mandatory:
+                    eligible: true
+                    created_at: '2022-11-08T19:33:53.754Z'
+                    updated_at: '2022-11-08T19:33:53.754Z'
+                    state: open
+                    included: false
+                    display_amount: "$100.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '1'
+                        type: order
+                    adjustable:
+                      data:
+                        id: '3'
+                        type: order
+                    source:
+                      data:
+                        id: '2'
+                        type: tax_rate
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/adjustments?page=1&per_page=&include=&filter[order_id]=
+                  next: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/adjustments?filter%5Border_id%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create an Adjustment
+  tags:
+  - Adjustments
+  security:
+  - bearer_auth: []
+  description: Creates an Adjustment
+  operationId: create-adjustment
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,adjustable
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: adjustment
+                  attributes:
+                    source_type: Spree::TaxRate
+                    adjustable_type: Spree::LineItem
+                    amount: '100.0'
+                    label: Shipping
+                    mandatory:
+                    eligible: true
+                    created_at: '2022-11-08T19:33:54.527Z'
+                    updated_at: '2022-11-08T19:33:54.527Z'
+                    state: open
+                    included: false
+                    display_amount: "$100.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '7'
+                        type: order
+                    adjustable:
+                      data:
+                        id: '1'
+                        type: line_item
+                    source:
+                      data:
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Adjustable can't be blank, Order can't be blank, Label
+                  can't be blank, and Amount is not a number
+                errors:
+                  adjustable:
+                  - can't be blank
+                  order:
+                  - can't be blank
+                  label:
+                  - can't be blank
+                  amount:
+                  - is not a number
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Adjustments/CreateParams.yaml"

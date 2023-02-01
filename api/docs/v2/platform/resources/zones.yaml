@@ -1,0 +1,142 @@
+get:
+  summary: Return a list of Zones
+  tags:
+  - Zones
+  security:
+  - bearer_auth: []
+  description: Returns a list of Zones
+  operationId: zones-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone_members
+    schema:
+      type: string
+  - name: filter[description_eq]
+    in: query
+    description: ''
+    example: The zone containing all EU countries
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '113'
+                  type: zone
+                  attributes:
+                    name: Laudantium itaque ab suscipit quo fugit delectus perferendis.
+                    description: Cum nisi esse veniam explicabo praesentium quod
+                      reprehenderit.
+                    default_tax: false
+                    zone_members_count: 0
+                    created_at: '2022-11-08T19:36:09.411Z'
+                    updated_at: '2022-11-08T19:36:09.411Z'
+                    kind: state
+                  relationships:
+                    zone_members:
+                      data: []
+                - id: '114'
+                  type: zone
+                  attributes:
+                    name: Enim perferendis consectetur in assumenda dolor deserunt.
+                    description: Incidunt iusto vitae architecto nulla voluptate.
+                    default_tax: false
+                    zone_members_count: 0
+                    created_at: '2022-11-08T19:36:09.412Z'
+                    updated_at: '2022-11-08T19:36:09.412Z'
+                    kind: state
+                  relationships:
+                    zone_members:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/zones?page=1&per_page=&include=&filter[description_eq]=
+                  next: http://www.example.com/api/v2/platform/zones?filter%5Bdescription_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/zones?filter%5Bdescription_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/zones?filter%5Bdescription_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/zones?filter%5Bdescription_eq%5D=&include=&page=1&per_page=
+          schema:
+            "$ref": "../schemas/ResourcesList.yaml"
+    '401':
+      "$ref": "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Zone
+  tags:
+  - Zones
+  security:
+  - bearer_auth: []
+  description: Creates a Zone
+  operationId: create-zone
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone_members
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '117'
+                  type: zone
+                  attributes:
+                    name: Repellat corrupti laudantium soluta dolorum animi quidem
+                      reiciendis.
+                    description: Laudantium tenetur accusamus blanditiis fuga
+                      totam.
+                    default_tax: false
+                    zone_members_count: 0
+                    created_at: '2022-11-08T19:36:09.930Z'
+                    updated_at: '2022-11-08T19:36:09.930Z'
+                    kind: state
+                  relationships:
+                    zone_members:
+                      data: []
+          schema:
+            "$ref": "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            "$ref": "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          "$ref": "../schemas/Zones/CreateParams.yaml"
