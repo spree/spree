@@ -21,7 +21,8 @@ module Spree
         :order_approve_service, :order_cancel_service, :shipment_change_state_service, :shipment_update_service,
         :shipment_create_service, :shipment_add_item_service, :shipment_remove_item_service,
         :payment_create_service, :address_create_service, :address_update_service,
-        :checkout_select_shipping_method_service
+        :checkout_select_shipping_method_service, :data_feeds_google_rss_service, :data_feeds_google_optional_attributes_service,
+        :data_feeds_google_required_attributes_service, :data_feeds_google_optional_sub_attributes_service, :data_feeds_google_products_list
       ].freeze
 
       attr_accessor *INJECTION_POINTS
@@ -110,6 +111,13 @@ module Spree
 
         # errors
         @error_handler = 'Spree::ErrorReporter'
+
+        # data feeds for Google
+        @data_feeds_google_rss_service = 'Spree::DataFeeds::Google::Rss'
+        @data_feeds_google_optional_attributes_service = 'Spree::DataFeeds::Google::OptionalAttributes'
+        @data_feeds_google_required_attributes_service = 'Spree::DataFeeds::Google::RequiredAttributes'
+        @data_feeds_google_optional_sub_attributes_service = 'Spree::DataFeeds::Google::OptionalSubAttributes'
+        @data_feeds_google_products_list = 'Spree::DataFeeds::Google::ProductsList'
       end
 
       def set_default_finders
