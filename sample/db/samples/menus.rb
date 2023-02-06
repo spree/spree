@@ -1,17 +1,28 @@
 Spree::Store.all.each do |store|
   store.supported_locales_list.each do |locale|
-    Spree::Menu.where(
+    main_menu_attrs = {
       name: 'Main Menu',
       location: 'header',
-      store_id: store,
+      store: store,
       locale: locale
-    ).first_or_create!
-
-    Spree::Menu.where(
+    }
+    footer_menu_attrs = {
       name: 'Footer Menu',
       location: 'footer',
-      store_id: store,
+      store: store,
       locale: locale
-    ).first_or_create!
+    }
+
+    if Spree::Menu.where(main_menu_attrs).any?
+      Spree::Menu.where(main_menu_attrs).first
+    else
+      Spree::Menu.create!(main_menu_attrs)
+    end
+
+    if Spree::Menu.where(footer_menu_attrs).any?
+      Spree::Menu.where(footer_menu_attrs).first
+    else
+      Spree::Menu.create!(footer_menu_attrs)
+    end
   end
 end
