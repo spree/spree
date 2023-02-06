@@ -1,0 +1,293 @@
+get:
+  summary: Return a list of Taxons
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  description: Returns a list of Taxons
+  operationId: taxons-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxonomy,parent,children
+    schema:
+      type: string
+  - name: filter[taxonomy_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[name_cont]
+    in: query
+    description: ''
+    example: Shirts
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '38'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: Shorts
+                    permalink: taxonomy-25/shorts
+                    lft: 2
+                    rgt: 3
+                    description:
+                    created_at: '2022-11-08T19:35:49.576Z'
+                    updated_at: '2022-11-08T19:35:49.581Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_25 -> Shorts
+                    seo_title: Shorts
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '37'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '25'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+                        id: '89'
+                        type: taxon_image
+                - id: '39'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxon_13
+                    permalink: taxonomy-25/taxon-13
+                    lft: 4
+                    rgt: 5
+                    description:
+                    created_at: '2022-11-08T19:35:49.603Z'
+                    updated_at: '2022-11-08T19:35:49.606Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_25 -> taxon_13
+                    seo_title: taxon_13
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '37'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '25'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+                        id: '90'
+                        type: taxon_image
+                - id: '40'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxon_14
+                    permalink: taxonomy-25/taxon-14
+                    lft: 6
+                    rgt: 7
+                    description:
+                    created_at: '2022-11-08T19:35:49.625Z'
+                    updated_at: '2022-11-08T19:35:49.628Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_25 -> taxon_14
+                    seo_title: taxon_14
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '37'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '25'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+                        id: '91'
+                        type: taxon_image
+                - id: '37'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxonomy_25
+                    permalink: taxonomy-25
+                    lft: 1
+                    rgt: 8
+                    description:
+                    created_at: '2022-11-08T19:35:49.552Z'
+                    updated_at: '2022-11-08T19:35:49.636Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 0
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_25
+                    seo_title: taxonomy_25
+                    is_root: true
+                    is_child: false
+                    is_leaf: false
+                  relationships:
+                    parent:
+                      data:
+                    taxonomy:
+                      data:
+                        id: '25'
+                        type: taxonomy
+                    children:
+                      data:
+                      - id: '38'
+                        type: taxon
+                      - id: '39'
+                        type: taxon
+                      - id: '40'
+                        type: taxon
+                    image:
+                      data:
+                meta:
+                  count: 4
+                  total_count: 4
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/taxons?page=1&per_page=&include=&filter[taxonomy_id_eq]=&filter[name_cont]=
+                  next: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/taxons?filter%5Bname_cont%5D=&filter%5Btaxonomy_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Taxon
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  description: Creates a Taxon
+  operationId: create-taxon
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxonomy,parent,children
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '47'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxon_17
+                    permalink: taxonomy-27/taxon-17
+                    lft: 4
+                    rgt: 5
+                    description:
+                    created_at: '2022-11-08T19:35:50.279Z'
+                    updated_at: '2022-11-08T19:35:50.283Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_27 -> taxon_17
+                    seo_title: taxon_17
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '45'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '27'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank and Taxonomy can't be blank
+                errors:
+                  name:
+                  - can't be blank
+                  taxonomy:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Taxons/CreateParams.yaml"

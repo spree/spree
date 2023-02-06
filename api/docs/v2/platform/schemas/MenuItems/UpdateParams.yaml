@@ -1,0 +1,61 @@
+type: object
+properties:
+  menu_item:
+    type: object
+    properties:
+      name:
+        type: string
+        example: T-Shirts
+        description: Update the name of this Menu Item
+      code:
+        type: string
+        nullable: true
+        example: MEN-TS
+        description: The Menu Item a code to identifies this Menu Item from
+          others. This is especially useful when using Container type Menu Items
+          to group items.
+      subtitle:
+        type: string
+        nullable: true
+        example: Shop men's T-Shirts
+        description: Set an optional subtitle for the Menu Item, this is useful
+          if your menu has promotional links that require more than just a link
+          name.
+      destination:
+        type: string
+        nullable: true
+        example: https://getvendo.com
+        description: 'Used when the linked_resource_type is set to: URL'
+      menu_id:
+        type: integer
+        example: 1
+        description: Specify the ID of the Menu this item belongs to.
+      new_window:
+        type: boolean
+        description: When set to `true` the link will be opened in a new tab
+          or window.
+      item_type:
+        type: string
+        enum:
+        - Link
+        - Container
+        description: Links are standard links, where as Containers are used
+          to group links.
+      linked_resource_type:
+        type: string
+        enum:
+        - URL
+        - Spree::Taxon
+        - Spree::Product
+        - Spree::CmsPage
+        description: 'Change the type of resource you want to link to, or set
+          to: URL to use the destination field for an external link.'
+      linked_resource_id:
+        type: integer
+        example: 1
+        nullable: true
+        description: The ID of the resource you are linking to.
+required:
+- menu_item
+title: Update a Menu Item
+x-internal: false

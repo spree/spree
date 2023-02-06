@@ -1,0 +1,11 @@
+type: object
+properties:
+  role:
+    type: object
+    properties:
+      name:
+        type: string
+        example: vendor
+required:
+- zone
+x-internal: false

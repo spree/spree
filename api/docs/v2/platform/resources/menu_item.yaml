@@ -1,0 +1,185 @@
+get:
+  summary: Return a Menu Item
+  tags:
+  - Menu Items
+  security:
+  - bearer_auth: []
+  description: Returns a Menu Item
+  operationId: show-menu-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu,icon,parent,children,linked_resource
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '30'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 25 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 8
+                    rgt: 9
+                    depth: 1
+                    created_at: '2022-11-08T19:34:24.785Z'
+                    updated_at: '2022-11-08T19:34:24.788Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '36'
+                        type: icon
+                    menu:
+                      data:
+                        id: '5'
+                        type: menu
+                    parent:
+                      data:
+                        id: '26'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Menu Item
+  tags:
+  - Menu Items
+  security:
+  - bearer_auth: []
+  description: Updates a Menu Item
+  operationId: update-menu-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu,icon,parent,children,linked_resource
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '44'
+                  type: menu_item
+                  attributes:
+                    name: Menu Item One
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 8
+                    rgt: 9
+                    depth: 1
+                    created_at: '2022-11-08T19:34:25.609Z'
+                    updated_at: '2022-11-08T19:34:25.857Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '47'
+                        type: icon
+                    menu:
+                      data:
+                        id: '8'
+                        type: menu
+                    parent:
+                      data:
+                        id: '40'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/MenuItems/UpdateParams.yaml"
+delete:
+  summary: Delete a Menu Item
+  tags:
+  - Menu Items
+  security:
+  - bearer_auth: []
+  description: Deletes a Menu Item
+  operationId: delete-menu-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

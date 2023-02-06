@@ -1,0 +1,35 @@
+patch:
+  summary: Use Store Credit for an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Creates Store Credit payment for an Order
+  operationId: use-store-credit-order
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: store credit payment created
+    '422':
+      description: user does not have store credit available
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Orders/AmountParams.yaml"

@@ -1,0 +1,71 @@
+patch:
+  summary: Reposition a Taxon
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  operationId: reposition-taxon
+  description: Reposition a Taxon
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '79'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxon_25
+                    permalink: taxonomy-39/shorts/taxon-25
+                    lft: 3
+                    rgt: 4
+                    description:
+                    created_at: '2022-11-08T19:35:53.074Z'
+                    updated_at: '2022-11-08T19:35:53.324Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 2
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_39 -> Shorts -> taxon_25
+                    seo_title: taxon_25
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '78'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '39'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+                        id: '115'
+                        type: taxon_image
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Taxons/RepositionParams.yaml"

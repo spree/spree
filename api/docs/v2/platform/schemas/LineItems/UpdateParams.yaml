@@ -1,0 +1,14 @@
+type: object
+properties:
+  line_item:
+    type: object
+    properties:
+      variant_id:
+        type: string
+        example: '1'
+      quantity:
+        type: integer
+        example: 2
+required:
+- line_item
+x-internal: false

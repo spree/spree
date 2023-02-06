@@ -1,0 +1,194 @@
+get:
+  summary: Return a list of Shipping Methods
+  tags:
+  - Shipping Methods
+  security:
+  - bearer_auth: []
+  description: Returns a list of Shipping Methods
+  operationId: shipping-methods-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator,shipping_categories,shipping_rates,tax_category
+    schema:
+      type: string
+  - name: filter[name]
+    in: query
+    description: ''
+    example: DHL Express
+    schema:
+      type: string
+  - name: filter[title_cont]
+    in: query
+    description: ''
+    example: About Us
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '77'
+                  type: shipping_method
+                  attributes:
+                    name: UPS Ground
+                    code: UPS_GROUND
+                    admin_name:
+                    display_on: both
+                    tracking_url:
+                    created_at: '2022-11-08T19:35:23.928Z'
+                    updated_at: '2022-11-08T19:35:23.928Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    shipping_categories:
+                      data:
+                      - id: '146'
+                        type: shipping_category
+                    shipping_rates:
+                      data: []
+                    tax_category:
+                      data:
+                    calculator:
+                      data:
+                        id: '137'
+                        type: calculator
+                - id: '78'
+                  type: shipping_method
+                  attributes:
+                    name: UPS Ground
+                    code: UPS_GROUND
+                    admin_name:
+                    display_on: both
+                    tracking_url:
+                    created_at: '2022-11-08T19:35:23.939Z'
+                    updated_at: '2022-11-08T19:35:23.939Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    shipping_categories:
+                      data:
+                      - id: '146'
+                        type: shipping_category
+                    shipping_rates:
+                      data: []
+                    tax_category:
+                      data:
+                    calculator:
+                      data:
+                        id: '138'
+                        type: calculator
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/shipping_methods?page=1&per_page=&include=&filter[name]=&filter[title_cont]=
+                  next: http://www.example.com/api/v2/platform/shipping_methods?filter%5Bname%5D=&filter%5Btitle_cont%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/shipping_methods?filter%5Bname%5D=&filter%5Btitle_cont%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/shipping_methods?filter%5Bname%5D=&filter%5Btitle_cont%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/shipping_methods?filter%5Bname%5D=&filter%5Btitle_cont%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Shipping Method
+  tags:
+  - Shipping Methods
+  security:
+  - bearer_auth: []
+  description: Creates a Shipping Method
+  operationId: create-shipping-method
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator,shipping_categories,shipping_rates,tax_category
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '81'
+                  type: shipping_method
+                  attributes:
+                    name: DHL Express Domestic
+                    code: DDD
+                    admin_name: DHL Express- Zone A
+                    display_on: both
+                    tracking_url:
+                    created_at: '2022-11-08T19:35:24.485Z'
+                    updated_at: '2022-11-08T19:35:24.485Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    shipping_categories:
+                      data:
+                      - id: '148'
+                        type: shipping_category
+                    shipping_rates:
+                      data: []
+                    tax_category:
+                      data:
+                        id: '142'
+                        type: tax_category
+                    calculator:
+                      data:
+                        id: '141'
+                        type: calculator
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Calculator can't be blank, Name can't be blank, Display
+                  on can't be blank, and You must select at least one shipping
+                  category
+                errors:
+                  calculator:
+                  - can't be blank
+                  name:
+                  - can't be blank
+                  display_on:
+                  - can't be blank
+                  base:
+                  - You must select at least one shipping category
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/ShippingMethods/CreateParams.yaml"

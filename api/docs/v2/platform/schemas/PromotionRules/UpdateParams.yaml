@@ -1,0 +1,23 @@
+type: object
+properties:
+  promotion_rule:
+    type: object
+    properties:
+      type:
+        type: string
+        example: Spree::Promotion::Rules::Country
+        enum:
+        - Spree::Promotion::Rules::Country
+        - Spree::Promotion::Rules::ItemTotal
+        - Spree::Promotion::Rules::Product
+        - Spree::Promotion::Rules::User
+        - Spree::Promotion::Rules::FirstOrder
+        - Spree::Promotion::Rules::UserLoggedIn
+        - Spree::Promotion::Rules::OneUsePerUser
+        - Spree::Promotion::Rules::Taxon
+        - Spree::Promotion::Rules::OptionValue
+        description: Set the Promotion Rule type.
+required:
+- promotion_rule
+title: Create a Promotion Rule
+x-internal: false

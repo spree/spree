@@ -1,0 +1,111 @@
+get:
+  summary: Return a Variant
+  tags:
+  - Variants
+  security:
+  - bearer_auth: []
+  description: Returns a Variant
+  operationId: show-variant
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product,tax_category,images,digitals
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '291'
+                  type: variant
+                  attributes:
+                    sku: SKU-290
+                    weight: '185.0'
+                    height: '33.55'
+                    depth: '3.78'
+                    deleted_at:
+                    is_master: false
+                    cost_price: '17.0'
+                    position: 2
+                    cost_currency: USD
+                    track_inventory: true
+                    updated_at: '2022-11-08T19:35:57.221Z'
+                    discontinue_on:
+                    created_at: '2022-11-08T19:35:57.218Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    barcode:
+                    display_price: "$19.99"
+                    display_compare_at_price:
+                    name: Product 2153349
+                    options_text: 'Size: S'
+                    total_on_hand: 0
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    product:
+                      data:
+                        id: '216'
+                        type: product
+                    tax_category:
+                      data:
+                    digitals:
+                      data: []
+                    images:
+                      data: []
+                    option_values:
+                      data:
+                      - id: '87'
+                        type: option_value
+                    stock_items:
+                      data:
+                      - id: '307'
+                        type: stock_item
+                    stock_locations:
+                      data:
+                      - id: '189'
+                        type: stock_location
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+delete:
+  summary: Delete a Variant
+  tags:
+  - Variants
+  security:
+  - bearer_auth: []
+  description: Deletes a Variant
+  operationId: delete-variant
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

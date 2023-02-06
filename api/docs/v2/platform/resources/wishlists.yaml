@@ -1,0 +1,149 @@
+get:
+  summary: Return a list of Wishlists
+  tags:
+  - Wishlists
+  security:
+  - bearer_auth: []
+  description: Returns a list of Wishlists
+  operationId: wishlists-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: wished_items
+    schema:
+      type: string
+  - name: filter[name_cont]
+    in: query
+    description: ''
+    example: Birthday
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '22'
+                  type: wishlist
+                  attributes:
+                    name: Black Friday
+                    is_private: true
+                    is_default: false
+                    created_at: '2022-11-08T19:36:06.256Z'
+                    updated_at: '2022-11-08T19:36:06.256Z'
+                    token: PunEhftsfcoHddCoVyqQLTYq
+                    variant_included: false
+                  relationships:
+                    wished_items:
+                      data:
+                      - id: '17'
+                        type: wished_item
+                      - id: '18'
+                        type: wished_item
+                - id: '23'
+                  type: wishlist
+                  attributes:
+                    name: Birthday
+                    is_private: true
+                    is_default: false
+                    created_at: '2022-11-08T19:36:06.257Z'
+                    updated_at: '2022-11-08T19:36:06.257Z'
+                    token: FYKHQXSsnSwAVEaci7RgbPXq
+                    variant_included: false
+                  relationships:
+                    wished_items:
+                      data:
+                      - id: '19'
+                        type: wished_item
+                      - id: '20'
+                        type: wished_item
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/wishlists?page=1&per_page=&include=&filter[name_cont]=
+                  next: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/wishlists?filter%5Bname_cont%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Wishlist
+  tags:
+  - Wishlists
+  security:
+  - bearer_auth: []
+  description: Creates a Wishlist
+  operationId: create-wishlist
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: wished_items
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '26'
+                  type: wishlist
+                  attributes:
+                    name: Wishlist_26
+                    is_private: true
+                    is_default: false
+                    created_at: '2022-11-08T19:36:07.290Z'
+                    updated_at: '2022-11-08T19:36:07.290Z'
+                    token: w7zjAVs9QJd9MLdPXDQcxrqi
+                    variant_included: false
+                  relationships:
+                    wished_items:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank and User can't be blank
+                errors:
+                  name:
+                  - can't be blank
+                  user:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Wishlists/CreateParams.yaml"

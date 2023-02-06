@@ -1,0 +1,25 @@
+type: object
+properties:
+  stock_item:
+    type: object
+    required:
+    - variant_id
+    - stock_location_id
+    - count_on_hand
+    properties:
+      variant_id:
+        type: string
+        example: '2'
+      stock_location_id:
+        type: string
+        example: '2'
+      count_on_hand:
+        type: number
+        example: 200
+      backorderable:
+        type: boolean
+        example: true
+        default: false
+required:
+- stock_item
+x-internal: false

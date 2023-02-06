@@ -1,0 +1,244 @@
+get:
+  summary: Return a list of Store Credits
+  tags:
+  - Store Credits
+  security:
+  - bearer_auth: []
+  description: Returns a list of Store Credits
+  operationId: store-credits-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,created_by,category,credit_type
+    schema:
+      type: string
+  - name: filter[user_id_eq]
+    in: query
+    description: ''
+    example: '5'
+    schema:
+      type: string
+  - name: filter[created_by_id_eq]
+    in: query
+    description: ''
+    example: '2'
+    schema:
+      type: string
+  - name: filter[amount_gteq]
+    in: query
+    description: ''
+    example: '50.0'
+    schema:
+      type: string
+  - name: filter[currency_eq]
+    in: query
+    description: ''
+    example: USD
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '2'
+                  type: store_credit
+                  attributes:
+                    amount: '150.0'
+                    amount_used: '0.0'
+                    memo:
+                    deleted_at:
+                    currency: USD
+                    amount_authorized: '0.0'
+                    originator_type:
+                    created_at: '2022-11-08T19:35:38.714Z'
+                    updated_at: '2022-11-08T19:35:38.714Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$150.00"
+                    display_amount_used: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '107'
+                        type: user
+                    created_by:
+                      data:
+                        id: '108'
+                        type: user
+                    store_credit_category:
+                      data:
+                        id: '14'
+                        type: store_credit_category
+                    store_credit_type:
+                      data:
+                        id: '14'
+                        type: store_credit_type
+                    store_credit_events:
+                      data:
+                      - id: '3'
+                        type: store_credit_event
+                - id: '3'
+                  type: store_credit
+                  attributes:
+                    amount: '150.0'
+                    amount_used: '0.0'
+                    memo:
+                    deleted_at:
+                    currency: USD
+                    amount_authorized: '0.0'
+                    originator_type:
+                    created_at: '2022-11-08T19:35:38.722Z'
+                    updated_at: '2022-11-08T19:35:38.722Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$150.00"
+                    display_amount_used: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '107'
+                        type: user
+                    created_by:
+                      data:
+                        id: '109'
+                        type: user
+                    store_credit_category:
+                      data:
+                        id: '15'
+                        type: store_credit_category
+                    store_credit_type:
+                      data:
+                        id: '15'
+                        type: store_credit_type
+                    store_credit_events:
+                      data:
+                      - id: '4'
+                        type: store_credit_event
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/store_credits?page=1&per_page=&include=&filter[user_id_eq]=&filter[created_by_id_eq]=&filter[amount_gteq]=&filter[currency_eq]=
+                  next: http://www.example.com/api/v2/platform/store_credits?filter%5Bamount_gteq%5D=&filter%5Bcreated_by_id_eq%5D=&filter%5Bcurrency_eq%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/store_credits?filter%5Bamount_gteq%5D=&filter%5Bcreated_by_id_eq%5D=&filter%5Bcurrency_eq%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/store_credits?filter%5Bamount_gteq%5D=&filter%5Bcreated_by_id_eq%5D=&filter%5Bcurrency_eq%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/store_credits?filter%5Bamount_gteq%5D=&filter%5Bcreated_by_id_eq%5D=&filter%5Bcurrency_eq%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Store Credit
+  tags:
+  - Store Credits
+  security:
+  - bearer_auth: []
+  description: Creates a Store Credit
+  operationId: create-store-credit
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,created_by,category,credit_type
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '6'
+                  type: store_credit
+                  attributes:
+                    amount: '150.0'
+                    amount_used: '0.0'
+                    memo:
+                    deleted_at:
+                    currency: USD
+                    amount_authorized: '0.0'
+                    originator_type:
+                    created_at: '2022-11-08T19:35:39.272Z'
+                    updated_at: '2022-11-08T19:35:39.272Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$150.00"
+                    display_amount_used: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '113'
+                        type: user
+                    created_by:
+                      data:
+                        id: '114'
+                        type: user
+                    store_credit_category:
+                      data:
+                        id: '18'
+                        type: store_credit_category
+                    store_credit_type:
+                      data:
+                        id: '18'
+                        type: store_credit_type
+                    store_credit_events:
+                      data:
+                      - id: '7'
+                        type: store_credit_event
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: User can't be blank, Category can't be blank, Created by
+                  can't be blank, Currency can't be blank, Amount must be greater
+                  than 0, Amount used Cannot be greater than amount., and Amount
+                  authorized Exceeds total credits.
+                errors:
+                  user:
+                  - can't be blank
+                  category:
+                  - can't be blank
+                  created_by:
+                  - can't be blank
+                  currency:
+                  - can't be blank
+                  amount:
+                  - must be greater than 0
+                  amount_used:
+                  - Cannot be greater than amount.
+                  amount_authorized:
+                  - Exceeds total credits.
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StoreCredits/CreateParams.yaml"

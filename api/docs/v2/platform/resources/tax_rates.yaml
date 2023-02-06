@@ -1,0 +1,180 @@
+get:
+  summary: Return a list of Tax Rates
+  tags:
+  - Tax Rates
+  security:
+  - bearer_auth: []
+  description: Returns a list of Tax Rates
+  operationId: tax-rates-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone,tax_category
+    schema:
+      type: string
+  - name: filter[zone_id_eq]
+    in: query
+    description: ''
+    example: '3'
+    schema:
+      type: string
+  - name: filter[amount_gt]
+    in: query
+    description: ''
+    example: '0.05'
+    schema:
+      type: string
+  - name: filter[tax_category_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '12'
+                  type: tax_rate
+                  attributes:
+                    amount: '0.1'
+                    included_in_price: false
+                    created_at: '2022-11-08T19:35:44.070Z'
+                    updated_at: '2022-11-08T19:35:44.070Z'
+                    name: TaxRate - 903896
+                    show_rate_in_label: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    zone:
+                      data:
+                        id: '99'
+                        type: zone
+                    tax_category:
+                      data:
+                        id: '165'
+                        type: tax_category
+                - id: '13'
+                  type: tax_rate
+                  attributes:
+                    amount: '0.1'
+                    included_in_price: false
+                    created_at: '2022-11-08T19:35:44.073Z'
+                    updated_at: '2022-11-08T19:35:44.073Z'
+                    name: TaxRate - 477775
+                    show_rate_in_label: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    zone:
+                      data:
+                        id: '100'
+                        type: zone
+                    tax_category:
+                      data:
+                        id: '165'
+                        type: tax_category
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/tax_rates?page=1&per_page=&include=&filter[zone_id_eq]=&filter[amount_gt]=&filter[tax_category_id_eq]=
+                  next: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/tax_rates?filter%5Bamount_gt%5D=&filter%5Btax_category_id_eq%5D=&filter%5Bzone_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Tax Rate
+  tags:
+  - Tax Rates
+  security:
+  - bearer_auth: []
+  description: Creates a Tax Rate
+  operationId: create-tax-rate
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: zone,tax_category
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '16'
+                  type: tax_rate
+                  attributes:
+                    amount: '0.1'
+                    included_in_price: false
+                    created_at: '2022-11-08T19:35:44.601Z'
+                    updated_at: '2022-11-08T19:35:44.601Z'
+                    name: TaxRate - 772641
+                    show_rate_in_label: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    zone:
+                      data:
+                    tax_category:
+                      data:
+                        id: '167'
+                        type: tax_category
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Calculator can't be blank, Rate can't be blank, Tax category
+                  can't be blank, and Name can't be blank
+                errors:
+                  calculator:
+                  - can't be blank
+                  amount:
+                  - can't be blank
+                  tax_category:
+                  - can't be blank
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/TaxRates/CreateParams.yaml"

@@ -1,0 +1,24 @@
+type: object
+properties:
+  shipment:
+    type: object
+    required:
+    - stock_location_id
+    - order_id
+    - variant_id
+    properties:
+      stock_location_id:
+        type: string
+        example: '101'
+      order_id:
+        type: string
+        example: '101'
+      variant_id:
+        type: string
+        example: '101'
+      quantity:
+        type: integer
+        example: 2
+required:
+- shipping_category
+x-internal: false

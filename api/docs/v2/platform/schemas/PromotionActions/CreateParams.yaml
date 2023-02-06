@@ -1,0 +1,25 @@
+type: object
+properties:
+  promotion_action:
+    type: object
+    required:
+    - type
+    - promotion_id
+    properties:
+      type:
+        type: string
+        example: Spree::Promotion::Actions::CreateAdjustment
+        enum:
+        - Spree::Promotion::Actions::CreateAdjustment
+        - Spree::Promotion::Actions::CreateItemAdjustments
+        - Spree::Promotion::Actions::CreateLineItems
+        - Spree::Promotion::Actions::FreeShipping
+        description: Set the Type of Promotion Action you wish to use.
+      promotion_id:
+        type: string
+        example: '22'
+        description: Set the ID of the promotion this action belongs to.
+required:
+- promotion_action
+title: Create a Promotion Action
+x-internal: false

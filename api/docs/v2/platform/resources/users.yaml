@@ -1,0 +1,182 @@
+get:
+  summary: Return a list of Users
+  tags:
+  - Users
+  security:
+  - bearer_auth: []
+  description: Returns a list of Users
+  operationId: users-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: ship_address,bill_address
+    schema:
+      type: string
+  - name: filter[user_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[email_cont]
+    in: query
+    description: ''
+    example: spree@example.com
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '129'
+                  type: user
+                  attributes:
+                    email: ivonne.braun@smith.biz
+                    first_name: Liberty
+                    last_name: Becker
+                    selected_locale: nil
+                    created_at: '2022-11-08T19:35:53.726Z'
+                    updated_at: '2022-11-08T19:35:53.726Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+                - id: '130'
+                  type: user
+                  attributes:
+                    email: lenita.mayer@kulas.us
+                    first_name: Chasidy
+                    last_name: Strosin
+                    selected_locale: 'fr'
+                    created_at: '2022-11-08T19:35:53.730Z'
+                    updated_at: '2022-11-08T19:35:53.730Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+                - id: '131'
+                  type: user
+                  attributes:
+                    email: dewayne@terrybarton.info
+                    first_name: Ruben
+                    last_name: Schmidt
+                    selected_locale: 'de'
+                    created_at: '2022-11-08T19:35:53.732Z'
+                    updated_at: '2022-11-08T19:35:53.732Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+                meta:
+                  count: 3
+                  total_count: 3
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/users?page=1&per_page=&include=&filter[user_id_eq]=&filter[email_cont]=
+                  next: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/users?filter%5Bemail_cont%5D=&filter%5Buser_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a User
+  tags:
+  - Users
+  security:
+  - bearer_auth: []
+  description: Creates a User
+  operationId: create-user
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: ship_address,bill_address
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '136'
+                  type: user
+                  attributes:
+                    email: rex_champlin@breitenberg.com
+                    first_name: Zenia
+                    last_name: King
+                    selected_locale: 'pl'
+                    created_at: '2022-11-08T19:35:54.351Z'
+                    updated_at: '2022-11-08T19:35:54.351Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Bill address belongs to other user
+                errors:
+                  bill_address_id:
+                  - belongs to other user
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Users/CreateParams.yaml"

@@ -1,0 +1,131 @@
+get:
+  summary: Return a Promotion Category
+  tags:
+  - Promotion Categories
+  security:
+  - bearer_auth: []
+  description: Returns a Promotion Category
+  operationId: show-promotion-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotions
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '6'
+                  type: promotion_category
+                  attributes:
+                    name: Promotion Category
+                    created_at: '2022-11-08T19:34:58.794Z'
+                    updated_at: '2022-11-08T19:34:58.794Z'
+                    code: MJO
+                  relationships:
+                    promotions:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Promotion Category
+  tags:
+  - Promotion Categories
+  security:
+  - bearer_auth: []
+  description: Updates a Promotion Category
+  operationId: update-promotion-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotions
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '8'
+                  type: promotion_category
+                  attributes:
+                    name: 2021 Promotions
+                    created_at: '2022-11-08T19:34:59.309Z'
+                    updated_at: '2022-11-08T19:34:59.539Z'
+                    code: 2021-Promos
+                  relationships:
+                    promotions:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/PromotionCategories/UpdateParams.yaml"
+delete:
+  summary: Delete a Promotion Category
+  tags:
+  - Promotion Categories
+  security:
+  - bearer_auth: []
+  description: Deletes a Promotion Category
+  operationId: delete-promotion-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

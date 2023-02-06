@@ -1,0 +1,160 @@
+get:
+  summary: Return a list of Stock Locations
+  tags:
+  - Stock Locations
+  security:
+  - bearer_auth: []
+  description: Returns a list of Stock Locations
+  operationId: stock-locations-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: country
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '175'
+                  type: stock_location
+                  attributes:
+                    name: Jonnie Pollich
+                    created_at: '2022-11-08T19:35:30.989Z'
+                    updated_at: '2022-11-08T19:35:30.989Z'
+                    default: false
+                    address1: 1600 Pennsylvania Ave NW
+                    address2:
+                    city: Washington
+                    state_name:
+                    zipcode: '20500'
+                    phone: "(202) 456-1111"
+                    active: true
+                    backorderable_default: true
+                    propagate_all_variants: false
+                    admin_name:
+                  relationships:
+                    country:
+                      data:
+                        id: '413'
+                        type: country
+                - id: '176'
+                  type: stock_location
+                  attributes:
+                    name: Lidia Hamill
+                    created_at: '2022-11-08T19:35:30.991Z'
+                    updated_at: '2022-11-08T19:35:30.991Z'
+                    default: false
+                    address1: 1600 Pennsylvania Ave NW
+                    address2:
+                    city: Washington
+                    state_name:
+                    zipcode: '20500'
+                    phone: "(202) 456-1111"
+                    active: true
+                    backorderable_default: true
+                    propagate_all_variants: false
+                    admin_name:
+                  relationships:
+                    country:
+                      data:
+                        id: '413'
+                        type: country
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/stock_locations?page=1&per_page=&include=
+                  next: http://www.example.com/api/v2/platform/stock_locations?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/stock_locations?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/stock_locations?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/stock_locations?include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Stock Location
+  tags:
+  - Stock Locations
+  security:
+  - bearer_auth: []
+  description: Creates a Stock Location
+  operationId: create-stock-location
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: country
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '179'
+                  type: stock_location
+                  attributes:
+                    name: Lon McClure
+                    created_at: '2022-11-08T19:35:31.517Z'
+                    updated_at: '2022-11-08T19:35:31.517Z'
+                    default: false
+                    address1: 1600 Pennsylvania Ave NW
+                    address2:
+                    city: Washington
+                    state_name:
+                    zipcode: '20500'
+                    phone: "(202) 456-1111"
+                    active: true
+                    backorderable_default: true
+                    propagate_all_variants: false
+                    admin_name:
+                  relationships:
+                    country:
+                      data:
+                        id: '415'
+                        type: country
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StockLocations/CreateParams.yaml"

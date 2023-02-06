@@ -1,0 +1,163 @@
+get:
+  summary: Return a Shipping Method
+  tags:
+  - Shipping Methods
+  security:
+  - bearer_auth: []
+  description: Returns a Shipping Method
+  operationId: show-shipping-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator,shipping_categories,shipping_rates,tax_category
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '82'
+                  type: shipping_method
+                  attributes:
+                    name: UPS Ground
+                    code: UPS_GROUND
+                    admin_name:
+                    display_on: both
+                    tracking_url:
+                    created_at: '2022-11-08T19:35:24.769Z'
+                    updated_at: '2022-11-08T19:35:24.769Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    shipping_categories:
+                      data:
+                      - id: '149'
+                        type: shipping_category
+                    shipping_rates:
+                      data: []
+                    tax_category:
+                      data:
+                    calculator:
+                      data:
+                        id: '142'
+                        type: calculator
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Shipping Method
+  tags:
+  - Shipping Methods
+  security:
+  - bearer_auth: []
+  description: Updates a Shipping Method
+  operationId: update-shipping-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator,shipping_categories,shipping_rates,tax_category
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '84'
+                  type: shipping_method
+                  attributes:
+                    name: FedEx Expedited
+                    code: UPS_GROUND
+                    admin_name:
+                    display_on: both
+                    tracking_url:
+                    created_at: '2022-11-08T19:35:25.390Z'
+                    updated_at: '2022-11-08T19:35:25.626Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    shipping_categories:
+                      data:
+                      - id: '151'
+                        type: shipping_category
+                    shipping_rates:
+                      data: []
+                    tax_category:
+                      data:
+                    calculator:
+                      data:
+                        id: '145'
+                        type: calculator
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/ShippingMethods/UpdateParams.yaml"
+delete:
+  summary: Delete a Shipping Method
+  tags:
+  - Shipping Methods
+  security:
+  - bearer_auth: []
+  description: Deletes a Shipping Method
+  operationId: delete-shipping-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

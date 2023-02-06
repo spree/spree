@@ -1,0 +1,191 @@
+get:
+  summary: Return a Store Credit
+  tags:
+  - Store Credits
+  security:
+  - bearer_auth: []
+  description: Returns a Store Credit
+  operationId: show-store-credit
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,created_by,category,credit_type
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '7'
+                  type: store_credit
+                  attributes:
+                    amount: '150.0'
+                    amount_used: '0.0'
+                    memo:
+                    deleted_at:
+                    currency: USD
+                    amount_authorized: '0.0'
+                    originator_type:
+                    created_at: '2022-11-08T19:35:39.554Z'
+                    updated_at: '2022-11-08T19:35:39.554Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$150.00"
+                    display_amount_used: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '115'
+                        type: user
+                    created_by:
+                      data:
+                        id: '116'
+                        type: user
+                    store_credit_category:
+                      data:
+                        id: '19'
+                        type: store_credit_category
+                    store_credit_type:
+                      data:
+                        id: '20'
+                        type: store_credit_type
+                    store_credit_events:
+                      data:
+                      - id: '8'
+                        type: store_credit_event
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Store Credit
+  tags:
+  - Store Credits
+  security:
+  - bearer_auth: []
+  description: Updates a Store Credit
+  operationId: update-store-credit
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: user,created_by,category,credit_type
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '9'
+                  type: store_credit
+                  attributes:
+                    amount: '500.0'
+                    amount_used: '0.0'
+                    memo: The user is awarded
+                    deleted_at:
+                    currency: CAD
+                    amount_authorized: '0.0'
+                    originator_type:
+                    created_at: '2022-11-08T19:35:40.170Z'
+                    updated_at: '2022-11-08T19:35:40.405Z'
+                    public_metadata:
+                      loyalty_reward: true
+                    private_metadata: {}
+                    display_amount: "$500.00"
+                    display_amount_used: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '119'
+                        type: user
+                    created_by:
+                      data:
+                        id: '120'
+                        type: user
+                    store_credit_category:
+                      data:
+                        id: '21'
+                        type: store_credit_category
+                    store_credit_type:
+                      data:
+                        id: '22'
+                        type: store_credit_type
+                    store_credit_events:
+                      data:
+                      - id: '10'
+                        type: store_credit_event
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Amount must be greater than 0, Amount used Cannot be greater
+                  than amount., and Amount authorized Exceeds total credits.
+                errors:
+                  amount:
+                  - must be greater than 0
+                  amount_used:
+                  - Cannot be greater than amount.
+                  amount_authorized:
+                  - Exceeds total credits.
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StoreCredits/UpdateParams.yaml"
+delete:
+  summary: Delete a Store Credit
+  tags:
+  - Store Credits
+  security:
+  - bearer_auth: []
+  description: Deletes a Store Credit
+  operationId: delete-store-credit
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

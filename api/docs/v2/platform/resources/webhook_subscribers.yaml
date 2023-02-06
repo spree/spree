@@ -1,0 +1,122 @@
+get:
+  summary: Return a list of Webhook Subscribers
+  tags:
+  - Webhook Subscribers
+  security:
+  - bearer_auth: []
+  description: Returns a list of Webhook Subscribers
+  operationId: webhook-subscribers-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: filter[active_eq]
+    in: query
+    description: ''
+    example: 'true'
+    schema:
+      type: string
+  - name: filter[url_cont]
+    in: query
+    description: ''
+    example: mysite
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '5'
+                  type: subscriber
+                  attributes:
+                    url: https://www.url5.com/
+                    active: true
+                    subscriptions:
+                    - "*"
+                    created_at: '2022-11-08T19:35:58.830Z'
+                    updated_at: '2022-11-08T19:35:58.830Z'
+                - id: '6'
+                  type: subscriber
+                  attributes:
+                    url: https://www.url6.com/
+                    active: true
+                    subscriptions:
+                    - "*"
+                    created_at: '2022-11-08T19:35:58.831Z'
+                    updated_at: '2022-11-08T19:35:58.831Z'
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/webhooks/subscribers?page=1&per_page=&filter[active_eq]=&filter[url_cont]=
+                  next: http://www.example.com/api/v2/platform/webhooks/subscribers?filter%5Bactive_eq%5D=&filter%5Burl_cont%5D=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/webhooks/subscribers?filter%5Bactive_eq%5D=&filter%5Burl_cont%5D=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/webhooks/subscribers?filter%5Bactive_eq%5D=&filter%5Burl_cont%5D=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/webhooks/subscribers?filter%5Bactive_eq%5D=&filter%5Burl_cont%5D=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Webhook Subscriber
+  tags:
+  - Webhook Subscribers
+  security:
+  - bearer_auth: []
+  description: Creates a Webhook Subscriber
+  operationId: create-webhook-subscriber
+  parameters: []
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '9'
+                  type: subscriber
+                  attributes:
+                    url: https://www.url9.com/
+                    active: true
+                    subscriptions:
+                    - "*"
+                    created_at: '2022-11-08T19:35:59.334Z'
+                    updated_at: '2022-11-08T19:35:59.334Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Url must be a valid URL, Url can't be blank, and Url the
+                  URL must have a path
+                errors:
+                  url:
+                  - must be a valid URL
+                  - can't be blank
+                  - the URL must have a path
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/WebhookSubscribers/CreateParams.yaml"

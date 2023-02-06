@@ -1,0 +1,35 @@
+type: object
+properties:
+  promotion:
+    type: object
+    properties:
+      promotion_rules_attributes:
+        type: array
+        items:
+          allOf:
+          - properties:
+              type:
+                type: string
+                example: Spree::Promotion::Rules::Country
+                enum:
+                - Spree::Promotion::Rules::Country
+                - Spree::Promotion::Rules::ItemTotal
+                - Spree::Promotion::Rules::Product
+                - Spree::Promotion::Rules::User
+                - Spree::Promotion::Rules::FirstOrder
+                - Spree::Promotion::Rules::UserLoggedIn
+                - Spree::Promotion::Rules::OneUsePerUser
+                - Spree::Promotion::Rules::Taxon
+                - Spree::Promotion::Rules::OptionValue
+                description: Set the Promotion Rule type.
+              preferred_country_id:
+                type: integer
+                example: 122
+                description: 'Each rule type has its own preferred attributes.
+                  In this example we are setting the ID of the Country this
+                  rule applies to. To learn more about Spree preferences visit
+                  TODO: [LINK].'
+required:
+- promotion
+title: Add a Rule to a Promotion
+x-internal: false

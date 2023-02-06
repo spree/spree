@@ -1,0 +1,16 @@
+type: object
+properties:
+  shipment:
+    type: object
+    required:
+    - variant_id
+    properties:
+      variant_id:
+        type: string
+        example: '101'
+      quantity:
+        type: integer
+        example: 2
+required:
+- shipping_category
+x-internal: false

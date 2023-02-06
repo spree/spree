@@ -1,0 +1,137 @@
+get:
+  summary: Return a Wishlist
+  tags:
+  - Wishlists
+  security:
+  - bearer_auth: []
+  description: Returns a Wishlist
+  operationId: show-wishlist
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: wished_items
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '27'
+                  type: wishlist
+                  attributes:
+                    name: My Wishlist
+                    is_private: true
+                    is_default: false
+                    created_at: '2022-11-08T19:36:07.570Z'
+                    updated_at: '2022-11-08T19:36:07.570Z'
+                    token: mTKMs2ZP2PQc1Gu64XMvPrtk
+                    variant_included: false
+                  relationships:
+                    wished_items:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Wishlist
+  tags:
+  - Wishlists
+  security:
+  - bearer_auth: []
+  description: Updates a Wishlist
+  operationId: update-wishlist
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: wished_items
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '29'
+                  type: wishlist
+                  attributes:
+                    name: My Super Wishlist
+                    is_private: true
+                    is_default: false
+                    created_at: '2022-11-08T19:36:08.103Z'
+                    updated_at: '2022-11-08T19:36:08.334Z'
+                    token: W4TY5oxqYi2kvpYs26XUPH3p
+                    variant_included: false
+                  relationships:
+                    wished_items:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Wishlists/UpdateParams.yaml"
+delete:
+  summary: Delete a Wishlist
+  tags:
+  - Wishlists
+  security:
+  - bearer_auth: []
+  description: Deletes a Wishlist
+  operationId: delete-wishlist
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

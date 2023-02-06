@@ -1,0 +1,137 @@
+get:
+  summary: Return a list of Payments
+  tags:
+  - Payments
+  security:
+  - bearer_auth: []
+  description: Returns a list of Payments
+  operationId: payments-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: payment_method,order,source
+    schema:
+      type: string
+  - name: filter[payment_method_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[amount_gteq]
+    in: query
+    description: ''
+    example: '99.90'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '6'
+                  type: payment
+                  attributes:
+                    amount: '45.75'
+                    source_type: Spree::CreditCard
+                    state: invalid
+                    response_code: '12345'
+                    avs_response:
+                    created_at: '2022-11-08T19:34:50.932Z'
+                    updated_at: '2022-11-08T19:34:50.951Z'
+                    number: PPC5V5ZL
+                    cvv_response_code:
+                    cvv_response_message:
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$45.75"
+                  relationships:
+                    order:
+                      data:
+                        id: '72'
+                        type: order
+                    payment_method:
+                      data:
+                        id: '60'
+                        type: payment_method
+                    source:
+                      data:
+                        id: '5'
+                        type: credit_card
+                    log_entries:
+                      data: []
+                    state_changes:
+                      data:
+                      - id: '15'
+                        type: state_change
+                    payment_capture_events:
+                      data: []
+                    refunds:
+                      data: []
+                - id: '7'
+                  type: payment
+                  attributes:
+                    amount: '45.75'
+                    source_type: Spree::CreditCard
+                    state: checkout
+                    response_code: '12345'
+                    avs_response:
+                    created_at: '2022-11-08T19:34:50.949Z'
+                    updated_at: '2022-11-08T19:34:50.949Z'
+                    number: PB59CC7E
+                    cvv_response_code:
+                    cvv_response_message:
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$45.75"
+                  relationships:
+                    order:
+                      data:
+                        id: '72'
+                        type: order
+                    payment_method:
+                      data:
+                        id: '60'
+                        type: payment_method
+                    source:
+                      data:
+                        id: '6'
+                        type: credit_card
+                    log_entries:
+                      data: []
+                    state_changes:
+                      data: []
+                    payment_capture_events:
+                      data: []
+                    refunds:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/payments?page=1&per_page=&include=&filter[payment_method_id_eq]=&filter[amount_gteq]=
+                  next: http://www.example.com/api/v2/platform/payments?filter%5Bamount_gteq%5D=&filter%5Bpayment_method_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/payments?filter%5Bamount_gteq%5D=&filter%5Bpayment_method_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/payments?filter%5Bamount_gteq%5D=&filter%5Bpayment_method_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/payments?filter%5Bamount_gteq%5D=&filter%5Bpayment_method_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

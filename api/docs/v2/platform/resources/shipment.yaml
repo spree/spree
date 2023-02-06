@@ -1,0 +1,215 @@
+get:
+  summary: Return a Shipment
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: Returns a Shipment
+  operationId: show-shipment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '34'
+                  type: shipment
+                  attributes:
+                    tracking: U10000
+                    number: H70979559010
+                    cost: '100.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:10.459Z'
+                    updated_at: '2022-11-08T19:35:10.475Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$100.00"
+                    display_item_cost: "$10.00"
+                    display_amount: "$100.00"
+                    display_final_price: "$100.00"
+                    display_cost: "$100.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '83'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '112'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data:
+                      - id: '30'
+                        type: inventory_unit
+                    shipping_rates:
+                      data:
+                      - id: '37'
+                        type: shipping_rate
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+                        id: '37'
+                        type: shipping_rate
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Shipment
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: Updates a Shipment
+  operationId: update-shipment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '38'
+                  type: shipment
+                  attributes:
+                    tracking: MY-TRACKING-NUMBER-1234
+                    number: H91981279448
+                    cost: '100.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:11.360Z'
+                    updated_at: '2022-11-08T19:35:11.610Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$100.00"
+                    display_item_cost: "$10.00"
+                    display_amount: "$100.00"
+                    display_final_price: "$100.00"
+                    display_cost: "$100.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '85'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '116'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data:
+                      - id: '34'
+                        type: inventory_unit
+                    shipping_rates:
+                      data:
+                      - id: '45'
+                        type: shipping_rate
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+                        id: '45'
+                        type: shipping_rate
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Stock location can't be blank
+                errors:
+                  stock_location:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Shipments/UpdateParams.yaml"
+delete:
+  summary: Delete a Shipment
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: Deletes a Shipment
+  operationId: delete-shipment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

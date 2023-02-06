@@ -1,0 +1,263 @@
+get:
+  summary: Return a list of Products
+  tags:
+  - Products
+  security:
+  - bearer_auth: []
+  description: Returns a list of Products
+  operationId: products-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: prices
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: Green Toy Boat
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '164'
+                  type: product
+                  attributes:
+                    name: Product 1648238
+                    description: |-
+                      Expedita a doloribus dolorum possimus architecto eligendi sunt quod. Officiis rerum nostrum incidunt delectus sint reiciendis doloribus ut. Atque voluptate nostrum voluptas unde repellendus.
+                      Cum natus a id amet eos eligendi laborum. Minus itaque culpa aliquid repudiandae est odio reiciendis temporibus. Nesciunt cum voluptas veniam excepturi ducimus explicabo recusandae. Error quos voluptate reiciendis numquam dicta.
+                    available_on: '2021-11-08T19:34:52.496Z'
+                    deleted_at:
+                    slug: product-1648238
+                    meta_description:
+                    meta_keywords:
+                    created_at: '2022-11-08T19:34:52.514Z'
+                    updated_at: '2022-11-08T19:34:52.520Z'
+                    promotionable: true
+                    meta_title:
+                    discontinue_on:
+                    public_metadata: {}
+                    private_metadata: {}
+                    status: active
+                    make_active_at: '2021-11-08T19:34:52.496Z'
+                    display_compare_at_price:
+                    display_price: "$19.99"
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    tax_category:
+                      data:
+                        id: '108'
+                        type: tax_category
+                    primary_variant:
+                      data:
+                        id: '231'
+                        type: variant
+                    default_variant:
+                      data:
+                        id: '231'
+                        type: variant
+                    variants:
+                      data: []
+                    option_types:
+                      data: []
+                    product_properties:
+                      data: []
+                    taxons:
+                      data: []
+                    images:
+                      data: []
+                - id: '165'
+                  type: product
+                  attributes:
+                    name: Product 1653934
+                    description: |-
+                      Blanditiis deleniti tempora provident culpa id doloremque. Quibusdam commodi minus magni asperiores nemo odio. Laborum mollitia alias quisquam exercitationem aliquam ex occaecati doloremque. Quos optio voluptatum suscipit soluta assumenda quaerat maxime fugit. In saepe quaerat exercitationem earum sequi.
+                      Quidem nesciunt provident dicta explicabo autem nemo sunt. Iusto in provident officiis sed. Eveniet quam distinctio ipsam optio sint. Et autem ducimus vel voluptas facere.
+                      Earum inventore ut eum eos numquam. Omnis nam provident atque temporibus. Natus illo voluptas enim ex optio eveniet ullam. Labore repudiandae laudantium non suscipit est quae. Odio provident a ad fuga accusamus distinctio vitae.
+                      Doloremque quod similique ipsa quas perferendis rerum earum excepturi. Minus explicabo autem quod incidunt. Earum magnam voluptatem expedita eveniet reiciendis dolores atque et.
+                      Inventore odio voluptate dicta dolore natus aut occaecati molestiae. Aut eum consequatur soluta voluptatum animi delectus accusantium asperiores. Facere exercitationem consequuntur adipisci nulla similique perferendis ullam. Illo ad aliquid maiores non ea.
+                    available_on: '2021-11-08T19:34:52.538Z'
+                    deleted_at:
+                    slug: product-1653934
+                    meta_description:
+                    meta_keywords:
+                    created_at: '2022-11-08T19:34:52.549Z'
+                    updated_at: '2022-11-08T19:34:52.555Z'
+                    promotionable: true
+                    meta_title:
+                    discontinue_on:
+                    public_metadata: {}
+                    private_metadata: {}
+                    status: active
+                    make_active_at: '2021-11-08T19:34:52.538Z'
+                    display_compare_at_price:
+                    display_price: "$19.99"
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    tax_category:
+                      data:
+                        id: '108'
+                        type: tax_category
+                    primary_variant:
+                      data:
+                        id: '232'
+                        type: variant
+                    default_variant:
+                      data:
+                        id: '232'
+                        type: variant
+                    variants:
+                      data: []
+                    option_types:
+                      data: []
+                    product_properties:
+                      data: []
+                    taxons:
+                      data: []
+                    images:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/products?page=1&per_page=&include=&filter[name_eq]=
+                  next: http://www.example.com/api/v2/platform/products?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/products?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/products?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/products?filter%5Bname_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Product
+  tags:
+  - Products
+  security:
+  - bearer_auth: []
+  description: Creates a Product
+  operationId: create-product
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: prices
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '168'
+                  type: product
+                  attributes:
+                    name: Spinning Top
+                    description:
+                    available_on:
+                    deleted_at:
+                    slug: spinning-top
+                    meta_description:
+                    meta_keywords:
+                    created_at: '2022-11-08T19:34:53.239Z'
+                    updated_at: '2022-11-08T19:34:53.243Z'
+                    promotionable: true
+                    meta_title:
+                    discontinue_on:
+                    public_metadata: {}
+                    private_metadata: {}
+                    status: draft
+                    make_active_at:
+                    display_compare_at_price:
+                    display_price: "$87.43"
+                    purchasable: false
+                    in_stock: false
+                    backorderable: false
+                    available: false
+                    currency: USD
+                    price: '87.43'
+                    compare_at_price:
+                  relationships:
+                    tax_category:
+                      data:
+                    primary_variant:
+                      data:
+                        id: '235'
+                        type: variant
+                    default_variant:
+                      data:
+                        id: '235'
+                        type: variant
+                    variants:
+                      data: []
+                    option_types:
+                      data: []
+                    product_properties:
+                      data: []
+                    taxons:
+                      data: []
+                    images:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank, Shipping Category can't be blank,
+                  and Price can't be blank
+                errors:
+                  name:
+                  - can't be blank
+                  shipping_category:
+                  - can't be blank
+                  price:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Products/CreateParams.yaml"

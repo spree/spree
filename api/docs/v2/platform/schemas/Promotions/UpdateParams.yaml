@@ -1,0 +1,48 @@
+type: object
+properties:
+  promotion:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Promotions Used in 2021
+        description: Change the promotion a name.
+      code:
+        type: string
+        example: CYB-MON
+        nullable: true
+        description: Change or remove the promotion code. Promotions without
+          a code are automatically applied if the order meets the Promotion
+          Rule requirements.
+      description:
+        type: string
+        example: Save today with discount code XYZ at checkout.
+        nullable: true
+        description: Update the promotion a description.
+      usage_limit:
+        type: integer
+        example: 100
+        nullable: true
+        description: If you wish you can set a usage limit for this promotion.
+      advertise:
+        type: boolean
+      starts_at:
+        type: string
+        format: date_time
+        nullable: true
+        description: Set a date and time that this promotion begins.
+      ends_at:
+        type: string
+        format: date_time
+        nullable: true
+        description: Set a date and time that this promotion ends.
+      store_ids:
+        type: array
+        items:
+          allOf:
+          - type: string
+            example: '2'
+required:
+- promotion
+title: Update a Promotion
+x-internal: false

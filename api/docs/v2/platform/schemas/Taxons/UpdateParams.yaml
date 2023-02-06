@@ -1,0 +1,18 @@
+type: object
+properties:
+  taxon:
+    type: object
+    properties:
+      taxonomy_id:
+        type: string
+      parent_id:
+        type: string
+      name:
+        type: string
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- taxon
+x-internal: false

@@ -1,0 +1,154 @@
+get:
+  summary: Return a list of Taxonomies
+  tags:
+  - Taxonomies
+  security:
+  - bearer_auth: []
+  description: Returns a list of Taxonomies
+  operationId: taxonomies-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxons,root
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: Categories
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '13'
+                  type: taxonomy
+                  attributes:
+                    name: taxonomy_13
+                    created_at: '2022-11-08T19:35:46.789Z'
+                    updated_at: '2022-11-08T19:35:46.801Z'
+                    position: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    taxons:
+                      data:
+                      - id: '25'
+                        type: taxon
+                    root:
+                      data:
+                        id: '25'
+                        type: taxon
+                - id: '14'
+                  type: taxonomy
+                  attributes:
+                    name: taxonomy_14
+                    created_at: '2022-11-08T19:35:46.804Z'
+                    updated_at: '2022-11-08T19:35:46.814Z'
+                    position: 2
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    taxons:
+                      data:
+                      - id: '26'
+                        type: taxon
+                    root:
+                      data:
+                        id: '26'
+                        type: taxon
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/taxonomies?page=1&per_page=&include=&filter[name_eq]=
+                  next: http://www.example.com/api/v2/platform/taxonomies?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/taxonomies?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/taxonomies?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/taxonomies?filter%5Bname_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Taxonomy
+  tags:
+  - Taxonomies
+  security:
+  - bearer_auth: []
+  description: Creates a Taxonomy
+  operationId: create-taxonomy
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxons,root
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '17'
+                  type: taxonomy
+                  attributes:
+                    name: taxonomy_17
+                    created_at: '2022-11-08T19:35:47.351Z'
+                    updated_at: '2022-11-08T19:35:47.361Z'
+                    position: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    taxons:
+                      data:
+                      - id: '29'
+                        type: taxon
+                    root:
+                      data:
+                        id: '29'
+                        type: taxon
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Taxonomies/CreateParams.yaml"

@@ -1,0 +1,13 @@
+type: object
+properties:
+  store_credit_category:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: refunded
+required:
+- store_credit_category
+x-internal: false

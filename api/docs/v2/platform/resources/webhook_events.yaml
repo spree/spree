@@ -1,0 +1,111 @@
+get:
+  summary: Return a list of Webhook Events
+  tags:
+  - Webhook Events
+  security:
+  - bearer_auth: []
+  description: Returns a list of Webhook Events
+  operationId: webhook-events-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: subscriber
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: order.canceled
+    schema:
+      type: string
+  - name: filter[request_errors_cont]
+    in: query
+    description: ''
+    example: google
+    schema:
+      type: string
+  - name: filter[response_code_eq]
+    in: query
+    description: ''
+    example: '200'
+    schema:
+      type: string
+  - name: filter[success_eq]
+    in: query
+    description: ''
+    example: 'true'
+    schema:
+      type: string
+  - name: filter[url_cont]
+    in: query
+    description: ''
+    example: mysite
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: event
+                  attributes:
+                    execution_time: 14933
+                    name: order.canceled
+                    request_errors: ''
+                    response_code: '200'
+                    success: true
+                    url: https://www.url1.com/
+                    created_at: '2022-11-08T19:35:58.544Z'
+                    updated_at: '2022-11-08T19:35:58.544Z'
+                  relationships:
+                    subscriber:
+                      data:
+                        id: '1'
+                        type: subscriber
+                - id: '2'
+                  type: event
+                  attributes:
+                    execution_time: 64917
+                    name: order.canceled
+                    request_errors: ''
+                    response_code: '200'
+                    success: true
+                    url: https://www.url2.com/
+                    created_at: '2022-11-08T19:35:58.547Z'
+                    updated_at: '2022-11-08T19:35:58.547Z'
+                  relationships:
+                    subscriber:
+                      data:
+                        id: '2'
+                        type: subscriber
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/webhooks/events?page=1&per_page=&include=&filter[name_eq]=&filter[request_errors_cont]=&filter[response_code_eq]=&filter[success_eq]=&filter[url_cont]=
+                  next: http://www.example.com/api/v2/platform/webhooks/events?filter%5Bname_eq%5D=&filter%5Brequest_errors_cont%5D=&filter%5Bresponse_code_eq%5D=&filter%5Bsuccess_eq%5D=&filter%5Burl_cont%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/webhooks/events?filter%5Bname_eq%5D=&filter%5Brequest_errors_cont%5D=&filter%5Bresponse_code_eq%5D=&filter%5Bsuccess_eq%5D=&filter%5Burl_cont%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/webhooks/events?filter%5Bname_eq%5D=&filter%5Brequest_errors_cont%5D=&filter%5Bresponse_code_eq%5D=&filter%5Bsuccess_eq%5D=&filter%5Burl_cont%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/webhooks/events?filter%5Bname_eq%5D=&filter%5Brequest_errors_cont%5D=&filter%5Bresponse_code_eq%5D=&filter%5Bsuccess_eq%5D=&filter%5Burl_cont%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

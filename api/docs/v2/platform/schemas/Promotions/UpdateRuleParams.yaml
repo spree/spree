@@ -1,0 +1,40 @@
+type: object
+properties:
+  promotion:
+    type: object
+    properties:
+      promotion_rules_attributes:
+        type: array
+        items:
+          allOf:
+          - properties:
+              id:
+                type: string
+                example: '22'
+                description: To update an existing Promotion Rule, you are required
+                  to pass the ID of the rule you are updating.
+              type:
+                type: string
+                example: Spree::Promotion::Rules::Country
+                enum:
+                - Spree::Promotion::Rules::Country
+                - Spree::Promotion::Rules::ItemTotal
+                - Spree::Promotion::Rules::Product
+                - Spree::Promotion::Rules::User
+                - Spree::Promotion::Rules::FirstOrder
+                - Spree::Promotion::Rules::UserLoggedIn
+                - Spree::Promotion::Rules::OneUsePerUser
+                - Spree::Promotion::Rules::Taxon
+                - Spree::Promotion::Rules::OptionValue
+                description: Set the Promotion Rule type.
+              preferred_country_id:
+                type: integer
+                example: 143
+                description: 'Each rule type has its own preferred attributes.
+                  In this example we are changing the ID of the Country this
+                  rule applies to. To learn more about Spree preferences visit
+                  TODO: [LINK].'
+required:
+- promotion
+title: Update an existing Rule
+x-internal: false

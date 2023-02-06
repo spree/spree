@@ -1,0 +1,32 @@
+type: object
+properties:
+  user:
+    type: object
+    required:
+    - email
+    - password
+    - password_confirmation
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      password_confirmation:
+        type: string
+      selected_locale:
+        type: string
+      ship_address_id:
+        type: string
+      bill_address_id:
+        type: string
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- user
+x-internal: false

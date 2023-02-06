@@ -1,0 +1,35 @@
+patch:
+  summary: Apply Coupon Code for an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Creates Store Credit payment for an Order
+  operationId: apply-coupon-code-order
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: coupon code applied
+    '422':
+      description: coupon code couldn't be applied
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Orders/CouponCodeParams.yaml"

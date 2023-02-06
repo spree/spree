@@ -1,0 +1,104 @@
+get:
+  summary: Return a list of Shipping Categories
+  tags:
+  - Shipping Categories
+  security:
+  - bearer_auth: []
+  description: Returns a list of Shipping Categories
+  operationId: shipping-categories-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: filter[name_i_cont]
+    in: query
+    description: ''
+    example: default
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '134'
+                  type: shipping_category
+                  attributes:
+                    name: ShippingCategory 134
+                    created_at: '2022-11-08T19:35:21.335Z'
+                    updated_at: '2022-11-08T19:35:21.335Z'
+                - id: '135'
+                  type: shipping_category
+                  attributes:
+                    name: ShippingCategory 135
+                    created_at: '2022-11-08T19:35:21.336Z'
+                    updated_at: '2022-11-08T19:35:21.336Z'
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/shipping_categories?page=1&per_page=&filter[name_i_cont]=
+                  next: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/shipping_categories?filter%5Bname_i_cont%5D=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Shipping Category
+  tags:
+  - Shipping Categories
+  security:
+  - bearer_auth: []
+  description: Creates a Shipping Category
+  operationId: create-shipping-category
+  parameters: []
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '138'
+                  type: shipping_category
+                  attributes:
+                    name: ShippingCategory 138
+                    created_at: '2022-11-08T19:35:21.863Z'
+                    updated_at: '2022-11-08T19:35:21.863Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/ShippingCategories/CreateParams.yaml"

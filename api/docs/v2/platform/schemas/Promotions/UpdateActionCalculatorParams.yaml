@@ -1,0 +1,41 @@
+type: object
+properties:
+  promotion:
+    type: object
+    properties:
+      promotion_actions_attributes:
+        type: array
+        items:
+          allOf:
+          - properties:
+              id:
+                type: string
+                example: '22'
+                description: To update an existing Promotion Action, you are
+                  required to pass the ID of the action you wish to update.
+              calculator_attributes:
+                properties:
+                  id:
+                    type: string
+                    example: '19'
+                    description: To update an existing Action Calculator, you
+                      are required to pass the ID of the calculator.
+                  type:
+                    type: string
+                    example: Spree::Promotion::Actions::CreateAdjustment
+                    enum:
+                    - Spree::Promotion::Actions::CreateAdjustment
+                    - Spree::Promotion::Actions::CreateItemAdjustments
+                    - Spree::Promotion::Actions::CreateLineItems
+                    - Spree::Promotion::Actions::FreeShipping
+                    description: Set the Type of Promotion Action you wish to
+                      use.
+                  preferred_flat_percent:
+                    type: integer
+                    example: 10
+                    description: In this example we are setting the preferred
+                      flat percentage to `10`.
+required:
+- promotion
+title: Update an Action Calculator
+x-internal: false

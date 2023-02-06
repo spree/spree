@@ -1,0 +1,156 @@
+get:
+  summary: Return a list of Stock Items
+  tags:
+  - Stock Items
+  security:
+  - bearer_auth: []
+  description: Returns a list of Stock Items
+  operationId: stock-items-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stock_location,variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '276'
+                  type: stock_item
+                  attributes:
+                    count_on_hand: 0
+                    created_at: '2022-11-08T19:35:27.570Z'
+                    updated_at: '2022-11-08T19:35:27.614Z'
+                    backorderable: false
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    is_available: false
+                  relationships:
+                    stock_location:
+                      data:
+                        id: '157'
+                        type: stock_location
+                    variant:
+                      data:
+                        id: '271'
+                        type: variant
+                - id: '278'
+                  type: stock_item
+                  attributes:
+                    count_on_hand: 10
+                    created_at: '2022-11-08T19:35:27.634Z'
+                    updated_at: '2022-11-08T19:35:27.644Z'
+                    backorderable: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    is_available: true
+                  relationships:
+                    stock_location:
+                      data:
+                        id: '157'
+                        type: stock_location
+                    variant:
+                      data:
+                        id: '272'
+                        type: variant
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/stock_items?page=1&per_page=&include=
+                  next: http://www.example.com/api/v2/platform/stock_items?include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/stock_items?include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/stock_items?include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/stock_items?include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Stock Item
+  tags:
+  - Stock Items
+  security:
+  - bearer_auth: []
+  description: Creates a Stock Item
+  operationId: create-stock-item
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stock_location,variant
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '285'
+                  type: stock_item
+                  attributes:
+                    count_on_hand: 0
+                    created_at: '2022-11-08T19:35:28.366Z'
+                    updated_at: '2022-11-08T19:35:28.366Z'
+                    backorderable: false
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    is_available: false
+                  relationships:
+                    stock_location:
+                      data:
+                        id: '160'
+                        type: stock_location
+                    variant:
+                      data:
+                        id: '276'
+                        type: variant
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Stock location can't be blank and Variant can't be blank
+                errors:
+                  stock_location:
+                  - can't be blank
+                  variant:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StockItems/CreateParams.yaml"

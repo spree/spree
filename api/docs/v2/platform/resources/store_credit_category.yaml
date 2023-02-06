@@ -1,0 +1,109 @@
+get:
+  summary: Return a Store Credit Category
+  tags:
+  - Store Credit Categories
+  security:
+  - bearer_auth: []
+  description: Returns a Store Credit Category
+  operationId: show-store-credit-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '7'
+                  type: store_credit_category
+                  attributes:
+                    name: Exchange
+                    created_at: '2022-11-08T19:35:34.365Z'
+                    updated_at: '2022-11-08T19:35:34.365Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Store Credit Category
+  tags:
+  - Store Credit Categories
+  security:
+  - bearer_auth: []
+  description: Updates a Store Credit Category
+  operationId: update-store-credit-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '9'
+                  type: store_credit_category
+                  attributes:
+                    name: refunded
+                    created_at: '2022-11-08T19:35:34.884Z'
+                    updated_at: '2022-11-08T19:35:35.112Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StoreCreditCategories/UpdateParams.yaml"
+delete:
+  summary: Delete a Store Credit Category
+  tags:
+  - Store Credit Categories
+  security:
+  - bearer_auth: []
+  description: Deletes a Store Credit Category
+  operationId: delete-store-credit-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

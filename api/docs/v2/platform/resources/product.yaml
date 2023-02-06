@@ -1,0 +1,222 @@
+get:
+  summary: Return a Product
+  tags:
+  - Products
+  security:
+  - bearer_auth: []
+  description: Returns a Product
+  operationId: show-product
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: prices
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '169'
+                  type: product
+                  attributes:
+                    name: Product 1682525
+                    description: |-
+                      Enim quibusdam et quis in iste. Eius labore corporis tempora suscipit molestiae sunt. Omnis vero numquam nostrum totam illum consectetur similique corporis.
+                      Iusto neque beatae consequatur consequuntur soluta pariatur at. Magnam numquam nisi voluptatem ipsa blanditiis ullam iste mollitia. Incidunt totam earum perferendis eveniet iusto ea. Sapiente est quam corporis veniam eveniet itaque.
+                      Repudiandae autem cumque hic nisi perferendis cum quod nostrum. Voluptatem ipsam esse provident itaque similique quia. Nobis quod blanditiis atque cupiditate eaque perspiciatis ullam in. Sequi aspernatur eaque reiciendis error illo dolorum pariatur.
+                      Sit recusandae reiciendis magni ipsam repudiandae est dolor quae. Veritatis possimus eveniet iusto dignissimos quasi consequatur temporibus. Magni asperiores officiis occaecati provident velit quos a voluptate.
+                    available_on: '2021-11-08T19:34:53.563Z'
+                    deleted_at:
+                    slug: product-1682525
+                    meta_description:
+                    meta_keywords:
+                    created_at: '2022-11-08T19:34:53.582Z'
+                    updated_at: '2022-11-08T19:34:53.588Z'
+                    promotionable: true
+                    meta_title:
+                    discontinue_on:
+                    public_metadata: {}
+                    private_metadata: {}
+                    status: active
+                    make_active_at: '2021-11-08T19:34:53.563Z'
+                    display_compare_at_price:
+                    display_price: "$19.99"
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    tax_category:
+                      data:
+                        id: '110'
+                        type: tax_category
+                    primary_variant:
+                      data:
+                        id: '236'
+                        type: variant
+                    default_variant:
+                      data:
+                        id: '236'
+                        type: variant
+                    variants:
+                      data: []
+                    option_types:
+                      data: []
+                    product_properties:
+                      data: []
+                    taxons:
+                      data: []
+                    images:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Product
+  tags:
+  - Products
+  security:
+  - bearer_auth: []
+  description: Updates a Product
+  operationId: update-product
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: prices
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '171'
+                  type: product
+                  attributes:
+                    name: Twirling Bottom
+                    description: |-
+                      Ut quod iusto optio quos labore. Blanditiis in sunt sequi dolores eveniet reprehenderit maxime. Iusto consequuntur itaque nostrum placeat.
+                      Laboriosam labore vero voluptatibus suscipit consectetur possimus qui. Ullam commodi corporis cumque voluptatem neque non explicabo. Quaerat atque error nesciunt recusandae rem unde qui quas. Labore perspiciatis consectetur quisquam voluptatibus similique officiis ipsam enim. Labore neque reprehenderit et tempore.
+                      Ea minus nostrum placeat quibusdam laudantium. Illo voluptates in suscipit consequatur harum. Omnis tempora facilis distinctio quos repudiandae ex sapiente. Amet optio temporibus voluptas doloribus.
+                      Odio at porro commodi repudiandae quia quas. Ut sequi atque accusamus voluptatum consequatur delectus explicabo. Nobis laboriosam facere molestias consectetur saepe totam eos ea. Possimus atque adipisci sequi dolorum excepturi quo. Ad esse dolorum accusantium fugiat quaerat.
+                      Voluptas libero magnam earum reprehenderit ullam at veritatis. Magni culpa id quidem hic ad. Quidem ipsum est vero ut eaque veniam. Corrupti sint ratione maxime aspernatur itaque quo nostrum. Qui architecto ducimus quisquam iste saepe ullam.
+                    available_on: '2021-11-08T19:34:54.192Z'
+                    deleted_at:
+                    slug: product-1706992
+                    meta_description:
+                    meta_keywords:
+                    created_at: '2022-11-08T19:34:54.210Z'
+                    updated_at: '2022-11-08T19:34:54.468Z'
+                    promotionable: true
+                    meta_title:
+                    discontinue_on:
+                    public_metadata: {}
+                    private_metadata: {}
+                    status: active
+                    make_active_at: '2021-11-08T19:34:54.192Z'
+                    display_compare_at_price:
+                    display_price: "$33.21"
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '33.21'
+                    compare_at_price:
+                  relationships:
+                    tax_category:
+                      data:
+                        id: '112'
+                        type: tax_category
+                    primary_variant:
+                      data:
+                        id: '238'
+                        type: variant
+                    default_variant:
+                      data:
+                        id: '238'
+                        type: variant
+                    variants:
+                      data: []
+                    option_types:
+                      data: []
+                    product_properties:
+                      data: []
+                    taxons:
+                      data: []
+                    images:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Products/UpdateParams.yaml"
+delete:
+  summary: Delete a Product
+  tags:
+  - Products
+  security:
+  - bearer_auth: []
+  description: Deletes a Product
+  operationId: delete-product
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

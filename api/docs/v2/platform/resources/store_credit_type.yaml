@@ -1,0 +1,111 @@
+get:
+  summary: Return a Store Credit Type
+  tags:
+  - Store Credit Types
+  security:
+  - bearer_auth: []
+  description: Returns a Store Credit Type
+  operationId: show-store-credit-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '7'
+                  type: store_credit_type
+                  attributes:
+                    name: Expiring
+                    priority: 1
+                    created_at: '2022-11-08T19:35:36.930Z'
+                    updated_at: '2022-11-08T19:35:36.930Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Store Credit Type
+  tags:
+  - Store Credit Types
+  security:
+  - bearer_auth: []
+  description: Updates a Store Credit Type
+  operationId: update-store-credit-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '9'
+                  type: store_credit_type
+                  attributes:
+                    name: default
+                    priority: 1
+                    created_at: '2022-11-08T19:35:37.442Z'
+                    updated_at: '2022-11-08T19:35:37.670Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StoreCreditTypes/UpdateParams.yaml"
+delete:
+  summary: Delete a Store Credit Type
+  tags:
+  - Store Credit Types
+  security:
+  - bearer_auth: []
+  description: Deletes a Store Credit Type
+  operationId: delete-store-credit-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

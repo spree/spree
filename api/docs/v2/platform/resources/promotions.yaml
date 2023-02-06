@@ -1,0 +1,266 @@
+get:
+  summary: Return a list of Promotions
+  tags:
+  - Promotions
+  security:
+  - bearer_auth: []
+  description: Returns a list of Promotions
+  operationId: promotions-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotion_category,promotion_rules,promotion_actions,stores
+    schema:
+      type: string
+  - name: filter[code_eq]
+    in: query
+    description: ''
+    example: BLK-FRI
+    schema:
+      type: string
+  - name: filter[name_cont]
+    in: query
+    description: ''
+    example: New Customer
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '23'
+                  type: promotion
+                  attributes:
+                    description:
+                    expires_at:
+                    starts_at:
+                    name: Promo
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code:
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:02.793Z'
+                    updated_at: '2022-11-08T19:35:02.795Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                    promotion_rules:
+                      data: []
+                    promotion_actions:
+                      data: []
+                    stores:
+                      data:
+                      - id: '375'
+                        type: store
+                - id: '24'
+                  type: promotion
+                  attributes:
+                    description:
+                    expires_at:
+                    starts_at:
+                    name: Promo
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code:
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:02.805Z'
+                    updated_at: '2022-11-08T19:35:02.807Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '13'
+                        type: promotion_category
+                    promotion_rules:
+                      data: []
+                    promotion_actions:
+                      data:
+                      - id: '16'
+                        type: promotion_action
+                    stores:
+                      data:
+                      - id: '375'
+                        type: store
+                - id: '25'
+                  type: promotion
+                  attributes:
+                    description:
+                    expires_at:
+                    starts_at:
+                    name: Promo
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code:
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:02.822Z'
+                    updated_at: '2022-11-08T19:35:02.824Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '13'
+                        type: promotion_category
+                    promotion_rules:
+                      data: []
+                    promotion_actions:
+                      data:
+                      - id: '17'
+                        type: promotion_action
+                    stores:
+                      data:
+                      - id: '375'
+                        type: store
+                - id: '26'
+                  type: promotion
+                  attributes:
+                    description:
+                    expires_at:
+                    starts_at:
+                    name: Promo
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code:
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:02.837Z'
+                    updated_at: '2022-11-08T19:35:02.839Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '13'
+                        type: promotion_category
+                    promotion_rules:
+                      data:
+                      - id: '12'
+                        type: promotion_rule
+                    promotion_actions:
+                      data:
+                      - id: '18'
+                        type: promotion_action
+                    stores:
+                      data:
+                      - id: '375'
+                        type: store
+                meta:
+                  count: 4
+                  total_count: 4
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/promotions?page=1&per_page=&include=&filter[code_eq]=&filter[name_cont]=
+                  next: http://www.example.com/api/v2/platform/promotions?filter%5Bcode_eq%5D=&filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/promotions?filter%5Bcode_eq%5D=&filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/promotions?filter%5Bcode_eq%5D=&filter%5Bname_cont%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/promotions?filter%5Bcode_eq%5D=&filter%5Bname_cont%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Promotion
+  tags:
+  - Promotions
+  security:
+  - bearer_auth: []
+  description: Creates a Promotion
+  operationId: create-promotion
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotion_category,promotion_rules,promotion_actions,stores
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '35'
+                  type: promotion
+                  attributes:
+                    description: First 1000 Customers Save 20%
+                    expires_at: '2022-11-12T19:35:03.283Z'
+                    starts_at: '2022-11-08T19:35:03.283Z'
+                    name: Black Friday 20% Off
+                    type: Spree::Promotion
+                    usage_limit: 1000
+                    match_policy: any
+                    code: BLK-20
+                    advertise: true
+                    path: "/black-fri/today"
+                    created_at: '2022-11-08T19:35:03.521Z'
+                    updated_at: '2022-11-08T19:35:03.533Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '15'
+                        type: promotion_category
+                    promotion_rules:
+                      data: []
+                    promotion_actions:
+                      data: []
+                    stores:
+                      data:
+                      - id: '382'
+                        type: store
+                      - id: '383'
+                        type: store
+                      - id: '381'
+                        type: store
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Promotions/CreateParams.yaml"

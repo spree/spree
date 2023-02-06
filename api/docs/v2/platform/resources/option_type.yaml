@@ -1,0 +1,125 @@
+get:
+  summary: Return an Option Type
+  tags:
+  - Option Types
+  security:
+  - bearer_auth: []
+  description: Returns an Option Type
+  operationId: show-option-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '73'
+                  type: option_type
+                  attributes:
+                    name: foo-size-73
+                    presentation: Size
+                    position: 1
+                    created_at: '2022-11-08T19:34:32.026Z'
+                    updated_at: '2022-11-08T19:34:32.026Z'
+                    filterable: true
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_values:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update an Option Type
+  tags:
+  - Option Types
+  security:
+  - bearer_auth: []
+  description: Updates an Option Type
+  operationId: update-option-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '75'
+                  type: option_type
+                  attributes:
+                    name: Size-X
+                    presentation: Size
+                    position: 1
+                    created_at: '2022-11-08T19:34:32.542Z'
+                    updated_at: '2022-11-08T19:34:32.772Z'
+                    filterable: true
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_values:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/OptionTypes/UpdateParams.yaml"
+delete:
+  summary: Delete an Option Type
+  tags:
+  - Option Types
+  security:
+  - bearer_auth: []
+  description: Deletes an Option Type
+  operationId: delete-option-type
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

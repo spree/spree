@@ -1,0 +1,138 @@
+get:
+  summary: Return a Tax Category
+  tags:
+  - Tax Categories
+  security:
+  - bearer_auth: []
+  description: Returns a Tax Category
+  operationId: show-tax-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: tax_rates
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '158'
+                  type: tax_category
+                  attributes:
+                    name: TaxCategory - 71294
+                    description: Sunt ut autem corrupti explicabo quibusdam nam
+                      voluptas.
+                    is_default: false
+                    deleted_at:
+                    created_at: '2022-11-08T19:35:42.273Z'
+                    updated_at: '2022-11-08T19:35:42.273Z'
+                    tax_code:
+                  relationships:
+                    tax_rates:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Tax Category
+  tags:
+  - Tax Categories
+  security:
+  - bearer_auth: []
+  description: Updates a Tax Category
+  operationId: update-tax-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: tax_rates
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '160'
+                  type: tax_category
+                  attributes:
+                    name: Clothing
+                    description: Men's, women's and children's clothing
+                    is_default: true
+                    deleted_at:
+                    created_at: '2022-11-08T19:35:42.789Z'
+                    updated_at: '2022-11-08T19:35:43.019Z'
+                    tax_code: 1233K
+                  relationships:
+                    tax_rates:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/TaxCategories/UpdateParams.yaml"
+delete:
+  summary: Delete a Tax Category
+  tags:
+  - Tax Categories
+  security:
+  - bearer_auth: []
+  description: Deletes a Tax Category
+  operationId: delete-tax-category
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

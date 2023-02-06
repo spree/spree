@@ -1,0 +1,101 @@
+get:
+  summary: Return a list of Store Credit Types
+  tags:
+  - Store Credit Types
+  security:
+  - bearer_auth: []
+  description: Returns a list of Store Credit Types
+  operationId: store-credit-types-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '2'
+                  type: store_credit_type
+                  attributes:
+                    name: Expiring
+                    priority: 1
+                    created_at: '2022-11-08T19:35:36.152Z'
+                    updated_at: '2022-11-08T19:35:36.152Z'
+                - id: '3'
+                  type: store_credit_type
+                  attributes:
+                    name: Expiring
+                    priority: 1
+                    created_at: '2022-11-08T19:35:36.153Z'
+                    updated_at: '2022-11-08T19:35:36.153Z'
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/store_credit_types?page=1&per_page=
+                  next: http://www.example.com/api/v2/platform/store_credit_types?page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/store_credit_types?page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/store_credit_types?page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/store_credit_types?page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Store Credit Type
+  tags:
+  - Store Credit Types
+  security:
+  - bearer_auth: []
+  description: Creates a Store Credit Type
+  operationId: create-store-credit-type
+  parameters: []
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '6'
+                  type: store_credit_type
+                  attributes:
+                    name: Expiring
+                    priority: 1
+                    created_at: '2022-11-08T19:35:36.660Z'
+                    updated_at: '2022-11-08T19:35:36.660Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StoreCreditTypes/CreateParams.yaml"

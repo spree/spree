@@ -1,0 +1,151 @@
+get:
+  summary: Return a Stock Item
+  tags:
+  - Stock Items
+  security:
+  - bearer_auth: []
+  description: Returns a Stock Item
+  operationId: show-stock-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stock_location,variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '287'
+                  type: stock_item
+                  attributes:
+                    count_on_hand: 10
+                    created_at: '2022-11-08T19:35:28.695Z'
+                    updated_at: '2022-11-08T19:35:28.707Z'
+                    backorderable: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    is_available: true
+                  relationships:
+                    stock_location:
+                      data:
+                        id: '162'
+                        type: stock_location
+                    variant:
+                      data:
+                        id: '277'
+                        type: variant
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Stock Item
+  tags:
+  - Stock Items
+  security:
+  - bearer_auth: []
+  description: Updates a Stock Item
+  operationId: update-stock-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stock_location,variant
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '291'
+                  type: stock_item
+                  attributes:
+                    count_on_hand: 200
+                    created_at: '2022-11-08T19:35:29.347Z'
+                    updated_at: '2022-11-08T19:35:29.598Z'
+                    backorderable: true
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    is_available: true
+                  relationships:
+                    stock_location:
+                      data:
+                        id: '166'
+                        type: stock_location
+                    variant:
+                      data:
+                        id: '279'
+                        type: variant
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Variant can't be blank
+                errors:
+                  variant:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/StockItems/UpdateParams.yaml"
+delete:
+  summary: Delete a Stock Item
+  tags:
+  - Stock Items
+  security:
+  - bearer_auth: []
+  description: Deletes a Stock Item
+  operationId: delete-stock-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

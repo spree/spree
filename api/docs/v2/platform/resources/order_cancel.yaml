@@ -1,0 +1,31 @@
+patch:
+  summary: Cancels an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Cancels an Order, when using a token created for a user, it will
+    save this user as the canceler
+  operationId: cancel-order
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: record canceled
+    '422':
+      description: cannot be canceled
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

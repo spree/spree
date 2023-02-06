@@ -1,0 +1,47 @@
+type: object
+properties:
+  stock_location:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: Warehouse 3
+      default:
+        type: boolean
+      address1:
+        type: string
+        example: South St. 8
+      address2:
+        type: string
+        example: South St. 109
+      country_id:
+        type: string
+        example: '2'
+      state_id:
+        type: string
+        example: '4'
+      city:
+        type: string
+        example: Los Angeles
+      state_name:
+        type: string
+        example: California
+      zipcode:
+        type: string
+        example: '90005'
+      phone:
+        type: string
+        example: '23333456'
+      active:
+        type: boolean
+      backorderable_default:
+        type: boolean
+      propagate_all_variants:
+        type: boolean
+      admin_name:
+        type: string
+required:
+- stock_location
+x-internal: false

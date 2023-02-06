@@ -1,0 +1,207 @@
+get:
+  summary: Return a Line Item
+  tags:
+  - Line Items
+  security:
+  - bearer_auth: []
+  description: Returns a Line Item
+  operationId: show-line-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,tax_category,variant.product,digital_links
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '28'
+                  type: line_item
+                  attributes:
+                    quantity: 1
+                    price: '10.0'
+                    created_at: '2022-11-08T19:34:20.761Z'
+                    updated_at: '2022-11-08T19:34:20.769Z'
+                    currency: USD
+                    cost_price: '17.0'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '10.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_amount: "$10.00"
+                    display_amount: "$10.00"
+                    display_final_amount: "$10.00"
+                    display_subtotal: "$10.00"
+                    display_pre_tax_amount: "$10.00"
+                    display_price: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$10.00"
+                    display_included_tax_total: "$0.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '33'
+                        type: order
+                    tax_category:
+                      data:
+                        id: '73'
+                        type: tax_category
+                    variant:
+                      data:
+                        id: '188'
+                        type: variant
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    digital_links:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Line Item
+  tags:
+  - Line Items
+  security:
+  - bearer_auth: []
+  description: Updates a Line Item
+  operationId: update-line-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,tax_category,variant.product,digital_links
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '30'
+                  type: line_item
+                  attributes:
+                    quantity: 4
+                    price: '10.0'
+                    created_at: '2022-11-08T19:34:21.508Z'
+                    updated_at: '2022-11-08T19:34:21.772Z'
+                    currency: USD
+                    cost_price: '17.0'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '40.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_amount: "$40.00"
+                    display_amount: "$40.00"
+                    display_final_amount: "$40.00"
+                    display_subtotal: "$40.00"
+                    display_pre_tax_amount: "$40.00"
+                    display_price: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$40.00"
+                    display_included_tax_total: "$0.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '35'
+                        type: order
+                    tax_category:
+                      data:
+                        id: '75'
+                        type: tax_category
+                    variant:
+                      data:
+                        id: '192'
+                        type: variant
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    digital_links:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Quantity selected of "Product 1275645" is not available.
+                errors:
+                  quantity:
+                  - selected of "Product 1275645" is not available.
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/LineItems/UpdateParams.yaml"
+delete:
+  summary: Delete a Line Item
+  tags:
+  - Line Items
+  security:
+  - bearer_auth: []
+  description: Deletes a Line Item
+  operationId: delete-line-item
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

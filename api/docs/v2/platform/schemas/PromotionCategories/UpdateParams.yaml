@@ -1,0 +1,19 @@
+type: object
+properties:
+  promotion_category:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: Promotions Used in 2021
+        description: Update the name of this Promotion Category.
+      code:
+        type: string
+        example: 2021-PROMOS
+        nullable: true
+        description: Change or remove the code for this Promotion Category.
+required:
+- promotion_category
+x-internal: false

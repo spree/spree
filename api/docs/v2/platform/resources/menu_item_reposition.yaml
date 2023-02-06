@@ -1,0 +1,71 @@
+patch:
+      summary: Reposition a Menu Item
+      tags:
+      - Menu Items
+      security:
+      - bearer_auth: []
+      operationId: reposition-menu-item
+      description: Reposition a Menu Item
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '77'
+                      type: menu_item
+                      attributes:
+                        name: Link no. 62 To Somewhere
+                        subtitle:
+                        destination:
+                        new_window: false
+                        item_type: Link
+                        linked_resource_type: Spree::Linkable::Uri
+                        code:
+                        lft: 5
+                        rgt: 6
+                        depth: 2
+                        created_at: '2022-11-08T19:34:27.610Z'
+                        updated_at: '2022-11-08T19:34:27.858Z'
+                        link:
+                        is_container: false
+                        is_root: false
+                        is_child: true
+                        is_leaf: true
+                      relationships:
+                        icon:
+                          data:
+                            id: '73'
+                            type: icon
+                        menu:
+                          data:
+                            id: '15'
+                            type: menu
+                        parent:
+                          data:
+                            id: '75'
+                            type: menu_item
+                        linked_resource:
+                          data:
+                        children:
+                          data: []
+              schema:
+                $ref: "../schemas/Resource.yaml"
+        '404':
+          $ref: "../responses/RecordNotFoundError.yaml"
+        '401':
+          $ref: "../responses/AuthenticationFailedError.yaml"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/MenuItems/RepositionParams.yaml"

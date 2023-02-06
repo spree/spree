@@ -1,0 +1,352 @@
+get:
+  summary: Return a list of Orders
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Returns a list of Orders
+  operationId: orders-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  - name: filter[state_eq]
+    in: query
+    description: ''
+    example: complete
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '40'
+                  type: order
+                  attributes:
+                    number: R936148131
+                    item_total: '0.0'
+                    total: '0.0'
+                    state: cart
+                    adjustment_total: '0.0'
+                    completed_at:
+                    payment_total: '0.0'
+                    shipment_state:
+                    payment_state:
+                    email: murray_harber@strosin.ca
+                    special_instructions:
+                    created_at: '2022-11-08T19:34:36.444Z'
+                    updated_at: '2022-11-08T19:34:36.444Z'
+                    currency: USD
+                    last_ip_address:
+                    shipment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    channel: spree
+                    included_tax_total: '0.0'
+                    item_count: 0
+                    approved_at:
+                    confirmation_delivered: false
+                    canceled_at:
+                    state_lock_version: 0
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    store_owner_notification_delivered:
+                    public_metadata: {}
+                    private_metadata: {}
+                    internal_note:
+                    display_ship_total: "$0.00"
+                    display_shipment_total: "$0.00"
+                    display_outstanding_balance: "$0.00"
+                    display_item_total: "$0.00"
+                    display_adjustment_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$0.00"
+                    display_cart_promo_total: "$0.00"
+                    display_pre_tax_item_amount: "$0.00"
+                    display_pre_tax_total: "$0.00"
+                    display_total_applicable_store_credit: "$0.00"
+                    display_total_applied_store_credit: "$0.00"
+                    display_order_total_after_store_credit: "$0.00"
+                    display_total_available_store_credit: "$0.00"
+                    display_store_credit_remaining_after_capture: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '41'
+                        type: user
+                    created_by:
+                      data:
+                    approver:
+                      data:
+                    canceler:
+                      data:
+                    bill_address:
+                      data:
+                        id: '52'
+                        type: address
+                    ship_address:
+                      data:
+                    line_items:
+                      data: []
+                    payments:
+                      data: []
+                    shipments:
+                      data: []
+                    state_changes:
+                      data: []
+                    return_authorizations:
+                      data: []
+                    reimbursements:
+                      data: []
+                    adjustments:
+                      data: []
+                    all_adjustments:
+                      data: []
+                    order_promotions:
+                      data: []
+                - id: '41'
+                  type: order
+                  attributes:
+                    number: R877925031
+                    item_total: '0.0'
+                    total: '0.0'
+                    state: cart
+                    adjustment_total: '0.0'
+                    completed_at:
+                    payment_total: '0.0'
+                    shipment_state:
+                    payment_state:
+                    email: bronwyn@legroscorkery.ca
+                    special_instructions:
+                    created_at: '2022-11-08T19:34:36.455Z'
+                    updated_at: '2022-11-08T19:34:36.455Z'
+                    currency: USD
+                    last_ip_address:
+                    shipment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    channel: spree
+                    included_tax_total: '0.0'
+                    item_count: 0
+                    approved_at:
+                    confirmation_delivered: false
+                    canceled_at:
+                    state_lock_version: 0
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    store_owner_notification_delivered:
+                    public_metadata: {}
+                    private_metadata: {}
+                    internal_note:
+                    display_ship_total: "$0.00"
+                    display_shipment_total: "$0.00"
+                    display_outstanding_balance: "$0.00"
+                    display_item_total: "$0.00"
+                    display_adjustment_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$0.00"
+                    display_cart_promo_total: "$0.00"
+                    display_pre_tax_item_amount: "$0.00"
+                    display_pre_tax_total: "$0.00"
+                    display_total_applicable_store_credit: "$0.00"
+                    display_total_applied_store_credit: "$0.00"
+                    display_order_total_after_store_credit: "$0.00"
+                    display_total_available_store_credit: "$0.00"
+                    display_store_credit_remaining_after_capture: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '42'
+                        type: user
+                    created_by:
+                      data:
+                    approver:
+                      data:
+                    canceler:
+                      data:
+                    bill_address:
+                      data:
+                        id: '53'
+                        type: address
+                    ship_address:
+                      data:
+                    line_items:
+                      data: []
+                    payments:
+                      data: []
+                    shipments:
+                      data: []
+                    state_changes:
+                      data: []
+                    return_authorizations:
+                      data: []
+                    reimbursements:
+                      data: []
+                    adjustments:
+                      data: []
+                    all_adjustments:
+                      data: []
+                    order_promotions:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/orders?page=1&per_page=&include=&filter[state_eq]=
+                  next: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/orders?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Creates an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Creates an Order
+  operationId: create-order
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '44'
+                  type: order
+                  attributes:
+                    number: R304058941
+                    item_total: '0.0'
+                    total: '0.0'
+                    state: cart
+                    adjustment_total: '0.0'
+                    completed_at:
+                    payment_total: '0.0'
+                    shipment_state:
+                    payment_state:
+                    email:
+                    special_instructions:
+                    created_at: '2022-11-08T19:34:37.269Z'
+                    updated_at: '2022-11-08T19:34:37.289Z'
+                    currency: USD
+                    last_ip_address:
+                    shipment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    channel: spree
+                    included_tax_total: '0.0'
+                    item_count: 0
+                    approved_at:
+                    confirmation_delivered: false
+                    canceled_at:
+                    state_lock_version: 0
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    store_owner_notification_delivered:
+                    public_metadata: {}
+                    private_metadata: {}
+                    internal_note:
+                    display_ship_total: "$0.00"
+                    display_shipment_total: "$0.00"
+                    display_outstanding_balance: "$0.00"
+                    display_item_total: "$0.00"
+                    display_adjustment_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$0.00"
+                    display_cart_promo_total: "$0.00"
+                    display_pre_tax_item_amount: "$20.00"
+                    display_pre_tax_total: "$20.00"
+                    display_total_applicable_store_credit: "$0.00"
+                    display_total_applied_store_credit: "$0.00"
+                    display_order_total_after_store_credit: "$0.00"
+                    display_total_available_store_credit: "$0.00"
+                    display_store_credit_remaining_after_capture: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                    created_by:
+                      data:
+                    approver:
+                      data:
+                    canceler:
+                      data:
+                    bill_address:
+                      data:
+                        id: '56'
+                        type: address
+                    ship_address:
+                      data:
+                        id: '56'
+                        type: address
+                    line_items:
+                      data:
+                      - id: '35'
+                        type: line_item
+                    payments:
+                      data:
+                      - id: '1'
+                        type: payment
+                    shipments:
+                      data: []
+                    state_changes:
+                      data: []
+                    return_authorizations:
+                      data: []
+                    reimbursements:
+                      data: []
+                    adjustments:
+                      data: []
+                    all_adjustments:
+                      data: []
+                    order_promotions:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Orders/CreateParams.yaml"

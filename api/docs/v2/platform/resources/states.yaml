@@ -1,0 +1,79 @@
+get:
+  summary: Returns a list of States
+  tags:
+  - States
+  security:
+  - bearer_auth: []
+  operationId: states-list
+  description: Returns a list of States
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: country
+    schema:
+      type: string
+  - name: filter[country_id_eq]
+    in: query
+    description: ''
+    example: '4'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '230'
+                  type: state
+                  attributes:
+                    name: STATE_NAME_230
+                    abbr: STATE_ABBR_230
+                    updated_at: '2022-11-08T19:35:26.719Z'
+                    created_at: '2022-11-08T19:35:26.719Z'
+                  relationships:
+                    country:
+                      data:
+                        id: '394'
+                        type: country
+                - id: '231'
+                  type: state
+                  attributes:
+                    name: STATE_NAME_231
+                    abbr: STATE_ABBR_231
+                    updated_at: '2022-11-08T19:35:26.721Z'
+                    created_at: '2022-11-08T19:35:26.721Z'
+                  relationships:
+                    country:
+                      data:
+                        id: '394'
+                        type: country
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/states?page=1&per_page=&include=&filter[country_id_eq]=
+                  next: http://www.example.com/api/v2/platform/states?filter%5Bcountry_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/states?filter%5Bcountry_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/states?filter%5Bcountry_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/states?filter%5Bcountry_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

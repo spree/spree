@@ -1,0 +1,138 @@
+type: object
+properties:
+  order:
+    type: object
+    properties:
+      item_total:
+        type: number
+        example: 170.9
+      total:
+        type: number
+        example: 190.9
+      state:
+        type: string
+        example: complete
+        enum:
+        - cart
+        - address
+        - delivery
+        - payment
+        - confirm
+        - complete
+        - canceled
+      adjustment_total:
+        type: number
+        example: 20.0
+      user_id:
+        type: string
+        example: '1'
+      completed_at:
+        type: string
+        format: date_time
+        example: 2022-11-08 19:33:50 UTC
+      bill_address_id:
+        type: string
+        example: '1'
+      ship_address_id:
+        type: string
+        example: '1'
+      payment_total:
+        type: number
+        example: 190.9
+      shipment_state:
+        type: string
+        example: shipped
+        enum:
+        - backorder
+        - canceled
+        - partial
+        - pending
+        - ready
+        - shipped
+      payment_state:
+        type: string
+        example: paid
+        enum:
+        - balance_due
+        - credit_owed
+        - failed
+        - paid
+        - void
+      email:
+        type: string
+        format: email
+        example: hi@getvendo.com
+      special_instructions:
+        type: string
+        example: I need it ASAP!
+      currency:
+        type: string
+        example: USD
+      last_ip_address:
+        type: string
+        example: 127.0.0.1
+      created_by_id:
+        type: string
+        example: '1'
+      shipment_total:
+        type: number
+        example: 10.0
+      additional_tax_total:
+        type: number
+        example: 10.0
+      promo_total:
+        type: number
+        example: 0.0
+      channel:
+        type: string
+        example: online
+      included_tax_total:
+        type: number
+        example: 0.0
+      item_count:
+        type: integer
+        example: 2
+      approver_id:
+        type: string
+      approved_at:
+        type: string
+        format: date_time
+        example: 2022-11-08 19:33:50 UTC
+      confirmation_delivered:
+        type: boolean
+        example: true
+        default: false
+      considered_risky:
+        type: boolean
+        example: true
+        default: false
+      canceled_at:
+        type: string
+        format: date_time
+      canceler_id:
+        type: string
+      taxable_adjustment_total:
+        type: number
+        example: 170.9
+      non_taxable_adjustment_total:
+        type: number
+        example: 10.0
+      store_owner_notification_delivered:
+        type: boolean
+        example: true
+        default: false
+      bill_address_attributes:
+        $ref: "../Addresses/UpdateParams.yaml"
+      ship_address_attributes:
+        $ref: "../Addresses/UpdateParams.yaml"
+      line_items_attributes:
+        type: array
+        items:
+          $ref: "../LineItems/UpdateParams.yaml"
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- order
+x-internal: false

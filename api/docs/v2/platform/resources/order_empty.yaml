@@ -1,0 +1,126 @@
+patch:
+  summary: Empties an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Removes all line items, promotions, shipment and payments from
+    an Order
+  operationId: empty-order
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '59'
+                  type: order
+                  attributes:
+                    number: R688998321
+                    item_total: '0.0'
+                    total: '0.0'
+                    state: cart
+                    adjustment_total: '0.0'
+                    completed_at:
+                    payment_total: '0.0'
+                    shipment_state:
+                    payment_state:
+                    email: porsha.shanahan@nicolaszboncak.us
+                    special_instructions:
+                    created_at: '2022-11-08T19:34:42.795Z'
+                    updated_at: '2022-11-08T19:34:43.122Z'
+                    currency: USD
+                    last_ip_address:
+                    shipment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    channel: spree
+                    included_tax_total: '0.0'
+                    item_count: 0
+                    approved_at:
+                    confirmation_delivered: false
+                    canceled_at:
+                    state_lock_version: 0
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    store_owner_notification_delivered:
+                    public_metadata: {}
+                    private_metadata: {}
+                    internal_note:
+                    display_ship_total: "$0.00"
+                    display_shipment_total: "$0.00"
+                    display_outstanding_balance: "$0.00"
+                    display_item_total: "$0.00"
+                    display_adjustment_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$0.00"
+                    display_cart_promo_total: "$0.00"
+                    display_pre_tax_item_amount: "$0.00"
+                    display_pre_tax_total: "$0.00"
+                    display_total_applicable_store_credit: "$0.00"
+                    display_total_applied_store_credit: "$0.00"
+                    display_order_total_after_store_credit: "$0.00"
+                    display_total_available_store_credit: "$0.00"
+                    display_store_credit_remaining_after_capture: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '59'
+                        type: user
+                    created_by:
+                      data:
+                    approver:
+                      data:
+                    canceler:
+                      data:
+                    bill_address:
+                      data:
+                        id: '85'
+                        type: address
+                    ship_address:
+                      data:
+                        id: '86'
+                        type: address
+                    line_items:
+                      data: []
+                    payments:
+                      data: []
+                    shipments:
+                      data: []
+                    state_changes:
+                      data: []
+                    return_authorizations:
+                      data: []
+                    reimbursements:
+                      data: []
+                    adjustments:
+                      data: []
+                    all_adjustments:
+                      data: []
+                    order_promotions:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

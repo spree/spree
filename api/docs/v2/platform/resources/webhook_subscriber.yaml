@@ -1,0 +1,118 @@
+get:
+  summary: Return a Webhook Subscriber
+  tags:
+  - Webhook Subscribers
+  security:
+  - bearer_auth: []
+  description: Returns a Webhook Subscriber
+  operationId: show-webhook-subscriber
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '10'
+                  type: subscriber
+                  attributes:
+                    url: https://www.url10.com/
+                    active: true
+                    subscriptions:
+                    - "*"
+                    created_at: '2022-11-08T19:35:59.604Z'
+                    updated_at: '2022-11-08T19:35:59.604Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Webhook Subscriber
+  tags:
+  - Webhook Subscribers
+  security:
+  - bearer_auth: []
+  description: Updates a Webhook Subscriber
+  operationId: update-webhook-subscriber
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '12'
+                  type: subscriber
+                  attributes:
+                    url: https://www.url12.com/
+                    active: true
+                    subscriptions:
+                    - "*"
+                    created_at: '2022-11-08T19:36:00.130Z'
+                    updated_at: '2022-11-08T19:36:00.130Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Url must be a valid URL, Url can't be blank, and Url the
+                  URL must have a path
+                errors:
+                  url:
+                  - must be a valid URL
+                  - can't be blank
+                  - the URL must have a path
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/WebhookSubscribers/UpdateParams.yaml"
+delete:
+  summary: Delete a Webhook Subscriber
+  tags:
+  - Webhook Subscribers
+  security:
+  - bearer_auth: []
+  description: Deletes a Webhook Subscriber
+  operationId: delete-webhook-subscriber
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

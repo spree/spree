@@ -1,0 +1,246 @@
+get:
+  summary: Return a list of Shipments
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: Returns a list of Shipments
+  operationId: shipments-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  - name: filter[state_eq]
+    in: query
+    description: ''
+    example: complete
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '28'
+                  type: shipment
+                  attributes:
+                    tracking: U10000
+                    number: H74819281258
+                    cost: '100.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:09.196Z'
+                    updated_at: '2022-11-08T19:35:09.199Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$100.00"
+                    display_item_cost: "$0.00"
+                    display_amount: "$100.00"
+                    display_final_price: "$100.00"
+                    display_cost: "$100.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '78'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '106'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    shipping_rates:
+                      data:
+                      - id: '30'
+                        type: shipping_rate
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+                        id: '30'
+                        type: shipping_rate
+                - id: '29'
+                  type: shipment
+                  attributes:
+                    tracking: U10000
+                    number: H45064150244
+                    cost: '100.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:09.230Z'
+                    updated_at: '2022-11-08T19:35:09.233Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$100.00"
+                    display_item_cost: "$0.00"
+                    display_amount: "$100.00"
+                    display_final_price: "$100.00"
+                    display_cost: "$100.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '79'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '107'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    shipping_rates:
+                      data:
+                      - id: '31'
+                        type: shipping_rate
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+                        id: '31'
+                        type: shipping_rate
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/shipments?page=1&per_page=&include=&filter[state_eq]=
+                  next: http://www.example.com/api/v2/platform/shipments?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/shipments?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/shipments?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/shipments?filter%5Bstate_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Shipment
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: Creates a Shipment
+  operationId: create-shipment
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '32'
+                  type: shipment
+                  attributes:
+                    tracking:
+                    number: H86798855348
+                    cost: '0.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:09.957Z'
+                    updated_at: '2022-11-08T19:35:09.970Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$0.00"
+                    display_item_cost: "$19.99"
+                    display_amount: "$0.00"
+                    display_final_price: "$0.00"
+                    display_cost: "$0.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '82'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '110'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data:
+                      - id: '28'
+                        type: inventory_unit
+                    shipping_rates:
+                      data: []
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: order_not_found
+                errors: {}
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Shipments/CreateParams.yaml"

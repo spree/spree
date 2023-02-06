@@ -1,0 +1,151 @@
+get:
+  summary: Return a list of Option Values
+  tags:
+  - Option Values
+  security:
+  - bearer_auth: []
+  description: Returns a list of Option Values
+  operationId: option-values-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: option_type
+    schema:
+      type: string
+  - name: filter[option_type_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[name_cont]
+    in: query
+    description: ''
+    example: Red
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '68'
+                  type: option_value
+                  attributes:
+                    position: 1
+                    name: Size-68
+                    presentation: S
+                    created_at: '2022-11-08T19:34:33.815Z'
+                    updated_at: '2022-11-08T19:34:33.815Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_type:
+                      data:
+                        id: '80'
+                        type: option_type
+                - id: '69'
+                  type: option_value
+                  attributes:
+                    position: 1
+                    name: Size-69
+                    presentation: S
+                    created_at: '2022-11-08T19:34:33.820Z'
+                    updated_at: '2022-11-08T19:34:33.820Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_type:
+                      data:
+                        id: '81'
+                        type: option_type
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/option_values?page=1&per_page=&include=&filter[option_type_id_eq]=&filter[name_cont]=
+                  next: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/option_values?filter%5Bname_cont%5D=&filter%5Boption_type_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create an Option Value
+  tags:
+  - Option Values
+  security:
+  - bearer_auth: []
+  description: Creates an Option Value
+  operationId: create-option-value
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: option_type
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '72'
+                  type: option_value
+                  attributes:
+                    position: 1
+                    name: Size-72
+                    presentation: S
+                    created_at: '2022-11-08T19:34:34.345Z'
+                    updated_at: '2022-11-08T19:34:34.345Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_type:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank and Presentation can't be blank
+                errors:
+                  name:
+                  - can't be blank
+                  presentation:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/OptionValues/CreateParams.yaml"

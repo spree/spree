@@ -1,0 +1,21 @@
+type: object
+properties:
+  option_type:
+    type: object
+    required:
+    - name
+    - presentation
+    properties:
+      name:
+        type: string
+        example: color
+      presentation:
+        type: string
+        example: Color
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- option_type
+x-internal: false

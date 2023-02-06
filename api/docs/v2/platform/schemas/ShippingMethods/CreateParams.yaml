@@ -1,0 +1,60 @@
+type: object
+properties:
+  shipping_method:
+    type: object
+    required:
+    - name
+    - display_on
+    - shipping_category_ids
+    properties:
+      name:
+        type: string
+        example: DHL Express
+      admin_name:
+        type: string
+        example: DHL Area Code D
+      code:
+        type: string
+        example: DHL-A-D
+      tracking_url:
+        type: string
+        example: dhlexpress.com?tracking=
+      display_on:
+        type: string
+        example: both
+        enum:
+        - both
+        - back_end
+        - front_end
+      tax_category_id:
+        type: string
+        example: '1'
+      shipping_category_ids:
+        type: array
+        items:
+          allOf:
+          - type: string
+            example: '2'
+      calculator_attributes:
+        type: object
+        properties:
+          type:
+            type: string
+            example: Spree::Calculator::Shipping::FlatPercentItemTotal
+            enum:
+            - Spree::Calculator::Shipping::DigitalDelivery
+            - Spree::Calculator::Shipping::FlatPercentItemTotal
+            - Spree::Calculator::Shipping::FlatRate
+            - Spree::Calculator::Shipping::FlexiRate
+            - Spree::Calculator::Shipping::PerItem
+            - Spree::Calculator::Shipping::PriceSack
+        required:
+        - type
+        x-internal: false
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- shipping_method
+x-internal: false

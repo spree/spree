@@ -1,0 +1,56 @@
+type: object
+properties:
+  store_credit:
+    type: object
+    required:
+    - user_id
+    - category_id
+    - type_id
+    - created_by_id
+    - currency
+    - store_id
+    - amount
+    properties:
+      user_id:
+        type: string
+        example: '2'
+      category_id:
+        type: string
+        example: '4'
+      created_by_id:
+        type: string
+        example: '5'
+      amount:
+        type: number
+        example: 25.0
+      amount_used:
+        type: number
+        example: 10.0
+      memo:
+        type: string
+        example: This credit was given as a refund
+      currency:
+        type: string
+        example: USD
+      amount_authorized:
+        type: number
+        example: 15.5
+      originator_id:
+        type: string
+        example: '3'
+      originator_type:
+        type: string
+        example: Refund
+      type_id:
+        type: string
+        example: '1'
+      store_id:
+        type: string
+        example: '2'
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- store_credit
+x-internal: false

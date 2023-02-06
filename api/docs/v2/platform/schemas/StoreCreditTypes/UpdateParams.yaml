@@ -1,0 +1,14 @@
+type: object
+properties:
+  store_credit_type:
+    type: object
+    properties:
+      name:
+        type: string
+        example: refunded
+      priority:
+        type: integer
+        example: 1
+required:
+- store_credit_type
+x-internal: false

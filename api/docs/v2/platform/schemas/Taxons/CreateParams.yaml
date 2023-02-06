@@ -1,0 +1,25 @@
+type: object
+properties:
+  taxon:
+    type: object
+    required:
+    - name
+    - taxonomy_id
+    properties:
+      taxonomy_id:
+        type: string
+      parent_id:
+        type: string
+      name:
+        type: string
+      public_metadata:
+        type: object
+        example:
+          ability_to_recycle: 90%
+      private_metadata:
+        type: object
+        example:
+          profitability: 2
+required:
+- taxon
+x-internal: false

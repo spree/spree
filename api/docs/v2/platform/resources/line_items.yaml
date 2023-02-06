@@ -1,0 +1,249 @@
+get:
+  summary: Return a list of Line Items
+  tags:
+  - Line Items
+  security:
+  - bearer_auth: []
+  description: Returns a list of Line Items
+  operationId: line-items-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,tax_category,variant.product,digital_links
+    schema:
+      type: string
+  - name: filter[order_id_eq]
+    in: query
+    description: ''
+    example: '123'
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '23'
+                  type: line_item
+                  attributes:
+                    quantity: 1
+                    price: '10.0'
+                    created_at: '2022-11-08T19:34:19.541Z'
+                    updated_at: '2022-11-08T19:34:19.550Z'
+                    currency: USD
+                    cost_price: '17.0'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '10.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_amount: "$10.00"
+                    display_amount: "$10.00"
+                    display_final_amount: "$10.00"
+                    display_subtotal: "$10.00"
+                    display_pre_tax_amount: "$10.00"
+                    display_price: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$10.00"
+                    display_included_tax_total: "$0.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '29'
+                        type: order
+                    tax_category:
+                      data:
+                        id: '70'
+                        type: tax_category
+                    variant:
+                      data:
+                        id: '183'
+                        type: variant
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    digital_links:
+                      data: []
+                - id: '24'
+                  type: line_item
+                  attributes:
+                    quantity: 1
+                    price: '10.0'
+                    created_at: '2022-11-08T19:34:19.584Z'
+                    updated_at: '2022-11-08T19:34:19.590Z'
+                    currency: USD
+                    cost_price: '17.0'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '10.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_amount: "$10.00"
+                    display_amount: "$10.00"
+                    display_final_amount: "$10.00"
+                    display_subtotal: "$10.00"
+                    display_pre_tax_amount: "$10.00"
+                    display_price: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$10.00"
+                    display_included_tax_total: "$0.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '29'
+                        type: order
+                    tax_category:
+                      data:
+                        id: '70'
+                        type: tax_category
+                    variant:
+                      data:
+                        id: '184'
+                        type: variant
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    digital_links:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/line_items?page=1&per_page=&include=&filter[order_id_eq]=
+                  next: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/line_items?filter%5Border_id_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Line Item
+  tags:
+  - Line Items
+  security:
+  - bearer_auth: []
+  description: Creates a Line Item
+  operationId: create-line-item
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: order,tax_category,variant.product,digital_links
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '27'
+                  type: line_item
+                  attributes:
+                    quantity: 1
+                    price: '10.0'
+                    created_at: '2022-11-08T19:34:20.312Z'
+                    updated_at: '2022-11-08T19:34:20.352Z'
+                    currency: USD
+                    cost_price: '17.0'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '10.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_amount: "$10.00"
+                    display_amount: "$10.00"
+                    display_final_amount: "$10.00"
+                    display_subtotal: "$10.00"
+                    display_pre_tax_amount: "$10.00"
+                    display_price: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$10.00"
+                    display_included_tax_total: "$0.00"
+                  relationships:
+                    order:
+                      data:
+                        id: '31'
+                        type: order
+                    tax_category:
+                      data:
+                        id: '72'
+                        type: tax_category
+                    variant:
+                      data:
+                        id: '187'
+                        type: variant
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data: []
+                    digital_links:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Variant can't be blank, Price is not a number, Currency
+                  Must match order currency
+                errors:
+                  variant:
+                  - can't be blank
+                  price:
+                  - is not a number
+                  currency:
+                  - Must match order currency
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/LineItems/CreateParams.yaml"

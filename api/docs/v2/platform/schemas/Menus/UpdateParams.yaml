@@ -1,0 +1,22 @@
+type: object
+properties:
+  menu:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Main Menu
+        description: Update this Menu name.
+      location:
+        type: string
+        enum:
+        - header
+        - footer
+        description: Update the location this menu appears in the website.
+      locale:
+        type: string
+        example: en-US
+        description: Change the language of this menu.
+required:
+- menu
+x-internal: false

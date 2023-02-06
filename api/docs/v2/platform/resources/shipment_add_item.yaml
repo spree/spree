@@ -1,0 +1,98 @@
+patch:
+  summary: Adds item (Variant) to an existing Shipment
+  tags:
+  - Shipments
+  security:
+  - bearer_auth: []
+  description: If selected Variant was already added to Order it will increase
+    the quantity of existing Line Item, if not it will create a new Line Item
+  operationId: add-item-shipment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '48'
+                  type: shipment
+                  attributes:
+                    tracking: U10000
+                    number: H80492609966
+                    cost: '0.0'
+                    shipped_at:
+                    state: pending
+                    created_at: '2022-11-08T19:35:13.675Z'
+                    updated_at: '2022-11-08T19:35:13.998Z'
+                    adjustment_total: '0.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    included_tax_total: '0.0'
+                    pre_tax_amount: '0.0'
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_discounted_cost: "$0.00"
+                    display_item_cost: "$29.99"
+                    display_amount: "$0.00"
+                    display_final_price: "$0.00"
+                    display_cost: "$0.00"
+                    tracking_url:
+                  relationships:
+                    order:
+                      data:
+                        id: '90'
+                        type: order
+                    address:
+                      data:
+                    stock_location:
+                      data:
+                        id: '126'
+                        type: stock_location
+                    adjustments:
+                      data: []
+                    inventory_units:
+                      data:
+                      - id: '44'
+                        type: inventory_unit
+                      - id: '45'
+                        type: inventory_unit
+                    shipping_rates:
+                      data:
+                      - id: '76'
+                        type: shipping_rate
+                      - id: '77'
+                        type: shipping_rate
+                    state_changes:
+                      data: []
+                    selected_shipping_rate:
+                      data:
+                        id: '77'
+                        type: shipping_rate
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Shipments/AddItemParams.yaml"

@@ -1,0 +1,158 @@
+get:
+  summary: Return a list of Menus
+  tags:
+  - Menus
+  security:
+  - bearer_auth: []
+  description: Returns a list of Menus
+  operationId: menus-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu_items
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: Main Menu
+    schema:
+      type: string
+  - name: filter[location_eq]
+    in: query
+    description: ''
+    example: header
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '18'
+                  type: menu
+                  attributes:
+                    name: Main Menu
+                    location: header
+                    locale: en
+                    created_at: '2022-11-08T19:34:28.349Z'
+                    updated_at: '2022-11-08T19:34:28.398Z'
+                  relationships:
+                    menu_items:
+                      data:
+                      - id: '89'
+                        type: menu_item
+                      - id: '90'
+                        type: menu_item
+                      - id: '87'
+                        type: menu_item
+                - id: '19'
+                  type: menu
+                  attributes:
+                    name: Footer Menu
+                    location: footer
+                    locale: en
+                    created_at: '2022-11-08T19:34:28.357Z'
+                    updated_at: '2022-11-08T19:34:28.448Z'
+                  relationships:
+                    menu_items:
+                      data:
+                      - id: '91'
+                        type: menu_item
+                      - id: '92'
+                        type: menu_item
+                      - id: '88'
+                        type: menu_item
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/menus?page=1&per_page=&include=&filter[name_eq]=&filter[location_eq]=
+                  next: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/menus?filter%5Blocation_eq%5D=&filter%5Bname_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Menu
+  tags:
+  - Menus
+  security:
+  - bearer_auth: []
+  description: Creates a Menu
+  operationId: create-menu
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu_items
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '22'
+                  type: menu
+                  attributes:
+                    name: Main Menu
+                    location: header
+                    locale: en
+                    created_at: '2022-11-08T19:34:29.089Z'
+                    updated_at: '2022-11-08T19:34:29.097Z'
+                  relationships:
+                    menu_items:
+                      data:
+                      - id: '99'
+                        type: menu_item
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank, Locale can't be blank, and Location
+                  is not included in the list
+                errors:
+                  name:
+                  - can't be blank
+                  locale:
+                  - can't be blank
+                  location:
+                  - is not included in the list
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Menus/CreateParams.yaml"

@@ -1,0 +1,141 @@
+get:
+  summary: Return an Option Value
+  tags:
+  - Option Values
+  security:
+  - bearer_auth: []
+  description: Returns an Option Value
+  operationId: show-option-value
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: option_type
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '73'
+                  type: option_value
+                  attributes:
+                    position: 1
+                    name: Size-73
+                    presentation: S
+                    created_at: '2022-11-08T19:34:34.613Z'
+                    updated_at: '2022-11-08T19:34:34.613Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_type:
+                      data:
+                        id: '84'
+                        type: option_type
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update an Option Value
+  tags:
+  - Option Values
+  security:
+  - bearer_auth: []
+  description: Updates an Option Value
+  operationId: update-option-value
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: option_type
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '75'
+                  type: option_value
+                  attributes:
+                    position: 1
+                    name: M
+                    presentation: S
+                    created_at: '2022-11-08T19:34:35.140Z'
+                    updated_at: '2022-11-08T19:34:35.372Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    option_type:
+                      data:
+                        id: '86'
+                        type: option_type
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/OptionValues/UpdateParams.yaml"
+delete:
+  summary: Delete an Option Value
+  tags:
+  - Option Values
+  security:
+  - bearer_auth: []
+  description: Deletes an Option Value
+  operationId: delete-option-value
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

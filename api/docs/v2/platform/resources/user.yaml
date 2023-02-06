@@ -1,0 +1,149 @@
+get:
+  summary: Return a User
+  tags:
+  - Users
+  security:
+  - bearer_auth: []
+  description: Returns a User
+  operationId: show-user
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: ship_address,bill_address
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '139'
+                  type: user
+                  attributes:
+                    email: gaynell@parisian.biz
+                    first_name: Irwin
+                    last_name: DuBuque
+                    selected_locale: 'en'
+                    created_at: '2022-11-08T19:35:54.635Z'
+                    updated_at: '2022-11-08T19:35:54.635Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a User
+  tags:
+  - Users
+  security:
+  - bearer_auth: []
+  description: Updates a User
+  operationId: update-user
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: ship_address,bill_address
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '144'
+                  type: user
+                  attributes:
+                    email: john@example.com
+                    first_name: Astrid
+                    last_name: Kohler
+                    selected_locale: 'fr'
+                    created_at: '2022-11-08T19:35:55.180Z'
+                    updated_at: '2022-11-08T19:35:55.414Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    average_order_value: []
+                    lifetime_value: []
+                    store_credits: []
+                  relationships:
+                    bill_address:
+                      data:
+                    ship_address:
+                      data:
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Bill address belongs to other user
+                errors:
+                  bill_address_id:
+                  - belongs to other user
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Users/UpdateParams.yaml"
+delete:
+  summary: Delete a User
+  tags:
+  - Users
+  security:
+  - bearer_auth: []
+  description: Deletes a User
+  operationId: delete-user
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

@@ -1,0 +1,16 @@
+type: object
+properties:
+  wishlist:
+    type: object
+    properties:
+      name:
+        type: string
+      user_id:
+        type: string
+      is_default:
+        type: boolean
+      is_private:
+        type: boolean
+required:
+- wishlist
+x-internal: false

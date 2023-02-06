@@ -1,0 +1,186 @@
+get:
+  summary: Return a Promotion
+  tags:
+  - Promotions
+  security:
+  - bearer_auth: []
+  description: Returns a Promotion
+  operationId: show-promotion
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotion_category,promotion_rules,promotion_actions,stores
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '44'
+                  type: promotion
+                  attributes:
+                    description:
+                    expires_at:
+                    starts_at:
+                    name: Promo
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code:
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:03.971Z'
+                    updated_at: '2022-11-08T19:35:03.973Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '17'
+                        type: promotion_category
+                    promotion_rules:
+                      data:
+                      - id: '16'
+                        type: promotion_rule
+                    promotion_actions:
+                      data:
+                      - id: '31'
+                        type: promotion_action
+                    stores:
+                      data:
+                      - id: '387'
+                        type: store
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Promotion
+  tags:
+  - Promotions
+  security:
+  - bearer_auth: []
+  description: Updates a Promotion
+  operationId: update-promotion
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: promotion_category,promotion_rules,promotion_actions,stores
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '58'
+                  type: promotion
+                  attributes:
+                    description: This is the new updated promo
+                    expires_at:
+                    starts_at:
+                    name: 10% OFF
+                    type:
+                    usage_limit:
+                    match_policy: all
+                    code: RAND-10
+                    advertise: false
+                    path:
+                    created_at: '2022-11-08T19:35:04.723Z'
+                    updated_at: '2022-11-08T19:35:04.970Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                  relationships:
+                    promotion_category:
+                      data:
+                        id: '20'
+                        type: promotion_category
+                    promotion_rules:
+                      data:
+                      - id: '19'
+                        type: promotion_rule
+                    promotion_actions:
+                      data:
+                      - id: '42'
+                        type: promotion_action
+                    stores:
+                      data:
+                      - id: '396'
+                        type: store
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - $ref: "../schemas/Promotions/UpdateParams.yaml"
+          - $ref: "../schemas/Promotions/AddRuleParams.yaml"
+          - $ref: "../schemas/Promotions/UpdateRuleParams.yaml"
+          - $ref: "../schemas/Promotions/AddActionParams.yaml"
+          - $ref: "../schemas/Promotions/UpdateChangeActionParams.yaml"
+          - $ref: "../schemas/Promotions/UpdateActionCalculatorParams.yaml"
+          - $ref: "../schemas/Promotions/UpdateChangeCalculatorParams.yaml"
+delete:
+  summary: Delete a Promotion
+  tags:
+  - Promotions
+  security:
+  - bearer_auth: []
+  description: Deletes a Promotion
+  operationId: delete-promotion
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

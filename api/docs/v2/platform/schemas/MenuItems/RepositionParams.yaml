@@ -1,0 +1,20 @@
+type: object
+properties:
+  menu_item:
+    type: object
+    required:
+    - new_parent_id
+    - new_position_idx
+    properties:
+      new_parent_id:
+        type: integer
+        example: 1
+        description: The ID of the new target parent Menu Item.
+      new_position_idx:
+        type: integer
+        example: 1
+        description: The new index position of the Menu Item within its parent
+required:
+- menu_item
+title: Reposition a Menu Item
+x-internal: false

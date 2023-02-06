@@ -1,0 +1,161 @@
+get:
+  summary: Return a Payment Method
+  tags:
+  - Payment Methods
+  security:
+  - bearer_auth: []
+  description: Returns a Payment Method
+  operationId: show-payment-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stores
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '30'
+                  type: payment_method
+                  attributes:
+                    name: Credit Card
+                    type: Spree::Gateway::Bogus
+                    description:
+                    active: true
+                    display_on: both
+                    auto_capture:
+                    position: 4
+                    created_at: '2022-11-08T19:34:48.855Z'
+                    updated_at: '2022-11-08T19:34:48.857Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    preferences:
+                      dummy_key: PUBLICKEY123
+                      test_mode: true
+                      server: test
+                  relationships:
+                    stores:
+                      data:
+                      - id: '295'
+                        type: store
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Payment Method
+  tags:
+  - Payment Methods
+  security:
+  - bearer_auth: []
+  description: Updates a Payment Method
+  operationId: update-payment-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: stores
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '40'
+                  type: payment_method
+                  attributes:
+                    name: Credit Card
+                    type: Spree::Gateway::Bogus
+                    description:
+                    active: true
+                    display_on: both
+                    auto_capture:
+                    position: 3
+                    created_at: '2022-11-08T19:34:49.452Z'
+                    updated_at: '2022-11-08T19:34:49.687Z'
+                    deleted_at:
+                    public_metadata: {}
+                    private_metadata: {}
+                    preferences:
+                      dummy_key: UPDATED-DUMMY-KEY-123
+                      test_mode: false
+                      server: production
+                  relationships:
+                    stores:
+                      data:
+                      - id: '301'
+                        type: store
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          oneOf:
+          - $ref: "../schemas/PaymentMethods/UpdateParams.yaml"
+          - $ref: "../schemas/PaymentMethods/UpdateParamsBogusGateway.yaml"
+delete:
+  summary: Delete a Payment Method
+  tags:
+  - Payment Methods
+  security:
+  - bearer_auth: []
+  description: Deletes a Payment Method
+  operationId: delete-payment-method
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

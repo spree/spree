@@ -1,0 +1,5 @@
+type: object
+properties:
+  coupon_code:
+    type: string
+x-internal: false

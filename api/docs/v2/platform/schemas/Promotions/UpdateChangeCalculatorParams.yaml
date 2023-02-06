@@ -1,0 +1,34 @@
+type: object
+properties:
+  promotion:
+    type: object
+    properties:
+      promotion_actions_attributes:
+        type: array
+        items:
+          allOf:
+          - properties:
+              id:
+                type: string
+                example: '22'
+                description: To update an existing Promotion Action, you are
+                  required to pass the ID of the Promotion Action.
+              calculator_attributes:
+                properties:
+                  type:
+                    type: string
+                    example: Spree::Calculator::FlatPercentItemTotal
+                    enum:
+                    - Spree::Calculator::FlatPercentItemTotal
+                    - Spree::Calculator::FlatRate
+                    - Spree::Calculator::FlexiRate
+                    - Spree::Calculator::TieredPercent
+                    - Spree::Calculator::TieredFlatRate
+                    - Spree::Calculator::PercentOnLineItem
+                    description: 'To set the Promotion Action Calculator pass
+                      the calculator type. Each Promotion action has certain
+                      Calculators available, to learn more visit TODO: [LINK]'
+required:
+- promotion
+title: Change an Action Calculator
+x-internal: false

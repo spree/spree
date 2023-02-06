@@ -1,0 +1,25 @@
+type: object
+properties:
+  line_item:
+    type: object
+    required:
+    - order_id
+    - variant_id
+    - quantity
+    properties:
+      order_id:
+        type: string
+        example: '1'
+      variant_id:
+        type: string
+        example: '1'
+      quantity:
+        type: integer
+        example: 2
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- line_item
+x-internal: false

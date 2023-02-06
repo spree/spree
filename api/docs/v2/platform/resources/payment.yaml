@@ -1,0 +1,94 @@
+get:
+  summary: Return a Payment
+  tags:
+  - Payments
+  security:
+  - bearer_auth: []
+  description: Returns a Payment
+  operationId: show-payment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: payment_method,order,source
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '10'
+                  type: payment
+                  attributes:
+                    amount: '45.75'
+                    source_type: Spree::CreditCard
+                    state: checkout
+                    response_code: '12345'
+                    avs_response:
+                    created_at: '2022-11-08T19:34:51.349Z'
+                    updated_at: '2022-11-08T19:34:51.349Z'
+                    number: PROYB91V
+                    cvv_response_code:
+                    cvv_response_message:
+                    public_metadata: {}
+                    private_metadata: {}
+                    display_amount: "$45.75"
+                  relationships:
+                    order:
+                      data:
+                        id: '74'
+                        type: order
+                    payment_method:
+                      data:
+                        id: '66'
+                        type: payment_method
+                    source:
+                      data:
+                        id: '9'
+                        type: credit_card
+                    log_entries:
+                      data: []
+                    state_changes:
+                      data: []
+                    payment_capture_events:
+                      data: []
+                    refunds:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+delete:
+  summary: Delete a Payment
+  tags:
+  - Payments
+  security:
+  - bearer_auth: []
+  description: Deletes a Payment
+  operationId: delete-payment
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

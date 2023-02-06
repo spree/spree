@@ -1,0 +1,28 @@
+type: object
+properties:
+  subscriber:
+    type: object
+    required:
+    - url
+    properties:
+      active:
+        type: boolean
+        example: true
+        default: false
+      subscriptions:
+        type: array
+        items:
+          allOf:
+          - type: string
+            example: order.completed
+        example:
+        - order.created
+        - order.completed
+        - product.updated
+        default: []
+      url:
+        type: string
+        example: https://www.url.com/
+required:
+- subscriber
+x-internal: false

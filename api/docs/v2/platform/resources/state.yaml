@@ -1,0 +1,41 @@
+get:
+  summary: Returns a State
+  tags:
+  - States
+  security:
+  - bearer_auth: []
+  operationId: show-state
+  description: Returns a State
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '234'
+                  type: state
+                  attributes:
+                    name: STATE_NAME_234
+                    abbr: STATE_ABBR_234
+                    updated_at: '2022-11-08T19:35:27.007Z'
+                    created_at: '2022-11-08T19:35:27.007Z'
+                  relationships:
+                    country:
+                      data:
+                        id: '396'
+                        type: country
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

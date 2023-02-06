@@ -1,0 +1,446 @@
+get:
+  summary: Return a list of Menu Items
+  tags:
+  - Menu Items
+  security:
+  - bearer_auth: []
+  description: Returns a list of Menu Items
+  operationId: menu-items-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu,icon,parent,children,linked_resource
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: T-Shirts
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '2'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 1 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 2
+                    rgt: 3
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.401Z'
+                    updated_at: '2022-11-08T19:34:23.404Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '13'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '3'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 2 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 4
+                    rgt: 5
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.425Z'
+                    updated_at: '2022-11-08T19:34:23.428Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '14'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '4'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 3 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 6
+                    rgt: 7
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.446Z'
+                    updated_at: '2022-11-08T19:34:23.449Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '15'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '5'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 4 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 8
+                    rgt: 9
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.468Z'
+                    updated_at: '2022-11-08T19:34:23.471Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '16'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '6'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 5 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 10
+                    rgt: 11
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.491Z'
+                    updated_at: '2022-11-08T19:34:23.494Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '17'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '7'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 6 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 12
+                    rgt: 13
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.515Z'
+                    updated_at: '2022-11-08T19:34:23.518Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '18'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '8'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 7 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 14
+                    rgt: 15
+                    depth: 1
+                    created_at: '2022-11-08T19:34:23.535Z'
+                    updated_at: '2022-11-08T19:34:23.537Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                        id: '19'
+                        type: icon
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                        id: '1'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+                - id: '1'
+                  type: menu_item
+                  attributes:
+                    name: Neque a rem deserunt beatae.
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Container
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 1
+                    rgt: 16
+                    depth: 0
+                    created_at: '2022-11-08T19:34:23.379Z'
+                    updated_at: '2022-11-08T19:34:23.545Z'
+                    link:
+                    is_container: true
+                    is_root: true
+                    is_child: false
+                    is_leaf: false
+                  relationships:
+                    icon:
+                      data:
+                    menu:
+                      data:
+                        id: '1'
+                        type: menu
+                    parent:
+                      data:
+                    linked_resource:
+                      data:
+                    children:
+                      data:
+                      - id: '2'
+                        type: menu_item
+                      - id: '3'
+                        type: menu_item
+                      - id: '4'
+                        type: menu_item
+                      - id: '5'
+                        type: menu_item
+                      - id: '6'
+                        type: menu_item
+                      - id: '7'
+                        type: menu_item
+                      - id: '8'
+                        type: menu_item
+                meta:
+                  count: 8
+                  total_count: 8
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/menu_items?page=1&per_page=&include=&filter[name_eq]=
+                  next: http://www.example.com/api/v2/platform/menu_items?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/menu_items?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/menu_items?filter%5Bname_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/menu_items?filter%5Bname_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Menu Item
+  tags:
+  - Menu Items
+  security:
+  - bearer_auth: []
+  description: Creates a Menu Item
+  operationId: create-menu-item
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: menu,icon,parent,children,linked_resource
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '21'
+                  type: menu_item
+                  attributes:
+                    name: Link no. 18 To Somewhere
+                    subtitle:
+                    destination:
+                    new_window: false
+                    item_type: Link
+                    linked_resource_type: Spree::Linkable::Uri
+                    code:
+                    lft: 8
+                    rgt: 9
+                    depth: 1
+                    created_at: '2022-11-08T19:34:24.333Z'
+                    updated_at: '2022-11-08T19:34:24.336Z'
+                    link:
+                    is_container: false
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    icon:
+                      data:
+                    menu:
+                      data:
+                        id: '3'
+                        type: menu
+                    parent:
+                      data:
+                        id: '17'
+                        type: menu_item
+                    linked_resource:
+                      data:
+                    children:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank, Menu can't be blank, and Item type
+                  is not included in the list
+                errors:
+                  name:
+                  - can't be blank
+                  menu:
+                  - can't be blank
+                  item_type:
+                  - is not included in the list
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/MenuItems/CreateParams.yaml"

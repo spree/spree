@@ -1,0 +1,152 @@
+get:
+  summary: Return a list of Tax Categories
+  tags:
+  - Tax Categories
+  security:
+  - bearer_auth: []
+  description: Returns a list of Tax Categories
+  operationId: tax-categories-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: tax_rates
+    schema:
+      type: string
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: Clothing
+    schema:
+      type: string
+  - name: filter[is_default_true]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[tax_code_eq]
+    in: query
+    description: ''
+    example: 1257L
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '153'
+                  type: tax_category
+                  attributes:
+                    name: TaxCategory - 54232
+                    description: Velit qui dignissimos excepturi eum corrupti.
+                    is_default: false
+                    deleted_at:
+                    created_at: '2022-11-08T19:35:41.496Z'
+                    updated_at: '2022-11-08T19:35:41.496Z'
+                    tax_code:
+                  relationships:
+                    tax_rates:
+                      data: []
+                - id: '154'
+                  type: tax_category
+                  attributes:
+                    name: TaxCategory - 100586
+                    description: Placeat nihil quaerat nostrum cumque ipsa eius
+                      perferendis.
+                    is_default: false
+                    deleted_at:
+                    created_at: '2022-11-08T19:35:41.497Z'
+                    updated_at: '2022-11-08T19:35:41.497Z'
+                    tax_code:
+                  relationships:
+                    tax_rates:
+                      data: []
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/tax_categories?page=1&per_page=&include=&filter[name_eq]=&filter[is_default_true]=&filter[tax_code_eq]=
+                  next: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/tax_categories?filter%5Bis_default_true%5D=&filter%5Bname_eq%5D=&filter%5Btax_code_eq%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Tax Category
+  tags:
+  - Tax Categories
+  security:
+  - bearer_auth: []
+  description: Creates a Tax Category
+  operationId: create-tax-category
+  parameters:
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: tax_rates
+    schema:
+      type: string
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '157'
+                  type: tax_category
+                  attributes:
+                    name: TaxCategory - 646810
+                    description: Facilis quis quos unde reiciendis.
+                    is_default: false
+                    deleted_at:
+                    created_at: '2022-11-08T19:35:42.001Z'
+                    updated_at: '2022-11-08T19:35:42.001Z'
+                    tax_code:
+                  relationships:
+                    tax_rates:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/TaxCategories/CreateParams.yaml"

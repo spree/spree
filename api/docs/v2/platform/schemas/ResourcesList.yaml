@@ -4,7 +4,7 @@ properties:
     type: array
     items:
       allOf:
-      - "$ref": "ResourceProperties.yaml"
+      - $ref: "ResourceProperties.yaml"
   meta:
     type: object
     properties:
@@ -42,3 +42,22 @@ required:
 - meta
 - links
 x-internal: false
+
+components:
+  schemas:
+    resource_properties:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+        relationships:
+          type: object
+      required:
+      - id
+      - type
+      - attributes
+      x-internal: false

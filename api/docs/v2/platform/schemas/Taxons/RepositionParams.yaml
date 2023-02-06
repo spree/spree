@@ -1,0 +1,20 @@
+type: object
+properties:
+  taxon:
+    type: object
+    required:
+    - new_parent_id
+    - new_position_idx
+    properties:
+      new_parent_id:
+        type: integer
+        example: 1
+        description: The ID of the new target parent Taxon.
+      new_position_idx:
+        type: integer
+        example: 1
+        description: The new index position of the Taxon within the parent Taxon.
+required:
+- taxon
+title: Reposition a Taxon
+x-internal: false

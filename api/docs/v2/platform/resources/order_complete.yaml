@@ -1,0 +1,141 @@
+patch:
+  summary: Completes an Order
+  tags:
+  - Orders
+  security:
+  - bearer_auth: []
+  description: Marks an Order as completed
+  operationId: complete-order
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: line_items,variants,product
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '56'
+                  type: order
+                  attributes:
+                    number: R923002122
+                    item_total: '10.0'
+                    total: '110.0'
+                    state: complete
+                    adjustment_total: '0.0'
+                    completed_at: '2022-11-08T19:34:42.207Z'
+                    payment_total: '0.0'
+                    shipment_state: pending
+                    payment_state: balance_due
+                    email: adeline@hodkiewicz.co.uk
+                    special_instructions:
+                    created_at: '2022-11-08T19:34:41.758Z'
+                    updated_at: '2022-11-08T19:34:42.207Z'
+                    currency: USD
+                    last_ip_address:
+                    shipment_total: '100.0'
+                    additional_tax_total: '0.0'
+                    promo_total: '0.0'
+                    channel: spree
+                    included_tax_total: '0.0'
+                    item_count: 1
+                    approved_at:
+                    confirmation_delivered: false
+                    canceled_at:
+                    state_lock_version: 0
+                    taxable_adjustment_total: '0.0'
+                    non_taxable_adjustment_total: '0.0'
+                    store_owner_notification_delivered:
+                    public_metadata: {}
+                    private_metadata: {}
+                    internal_note:
+                    display_ship_total: "$100.00"
+                    display_shipment_total: "$100.00"
+                    display_outstanding_balance: "$110.00"
+                    display_item_total: "$10.00"
+                    display_adjustment_total: "$0.00"
+                    display_included_tax_total: "$0.00"
+                    display_additional_tax_total: "$0.00"
+                    display_tax_total: "$0.00"
+                    display_promo_total: "$0.00"
+                    display_total: "$110.00"
+                    display_cart_promo_total: "$0.00"
+                    display_pre_tax_item_amount: "$10.00"
+                    display_pre_tax_total: "$110.00"
+                    display_total_applicable_store_credit: "$0.00"
+                    display_total_applied_store_credit: "$0.00"
+                    display_order_total_after_store_credit: "$110.00"
+                    display_total_available_store_credit: "$0.00"
+                    display_store_credit_remaining_after_capture: "$0.00"
+                  relationships:
+                    user:
+                      data:
+                        id: '56'
+                        type: user
+                    created_by:
+                      data:
+                    approver:
+                      data:
+                    canceler:
+                      data:
+                    bill_address:
+                      data:
+                        id: '79'
+                        type: address
+                    ship_address:
+                      data:
+                        id: '80'
+                        type: address
+                    line_items:
+                      data:
+                      - id: '47'
+                        type: line_item
+                    payments:
+                      data:
+                      - id: '2'
+                        type: payment
+                    shipments:
+                      data:
+                      - id: '12'
+                        type: shipment
+                    state_changes:
+                      data:
+                      - id: '4'
+                        type: state_change
+                      - id: '5'
+                        type: state_change
+                      - id: '8'
+                        type: state_change
+                      - id: '9'
+                        type: state_change
+                      - id: '10'
+                        type: state_change
+                    return_authorizations:
+                      data: []
+                    reimbursements:
+                      data: []
+                    adjustments:
+                      data: []
+                    all_adjustments:
+                      data: []
+                    order_promotions:
+                      data: []
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

@@ -1,0 +1,17 @@
+type: object
+properties:
+  payment_method:
+    type: object
+    properties:
+      preferred_dummy_key:
+        type: string
+        example: UPDATED-DUMMY-KEY-123
+      preferred_server:
+        type: string
+        example: production
+      preferred_test_mode:
+        type: boolean
+required:
+- payment_method
+x-internal: false
+title: Update Bogus Gateway

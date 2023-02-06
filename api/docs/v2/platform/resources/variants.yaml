@@ -1,0 +1,221 @@
+get:
+  summary: Return a list of Variants
+  tags:
+  - Variants
+  security:
+  - bearer_auth: []
+  description: Returns a list of Variants
+  operationId: variants-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: product,tax_category,images,digitals
+    schema:
+      type: string
+  - name: filter[product_id_eq]
+    in: query
+    description: ''
+    example: '1'
+    schema:
+      type: string
+  - name: filter[sku_i_cont]
+    in: query
+    description: ''
+    example: SKU123
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '284'
+                  type: variant
+                  attributes:
+                    sku: SKU-283
+                    weight: '0.0'
+                    height:
+                    depth:
+                    deleted_at:
+                    is_master: true
+                    cost_price: '17.0'
+                    position: 1
+                    cost_currency: USD
+                    track_inventory: true
+                    updated_at: '2022-11-08T19:35:56.573Z'
+                    discontinue_on:
+                    created_at: '2022-11-08T19:35:56.573Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    barcode:
+                    display_price: "$19.99"
+                    display_compare_at_price:
+                    name: Product 213286
+                    options_text: ''
+                    total_on_hand: 0
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    product:
+                      data:
+                        id: '214'
+                        type: product
+                    tax_category:
+                      data:
+                    digitals:
+                      data: []
+                    images:
+                      data: []
+                    option_values:
+                      data: []
+                    stock_items:
+                      data:
+                      - id: '300'
+                        type: stock_item
+                    stock_locations:
+                      data:
+                      - id: '187'
+                        type: stock_location
+                - id: '285'
+                  type: variant
+                  attributes:
+                    sku: SKU-284
+                    weight: '23.12'
+                    height: '92.8'
+                    depth: '47.37'
+                    deleted_at:
+                    is_master: false
+                    cost_price: '17.0'
+                    position: 2
+                    cost_currency: USD
+                    track_inventory: true
+                    updated_at: '2022-11-08T19:35:56.608Z'
+                    discontinue_on:
+                    created_at: '2022-11-08T19:35:56.605Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    barcode:
+                    display_price: "$19.99"
+                    display_compare_at_price:
+                    name: Product 213286
+                    options_text: 'Size: S'
+                    total_on_hand: 0
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    product:
+                      data:
+                        id: '214'
+                        type: product
+                    tax_category:
+                      data:
+                    digitals:
+                      data: []
+                    images:
+                      data: []
+                    option_values:
+                      data:
+                      - id: '83'
+                        type: option_value
+                    stock_items:
+                      data:
+                      - id: '301'
+                        type: stock_item
+                    stock_locations:
+                      data:
+                      - id: '187'
+                        type: stock_location
+                - id: '286'
+                  type: variant
+                  attributes:
+                    sku: SKU-285
+                    weight: '90.94'
+                    height: '108.64'
+                    depth: '191.7'
+                    deleted_at:
+                    is_master: false
+                    cost_price: '17.0'
+                    position: 3
+                    cost_currency: USD
+                    track_inventory: true
+                    updated_at: '2022-11-08T19:35:56.633Z'
+                    discontinue_on:
+                    created_at: '2022-11-08T19:35:56.629Z'
+                    public_metadata: {}
+                    private_metadata: {}
+                    barcode:
+                    display_price: "$19.99"
+                    display_compare_at_price:
+                    name: Product 213286
+                    options_text: 'Size: S'
+                    total_on_hand: 0
+                    purchasable: true
+                    in_stock: false
+                    backorderable: true
+                    available: true
+                    currency: USD
+                    price: '19.99'
+                    compare_at_price:
+                  relationships:
+                    product:
+                      data:
+                        id: '214'
+                        type: product
+                    tax_category:
+                      data:
+                    digitals:
+                      data: []
+                    images:
+                      data: []
+                    option_values:
+                      data:
+                      - id: '84'
+                        type: option_value
+                    stock_items:
+                      data:
+                      - id: '302'
+                        type: stock_item
+                    stock_locations:
+                      data:
+                      - id: '187'
+                        type: stock_location
+                meta:
+                  count: 3
+                  total_count: 3
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/variants?page=1&per_page=&include=&filter[product_id_eq]=&filter[sku_i_cont]=
+                  next: http://www.example.com/api/v2/platform/variants?filter%5Bproduct_id_eq%5D=&filter%5Bsku_i_cont%5D=&include=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/variants?filter%5Bproduct_id_eq%5D=&filter%5Bsku_i_cont%5D=&include=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/variants?filter%5Bproduct_id_eq%5D=&filter%5Bsku_i_cont%5D=&include=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/variants?filter%5Bproduct_id_eq%5D=&filter%5Bsku_i_cont%5D=&include=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

@@ -1,0 +1,104 @@
+get:
+  summary: Return a list of Roles
+  tags:
+  - Roles
+  security:
+  - bearer_auth: []
+  description: Returns a list of Roles
+  operationId: roles-list
+  parameters:
+  - name: page
+    in: query
+    example: 1
+    schema:
+      type: integer
+  - name: per_page
+    in: query
+    example: 50
+    schema:
+      type: integer
+  - name: filter[name_eq]
+    in: query
+    description: ''
+    example: admin
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Records returned
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                - id: '1'
+                  type: role
+                  attributes:
+                    name: Role 1
+                    created_at: '2022-11-08T19:35:06.596Z'
+                    updated_at: '2022-11-08T19:35:06.596Z'
+                - id: '2'
+                  type: role
+                  attributes:
+                    name: Role 2
+                    created_at: '2022-11-08T19:35:06.597Z'
+                    updated_at: '2022-11-08T19:35:06.597Z'
+                meta:
+                  count: 2
+                  total_count: 2
+                  total_pages: 1
+                links:
+                  self: http://www.example.com/api/v2/platform/roles?page=1&per_page=&filter[name_eq]=
+                  next: http://www.example.com/api/v2/platform/roles?filter%5Bname_eq%5D=&page=1&per_page=
+                  prev: http://www.example.com/api/v2/platform/roles?filter%5Bname_eq%5D=&page=1&per_page=
+                  last: http://www.example.com/api/v2/platform/roles?filter%5Bname_eq%5D=&page=1&per_page=
+                  first: http://www.example.com/api/v2/platform/roles?filter%5Bname_eq%5D=&page=1&per_page=
+          schema:
+            $ref: "../schemas/ResourcesList.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+post:
+  summary: Create a Role
+  tags:
+  - Roles
+  security:
+  - bearer_auth: []
+  description: Creates a Role
+  operationId: create-role
+  parameters: []
+  responses:
+    '201':
+      description: Record created
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '5'
+                  type: role
+                  attributes:
+                    name: Role 5
+                    created_at: '2022-11-08T19:35:07.110Z'
+                    updated_at: '2022-11-08T19:35:07.110Z'
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Roles/CreateParams.yaml"

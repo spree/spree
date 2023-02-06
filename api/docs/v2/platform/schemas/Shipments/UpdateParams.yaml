@@ -1,0 +1,11 @@
+type: object
+properties:
+  shipment:
+    type: object
+    properties:
+      tracking:
+        type: string
+        example: MY-TRACKING-REF-12324
+required:
+- shipping_category
+x-internal: false

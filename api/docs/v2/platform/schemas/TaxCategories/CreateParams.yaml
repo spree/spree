@@ -1,0 +1,22 @@
+type: object
+properties:
+  tax_category:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: Clothing
+      is_default:
+        type: boolean
+        example: true
+      tax_code:
+        type: string
+        example: 1257L
+      description:
+        type: string
+        example: Men's, women's and children's branded clothing
+required:
+- tax_category
+x-internal: false

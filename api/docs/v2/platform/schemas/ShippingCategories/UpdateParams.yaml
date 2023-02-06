@@ -1,0 +1,13 @@
+type: object
+properties:
+  shipping_category:
+    type: object
+    required:
+    - name
+    properties:
+      name:
+        type: string
+        example: Another Category
+required:
+- shipping_category
+x-internal: false

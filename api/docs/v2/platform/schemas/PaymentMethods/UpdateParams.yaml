@@ -1,0 +1,42 @@
+type: object
+properties:
+  payment_method:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Test Payment Method
+      active:
+        type: boolean
+      auto_capture:
+        type: boolean
+      description:
+        type: string
+        example: This is a test payment method
+      type:
+        type: string
+        example: Spree::Gateway::Bogus
+        enum:
+        - Spree::Gateway::Bogus
+        - Spree::PaymentMethod::Check
+      display_on:
+        type: string
+        example: both
+        enum:
+        - both
+        - back_end
+        - front_end
+      store_ids:
+        type: array
+        items:
+          allOf:
+          - type: string
+            example: '2'
+      public_metadata:
+        type: object
+      private_metadata:
+        type: object
+required:
+- payment_method
+x-internal: false
+title: Update Payment Method

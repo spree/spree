@@ -1,0 +1,124 @@
+get:
+  summary: Return a Promotion Action
+  tags:
+  - Promotion Actions
+  security:
+  - bearer_auth: []
+  description: Returns a Promotion Action
+  operationId: show-promotion-action
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '10'
+                  type: promotion_action
+                  attributes:
+                    position:
+                    type:
+                    deleted_at:
+                    created_at: '2022-11-08T19:34:56.411Z'
+                    updated_at: '2022-11-08T19:34:56.411Z'
+                  relationships:
+                    promotion:
+                      data:
+                        id: '8'
+                        type: promotion
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Promotion Action
+  tags:
+  - Promotion Actions
+  security:
+  - bearer_auth: []
+  description: Updates a Promotion Action
+  operationId: update-promotion-action
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: calculator
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '12'
+                  type: promotion_action
+                  attributes:
+                    position:
+                    type: Spree::Promotion::Actions::CreateAdjustment
+                    deleted_at:
+                    created_at: '2022-11-08T19:34:56.948Z'
+                    updated_at: '2022-11-08T19:34:57.178Z'
+                  relationships:
+                    promotion:
+                      data:
+                        id: '10'
+                        type: promotion
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/PromotionActions/UpdateParams.yaml"
+delete:
+  summary: Delete a Promotion Action
+  tags:
+  - Promotion Actions
+  security:
+  - bearer_auth: []
+  description: Deletes a Promotion Action
+  operationId: delete-promotion-action
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"

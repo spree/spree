@@ -1,0 +1,188 @@
+get:
+  summary: Return a Taxon
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  description: Returns a Taxon
+  operationId: show-taxon
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxonomy,parent,children
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record found
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '52'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: taxon_18
+                    permalink: taxonomy-29/taxon-18
+                    lft: 4
+                    rgt: 5
+                    description:
+                    created_at: '2022-11-08T19:35:50.654Z'
+                    updated_at: '2022-11-08T19:35:50.657Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata: {}
+                    private_metadata: {}
+                    pretty_name: taxonomy_29 -> taxon_18
+                    seo_title: taxon_18
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '50'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '29'
+                        type: taxonomy
+                    children:
+                      data: []
+                    products:
+                      data: []
+                    image:
+                      data:
+                        id: '98'
+                        type: taxon_image
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+patch:
+  summary: Update a Taxon
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  description: Updates a Taxon
+  operationId: update-taxon
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  - name: include
+    in: query
+    description: 'Select which associated resources you would like to fetch, see:
+      <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+    example: taxonomy,parent,children
+    schema:
+      type: string
+  responses:
+    '200':
+      description: Record updated
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                data:
+                  id: '60'
+                  type: taxon
+                  attributes:
+                    position: 0
+                    name: T-Shirts
+                    permalink: taxonomy-32/taxon-20
+                    lft: 4
+                    rgt: 5
+                    description:
+                    created_at: '2022-11-08T19:35:51.420Z'
+                    updated_at: '2022-11-08T19:35:51.665Z'
+                    meta_title:
+                    meta_description:
+                    meta_keywords:
+                    depth: 1
+                    public_metadata:
+                      profitability: 3
+                    private_metadata: {}
+                    pretty_name: taxonomy_32 -> T-Shirts
+                    seo_title: T-Shirts
+                    is_root: false
+                    is_child: true
+                    is_leaf: true
+                  relationships:
+                    parent:
+                      data:
+                        id: '58'
+                        type: taxon
+                    taxonomy:
+                      data:
+                        id: '32'
+                        type: taxonomy
+                    children:
+                      data: []
+                    image:
+                      data:
+                        id: '103'
+                        type: taxon_image
+          schema:
+            $ref: "../schemas/Resource.yaml"
+    '422':
+      description: Invalid request
+      content:
+        application/vnd.api+json:
+          examples:
+            Example:
+              value:
+                error: Name can't be blank
+                errors:
+                  name:
+                  - can't be blank
+          schema:
+            $ref: "../schemas/ValidationErrors.yaml"
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/Taxons/UpdateParams.yaml"
+delete:
+  summary: Delete a Taxon
+  tags:
+  - Taxons
+  security:
+  - bearer_auth: []
+  description: Deletes a Taxon
+  operationId: delete-taxon
+  parameters:
+  - name: id
+    in: path
+    required: true
+    schema:
+      type: string
+  responses:
+    '204':
+      description: Record deleted
+    '404':
+      $ref: "../responses/RecordNotFoundError.yaml"
+    '401':
+      $ref: "../responses/AuthenticationFailedError.yaml"
