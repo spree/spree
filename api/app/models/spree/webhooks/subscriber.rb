@@ -40,13 +40,6 @@ module Spree
         end
       end
 
-      # Verifies the existence of the {#secret_key} attribute.
-      #
-      # @return [true, false]
-      def secret_key?
-        !secret_key.nil?
-      end
-
       private
 
       def check_uri_path
