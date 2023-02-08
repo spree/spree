@@ -52,6 +52,12 @@ FactoryBot.define do
       factory :product_with_option_types do
         after(:create) { |product| create(:product_option_type, product: product) }
       end
+      factory :product_with_properties do
+        after(:create) do |product|
+          create(:property, :brand, id: 10)
+          create(:product_property, product: product, property_id: 10, value: 'Epsilon')
+        end
+      end
     end
   end
 end
