@@ -26,7 +26,7 @@ describe 'Menus API', swagger: true do
       record.save!
     end
 
-    menu_1 = Spree::MenuItem.first
+    menu_1 = Spree::Menu.first
     menu_2 = Spree::Menu.last
     create(:menu_item, menu: menu_1)
     create(:menu_item, menu: menu_1)

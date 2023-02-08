@@ -42,6 +42,7 @@ module Spree
       end
     end
 
+    # Override first_or_create! to work around Mobility issue with the original first_or_create! method
     def self.first_or_create!(attrs)
       if where(attrs).any?
         where(attrs).first

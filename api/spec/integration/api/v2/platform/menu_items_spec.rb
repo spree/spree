@@ -16,7 +16,14 @@ describe 'Menu Items API', swagger: true do
   let!(:menu_item_three) { create(:menu_item, menu: menu) }
 
   let(:records_list) { create_list(:menu_item, 4, menu: menu) }
-  let(:valid_create_param_value) { build(:menu_item, menu: menu).attributes }
+  let(:valid_create_param_value) do
+    {
+      name: 'Special Menu Item',
+      item_type: 'Link',
+      linked_resource_type: 'Spree::Linkable::Uri',
+      menu_id: menu.id
+    }
+  end
   let(:valid_update_param_value) do
     {
       menu_item: {
