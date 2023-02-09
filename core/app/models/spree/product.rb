@@ -41,7 +41,11 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
     translates(*TRANSLATABLE_FIELDS)
 
-    self::Translation.class_eval { acts_as_paranoid }
+    self::Translation.class_eval do
+      acts_as_paranoid
+      # deleted translation values also need to be accessible for index views listing deleted resources
+      default_scope { unscope(where: :deleted_at) }
+    end
 
     friendly_id :slug_candidates, use: [:history, :mobility]
     acts_as_paranoid
