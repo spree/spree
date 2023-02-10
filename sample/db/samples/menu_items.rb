@@ -114,35 +114,35 @@ MENUS.each do |menu|
   # Root Items #
   ##############
   woman_taxon = Spree::Taxon.find_by!(permalink: 'categories/women')
-  menu_root_women = Spree::MenuItem.first_or_create!({
-                                                   name: root_name_a,
-                                                   item_type: 'Link',
-                                                   linked_resource_type: 'Spree::Taxon',
-                                                   menu_id: menu.id,
-                                                   parent_id: menu.root.id
-                                                 })
+  menu_root_women = Spree::MenuItem.where(
+    name: root_name_a,
+    item_type: 'Link',
+    linked_resource_type: 'Spree::Taxon',
+    menu_id: menu,
+    parent_id: menu.root.id
+  ).first_or_create!
   menu_root_women.linked_resource_id = woman_taxon.id
   menu_root_women.save!
 
   men_taxon = Spree::Taxon.find_by!(permalink: 'categories/men')
-  menu_root_men = Spree::MenuItem.first_or_create!({
-                                                 name: root_name_b,
-                                                 item_type: 'Link',
-                                                 linked_resource_type: 'Spree::Taxon',
-                                                 menu_id: menu.id,
-                                                 parent_id: menu.root.id
-                                               })
+  menu_root_men = Spree::MenuItem.where(
+    name: root_name_b,
+    item_type: 'Link',
+    linked_resource_type: 'Spree::Taxon',
+    menu_id: menu,
+    parent_id: menu.root.id
+  ).first_or_create!
   menu_root_men.linked_resource_id = men_taxon.id
   menu_root_men.save!
 
   sw_taxon = Spree::Taxon.find_by!(permalink: 'categories/sportswear')
-  menu_root_sw = Spree::MenuItem.first_or_create!({
-                                                name: root_name_c,
-                                                item_type: 'Link',
-                                                linked_resource_type: 'Spree::Taxon',
-                                                menu_id: menu.id,
-                                                parent_id: menu.root.id
-                                              })
+  menu_root_sw = Spree::MenuItem.where(
+    name: root_name_c,
+    item_type: 'Link',
+    linked_resource_type: 'Spree::Taxon',
+    menu_id: menu,
+    parent_id: menu.root.id
+  ).first_or_create!
   menu_root_sw.linked_resource_id = sw_taxon.id
   menu_root_sw.save!
 
@@ -151,52 +151,57 @@ MENUS.each do |menu|
     ##############
     # Categories #
     ##############
-    menu_cat_women = Spree::MenuItem.first_or_create!({
-                                                    name: categories,
-                                                    item_type: 'Container',
-                                                    code: 'category',
-                                                    menu_id: menu.id,
-                                                    parent_id: menu_root_women
-                                                  })
-    menu_cat_men = Spree::MenuItem.first_or_create!({
-                                                  name: categories,
-                                                  item_type: 'Container',
-                                                  code: 'category',
-                                                  menu_id: menu.id,
-                                                  parent_id: menu_root_men
-                                                })
-    menu_cat_sw = Spree::MenuItem.first_or_create!({
-                                                 name: categories,
-                                                 item_type: 'Container',
-                                                 code: 'category',
-                                                 menu_id: menu.id,
-                                                 parent_id: menu_root_sw
-                                               })
+    menu_cat_women = Spree::MenuItem.where(
+      name: categories,
+      item_type: 'Container',
+      code: 'category',
+      menu_id: menu,
+      parent_id: menu_root_women
+    ).first_or_create!
+
+    menu_cat_men = Spree::MenuItem.where(
+      name: categories,
+      item_type: 'Container',
+      code: 'category',
+      menu_id: menu,
+      parent_id: menu_root_men
+    ).first_or_create!
+
+    menu_cat_sw = Spree::MenuItem.where(
+      name: categories,
+      item_type: 'Container',
+      code: 'category',
+      menu_id: menu,
+      parent_id: menu_root_sw
+    ).first_or_create!
 
     ##############
     # Promotions #
     ##############
-    menu_promo_women = Spree::MenuItem.first_or_create!({
-                                                      name: 'Promos',
-                                                      item_type: 'Container',
-                                                      code: 'promo',
-                                                      menu_id: menu.id,
-                                                      parent_id: menu_root_women
-                                                    })
-    menu_promo_men = Spree::MenuItem.first_or_create!({
-                                                    name: 'Promos',
-                                                    item_type: 'Container',
-                                                    code: 'promo',
-                                                    menu_id: menu.id,
-                                                    parent_id: menu_root_men
-                                                  })
-    menu_promo_sw = Spree::MenuItem.first_or_create!({
-                                                   name: 'Promos',
-                                                   item_type: 'Container',
-                                                   code: 'promo',
-                                                   menu_id: menu.id,
-                                                   parent_id: menu_root_sw
-                                                 })
+    menu_promo_women = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_women
+    ).first_or_create!
+
+    menu_promo_men = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_men
+    ).first_or_create!
+
+    menu_promo_sw = Spree::MenuItem.where(
+      name: 'Promos',
+      item_type: 'Container',
+      code: 'promo',
+      menu_id: menu,
+      parent_id: menu_root_sw
+    ).first_or_create!
+
     promos = [menu_promo_women, menu_promo_men, menu_promo_sw]
   else
     promos = []
@@ -210,25 +215,25 @@ MENUS.each do |menu|
   #####################
 
   promos.each do |promo|
-    summer_promo = Spree::MenuItem.first_or_create!({
-                                                  name: promo_a_name,
-                                                  subtitle: promo_a_subtitle,
-                                                  linked_resource_type: 'Spree::Taxon',
-                                                  item_type: 'Link',
-                                                  menu_id: menu.id,
-                                                  parent_id: promo
-                                                })
+    summer_promo = Spree::MenuItem.where(
+      name: promo_a_name,
+      subtitle: promo_a_subtitle,
+      linked_resource_type: 'Spree::Taxon',
+      item_type: 'Link',
+      menu_id: menu,
+      parent_id: promo
+    ).first_or_create!
     summer_promo.linked_resource_id = summer.id
     summer_promo.save!
 
-    special_offer = Spree::MenuItem.first_or_create!({
-                                                   name: promo_b_name,
-                                                   subtitle: promo_b_subtitle,
-                                                   linked_resource_type: 'Spree::Taxon',
-                                                   item_type: 'Link',
-                                                   menu_id: menu.id,
-                                                   parent_id: promo
-                                                 })
+    special_offer = Spree::MenuItem.where(
+      name: promo_b_name,
+      subtitle: promo_b_subtitle,
+      linked_resource_type: 'Spree::Taxon',
+      item_type: 'Link',
+      menu_id: menu,
+      parent_id: promo
+    ).first_or_create!
     special_offer.linked_resource_id = offers.id
     special_offer.save!
   end
@@ -244,65 +249,68 @@ MENUS.each do |menu|
                          end
 
   women_skirts_t = Spree::Taxon.find_by!(permalink: 'categories/women/skirts')
-  women_skirts = Spree::MenuItem.first_or_create!({
-                                                name: skirts,
-                                                linked_resource_type: 'Spree::Taxon',
-                                                item_type: 'Link',
-                                                menu_id: menu.id,
-                                                parent_id: women_link_parent_id
-                                              })
+  women_skirts = Spree::MenuItem.where(
+    name: skirts,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
   women_skirts.linked_resource_id = women_skirts_t.id
   women_skirts.save!
 
   women_dresses_t = Spree::Taxon.find_by!(permalink: 'categories/women/dresses')
-  women_dresses = Spree::MenuItem.first_or_create!({
-                                                 name: dresses,
-                                                 linked_resource_type: 'Spree::Taxon',
-                                                 item_type: 'Link',
-                                                 menu_id: menu.id,
-                                                 parent_id: women_link_parent_id
-                                               })
+  women_dresses = Spree::MenuItem.where(
+    name: dresses,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
   women_dresses.linked_resource_id = women_dresses_t.id
   women_dresses.save!
 
   women_s_b_t = Spree::Taxon.find_by!(permalink: 'categories/women/shirts-and-blouses')
-  women_s_b = Spree::MenuItem.first_or_create!({
-                                             name: shirts_and_blouses,
-                                             linked_resource_type: 'Spree::Taxon',
-                                             item_type: 'Link',
-                                             menu_id: menu.id,
-                                             parent_id: women_link_parent_id
-                                           })
+  women_s_b = Spree::MenuItem.where(
+    name: shirts_and_blouses,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
+  women_s_b.linked_resource_id = women_s_b_t.id
+  women_s_b.save!
+
   women_sweaters_t = Spree::Taxon.find_by!(permalink: 'categories/women/sweaters')
-  women_sweaters = Spree::MenuItem.first_or_create!({
-                                                  name: sweaters,
-                                                  linked_resource_type: 'Spree::Taxon',
-                                                  item_type: 'Link',
-                                                  menu_id: menu.id,
-                                                  parent_id: women_link_parent_id
-                                                })
+  women_sweaters = Spree::MenuItem.where(
+    name: sweaters,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
   women_sweaters.linked_resource_id = women_sweaters_t.id
   women_sweaters.save!
 
   women_tops_tees_t = Spree::Taxon.find_by!(permalink: 'categories/women/tops-and-t-shirts')
-  women_tops_tees = Spree::MenuItem.first_or_create!({
-                                                   name: tops_and_t_shirts,
-                                                   linked_resource_type: 'Spree::Taxon',
-                                                   item_type: 'Link',
-                                                   menu_id: menu.id,
-                                                   parent_id: women_link_parent_id
-                                                 })
+  women_tops_tees = Spree::MenuItem.where(
+    name: tops_and_t_shirts,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
   women_tops_tees.linked_resource_id = women_tops_tees_t.id
   women_tops_tees.save!
 
   women_j_c_t = Spree::Taxon.find_by!(permalink: 'categories/women/jackets-and-coats')
-  women_j_c = Spree::MenuItem.first_or_create!({
-                                             name: jackets_and_coats,
-                                             linked_resource_type: 'Spree::Taxon',
-                                             item_type: 'Link',
-                                             menu_id: menu.id,
-                                             parent_id: women_link_parent_id
-                                           })
+  women_j_c = Spree::MenuItem.where(
+    name: jackets_and_coats,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: women_link_parent_id
+  ).first_or_create!
   women_j_c.linked_resource_id = women_j_c_t.id
   women_j_c.save!
 
@@ -317,46 +325,46 @@ MENUS.each do |menu|
                        end
 
   men_shirts_t = Spree::Taxon.find_by!(permalink: 'categories/men/shirts')
-  men_shirts = Spree::MenuItem.first_or_create!({
-                                              name: shirts,
-                                              linked_resource_type: 'Spree::Taxon',
-                                              item_type: 'Link',
-                                              menu_id: menu.id,
-                                              parent_id: men_link_parent_id
-                                            })
+  men_shirts = Spree::MenuItem.where(
+    name: shirts,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: men_link_parent_id
+  ).first_or_create!
   men_shirts.linked_resource_id = men_shirts_t.id
   men_shirts.save!
 
   men_t_shirts_t = Spree::Taxon.find_by!(permalink: 'categories/men/t-shirts')
-  men_t_shirts = Spree::MenuItem.first_or_create!({
-                                                name: t_shirts,
-                                                linked_resource_type: 'Spree::Taxon',
-                                                item_type: 'Link',
-                                                menu_id: menu.id,
-                                                parent_id: men_link_parent_id
-                                              })
+  men_t_shirts = Spree::MenuItem.where(
+    name: t_shirts,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: men_link_parent_id
+  ).first_or_create!
   men_t_shirts.linked_resource_id = men_t_shirts_t.id
   men_t_shirts.save!
 
   men_sweaters_t = Spree::Taxon.find_by!(permalink: 'categories/men/sweaters')
-  men_sweaters = Spree::MenuItem.first_or_create!({
-                                                name: sweaters,
-                                                linked_resource_type: 'Spree::Taxon',
-                                                item_type: 'Link',
-                                                menu_id: menu.id,
-                                                parent_id: men_link_parent_id
-                                              })
+  men_sweaters = Spree::MenuItem.where(
+    name: sweaters,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: men_link_parent_id
+  ).first_or_create!
   men_sweaters.linked_resource_id = men_sweaters_t.id
   men_sweaters.save!
 
   men_j_c_t = Spree::Taxon.find_by!(permalink: 'categories/men/jackets-and-coats')
-  men_j_c = Spree::MenuItem.first_or_create!({
-                                           name: jackets_and_coats,
-                                           linked_resource_type: 'Spree::Taxon',
-                                           item_type: 'Link',
-                                           menu_id: menu.id,
-                                           parent_id: men_link_parent_id
-                                         })
+  men_j_c = Spree::MenuItem.where(
+    name: jackets_and_coats,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: men_link_parent_id
+  ).first_or_create!
   men_j_c.linked_resource_id = men_j_c_t.id
   men_j_c.save!
 
@@ -371,35 +379,35 @@ MENUS.each do |menu|
                       end
 
   sw_tops_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/tops')
-  sw_tops = Spree::MenuItem.first_or_create!({
-                                           name: tops,
-                                           linked_resource_type: 'Spree::Taxon',
-                                           item_type: 'Link',
-                                           menu_id: menu.id,
-                                           parent_id: sw_link_parent_id
-                                         })
+  sw_tops = Spree::MenuItem.where(
+    name: tops,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: sw_link_parent_id
+  ).first_or_create!
   sw_tops.linked_resource_id = sw_tops_t.id
   sw_tops.save!
 
   sw_sweatshirts_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/sweatshirts')
-  sw_sweatshirts = Spree::MenuItem.first_or_create!({
-                                                  name: sweat_shirts,
-                                                  linked_resource_type: 'Spree::Taxon',
-                                                  item_type: 'Link',
-                                                  menu_id: menu.id,
-                                                  parent_id: sw_link_parent_id
-                                                })
+  sw_sweatshirts = Spree::MenuItem.where(
+    name: sweat_shirts,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: sw_link_parent_id
+  ).first_or_create!
   sw_sweatshirts.linked_resource_id = sw_sweatshirts_t.id
   sw_sweatshirts.save!
 
   sw_pants_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/pants')
-  sw_pants = Spree::MenuItem.first_or_create!({
-                                            name: pants,
-                                            linked_resource_type: 'Spree::Taxon',
-                                            item_type: 'Link',
-                                            menu_id: menu.id,
-                                            parent_id: sw_link_parent_id
-                                          })
+  sw_pants = Spree::MenuItem.where(
+    name: pants,
+    linked_resource_type: 'Spree::Taxon',
+    item_type: 'Link',
+    menu_id: menu,
+    parent_id: sw_link_parent_id
+  ).first_or_create!
   sw_pants.linked_resource_id = sw_pants_t.id
   sw_pants.save!
 end

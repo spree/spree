@@ -1,13 +1,9 @@
 module Spree
   class MenuItem < Spree::Base
-    include TranslatableResource
     include Spree::DisplayLink
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
-
-    TRANSLATABLE_FIELDS = %i[name subtitle destination]
-    translates(*TRANSLATABLE_FIELDS)
 
     acts_as_nested_set dependent: :destroy
 
@@ -39,15 +35,6 @@ module Spree
         code == item_code
       else
         code.present?
-      end
-    end
-
-    # Override first_or_create! to work around Mobility issue with the original first_or_create! method
-    def self.first_or_create!(attrs)
-      if where(attrs).any?
-        where(attrs).first
-      else
-        create!(attrs)
       end
     end
 

@@ -1,13 +1,9 @@
 module Spree
   class Menu < Spree::Base
     include SingleStoreResource
-    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
-
-    TRANSLATABLE_FIELDS = %i[name]
-    translates(*TRANSLATABLE_FIELDS)
 
     MENU_LOCATIONS = ['Header', 'Footer']
     MENU_LOCATIONS_PARAMETERIZED = []
