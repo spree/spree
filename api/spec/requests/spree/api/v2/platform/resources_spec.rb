@@ -327,15 +327,7 @@ describe 'Platform API v2 Resources spec', type: :request do
     context '#ensure_current_store' do
       context 'single store resource' do
         let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
-        let(:menu_attribute_hash) do
-          {
-            :id => 77,
-            :name => 'Ensure-MenuTest',
-            :location => 'Header',
-            :locale => 'en'
-          }
-        end
-        let(:menu_resource_params) { { menu: menu_attribute_hash } }
+        let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
 
         before { execute }
 
