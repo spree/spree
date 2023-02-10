@@ -1,11 +1,18 @@
 module Spree
   class Store < Spree::Base
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::Stores)
       include Spree::Security::Stores
     end
+
+    TRANSLATABLE_FIELDS = %i[name url meta_description meta_keywords seo_title default_currency
+                             supported_currencies facebook twitter instagram customer_support_email
+                             default_country_id description address contact_phone new_order_notifications_email
+                             checkout_zone_id].freeze
+    translate(*TRANSLATABLE_FIELDS)
 
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
