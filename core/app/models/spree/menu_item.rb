@@ -2,6 +2,7 @@ module Spree
   class MenuItem < Spree::Base
     include TranslatableResource
     include Spree::DisplayLink
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -10,6 +11,9 @@ module Spree
     translates(*TRANSLATABLE_FIELDS)
 
     acts_as_nested_set dependent: :destroy
+
+    TRANSLATABLE_FIELDS = %i[name subtitle destination]
+    translates *TRANSLATABLE_FIELDS
 
     ITEM_TYPE = %w[Link Container]
     LINKED_RESOURCE_TYPE = ['Spree::Linkable::Uri', 'Spree::Linkable::Homepage', 'Spree::Product', 'Spree::Taxon', 'Spree::CmsPage']
