@@ -352,6 +352,12 @@ describe Spree::Product, type: :model do
         expect(@product.slugs.with_deleted).not_to be_empty
       end
 
+      it 'keeps translations when product is destroyed' do
+        @product.destroy
+
+        expect(@product.name).not_to be_empty
+      end
+
       it 'updates the history when the product is restored' do
         @product.destroy
 

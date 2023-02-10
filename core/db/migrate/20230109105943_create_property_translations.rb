@@ -1,7 +1,10 @@
 class CreatePropertyTranslations < ActiveRecord::Migration[6.1]
   def change
-    if ActiveRecord::Base.connection.table_exists? 'spree_property_translations'
-      remove_index :spree_property_translations, column: :spree_property_id, if_exists: true
+    if ActiveRecord::Base.connection.table_exists?('spree_property_translations')
+      # manually check for index since Rails if_exists does not always work correctly
+      if ActiveRecord::Migration.connection.index_exists?(:spree_property_translations, :spree_property_id)
+        remove_index :spree_property_translations, column: :spree_property_id, if_exists: true
+      end
     else
       create_table :spree_property_translations do |t|
         # Translated attribute(s)

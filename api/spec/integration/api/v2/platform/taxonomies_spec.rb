@@ -11,7 +11,12 @@ describe 'Taxonomies API', swagger: true do
 
   let(:id) { create(:taxonomy, store: store).id }
   let(:records_list) { create_list(:taxonomy, 2) }
-  let(:valid_create_param_value) { build(:taxonomy).attributes }
+  let(:valid_create_param_value) do
+    {
+      name: 'First Taxonomy',
+      store: Spree::Store.default
+    }
+  end
   let(:valid_update_param_value) do
     {
       name: 'Categories',

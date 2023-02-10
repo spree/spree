@@ -117,6 +117,7 @@ require 'spree/core/version'
 
 require 'spree/core/number_generator'
 require 'spree/migrations'
+require 'spree/translation_migrations'
 require 'spree/core/engine'
 
 require 'spree/i18n'

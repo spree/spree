@@ -72,6 +72,29 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "857c335935a00f584137f31dbcb1a4532af5c8bb5cf53a86058b4af98c6597dc",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "lib/spree/translation_migrations.rb",
+      "line": 21,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "ActiveRecord::Base.connection.execute(\"\\n          UPDATE #{resource_class.table_name}\\n          SET #{resource_class.translatable_fields.map do\n \"#{f}=null\"\n end.join(\", \")};\\n                                              \")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslationMigrations",
+        "method": "transfer_translation_data"
+      },
+      "user_input": "resource_class.translatable_fields.map do\n \"#{f}=null\"\n end.join(\", \")",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "965d3919f811ab63b7b8d62da528559a7f38dc122c57efea7136e7ec5ef1f062",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -114,6 +137,29 @@
         89
       ],
       "note": "interpolating table name"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "c1c97347a2d74ea41d46519e3bfbd94c511a1bd9c285f3f2a1fa0cb7e624d232",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "lib/spree/translation_migrations.rb",
+      "line": 32,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "ActiveRecord::Base.connection.execute(\"\\n          UPDATE #{resource_class.table_name}\\n          SET (#{resource_class.translatable_fields.join(\", \")}) = #{(\"ROW\" or \"\")}(#{resource_class.translatable_fields.map do\n \"#{resource_class::Translation.table_name}.#{f}\"\n end.join(\", \")})\\n          FROM #{resource_class::Translation.table_name}\\n          WHERE #{resource_class::Translation.table_name}.#{\"#{resource_class.table_name.singularize}_id\"} = #{resource_class.table_name}.id\\n                                            \")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslationMigrations",
+        "method": "revert_translation_data_transfer"
+      },
+      "user_input": "resource_class.translatable_fields.join(\", \")",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
     },
     {
       "warning_type": "SQL Injection",
@@ -183,8 +229,31 @@
         89
       ],
       "note": "interpolating table name"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "f14dd62fac0dd1e9d5532dd5efc770e2eb873a8db80faf366b6295378634754a",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "lib/spree/translation_migrations.rb",
+      "line": 16,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "ActiveRecord::Base.connection.execute(\"\\n          INSERT INTO #{resource_class::Translation.table_name} (#{resource_class.translatable_fields.join(\", \")}, #{\"#{resource_class.table_name.singularize}_id\"}, locale, created_at, updated_at)\\n          SELECT #{resource_class.translatable_fields.join(\", \")}, id, '#{default_locale}' as locale, created_at, updated_at FROM #{resource_class.table_name};\\n                                              \")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslationMigrations",
+        "method": "transfer_translation_data"
+      },
+      "user_input": "resource_class.translatable_fields.join(\", \")",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
     }
   ],
-  "updated": "2023-01-13 11:44:19 +0100",
+  "updated": "2023-01-18 14:40:41 +0100",
   "brakeman_version": "5.4.0"
 }

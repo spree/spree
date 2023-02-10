@@ -41,7 +41,11 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
     translates(*TRANSLATABLE_FIELDS)
 
-    self::Translation.class_eval { acts_as_paranoid }
+    self::Translation.class_eval do
+      acts_as_paranoid
+      # deleted translation values also need to be accessible for index views listing deleted resources
+      default_scope { unscope(where: :deleted_at) }
+    end
 
     friendly_id :slug_candidates, use: [:history, :mobility]
     acts_as_paranoid
@@ -355,11 +359,16 @@ module Spree
     end
 
     def brand
-      @brand ||= taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
+      @brand ||= taxons.joins(:taxonomy).
+                 join_translation_table(Taxonomy).
+                 find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
     end
 
     def category
-      @category ||= taxons.joins(:taxonomy).order(depth: :desc).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+      @category ||= taxons.joins(:taxonomy).
+                    join_translation_table(Taxonomy).
+                    order(depth: :desc).
+                    find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
     end
 
     def taxons_for_store(store)
