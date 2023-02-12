@@ -12,7 +12,12 @@ module Spree
                              supported_currencies facebook twitter instagram customer_support_email
                              default_country_id description address contact_phone new_order_notifications_email
                              checkout_zone_id].freeze
-    translate(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS)
+
+    self::Translation.class_eval do
+      acts_as_paranoid
+      default_scope { unscope(where: :deleted_at) }
+    end
 
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
       # Spree Digital Asset Configurations
@@ -101,7 +106,7 @@ module Spree
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
-    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
+    scope :by_url, ->(url_param) { i18n { url.matches("%#{url_param}%") } }
 
     after_commit :clear_cache
 
@@ -136,7 +141,7 @@ module Spree
     end
 
     def supported_currencies_list
-      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
+      @supported_currencies_list ||= (supported_currencies.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
     end
