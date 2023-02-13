@@ -84,7 +84,11 @@ Spree::Core::Engine.add_routes do
         end
 
         # Product Catalog API
-        resources :products
+        resources :products do
+          member do
+            patch :translate
+          end
+        end
         resources :taxonomies
         resources :taxons do
           member do

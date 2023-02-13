@@ -86,6 +86,10 @@ module Spree
         data_feeds_google_optional_sub_attributes_service: 'Spree::DataFeeds::Google::OptionalSubAttributes',
         data_feeds_google_products_list: 'Spree::DataFeeds::Google::ProductsList',
 
+        # translations
+        products_generate_automated_translations: 'Spree::Products::Translations::GenerateAutomatedTranslations',
+        products_automated_translations_provider: nil,
+
         # finders
         address_finder: 'Spree::Addresses::Find',
         country_finder: 'Spree::Countries::Find',

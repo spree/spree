@@ -31,6 +31,9 @@ en:
           unauthorized: Error, you are not authorized to access this asset
         metadata:
           invalid_params: Public and private metadata parameters should be objects
+        translations:
+          missing_provider: No automated translations provider configured
+          success: Requested translations were generated successfully
         wishlist:
           errors:
             the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.

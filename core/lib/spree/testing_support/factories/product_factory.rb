@@ -58,6 +58,10 @@ FactoryBot.define do
           create(:product_property, product: product, property_id: 10, value: 'Epsilon')
         end
       end
+
+      trait :with_translations do
+        after(:create) { |product| create(:product_translation, locale: :it, product: product) }
+      end
     end
   end
 end
