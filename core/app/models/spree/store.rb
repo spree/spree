@@ -10,8 +10,7 @@ module Spree
 
     TRANSLATABLE_FIELDS = %i[name url meta_description meta_keywords seo_title default_currency
                              supported_currencies facebook twitter instagram customer_support_email
-                             default_country_id description address contact_phone new_order_notifications_email
-                             checkout_zone_id].freeze
+                             description address contact_phone new_order_notifications_email].freeze
     translates(*TRANSLATABLE_FIELDS)
 
     self::Translation.class_eval do
@@ -141,6 +140,8 @@ module Spree
     end
 
     def supported_currencies_list
+      ensure_supported_currencies
+
       @supported_currencies_list ||= (supported_currencies.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact

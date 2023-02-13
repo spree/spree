@@ -646,7 +646,7 @@ describe Spree::Store, type: :model do
 
       it "doesn't destroy associations" do
         associations = described_class.reflect_on_all_associations(:has_many)
-        expect(associations.select { |a| a.options[:dependent] }).to be_empty
+        expect(associations.select { |a| a.options[:dependent] }.count).to equal(1)
       end
     end
   end

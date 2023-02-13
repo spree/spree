@@ -15,7 +15,7 @@ describe Spree::Api::V2::Platform::StoreSerializer do
 
   it { expect(subject).to be_kind_of(Hash) }
 
-  it do
+  it 'generates the correct serialization' do
     expect(subject).to eq(
       {
         data: {
