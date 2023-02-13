@@ -39,6 +39,12 @@ Rails.application.routes.draw do
       )
     end
   end
+
+  if Rails.env.development? && !Spree::Core::Engine.frontend_available? && Spree::Config[:show_welcome_page]
+    scope module: 'spree' do
+      get '/', to: "welcome_page#index"
+    end
+  end
 end
 
 Spree::Core::Engine.draw_routes
