@@ -167,7 +167,23 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'with locale set to polish' do
-        # create translated resources
+        # generate translations for default store
+        let!(:store) do
+          default_store = Spree::Store.default
+          Mobility.with_locale(:pl) do
+            default_store.name = 'Spree Sklep Testowy'
+            default_store.url = 'www.example.com'
+            default_store.mail_from_address = 'no-reply@example.com'
+            default_store.customer_support_email = 'support@example.com'
+            default_store.new_order_notifications_email = 'store-owner@example.com'
+            default_store.default_currency = 'PLN'
+            default_store.supported_currencies = 'PLN'
+            default_store.default_locale = 'pl'
+          end
+
+          default_store
+        end
+        # generate translated resources
         let!(:option_type_pl_locale)     { Mobility.with_locale(:pl) { create(:option_type) } }
         let!(:option_value_pl_locale)    { Mobility.with_locale(:pl) { create(:option_value, option_type: option_type_pl_locale) } }
         let!(:product_pl_locale)         { Mobility.with_locale(:pl) { create(:product, name: 'Produkt Superowy', option_types: [option_type_pl_locale], stores: [store]) } }
