@@ -15,6 +15,7 @@ module Spree
 
     self::Translation.class_eval do
       acts_as_paranoid
+      # deleted translation values still need to be accessible - remove deleted_at scope
       default_scope { unscope(where: :deleted_at) }
     end
 
