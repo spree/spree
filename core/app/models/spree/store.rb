@@ -124,7 +124,12 @@ module Spree
     # this behaviour is very buggy and unpredictable
     def self.default
       Rails.cache.fetch('default_store') do
-        where(default: true).first_or_initialize
+        # workaround for Mobility bug with first_or_initialize
+        if where(default: true).any?
+          where(default: true).first
+        else
+          new(default: true)
+        end
       end
     end
 
