@@ -8,9 +8,9 @@ module Spree
       include Spree::Security::Stores
     end
 
-    TRANSLATABLE_FIELDS = %i[name url meta_description meta_keywords seo_title default_currency
-                             supported_currencies facebook twitter instagram customer_support_email
-                             description address contact_phone new_order_notifications_email].freeze
+    TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
+                             twitter instagram customer_support_email description
+                             address contact_phone new_order_notifications_email].freeze
     translates(*TRANSLATABLE_FIELDS)
 
     self::Translation.class_eval do

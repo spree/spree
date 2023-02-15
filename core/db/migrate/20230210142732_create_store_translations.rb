@@ -6,9 +6,6 @@ class CreateStoreTranslations < ActiveRecord::Migration[6.1]
         remove_index :spree_store_translations, column: :spree_store_id, if_exists: true
       end
 
-      add_column :spree_store_translations, :url, :string
-      add_column :spree_store_translations, :default_currency, :string
-      add_column :spree_store_translations, :supported_currencies, :string
       add_column :spree_store_translations, :facebook, :string
       add_column :spree_store_translations, :twitter, :string
       add_column :spree_store_translations, :instagram, :string
@@ -21,12 +18,9 @@ class CreateStoreTranslations < ActiveRecord::Migration[6.1]
       create_table :spree_store_translations do |t|
         # Translated attribute(s)
         t.string :name
-        t.string :url
         t.text :meta_description
         t.text :meta_keywords
         t.string :seo_title
-        t.string :default_currency
-        t.string :supported_currencies
         t.string :facebook
         t.string :twitter
         t.string :instagram

@@ -170,15 +170,13 @@ describe 'API V2 Storefront Products Spec', type: :request do
         # generate translations for default store
         let!(:store) do
           default_store = Spree::Store.default
+          default_store.default_locale = 'pl'
+
           Mobility.with_locale(:pl) do
             default_store.name = 'Spree Sklep Testowy'
-            default_store.url = 'www.example.com'
             default_store.mail_from_address = 'no-reply@example.com'
             default_store.customer_support_email = 'support@example.com'
             default_store.new_order_notifications_email = 'store-owner@example.com'
-            default_store.default_currency = 'PLN'
-            default_store.supported_currencies = 'PLN'
-            default_store.default_locale = 'pl'
           end
 
           default_store
