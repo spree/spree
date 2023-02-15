@@ -42,7 +42,7 @@ Rails.application.routes.draw do
 
   if Rails.env.development? && !Spree::Core::Engine.frontend_available? && Spree::Config[:show_welcome_page]
     scope module: 'spree' do
-      get '/', to: "welcome_page#index"
+      get '/', to: 'welcome_page#index'
     end
   end
 end

@@ -1,22 +1,13 @@
-require 'pry'
-
 module Spree
   class WelcomePageController < Spree::BaseController
+    CUSTOMIZE_SPREE_LINK = 'https://dev-docs.spreecommerce.org/customization/'.freeze
+    SLACK_INVITE = 'https://slack.spreecommerce.org'.freeze
+    INSTALL_FRONTEND_LINK = 'https://dev-docs.spreecommerce.org/storefronts'.freeze
+    GITHUB_LINK = 'https://github.com/spree'.freeze
+
     def index
-      if Spree::Core::Engine.backend_available?
-        @admin_page_link = "#{current_store.url}:#{request.port}/admin"
-      else
-        @admin_page_link = nil
-      end
-      @customize_spree_link = 'https://dev-docs.spreecommerce.org/customization/'
-      @install_frontend_link = 'https://dev-docs.spreecommerce.org/storefronts'
-      if Spree::Core::Engine.api_available?
-        @spree_api_link = 'https://api.spreecommerce.org/'
-      else
-        @spree_api_link = nil
-      end
-      @slack_invite = 'https://slack.spreecommerce.org'
-      @github_link = 'https://github.com/spree'
+      @admin_page_link = Spree::Core::Engine.backend_available? ? 'admin' : nil
+      @spree_api_link = Spree::Core::Engine.api_available? ? 'https://api.spreecommerce.org/' : nil
     end
   end
 end

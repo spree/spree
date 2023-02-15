@@ -1,5 +1,6 @@
 require_relative 'dependencies'
 require_relative 'configuration'
+require 'sprockets/railtie'
 
 module Spree
   module Core
@@ -157,6 +158,8 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
       end
+
+      config.assets.paths << Spree::Core::Engine.root.join('public')
     end
   end
 end

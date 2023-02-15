@@ -1,5 +1,5 @@
 <!DOCTYPE html><!--  This site was created in Webflow. https://www.webflow.com  -->
-<!--  Last Published: Fri Feb 10 2023 10:48:28 GMT+0000 (Coordinated Universal Time)  -->
+<!--  Last Published: Thu Feb 16 2023 10:22:57 GMT+0000 (Coordinated Universal Time)  -->
 <html data-wf-page="63e3585a16d4439634e031d2" data-wf-site="63e3585a16d4432990e031d1">
 <head>
   <meta charset="utf-8">
@@ -13,8 +13,8 @@
   <%= favicon_link_tag "webclip.png", :rel => "apple-touch-icon" %>
 </head>
 <body class="body">
-  <div class="new-page-3">
-    <div data-animation="default" data-collapse="none" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="navbar-logo-left-2 w-nav">
+  <div class="page">
+    <div data-w-id="9b56944c-92ed-ab4f-6bcd-4e783e95a0e3" data-animation="default" data-collapse="none" data-duration="400" data-easing="ease" data-easing2="ease" role="banner" class="navbar-logo-left-2 w-nav">
       <div class="navbarcontainer-2 w-container">
         <div class="navbar-content-2">
           <div class="navbar-brand">
@@ -22,11 +22,14 @@
           </div>
           <nav role="navigation" class="navbar-menu w-nav-menu">
             <div class="contact-search">
-              <a href=<%= @slack_invite %> target="_blank" class="button-3">
-                <%= image_tag "Vectors-Wrapper_2.svg", :class => "vectors-wrapper-2" %>
+              <a href=<%= Spree::WelcomePageController::SLACK_INVITE %> target="_blank" class="link-nav w-inline-block">
+                <%= image_tag "SLACK.png", :size => "(max-width: 767px) 25px, (max-width: 991px) 3vw, (max-width: 1279px) 25px, (max-width: 1439px) 2vw, (max-width: 1919px) 25px, 1vw",
+                              :srcset => {"SLACK-p-500.png" => "500w", "SLACK-p-800.png" => "800w", "SLACK-p-1080.png" => "1080w", "SLACK-p-1600.png" => "1600w",
+                                          "SLACK-p-2000.png" => "2000w", "SLACK.png" => "2048w"}, :class => "link-img" %>
               </a>
-              <a href=<%= @github_link %> target="_blank" class="button-3">
-                <%= image_tag "Vectors-Wrapper_3.svg", :class => "vectors-wrapper-2" %>
+              <a href=<%= Spree::WelcomePageController::GITHUB_LINK %> target="_blank" class="link-nav w-inline-block">
+                <%= image_tag "GITHUBnegative.png", :size => "(max-width: 767px) 25px, (max-width: 991px) 3vw, (max-width: 1279px) 25px, (max-width: 1439px) 2vw, (max-width: 1919px) 25px, 1vw",
+                    :srcset => {"GITHUBnegative-p-500.png" => "500w", "GITHUBnegative.png" => "512w"}, :class => "link-img"%>
               </a>
             </div>
           </nav>
@@ -36,36 +39,67 @@
         </div>
       </div>
     </div>
+    <div data-w-id="60ca18d7-88f2-c57e-37c7-65c41290dd8c" class="cover"></div>
     <div class="section-4">
       <div class="container-3">
         <div class="_2-columns f2wf-columns-2">
           <div class="column">
-            <div class="text small">Getting started</div>
-            <div class="youre-running-spree-headless">
-              <div class="youre-running-spree-headless youre-running-spree-headless heading"><span class="youre-running-spree-headless-0">You&#x27;re
-                  running
-                </span><span class="youre-running-spree-headless-1 spree">Spree</span><span class="youre-running-spree-headless-2">
-                </span><span class="youre-running-spree-headless-0">headless</span></div>
+            <div class="text-container">
+              <div data-w-id="0f48a5f6-68ee-9626-d0c2-fbb15b166010" class="text-mask">
+                <div class="text small">Getting started</div>
+              </div>
+            </div>
+            <div class="heading-container">
+              <div class="heading-mask">
+                <h2 class="heading">You&#x27;re</h2>
+              </div>
+              <div class="heading-mask">
+                <h2 class="heading">running</h2>
+              </div>
+              <div class="heading-mask">
+                <h2 class="heading heading-grad">Spree</h2>
+              </div>
+              <div class="heading-mask">
+                <h2 class="heading">headless</h2>
+              </div>
             </div>
           </div>
           <div class="column-3">
             <div class="frame-29">
-              <% unless @admin_page_link.nil? %>
-                <a href=<%= @admin_page_link %> target="_blank" class="button">
-                  <div class="text-2">Go to the admin panel</div>
-                </a>
-              <% end %>
-              <a href=<%= @customize_spree_link %> target="_blank" class="button-2">
-                <div class="text-3">how to customize spree</div>
-              </a>
-              <a href=<%= @install_frontend_link %> target="_blank" class="link">
-                <div class="text-3">How to install the Front end?</div>
-                <%= image_tag "Vectors-Wrapper_1.svg", :class => "vectors-wrapper-4"%>
-              </a>
-              <a href=<%= @spree_api_link %> target="_blank" class="link">
-                <div class="text-3">Spree commerce api reference</div>
-                <%= image_tag "Vectors-Wrapper_1.svg", :class => "vectors-wrapper-4"%>
-              </a>
+              <div class="button-container">
+                <div class="button-mask">
+                  <% unless @admin_page_link.nil? %>
+                    <a href=<%= @admin_page_link %> target="_blank" class="button button-main">
+                      <div class="text-2">Go to the admin panel</div>
+                    </a>
+                  <% end %>
+                </div>
+              </div>
+              <div class="button-container">
+                <div class="button-mask">
+                  <a href=<%= Spree::WelcomePageController::CUSTOMIZE_SPREE_LINK %> target="_blank" class="button-2 button-second">
+                    <div class="text-3">how to customize spree</div>
+                  </a>
+                </div>
+              </div>
+              <div class="button-container link-container">
+                <div class="button-mask">
+                  <a href=<%= Spree::WelcomePageController::INSTALL_FRONTEND_LINK %> target="_blank" class="link">
+                    <div class="text-3">How to install the Front end?</div>
+                    <%= image_tag "Vectors-Wrapper_1.svg", :class => "vectors-wrapper-4"%>
+                  </a>
+                </div>
+              </div>
+              <div class="button-container link-container button-last">
+                <div class="button-mask">
+                  <% unless @spree_api_link.nil? %>
+                    <a href=<%= @spree_api_link %> target="_blank" class="link">
+                      <div class="text-3">Spree commerce api reference</div>
+                      <%= image_tag "Vectors-Wrapper_1.svg", :class => "vectors-wrapper-4"%>
+                    </a>
+                  <% end %>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -73,15 +107,16 @@
     </div>
     <div class="section-5">
       <div class="container-4">
-        <%= image_tag "Laptop-spree.png", :srcset => {"Laptop-spree-p-500.png" => "500w", "Laptop-spree-p-800.png" => "800w",
-        "Laptop-spree-p-1080.png" => "1080w", "Laptop-spree-p-1600.png" => "1600w", "Laptop-spree-p-2000.png" => "2000w",
-        "Laptop-spree-p-2600.png" => "2600w", "Laptop-spree-p-3200.png" => "3200w", "Laptop-spree.png" => "3500w"},
-        :size => "100vw", :class => "vectors-wrapper-6 img" %>
+        <%= image_tag "Laptop-spree.png", :size => "100vw", :srcset => {"Laptop-spree-p-500.png" => "500w", "Laptop-spree-p-800.png" => "800w",
+                                                                        "Laptop-spree-p-1080.png" => "1080w", "Laptop-spree-p-1600.png" => "1600w",
+                                                                        "Laptop-spree-p-2000.png" => "2000w", "Laptop-spree-p-2600.png" => "2600w",
+                                                                        "Laptop-spree-p-3200.png" => "3200w", "Laptop-spree.png" => "3500w"},
+                                                                        :class => "vectors-wrapper-6 img" %>
       </div>
     </div>
   </div>
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=63e3585a16d4432990e031d1" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-  <%= javascript_include_tag 'spree/core/all' %>
+  <%= javascript_include_tag 'spree/core/webflow' %>
   <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
 </body>
 </html>

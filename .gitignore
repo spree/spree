@@ -55,4 +55,5 @@ test_app
 vendor/bundle
 */vendor/bundle
 .ignore
+core/node_modules
 TODO

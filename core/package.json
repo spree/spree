@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "esbuild": "^0.14.1"
+  },
+  "scripts": {
+    "prod:build:js": "esbuild app/assets/javascripts/spree/core/*.js --bundle --sourcemap --minify --outdir=public/spree/core",
+    "prod:build:css": "tailwindcss -i app/assets/stylesheets/spree/core.css -o ./public/spree/core/all.css --postcss"
+  },
+  "devDependencies": {
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.6"
+  }
+}
