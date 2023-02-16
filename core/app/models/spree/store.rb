@@ -146,7 +146,7 @@ module Spree
     end
 
     def supported_currencies_list
-      @supported_currencies_list ||= (supported_currencies.split(',') << default_currency).sort.map(&:to_s).map do |code|
+      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
     end
