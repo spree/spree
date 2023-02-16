@@ -10,7 +10,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
 
   describe '#index' do
     context 'filtering' do
-      let(:data_ids) { json_response['data'].pluck(:id) } 
+      let(:data_ids) { json_response['data'].pluck(:id) }
 
       context 'with no params' do
         before do
@@ -89,7 +89,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
       }.to change {
         Spree::Webhooks::Subscriber.
           all.
-          as_json(except: %i[created_at id preferences updated_at]).
+          as_json(except: %i[created_at id preferences updated_at secret_key]).
           map(&:values)
       }.from([]).to([[url, active, events]])
     end

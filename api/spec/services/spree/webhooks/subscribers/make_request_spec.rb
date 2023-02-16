@@ -4,9 +4,10 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   let(:http_double) { instance_double(Net::HTTP) }
   let(:url) { 'http://google.com/' }
   let(:webhook_payload_body) { { data: [{}] }.to_json }
+  let(:signature) { 'some-signature-of-data' }
 
   describe '#execution_time' do
-    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).execution_time }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url, signature: signature).execution_time }
 
     before do
       stub_request(:post, url)
@@ -36,7 +37,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#failed_request?' do
-    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).failed_request? }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url, signature: signature).failed_request? }
 
     before { stub_request(:post, url) }
 
@@ -152,8 +153,34 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
     end
   end
 
+  describe 'HTTP request headers' do
+    subject do
+      described_class.new(
+        signature: signature,
+        url: url,
+        webhook_payload_body: webhook_payload_body
+      )
+    end
+
+    before do
+      stub_request(:post, url)
+    end
+
+    it 'marks the HTTP request as a JSON request' do
+      expect(subject.send(:request)).to \
+        have_requested(:post, url).
+        with(headers: { 'Content-Type' => 'application/json' })
+    end
+
+    it "includes the event's signature in the HTTP headers" do
+      expect(subject.send(:request)).to \
+        have_requested(:post, url).
+        with(headers: { 'X-Spree-Hmac-SHA256' => signature })
+    end
+  end
+
   describe '#response_code' do
-    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url).response_code }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url, signature: signature).response_code }
 
     context 'when request raises an Errno::ECONNREFUSED exception' do
       before do
@@ -190,7 +217,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#success?' do
-    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url) }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url, signature: signature) }
 
     context 'when unprocessable_uri? equals true' do
       before { allow(subject).to receive(:unprocessable_uri?).and_return(true) }
@@ -218,7 +245,7 @@ describe Spree::Webhooks::Subscribers::MakeRequest do
   end
 
   describe '#unprocessable_uri?' do
-    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url) }
+    subject { described_class.new(webhook_payload_body: webhook_payload_body, url: url, signature: signature) }
 
     before { allow(subject).to receive(:URI).with(url).and_return(uri) }
 

@@ -39,7 +39,11 @@ module Spree
 
         def request
           @request ||=
-            Spree::Webhooks::Subscribers::MakeRequest.new(webhook_payload_body: body_with_event_metadata, url: url)
+            Spree::Webhooks::Subscribers::MakeRequest.new(
+              signature: event.signature_for(body_with_event_metadata),
+              url: url,
+              webhook_payload_body: body_with_event_metadata
+            )
         end
         alias make_request request
 

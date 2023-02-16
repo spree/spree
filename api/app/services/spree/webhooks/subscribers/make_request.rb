@@ -4,8 +4,9 @@ module Spree
   module Webhooks
     module Subscribers
       class MakeRequest
-        def initialize(url:, webhook_payload_body:)
+        def initialize(signature:, url:, webhook_payload_body:)
           @execution_time_in_milliseconds = 0
+          @signature = signature
           @url = url
           @webhook_payload_body = webhook_payload_body
           @webhooks_timeout = ENV['SPREE_WEBHOOKS_TIMEOUT']
@@ -49,7 +50,7 @@ module Spree
         end
 
         def request
-          req = Net::HTTP::Post.new(uri_path, HEADERS)
+          req = Net::HTTP::Post.new(uri_path, HEADERS.merge('X-Spree-Hmac-SHA256' => @signature))
           req.body = webhook_payload_body
           @request ||= begin
             start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)

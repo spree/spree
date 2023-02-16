@@ -16,6 +16,7 @@ describe Spree::Api::V2::Platform::Webhooks::SubscriberSerializer do
         attributes: {
           active: resource.active,
           created_at: resource.created_at,
+          secret_key: resource.secret_key,
           subscriptions: resource.subscriptions,
           updated_at: resource.updated_at,
           url: resource.url
