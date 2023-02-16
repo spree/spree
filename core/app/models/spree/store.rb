@@ -106,7 +106,7 @@ module Spree
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
-    scope :by_url, ->(url_param) { i18n { url.matches("%#{url_param}%") } }
+    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
 
     after_commit :clear_cache
 
@@ -146,8 +146,6 @@ module Spree
     end
 
     def supported_currencies_list
-      ensure_supported_currencies
-
       @supported_currencies_list ||= (supported_currencies.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
