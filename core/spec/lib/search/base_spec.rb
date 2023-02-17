@@ -161,6 +161,6 @@ describe Spree::Core::Search::Base do
   it 'returns products with shirt in name when keyword set to shirt' do
     params = { keywords: 'shirt', include_images: true }
     searcher = described_class.new(ActionController::Parameters.new(params))
-    expect(searcher.retrieve_products.count).to eq(1)
+    expect(searcher.retrieve_products.first.name).to eq('RoR Shirt')
   end
 end
