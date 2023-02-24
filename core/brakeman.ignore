@@ -24,6 +24,29 @@
       "note": "interpolating table name"
     },
     {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "05d3870f66d650510c859a8949d5686b05eb028825083b096d0f65fedf80b118",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "lib/spree/core/controller_helpers/auth.rb",
+      "line": 25,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to((session[\"spree_user_return_to\"] or (request.env[\"HTTP_REFERER\"] or default)))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Core::ControllerHelpers::Auth",
+        "method": "redirect_back_or_default"
+      },
+      "user_input": "request.env[\"HTTP_REFERER\"]",
+      "confidence": "High",
+      "cwe_id": [
+        601
+      ],
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "1f02952550c2f54d044c9577a45e7ba7c7990c8b8a59d1dac83a96790237f507",
@@ -254,6 +277,6 @@
       "note": ""
     }
   ],
-  "updated": "2023-01-18 14:40:41 +0100",
-  "brakeman_version": "5.4.0"
+  "updated": "2023-02-24 11:32:53 +0100",
+  "brakeman_version": "5.4.1"
 }
