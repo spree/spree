@@ -1,10 +1,22 @@
 module Spree
   class Store < Spree::Base
+    include TranslatableResource
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::Stores)
       include Spree::Security::Stores
+    end
+
+    TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
+                             twitter instagram customer_support_email description
+                             address contact_phone new_order_notifications_email].freeze
+    translates(*TRANSLATABLE_FIELDS)
+
+    self::Translation.class_eval do
+      acts_as_paranoid
+      # deleted translation values still need to be accessible - remove deleted_at scope
+      default_scope { unscope(where: :deleted_at) }
     end
 
     typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
@@ -112,7 +124,12 @@ module Spree
     # this behaviour is very buggy and unpredictable
     def self.default
       Rails.cache.fetch('default_store') do
-        where(default: true).first_or_initialize
+        # workaround for Mobility bug with first_or_initialize
+        if where(default: true).any?
+          where(default: true).first
+        else
+          new(default: true)
+        end
       end
     end
 
