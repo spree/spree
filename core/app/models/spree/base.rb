@@ -3,6 +3,7 @@ class Spree::Base < ApplicationRecord
   serialize :preferences, Hash
 
   include Spree::RansackableAttributes
+  include Spree::TranslatableResourceScopes
 
   after_initialize do
     if has_attribute?(:preferences) && !preferences.nil?

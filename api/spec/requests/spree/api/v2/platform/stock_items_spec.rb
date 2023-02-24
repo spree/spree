@@ -27,7 +27,8 @@ describe 'Platform API v2 Stock Items API' do
       before { get "/api/v2/platform/stock_items?filter[variant_product_name_or_variant_sku_cont]=#{product_2.name}", headers: bearer_token }
 
       it 'returns stock_items with matching stock location ids' do
-        expect(json_response['data'].count).to eq 2
+        # default variant + 2 variants for product_2, each inside two stock locations
+        expect(json_response['data'].count).to eq 6
         expect(json_response['data'].first).to have_type('stock_item')
       end
     end

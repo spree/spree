@@ -2,7 +2,6 @@ module Spree
   class ProductProperty < Spree::Base
     include Spree::FilterParam
     include TranslatableResource
-    include TranslatableResourceScopes
 
     TRANSLATABLE_FIELDS = %i[value filter_param].freeze
     translates(*TRANSLATABLE_FIELDS)
