@@ -6,7 +6,7 @@ describe 'API V2 Platform Line Items Spec' do
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
   let!(:line_items) { create_list(:line_item, 5) }
-  
+
   describe 'line_items#index' do
     context 'with no params' do
       before { get '/api/v2/platform/line_items', headers: bearer_token }
@@ -57,6 +57,14 @@ describe 'API V2 Platform Line Items Spec' do
         it 'returns line items with price greater than or equal to the given price' do
           expect(json_response['data'].count).to eq 1
           expect(json_response['data'].first['id']).to eq line_item.id.to_s
+        end
+      end
+
+      context 'by variant name' do
+        before { get "/api/v2/platform/line_items?filter[variant_product_name_or_variant_sku_cont]=#{line_items.first.variant.name}", headers: bearer_token }
+
+        it 'returns line items with correct variant name' do
+          expect(json_response['data'].count).to eq 1
         end
       end
     end
