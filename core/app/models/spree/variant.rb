@@ -5,7 +5,6 @@ module Spree
 
     include MemoizedData
     include Metadata
-    include TranslatableResourceScopes
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

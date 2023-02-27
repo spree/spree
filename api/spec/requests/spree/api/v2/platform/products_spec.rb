@@ -307,6 +307,14 @@ describe 'API V2 Platform Products Spec' do
         end
       end
     end
+
+    context 'filtering' do
+      before { get "/api/v2/platform/products?filter[name_cont]=#{in_stock_product.name}", headers: bearer_token }
+
+      it 'returns line items with correct variant name' do
+        expect(json_response['data'].count).to eq 1
+      end
+    end
   end
 
   describe 'products#show' do
