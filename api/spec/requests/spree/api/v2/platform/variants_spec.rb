@@ -7,7 +7,7 @@ describe 'API V2 Platform Variants Spec' do
 
   let(:product) { create(:product, stores: [store]) }
   let!(:variants) { create_list(:variant, 5, product: product) }
-  
+
   describe 'variants#index' do
     context 'with no params' do
       before { get '/api/v2/platform/variants', headers: bearer_token }
@@ -41,7 +41,7 @@ describe 'API V2 Platform Variants Spec' do
         let(:product_2) { create(:product, stores: [store], name: 'Vendo T-shirt') }
         let!(:variant) { create(:variant, product: product_2) }
 
-        before { get "/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false', headers: bearer_token }
 
         it 'returns variant with a specified name' do
           expect(json_response['data'].count).to eq 1
@@ -52,7 +52,7 @@ describe 'API V2 Platform Variants Spec' do
       xcontext 'by price' do
         let!(:variant) { create(:variant, price: 100) }
 
-        before { get "/api/v2/platform/variants?filter[product_price_between]=100,200", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_price_between]=100,200', headers: bearer_token }
 
         it 'returns variants with price greater than or equal to the given price' do
           expect(json_response['data'].count).to eq 1
