@@ -186,7 +186,7 @@ module Spree
 
           next if values.empty?
 
-          ids = products.with_property_values(property_filter_param, values).ids
+          ids = scope.unscope(:order, :includes).with_property_values(property_filter_param, values).ids
           product_ids = index == 0 ? ids : product_ids & ids
           index += 1
         end
