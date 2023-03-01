@@ -1,3 +1,5 @@
+require 'friendly_id/mobility'
+
 # To learn more, check out the guide:
 # http://norman.github.io/friendly_id/file.Guide.html
 FriendlyId.defaults do |config|

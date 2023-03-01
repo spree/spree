@@ -56,5 +56,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord-typedstore'
   s.add_dependency 'mobility', '~> 1.2.9'
   s.add_dependency 'mobility-ransack', '~> 1.2.1'
-  s.add_dependency 'friendly_id-mobility', '~> 1.0.3'
+  s.add_dependency 'friendly_id-mobility', '~> 1.0.4'
 end
