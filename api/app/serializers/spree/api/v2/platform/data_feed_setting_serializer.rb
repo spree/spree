@@ -2,7 +2,7 @@ module Spree
   module Api
     module V2
       module Platform
-        class GoogleFeedSettingSerializer < BaseSerializer
+        class DataFeedSettingSerializer < BaseSerializer
           include ResourceSerializerConcern
         end
       end

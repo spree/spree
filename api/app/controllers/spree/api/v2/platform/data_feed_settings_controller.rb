@@ -2,11 +2,11 @@ module Spree
   module Api
     module V2
       module Platform
-        class GoogleFeedSettingsController < ResourceController
+        class DataFeedSettingsController < ResourceController
           private
 
           def model_class
-            Spree::GoogleFeedSetting
+            Spree::DataFeedSetting
           end
         end
       end
