@@ -196,8 +196,8 @@ Spree::Core::Engine.add_routes do
         # Store API
         resources :stores
 
-        # Google Feed Setting API
-        resources :google_feed_settings
+        # Data Feed Setting API
+        resources :data_feed_settings
 
         # Configurations API
         resources :payment_methods
