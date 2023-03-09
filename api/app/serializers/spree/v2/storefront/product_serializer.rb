@@ -24,8 +24,8 @@ module Spree
           product.available?
         end
 
-        attribute :translated_slugs do |product|
-          product.translated_slugs
+        attribute :localized_slugs do |product|
+          product.localized_slugs
         end
 
         attribute :currency do |_product, params|
@@ -47,9 +47,6 @@ module Spree
         attribute :display_compare_at_price do |product, params|
           display_compare_at_price(product, params[:currency])
         end
-
-
-
 
         has_many :variants
         has_many :option_types
