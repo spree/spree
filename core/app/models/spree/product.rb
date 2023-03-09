@@ -388,6 +388,10 @@ module Spree
       shipping_category&.name == I18n.t('spree.seed.shipping.categories.digital')
     end
 
+    def localized_slugs
+      Hash[translations.pluck(:locale, :slug)]
+    end
+
     private
 
     def add_associations_from_prototype

@@ -24,6 +24,10 @@ module Spree
           product.available?
         end
 
+        attribute :localized_slugs do |product|
+          product.localized_slugs
+        end
+
         attribute :currency do |_product, params|
           params[:currency]
         end

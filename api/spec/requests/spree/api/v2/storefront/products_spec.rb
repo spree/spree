@@ -994,6 +994,21 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 404 HTTP status'
     end
 
+    context 'with localized_slugs' do
+      let!(:product_with_slug) { create(:product) }
+      let!(:translation1) { product_with_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
+      let!(:translation2) { product_with_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
+
+      before do
+        get "/api/v2/storefront/products/#{product_with_slug.id}"
+      end
+
+      it 'returns translated slugs' do
+        expect(json_response['data']['attributes']['localized_slugs']).to match(product_with_slug.localized_slugs)
+        expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
+      end
+    end
+
     context 'with product image data' do
       shared_examples 'returns product image data' do
         it 'returns product image data' do
