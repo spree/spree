@@ -387,6 +387,9 @@ module Spree
     def digital?
       shipping_category&.name == I18n.t('spree.seed.shipping.categories.digital')
     end
+    def translated_slugs
+      Hash[translations.pluck(:locale, :slug)]
+    end
 
     private
 
@@ -451,6 +454,7 @@ module Spree
     def update_slug_history
       save!
     end
+
 
     def anything_changed?
       saved_changes? || @nested_changes
@@ -574,5 +578,9 @@ module Spree
     def after_draft
       # this method is prepended in api/ to queue Webhooks requests
     end
+
+
+
+
   end
 end
