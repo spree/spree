@@ -55,7 +55,7 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    TRANSLATABLE_FIELDS = %i[name description].freeze
+    TRANSLATABLE_FIELDS = %i[name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS)
 
     # indicate which filters should be used for a taxon
@@ -109,6 +109,10 @@ module Spree
     #  See #3390 for background.
     def child_index=(idx)
       move_to_child_with_index(parent, idx.to_i) unless new_record?
+    end
+
+    def localized_slugs
+      Hash[translations.pluck(:locale, :permalink)]
     end
 
     private
