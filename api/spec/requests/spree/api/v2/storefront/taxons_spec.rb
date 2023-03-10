@@ -218,6 +218,21 @@ describe 'Taxons Spec', type: :request do
       end
     end
 
+    context 'with localized_slugs' do
+      # generate translations for test taxon
+      let!(:taxon_slug) { create(:taxon) }
+      let!(:translation1) { taxon_slug.translations.create(permalink: "test_slug_pl", locale: "pl")  }
+      let!(:translation2) { taxon_slug.translations.create(permalink: "test_slug_es", locale: "es")  }
+
+      before do
+        get "/api/v2/storefront/taxons/#{taxon_slug.id}"
+      end
+
+      it 'returns translated slugs' do
+        expect(json_response["data"]["attributes"]["localized_slugs"]).to match(taxon_slug.localized_slugs)
+      end
+    end
+
     context 'with taxon image data' do
       shared_examples 'returns taxon image data' do
         it 'returns taxon image data' do
