@@ -74,10 +74,6 @@ describe 'Taxons Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns children taxons by parent' do
-        puts("/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink}")
-        puts(taxonomy.root.permalink)
-        puts(taxonomy.root.permalink.class)
-        puts(json_response)
         expect(json_response['data'].size).to eq(2)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
         expect(json_response['data'][1]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
@@ -222,20 +218,20 @@ describe 'Taxons Spec', type: :request do
       end
     end
 
-    # context 'with localized_slugs' do
-    #   let!(:taxon_slug) { create(:taxon) }
-    #   let!(:translation1) { taxon_slug.translations.create(permalink: 'test_slug_pl', locale: 'pl')  }
-    #   let!(:translation2) { taxon_slug.translations.create(permalink: 'test_slug_es', locale: 'es')  }
+    context 'with localized_slugs' do
+      let!(:taxon_slug) { create(:taxon) }
+      let!(:translation1) { taxon_slug.translations.create(permalink: 'test_slug_pl', locale: 'pl')  }
+      let!(:translation2) { taxon_slug.translations.create(permalink: 'test_slug_es', locale: 'es')  }
 
-    #   before do
-    #     get "/api/v2/storefront/taxons/#{taxon_slug.id}"
-    #   end
-    #
-    #   it 'returns translated slugs' do
-    #     expect(json_response['data']['attributes']['localized_slugs']).to match(taxon_slug.localized_slugs)
-    #     expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
-    #   end
-    # end
+      before do
+        get "/api/v2/storefront/taxons/#{taxon_slug.id}"
+      end
+
+      it 'returns translated slugs' do
+        expect(json_response['data']['attributes']['localized_slugs']).to match(taxon_slug.localized_slugs)
+        expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
+      end
+    end
 
     context 'with taxon image data' do
       shared_examples 'returns taxon image data' do
