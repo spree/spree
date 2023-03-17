@@ -219,16 +219,15 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'with localized_slugs' do
-      let!(:taxon_slug) { create(:taxon) }
-      let!(:translation1) { taxon_slug.translations.create(permalink: 'test_slug_pl', locale: 'pl')  }
-      let!(:translation2) { taxon_slug.translations.create(permalink: 'test_slug_es', locale: 'es')  }
+      let!(:taxon_with_slug) { create(:taxon) }
+      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { permalink: 'test_slug_es', locale: 'es' } ])}
 
       before do
-        get "/api/v2/storefront/taxons/#{taxon_slug.id}"
+        get "/api/v2/storefront/taxons/#{taxon_with_slug.id}"
       end
 
       it 'returns translated slugs' do
-        expect(json_response['data']['attributes']['localized_slugs']).to match(taxon_slug.localized_slugs)
+        expect(json_response['data']['attributes']['localized_slugs']).to match(taxon_with_slug.localized_slugs)
         expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
       end
     end

@@ -995,16 +995,16 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with localized_slugs' do
-      let!(:product_slug) { create(:product) }
-      let!(:translation1) { product_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
-      let!(:translation2) { product_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
+      let!(:product_with_slug) { create(:product) }
+      let!(:translation1) { product_with_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
+      let!(:translation2) { product_with_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
 
       before do
-        get "/api/v2/storefront/products/#{product_slug.id}"
+        get "/api/v2/storefront/products/#{product_with_slug.id}"
       end
 
       it 'returns translated slugs' do
-        expect(json_response['data']['attributes']['localized_slugs']).to match(product_slug.localized_slugs)
+        expect(json_response['data']['attributes']['localized_slugs']).to match(product_with_slug.localized_slugs)
         expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
       end
     end
