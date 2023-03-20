@@ -55,8 +55,12 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    TRANSLATABLE_FIELDS = %i[name description].freeze
+    TRANSLATABLE_FIELDS = %i[name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS)
+
+    self::Translation.class_eval do
+      alias_attribute :slug, :permalink
+    end
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
@@ -112,7 +116,7 @@ module Spree
     end
 
     def localized_slugs
-      Hash[translations.pluck(:locale, :permalink)]
+      Hash[translations.pluck(:locale, :slug)]
     end
 
     private

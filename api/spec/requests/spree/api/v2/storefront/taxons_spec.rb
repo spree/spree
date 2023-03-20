@@ -220,7 +220,7 @@ describe 'Taxons Spec', type: :request do
 
     context 'with localized_slugs' do
       let!(:taxon_with_slug) { create(:taxon) }
-      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { permalink: 'test_slug_es', locale: 'es' } ])}
+      let!(:translations) { taxon_with_slug.translations.create([{ slug: 'test_slug_pl', locale: 'pl' }, { slug: 'test_slug_es', locale: 'es' } ])}
 
       before do
         get "/api/v2/storefront/taxons/#{taxon_with_slug.id}"
