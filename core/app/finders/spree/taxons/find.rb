@@ -66,9 +66,13 @@ module Spree
         return taxons unless parent_permalink?
 
         if Rails::VERSION::STRING >= '6.1'
-          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
+          taxons.joins(:parent).
+            join_translation_table(Taxon, join_on_table_alias = 'parents_spree_taxons').
+            where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
         else
-          taxons.joins("INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id").where(["parent_taxon.permalink = ?", parent_permalink])
+          taxons.joins("INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id").
+            join_translation_table(Taxon, join_on_table_alias = 'parent_taxon').
+            where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
         end
       end
 
