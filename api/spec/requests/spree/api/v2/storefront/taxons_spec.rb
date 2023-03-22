@@ -219,16 +219,26 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'with localized_slugs' do
-      let!(:taxon_with_slug) { create(:taxon) }
-      let!(:translations) { taxon_with_slug.translations.create([{ slug: 'test_slug_pl', locale: 'pl' }, { slug: 'test_slug_es', locale: 'es' } ])}
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
+      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { slug: 'test_slug_es', locale: 'es' } ])}
+
+      let(:expected_slugs) do
+        {
+          en: 'categories/test_slug_en',
+          pl: 'test_slug_pl',
+          es: 'test_slug_es'
+        }
+      end
 
       before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
         get "/api/v2/storefront/taxons/#{taxon_with_slug.id}"
       end
 
       it 'returns translated slugs' do
-        expect(json_response['data']['attributes']['localized_slugs']).to match(taxon_with_slug.localized_slugs)
-        expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
+        expect(json_response['data']['attributes']['localized_slugs']).to match(expected_slugs)
       end
     end
 

@@ -4,6 +4,7 @@ require 'stringex'
 module Spree
   class Taxon < Spree::Base
     include TranslatableResource
+    include TranslatableResourceSlug
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -113,10 +114,6 @@ module Spree
     #  See #3390 for background.
     def child_index=(idx)
       move_to_child_with_index(parent, idx.to_i) unless new_record?
-    end
-
-    def localized_slugs
-      Hash[translations.pluck(:locale, :slug)]
     end
 
     private

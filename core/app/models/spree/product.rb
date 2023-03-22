@@ -24,6 +24,7 @@ module Spree
     include ProductScopes
     include MultiStoreResource
     include TranslatableResource
+    include TranslatableResourceSlug
     include MemoizedData
     include Metadata
     if defined?(Spree::Webhooks)
@@ -386,10 +387,6 @@ module Spree
 
     def digital?
       shipping_category&.name == I18n.t('spree.seed.shipping.categories.digital')
-    end
-
-    def localized_slugs
-      Hash[translations.pluck(:locale, :slug)]
     end
 
     private

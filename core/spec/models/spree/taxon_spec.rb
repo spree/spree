@@ -182,4 +182,44 @@ describe Spree::Taxon, type: :model do
       end
     end
   end
+
+  describe '#localized_slugs_for_store' do
+    let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
+    let(:taxonomy) { create(:taxonomy, name: 'categories', store: store) }
+    let(:taxon) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
+    let!(:taxon_translation_fr) { taxon.translations.create(slug: 'test_slug_fr', locale: 'fr') }
+
+    subject { taxon.localized_slugs_for_store(store) }
+
+    context 'when there are slugs in locales not supported by the store' do
+      let!(:taxon_translation_pl) { taxon.translations.create(slug: 'test_slug_pl', locale: 'pl') }
+      let!(:taxon_translation_de) { taxon.translations.create(slug: 'test_slug_de', locale: 'de') }
+
+      let(:expected_slugs) do
+        {
+          'en' => 'categories/test_slug_en',
+          'fr' => 'test_slug_fr',
+          'pl' => 'test_slug_pl'
+        }
+      end
+
+      it 'returns only slugs in locales supported by the store' do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'when one of the supported locales does not have a translation' do
+      let(:expected_slugs) do
+        {
+          'en' => 'categories/test_slug_en',
+          'fr' => 'test_slug_fr',
+          'pl' => 'test_slug_fr'
+        }
+      end
+
+      it "falls back to store's default locale" do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+  end
 end

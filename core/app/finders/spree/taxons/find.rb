@@ -67,11 +67,11 @@ module Spree
 
         if Rails::VERSION::STRING >= '6.1'
           taxons.joins(:parent).
-            join_translation_table(Taxon, join_on_table_alias = 'parents_spree_taxons').
+            join_translation_table(Taxon, 'parents_spree_taxons').
             where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
         else
           taxons.joins("INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id").
-            join_translation_table(Taxon, join_on_table_alias = 'parent_taxon').
+            join_translation_table(Taxon, 'parent_taxon').
             where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
         end
       end

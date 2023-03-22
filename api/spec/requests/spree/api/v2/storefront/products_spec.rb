@@ -995,17 +995,26 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with localized_slugs' do
-      let!(:product_with_slug) { create(:product) }
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:product_with_slug) { create(:product, stores: [store2], slug: 'test_slug_en') }
       let!(:translation1) { product_with_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
       let!(:translation2) { product_with_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
 
+      let(:expected_result) do
+        {
+          en: 'test_slug_en',
+          pl: 'test_slug_pl',
+          es: 'test_slug_es'
+        }
+      end
+
       before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
         get "/api/v2/storefront/products/#{product_with_slug.id}"
       end
 
       it 'returns translated slugs' do
-        expect(json_response['data']['attributes']['localized_slugs']).to match(product_with_slug.localized_slugs)
-        expect(json_response['data']['attributes']['localized_slugs']).to be_an_instance_of(ActiveSupport::HashWithIndifferentAccess)
+        expect(json_response['data']['attributes']['localized_slugs']).to match(expected_result)
       end
     end
 
