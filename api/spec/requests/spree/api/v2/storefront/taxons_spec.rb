@@ -227,8 +227,8 @@ describe 'Taxons Spec', type: :request do
       let(:expected_slugs) do
         {
           en: 'categories/test_slug_en',
-          pl: 'test_slug_pl',
-          es: 'test_slug_es'
+          pl: 'categories/test_slug_pl',
+          es: 'categories/test_slug_es'
         }
       end
 

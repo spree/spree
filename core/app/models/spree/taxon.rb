@@ -61,6 +61,17 @@ module Spree
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink
+
+      before_create :set_permalink
+
+      def set_permalink
+        parent = translated_model.parent
+        if parent.present?
+          self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
+        else
+          self.permalink = name.to_url if permalink.blank?
+        end
+      end
     end
 
     # indicate which filters should be used for a taxon
@@ -82,11 +93,7 @@ module Spree
 
     # Creates permalink base for friendly_id
     def set_permalink
-      if parent.present?
-        self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
-      else
-        self.permalink = name.to_url if permalink.blank?
-      end
+      translations.each(&:set_permalink)
     end
 
     def active_products

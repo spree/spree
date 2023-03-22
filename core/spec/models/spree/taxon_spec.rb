@@ -198,8 +198,8 @@ describe Spree::Taxon, type: :model do
       let(:expected_slugs) do
         {
           'en' => 'categories/test_slug_en',
-          'fr' => 'test_slug_fr',
-          'pl' => 'test_slug_pl'
+          'fr' => 'categories/test_slug_fr',
+          'pl' => 'categories/test_slug_pl'
         }
       end
 
@@ -212,8 +212,8 @@ describe Spree::Taxon, type: :model do
       let(:expected_slugs) do
         {
           'en' => 'categories/test_slug_en',
-          'fr' => 'test_slug_fr',
-          'pl' => 'test_slug_fr'
+          'fr' => 'categories/test_slug_fr',
+          'pl' => 'categories/test_slug_fr'
         }
       end
 
