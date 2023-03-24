@@ -218,6 +218,30 @@ describe 'Taxons Spec', type: :request do
       end
     end
 
+    context 'with localized_slugs' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
+      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { slug: 'test_slug_es', locale: 'es' } ])}
+
+      let(:expected_slugs) do
+        {
+          en: 'categories/test_slug_en',
+          pl: 'categories/test_slug_pl',
+          es: 'categories/test_slug_es'
+        }
+      end
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/taxons/#{taxon_with_slug.id}"
+      end
+
+      it 'returns translated slugs' do
+        expect(json_response['data']['attributes']['localized_slugs']).to match(expected_slugs)
+      end
+    end
+
     context 'with taxon image data' do
       shared_examples 'returns taxon image data' do
         it 'returns taxon image data' do

@@ -19,6 +19,10 @@ module Spree
           taxon.leaf?
         end
 
+        attribute :localized_slugs do |taxon, params|
+          taxon.localized_slugs_for_store(params[:store])
+        end
+
         belongs_to :parent,   record_type: :taxon, serializer: :taxon
         belongs_to :taxonomy, record_type: :taxonomy
 
