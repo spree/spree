@@ -8,7 +8,8 @@ module Spree
             option_types: [],
             variant_images: [],
             master: product_variant_includes,
-            variants: product_variant_includes
+            variants: product_variant_includes,
+            translations: []
           }
         end
 
