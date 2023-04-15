@@ -196,8 +196,8 @@ Spree::Core::Engine.add_routes do
         # Store API
         resources :stores
 
-        # Data Feed Setting API
-        resources :data_feed_settings
+        # Data Feeds API
+        resources :data_feeds
 
         # Configurations API
         resources :payment_methods
@@ -213,7 +213,7 @@ Spree::Core::Engine.add_routes do
 
       namespace :data_feeds do
         # google data feed API
-        get '/google/:unique_url', to: 'google#rss_feed'
+        get '/google/:slug', to: 'google#rss_feed'
       end
     end
   end

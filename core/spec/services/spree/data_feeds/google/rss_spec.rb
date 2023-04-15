@@ -5,7 +5,7 @@ module Spree
     subject { described_class.new }
 
     let(:store) { create(:store) }
-    let(:setting) { create(:data_feed_setting, store: store) }
+    let(:setting) { create(:data_feed, store: store) }
     let(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:with_image_variant, product: product) }
     let(:result) { subject.call(setting) }

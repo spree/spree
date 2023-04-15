@@ -1,7 +1,7 @@
 FactoryBot.define do
-  factory :data_feed_setting, class: Spree::DataFeedSetting do
+  factory :data_feed, class: Spree::DataFeed do
     id             { 1 }
-    enabled        { true }
+    active         { true }
     store          { create(:store) }
     provider       { 'google' }
     name           { 'test' }

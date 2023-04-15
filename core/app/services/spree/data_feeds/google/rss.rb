@@ -9,7 +9,7 @@ module Spree
         def call(settings)
           @settings = settings
 
-          return failure(store, error: "Store with id: #{settings.spree_store_id} does not exist.") if store.nil?
+          return failure(store, error: "Store with id: #{settings.store_id} does not exist.") if store.nil?
 
           builder = Nokogiri::XML::Builder.new do |xml|
             xml.rss('xmlns:g' => 'http://base.google.com/ns/1.0', 'version' => '2.0') do
@@ -35,7 +35,7 @@ module Spree
         def store
           return @store if defined? @store
 
-          @store ||= Spree::Store.find_by(id: @settings.spree_store_id)
+          @store ||= Spree::Store.find_by(id: @settings.store_id)
         end
 
         def add_store_information_to_xml(xml)
