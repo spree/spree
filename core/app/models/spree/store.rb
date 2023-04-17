@@ -67,8 +67,7 @@ module Spree
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
 
-    has_many :data_feed_settings, class_name: 'Spree::DataFeedSetting', foreign_key: 'spree_store_id'
-    accepts_nested_attributes_for :data_feed_settings, update_only: true
+    has_many :data_feeds, class_name: 'Spree::DataFeed'
 
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
