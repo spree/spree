@@ -8,7 +8,7 @@ Capybara.register_driver :selenium_chrome_headless_ci do |app|
     opts.add_argument('--disable-gpu') if Gem.win_platform?
     # Workaround https://bugs.chromium.org/p/chromedriver/issues/detail?id=2650&q=load&sort=-id&colspec=ID%20Status%20Pri%20Owner%20Summary
     opts.add_argument('--disable-site-isolation-trials')
-    opts.add_argument('--whitelisted-ips=')
+    opts.add_argument('--whitelisted-ips')
   end
 
   Capybara::Selenium::Driver.new(app, **{ :browser => :chrome, options_key => browser_options })
