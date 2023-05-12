@@ -9,12 +9,11 @@ module Spree
     with_options presence: true do
       validates :store
       validates :name, uniqueness: true
-      validates :provider
       validates :slug, uniqueness: { scope: :store_id }
     end
 
     def formatted_url
-      "#{store.formatted_url}/api/v2/data_feeds/#{provider}/#{slug}.rss"
+      "#{store.formatted_url}/api/v2/data_feeds/#{self.class.provider_name}/#{slug}.rss"
     end
 
     private
@@ -22,6 +21,20 @@ module Spree
     def generate_slug
       new_slug = slug.blank? ? SecureRandom.uuid : slug.parameterize
       write_attribute(:slug, new_slug)
+    end
+
+    class << self
+      def label
+        raise NotImplementedError
+      end
+
+      def provider_name
+        raise NotImplementedError
+      end
+
+      def available_types
+        Rails.application.config.spree.data_feed_types
+      end
     end
   end
 end
