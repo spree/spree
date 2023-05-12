@@ -1,7 +1,6 @@
 # settings for default store
-Spree::DataFeed.create!(
+Spree::DataFeed::Google.create!(
   store: Spree::Store.default,
-  name: 'Default Google Data Feed',
-  provider: 'google'
+  name: 'Default Google Data Feed'
 )
 
