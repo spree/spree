@@ -2235,11 +2235,6 @@ paths:
                           type: Spree::DataFeed::Google
                           slug: e593ae1f-630a-4f77-832f-0489da1c921b
                           active: true
-                        relationships:
-                          store:
-                            data:
-                              id: '1'
-                              type: store
                       - id: '2'
                         type: data_feed
                         attributes:
@@ -2247,11 +2242,6 @@ paths:
                           type: Spree::DataFeed::Google
                           slug: 52f060f2-76cf-4983-89a3-714419941463
                           active: true
-                        relationships:
-                          store:
-                            data:
-                              id: '1'
-                              type: store
                     meta:
                       count: 2
                       total_count: 2
@@ -2299,11 +2289,6 @@ paths:
                         type: Spree::DataFeed::Google
                         slug: e593ae1f-630a-4f77-832f-0489da1c921b
                         active: true
-                      relationships:
-                        store:
-                          data:
-                            id: '1'
-                            type: store
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -2316,8 +2301,6 @@ paths:
                     error: Data Feed name can't be blank
                     errors:
                       name:
-                        - can't be blank
-                      store:
                         - can't be blank
                       type:
                         - can't be blank
@@ -2416,11 +2399,6 @@ paths:
                         type: Spree::DataFeed::Google
                         slug: e593ae1f-630a-4f77-832f-0489da1c921b
                         active: true
-                      relationships:
-                        store:
-                          data:
-                            id: '1'
-                            type: store
               schema:
                 "$ref": "#/components/schemas/resource"
         '422':
@@ -19491,7 +19469,6 @@ components:
           required:
           - name
           - type
-          - store_id
           properties:
             name:
               type: string
@@ -19502,9 +19479,6 @@ components:
             type:
               type: string
               example: 'Spree::DataFeed::Google'
-            store_id:
-              type: string
-              example: '1'
             active:
               type: boolean
       x-internal: false
@@ -19516,7 +19490,6 @@ components:
           required:
             - name
             - type
-            - store_id
           properties:
             name:
               type: string
@@ -19527,9 +19500,6 @@ components:
             type:
               type: string
               example: 'Spree::DataFeed::Google'
-            store_id:
-              type: string
-              example: '1'
             active:
               type: boolean
       x-internal: false
