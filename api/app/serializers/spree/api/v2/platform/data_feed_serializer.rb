@@ -3,7 +3,9 @@ module Spree
     module V2
       module Platform
         class DataFeedSerializer < BaseSerializer
-          include ResourceSerializerConcern
+          set_type :data_feed
+
+          attributes :name, :type, :slug, :active
         end
       end
     end
