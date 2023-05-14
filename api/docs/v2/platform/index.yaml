@@ -2200,6 +2200,304 @@ paths:
                     error: The access token is invalid
               schema:
                 "$ref": "#/components/schemas/error"
+  "/api/v2/platform/data_feeds":
+    get:
+      summary: Return a list of Data Feeds
+      tags:
+        - Data Feeds
+      security:
+        - bearer_auth: [ ]
+      operationId: data-feeds-list
+      parameters:
+        - name: page
+          in: query
+          example: 1
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          example: 50
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Records returned
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      - id: '1'
+                        type: data_feed
+                        attributes:
+                          name: First Data Feed
+                          type: Spree::DataFeed::Google
+                          slug: e593ae1f-630a-4f77-832f-0489da1c921b
+                          active: true
+                        relationships:
+                          store:
+                            data:
+                              id: '1'
+                              type: store
+                      - id: '2'
+                        type: data_feed
+                        attributes:
+                          name: Second Data Feed
+                          type: Spree::DataFeed::Google
+                          slug: 52f060f2-76cf-4983-89a3-714419941463
+                          active: true
+                        relationships:
+                          store:
+                            data:
+                              id: '1'
+                              type: store
+                    meta:
+                      count: 2
+                      total_count: 2
+                      total_pages: 1
+                    links:
+                      self: http://www.example.com/api/v2/platform/data_feeds?page=1&per_page=
+                      next: http://www.example.com/api/v2/platform/data_feeds?page=1&per_page=
+                      prev: http://www.example.com/api/v2/platform/data_feeds?page=1&per_page=
+                      last: http://www.example.com/api/v2/platform/data_feeds?page=1&per_page=
+                      first: http://www.example.com/api/v2/platform/data_feeds?page=1&per_page=
+              schema:
+                "$ref": "#/components/schemas/resources_list"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    post:
+      summary: Create a Data Feed
+      tags:
+        - Data Feeds
+      security:
+        - bearer_auth: [ ]
+      description: Creates a Data Feed
+      operationId: create-data-feed
+      parameters: [ ]
+      responses:
+        '201':
+          description: Record created
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: data_feed
+                      attributes:
+                        name: First Data Feed
+                        type: Spree::DataFeed::Google
+                        slug: e593ae1f-630a-4f77-832f-0489da1c921b
+                        active: true
+                      relationships:
+                        store:
+                          data:
+                            id: '1'
+                            type: store
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Data Feed name can't be blank
+                    errors:
+                      name:
+                        - can't be blank
+                      store:
+                        - can't be blank
+                      type:
+                        - can't be blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/create_data_feed_params"
+  "/api/v2/platform/data_feeds/{id}":
+    get:
+      summary: Return a Data Feed
+      tags:
+        - Data Feeds
+      security:
+        - bearer_auth: [ ]
+      description: Returns a Data Feed
+      operationId: show-data-feed
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Record found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: data_feed
+                      attributes:
+                        name: First Data Feed
+                        type: Spree::DataFeed::Google
+                        slug: e593ae1f-630a-4f77-832f-0489da1c921b
+                        active: true
+                      relationships:
+                        store:
+                          data:
+                            id: '1'
+                            type: store
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+    patch:
+      summary: Update a Data Feed
+      tags:
+        - Data Feeds
+      security:
+        - bearer_auth: [ ]
+      description: Updates a Data Feed
+      operationId: update-data-feed
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Record updated
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    data:
+                      id: '1'
+                      type: data_feed
+                      attributes:
+                        name: First Data Feed
+                        type: Spree::DataFeed::Google
+                        slug: e593ae1f-630a-4f77-832f-0489da1c921b
+                        active: true
+                      relationships:
+                        store:
+                          data:
+                            id: '1'
+                            type: store
+              schema:
+                "$ref": "#/components/schemas/resource"
+        '422':
+          description: Invalid request
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: Name is blank
+                    errors:
+                      name:
+                        - is blank
+              schema:
+                "$ref": "#/components/schemas/validation_errors"
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/update_data_feed_params"
+    delete:
+      summary: Delete a Data Feed
+      tags:
+        - Data Feeds
+      security:
+        - bearer_auth: [ ]
+      description: Deletes a Data Feed
+      operationId: delete-data-feed
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The resource you were looking for could not be found.
+              schema:
+                "$ref": "#/components/schemas/error"
+        '401':
+          description: Authentication Failed
+          content:
+            application/vnd.api+json:
+              examples:
+                Example:
+                  value:
+                    error: The access token is invalid
+              schema:
+                "$ref": "#/components/schemas/error"
   "/api/v2/platform/digital_links":
     get:
       summary: Return a list of Digital Links
@@ -19184,6 +19482,56 @@ components:
       required:
       - cms_section
       title: Update a Rich Text Section
+      x-internal: false
+    create_data_feed_params:
+      type: object
+      properties:
+        data_feed:
+          type: object
+          required:
+          - name
+          - type
+          - store_id
+          properties:
+            name:
+              type: string
+              example: 'First data feed'
+            slug:
+              type: string
+              example: 'first-data-feed'
+            type:
+              type: string
+              example: 'Spree::DataFeed::Google'
+            store_id:
+              type: string
+              example: '1'
+            active:
+              type: boolean
+      x-internal: false
+    update_data_feed_params:
+      type: object
+      properties:
+        data_feed:
+          type: object
+          required:
+            - name
+            - type
+            - store_id
+          properties:
+            name:
+              type: string
+              example: 'First data feed'
+            slug:
+              type: string
+              example: 'first-data-feed'
+            type:
+              type: string
+              example: 'Spree::DataFeed::Google'
+            store_id:
+              type: string
+              example: '1'
+            active:
+              type: boolean
       x-internal: false
     create_digital_params:
       type: object
