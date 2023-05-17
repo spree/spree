@@ -222,7 +222,7 @@ describe 'Taxons Spec', type: :request do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
       let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
-      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { slug: 'test_slug_es', locale: 'es' } ])}
+      let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { permalink: 'test_slug_es', locale: 'es' } ])}
 
       let(:expected_slugs) do
         {
@@ -239,6 +239,40 @@ describe 'Taxons Spec', type: :request do
 
       it 'returns translated slugs' do
         expect(json_response['data']['attributes']['localized_slugs']).to match(expected_slugs)
+      end
+    end
+
+    context 'with fallback to default locale' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, name: 'test slug en', permalink: default_locale_slug) }
+      let(:default_locale_slug) { 'test_slug_en' }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/taxons/categories/#{default_locale_slug}?locale=es"
+      end
+
+      it 'finds the taxon' do
+        expect(json_response['data']['id']).to eq(taxon_with_slug.id.to_s)
+      end
+    end
+
+    context 'with slug in translated locale' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: default_locale_slug) }
+      let!(:translations) { taxon_with_slug.translations.create([ { name: 'test slug en', permalink: translated_slug, locale: 'es' } ]) }
+      let(:default_locale_slug) { 'test_slug_en' }
+      let(:translated_slug) { 'test_slug_es' }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/taxons/categories/#{translated_slug}?locale=es"
+      end
+
+      it 'finds the taxon' do
+        expect(json_response['data']['id']).to eq(taxon_with_slug.id.to_s)
       end
     end
 

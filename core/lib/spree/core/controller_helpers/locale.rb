@@ -68,6 +68,16 @@ module Spree
 
           I18n.locale.to_s
         end
+
+        def find_with_fallback_default_locale(&block)
+          result = begin
+            block.call
+          rescue ActiveRecord::RecordNotFound => _e
+            nil
+          end
+
+          result || Mobility.with_locale(current_store.default_locale) { block.call }
+        end
       end
     end
   end

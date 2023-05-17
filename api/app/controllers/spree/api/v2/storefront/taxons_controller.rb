@@ -22,7 +22,7 @@ module Spree
           end
 
           def resource
-            @resource ||= scope.find_by(permalink: params[:id]) || scope.find(params[:id])
+            @resource ||= find_with_fallback_default_locale { scope.find_by(permalink: params[:id]) } || scope.find(params[:id])
           end
 
           def model_class
