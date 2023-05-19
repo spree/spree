@@ -174,27 +174,19 @@ describe Spree::ServiceModule do
     end
 
     it 'calls second method' do
-      skip_if_ruby_3
       expect(service).to receive(:second_method).and_call_original
       service.call(params: {})
     end
 
     it 'passes input from call to first run method' do
-      skip_if_ruby_3
       param = 'param'
       expect(service).to receive(:first_method).with(params: param).and_call_original
       service.call(params: param)
     end
 
     it 'passes empty hash if input was not provided' do
-      skip_if_ruby_3
       expect(service).to receive(:first_method).with(params: {}).and_call_original
       service.call(params: {})
-    end
-
-    # FIXME: https://github.com/rspec/rspec-mocks/issues/1306
-    def skip_if_ruby_3
-      skip 'https://github.com/rspec/rspec-mocks/issues/1306' if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.0.0')
     end
   end
 
