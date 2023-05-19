@@ -113,8 +113,8 @@ module Spree
       meta = {}
 
       if object.is_a? ApplicationRecord
-        meta[:keywords] = object.meta_keywords if object[:meta_keywords].present?
-        meta[:description] = object.meta_description if object[:meta_description].present?
+        meta[:keywords] = object.meta_keywords if object.try(:meta_keywords).present?
+        meta[:description] = object.meta_description if object.try(:meta_description).present?
       end
 
       if meta[:description].blank? && object.is_a?(Spree::Product)
