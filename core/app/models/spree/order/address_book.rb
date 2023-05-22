@@ -5,15 +5,19 @@ module Spree
       extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 
       def clone_shipping_address
-        if ship_address
-          self.bill_address = ship_address
+        if ship_address && bill_address.nil?
+          self.bill_address = ship_address.clone
+        else
+          bill_address.attributes = ship_address.attributes.except('id', 'updated_at', 'created_at')
         end
         true
       end
 
       def clone_billing_address
-        if bill_address
-          self.ship_address = bill_address
+        if bill_address && ship_address.nil?
+          self.ship_address = bill_address.clone
+        else
+          ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
         end
         true
       end
