@@ -28,7 +28,7 @@ module Spree
     private
 
     def set_root
-      self.root ||= Taxon.create!(taxonomy_id: id, name: name)
+      self.root ||= Taxon.create!(taxonomy_id: id, name: name, permalink: name.to_url)
     end
 
     def set_root_taxon_name
