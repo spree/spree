@@ -189,6 +189,8 @@ describe Spree::Taxon, type: :model do
     let(:taxon) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
     let!(:taxon_translation_fr) { taxon.translations.create(slug: 'test_slug_fr', locale: 'fr') }
 
+    before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
+
     subject { taxon.localized_slugs_for_store(store) }
 
     context 'when there are slugs in locales not supported by the store' do
