@@ -13,6 +13,7 @@ module Spree
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
     before_validation :set_permalink, on: :create, if: :name
+    alias_attribute :slug, :permalink
 
     acts_as_nested_set dependent: :destroy
 
@@ -66,10 +67,12 @@ module Spree
 
       def set_permalink
         parent = translated_model.parent
+        name_with_fallback = name || translated_model.name
+
         if parent.present?
-          self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
+          self.permalink = [parent.permalink, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last)].join('/')
         else
-          self.permalink = name.to_url if permalink.blank?
+          self.permalink = name_with_fallback.to_url if permalink.blank?
         end
       end
     end

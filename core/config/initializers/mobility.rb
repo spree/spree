@@ -8,11 +8,9 @@ Mobility.configure do |config|
     backend_reader
     query
     cache
-    fallbacks
+    store_based_fallbacks
     locale_accessors
     presence
     dirty
   end
-
-  config.defaults[:fallbacks] = true
 end
