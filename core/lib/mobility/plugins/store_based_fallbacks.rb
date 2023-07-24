@@ -3,6 +3,10 @@
 require 'concurrent'
 require 'mobility'
 
+# The default implementation in the Mobility gem requires fallbacks to be defined when booting the application.
+# This patch allows to dynamically reconfigure translations fallbacks, by setting Mobility.store_based_fallbacks attribute.
+# The implementation is based on the default fallbacks plugin, with some changes around fetching the list of fallbacks to be used.
+# https://github.com/shioyama/mobility/blob/master/lib/mobility/plugins/fallbacks.rb
 module Mobility
   @store_based_fallbacks = Concurrent::ThreadLocalVar.new(I18n::Locale::Fallbacks.new)
 
