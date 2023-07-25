@@ -6,14 +6,14 @@ module Spree
 
       def clone_shipping_address
         if ship_address
-          self.bill_address = ship_address
+          self.bill_address = ship_address.clone
         end
         true
       end
 
       def clone_billing_address
         if bill_address
-          self.ship_address = bill_address
+          self.ship_address = bill_address.clone
         end
         true
       end
