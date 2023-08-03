@@ -24,6 +24,7 @@ module Spree
     include ProductScopes
     include MultiStoreResource
     include TranslatableResource
+    include TranslatableResourceSlug
     include MemoizedData
     include Metadata
     if defined?(Spree::Webhooks)

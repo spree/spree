@@ -3022,6 +3022,9 @@ components:
               type: string
               example: $49.99
               nullable: true
+            localized_slugs:
+              type: object
+              description: Provides product's slugs in other locales
         relationships:
           type: object
           properties:
@@ -3524,6 +3527,9 @@ components:
             updated_at:
               type: string
               example: '2018-06-18T10:57:29.704Z'
+            localized_slugs:
+              type: object
+              description: Provides taxon's slugs in other locales
         relationships:
           type: object
           properties:
@@ -6367,6 +6373,10 @@ components:
                     display_price: $38.99
                     compare_at_price: null
                     display_compare_at_price: null
+                    localized_slugs:
+                      en: bomber-jacket
+                      de: bomberjacke
+                      fr: blouson
                   relationships:
                     variants:
                       data:
@@ -8733,6 +8743,10 @@ components:
                     is_root: false
                     is_child: true
                     is_leaf: true
+                    localized_slugs:
+                      en: categories/summer-sale
+                      de: kategorien/sommerschlussverkauf
+                      fr: categories/soldes-dete
                   relationships:
                     parent:
                       data:

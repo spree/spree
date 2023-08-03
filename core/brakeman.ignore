@@ -49,6 +49,29 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "1c12fcb833b0ddffa07880acb7e604922c0d1d52de598316186241baf16551cd",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/finders/spree/taxons/find.rb",
+      "line": 75,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "taxons.joins(\"INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id\").join_translation_table(Taxon, \"parent_taxon\").where([\"#{Taxon.translation_table_alias}.permalink = ?\", parent_permalink])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Taxons::Find",
+        "method": "by_parent_permalink"
+      },
+      "user_input": "Taxon.translation_table_alias",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "1f02952550c2f54d044c9577a45e7ba7c7990c8b8a59d1dac83a96790237f507",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -141,6 +164,29 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
+      "fingerprint": "98607ecfb86c2d3c2567390f813861edbc42d6ffa9f482afb7c0b3464eaf6e73",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/concerns/spree/translatable_resource_scopes.rb",
+      "line": 18,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(\"LEFT OUTER JOIN #{translatable_class::Translation.table_name} #{translatable_class.translation_table_alias}\\n             ON #{translatable_class.translation_table_alias}.#{\"#{translatable_class.table_name.singularize}_id\"} = #{(translatable_class.table_name or join_on_table_alias)}.id\\n             AND #{translatable_class.translation_table_alias}.locale = '#{Mobility.locale}'\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::TranslatableResourceScopes",
+        "method": "join_translation_table"
+      },
+      "user_input": "translatable_class.translation_table_alias",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
       "fingerprint": "abd8e90e7a7dfbcdcd6d44fd3fb550598aee6d7a9ef2bb132ad1a18a3c50be30",
       "check_name": "SQL",
       "message": "Possible SQL injection",
@@ -191,7 +237,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/spree/variant.rb",
-      "line": 127,
+      "line": 126,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "joins(:product).join_translation_table(Product).where(\"LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)\\n               OR LOWER(sku) LIKE LOWER(:query)\", :query => (\"%#{query}%\"))",
       "render_path": null,
@@ -210,21 +256,21 @@
     {
       "warning_type": "SQL Injection",
       "warning_code": 0,
-      "fingerprint": "e7aa61c87f26af5f63f00e9791954d787a559dab1eadf8926861796237bd431d",
+      "fingerprint": "ed253ae6b1b4ea3fe3d87d3652380fecab80133319b1ed041d98d163fd16b815",
       "check_name": "SQL",
       "message": "Possible SQL injection",
-      "file": "app/models/concerns/spree/translatable_resource_scopes.rb",
-      "line": 10,
+      "file": "app/finders/spree/taxons/find.rb",
+      "line": 71,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
-      "code": "joins(\"LEFT OUTER JOIN #{translatable_class::Translation.table_name} #{translatable_class.translation_table_alias}\\n             ON #{translatable_class.translation_table_alias}.#{\"#{translatable_class.table_name.singularize}_id\"} = #{translatable_class.table_name}.id\\n             AND #{translatable_class.translation_table_alias}.locale = '#{Mobility.locale}'\")",
+      "code": "taxons.joins(:parent).join_translation_table(Taxon, \"parents_spree_taxons\").where([\"#{Taxon.translation_table_alias}.permalink = ?\", parent_permalink])",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "Spree::TranslatableResourceScopes",
-        "method": "join_translation_table"
+        "class": "Spree::Taxons::Find",
+        "method": "by_parent_permalink"
       },
-      "user_input": "translatable_class.translation_table_alias",
-      "confidence": "Medium",
+      "user_input": "Taxon.translation_table_alias",
+      "confidence": "Weak",
       "cwe_id": [
         89
       ],
@@ -277,6 +323,6 @@
       "note": ""
     }
   ],
-  "updated": "2023-02-24 11:32:53 +0100",
+  "updated": "2023-03-22 20:11:32 +0100",
   "brakeman_version": "5.4.1"
 }

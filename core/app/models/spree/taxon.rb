@@ -4,6 +4,7 @@ require 'stringex'
 module Spree
   class Taxon < Spree::Base
     include TranslatableResource
+    include TranslatableResourceSlug
     include Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
@@ -12,6 +13,7 @@ module Spree
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
     before_validation :set_permalink, on: :create, if: :name
+    alias_attribute :slug, :permalink
 
     acts_as_nested_set dependent: :destroy
 
@@ -55,8 +57,25 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    TRANSLATABLE_FIELDS = %i[name description].freeze
+    TRANSLATABLE_FIELDS = %i[name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS)
+
+    self::Translation.class_eval do
+      alias_attribute :slug, :permalink
+
+      before_create :set_permalink
+
+      def set_permalink
+        parent = translated_model.parent
+        name_with_fallback = name || translated_model.name
+
+        if parent.present?
+          self.permalink = [parent.permalink, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last)].join('/')
+        else
+          self.permalink = name_with_fallback.to_url if permalink.blank?
+        end
+      end
+    end
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
@@ -77,11 +96,7 @@ module Spree
 
     # Creates permalink base for friendly_id
     def set_permalink
-      if parent.present?
-        self.permalink = [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last)].join('/')
-      else
-        self.permalink = name.to_url if permalink.blank?
-      end
+      translations.each(&:set_permalink)
     end
 
     def active_products

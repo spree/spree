@@ -6,6 +6,7 @@ module Spree
 
         included do
           before_action :set_locale
+          before_action :set_fallback_locale
 
           if defined?(helper_method)
             helper_method :supported_locales
@@ -19,6 +20,12 @@ module Spree
 
         def set_locale
           I18n.locale = current_locale
+        end
+
+        def set_fallback_locale
+          return unless respond_to?(:current_store) && current_store.present?
+
+          Spree::Locales::SetFallbackLocaleForStore.new.call(store: current_store)
         end
 
         def current_locale
@@ -67,6 +74,16 @@ module Spree
           return if I18n.locale.to_s == current_store.default_locale || current_store.default_locale.nil?
 
           I18n.locale.to_s
+        end
+
+        def find_with_fallback_default_locale(&block)
+          result = begin
+            block.call
+          rescue ActiveRecord::RecordNotFound => _e
+            nil
+          end
+
+          result || Mobility.with_locale(current_store.default_locale) { block.call }
         end
       end
     end

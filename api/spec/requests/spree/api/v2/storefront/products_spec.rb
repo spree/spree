@@ -994,6 +994,62 @@ describe 'API V2 Storefront Products Spec', type: :request do
       it_behaves_like 'returns 404 HTTP status'
     end
 
+    context 'with localized_slugs' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:product_with_slug) { create(:product, stores: [store2], slug: 'test_slug_en') }
+      let!(:translation1) { product_with_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
+      let!(:translation2) { product_with_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
+
+      let(:expected_result) do
+        {
+          en: 'test_slug_en',
+          pl: 'test_slug_pl',
+          es: 'test_slug_es'
+        }
+      end
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/products/#{product_with_slug.id}"
+      end
+
+      it 'returns translated slugs' do
+        expect(json_response['data']['attributes']['localized_slugs']).to match(expected_result)
+      end
+    end
+
+    context 'with slug fallback to default locale' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let!(:product_with_slug) { create(:product, stores: [store2], slug: default_locale_slug) }
+      let(:default_locale_slug) { 'test_slug_en' }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/products/#{default_locale_slug}?locale=pl"
+      end
+
+      it 'finds the product' do
+        expect(json_response['data']['id']).to eq(product_with_slug.id.to_s)
+      end
+    end
+
+    context 'with slug in translated locale' do
+      let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
+      let(:product_with_slug) { create(:product, stores: [store2], slug: default_locale_slug) }
+      let!(:translation2) { product_with_slug.translations.create(slug: translated_slug, locale: 'es')  }
+      let(:default_locale_slug) { 'test_slug_en' }
+      let(:translated_slug) { 'test_slug_es' }
+
+      before do
+        allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
+        get "/api/v2/storefront/products/#{translated_slug}?locale=es"
+      end
+
+      it 'finds the product' do
+        expect(json_response['data']['id']).to eq(product_with_slug.id.to_s)
+      end
+    end
+
     context 'with product image data' do
       shared_examples 'returns product image data' do
         it 'returns product image data' do

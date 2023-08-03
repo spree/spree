@@ -918,4 +918,45 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe '#localized_slugs_for_store' do
+    let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
+    let(:product) { create(:product, stores: [store], slug: 'test_slug_en') }
+    let!(:product_translation_fr) { product.translations.create(slug: 'test_slug_fr', locale: 'fr') }
+
+    before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
+
+    subject { product.localized_slugs_for_store(store) }
+
+    context 'when there are slugs in locales not supported by the store' do
+      let!(:product_translation_pl) { product.translations.create(slug: 'test_slug_pl', locale: 'pl') }
+      let!(:product_translation_de) { product.translations.create(slug: 'test_slug_de', locale: 'de') }
+
+      let(:expected_slugs) do
+        {
+          'en' => 'test_slug_en',
+          'fr' => 'test_slug_fr',
+          'pl' => 'test_slug_pl'
+        }
+      end
+
+      it 'returns only slugs in locales supported by the store' do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'when one of the supported locales does not have a translation' do
+      let(:expected_slugs) do
+        {
+          'en' => 'test_slug_en',
+          'fr' => 'test_slug_fr',
+          'pl' => 'test_slug_fr'
+        }
+      end
+
+      it "falls back to store's default locale" do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+  end
 end

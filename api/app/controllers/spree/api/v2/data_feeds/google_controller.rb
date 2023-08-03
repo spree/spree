@@ -10,7 +10,7 @@ module Spree
           private
 
           def settings
-            @settings ||= Spree::DataFeedSetting.find_by!(spree_store_id: current_store, uuid: params[:unique_url], provider: 'google', enabled: true)
+            @settings ||= Spree::DataFeed::Google.find_by!(store: current_store, slug: params[:slug], active: true)
           end
 
           def data_feeds_google_rss_service
