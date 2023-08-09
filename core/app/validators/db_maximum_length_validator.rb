@@ -7,11 +7,7 @@ class DbMaximumLengthValidator < ActiveModel::EachValidator
       Please remove any `db_maximum_length: true` validations from your codebase
     DEPRECATION
 
-    limit = if defined?(Globalize)
-              record.class.translation_class.columns_hash[attribute.to_s].limit
-            else
-              record.class.columns_hash[attribute.to_s].limit
-            end
+    limit = record.class.columns_hash[attribute.to_s].limit
     value = record[attribute.to_sym]
     if value && limit && value.to_s.length > limit
       record.errors.add(attribute.to_sym, :too_long, count: limit)
