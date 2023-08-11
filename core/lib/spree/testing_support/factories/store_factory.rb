@@ -13,6 +13,8 @@ FactoryBot.define do
     twitter                { 'spreecommerce' }
     instagram              { 'spreecommerce' }
     meta_description       { 'Sample store description.' }
+    digital_asset_authorized_clicks { 5 }
+    digital_asset_authorized_days   { 7 }
 
     trait :with_favicon do
       transient do
