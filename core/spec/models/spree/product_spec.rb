@@ -924,6 +924,8 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product, stores: [store], slug: 'test_slug_en') }
     let!(:product_translation_fr) { product.translations.create(slug: 'test_slug_fr', locale: 'fr') }
 
+    before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
+
     subject { product.localized_slugs_for_store(store) }
 
     context 'when there are slugs in locales not supported by the store' do
