@@ -996,15 +996,15 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'with localized_slugs' do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
-      let(:product_with_slug) { create(:product, stores: [store2], slug: 'test_slug_en') }
-      let!(:translation1) { product_with_slug.translations.create(slug: 'test_slug_pl', locale: 'pl')  }
-      let!(:translation2) { product_with_slug.translations.create(slug: 'test_slug_es', locale: 'es')  }
+      let(:product_with_slug) { create(:product, stores: [store2], slug: 'test-slug-en') }
+      let!(:translation1) { product_with_slug.translations.create(slug: 'test-slug-pl', locale: 'pl')  }
+      let!(:translation2) { product_with_slug.translations.create(slug: 'test-slug-es', locale: 'es')  }
 
       let(:expected_result) do
         {
-          en: 'test_slug_en',
-          pl: 'test_slug_pl',
-          es: 'test_slug_es'
+          en: 'test-slug-en',
+          pl: 'test-slug-pl',
+          es: 'test-slug-es'
         }
       end
 
@@ -1021,7 +1021,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     context 'with slug fallback to default locale' do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
       let!(:product_with_slug) { create(:product, stores: [store2], slug: default_locale_slug) }
-      let(:default_locale_slug) { 'test_slug_en' }
+      let(:default_locale_slug) { 'test-slug-en' }
 
       before do
         allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)
@@ -1037,8 +1037,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
       let(:product_with_slug) { create(:product, stores: [store2], slug: default_locale_slug) }
       let!(:translation2) { product_with_slug.translations.create(slug: translated_slug, locale: 'es')  }
-      let(:default_locale_slug) { 'test_slug_en' }
-      let(:translated_slug) { 'test_slug_es' }
+      let(:default_locale_slug) { 'test-slug-en' }
+      let(:translated_slug) { 'test-slug-es' }
 
       before do
         allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store2)

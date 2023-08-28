@@ -188,6 +188,7 @@ describe Spree::Taxon, type: :model do
     let(:taxonomy) { create(:taxonomy, name: 'categories', store: store) }
     let(:taxon) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
     let!(:taxon_translation_fr) { taxon.translations.create(slug: 'test_slug_fr', locale: 'fr') }
+    let!(:root_taxon) { taxonomy.taxons.find_by(parent_id: nil) }
 
     before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
 
@@ -199,9 +200,9 @@ describe Spree::Taxon, type: :model do
 
       let(:expected_slugs) do
         {
-          'en' => 'categories/test_slug_en',
-          'fr' => 'categories/test_slug_fr',
-          'pl' => 'categories/test_slug_pl'
+          'en' => 'categories/test-slug-en',
+          'fr' => 'categories/test-slug-fr',
+          'pl' => 'categories/test-slug-pl'
         }
       end
 
@@ -213,14 +214,47 @@ describe Spree::Taxon, type: :model do
     context 'when one of the supported locales does not have a translation' do
       let(:expected_slugs) do
         {
-          'en' => 'categories/test_slug_en',
-          'fr' => 'categories/test_slug_fr',
-          'pl' => 'categories/test_slug_fr'
+          'en' => 'categories/test-slug-en',
+          'fr' => 'categories/test-slug-fr',
+          'pl' => 'categories/test-slug-fr'
         }
       end
 
       it "falls back to store's default locale" do
         expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'when setting the slug translations for taxonomy' do
+      let!(:root_taxon_translation_pl) { root_taxon.translations.create(slug: 'slug with space', locale: 'pl') }
+
+      let(:expected_slugs) do
+        {
+          'en' => 'categories',
+          'fr' => 'categories',
+          'pl' => 'slug-with-space'
+        }
+      end
+
+      it "sets the slugs in slug format" do
+        expect(root_taxon.localized_slugs_for_store(store)).to match(expected_slugs)
+      end
+    end
+
+    context 'when setting the slugs in taxon under taxomony with different parent slug' do
+      let!(:root_taxon_translation_pl) { root_taxon.translations.create(slug: 'slug with space', locale: 'pl') }
+      let!(:taxon_translation_pl) { taxon.translations.create(locale: 'pl') }
+
+      let(:expected_slugs) do
+        {
+          'en' => 'categories/test-slug-en',
+          'fr' => 'categories/test-slug-fr',
+          'pl' => "slug-with-space/#{taxon.name.to_url}"
+        }
+      end
+
+      it "sets the slug in valid format" do
+        expect(taxon.localized_slugs_for_store(store)).to match(expected_slugs)
       end
     end
   end

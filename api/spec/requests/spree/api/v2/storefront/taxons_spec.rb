@@ -226,9 +226,9 @@ describe 'Taxons Spec', type: :request do
 
       let(:expected_slugs) do
         {
-          en: 'categories/test_slug_en',
-          pl: 'categories/test_slug_pl',
-          es: 'categories/test_slug_es'
+          en: 'categories/test-slug-en',
+          pl: 'categories/test-slug-pl',
+          es: 'categories/test-slug-es'
         }
       end
 
@@ -246,7 +246,7 @@ describe 'Taxons Spec', type: :request do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
       let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, name: 'test slug en', permalink: default_locale_slug) }
-      let(:default_locale_slug) { 'test_slug_en' }
+      let(:default_locale_slug) { 'test-slug-en' }
 
       before do
         allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
@@ -264,7 +264,7 @@ describe 'Taxons Spec', type: :request do
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: default_locale_slug) }
       let!(:translations) { taxon_with_slug.translations.create([ { name: 'test slug en', permalink: translated_slug, locale: 'es' } ]) }
       let(:default_locale_slug) { 'test_slug_en' }
-      let(:translated_slug) { 'test_slug_es' }
+      let(:translated_slug) { 'test-slug-es' }
 
       before do
         allow_any_instance_of(Spree::Api::V2::Storefront::TaxonsController).to receive(:current_store).and_return(store2)
