@@ -10,49 +10,11 @@ defaults: &defaults
     RAILS_VERSION: '~> 7.0'
   working_directory: ~/spree
   docker:
-    - image: &ruby_2_7_image circleci/ruby:2.7-node-browsers
+    - image: &ruby_3_2_image cimg/ruby:3.2.0-browsers
     - image: &redis_image circleci/redis:6.2-alpine
 
-defaults_3_2: &defaults_3_2
-  <<: *defaults
-  docker:
-    - image: &ruby_3_2_image cimg/ruby:3.2.0-browsers
-    - image: *redis_image
-
-run_tests_2_7: &run_tests_2_7
-  <<: *defaults
-  parallelism: 3
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v10-ruby-2-7
-    - run:
-        name: Add keyserver
-        command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
-    - run:
-        name: Install libvips
-        command: sudo apt-get update && sudo apt-get install libvips
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
-
 run_tests_3_2: &run_tests_3_2
-  <<: *defaults_3_2
+  <<: *defaults
   parallelism: 3
   steps:
     - checkout
@@ -81,32 +43,8 @@ run_tests_3_2: &run_tests_3_2
         path: /tmp/test-results
 
 jobs:
-  bundle_ruby_2_7:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-            - spree-bundle-v10-ruby-2-7
-      - run:
-          name: Add keyserver
-          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
-      - run:
-          name: Install libvips
-          command: sudo apt-get update && sudo apt-get install libvips
-      - run:
-          name: Bundle Install
-          command: |
-            bundle check || bundle install
-            ./bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v10-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
-
   bundle_ruby_3_2:
-    <<: *defaults_3_2
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -127,7 +65,7 @@ jobs:
             - ~/spree/vendor/bundle
 
   brakeman:
-    <<: *defaults_3_2
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -152,31 +90,22 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
-  tests_ruby_2_7_rails_7_0_postgres: &tests_ruby_2_7_rails_7_0_postgres
-    <<: *run_tests_2_7
+  tests_ruby_3_2_rails_7_0_postgres: &tests_ruby_3_2_rails_7_0_postgres
+    <<: *run_tests_3_2
     environment: &postgres_environment
       <<: *environment
       DB: postgres
       DB_HOST: localhost
       DB_USERNAME: postgres
     docker:
-      - image: *ruby_2_7_image
-      - image: *redis_image
+      - image: *ruby_3_2_image
       - image: &postgres_image circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: postgres
-
-  tests_ruby_3_2_rails_7_0_postgres:
-    <<: *run_tests_3_2
-    environment:
-      <<: *postgres_environment
-    docker:
-      - image: *ruby_3_2_image
-      - image: *postgres_image
       - image: *redis_image
 
-  tests_ruby_2_7_rails_6_1_postgres:
-    <<: *tests_ruby_2_7_rails_7_0_postgres
+  tests_ruby_3_2_rails_6_1_postgres:
+    <<: *tests_ruby_3_2_rails_7_0_postgres
     environment:
       <<: *postgres_environment
       RAILS_VERSION: '~> 6.1.0'
@@ -262,7 +191,6 @@ workflows:
   version: 2
   main:
     jobs:
-      - bundle_ruby_2_7
       - bundle_ruby_3_2
       - brakeman:
           requires:
@@ -270,12 +198,9 @@ workflows:
       - tests_ruby_3_2_rails_7_0_postgres:
           requires:
             - bundle_ruby_3_2
-      - tests_ruby_2_7_rails_7_0_postgres:
+      - tests_ruby_3_2_rails_6_1_postgres:
           requires:
-            - bundle_ruby_2_7
-      - tests_ruby_2_7_rails_6_1_postgres:
-          requires:
-            - bundle_ruby_2_7
+            - bundle_ruby_3_2
       - tests_ruby_3_2_rails_7_0_mysql:
           requires:
             - bundle_ruby_3_2
