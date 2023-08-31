@@ -1,6 +1,6 @@
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
   Include:
     - '**/Gemfile'
     - '**/Rakefile'
