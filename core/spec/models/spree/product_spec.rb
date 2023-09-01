@@ -254,14 +254,14 @@ describe Spree::Product, type: :model do
 
         context 'when more than one translation exists' do
           before {
-            product.send(:slug=, "french_slug", locale: :fr)
+            product.send(:slug=, "french-slug", locale: :fr)
             product.save!
           }
 
           it 'renames slug for all translations' do
             product.destroy
             expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
-            expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/[0-9]+_french_slug/)
+            expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/[0-9]+_french-slug/)
           end
         end
 
@@ -921,7 +921,7 @@ describe Spree::Product, type: :model do
 
   describe '#localized_slugs_for_store' do
     let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
-    let(:product) { create(:product, stores: [store], slug: 'test_slug_en') }
+    let(:product) { create(:product, stores: [store], name: 'Test product', slug: 'test_slug_en') }
     let!(:product_translation_fr) { product.translations.create(slug: 'test_slug_fr', locale: 'fr') }
 
     before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
@@ -934,9 +934,9 @@ describe Spree::Product, type: :model do
 
       let(:expected_slugs) do
         {
-          'en' => 'test_slug_en',
-          'fr' => 'test_slug_fr',
-          'pl' => 'test_slug_pl'
+          'en' => 'test-slug-en',
+          'fr' => 'test-slug-fr',
+          'pl' => 'test-slug-pl'
         }
       end
 
@@ -948,13 +948,67 @@ describe Spree::Product, type: :model do
     context 'when one of the supported locales does not have a translation' do
       let(:expected_slugs) do
         {
-          'en' => 'test_slug_en',
-          'fr' => 'test_slug_fr',
-          'pl' => 'test_slug_fr'
+          'en' => 'test-slug-en',
+          'fr' => 'test-slug-fr',
+          'pl' => 'test-slug-fr'
         }
       end
 
       it "falls back to store's default locale" do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'the slugs are generated from name when slug field is empty' do
+      before do
+        product_translation_fr.update(slug: nil, name: "slug from name")
+      end
+
+      let(:expected_slugs) do
+        {
+          'en' => 'test-slug-en',
+          'fr' => 'slug-from-name',
+          'pl' => 'slug-from-name'
+        }
+      end
+
+      it "saves slugs generated from name" do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'the slugs are generated from default locale name when name and slug for translation is empty' do
+      before do
+        product_translation_fr.update(slug: nil, name: nil)
+      end
+
+      let(:expected_slugs) do
+        {
+          'en' => 'test-slug-en',
+          'fr' => 'test-product',
+          'pl' => 'test-product'
+        }
+      end
+
+      it 'saves slugs generated from fallback name' do
+        expect(subject).to match(expected_slugs)
+      end
+    end
+
+    context 'the slugs are generated from invalid slug format' do
+      before do
+        product_translation_fr.update(slug: "slug with_spaces")
+      end
+
+      let(:expected_slugs) do
+        {
+          'en' => 'test-slug-en',
+          'fr' => 'slug-with-spaces',
+          'pl' => 'slug-with-spaces'
+        }
+      end
+
+      it 'saves slugs in valid format' do
         expect(subject).to match(expected_slugs)
       end
     end

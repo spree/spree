@@ -42,9 +42,25 @@ module Spree
     translates(*TRANSLATABLE_FIELDS)
 
     self::Translation.class_eval do
+      before_save :set_slug
       acts_as_paranoid
       # deleted translation values also need to be accessible for index views listing deleted resources
       default_scope { unscope(where: :deleted_at) }
+      def set_slug
+        self.slug = generate_slug
+      end
+
+      private
+
+      def generate_slug
+        if name.blank? && slug.blank?
+          translated_model.name.to_url
+        elsif slug.blank?
+          name.to_url
+        else
+          slug.to_url
+        end
+      end
     end
 
     friendly_id :slug_candidates, use: [:history, :mobility]
