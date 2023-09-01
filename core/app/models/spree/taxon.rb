@@ -62,18 +62,39 @@ module Spree
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink
-
-      before_create :set_permalink
+      before_save :set_permalink
 
       def set_permalink
-        parent = translated_model.parent
-        name_with_fallback = name || translated_model.name
+        self.permalink = generate_slug
+      end
 
+      private
+
+      def generate_slug
         if parent.present?
-          self.permalink = [parent.permalink, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last)].join('/')
+          generate_permalink_including_parent
+        elsif permalink.blank?
+          name_with_fallback.to_url
         else
-          self.permalink = name_with_fallback.to_url if permalink.blank?
+          permalink.to_url
         end
+      end
+
+      def generate_permalink_including_parent
+        [parent_permalink_with_fallback, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
+      end
+
+      def name_with_fallback
+        name.blank? ? translated_model.name : name
+      end
+
+      def parent
+        translated_model.parent
+      end
+
+      def parent_permalink_with_fallback
+        localized_parent = parent.translations.find_by(locale: locale)
+        localized_parent.present? ? localized_parent.permalink : parent.permalink
       end
     end
 
