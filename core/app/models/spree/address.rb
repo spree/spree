@@ -10,9 +10,7 @@ module Spree
       include Spree::Security::Addresses
     end
 
-    if Rails::VERSION::STRING >= '6.1'
-      serialize :preferences, Hash, default: {}
-    end
+    serialize :preferences, Hash, default: {}
 
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
