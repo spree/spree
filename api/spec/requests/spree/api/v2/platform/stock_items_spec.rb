@@ -24,7 +24,7 @@ describe 'Platform API v2 Stock Items API' do
     end
 
     context 'filtering by variant product name or sku' do
-      before { get "/api/v2/platform/stock_items?filter[variant_product_name_or_variant_sku_cont]=#{product_2.name}", headers: bearer_token }
+      before { get "/api/v2/platform/stock_items?filter[variants_product_name_or_variants_sku_cont]=#{product_2.name}", headers: bearer_token }
 
       it 'returns stock_items with matching stock location ids' do
         # default variant + 2 variants for product_2, each inside two stock locations
