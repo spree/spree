@@ -46,41 +46,39 @@ describe Spree::Cms::Sections::SideBySideImages, type: :model do
     end
   end
 
-  if Rails::VERSION::STRING >= '6.0'
-    context 'when changing the link types for links one and two' do
-      let!(:side_by_side_images_section) { create(:cms_side_by_side_images_section, cms_page: homepage) }
+  context 'when changing the link types for links one and two' do
+    let!(:side_by_side_images_section) { create(:cms_side_by_side_images_section, cms_page: homepage) }
 
-      before do
-        section = Spree::CmsSection.find(side_by_side_images_section.id)
+    before do
+      section = Spree::CmsSection.find(side_by_side_images_section.id)
 
-        section.content[:link_type_one] = 'Spree::Product'
-        section.content[:link_type_two] = 'Spree::Product'
+      section.content[:link_type_one] = 'Spree::Product'
+      section.content[:link_type_two] = 'Spree::Product'
 
-        section.content[:link_one] = 'Shirt 1'
-        section.content[:link_two] = 'Shirt 2'
+      section.content[:link_one] = 'Shirt 1'
+      section.content[:link_two] = 'Shirt 2'
 
-        section.save!
-        section.reload
-      end
+      section.save!
+      section.reload
+    end
 
-      it 'link_one and link_two save the values correctly' do
-        section = Spree::CmsSection.find(side_by_side_images_section.id)
+    it 'link_one and link_two save the values correctly' do
+      section = Spree::CmsSection.find(side_by_side_images_section.id)
 
-        expect(section.link_one).to eql 'Shirt 1'
-        expect(section.link_two).to eql 'Shirt 2'
-      end
+      expect(section.link_one).to eql 'Shirt 1'
+      expect(section.link_two).to eql 'Shirt 2'
+    end
 
-      it 'link_one and link_two are reset to nil when type is changed' do
-        section = Spree::CmsSection.find(side_by_side_images_section.id)
+    it 'link_one and link_two are reset to nil when type is changed' do
+      section = Spree::CmsSection.find(side_by_side_images_section.id)
 
-        section.content[:link_type_one] = 'Spree::Taxon'
-        section.content[:link_type_two] = 'Spree::Taxon'
-        section.save!
-        section.reload
+      section.content[:link_type_one] = 'Spree::Taxon'
+      section.content[:link_type_two] = 'Spree::Taxon'
+      section.save!
+      section.reload
 
-        expect(section.link_one).to be nil
-        expect(section.link_two).to be nil
-      end
+      expect(section.link_one).to be nil
+      expect(section.link_two).to be nil
     end
   end
 end

@@ -174,10 +174,6 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
-    def rails_5?
-      Rails::VERSION::STRING < '6.0'
-    end
-
     def spree_storefront_resource_url(resource, options = {})
       if defined?(locale_param) && locale_param.present?
         options.merge!(locale: locale_param)

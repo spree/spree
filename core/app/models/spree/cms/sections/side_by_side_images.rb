@@ -3,11 +3,7 @@ module Spree::Cms::Sections
     after_initialize :default_values
     validate :reset_multiple_link_attributes
 
-    LINKED_RESOURCE_TYPE = if Rails::VERSION::STRING < '6.0'
-                             ['Spree::Taxon'].freeze
-                           else
-                             ['Spree::Taxon', 'Spree::Product'].freeze
-                           end
+    LINKED_RESOURCE_TYPE = ['Spree::Taxon', 'Spree::Product'].freeze
 
     store :content, accessors: [:link_type_one, :link_one, :title_one, :subtitle_one,
                                 :link_type_two, :link_two, :title_two, :subtitle_two], coder: JSON
@@ -49,8 +45,6 @@ module Spree::Cms::Sections
     private
 
     def reset_multiple_link_attributes
-      return if Rails::VERSION::STRING < '6.0'
-
       if link_type_one_changed?
         return if link_type_one_was.nil?
 

@@ -222,18 +222,10 @@ module Spree
 
     def validate_source
       if source && !source.valid?
-        if Rails::VERSION::STRING >= '6.1'
-          source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
-            next if err[:field].blank? || err[:message].blank?
+        source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
+          next if err[:field].blank? || err[:message].blank?
 
-            add_source_error(err[:field], err[:message])
-          end
-        else
-          source.errors.messages.each do |field, error|
-            next if field.blank? || error.empty?
-
-            add_source_error(field, error.first)
-          end
+          add_source_error(err[:field], err[:message])
         end
       end
       !errors.present?
