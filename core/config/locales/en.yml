@@ -1572,6 +1572,7 @@ en:
     starting_from: Starts at
     state: State
     state_based: State Based
+    state_changes: State Changes
     states: States
     state_machine_states:
       accepted: Accepted
