@@ -1572,6 +1572,7 @@ en:
     starting_from: Starts at
     state: State
     state_based: State Based
+    state_changes: State Changes
     states: States
     state_machine_states:
       accepted: Accepted
@@ -1750,6 +1751,7 @@ en:
     transfer_from_location: Transfer From
     transfer_stock: Transfer Stock
     transfer_to_location: Transfer To
+    translations: Translations
     tree: Tree
     type: Type
     type_to_search: Type to search
