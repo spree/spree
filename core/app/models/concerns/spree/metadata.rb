@@ -5,8 +5,8 @@ module Spree
     included do
       attribute :public_metadata, default: {}
       attribute :private_metadata, default: {}
-      serialize :public_metadata, HashSerializer
-      serialize :private_metadata, HashSerializer
+      serialize :public_metadata, type: HashSerializer
+      serialize :private_metadata, type: HashSerializer
     end
 
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails
