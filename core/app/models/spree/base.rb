@@ -1,6 +1,6 @@
 class Spree::Base < ApplicationRecord
   include Spree::Preferences::Preferable
-  serialize :preferences, Hash
+  serialize :preferences, coder: Hash
 
   include Spree::RansackableAttributes
   include Spree::TranslatableResourceScopes
