@@ -7,7 +7,7 @@ defaults: &defaults
     BUNDLE_JOBS: 4
     BUNDLE_RETRY: 3
     BUNDLE_PATH: ~/spree/vendor/bundle
-    RAILS_VERSION: '~> 7.0'
+    RAILS_VERSION: '~> 7.0.0'
   working_directory: ~/spree
   docker:
     - image: &ruby_3_2_image cimg/ruby:3.2.0-browsers
