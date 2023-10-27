@@ -5,7 +5,11 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    has_secure_token
+    if Rails::VERSION::STRING >= '7.1.0'
+      has_secure_token on: :save
+    else
+      has_secure_token
+    end
 
     belongs_to :user, class_name: "::#{Spree.user_class}", touch: true
     belongs_to :store, class_name: 'Spree::Store'
