@@ -30,6 +30,7 @@ describe Spree::Image, type: :model do
   describe '#styles' do
     it 'will return all styles for the image' do
       spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
+      spree_image.save!
       res = spree_image.styles
 
       expect(res.length).to eq described_class.styles.keys.length
@@ -39,6 +40,7 @@ describe Spree::Image, type: :model do
   describe '#style' do
     it 'will return style for the given name' do
       spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
+      spree_image.save!
       styles = described_class.styles.keys
       random_style_name = styles.sample
       res = spree_image.style(random_style_name)

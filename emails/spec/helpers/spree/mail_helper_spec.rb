@@ -64,6 +64,7 @@ module Spree
         before do
           store.build_mailer_logo
           store.mailer_logo.attachment.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
+          store.mailer_logo.attachment.save!
           @order = create(:order, store: store)
         end
 
@@ -78,6 +79,7 @@ module Spree
         before do
           store.build_mailer_logo
           store.mailer_logo.attachment.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')
+          store.mailer_logo.attachment.save!
         end
 
         it 'shows logo attached to current store' do
