@@ -62,7 +62,11 @@ module Spree
     scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: { original_return_item_id: nil }).distinct }
     scope :resellable, -> { where resellable: true }
 
-    serialize :acceptance_status_errors
+    if Rails::VERSION::STRING >= '7.1.0'
+      serialize :acceptance_status_errors, coder: YAML
+    else
+      serialize :acceptance_status_errors
+    end
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit
