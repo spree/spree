@@ -55,7 +55,12 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
     it 'sets httponly flag' do
       get :index
-      expect(response['Set-Cookie']).to include('HttpOnly')
+      if Rails::VERSION::STRING >= '7.1.0'
+        token_header = response.headers['Set-Cookie'].find { |e| e.starts_with?('token=') }
+        expect(token_header).to include('httponly')
+      else
+        expect(response['Set-Cookie']).to include('HttpOnly')
+      end
     end
   end
 
