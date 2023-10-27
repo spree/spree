@@ -104,6 +104,21 @@ jobs:
           POSTGRES_USER: postgres
       - image: *redis_image
 
+  tests_ruby_3_2_rails_7_1_postgres: &tests_ruby_3_2_rails_7_0_postgres
+    <<: *run_tests_3_2
+    environment: &postgres_environment
+      <<: *environment
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+      RAILS_VERSION: '~> 7.1.0'
+    docker:
+      - image: *ruby_3_2_image
+      - image: &postgres_image circleci/postgres:12-alpine
+        environment:
+          POSTGRES_USER: postgres
+      - image: *redis_image
+
   tests_ruby_3_2_rails_6_1_postgres:
     <<: *tests_ruby_3_2_rails_7_0_postgres
     environment:
@@ -196,6 +211,9 @@ workflows:
           requires:
             - bundle_ruby_3_2
       - tests_ruby_3_2_rails_7_0_postgres:
+          requires:
+            - bundle_ruby_3_2
+      - tests_ruby_3_2_rails_7_1_postgres:
           requires:
             - bundle_ruby_3_2
       - tests_ruby_3_2_rails_6_1_postgres:
