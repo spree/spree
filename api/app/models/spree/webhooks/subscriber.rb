@@ -5,7 +5,12 @@ module Spree
         include Spree::VendorConcern
       end
 
-      has_secure_token :secret_key
+      if Rails::VERSION::STRING >= '7.1.0'
+        has_secure_token :secret_key, on: :save
+      else
+        has_secure_token :secret_key
+      end
+
 
       has_many :events, inverse_of: :subscriber
 
