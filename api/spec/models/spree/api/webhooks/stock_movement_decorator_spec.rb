@@ -17,7 +17,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
     let!(:variant2) { create(:variant, product: product) }
     let(:webhook_payload_body) do
       Spree::Api::V2::Platform::ProductSerializer.new(
-        product,
+        product.reload,
         include: Spree::Api::V2::Platform::ProductSerializer.relationships_to_serialize.keys
       ).serializable_hash
     end
@@ -58,6 +58,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
               stock_movement.save
             end
             product.reload
+            Rails.cache.clear
           end
 
           before do
@@ -65,8 +66,9 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             stock_location.stock_movements.new.tap do |stock_movement|
               stock_movement.quantity = -1
               stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[0])
-              stock_movement.save
+              stock_movement.save!
             end
+            Rails.cache.clear
           end
 
           it { expect { subject }.to emit_webhook_event(event_name) }
@@ -78,9 +80,10 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
           stock_location.stock_movements.new.tap do |stock_movement|
             stock_movement.quantity = -1
             stock_movement.stock_item = stock_location.set_up_stock_item(product.variants[0])
-            stock_movement.save
+            stock_movement.save!
           end
           product.reload
+          Rails.cache.clear
         end
 
         before { product.variants[0].stock_items[0].set_count_on_hand(1) }
@@ -96,6 +99,7 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             stock_movement.save
           end
           product.reload
+          Rails.cache.clear
         end
 
         before do
@@ -122,9 +126,10 @@ describe Spree::Api::Webhooks::StockMovementDecorator do
             stock_location.stock_movements.new.tap do |stock_movement|
               stock_movement.quantity = 1
               stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-              stock_movement.save
+              stock_movement.save!
             end
             product.reload
+            Rails.cache.clear
           end
 
           it { expect { subject }.to emit_webhook_event(event_name) }
