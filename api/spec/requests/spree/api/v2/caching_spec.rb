@@ -29,7 +29,9 @@ describe 'API v2 Caching spec', type: :request do
     end
 
     def cache_entries
-      Rails.cache.redis.keys.find_all { |k| k.start_with?(cache_namespace) }
+      Rails.cache.redis.with do |redis|
+        redis.keys.find_all { |k| k.start_with?(cache_namespace) }
+      end
     end
 
     it 'caches collection' do
