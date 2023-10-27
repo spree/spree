@@ -9,7 +9,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
   actionmailer actionpack actionview activejob activemodel activerecord
   activestorage activesupport railties
 ].each do |rails_gem|
-  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.0.0'), require: false
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.1.0'), require: false
 end
 
 platforms :jruby do
@@ -38,7 +38,7 @@ group :test do
   gem 'rspec-rails'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
-  gem 'rswag-specs', github: 'rswag/rswag'
+  gem 'rswag-specs'
   gem 'jsonapi-rspec'
   gem 'simplecov', '0.17.1'
   gem 'webmock'
