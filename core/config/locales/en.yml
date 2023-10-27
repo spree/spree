@@ -1,6 +1,8 @@
 en:
   activemodel:
     errors:
+      messages:
+        blank: can't be blank
       models:
         spree/fulfilment_changer:
           attributes:
@@ -309,6 +311,8 @@ en:
         one: Zone
         other: Zones
     errors:
+      messages:
+        blank: can't be blank
       models:
         spree/calculator/tiered_flat_rate:
           attributes:
