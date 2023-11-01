@@ -112,7 +112,7 @@ module Spree
     alias_attribute :contact_email, :customer_support_email
 
     def self.current(url = nil)
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `Spree::Store.current` is deprecated and will be removed in Spree 5.0
         Please use `Spree::Stores::FindCurrent.new(url: "https://example.com").execute` instead
       DEPRECATION
@@ -194,7 +194,7 @@ module Spree
     end
 
     def checkout_zone_or_default
-      ActiveSupport::Deprecation.warn('Store#checkout_zone_or_default is deprecated and will be removed in Spree 5')
+      Spree::Deprecation.warn('Store#checkout_zone_or_default is deprecated and will be removed in Spree 5')
 
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end

@@ -5,7 +5,7 @@ module Spree
         @scope = scope
 
         if current_currency.present?
-          ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Spree::Deprecation.warn(<<-DEPRECATION, caller)
             `current_currency` param is deprecated and will be removed in Spree 5.
             Please pass `:currency` in `params` hash instead.
           DEPRECATION

@@ -76,7 +76,7 @@ module Spree
 
     # will return a human readable string
     def available_status(product)
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `Spree::ProductsHelper#available_status` method from spree/core is deprecated and will be removed.
         Please use `Spree::Admin::ProductsHelper#available_status` from spree_backend instead.
       DEPRECATION
@@ -140,7 +140,7 @@ module Spree
     end
 
     def related_products
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         ProductsHelper#related_products is deprecated and will be removed in Spree 5.0.
         Please use ProductsHelper#relations from now on.
       DEPRECATION

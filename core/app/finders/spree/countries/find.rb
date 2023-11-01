@@ -8,7 +8,7 @@ module Spree
       end
 
       def call
-        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        Spree::Deprecation.warn(<<-DEPRECATION, caller)
           Spree::Countries::Find.new.call is deprecated and will be removed in Spree 5.0.
           Please use Spree::Countries::Find.new.execute instead
         DEPRECATION

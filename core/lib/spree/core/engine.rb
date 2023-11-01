@@ -27,6 +27,7 @@ module Spree
         app.config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal]
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
+        Spree::Deprecation = ActiveSupport::Deprecation.new
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|
