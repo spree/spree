@@ -76,7 +76,7 @@ module Spree
 
       # searcher_class allows spree extension writers to provide their own Search class
       def searcher_class
-        ActiveSupport::Deprecation.warn('`Spree::Config.searcher_class` is deprecated and will be removed in Spree v5, please use `Spree.searcher_class` instead.')
+        Spree::Deprecation.warn('`Spree::Config.searcher_class` is deprecated and will be removed in Spree v5, please use `Spree.searcher_class` instead.')
         @searcher_class ||= Spree.searcher_class
       end
 

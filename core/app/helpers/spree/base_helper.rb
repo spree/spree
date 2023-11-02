@@ -55,7 +55,7 @@ module Spree
     end
 
     def logo(image_path = nil, options = {})
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `BaseHelper#logo` is deprecated and will be removed in Spree 5.0.
         Please use `FrontendHelper#logo` instead
       DEPRECATION

@@ -33,7 +33,7 @@ module Spree
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true
 
     def property_name=(name)
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `ProductProperty#property_name=` is deprecated and will be removed in Spree 5.0.
       DEPRECATION
       if name.present?

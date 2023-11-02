@@ -415,7 +415,7 @@ module Spree
 
     def available_payment_methods(store = nil)
       if store.present?
-        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+        Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
       end
 
       @available_payment_methods ||= collect_payment_methods(store)
@@ -449,7 +449,7 @@ module Spree
     end
 
     def empty!
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `Order#empty!` is deprecated and will be removed in Spree 5.0.
         Please use `Spree::Cart::Empty.call(order: order)` instead.
       DEPRECATION
@@ -647,7 +647,7 @@ module Spree
     end
 
     def validate_payments_attributes(attributes)
-      ActiveSupport::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 5')
+      Spree::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 5')
 
       # Ensure the payment methods specified are allowed for this user
       payment_method_ids = available_payment_methods.map(&:id).map(&:to_s)
@@ -745,7 +745,7 @@ module Spree
 
     def collect_payment_methods(store = nil)
       if store.present?
-        ActiveSupport::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
+        Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
       end
       store ||= self.store
 

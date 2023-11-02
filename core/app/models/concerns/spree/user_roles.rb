@@ -14,19 +14,19 @@ module Spree
       end
 
       def self.admin
-        ActiveSupport::Deprecation.warn('`User#admin` is deprecated and will be removed in Spree 5. Please use `User#spree_admin`')
+        Spree::Deprecation.warn('`User#admin` is deprecated and will be removed in Spree 5. Please use `User#spree_admin`')
 
         spree_admin
       end
 
       def self.admin_created?
-        ActiveSupport::Deprecation.warn('`User#admin_created?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin_created?`')
+        Spree::Deprecation.warn('`User#admin_created?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin_created?`')
 
         spree_admin_created?
       end
 
       def admin?
-        ActiveSupport::Deprecation.warn('`User#admin?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin?`')
+        Spree::Deprecation.warn('`User#admin?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin?`')
 
         spree_admin?
       end
