@@ -15,6 +15,7 @@ module Spree
     attr_reader :eligibility_errors, :generate_code
 
     belongs_to :promotion_category, optional: true
+    belongs_to :promotion_batch, optional: true
 
     has_many :promotion_rules, autosave: true, dependent: :destroy
     alias rules promotion_rules
@@ -39,6 +40,8 @@ module Spree
 
     auto_strip_attributes :code, :path, :name
 
+    after_update :update_descendants
+
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
@@ -47,6 +50,7 @@ module Spree
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
+    scope :non_batched, -> { where(promotion_batch_id: nil) }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
@@ -235,6 +239,10 @@ module Spree
         break random_token unless self.class.exists?(code: random_token)
       end
       coupon_code
+    end
+
+    def update_descendants
+      Spree::PromotionHandler::UpdateDescendantsService.new(self).call
     end
   end
 end

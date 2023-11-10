@@ -97,7 +97,10 @@ module Spree
         credit_card_finder: 'Spree::CreditCards::Find',
         products_finder: 'Spree::Products::Find',
         taxon_finder: 'Spree::Taxons::Find',
-        line_item_by_variant_finder: 'Spree::LineItems::FindByVariant'
+        line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
+
+        # promotion batches
+        promotion_batch_destroy_service: 'Spree::PromotionBatches::Destroy'
       }.freeze
 
       include Spree::DependenciesHelper

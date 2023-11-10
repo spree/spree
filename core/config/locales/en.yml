@@ -229,6 +229,9 @@ en:
       spree/promotion:
         one: Promotion
         other: Promotions
+      spree/promotion_batch:
+        one: Promotion Batch
+        other: Promotion Batches
       spree/promotion_category:
         one: Promotion Category
         other: Promotion Categories
@@ -680,6 +683,7 @@ en:
     close: Close
     close_all_adjustments: Close All Adjustments
     code: Code
+    code_upload: Promotion codes are being uploaded. It might take a while.
     company: Company
     compare_at_price: Compare at price
     complete: complete
@@ -942,6 +946,7 @@ en:
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
+    invalid_file: No file / Wrong file format / Empty file
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
@@ -1019,6 +1024,7 @@ en:
     meta_title: Meta Title
     metadata: Metadata
     mutable: Mutable
+    mutually_exclusive_inputs: Invalid inputs. Forbidden phrases cannot contain the affix.
     must_have_one_store: The resource must belong to a store.
     min: 'Min'
     minimal_amount: Minimal Amount
@@ -1059,6 +1065,7 @@ en:
     new_payment_method: New Payment Method
     new_product: New Product
     new_promotion: New Promotion
+    new_promotion_batch: New Promotion Batch
     new_promotion_category: New Promotion Category
     new_property: New Property
     new_prototype: New Prototype
@@ -1103,6 +1110,7 @@ en:
     no_returns_found: No returns found
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
+    no_template_promotion: Promotion template must be set in order to import promotion codes.
     no_tracking_present: No tracking details provided.
     user_not_found: User not found
     none: None
@@ -1311,8 +1319,20 @@ en:
         manual: Manually choose
     products: Products
     promotion: Promotion
+    promotion_batch: Promotion Batch
+    promotion_batches: Promotion Batches
+    promotion_batch_form:
+      affix: Affix
+      affix_content: Affix content
+      batch_size: Batch size
+      forbidden_phrases: Forbidden phrases
+      import_codes: Import codes from CSV
+      populate: Populate
+      prefix: Prefix
+      random_part_bytes: Random part bytes
+      sufix: Sufix
+    promotion_batch_populated: Promotion Batch is being populated.
     promotionable: Promotable
-    promotion_cloned: Promotion has been cloned
     promotion_not_cloned: "Promotion has not been cloned. Reason: %{error}"
     promotion_action: Promotion Action
     promotion_action_types:
@@ -1723,6 +1743,8 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
+    template_not_found: Template promotion - not found! Assign a template before populating a batch.
+    template_promotion_already_assigned: Template promotion has already been assigned!
     test: Test
     test_mailer:
       test_email:
