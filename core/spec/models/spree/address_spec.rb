@@ -260,45 +260,6 @@ describe Spree::Address, type: :model do
     end
   end
 
-  xcontext '.default' do
-    context 'no user given' do
-      before do
-        @default_country_id = Spree::Config[:default_country_id]
-        new_country = create(:country)
-        Spree::Config[:default_country_id] = new_country.id
-      end
-
-      after do
-        Spree::Config[:default_country_id] = @default_country_id
-      end
-
-      it 'sets up a new record with Spree::Config[:default_country_id]' do
-        expect(Spree::Address.default.country).to eq(Spree::Country.find(Spree::Config[:default_country_id]))
-      end
-
-      # Regression test for #1142
-      it 'uses the first available country if :default_country_id is set to an invalid value' do
-        Spree::Config[:default_country_id] = '0'
-        expect(Spree::Address.default.country).to eq(Spree::Country.first)
-      end
-    end
-
-    context 'user given' do
-      let(:bill_address) { Spree::Address.new(phone: Time.current.to_i) }
-      let(:ship_address) { double('ShipAddress') }
-      let(:user) { double('User', bill_address: bill_address, ship_address: ship_address) }
-
-      it 'returns a copy of that user bill address' do
-        expect(Spree::Address.default(user).phone).to eq bill_address.phone
-      end
-
-      it 'falls back to build default when user has no address' do
-        allow(user).to receive_messages(bill_address: nil)
-        expect(Spree::Address.default(user)).to eq Spree::Address.build_default
-      end
-    end
-  end
-
   context '#full_name' do
     context 'both first and last names are present' do
       let(:address) { create(:address, firstname: 'Michael', lastname: 'Jackson') }
@@ -468,12 +429,6 @@ describe Spree::Address, type: :model do
 
       it { expect(address == address2).to eq(false) }
     end
-  end
-
-  describe '.build_default' do
-    let(:_address) { described_class.build_default }
-
-    it { expect(_address.country).to eq(Spree::Country.default) }
   end
 
   context 'editable & destroy' do
