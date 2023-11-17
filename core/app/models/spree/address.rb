@@ -68,25 +68,6 @@ module Spree
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
     self.whitelisted_ransackable_associations = %w[country state user]
 
-    def self.build_default
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `Address#build_default` is deprecated and will be removed in Spree 5.0.
-        Please use standard rails `Address.new(country: current_store.default_country)`
-      DEPRECATION
-      new(country: Spree::Country.default)
-    end
-
-    def self.default(user = nil, kind = 'bill')
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `Address#default` is deprecated and will be removed in Spree 5.0.
-      DEPRECATION
-      if user && user_address = user.public_send(:"#{kind}_address")
-        user_address.clone
-      else
-        build_default
-      end
-    end
-
     def self.required_fields
       Spree::Address.validators.map do |v|
         v.is_a?(ActiveModel::Validations::PresenceValidator) ? v.attributes : []
