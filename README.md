@@ -1,6 +1,6 @@
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
-[![Github README - Header](https://github.com/spree/spree/assets/43988137/54768c5a-3d8f-48db-b965-f1cb96ed7f91)](https://github.com/spree/spree/releases/tag/v4.6.0)
+[![Github README - Header](https://github.com/spree/spree/assets/6420475/8c3be6ab-3ac9-41ce-accd-ae97f3c1b536)](https://github.com/spree/spree/releases/tag/v4.7.0)
 
 **Spree** is a headless open source e-commerce platform for global brands.
 
