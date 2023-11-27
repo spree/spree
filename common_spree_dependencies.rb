@@ -32,7 +32,7 @@ group :test do
   gem 'capybara-select-2'
   gem 'database_cleaner-active_record'
   gem 'email_spec'
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', '~> 6.2.0'
   gem 'multi_json'
   gem 'rspec-activemodel-mocks'
   gem 'rspec-rails'
