@@ -45,8 +45,8 @@ class Project
   def pass?
     chdir do
       setup_test_app
-      run_tests
     end
+    run_tests
   end
 
   # Process CLI arguments
