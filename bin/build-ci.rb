@@ -172,7 +172,6 @@ class Project
   # @return [Array<Project>]
   def self.current_projects
     NODE_INDEX.step(ALL.length - 1, NODE_TOTAL).map(&ALL.method(:fetch))
-    # ALL
   end
   private_class_method :current_projects
 
