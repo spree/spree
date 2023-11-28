@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 # Used in the sandbox rake task in Rakefile
 
 set -e
