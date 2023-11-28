@@ -106,7 +106,8 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system("circleci tests glob \"**/*_spec.rb\" | circleci tests run --command=\"xargs bundle exec rspec #{rspec_arguments.join(' ')}\"")
+    system("circleci tests glob \"**/*_spec.rb\" | xargs --verbose echo \"xargs bundle exec rspec #{rspec_arguments.join(' ')}\"")
+    system("circleci tests glob \"**/*_spec.rb\" | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
   end
 
   def rspec_arguments(custom_name = name)
