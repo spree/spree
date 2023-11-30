@@ -109,7 +109,7 @@ class Project
   #   system("circleci tests glob \"./**/*_spec.rb\" | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
   # end
   def run_tests
-    system("bundle exec rspec #{rspec_arguments.join(' ')}")
+    system("circleci tests glob \"./**/*_spec.rb\" | grep -E \"^#{name}\" | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
   end
 
   def rspec_arguments(custom_name = name)
@@ -171,7 +171,8 @@ class Project
   #
   # @return [Array<Project>]
   def self.current_projects
-    NODE_INDEX.step(ALL.length - 1, NODE_TOTAL).map(&ALL.method(:fetch))
+    # NODE_INDEX.step(ALL.length - 1, NODE_TOTAL).map(&ALL.method(:fetch))
+    ALL
   end
   private_class_method :current_projects
 
