@@ -42,10 +42,10 @@ class Project
   #
   # @return [Boolean]
   #   the success of the build
-  def pass?
+  def pass?(project_name)
     chdir do
       setup_test_app
-      run_tests
+      run_tests(project_name)
     end
   end
 
@@ -105,11 +105,8 @@ class Project
   #
   # @return [Boolean]
   #   the success of the tests
-  # def run_tests
-  #   system("circleci tests glob \"./**/*_spec.rb\" | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
-  # end
-  def run_tests
-    system("circleci tests glob \"./**/*_spec.rb\" | grep -E \"^#{name}\" | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
+  def run_tests(name)
+    system("circleci tests glob \"./**/*_spec.rb\" | sed '/#{name}/d' | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
   end
 
   def rspec_arguments(custom_name = name)
@@ -155,7 +152,7 @@ class Project
 
     builds = projects.map do |project|
       log("Building: #{project.name}")
-      project.pass?
+      project.pass?(project.name)
     end
     log("Finished running #{suffix}")
 
