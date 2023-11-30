@@ -105,8 +105,15 @@ class Project
   #
   # @return [Boolean]
   #   the success of the tests
-  def run_tests(name)
-    system("circleci tests glob \"./**/*_spec.rb\" | sed '/#{name}/d' | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
+  def run_tests(project_name)
+
+    to_exclude = ""
+    %w[emails api core sample].each { |name|
+      if name != project_name 
+        to_exclude += "| sed '/#{name}/d' "
+      end
+    }
+    system("circleci tests glob \"**/*_spec.rb\" #{to_exclude} | circleci tests run --command=\"xargs --verbose bundle exec rspec #{rspec_arguments.join(' ')}\" --verbose")
   end
 
   def rspec_arguments(custom_name = name)
