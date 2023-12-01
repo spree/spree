@@ -201,6 +201,9 @@ jobs:
           command: |
             ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+      - store_artifacts:
+          path: /tmp/workspace/simplecov
+          destination: test-coverage-artifacts
 
 workflows:
   version: 2
