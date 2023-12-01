@@ -127,7 +127,10 @@ jobs:
       - run:
           name:  Send test coverage
           command: bash << parameters.run_file_path >>
-          
+      - store_artifacts:
+          path: /tmp/workspace/simplecov
+          destination: test-coverage-artifacts
+
 
 workflows:
   version: 2
@@ -191,7 +194,7 @@ workflows:
               - persist_to_workspace:
                   root: /tmp/workspace
                   paths:
-                    - simplecov  
+                    - simplecov
           requires:
               - bundle_ruby_3_2
       - send_test_coverage:
@@ -201,4 +204,4 @@ workflows:
           redis_image: circleci/redis:6.2-alpine
           run_file_path: ./bin/tests_coverage.sh
           requires:
-              - tests_ruby_3_2_rails_7_0_mysql          
+              - tests_ruby_3_2_rails_7_0_mysql
