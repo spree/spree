@@ -121,15 +121,15 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
+      - store_artifacts:
+          path: /tmp/workspace/simplecov
+          destination: test-coverage-artifacts
       - run:
           name: Allow executing given file
           command: chmod +x << parameters.run_file_path >>
       - run:
           name:  Send test coverage
           command: bash << parameters.run_file_path >>
-      - store_artifacts:
-          path: /tmp/workspace/simplecov
-          destination: test-coverage-artifacts
 
 
 workflows:
