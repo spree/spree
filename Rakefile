@@ -96,3 +96,26 @@ task :sandbox do
     exec("bin/sandbox.sh")
   end
 end
+namespace :coverage do
+  task :report do
+    require 'simplecov'
+
+    %w[emails api core].each { |name|
+      SimpleCov.collate Dir["/tmp/workspace/simplecov/#{name}_/.resultset.json"], 'rails' do
+          add_group 'Models', 'app/models'
+          add_group 'Mailers', 'app/mailers'
+          add_group 'Helpers', 'app/helpers'
+      
+          add_filter '/bin/'
+          add_filter '/db/'
+          add_filter '/script/'
+          add_filter '/spec/'
+          add_filter '/lib/spree/testing_support/'
+          add_filter '/lib/generators/'
+
+          coverage_dir "#{ENV['COVERAGE_DIR']}/#{name}" if ENV['COVERAGE_DIR']
+          refuse_coverage_drop
+      end
+    }
+  end
+end

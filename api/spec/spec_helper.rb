@@ -11,7 +11,7 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/lib/spree/api/testing_support/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/api" if ENV['COVERAGE_DIR']
+    coverage_dir "#{ENV['COVERAGE_DIR']}/api_" if ENV['COVERAGE_DIR']
   end
 end
 
