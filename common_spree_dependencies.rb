@@ -40,7 +40,7 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'rswag-specs'
   gem 'jsonapi-rspec'
-  gem 'simplecov'
+  gem 'simplecov', '~> 18.0.0'
   gem 'webmock'
   gem 'timecop'
   gem 'rails-controller-testing'
