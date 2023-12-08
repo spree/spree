@@ -114,7 +114,6 @@ namespace :coverage do
           add_filter '/lib/generators/'
 
           coverage_dir "#{ENV['COVERAGE_DIR']}/#{name}" if ENV['COVERAGE_DIR']
-          refuse_coverage_drop
       end
     }
   end
