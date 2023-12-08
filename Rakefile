@@ -98,23 +98,54 @@ task :sandbox do
 end
 namespace :coverage do
   task :report do
-    require 'simplecov'
 
-    %w[emails api core].each { |name|
-      SimpleCov.collate Dir["/tmp/workspace/simplecov/#{name}_/.resultset.json"], 'rails' do
-          add_group 'Models', 'app/models'
-          add_group 'Mailers', 'app/mailers'
-          add_group 'Helpers', 'app/helpers'
-      
-          add_filter '/bin/'
-          add_filter '/db/'
-          add_filter '/script/'
-          add_filter '/spec/'
-          add_filter '/lib/spree/testing_support/'
-          add_filter '/lib/generators/'
-
-          coverage_dir "#{ENV['COVERAGE_DIR']}/#{name}" if ENV['COVERAGE_DIR']
+  class SimpleCovMerger
+    def self.report_coverage(base_dir:, ci_project_path:, project_path:)
+      new(base_dir: base_dir, ci_project_path: ci_project_path, project_path: project_path).merge_results
+    end
+  
+    attr_reader :base_dir, :ci_project_path, :project_path
+  
+    def initialize(base_dir:, ci_project_path:, project_path:)
+      @base_dir = base_dir
+      @ci_project_path = ci_project_path
+      @project_path = project_path
+    end
+  
+    def merge_results
+      require "simplecov"
+      require "json"
+  
+      results = []
+      resultsets.each do |file|
+        hash_result = JSON.parse(clean(File.read(file)))
+  
+        hash_result.each do |command_name, data|
+          result = SimpleCov::Result.from_hash(command_name => data)
+          results << result
+        end
       end
-    }
+  
+      result = SimpleCov::ResultMerger.merge_results(*results)
+  
+      SimpleCov::ResultMerger.store_result(result)
+  
+      result.format!
+    end
+  
+    private
+  
+    def resultsets
+      Dir["#{base_dir}_/.resultset.json"]
+    end
+  
+    def clean(results)
+      results.gsub(ci_project_path, project_path)
+    end
   end
+
+  %w[emails api core].each { |name| 
+  SimpleCovMerger.report_coverage(base_dir: "#{ENV['COVERAGE_DIR']}/name", ci_project_path: "~/spree", project_path: "~/spree")
+}  
+end
 end
