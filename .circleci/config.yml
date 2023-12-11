@@ -179,11 +179,6 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Merge coverage reports
-          command: 
-              bundle check || bundle install &&
-              bundle exec rake coverage:report
-      - run:
           name:  Download cc-test-reporter
           command: |
             mkdir -p tmp/

@@ -17,7 +17,7 @@ if ENV['COVERAGE']
     add_filter '/lib/spree/testing_support/'
     add_filter '/lib/generators/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/core_" if ENV['COVERAGE_DIR']
+    coverage_dir "#{ENV['COVERAGE_DIR']}/core" if ENV['COVERAGE_DIR']
   end
 end
 
