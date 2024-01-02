@@ -10,8 +10,17 @@ module Spree
 
     validates :attachment,
               content_type: VALID_CONTENT_TYPES,
-              dimension: { max: 256..256 },
-              aspect_ratio: :square,
               size: { less_than_or_equal_to: 1.megabyte }
+
+    validates :attachment,
+              if: :is_png?,
+              dimension: { max: 256..256 },
+              aspect_ratio: :square
+
+    private
+
+    def is_png?
+      attachment.content_type.in?('image/png')
+    end
   end
 end
