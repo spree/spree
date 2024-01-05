@@ -96,3 +96,16 @@ task :sandbox do
     exec("bin/sandbox.sh")
   end
 end
+
+namespace :coverage do
+  task :report do
+
+    require 'simplecov'
+
+    %w[emails api core].each { |name|
+      SimpleCov.collate Dir["/tmp/workspace/simplecov/#{name}_*/.resultset.json"], 'rails' do
+          coverage_dir "#{ENV['COVERAGE_DIR']}/#{name}" if ENV['COVERAGE_DIR']
+      end
+    }
+end
+end
