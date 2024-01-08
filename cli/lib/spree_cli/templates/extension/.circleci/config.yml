@@ -1,0 +1,141 @@
+version: 2.1
+
+defaults: &defaults
+  parameters: &default_parameters
+    ruby_image:
+      type: string
+    redis_image:
+      type: string
+    restore_cache_key_1:
+      type: string
+      default: 'spree-bundle-v10-ruby-3-3-{{ .Branch }}'
+    restore_cache_key_2:
+      type: string
+      default: spree-bundle-v10-ruby-3-3
+    save_cache_key:
+      type: string
+      default: "n"
+    run_file_path:
+      type: string
+    rails_version:
+      type: string
+      default: '~> 7.0.0'
+    store_artefacts:
+      type: boolean
+      default: false
+  environment: &environment
+      CIRCLE_TEST_REPORTS: /tmp/test-results
+      CIRCLE_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: ~/spree/vendor/bundle
+      RAILS_VERSION: << parameters.rails_version >>
+  working_directory: ~/spree
+  docker:
+    - image: &ruby_image << parameters.ruby_image >>
+    - image: &redis_image << parameters.redis_image >>
+
+
+jobs:
+  run_test: &run_test
+    <<: *defaults
+    steps: &default_steps
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - restore_cache:
+          keys:
+            - << parameters.restore_cache_key_1 >>
+            - << parameters.restore_cache_key_2 >>
+      - run:
+          name: Allow executing given file
+          command: chmod +x << parameters.run_file_path >>
+      - run:
+          name: Run << parameters.run_file_path >> file
+          command: bash << parameters.run_file_path >>
+      - when:
+          condition: << parameters.save_cache_key >>
+          steps:
+              - save_cache:
+                  key: << parameters.save_cache_key >>
+                  paths:
+                    - ~/spree/vendor/bundle
+      - when:
+          condition: <<  parameters.store_artefacts >>
+          steps:
+              - store_artifacts:
+                  path: /tmp/test-artifacts
+                  destination: test-artifacts
+              - store_artifacts:
+                  path: /tmp/failed_tests
+                  destination: failed_tests
+              - store_artifacts:
+                  path: /tmp/test-results
+                  destination: raw-test-output
+              - store_test_results:
+                  path: /tmp/test-results
+
+  tests_postgres:
+    <<: *run_test
+    parallelism: << parameters.parallelism >>
+    parameters:
+        <<: *default_parameters
+        postgres_image:
+            type: string
+        parallelism:
+            type: integer
+            default: 8
+    environment:
+      <<: *environment
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+    docker:
+      - image: *ruby_image
+      - image: << parameters.postgres_image >>
+        environment:
+          POSTGRES_USER: postgres
+      - image: *redis_image
+
+  tests_mysql:
+    <<: *run_test
+    parallelism: << parameters.parallelism >>
+    parameters:
+        <<: *default_parameters
+        mysql_image:
+            type: string
+        parallelism:
+            type: integer
+            default: 8
+    environment:
+      <<: *environment
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      COVERAGE: true
+      COVERAGE_DIR: /tmp/workspace/simplecov
+    docker:
+      - image: *ruby_image
+      - image: *redis_image
+      - image: << parameters.mysql_image >>
+        command: [--default-authentication-plugin=mysql_native_password]
+
+  send_test_coverage:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Merge coverage reports
+          command:
+              bundle check || bundle install &&
+              bundle exec rake coverage:report
+      - run:
+          name: Allow executing given file
+          command: chmod +x << parameters.run_file_path >>
+      - run:
+          name:  Send test coverage
+          command: bash << parameters.run_file_path >>
+
+# create your workflows here
