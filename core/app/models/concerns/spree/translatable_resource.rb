@@ -18,7 +18,7 @@ module Spree
       end
 
       def translation_table_alias
-        "#{self::Translation.table_name}_#{Mobility.locale.to_s.underscore}"
+        "#{self::Translation.table_name}_#{Mobility.normalize_locale(Mobility.locale)}"
       end
     end
   end
