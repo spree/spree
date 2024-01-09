@@ -58,6 +58,9 @@ module Spree
 
     def apply_admin_permissions(user)
       can :manage, :all
+      # admin has access to AdminPanel out of the box
+      # this is a showcase how to add permission to view admin panel to other users
+      can :read, ::Spree::AdminPanel
     end
 
     def apply_user_permissions(user)
