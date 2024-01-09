@@ -28,7 +28,7 @@ module SpreeCli
       template 'config/routes.rb', "#{file_name}/config/routes.rb"
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
-      template 'travis.yml', "#{file_name}/.travis.yml"
+      template '.circleci/config.yml', "#{file_name}/.circleci/config.yml"
       template '.rubocop.yml', "#{file_name}/.rubocop.yml"
     end
 
