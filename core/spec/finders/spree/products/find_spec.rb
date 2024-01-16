@@ -402,6 +402,7 @@ module Spree
       let(:brand) { create(:property, :brand) }
       let(:manufacturer) { create(:property, :manufacturer) }
       let(:material) { create(:property, :material) }
+      let(:length) { create(:property, :length) }
 
       let!(:product_1) do
         create(
@@ -432,6 +433,15 @@ module Spree
         )
       end
 
+      let!(:product_4) do
+        create(
+          :product,
+          product_properties: [
+            create(:product_property, property: length, value: '120.5')
+          ]
+        )
+      end
+
       before do
         create(:product, product_properties: [create(:product_property, property: manufacturer, value: 'Jerseys')])
         create(:product, product_properties: [create(:product_property, property: material, value: '100% Cotton')])
@@ -442,6 +452,14 @@ module Spree
 
         it 'finds Products matching any of Property values' do
           expect(products).to contain_exactly(product_1, product_2, product_3)
+        end
+      end
+
+      context 'when filtering by range Property' do
+        let(:properties_param) { { length: '(100,150)' } }
+
+        it 'finds Products matching any of Property values' do
+          expect(products).to contain_exactly(product_4)
         end
       end
 
