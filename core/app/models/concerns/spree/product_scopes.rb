@@ -140,15 +140,14 @@ module Spree
           where(property_conditions(property))
       end
 
-      # Spree::Product.with_property_range(17, 10, 40)
       add_search_scope :with_property_range do |property, from, to|
-        product_property = ProductProperty.translation_table_alias
+        table = ProductProperty.translation_table_alias
         query = joins(:properties).
           join_translation_table(Property).
           join_translation_table(ProductProperty).
           where(property_conditions(property))
-        query = query.where("#{product_property}.value::float >= ?", from) if from.present?
-        query = query.where("#{product_property}.value::float <= ?", to) if to.present?
+        query = query.where(sanitize_sql(["#{table}.value::float >= ?", from])) if from.present?
+        query = query.where(sanitize_sql(["#{table}.value::float <= ?", to])) if to.present?
         query
       end
 
