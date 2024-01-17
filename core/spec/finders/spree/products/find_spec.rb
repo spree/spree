@@ -433,15 +433,6 @@ module Spree
         )
       end
 
-      let!(:product_4) do
-        create(
-          :product,
-          product_properties: [
-            create(:product_property, property: length, value: '120.5')
-          ]
-        )
-      end
-
       before do
         create(:product, product_properties: [create(:product_property, property: manufacturer, value: 'Jerseys')])
         create(:product, product_properties: [create(:product_property, property: material, value: '100% Cotton')])
@@ -456,10 +447,63 @@ module Spree
       end
 
       context 'when filtering by range Property' do
-        let(:properties_param) { { length: '(100,150)' } }
+        let!(:product_within_range) do
+          create(
+            :product,
+            product_properties: [
+              create(:product_property, property: length, value: '120.5')
+            ]
+          )
+        end
 
-        it 'finds Products matching any of Property values' do
-          expect(products).to contain_exactly(product_4)
+        let!(:product_below_range) do
+          create(
+            :product,
+            product_properties: [
+              create(:product_property, property: length, value: '99.9999')
+            ]
+          )
+        end
+
+        let!(:product_above_range) do
+          create(
+            :product,
+            product_properties: [
+              create(:product_property, property: length, value: '150.0001')
+            ]
+          )
+        end
+
+        context "when 'from' and 'to' values are present" do
+          let(:properties_param) { { length: '(100,150)' } }
+
+          it 'finds Products with Property in range' do
+            expect(products).to contain_exactly(product_within_range)
+          end
+        end
+
+        context "when only 'from' value is present" do
+          let(:properties_param) { { length: '(100,)' } }
+
+          it 'finds Products with Property in range' do
+            expect(products).to contain_exactly(product_within_range, product_above_range)
+          end
+        end
+
+        context "when only 'to' value is present" do
+          let(:properties_param) { { length: '(,150)' } }
+
+          it 'finds Products with Property in range' do
+            expect(products).to contain_exactly(product_below_range, product_within_range)
+          end
+        end
+
+        context "when neither 'from' and 'to' values are present" do
+          let(:properties_param) { { length: '(,)' } }
+
+          it 'finds Products with Property in range' do
+            expect(products).to contain_exactly(product_below_range, product_within_range, product_above_range)
+          end
         end
       end
 
