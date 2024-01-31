@@ -1,20 +1,29 @@
 require 'spec_helper'
 
 describe Spree::PromotionBatch, type: :model do
-  describe 'validations' do
-    describe 'template_assignment' do
-      let(:promotion) { create(:promotion) }
-      let(:other_promotion) { create(:promotion) }
-      let(:promotion_batch) { create(:promotion_batch, template_promotion: promotion) }
+  describe '#save' do
+    let(:template_promotion) { create(:promotion) }
+    let(:promotion_batch) { build(:promotion_batch, template_promotion: template_promotion, codes: codes) }
 
-      before do
-        promotion
-        other_promotion
-        promotion_batch
+    subject { promotion_batch.save }
+
+    context 'when there are no codes provided' do
+      let(:codes) { [] }
+
+      it 'fails validation' do
+        subject
+        expect(promotion_batch.errors[:codes]).to_not be_empty
+        expect(promotion_batch.persisted?).to eq(false)
       end
+    end
 
-      it 'should validate template_assignment on update' do
-        expect { promotion_batch.update!(template_promotion: other_promotion) }.to raise_error(ActiveRecord::RecordInvalid)
+    context 'when codes are provided' do
+      let(:codes) { ['TEST', 'TEST2'] }
+
+      it 'passes validation' do
+        subject
+        expect(promotion_batch.errors[:codes]).to be_empty
+        expect(promotion_batch.persisted?).to eq(true)
       end
     end
   end

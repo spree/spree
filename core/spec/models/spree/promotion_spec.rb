@@ -119,22 +119,6 @@ describe Spree::Promotion, type: :model do
         expect(subject).to include(promotion_advertised)
       end
     end
-
-    describe '.non_batched' do
-      subject { described_class.non_batched }
-
-      let!(:non_batched_promotion) { create :promotion, promotion_batch_id: nil }
-      let!(:promotion_batch) { create :promotion_batch }
-      let!(:batched_promotion) { create :promotion, promotion_batch_id: promotion_batch.id  }
-
-      it 'is expected to not include batched promotion' do
-        expect(subject).not_to include(batched_promotion)
-      end
-
-      it 'is expected to include non_batched promotion' do
-        expect(subject).to include(non_batched_promotion)
-      end
-    end
   end
 
   describe '#destroy' do
@@ -178,7 +162,7 @@ describe Spree::Promotion, type: :model do
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:payload) { { order: order, user: user } }
-    
+
     before do
       allow(action1).to receive_messages perform: true
       allow(action2).to receive_messages perform: true
@@ -741,22 +725,6 @@ describe Spree::Promotion, type: :model do
       it 'has a generated code' do
         expect(promotion.code).to eq 'spree123'
       end
-    end
-  end
-
-  describe '#update_descendants' do
-    let(:promotion) { create(:promotion) }
-    let(:service) { instance_double(Spree::PromotionHandler::UpdateDescendantsService) }
-
-    it 'calls the service' do
-      expect(Spree::PromotionHandler::UpdateDescendantsService)
-        .to receive(:new)
-        .with(promotion)
-        .and_return(service)
-      expect(service)
-        .to receive(:call)
-
-      promotion.update(description: "anything")
     end
   end
 end

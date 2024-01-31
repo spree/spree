@@ -6,107 +6,67 @@ describe 'Promotion API v2 spec', type: :request do
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
+  describe 'promotion_batches#index' do
+    before { create(:promotion_batch) }
+
+    before { get '/api/v2/platform/promotion_batches', headers: bearer_token }
+
+    it_behaves_like 'returns 200 HTTP status'
+
+    it 'returns a list of promotion batches' do
+      expect(json_response['data'].count).to eq(1)
+      expect(json_response['data'].first).to have_type('promotion_batch')
+    end
+  end
+
   describe 'promotion_batches#create' do
-    context 'with valid params' do
-      before { post '/api/v2/platform/promotion_batches', params: params, headers: bearer_token }
-    
-      let(:new_promotion_batch_attributes) do
-        {
-          template_promotion_id: nil
+    before { post '/api/v2/platform/promotion_batches', params: params, headers: bearer_token }
+
+    let(:template_promotion) { create(:promotion) }
+
+    let(:params) do
+      {
+        promotion_batch: {
+          template_promotion_id: template_promotion.id,
+          amount: 10,
+          random_characters: 5,
+          prefix: 'MYPROMO_'
         }
-      end
-
-      let(:params) { { promotion_batch: new_promotion_batch_attributes } }
-
-      it 'creates and returns a promotion batch' do
-        expect(json_response['data']).to have_relationship(:template_promotion).with_data(nil)
-      end
+      }
     end
 
-    context 'when assigning a non-existing template' do
-      before { post '/api/v2/platform/promotion_batches', params: params, headers: bearer_token }
-    
-      let(:new_promotion_batch_attributes) do
-        {
-          template_promotion_id: 123
-        }
-      end
-  
-      let(:params) { { promotion_batch: new_promotion_batch_attributes } }
-  
-      it 'does not create and returns an error' do
-        expect(json_response.has_key?('error')).to eq(true)
-      end
+    it_behaves_like 'returns 200 HTTP status'
+
+    it 'creates a promotion batch' do
+      expect(Spree::PromotionBatch.count).to eq(1)
+      promotion_batch = Spree::PromotionBatch.first
+      expect(promotion_batch.template_promotion).to eq(template_promotion)
+      expect(promotion_batch.codes.size).to eq(10)
+      expect(promotion_batch.codes.first).to start_with('MYPROMO_')
     end
   end
 
-  describe 'promotion_batches#update' do
-    context 'with valid params' do
-      before { put "/api/v2/platform/promotion_batches/#{existing_promotion_batch.id}", params: params, headers: bearer_token }
+  describe 'promotion_batches#import' do
+    before { post '/api/v2/platform/promotion_batches/import', params: params, headers: bearer_token }
 
-      let(:existing_promotion) { create(:promotion) }
-      let(:existing_promotion_batch) { create(:promotion_batch, template_promotion_id: nil) }
+    let(:template_promotion) { create(:promotion) }
 
-      let(:update_promotion_attributes) do
-        {
-          template_promotion_id: existing_promotion.id
+    let(:params) do
+      {
+        promotion_batch: {
+          template_promotion_id: template_promotion.id,
+          codes: ['ABCD', 'EFGH']
         }
-      end
-
-      let(:params) { { promotion_batch: update_promotion_attributes } }
-
-      it 'updates and returns a promotion batch' do
-        expect(json_response['data']).to have_relationship(:template_promotion).with_data({ 'id' => existing_promotion.id.to_s, 'type' => 'promotion' })
-      end
+      }
     end
 
-    context 'when trying to override an assigned template' do
-      before do
-        existing_promotion
-        other_existing_promotion
-        existing_promotion_batch
-        put "/api/v2/platform/promotion_batches/#{existing_promotion_batch.id}", params: params, headers: bearer_token
-      end
+    it_behaves_like 'returns 200 HTTP status'
 
-      let(:existing_promotion) { create(:promotion) }
-      let(:other_existing_promotion) { create(:promotion) }
-      let(:existing_promotion_batch) { create(:promotion_batch, template_promotion: existing_promotion) }
-
-      let(:update_promotion_attributes) do
-        {
-          template_promotion_id: other_existing_promotion.id
-        }
-      end
-
-      let(:params) { { promotion_batch: update_promotion_attributes } }
-
-      it 'does not update and returns an error' do
-        expect(json_response.dig(:errors, :template_promotion_id)).to eq(['Template promotion has already been assigned!'])
-      end
-    end
-  end
-
-  describe 'promotion_batches#populate' do
-    context 'with valid params' do
-      before { post "/api/v2/platform/promotion_batches/#{existing_promotion_batch.id}/populate", params: params, headers: bearer_token }
-
-      let(:existing_promotion_batch) { create(:promotion_batch) }
-
-      let(:params) do
-        {
-          batch_size: 2,
-          code: {
-              affix: 'prefix'
-          },
-          affix_content: 'BLACKWEEK_',
-          forbidden_phrases: 'forbidden phrases',
-          random_part_bytes: 4
-        }
-      end
-
-      it 'is successful' do
-        expect(json_response[:message]).to eq('Promotion Batch is being populated.')
-      end
+    it 'creates a promotion batch' do
+      expect(Spree::PromotionBatch.count).to eq(1)
+      promotion_batch = Spree::PromotionBatch.first
+      expect(promotion_batch.template_promotion).to eq(template_promotion)
+      expect(promotion_batch.codes).to eq(['ABCD', 'EFGH'])
     end
   end
 end

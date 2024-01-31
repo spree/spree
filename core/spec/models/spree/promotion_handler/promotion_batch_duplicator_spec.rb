@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::PromotionHandler::PromotionBatchDuplicator do
-  subject { described_class.new(promotion, promotion_batch.id) }
+  subject { described_class.new(promotion, promotion_batch.id, code: 'test') }
 
   let!(:promo_category) { create(:promotion_category) }
   let!(:calculator) { create(:calculator) }
@@ -40,26 +40,12 @@ describe Spree::PromotionHandler::PromotionBatchDuplicator do
 
         it 'assigns a unique code to the duplicated promotion' do
           result = new_promotion
-          expect(result.code).to match provided_code
-        end
-      end
-
-      context "when code is NOT provided" do
-        let(:new_code) { 'secure_random_code' }
-
-        before do
-          allow(SecureRandom).to receive(:hex).with(4).and_return(new_code)
+          expect(result.code).to eq(provided_code)
         end
 
-        it 'assigns a unique code to the duplicated promotion' do
-          expect(SecureRandom).to receive(:hex).with(4).and_return(new_code)
-          result = new_promotion
-          expect(result.code).to match new_code
+        it 'returns a duplicate of a promotion with the path field changed' do
+          expect(new_promotion.path).to eq("#{promotion.path}_#{provided_code}")
         end
-      end
-
-      it 'returns a duplicate of a promotion with the path field changed' do
-        expect(new_promotion.path).to match /#{promotion.path}_[a-zA-Z]{4}/
       end
 
       it 'returns a duplicate of a promotion with all the fields (except the path, code and usage_limit fields) the same' do

@@ -29,6 +29,8 @@ module Spree
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
 
+    has_many :promotion_batches, foreign_key: 'template_promotion_id'
+
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
@@ -40,8 +42,6 @@ module Spree
 
     auto_strip_attributes :code, :path, :name
 
-    after_update :update_descendants
-
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
@@ -50,7 +50,7 @@ module Spree
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
-    scope :non_batched, -> { where(promotion_batch_id: nil) }
+    scope :templates, -> { where(template: true) }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
@@ -239,10 +239,6 @@ module Spree
         break random_token unless self.class.exists?(code: random_token)
       end
       coupon_code
-    end
-
-    def update_descendants
-      Spree::PromotionHandler::UpdateDescendantsService.new(self).call
     end
   end
 end

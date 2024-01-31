@@ -128,7 +128,6 @@ require 'spree/service_module'
 require 'spree/database_type_utilities'
 
 require 'spree/core/importer'
-require 'spree/core/converters'
 require 'spree/core/query_filters'
 require 'spree/core/product_duplicator'
 require 'spree/core/controller_helpers/auth'

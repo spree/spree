@@ -1,10 +1,9 @@
 module Spree
   module PromotionHandler
     class PromotionBatchDuplicator < Spree::PromotionDuplicatorCore
-      def initialize(promotion, promotion_batch_id, random_string: generate_random_string(4), code: nil)
+      def initialize(promotion, promotion_batch_id, code:)
         @promotion = promotion
         @promotion_batch_id = promotion_batch_id
-        @random_string = random_string
         @code = code
       end
 
@@ -12,8 +11,8 @@ module Spree
         new_promotion = @promotion.dup
         new_promotion.usage_limit = 1
         new_promotion.promotion_batch_id = @promotion_batch_id
-        new_promotion.path = "#{@promotion.path}_#{@random_string}"
-        code_assignment(new_promotion)
+        new_promotion.path = "#{@promotion.path}_#{@code}"
+        new_promotion.code = @code
         new_promotion.stores = @promotion.stores
 
         ActiveRecord::Base.transaction do
@@ -23,16 +22,6 @@ module Spree
         end
 
         new_promotion
-      end
-
-      private
-
-      def code_assignment(new_promotion)
-        if @code
-          new_promotion.code = @code
-        else
-          new_promotion.generate_code=(true)
-        end
       end
     end
   end
