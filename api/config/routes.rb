@@ -72,6 +72,17 @@ Spree::Core::Engine.add_routes do
         resources :promotion_categories
         resources :promotion_rules
 
+        # Promotion Batches API
+        resources :promotion_batches, only: %i[index show create] do
+          member do
+            get :csv_export, to: 'promotion_batches#csv_export'
+          end
+
+          collection do
+            post :import, to: 'promotion_batches#import'
+          end
+        end
+
         # Returns API
         resources :customer_returns
         resources :reimbursements
