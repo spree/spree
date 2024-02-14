@@ -30,6 +30,7 @@ module Spree
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
 
     has_many :promotion_batches, foreign_key: 'template_promotion_id'
+    has_many :promotions_from_template, through: :promotion_batches, class_name: 'Spree::Promotion', source: :promotions
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
@@ -51,8 +52,10 @@ module Spree
       SQL
     }
     scope :templates, -> { where(template: true) }
+    scope :for_template_promotion_id, ->(id) { joins(:promotion_batch).where(promotion_batch: { template_promotion_id: id }) }
 
-    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'promotion_batch_id', 'code']
+    self.whitelisted_ransackable_scopes = ['for_template_promotion_id']
 
     def self.with_coupon_code(coupon_code)
       where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).

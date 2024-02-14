@@ -18,6 +18,7 @@ describe Spree::PromotionHandler::PromotionBatchDuplicator do
            code: 'test1',
            advertise: true,
            path: 'test1',
+           template: true,
            promotion_category: promo_category,
            stores: [store, store_2])
   end
@@ -31,7 +32,7 @@ describe Spree::PromotionHandler::PromotionBatchDuplicator do
     let(:promotion_batch) { create(:promotion_batch) }
 
     context 'model fields' do
-      let(:excluded_fields) { ['code', 'path', 'id', 'created_at', 'updated_at', 'deleted_at', 'promotion_batch_id', 'usage_limit'] }
+      let(:excluded_fields) { ['code', 'path', 'id', 'created_at', 'updated_at', 'deleted_at', 'promotion_batch_id', 'usage_limit', 'template'] }
 
       context "when code is provided" do
         subject { described_class.new(promotion, promotion_batch.id, code: provided_code) }
@@ -56,6 +57,10 @@ describe Spree::PromotionHandler::PromotionBatchDuplicator do
 
       it 'associates the duplicated promotion with a batch' do
         expect(new_promotion.promotion_batch_id).to match promotion_batch.id
+      end
+
+      it 'returns a duplicate promotion with template set to false' do
+        expect(new_promotion.template?).to be_falsey
       end
     end
 
