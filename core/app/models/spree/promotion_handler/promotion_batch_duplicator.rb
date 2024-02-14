@@ -14,6 +14,7 @@ module Spree
         new_promotion.path = "#{@promotion.path}_#{@code}"
         new_promotion.code = @code
         new_promotion.stores = @promotion.stores
+        new_promotion.template = false
 
         ActiveRecord::Base.transaction do
           new_promotion.save
