@@ -10,11 +10,11 @@ module Spree
     let(:suffix) { nil }
 
     before do
-      allow(random_double).to receive(:hex).with(random_characters).and_return('CODE')
+      allow(random_double).to receive(:hex).with(random_characters).and_return('code')
     end
 
     context 'when no prefix or suffix is set' do
-      it 'returns randomly generated code' do
+      it 'returns randomly generated code in uppercase' do
         expect(subject).to eq('CODE')
       end
     end

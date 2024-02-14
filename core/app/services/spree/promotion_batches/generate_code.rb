@@ -8,7 +8,7 @@ module Spree
       def call(random_characters:, prefix: nil, suffix: nil)
         [
           prefix,
-          @random.hex(random_characters),
+          @random.hex(random_characters).upcase,
           suffix
         ].join('')
       end
