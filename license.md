@@ -1,4 +1,4 @@
-Spree License
+BSD 3-Clause License
 =============
 
 Copyright © 2007-2024, Spree Commerce Inc., Spark Solutions Sp. z o.o. and other contributors.
