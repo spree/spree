@@ -58,7 +58,6 @@ group :test, :development do
   gem 'webdrivers', '~> 4.1'
   gem 'puma'
   gem 'ffaker'
-  gem 'psych', '< 4'
 end
 
 group :development do
