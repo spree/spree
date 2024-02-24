@@ -32,6 +32,7 @@ module Spree
           expect(value).to have_attributes(new_address_params)
           expect(value.country).to eq(country)
           expect(value.state).to eq(state)
+          expect(value.user).to eq(user)
         end
       end
 

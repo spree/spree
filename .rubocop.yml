@@ -51,6 +51,7 @@ Metrics/BlockLength:
     - '**/*.rake'
     - '**/factories/**/*'
     - '**/config/routes.rb'
+    - '**/lib/**/testing_support/**/*'
 
 Metrics/AbcSize:
  Max: 45
