@@ -51,7 +51,6 @@ group :test, :development do
   gem 'brakeman'
   gem 'gem-release'
   gem 'i18n-tasks'
-  gem 'redis'
   gem 'rubocop', '~> 1.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'

@@ -4,8 +4,6 @@ defaults: &defaults
   parameters: &default_parameters
     ruby_image:
       type: string
-    redis_image:
-      type: string
     restore_cache_key_1:
       type: string
       default: 'spree-bundle-v10-ruby-3-3-{{ .Branch }}'
@@ -33,7 +31,6 @@ defaults: &defaults
   working_directory: ~/spree
   docker:
     - image: &ruby_image << parameters.ruby_image >>
-    - image: &redis_image << parameters.redis_image >>
 
 
 jobs:
@@ -95,7 +92,6 @@ jobs:
       - image: << parameters.postgres_image >>
         environment:
           POSTGRES_USER: postgres
-      - image: *redis_image
 
   tests_mysql:
     <<: *run_test
@@ -116,7 +112,6 @@ jobs:
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *ruby_image
-      - image: *redis_image
       - image: << parameters.mysql_image >>
         command: [--default-authentication-plugin=mysql_native_password]
 

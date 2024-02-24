@@ -4,8 +4,6 @@ defaults: &defaults
   parameters: &default_parameters
     ruby_image:
       type: string
-    redis_image:
-      type: string
     restore_cache_key_1:
       type: string
       default: 'spree-bundle-v10-ruby-3-3-{{ .Branch }}'
@@ -33,7 +31,6 @@ defaults: &defaults
   working_directory: ~/spree
   docker:
     - image: &ruby_image << parameters.ruby_image >>
-    - image: &redis_image << parameters.redis_image >>
 
 
 jobs:
@@ -95,7 +92,6 @@ jobs:
       - image: << parameters.postgres_image >>
         environment:
           POSTGRES_USER: postgres
-      - image: *redis_image
 
   tests_mysql:
     <<: *run_test
@@ -116,7 +112,6 @@ jobs:
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *ruby_image
-      - image: *redis_image
       - image: << parameters.mysql_image >>
         command: [--default-authentication-plugin=mysql_native_password]
 
@@ -146,13 +141,11 @@ workflows:
       - run_test:
           name: bundle_ruby_3_3
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
           save_cache_key: spree-bundle-v10-ruby-3-1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           run_file_path: ./bin/bundle_ruby.sh
       - run_test:
           name: brakeman
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
           restore_cache_key_1: spree-brakeman-{{ .Branch }}
           restore_cache_key_2: spree-brakeman
           save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -163,8 +156,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_0_postgres
           rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16.2
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -173,8 +165,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_1_postgres
           rails_version: '~> 7.1.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16.2
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -183,8 +174,7 @@ workflows:
           name: tests_ruby_3_3_rails_6_1_postgres
           rails_version: '~> 6.1.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16.2
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -193,8 +183,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_0_mysql
           rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
-          mysql_image: circleci/mysql:8-ram
+          mysql_image: cimg/mysql:8.0
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           post-steps:
@@ -208,7 +197,6 @@ workflows:
           name: send_test_coverage
           rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          redis_image: circleci/redis:6.2-alpine
           run_file_path: ./bin/tests_coverage.sh
           requires:
               - tests_ruby_3_3_rails_7_0_mysql

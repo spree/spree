@@ -36,7 +36,7 @@ Dummy::Application.configure do
 
   config.active_job.queue_adapter = :test
 
-  config.cache_store = :redis_cache_store
+  config.cache_store = :memory_store # we need to use memory store for Spree preferences
 
   routes.default_url_options = { host: 'localhost', port: 3000 }
 end
