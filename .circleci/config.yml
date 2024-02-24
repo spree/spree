@@ -156,7 +156,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_0_postgres
           rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16-alpine
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -165,7 +165,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_1_postgres
           rails_version: '~> 7.1.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16-alpine
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -174,7 +174,7 @@ workflows:
           name: tests_ruby_3_3_rails_6_1_postgres
           rails_version: '~> 6.1.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: circleci/postgres:12-alpine
+          postgres_image: cimg/postgres:16-alpine
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -183,7 +183,7 @@ workflows:
           name: tests_ruby_3_3_rails_7_0_mysql
           rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
-          mysql_image: circleci/mysql:8-ram
+          mysql_image: cimg/mysql:8-ram
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           post-steps:
