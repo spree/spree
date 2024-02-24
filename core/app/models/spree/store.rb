@@ -109,8 +109,6 @@ module Spree
 
     after_commit :clear_cache
 
-    alias_attribute :contact_email, :customer_support_email
-
     def self.current(url = nil)
       Spree::Deprecation.warn(<<-DEPRECATION, caller)
         `Spree::Store.current` is deprecated and will be removed in Spree 5.0
