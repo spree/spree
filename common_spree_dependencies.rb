@@ -20,7 +20,7 @@ platforms :ruby do
   if ENV['DB'] == 'mysql'
     gem 'mysql2'
   else
-    gem 'pg', '~> 1.1'
+    gem 'pg'
   end
 end
 
@@ -54,7 +54,6 @@ group :test, :development do
   gem 'rubocop', '~> 1.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
-  gem 'webdrivers', '~> 4.1'
   gem 'puma'
   gem 'ffaker'
 end
