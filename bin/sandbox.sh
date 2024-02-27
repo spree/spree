@@ -7,8 +7,11 @@ case "$DB" in
 mysql)
   RAILSDB="mysql"
   ;;
-postgres|'')
+postgres)
   RAILSDB="postgresql"
+  ;;
+sqlite|'')
+  RAILSDB="sqlite3"
   ;;
 *)
   echo "Invalid DB specified: $DB"
@@ -22,11 +25,7 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-git \
   --skip-keeps \
   --skip-rc \
-  --skip-spring \
   --skip-test \
-  --skip-coffee \
-  --skip-javascript \
-  --skip-bootsnap
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
@@ -35,28 +34,29 @@ fi
 
 cd ./sandbox
 
-# Gems listed below were tagged on 1 August 2022
 if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
   SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
 else
-  # For now tag on branch main will be used,
-  # in the future replace it with 4.5-stable release
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', tag: 'v4.5.0-development'"
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'"
 fi
 
 if [ "$SPREE_GATEWAY_PATH" != "" ]; then
   SPREE_GATEWAY_GEM="gem 'spree_gateway', path: '$SPREE_GATEWAY_PATH'"
 else
   # spree_gateway 'main' branch has latest needed changes - this tag needs to be replaced after release of 4.5-stable
-  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', tag: 'v4.5.0-development'"
+  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
 fi
 
 if [ "$SPREE_DASHBOARD_PATH" != "" ]; then
   SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_DASHBOARD_PATH'"
 else
-  # For now tag on branch main will be used to provide compatibility with Rails 7,
-  # in the future replace it with 4.5-stable release
-  SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', tag: 'v4.5.0-development'"
+  SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'"
+fi
+
+if [ "$SPREE_STOREFRINT_PATH" != "" ]; then
+  SPREE_STOREFRINT_PATH="gem 'spree_frontend', path: '$SPREE_DASHBOARD_PATH'"
+else
+  SPREE_STOREFRINT_PATH="gem 'spree_frontend', github: 'spree/spree_rails_frontend', branch: 'main'"
 fi
 
 cat <<RUBY >> Gemfile
@@ -64,8 +64,9 @@ gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
 $SPREE_BACKEND_GEM
-$SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
+$SPREE_STOREFRINT_PATH
+$SPREE_AUTH_DEVISE_GEM
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', ref: '3c3e5954888232153a78fa4168f40b3255586b3b'
 
 group :test, :development do
@@ -82,7 +83,6 @@ gem 'mini_racer'
 # https://github.com/sass/sassc-ruby/commit/04407faf6fbd400f1c9f72f752395e1dfa5865f7
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 
-gem 'rack-cache'
 gem 'oj'
 
 gem 'jsbundling-rails'
@@ -138,6 +138,7 @@ bin/rails db:drop || true
 bin/rails db:create
 bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
 bin/rails g spree:backend:install
+bin/rails g spree:frontend:install
 bin/rails g spree:emails:install
 bin/rails g spree:auth:install
 bin/rails g spree_gateway:install
