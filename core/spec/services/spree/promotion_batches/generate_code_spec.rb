@@ -4,7 +4,6 @@ module Spree
   describe PromotionBatches::GenerateCode do
     subject { described_class.new.call(random_characters: random_characters, prefix: prefix, suffix: suffix) }
 
-    let(:random_double) { double }
     let(:random_characters) { 4 }
     let(:prefix) { nil }
     let(:suffix) { nil }
