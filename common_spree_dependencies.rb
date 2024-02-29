@@ -19,7 +19,7 @@ end
 platforms :ruby do
   if ENV['DB'] == 'mysql'
     gem 'mysql2'
-  elsif ENV['DB'] == 'postgresql'
+  elsif ENV['DB'] == 'postgres'
     gem 'pg'
   else
     gem 'sqlite3'
