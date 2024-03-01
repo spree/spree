@@ -56,9 +56,6 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'promotion_batch_id', 'code']
     self.whitelisted_ransackable_scopes = ['for_template_promotion_id']
-    def self.ransackable_scopes_skip_sanitize_args
-      [:for_template_promotion_id]
-    end
 
     def self.with_coupon_code(coupon_code)
       where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
