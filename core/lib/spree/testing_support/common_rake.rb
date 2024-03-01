@@ -14,21 +14,21 @@ namespace :common do
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
-    if ENV['LIB_NAME'] == 'spree/backend'
-      puts 'Preparing NPM package...'
-      system('yarn install')
-      system('yarn build')
-      system('yarn link')
+    Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}"]
+
+    # install frontend libraries
+    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+      system('bin/rails importmap:install')
+      system('bin/rails turbo:install')
+      system('bin/rails stimulus:install')
     end
 
-    Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--quiet']
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
       '--auto-accept',
       '--migrate=false',
       '--seed=false',
       '--sample=false',
-      '--quiet',
       '--copy_storefront=false',
       "--install_storefront=#{args[:install_storefront]}",
       "--install_admin=#{args[:install_admin]}",
@@ -41,12 +41,6 @@ namespace :common do
     Spree::DummyModelGenerator.start
     system('bundle exec rake db:migrate')
 
-    unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
-      puts 'Setting up node environment'
-      system('bin/rails javascript:install:esbuild')
-      system('bin/rails turbo:install')
-    end
-
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
       puts 'Running extension installation generator...'
@@ -56,11 +50,6 @@ namespace :common do
     end
 
     unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
-      if ENV['LIB_NAME'] == 'spree/backend'
-        puts 'Installing node dependencies...'
-        system('yarn link @spree/dashboard')
-        system('yarn install')
-      end
       puts 'Precompiling assets...'
       system('bundle exec rake assets:precompile')
     end
