@@ -21,7 +21,7 @@ module Spree
       let(:prefix) { 'MYCAMPAIGN_' }
 
       it 'returns prefix and randomly generated code' do
-        expect(subject).to start_with('MYCAMPAIGN_')
+        expect(subject).to match('^MYCAMPAIGN_[A-Z0-9]{4}$')
       end
     end
 
@@ -29,7 +29,7 @@ module Spree
       let(:suffix) { '_RETAIL' }
 
       it 'returns randomly generated code with suffix' do
-        expect(subject).to end_with('_RETAIL')
+        expect(subject).to match('^[A-Z0-9]{4}_RETAIL$')
       end
     end
 
@@ -38,8 +38,7 @@ module Spree
       let(:suffix) { '_ONLINE' }
 
       it 'returns randomly generated code with prefix and suffix' do
-        expect(subject).to start_with('TESTCAMPAIGN_')
-        expect(subject).to end_with('_ONLINE')
+        expect(subject).to match('^TESTCAMPAIGN_[A-Z0-9]{4}_ONLINE$')
       end
     end
   end
