@@ -1743,7 +1743,8 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
-    template_promotions: Template Promotions
+    template_not_found: Template promotion - not found! Assign a template before populating a batch.
+    template_promotion_already_assigned: Template promotion has already been assigned!
     test: Test
     test_mailer:
       test_email:
