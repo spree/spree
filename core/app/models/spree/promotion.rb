@@ -15,7 +15,6 @@ module Spree
     attr_reader :eligibility_errors, :generate_code
 
     belongs_to :promotion_category, optional: true
-    belongs_to :promotion_batch, optional: true
 
     has_many :promotion_rules, autosave: true, dependent: :destroy
     alias rules promotion_rules
@@ -28,8 +27,6 @@ module Spree
 
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
-
-    has_many :promotion_batches, foreign_key: 'template_promotion_id'
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
@@ -50,7 +47,6 @@ module Spree
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
-    scope :templates, -> { where(template: true) }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 

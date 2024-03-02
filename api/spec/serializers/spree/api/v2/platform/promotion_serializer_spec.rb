@@ -20,7 +20,6 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
             description: resource.description,
             expires_at: resource.expires_at,
             starts_at: resource.starts_at,
-            template: resource.template,
             name: resource.name,
             type: resource.type,
             usage_limit: resource.usage_limit,

@@ -114,9 +114,6 @@ module Spree
         platform_shipment_change_state_service: -> { Spree::Dependencies.shipment_change_state_service },
         platform_shipment_add_item_service: -> { Spree::Dependencies.shipment_add_item_service },
         platform_shipment_remove_item_service: -> { Spree::Dependencies.shipment_remove_item_service },
-
-        # promotion batches services
-        platform_promotion_batch_destroy_service: -> { Spree::Dependencies.promotion_batch_destroy_service },
       }
 
       include Spree::DependenciesHelper
