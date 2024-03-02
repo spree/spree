@@ -162,7 +162,7 @@ describe Spree::Promotion, type: :model do
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:payload) { { order: order, user: user } }
-
+    
     before do
       allow(action1).to receive_messages perform: true
       allow(action2).to receive_messages perform: true
