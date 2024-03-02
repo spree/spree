@@ -2,18 +2,20 @@ require 'spec_helper'
 
 module Spree
   describe PromotionBatches::GenerateCode do
-    subject { described_class.new.call(random_characters: random_characters, prefix: prefix, suffix: suffix) }
+    subject { described_class.new(random: random_double).call(random_characters: random_characters, prefix: prefix, suffix: suffix) }
 
+    let(:random_double) { double }
     let(:random_characters) { 4 }
     let(:prefix) { nil }
     let(:suffix) { nil }
 
+    before do
+      allow(random_double).to receive(:hex).with(random_characters).and_return('code')
+    end
+
     context 'when no prefix or suffix is set' do
       it 'returns randomly generated code in uppercase' do
-        expect(subject).to match('^[A-Z0-9]*$')
-      end
-      it 'returns randomly generated code with correct length' do
-        expect(subject.length).to eq(4)
+        expect(subject).to eq('CODE')
       end
     end
 
@@ -21,7 +23,7 @@ module Spree
       let(:prefix) { 'MYCAMPAIGN_' }
 
       it 'returns prefix and randomly generated code' do
-        expect(subject).to match('^MYCAMPAIGN_[A-Z0-9]{4}$')
+        expect(subject).to eq('MYCAMPAIGN_CODE')
       end
     end
 
@@ -29,7 +31,7 @@ module Spree
       let(:suffix) { '_RETAIL' }
 
       it 'returns randomly generated code with suffix' do
-        expect(subject).to match('^[A-Z0-9]{4}_RETAIL$')
+        expect(subject).to eq('CODE_RETAIL')
       end
     end
 
@@ -38,7 +40,7 @@ module Spree
       let(:suffix) { '_ONLINE' }
 
       it 'returns randomly generated code with prefix and suffix' do
-        expect(subject).to match('^TESTCAMPAIGN_[A-Z0-9]{4}_ONLINE$')
+        expect(subject).to eq('TESTCAMPAIGN_CODE_ONLINE')
       end
     end
   end
