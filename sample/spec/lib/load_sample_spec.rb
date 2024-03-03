@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Load samples' do
-  xit 'doesnt raise any error' do
+  it 'doesnt raise any error' do
     expect do
       Spree::Seeds::All.call
       SpreeSample::Engine.load_samples

@@ -17,7 +17,7 @@ defaults: &defaults
       type: string
     rails_version:
       type: string
-      default: '~> 7.0.0'
+      default: '~> 7.1.0'
     store_artefacts:
       type: boolean
       default: false
@@ -163,7 +163,6 @@ workflows:
               - bundle_ruby_3_3
       - tests_postgres:
           name: tests_ruby_3_3_rails_7_1_postgres
-          rails_version: '~> 7.1.0'
           ruby_image: cimg/ruby:3.3.0-browsers
           postgres_image: cimg/postgres:16.2
           store_artefacts: true
@@ -180,8 +179,7 @@ workflows:
           requires:
               - bundle_ruby_3_3
       - tests_mysql:
-          name: tests_ruby_3_3_rails_7_0_mysql
-          rails_version: '~> 7.0.0'
+          name: tests_ruby_3_3_rails_7_1_mysql
           ruby_image: cimg/ruby:3.3.0-browsers
           mysql_image: cimg/mysql:8.0
           store_artefacts: true
@@ -195,9 +193,8 @@ workflows:
               - bundle_ruby_3_3
       - send_test_coverage:
           name: send_test_coverage
-          rails_version: '~> 7.0.0'
           ruby_image: cimg/ruby:3.3.0-browsers
           run_file_path: ./bin/tests_coverage.sh
           requires:
-              - tests_ruby_3_3_rails_7_0_mysql
+              - tests_ruby_3_3_rails_7_1_mysql
 
