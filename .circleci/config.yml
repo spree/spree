@@ -2,17 +2,15 @@ version: 2.1
 
 defaults: &defaults
   parameters: &default_parameters
-    ruby_image:
-      type: string
     restore_cache_key_1:
       type: string
-      default: 'spree-bundle-v10-ruby-3-3-{{ .Branch }}'
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
     restore_cache_key_2:
       type: string
-      default: spree-bundle-v10-ruby-3-3
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}'
     save_cache_key:
       type: string
-      default: "n"
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
     run_file_path:
       type: string
     rails_version:
@@ -28,14 +26,16 @@ defaults: &defaults
       BUNDLE_RETRY: 3
       BUNDLE_PATH: ~/spree/vendor/bundle
       RAILS_VERSION: << parameters.rails_version >>
+      DB: postgres # default value, this will speed up bundle install for all postgres builds
   working_directory: ~/spree
   docker:
-    - image: &ruby_image << parameters.ruby_image >>
+    - image: &ruby_image cimg/ruby:3.3.0-browsers
 
 
 jobs:
   run_test: &run_test
     <<: *defaults
+    parallelism: 8
     steps: &default_steps
       - checkout
       - attach_workspace:
@@ -74,35 +74,22 @@ jobs:
 
   tests_postgres:
     <<: *run_test
-    parallelism: << parameters.parallelism >>
     parameters:
         <<: *default_parameters
-        postgres_image:
-            type: string
-        parallelism:
-            type: integer
-            default: 8
     environment:
       <<: *environment
-      DB: postgres
       DB_HOST: localhost
       DB_USERNAME: postgres
     docker:
       - image: *ruby_image
-      - image: << parameters.postgres_image >>
+      - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
 
   tests_mysql:
     <<: *run_test
-    parallelism: << parameters.parallelism >>
     parameters:
         <<: *default_parameters
-        mysql_image:
-            type: string
-        parallelism:
-            type: integer
-            default: 8
     environment:
       <<: *environment
       DB: mysql
@@ -112,7 +99,7 @@ jobs:
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *ruby_image
-      - image: << parameters.mysql_image >>
+      - image: cimg/mysql:8.0
         command: [--default-authentication-plugin=mysql_native_password]
 
   send_test_coverage:
@@ -135,53 +122,41 @@ jobs:
 
 
 workflows:
-  version: 2
   main:
     jobs:
       - run_test:
-          name: bundle_ruby_3_3
-          ruby_image: cimg/ruby:3.3.0-browsers
-          save_cache_key: spree-bundle-v10-ruby-3-1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          name: bundle_ruby
           run_file_path: ./bin/bundle_ruby.sh
       - run_test:
           name: brakeman
-          ruby_image: cimg/ruby:3.3.0-browsers
           restore_cache_key_1: spree-brakeman-{{ .Branch }}
           restore_cache_key_2: spree-brakeman
           save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           run_file_path: ./bin/brakeman.sh
           requires:
-              - bundle_ruby_3_3
+              - bundle_ruby
       - tests_postgres:
-          name: tests_ruby_3_3_rails_7_0_postgres
+          name: tests_rails_postgres
+          store_artefacts: true
+          run_file_path: ./bin/tests_database_ci.sh
+          requires:
+              - bundle_ruby
+      - tests_postgres:
+          name: tests_rails_7_0_postgres
           rails_version: '~> 7.0.0'
-          ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: cimg/postgres:16.2
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby_3_3
+              - bundle_ruby
       - tests_postgres:
-          name: tests_ruby_3_3_rails_7_1_postgres
-          ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: cimg/postgres:16.2
-          store_artefacts: true
-          run_file_path: ./bin/tests_database_ci.sh
-          requires:
-              - bundle_ruby_3_3
-      - tests_postgres:
-          name: tests_ruby_3_3_rails_6_1_postgres
+          name: tests_rails_6_1_postgres
           rails_version: '~> 6.1.0'
-          ruby_image: cimg/ruby:3.3.0-browsers
-          postgres_image: cimg/postgres:16.2
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby_3_3
+              - bundle_ruby
       - tests_mysql:
-          name: tests_ruby_3_3_rails_7_1_mysql
-          ruby_image: cimg/ruby:3.3.0-browsers
-          mysql_image: cimg/mysql:8.0
+          name: tests_rails_mysql
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           post-steps:
@@ -190,11 +165,10 @@ workflows:
                   paths:
                     - simplecov
           requires:
-              - bundle_ruby_3_3
+              - bundle_ruby
       - send_test_coverage:
           name: send_test_coverage
-          ruby_image: cimg/ruby:3.3.0-browsers
           run_file_path: ./bin/tests_coverage.sh
           requires:
-              - tests_ruby_3_3_rails_7_1_mysql
+              - tests_rails_mysql
 
