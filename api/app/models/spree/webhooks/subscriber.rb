@@ -32,6 +32,8 @@ module Spree
             ["('*' MEMBER OF(subscriptions) OR ? MEMBER OF(subscriptions))", event]
           when 'PostgreSQL'
             ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
+          when 'SQLite'
+            ["subscriptions LIKE '%\"*\"%' OR subscriptions LIKE ?", "%#{event}%"]
           end
         )
       end
