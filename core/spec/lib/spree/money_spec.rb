@@ -101,14 +101,12 @@ describe Spree::Money do
     # rubocop:disable Style/AsciiComments
     it 'formats as HTML if asked (nicely) to' do
       money = described_class.new(10, format: '%n %u')
-      # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC;')
+      expect(money.to_html).to eq('10.00&nbsp;€')
     end
 
     it 'formats as HTML with currency' do
       money = described_class.new(10, format: '%n %u', with_currency: true)
-      # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC; EUR')
+      expect(money.to_html).to eq('10.00&nbsp;€ EUR')
     end
     # rubocop:enable Style/AsciiComments
   end
