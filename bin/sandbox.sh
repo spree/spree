@@ -80,10 +80,6 @@ end
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 RUBY
 
-cat <<RUBY >> config/environments/development.rb
-Rails.application.config.hosts.clear
-RUBY
-
 touch config/initializers/bullet.rb
 
 cat <<RUBY >> config/initializers/bullet.rb

@@ -2,9 +2,9 @@
 # see: https://github.com/rails/rails/issues/34872
 Rails.application.routes.draw do
   direct :cdn_image do |model, options|
-    host = Spree.cdn_host || Rails.application.routes.default_url_options[:host] || 'localhost'
-    port = Rails.application.routes.default_url_options[:port]
-    port ||= 3000 if Rails.env.development?
+    options[:host] = Spree.cdn_host if Spree.cdn_host.present?
+    options[:host] ||= Rails.application.routes.default_url_options[:host]
+    options[:host] ||= 'localhost' if Rails.env.development?
 
     if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
       if model.class.method_defined?(:has_mvariation)
@@ -21,7 +21,7 @@ Rails.application.routes.draw do
         :rails_service_blob_proxy,
         model.signed_id,
         model.filename,
-        options.merge(host: host, port: port)
+        options
       )
     else
       signed_blob_id = model.blob.signed_id
@@ -33,7 +33,7 @@ Rails.application.routes.draw do
         signed_blob_id,
         variation_key,
         filename,
-        options.merge(host: host, port: port)
+        options
       )
     end
   end

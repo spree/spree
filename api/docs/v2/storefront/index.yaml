@@ -2,7 +2,7 @@ openapi: 3.0.3
 servers:
   - url: 'https://demo.spreecommerce.org'
     description: demo
-  - url: 'http://localhost:4000'
+  - url: 'http://localhost:3000'
     description: localhost
 info:
   version: 2.0.0
@@ -2540,7 +2540,7 @@ components:
       properties:
         url:
           type: string
-          example: 'http://localhost:4000/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJbWQyWVhKcFlXNTBjeTltWm1sMmRURlNORFpZWjJaSFpYUkdZMjk2WWsxM1RHWXZNVGs1T1RCak5XVmlNamN4TlRnd1pqVTBabUpqTWpCbFkyVXhZMlZpTTJFd05ERTJZemMzT0dKaE5tSTFNREkyT0dKaFpqa3paV1JtWTJWaE16aGxaQVk2QmtWVSIsImV4cCI6IjIwMTgtMDYtMjRUMTM6NTk6NTguOTY5WiIsInB1ciI6ImJsb2Jfa2V5In19--5e9ff358dc747f73754e332678c5762114ac6f3f/ror_jr_spaghetti.jpeg?content_type=image%2Fjpeg&disposition=inline%3B+filename%3D%22ror_jr_spaghetti.jpeg%22%3B+filename%2A%3DUTF-8%27%27ror_jr_spaghetti.jpeg'
+          example: 'http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJbWQyWVhKcFlXNTBjeTltWm1sMmRURlNORFpZWjJaSFpYUkdZMjk2WWsxM1RHWXZNVGs1T1RCak5XVmlNamN4TlRnd1pqVTBabUpqTWpCbFkyVXhZMlZpTTJFd05ERTJZemMzT0dKaE5tSTFNREkyT0dKaFpqa3paV1JtWTJWaE16aGxaQVk2QmtWVSIsImV4cCI6IjIwMTgtMDYtMjRUMTM6NTk6NTguOTY5WiIsInB1ciI6ImJsb2Jfa2V5In19--5e9ff358dc747f73754e332678c5762114ac6f3f/ror_jr_spaghetti.jpeg?content_type=image%2Fjpeg&disposition=inline%3B+filename%3D%22ror_jr_spaghetti.jpeg%22%3B+filename%2A%3DUTF-8%27%27ror_jr_spaghetti.jpeg'
           description: Absolute URL of the uploaded image in selected style (width/height)
         width:
           type: integer
@@ -4818,11 +4818,11 @@ components:
                   total_count: 1
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/account/orders'
-                  next: 'http://localhost:4000/api/v2/storefront/account/orders?page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/account/orders?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/account/orders?page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/account/orders?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/account/orders'
+                  next: 'http://localhost:3000/api/v2/storefront/account/orders?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/account/orders?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/account/orders?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/account/orders?page=1'
             Including all related objects:
               value:
                 data:
@@ -5093,11 +5093,11 @@ components:
                   total_count: 1
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
-                  next: 'http://localhost:4000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+                  next: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
     User:
       description: 200 Success - Returns the `user` object.
       content:
@@ -5268,11 +5268,11 @@ components:
                   total_count: 3
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/account/addresses'
-                  next: 'http://localhost:4000/api/v2/storefront/account/addresses?page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/account/addresses?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/account/addresses?page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/account/addresses?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/account/addresses'
+                  next: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/account/addresses?page=1'
     Address:
       description: 200 Success - Returns the `address` object.
       content:
@@ -5716,11 +5716,11 @@ components:
                   total_count: 6
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/cms_pages'
-                  next: 'http://localhost:4000/api/v2/storefront/cms_pages?page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/cms_pages?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/cms_pages?page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/cms_pages?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/cms_pages'
+                  next: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/cms_pages?page=1'
             CMS Pages with Included Sections:
               value:
                 data:
@@ -6215,11 +6215,11 @@ components:
                   total_count: 6
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/cms_pages?include=cms_sections'
-                  next: 'http://localhost:4000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections'
+                  next: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/cms_pages?include=cms_sections&page=1'
     CreditCard:
       description: 200 Success - Returns the `credit_card` object.
       content:
@@ -6329,11 +6329,11 @@ components:
                   total_count: 2
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/account/credit_cards'
-                  next: 'http://localhost:4000/api/v2/storefront/account/credit_cards?page=0'
-                  prev: 'http://localhost:4000/api/v2/storefront/account/credit_cards?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/account/credit_cards?page=0'
-                  first: 'http://localhost:4000/api/v2/storefront/account/credit_cards?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/account/credit_cards'
+                  next: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=0'
+                  prev: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=0'
+                  first: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
     Product:
       description: 200 Success - Returns the `product` object.
       content:
@@ -8566,11 +8566,11 @@ components:
                           - value: Zeta
                             filter_param: zeta
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/products'
-                  next: 'http://localhost:4000/api/v2/storefront/products?page=2'
-                  prev: 'http://localhost:4000/api/v2/storefront/products?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/products?page=5'
-                  first: 'http://localhost:4000/api/v2/storefront/products?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/products'
+                  next: 'http://localhost:3000/api/v2/storefront/products?page=2'
+                  prev: 'http://localhost:3000/api/v2/storefront/products?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/products?page=5'
+                  first: 'http://localhost:3000/api/v2/storefront/products?page=1'
     Store:
       description: 200 Success - Returns the `store` object.
       content:
@@ -11930,11 +11930,11 @@ components:
                   total_count: 26
                   total_pages: 2
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/taxons'
-                  next: 'http://localhost:4000/api/v2/storefront/taxons?page=2'
-                  prev: 'http://localhost:4000/api/v2/storefront/taxons?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/taxons?page=2'
-                  first: 'http://localhost:4000/api/v2/storefront/taxons?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/taxons'
+                  next: 'http://localhost:3000/api/v2/storefront/taxons?page=2'
+                  prev: 'http://localhost:3000/api/v2/storefront/taxons?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/taxons?page=2'
+                  first: 'http://localhost:3000/api/v2/storefront/taxons?page=1'
     Country:
       description: 200 Success - Returns the `country` object.
       content:
@@ -15236,11 +15236,11 @@ components:
                   total_count: 240
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/countries'
-                  next: 'http://localhost:4000/api/v2/storefront/countries?page=1&per_page=240'
-                  prev: 'http://localhost:4000/api/v2/storefront/countries?page=1&per_page=240'
-                  last: 'http://localhost:4000/api/v2/storefront/countries?page=1&per_page=240'
-                  first: 'http://localhost:4000/api/v2/storefront/countries?page=1&per_page=240'
+                  self: 'http://localhost:3000/api/v2/storefront/countries'
+                  next: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
+                  prev: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
+                  last: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
+                  first: 'http://localhost:3000/api/v2/storefront/countries?page=1&per_page=240'
     Shipment:
       description: '200 Success - Returns an array containing several `shipment` objects, along with the included array containing all available `shipping_rate` and `stock_location` objects. '
       content:
@@ -16243,11 +16243,11 @@ components:
                   total_count: 2
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/menus'
-                  next: 'http://localhost:4000/api/v2/storefront/menus?page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/menus?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/menus?page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/menus?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/menus'
+                  next: 'http://localhost:3000/api/v2/storefront/menus?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/menus?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/menus?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/menus?page=1'
     Wishlist:
       description: 200 Success - Returns the `wishlist` object.
       content:
@@ -16385,11 +16385,11 @@ components:
                   total_count: 3
                   total_pages: 1
                 links:
-                  self: 'http://localhost:4000/api/v2/storefront/wishlists?is_variant_included=150'
-                  next: 'http://localhost:4000/api/v2/storefront/wishlists?page=1'
-                  prev: 'http://localhost:4000/api/v2/storefront/wishlists?page=1'
-                  last: 'http://localhost:4000/api/v2/storefront/wishlists?page=1'
-                  first: 'http://localhost:4000/api/v2/storefront/wishlists?page=1'
+                  self: 'http://localhost:3000/api/v2/storefront/wishlists?is_variant_included=150'
+                  next: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                  prev: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                  last: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
+                  first: 'http://localhost:3000/api/v2/storefront/wishlists?page=1'
     WishedItem:
       description: 200 Success - Returns an array of `wished_item` objects.
       content:
