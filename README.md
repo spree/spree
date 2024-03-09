@@ -1,27 +1,28 @@
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
-**Spree** is an open source e-commerce platform for global brands. It is a modular platform that allows for easy customization and extension. It is built with Ruby on Rails and is used by thousands of merchants around the globe.
+[![Github README - Header](https://github.com/spree/spree/assets/6420475/8c3be6ab-3ac9-41ce-accd-ae97f3c1b536)](https://github.com/spree/spree/releases/tag/v4.7.0)
 
-[![GitHub README - Spree](
+**Spree** is a headless open source e-commerce platform for global brands.
 
-* [Join our Slack community](http://slack.spreecommerce.org/) - get help, share your experience, contribute to the project, over 6000 members!
-* [Success Stories](https://spreecommerce.org/stories/) - see how Spree is used by global brands
-* [Integrations](https://spreecommerce.org/integrations/) - see how Spree can be integrated with other software
-* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open) - see what's coming next
+* [Success Stories](https://spreecommerce.org/stories/)
+* [Integrations](https://spreecommerce.org/integrations/)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
+* [Join our Slack community](http://slack.spreecommerce.org/)
 
 ## Key Features
 
+* **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
+* **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
 * **[Global Commerce](https://spreecommerce.org/use-cases/international-sales-demo/)** - multi currency and multi language support out of the box, different shipping methods / costs for different regions, advanced tax calculation
 * **Multi-Store** - host multiple brands / stores on one Spree instance with different branding, configuration, payment methods, shipping options, product catalogs etc
 * **[Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)** - run your own marketplace with multiple suppliers with dedicated Supplier Dashboard
-* **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
 * **Responsive Admin Panel** - manage and curate products, users, orders, returns, shipments & more
 * **Orders** - robust system for orders, shipments, returns and refunds
 * **Carts** -  comprehensive and advanced discounts system
 * **Payments** - over 30 payment provider integration out of the box plus API to integrate any other gateway
-* **Run everywhere** - cloud, VPS, Docker, Kubernetes, Heroku, AWS, Google Cloud, Azure, your own server
+* **Run everywhere** - cloud, VPS, Docker, Kubernetes
 * **Battle Tested** - used by thousands of merchants around the globe in all categories since 2007!
-
+* **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
 * **More features available via extensions** - dozens of extensions built by community, ready for use for free!
 
 ## Documentation
