@@ -4,7 +4,8 @@ Rails.application.routes.draw do
   direct :cdn_image do |model, options|
     options[:host] = Spree.cdn_host if Spree.cdn_host.present?
     options[:host] ||= Rails.application.routes.default_url_options[:host]
-    options[:host] ||= 'localhost' if Rails.env.development?
+
+    options[:only_path] = true if options[:host].blank?
 
     if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
       if model.class.method_defined?(:has_mvariation)
