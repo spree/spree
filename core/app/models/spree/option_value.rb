@@ -2,7 +2,7 @@ module Spree
   class OptionValue < Spree::Base
     include Metadata
     include TranslatableResource
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

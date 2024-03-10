@@ -3,7 +3,7 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     include NumberIdentifier
     include Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

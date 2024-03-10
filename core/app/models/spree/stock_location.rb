@@ -1,7 +1,7 @@
 module Spree
   class StockLocation < Spree::Base
     include UniqueName
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::StockLocations)

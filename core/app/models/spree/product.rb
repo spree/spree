@@ -27,7 +27,7 @@ module Spree
     include TranslatableResourceSlug
     include MemoizedData
     include Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::VendorConcern)

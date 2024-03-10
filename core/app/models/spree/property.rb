@@ -3,7 +3,7 @@ module Spree
     include Spree::FilterParam
     include Metadata
     include TranslatableResource
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
