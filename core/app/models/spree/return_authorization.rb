@@ -2,7 +2,7 @@ module Spree
   class ReturnAuthorization < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include NumberIdentifier
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

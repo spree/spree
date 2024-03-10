@@ -5,7 +5,7 @@ module Spree
       min: -2**31
     }.freeze
 
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

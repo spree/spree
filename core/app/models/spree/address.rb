@@ -3,7 +3,7 @@ module Spree
     require 'validates_zipcode'
 
     include Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::Addresses)

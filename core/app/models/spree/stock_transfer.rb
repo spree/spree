@@ -4,7 +4,7 @@ module Spree
     include NumberIdentifier
     include NumberAsParam
     include Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

@@ -3,7 +3,7 @@ module Spree
     belongs_to :variant
     has_many :digital_links, dependent: :destroy
 
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

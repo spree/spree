@@ -142,3 +142,5 @@ require 'spree/core/controller_helpers/currency'
 require 'spree/core/preferences/store'
 require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
+
+require "spree/core/webhooks"

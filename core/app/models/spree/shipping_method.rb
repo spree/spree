@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     include Spree::CalculatedAdjustments
     include Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::VendorConcern)
