@@ -24,5 +24,11 @@ FactoryBot.define do
       presentation { 'Material' }
       filter_param { 'material' }
     end
+
+    trait :length do
+      name         { 'length' }
+      presentation { 'Length' }
+      filter_param { 'length' }
+    end
   end
 end
