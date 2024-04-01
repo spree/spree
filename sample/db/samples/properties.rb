@@ -1,16 +1,16 @@
 properties = {
-  brand: 'Brand',
-  model: 'Model',
-  manufacturer: 'Manufacturer',
-  made_from: 'Made from',
-  fit: 'Fit',
-  gender: 'Gender',
-  type: 'Type',
-  size: 'Size',
-  material: 'Material',
-  length: 'Lenght',
-  color: 'Color',
-  collection: 'Collection'
+  бренд: 'Бренд',
+  модель: 'Модель',
+  виробник: 'Виробник',
+  зроблено_з: 'Зроблено з',
+  формат: 'Формат',
+  стать: 'Стать',
+  тип: 'Тип',
+  розмір: 'Розмір',
+  матеріал: 'Матеріал',
+  довжина: 'Довжина',
+  колір: 'Колір',
+  колекція: 'Колекція'
 }
 
 properties.each do |name, presentation|
@@ -19,4 +19,4 @@ properties.each do |name, presentation|
   end
 end
 
-Spree::Property.where(name: %w[brand manufacturer]).update(filterable: true)
+Spree::Property.where(name: %w[бренд виробник]).update(filterable: true)

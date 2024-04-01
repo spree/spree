@@ -6,6 +6,21 @@ Spree::CmsPage.all.each do |page|
   end
 end
 
+def image(filename, image_type)
+  picture = case image_type
+  when "one"
+    Spree::CmsSectionImageOne.new
+  when "two"
+    Spree::CmsSectionImageTwo.new
+  when "three"
+    Spree::CmsSectionImageThree.new
+  end
+
+  file = File.open(File.join(__dir__, "images", "cms_sections", filename + ".jpg"))
+  picture.attachment.attach(io: file, filename:, content_type: 'image/jpg')
+  picture
+end
+
 # Hero Image
 PAGES.each do |page|
   case page.locale
@@ -13,21 +28,13 @@ PAGES.each do |page|
     name_txt = 'Hero Image'
     title_txt = 'Summer Collection'
     button_txt = 'Shop Now'
-  when 'de'
-    name_txt = 'Heldenbild'
-    title_txt = 'Sommerkollektion'
-    button_txt = 'Jetzt einkaufen'
-  when 'fr'
-    name_txt = 'Image de héros'
-    title_txt = "Collection d'été"
-    button_txt = 'Achetez maintenant'
-  when 'es'
-    name_txt = 'Imagen de héroe'
-    title_txt = 'Colección de verano'
-    button_txt = 'Compra ahora'
+  when 'uk'
+    name_txt = 'Головне зображення'
+    title_txt = 'Літня Колекція'
+    button_txt = 'Купити Зараз'
   end
 
-  summer_collection = Spree::Taxon.find_by!(permalink: "categories/new-collection/summer-#{Date.today.year}")
+  summer_collection = Spree::Taxon.find_by(permalink: "katieghoriyi/nova-koliektsiia/lito-#{Date.today.year}")
 
   hero_section = Spree::CmsSection.where(
     name: name_txt,
@@ -39,15 +46,15 @@ PAGES.each do |page|
   hero_section.title = title_txt
   hero_section.button_text = button_txt
   hero_section.linked_resource_id = summer_collection.id
+  hero_section.image_one = image("summer_collection", "one")
   hero_section.save!
 end
 
 # Three Taxons
-PAGES.each do |page|
-  link_one = 'categories/men'
-  link_two = 'categories/women'
-  link_three = 'categories/sportswear'
-
+PAGES.each do |page|  
+  link_one = 'katieghoriyi/choloviki'
+  link_two = 'katieghoriyi/zhinki'
+  link_three = 'katieghoriyi/sportivnii-odiagh'
   case page.locale
   when 'en'
     name_txt = 'Main Taxons'
@@ -55,25 +62,12 @@ PAGES.each do |page|
     title_one = 'Men'
     title_two = 'Women'
     title_three = 'Sportswear'
+  when 'uk'
+    name_txt = 'Основні таксони'
 
-  when 'de'
-    name_txt = 'Haupttaxa'
-
-    title_one = 'Männer'
-    title_two = 'Frauen'
-    title_three = 'Sportbekleidung'
-  when 'fr'
-    name_txt = 'Main Taxons'
-
-    title_one = 'Hommes'
-    title_two = 'Femmes'
-    title_three = 'Tenue de sport'
-  when 'es'
-    name_txt = 'Taxón principal'
-
-    title_one = 'Hombres'
-    title_two = 'Mujeres'
-    title_three = 'Ropa de deporte'
+    title_one = 'Чоловіки'
+    title_two = 'Жінки'
+    title_three = 'Спортивний одяг'
   end
 
   three_taxon_section = Spree::CmsSection.where(
@@ -90,6 +84,10 @@ PAGES.each do |page|
   three_taxon_section.title_two = title_two
   three_taxon_section.title_three = title_three
 
+  three_taxon_section.image_one = image("first_left", "one")
+  three_taxon_section.image_two = image("right", "two")
+  three_taxon_section.image_three = image("second_left", "three")
+
   three_taxon_section.save!
 end
 
@@ -98,15 +96,11 @@ PAGES.each do |page|
   case page.locale
   when 'en'
     name_txt = 'Best Sellers Carousel'
-  when 'de'
-    name_txt = 'Bestseller Karussell'
-  when 'fr'
-    name_txt = 'Carrousel des meilleures ventes'
-  when 'es'
-    name_txt = 'Carrusel de los más vendidos'
+  when 'uk'
+    name_txt = 'Карусель кращих продавців'
   end
 
-  bestsellers = Spree::Taxon.find_by!(permalink: 'categories/bestsellers')
+  bestsellers = Spree::Taxon.find_by!(permalink: 'katieghoriyi/biestsiellieri')
 
   product_carousel = Spree::CmsSection.where(
     name: name_txt,
@@ -127,24 +121,14 @@ PAGES.each do |page|
     title_txt = "Summer #{Date.today.year}"
     subtitle_txt = 'Fashion Trends'
     button_txt = 'Read More'
-  when 'de'
-    name_txt = 'Modetrends'
-    title_txt = "Sommer #{Date.today.year}"
-    subtitle_txt = 'Modetrends'
-    button_txt = 'Weiterlesen'
-  when 'fr'
-    name_txt = 'Tendances de la mode'
-    title_txt = "Été #{Date.today.year}"
-    subtitle_txt = 'Tendances de la mode'
-    button_txt = 'Lire la suite'
-  when 'es'
-    name_txt = 'Tendencias de la moda'
-    title_txt = "Verano #{Date.today.year}"
-    subtitle_txt = 'Tendencias de la moda'
-    button_txt = 'Lee mas'
+  when 'uk'
+    name_txt = 'Модні Тенденції'
+    title_txt = "Літо #{Date.today.year}"
+    subtitle_txt = 'Модні Тенденції'
+    button_txt = 'Детальніше'
   end
 
-  trending = Spree::Taxon.find_by!(permalink: 'categories/trending')
+  trending = Spree::Taxon.find_by!(permalink: 'katieghoriyi/v-triendakh')
 
   featured_article = Spree::CmsSection.where(
     name: name_txt,
@@ -156,7 +140,7 @@ PAGES.each do |page|
   featured_article.title = title_txt
   featured_article.subtitle = subtitle_txt
   featured_article.button_text = button_txt
-  featured_article.rte_content = '<div style="text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</div>'
+  featured_article.rte_content = '<div style="text-center">Важливо доглядати за хворим, слідкувати за хворим, але це станеться в такий час, коли буде багато роботи і болю. З роками прийду.</div>'
   featured_article.linked_resource_id = trending.id
   featured_article.save!
 end
@@ -166,15 +150,11 @@ PAGES.each do |page|
   case page.locale
   when 'en'
     name_txt = 'Trending Carousel'
-  when 'de'
-    name_txt = 'Trendiges Karussell'
-  when 'fr'
-    name_txt = 'Carrousel tendance'
-  when 'es'
-    name_txt = 'Carrusel de tendencias'
+  when 'uk'
+    name_txt = 'Карусель трендів'
   end
 
-  trending = Spree::Taxon.find_by!(permalink: 'categories/trending')
+  trending = Spree::Taxon.find_by!(permalink: 'katieghoriyi/v-triendakh')
 
   trending_section = Spree::CmsSection.where(
     name: name_txt,
@@ -188,10 +168,9 @@ PAGES.each do |page|
 end
 
 # Side-by-Side Promotions
-PAGES.each do |page|
-  link_one = 'categories/streetstyle'
-  link_two = 'categories/special-offers/30-percent-off'
-
+PAGES.each do |page|  
+  link_one = 'katieghoriyi/vulichnii-stil'
+  link_two = 'katieghoriyi/spietsialni-propozitsiyi/znizhka-30-percent'
   case page.locale
   when 'en'
     name_txt = 'Promotions'
@@ -201,31 +180,14 @@ PAGES.each do |page|
 
     title_two = 'Summer Sale'
     subtitle_two = 'Up To 30% OFF'
+  when 'uk'
+    name_txt = 'Акції'
 
-  when 'de'
-    name_txt = 'Werbeaktionen'
+    title_one = 'Нова Колекція'
+    subtitle_one = 'Вуличний Стиль'
 
-    title_one = 'Neue Kollektion'
-    subtitle_one = 'Street Style'
-
-    title_two = 'Summer Sale'
-    subtitle_two = 'Bis zu 30% RABATT'
-  when 'fr'
-    name_txt = 'Promotions'
-
-    title_one = 'Nouvelle collection'
-    subtitle_one = 'Style de rue'
-
-    title_two = 'Summer Sale'
-    subtitle_two = "Jusqu'à 30% de réduction"
-  when 'es'
-    name_txt = 'Promociones'
-
-    title_one = 'Nueva colección'
-    subtitle_one = 'Estilo callejero'
-
-    title_two = 'Summer Sale'
-    subtitle_two = 'Hasta 30% DE DESCUENTO'
+    title_two = 'Літній Розпродаж'
+    subtitle_two = 'ЗНИЖКИ до 30%'
   end
 
   promos_section = Spree::CmsSection.where(
@@ -237,10 +199,12 @@ PAGES.each do |page|
   promos_section.title_one = title_one
   promos_section.subtitle_one = subtitle_one
   promos_section.link_one = link_one
+  promos_section.image_one = image("street_style", "one")
 
   promos_section.title_two = title_two
   promos_section.subtitle_two = subtitle_two
   promos_section.link_two = link_two
+  promos_section.image_two = image("for_sale", "two")
 
   promos_section.save!
 end

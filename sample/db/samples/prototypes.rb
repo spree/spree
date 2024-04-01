@@ -2,16 +2,16 @@ Spree::Sample.load_sample('properties')
 
 prototypes = [
   {
-    name: 'Shirt',
-    properties: ['Manufacturer', 'Brand', 'Model', 'Lenght', 'Made from', 'Material', 'Fit', 'Gender']
+    name: 'Сорочка',
+    properties: ['Виробник', 'Бренд', 'Модель', 'Довжина', 'Зроблено з', 'Матеріал', 'Формат', 'Стать']
   },
   {
-    name: 'Bag',
-    properties: ['Type', 'Size', 'Material']
+    name: 'Сумка',
+    properties: ['Тип', 'Розмір', 'Матеріал']
   },
   {
-    name: 'Mugs',
-    properties: ['Size', 'Type']
+    name: 'Кружки',
+    properties: ['Розмір', 'Тип']
   }
 ]
 

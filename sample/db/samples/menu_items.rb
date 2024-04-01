@@ -4,6 +4,13 @@ Spree::Menu.all.each do |menu|
   MENUS << menu
 end
 
+def image(filename)
+  picture = Spree::Icon.new
+  file = File.open(File.join(__dir__, "images", "menu_items", filename))
+  picture.attachment.attach(io: file, filename:, content_type: 'image/jpg')
+  picture
+end
+
 MENUS.each do |menu|
   ################
   # Translations #
@@ -33,87 +40,36 @@ MENUS.each do |menu|
 
     promo_b_name = 'Special Offers'
     promo_b_subtitle = 'Get up to 30% off'
+  when 'uk'
+    root_name_a = 'Жінки'
+    root_name_b = 'Чоловіки'
+    root_name_c = 'Спортивний одяг'
 
-  when 'fr'
-    root_name_a = 'Femmes'
-    root_name_b = 'Hommes'
-    root_name_c = 'Tenue de sport'
+    categories = 'Категорії'
 
-    categories = 'Catégories'
+    skirts = 'Спідниці'
+    dresses = 'Сукні'
+    shirts_and_blouses = 'Спідниці та Блузки'
+    sweaters = 'Светри'
+    tops_and_t_shirts = 'Топи та Футболки'
+    jackets_and_coats = 'Куртки та Пальто'
+    shirts = 'Сорочки'
+    t_shirts = 'Футболки'
+    tops = 'Топи'
+    sweat_shirts = 'Світшоти'
+    pants = 'Штани'
 
-    skirts = 'Jupes'
-    dresses = 'Robes'
-    shirts_and_blouses = 'Jupes et chemisiers'
-    sweaters = 'Chandails'
-    tops_and_t_shirts = 'Hauts et T-shirts'
-    jackets_and_coats = 'Vestes et manteaux'
-    shirts = 'Chemises'
-    t_shirts = 'T-Shirts'
-    tops = 'Hauts'
-    sweat_shirts = 'Pulls molletonnés'
-    pants = 'Pantalon'
+    promo_a_name = 'Нова Колекція'
+    promo_a_subtitle = "Літо #{Date.today.year}"
 
-    promo_a_name = 'Nouvelle collection'
-    promo_a_subtitle = "Été #{Date.today.year}"
-
-    promo_b_name = 'Offres spéciales'
-    promo_b_subtitle = "Obtenez jusqu'à 30% de réduction"
-
-  when 'de'
-    root_name_a = 'Frauen'
-    root_name_b = 'Männer'
-    root_name_c = 'Sportbekleidung'
-
-    categories = 'Kategorien'
-
-    skirts = 'die Röcke'
-    dresses = 'Kleider'
-    shirts_and_blouses = 'Röcke und Blusen'
-    sweaters = 'Pullovers'
-    tops_and_t_shirts = 'Tops und T-Shirts'
-    jackets_and_coats = 'Jacken und Mäntel'
-    shirts = 'Hemden'
-    t_shirts = 'T-Shirts'
-    tops = 'Tops'
-    sweat_shirts = 'Sweatshirts'
-    pants = 'Hose'
-
-    promo_a_name = 'Neue Kollektion'
-    promo_a_subtitle = "Sommer #{Date.today.year}"
-
-    promo_b_name = 'Sonderangebote'
-    promo_b_subtitle = 'Erhalten Sie bis zu 30% Rabatt'
-
-  when 'es'
-    root_name_a = 'Hombres'
-    root_name_b = 'Mujeres'
-    root_name_c = 'Ropa de deporte'
-
-    categories = 'Categorías'
-
-    skirts = 'Faldas'
-    dresses = 'Vestidos'
-    shirts_and_blouses = 'Faldas y blusas'
-    sweaters = 'Suéteres'
-    tops_and_t_shirts = 'Tops y camisetas'
-    jackets_and_coats = 'Chaquetas y abrigos'
-    shirts = 'Camisas'
-    t_shirts = 'Camisetas'
-    tops = 'Tops'
-    sweat_shirts = 'Sudaderas'
-    pants = 'Pantalones'
-
-    promo_a_name = 'Nueva colección'
-    promo_a_subtitle = "Verano #{Date.today.year}"
-
-    promo_b_name = 'Ofertas especiales'
-    promo_b_subtitle = 'Obtenga hasta un 30% de descuento'
+    promo_b_name = 'Спеціальні Пропозиції'
+    promo_b_subtitle = 'Отримайте знижку до 30%'
   end
 
   ##############
   # Root Items #
   ##############
-  woman_taxon = Spree::Taxon.find_by!(permalink: 'categories/women')
+  woman_taxon = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki')
   menu_root_women = Spree::MenuItem.where(
     name: root_name_a,
     item_type: 'Link',
@@ -124,7 +80,7 @@ MENUS.each do |menu|
   menu_root_women.linked_resource_id = woman_taxon.id
   menu_root_women.save!
 
-  men_taxon = Spree::Taxon.find_by!(permalink: 'categories/men')
+  men_taxon = Spree::Taxon.find_by!(permalink: 'katieghoriyi/choloviki')
   menu_root_men = Spree::MenuItem.where(
     name: root_name_b,
     item_type: 'Link',
@@ -135,7 +91,7 @@ MENUS.each do |menu|
   menu_root_men.linked_resource_id = men_taxon.id
   menu_root_men.save!
 
-  sw_taxon = Spree::Taxon.find_by!(permalink: 'categories/sportswear')
+  sw_taxon = Spree::Taxon.find_by!(permalink: 'katieghoriyi/sportivnii-odiagh')
   menu_root_sw = Spree::MenuItem.where(
     name: root_name_c,
     item_type: 'Link',
@@ -207,8 +163,8 @@ MENUS.each do |menu|
     promos = []
   end
 
-  summer = Spree::Taxon.find_by!(permalink: "categories/new-collection/summer-#{Date.today.year}")
-  offers = Spree::Taxon.find_by!(permalink: 'categories/special-offers/30-percent-off')
+  summer = Spree::Taxon.find_by!(permalink: "katieghoriyi/nova-koliektsiia/lito-#{Date.today.year}")
+  offers = Spree::Taxon.find_by!(permalink: 'katieghoriyi/spietsialni-propozitsiyi/znizhka-30-percent')
 
   #####################
   # Links For: PROMOS #
@@ -224,6 +180,7 @@ MENUS.each do |menu|
       parent_id: promo
     ).first_or_create!
     summer_promo.linked_resource_id = summer.id
+    summer_promo.icon = image("new_collection.jpg")
     summer_promo.save!
 
     special_offer = Spree::MenuItem.where(
@@ -235,6 +192,7 @@ MENUS.each do |menu|
       parent_id: promo
     ).first_or_create!
     special_offer.linked_resource_id = offers.id
+    special_offer.icon = image("spec_propositions.jpg")
     special_offer.save!
   end
 
@@ -248,7 +206,7 @@ MENUS.each do |menu|
                            menu_root_women
                          end
 
-  women_skirts_t = Spree::Taxon.find_by!(permalink: 'categories/women/skirts')
+  women_skirts_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/spidnitsi')
   women_skirts = Spree::MenuItem.where(
     name: skirts,
     linked_resource_type: 'Spree::Taxon',
@@ -259,7 +217,7 @@ MENUS.each do |menu|
   women_skirts.linked_resource_id = women_skirts_t.id
   women_skirts.save!
 
-  women_dresses_t = Spree::Taxon.find_by!(permalink: 'categories/women/dresses')
+  women_dresses_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/sukni')
   women_dresses = Spree::MenuItem.where(
     name: dresses,
     linked_resource_type: 'Spree::Taxon',
@@ -270,7 +228,7 @@ MENUS.each do |menu|
   women_dresses.linked_resource_id = women_dresses_t.id
   women_dresses.save!
 
-  women_s_b_t = Spree::Taxon.find_by!(permalink: 'categories/women/shirts-and-blouses')
+  women_s_b_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/sorochki-ta-bluzki')
   women_s_b = Spree::MenuItem.where(
     name: shirts_and_blouses,
     linked_resource_type: 'Spree::Taxon',
@@ -281,7 +239,7 @@ MENUS.each do |menu|
   women_s_b.linked_resource_id = women_s_b_t.id
   women_s_b.save!
 
-  women_sweaters_t = Spree::Taxon.find_by!(permalink: 'categories/women/sweaters')
+  women_sweaters_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/svietri')
   women_sweaters = Spree::MenuItem.where(
     name: sweaters,
     linked_resource_type: 'Spree::Taxon',
@@ -292,7 +250,7 @@ MENUS.each do |menu|
   women_sweaters.linked_resource_id = women_sweaters_t.id
   women_sweaters.save!
 
-  women_tops_tees_t = Spree::Taxon.find_by!(permalink: 'categories/women/tops-and-t-shirts')
+  women_tops_tees_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/topi-i-futbolki')
   women_tops_tees = Spree::MenuItem.where(
     name: tops_and_t_shirts,
     linked_resource_type: 'Spree::Taxon',
@@ -303,7 +261,7 @@ MENUS.each do |menu|
   women_tops_tees.linked_resource_id = women_tops_tees_t.id
   women_tops_tees.save!
 
-  women_j_c_t = Spree::Taxon.find_by!(permalink: 'categories/women/jackets-and-coats')
+  women_j_c_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/zhinki/kurtki-ta-palto')
   women_j_c = Spree::MenuItem.where(
     name: jackets_and_coats,
     linked_resource_type: 'Spree::Taxon',
@@ -324,7 +282,7 @@ MENUS.each do |menu|
                          menu_root_men
                        end
 
-  men_shirts_t = Spree::Taxon.find_by!(permalink: 'categories/men/shirts')
+  men_shirts_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/choloviki/sorochki')
   men_shirts = Spree::MenuItem.where(
     name: shirts,
     linked_resource_type: 'Spree::Taxon',
@@ -335,7 +293,7 @@ MENUS.each do |menu|
   men_shirts.linked_resource_id = men_shirts_t.id
   men_shirts.save!
 
-  men_t_shirts_t = Spree::Taxon.find_by!(permalink: 'categories/men/t-shirts')
+  men_t_shirts_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/choloviki/futbolki')
   men_t_shirts = Spree::MenuItem.where(
     name: t_shirts,
     linked_resource_type: 'Spree::Taxon',
@@ -346,7 +304,7 @@ MENUS.each do |menu|
   men_t_shirts.linked_resource_id = men_t_shirts_t.id
   men_t_shirts.save!
 
-  men_sweaters_t = Spree::Taxon.find_by!(permalink: 'categories/men/sweaters')
+  men_sweaters_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/choloviki/svietri')
   men_sweaters = Spree::MenuItem.where(
     name: sweaters,
     linked_resource_type: 'Spree::Taxon',
@@ -357,7 +315,7 @@ MENUS.each do |menu|
   men_sweaters.linked_resource_id = men_sweaters_t.id
   men_sweaters.save!
 
-  men_j_c_t = Spree::Taxon.find_by!(permalink: 'categories/men/jackets-and-coats')
+  men_j_c_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/choloviki/kurtki-ta-palto')
   men_j_c = Spree::MenuItem.where(
     name: jackets_and_coats,
     linked_resource_type: 'Spree::Taxon',
@@ -378,7 +336,7 @@ MENUS.each do |menu|
                         menu_root_sw
                       end
 
-  sw_tops_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/tops')
+  sw_tops_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/sportivnii-odiagh/topi')
   sw_tops = Spree::MenuItem.where(
     name: tops,
     linked_resource_type: 'Spree::Taxon',
@@ -389,7 +347,7 @@ MENUS.each do |menu|
   sw_tops.linked_resource_id = sw_tops_t.id
   sw_tops.save!
 
-  sw_sweatshirts_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/sweatshirts')
+  sw_sweatshirts_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/sportivnii-odiagh/svitshoti')
   sw_sweatshirts = Spree::MenuItem.where(
     name: sweat_shirts,
     linked_resource_type: 'Spree::Taxon',
@@ -400,7 +358,7 @@ MENUS.each do |menu|
   sw_sweatshirts.linked_resource_id = sw_sweatshirts_t.id
   sw_sweatshirts.save!
 
-  sw_pants_t = Spree::Taxon.find_by!(permalink: 'categories/sportswear/pants')
+  sw_pants_t = Spree::Taxon.find_by!(permalink: 'katieghoriyi/sportivnii-odiagh/shtani')
   sw_pants = Spree::MenuItem.where(
     name: pants,
     linked_resource_type: 'Spree::Taxon',

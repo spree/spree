@@ -1,4 +1,5 @@
 Spree::Sample.load_sample('stores')
+I18n.locale = "uk"
 
 taxonomies = [
   {

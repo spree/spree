@@ -1,14 +1,14 @@
 Spree::Sample.load_sample('addresses')
 Spree::Sample.load_sample('products')
 
-product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
-product_2 = Spree::Product.find_by!(name: 'Checked Shirt')
+product_1 = Spree::Product.find_by!(name: 'Джинсова сорочка')
+product_2 = Spree::Product.find_by!(name: 'Кліткова сорочка')
 
 orders = []
 orders << Spree::Order.where(
   number: 'R123456789',
   email: 'spree@example.com',
-  currency: 'USD'
+  currency: 'UAH'
 ).first_or_create! do |order|
   order.item_total = product_1.master.amount_in(order.currency)
   order.adjustment_total = product_1.master.amount_in(order.currency)
@@ -18,7 +18,7 @@ end
 orders << Spree::Order.where(
   number: 'R987654321',
   email: 'spree@example.com',
-  currency: 'USD'
+  currency: 'UAH'
 ).first_or_create! do |order|
   order.item_total = product_2.master.amount_in(order.currency)
   order.adjustment_total = product_2.master.amount_in(order.currency)

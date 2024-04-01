@@ -2,9 +2,11 @@ require 'csv'
 
 Spree::Sample.load_sample('taxonomies')
 
-ADDITIONAL_TAXONS = ['Bestsellers', 'Trending', 'Streetstyle', 'Summer Sale'].freeze
+I18n.locale = "uk"
 
-SPECIAL_TAXONS = { 'New Collection': "Summer #{Date.today.year}", 'Special Offers': '30% Off' }.freeze
+ADDITIONAL_TAXONS = ['Бестселлери', 'В трендах', 'Вуличний стиль', 'Літній розпродаж'].freeze
+
+SPECIAL_TAXONS = { 'Нова Колекція': "Літо #{Date.today.year}", 'Спеціальні пропозиції': 'Знижка 30%' }.freeze
 
 CHILDREN_TAXON_NAMES = CSV.read(File.join(__dir__, 'variants.csv')).map do |(parent_name, taxon_name, _product_name, _color_name)|
   [parent_name, taxon_name]
@@ -39,10 +41,10 @@ CHILDREN_TAXON_NAMES.each do |(parent_name, taxon_name)|
 end
 
 taxon =
-  if categories_taxon.children.where(name: 'New').any?
-    categories_taxon.children.where(name: 'New').first
+  if categories_taxon.children.where(name: 'Новий').any?
+    categories_taxon.children.where(name: 'Новий').first
   else
-    Spree::Taxon.create!(name: 'New', parent_id: categories_taxon.id, taxonomy: categories)
+    Spree::Taxon.create!(name: 'Новий', parent_id: categories_taxon.id, taxonomy: categories)
   end
 taxon.taxonomy = categories
 taxon.save!

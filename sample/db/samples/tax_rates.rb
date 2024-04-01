@@ -1,12 +1,12 @@
 Spree::Sample.load_sample('tax_categories')
 Spree::Sample.load_sample('zones')
 
-california = Spree::Zone.find_by!(name: 'California Tax')
-clothing = Spree::TaxCategory.find_by!(name: 'Clothing')
+ukraine = Spree::Zone.find_by!(name: 'Україна')
+clothing = Spree::TaxCategory.find_by!(name: 'Одяг')
 
 Spree::TaxRate.where(
-  name: 'California',
-  zone: california,
+  name: 'Україна',
+  zone: ukraine,
   amount: 0.1,
   tax_category: clothing
 ).first_or_create! do |tax_rate|

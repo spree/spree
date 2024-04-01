@@ -5,8 +5,8 @@ Spree::Sample.load_sample('option_types')
 Spree::Sample.load_sample('taxons')
 Spree::Sample.load_sample('stores')
 
-default_shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Default')
-clothing_tax_category = Spree::TaxCategory.find_or_create_by!(name: 'Clothing')
+default_shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'За замовчуванням')
+clothing_tax_category = Spree::TaxCategory.find_or_create_by!(name: 'Одяг')
 
 color = Spree::OptionType.find_by!(name: 'color')
 length = Spree::OptionType.find_by!(name: 'length')
@@ -23,12 +23,12 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
 
   Spree::Product.create!(name: product_name.titleize) do |product|
     product.price = rand(10...100) + 0.99
-    product.description = FFaker::Lorem.paragraph
+    product.description = FFaker::LoremUA.paragraph
     product.available_on = Time.zone.now
     product.make_active_at = Time.zone.now
     product.status = 'active'
     product.option_types =
-      if parent_name == 'Women' && %w[Dresses Skirts].include?(taxon_name)
+      if parent_name == 'Жінки' && %w[Сукні Спідниці].include?(taxon_name)
         [color, length, size]
       else
         [color, size]
@@ -42,7 +42,7 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
   end
 end
 
-Spree::Taxon.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale', "Summer #{Date.today.year}", '30% Off']).each do |taxon|
+Spree::Taxon.where(name: ['Бестселлери', "Новий" 'В трендах', 'Вуличний стиль', 'Літній розпродаж', "Літо #{Date.today.year}", "Знижка 30%"]).each do |taxon|
   next if taxon.products.any?
 
   taxon.products << Spree::Product.all.sample(30)

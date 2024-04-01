@@ -33,101 +33,37 @@ Spree::Store.all.each do |store|
         locale: locale,
         content: FFaker::Lorem.paragraph(8)
       ).first_or_create!
-    when 'fr'
+    when 'uk'
       Spree::CmsPage.where(
-        title: 'À propos de nous',
+        title: 'Про нас',
         type: 'Spree::Cms::Pages::StandardPage',
         store: store,
         locale: locale,
-        content: FFaker::Lorem.paragraph(8)
+        content: FFaker::LoremUA.paragraph(8)
       ).first_or_create!
 
       Spree::CmsPage.where(
-        title: 'Politique de confidentialité',
+        title: 'Політика конфіденційності',
         type: 'Spree::Cms::Pages::StandardPage',
         store: store,
         locale: locale,
-        content: FFaker::Lorem.paragraph(8)
+        content: FFaker::LoremUA.paragraph(8)
       ).first_or_create!
 
       Spree::CmsPage.where(
-        title: "Politique d'expédition",
+        title: 'Політика доставки',
         type: 'Spree::Cms::Pages::StandardPage',
         store: store,
         locale: locale,
-        content: FFaker::Lorem.paragraph(8)
+        content: FFaker::LoremUA.paragraph(8)
       ).first_or_create!
 
       Spree::CmsPage.where(
-        title: 'Politique de retour',
+        title: 'Політика повернення товару',
         type: 'Spree::Cms::Pages::StandardPage',
         store: store,
         locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-    when 'de'
-      Spree::CmsPage.where(
-        title: 'Über uns',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Datenschutz-Bestimmungen',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Versandbedingungen',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Rückgaberecht',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-    when 'es'
-      Spree::CmsPage.where(
-        title: 'Sobre nosotros',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Política de privacidad',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Politica de envios',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
-      ).first_or_create!
-
-      Spree::CmsPage.where(
-        title: 'Política de devoluciones',
-        type: 'Spree::Cms::Pages::StandardPage',
-        store: store,
-        locale: locale,
-        content: FFaker::Lorem.paragraph(8)
+        content: FFaker::LoremUA.paragraph(8)
       ).first_or_create!
     end
   end

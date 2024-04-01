@@ -1,13 +1,13 @@
 [
-  'Better price available',
-  'Missed estimated delivery date',
-  'Missing parts or accessories',
-  'Damaged/Defective',
-  'Different from what was ordered',
-  'Different from description',
-  'No longer needed/wanted',
-  'Accidental order',
-  'Unauthorized purchase',
+  'Доступна краща ціна',
+  'Пропущений приблизний термін доставки',
+  'Відсутні частини або аксесуари',
+  'Пошкоджений/дефектний',
+  'Інший, ніж замовлено',
+  'Інший, ніж описано',
+  'Більше не потрібно/не бажано',
+  'Випадкове замовлення',
+  'Несанкціонована покупка'
 ].each do |name|
   Spree::ReturnAuthorizationReason.find_or_create_by!(name: name)
 end
