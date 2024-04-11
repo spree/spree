@@ -1,0 +1,82 @@
+---
+description: This guide covers upgrading a 4.5 Spree application to Spree 4.6.
+---
+
+# 4.5 to 4.6
+
+**If you're on an older version than 4.5 please follow previous upgrade guides and perform those upgrades incrementally, e.g.**
+
+1. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three.md)
+2. [upgrade 4.3 to 4.4](https://dev-docs.spreecommerce.org/upgrades/upgrades/4.3-to-4.4)
+3. [upgrade 4.4 to 4.5](4.4-to-4.5.md)
+
+This is the safest and recommended method.
+
+## Update Gemfile
+
+```
+gem 'spree', '>= 4.6.0'
+```
+
+Update all other spree gems used in your application to 4.6.0 or version compatible with 4.6:
+
+```
+gem 'spree_sample', '~> 4.6.0'
+gem 'spree_emails', '~> 4.6.0'
+gem 'spree_frontend', '>= 4.6.0'
+gem 'spree_backend', '>= 4.6.0'
+gem 'spree_gateway', '~> 3.10'
+gem 'spree_auth_devise', '>= 4.5.0'
+gem 'spree_i18n', '~> 5.1'
+```
+
+## (Optional) Remove spree\_globalize
+
+If your application used the spree\_globalize extension, you can remove it from your Gemfile, as translations are now supported out-of-the-box with the [Mobility](https://github.com/shioyama/mobility) gem.
+
+We've configured Mobility to use [a strategy that uses a separate table to store translations](https://dejimata.com/2017/3/3/translating-with-mobility#strategy-2), just like how spree\_globalize did. This means, you won't need to make any changes to the database structure or migrate data.
+
+During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](../../customization/i18n.md) to make it easier to work with translatable models.
+
+## Update gems
+
+```bash
+bundle update
+```
+
+## Install missing migrations
+
+```bash
+bin/rake railties:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+Note: If you didn't use spree\_globalize before, this will install migrations that move some columns from spree\_products, spree\_taxons, to dedicated translation tables -> spree\_products\_translations, spree\_taxons\_translations etc.&#x20;
+
+If you're using raw SQL queries (either in the application code, or running in external tools), you may need to review the new structure and update your queries accordingly.
+
+## Run Additional Commands for Frontend
+
+If using [Spree Frontend](https://github.com/spree/spree\_legacy\_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+
+```
+bin/rails javascript:install:esbuild
+bin/rails turbo:install
+bin/rails g spree:frontend:install
+yarn build
+```
+
+And that's a wrap! :tada:
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.6.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.6.0).
+
+## More info
+
+If you have any questions, issues or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/).

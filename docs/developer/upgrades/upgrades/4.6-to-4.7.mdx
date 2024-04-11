@@ -1,0 +1,86 @@
+---
+description: This guide covers upgrading a 4.6 Spree application to Spree 4.7.
+---
+
+# 4.6 to 4.7
+
+**If you're on an older version than 4.6 please follow previous upgrade guides and perform those upgrades incrementally, e.g.**
+
+1. [upgrade 4.3 to 4.4](https://dev-docs.spreecommerce.org/upgrades/upgrades/4.3-to-4.4)
+2. [upgrade 4.4 to 4.5](4.4-to-4.5.md)
+3. [upgrade 4.5 to 4.6](4.5-to-4.6.md)
+
+This is the safest and recommended method.
+
+## Update Gemfile
+
+```
+gem 'spree', '~> 4.7.0'
+```
+
+Update all other spree gems used in your application to 4.7.0 or version compatible with 4.7:
+
+```
+gem 'spree_sample', '~> 4.7.0'
+gem 'spree_emails', '~> 4.7.0'
+gem 'spree_backend', '~> 4.7.0'
+gem 'spree_frontend', '~> 4.7.0'
+gem 'spree_gateway', '~> 3.10.0'
+gem 'spree_auth_devise', '~> 4.6.0'
+gem 'spree_i18n', '~> 5.3.0'
+```
+
+
+
+{% hint style="warning" %}
+If your Gemfile includes spree\_frontend, make sure it's defined below spree\_backend. This is required for a proper initialization of the admin action buttons defined by spree\_frontend.
+{% endhint %}
+
+## (Optional) Upgrade to Rails 7.1
+
+Spree 4.7 brings support for Rails 7.1 - to receive security patches we recommend upgrading Rails version to the latest one.
+
+```
+gem 'rails', '~> 7.1.0'
+```
+
+After upgrading to Rails 7.1, you may need to update your code to be compatible with the new release of Rails. Follow the official [Rails 7.1 Release Notes](https://edgeguides.rubyonrails.org/7\_1\_release\_notes.html) for more information on new features introduced in that release as well as on breaking changes.
+
+## Update gems
+
+```bash
+bundle update
+```
+
+## Install missing migrations
+
+```bash
+bin/rake railties:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+## Run Additional Commands for Frontend
+
+If using [Spree Frontend](https://github.com/spree/spree\_legacy\_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+
+```
+bin/rails javascript:install:esbuild
+bin/rails turbo:install
+bin/rails g spree:frontend:install
+yarn build
+```
+
+And that's a wrap! :tada:
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.7.0 Release Notes.](https://github.com/spree/spree/releases/tag/v4.7.0)
+
+## More info
+
+If you have any questions, issues or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/).

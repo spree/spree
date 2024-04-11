@@ -1,0 +1,260 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Spree Commerce Guides",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/Spree-LOGO.png"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#0085FF",
+    "light": "#07C983",
+    "dark": "#0085FF",
+    "anchors": {
+      "from": "#0085FF",
+      "to": "#07C983"
+    }
+  },
+  "openapi": "https://raw.githubusercontent.com/spree/spree/main/api/docs/v2/storefront/index.yaml",
+  "topbarLinks": [
+    {
+      "name": "Support",
+      "url": "mailto:hello@spreecommerce.org"
+    }
+  ],
+  "topbarCtaButton": {
+    "type": "github",
+    "url": "https://github.com/spree/spree"
+  },
+  "tabs": [
+    {
+        "name": "API Reference",
+        "url": "api-reference"
+    }
+  ],
+  "primaryTab": {
+    "name": "Docs"
+  },
+  "anchors": [
+    {
+      "name": "Community",
+      "icon": "slack",
+      "url": "http://slack.spreecommerce.org/"
+    },
+    {
+      "name": "Github",
+      "icon": "github",
+      "url": "https://github.com/spree/spree"
+    },
+    {
+      "name": "Blog",
+      "icon": "newspaper",
+      "url": "https://spreecommerce.org/blog/"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting started",
+      "pages": [
+        "developer/getting-started/installation"
+      ]
+    },
+    {
+      "group": "API basics",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/pagination",
+        "api-reference/filtering-and-sorting",
+        "api-reference/fetching-multiple-resources"
+      ]
+    },
+    {
+      "group": "Storefront API",
+      "pages": [
+        "api-reference/storefront/authentication",
+        {
+          "group": "Account",
+          "pages": [
+            "api-reference/storefront/account/retrieve-an-account",
+            "api-reference/storefront/account/create-an-account",
+            "api-reference/storefront/account/update-an-account"
+          ]
+        },
+        {
+          "group": "Account / Address",
+          "pages": [
+            "api-reference/storefront/account-address/list-all-addresses",
+            "api-reference/storefront/account-address/create-an-address",
+            "api-reference/storefront/account-address/remove-an-address",
+            "api-reference/storefront/account-address/update-an-address"
+          ]
+        },
+        {
+          "group": "Account / Credit Cards",
+          "pages": [
+            "api-reference/storefront/account-credit-cards/list-all-credit-cards",
+            "api-reference/storefront/account-credit-cards/remove-a-credit-card",
+            "api-reference/storefront/account-credit-cards/retrieve-the-default-credit-card"
+          ]
+        },
+        {
+          "group": "Account / Orders",
+          "pages": [
+            "api-reference/storefront/account-orders/list-all-orders",
+            "api-reference/storefront/account-orders/retrieve-an-order"
+          ]
+        },
+        {
+          "group": "Order Status",
+          "pages": [
+            "api-reference/storefront/order-status/retrieve-an-order-status"
+          ]
+        },
+        {
+          "group": "Cart",
+          "pages": [
+            "api-reference/storefront/cart/retrieve-a-cart",
+            "api-reference/storefront/cart/create-a-cart",
+            "api-reference/storefront/cart/delete-a-cart"
+          ]
+        },
+        {
+          "group": "Cart / Line Items",
+          "pages": [
+            "api-reference/storefront/cart-line-items/add-an-item-to-cart",
+            "api-reference/storefront/cart-line-items/set-line-item-quantity",
+            "api-reference/storefront/cart-line-items/remove-a-line-item"
+          ]
+        },
+        {
+          "group": "Cart / Other",
+          "pages": [
+            "api-reference/storefront/cart-other/empty-the-cart",
+            "api-reference/storefront/cart-other/list-estimated-shipping-rates",
+            "api-reference/storefront/cart-other/associate-a-cart-with-a-user",
+            "api-reference/storefront/cart-other/change-cart-currency"
+          ]
+        },
+        {
+          "group": "Cart / Coupons",
+          "pages": [
+            "api-reference/storefront/cart-coupons/apply-a-coupon-code",
+            "api-reference/storefront/cart-coupons/remove-a-coupon",
+            "api-reference/storefront/cart-coupons/remove-all-coupons"
+          ]
+        },
+        {
+          "group": "Checkout",
+          "pages": [
+            "api-reference/storefront/checkout/update-checkout"
+          ]
+        },
+        {
+          "group": "Checkout / State",
+          "pages": [
+            "api-reference/storefront/checkout-state/next-checkout-step",
+            "api-reference/storefront/checkout-state/advance-checkout",
+            "api-reference/storefront/checkout-state/complete-checkout"
+          ]
+        },
+        {
+          "group": "Checkout / Shipments",
+          "pages": [
+            "api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments",
+            "api-reference/storefront/checkout-shipments/list-shipping-rates"
+          ]
+        },
+        {
+          "group": "Checkout / Payments",
+          "pages": [
+            "api-reference/storefront/checkout-payments/create-new-payment",
+            "api-reference/storefront/checkout-payments/list-payment-methods"
+          ]
+        },
+        {
+          "group": "Checkout / Store Credit",
+          "pages": [
+            "api-reference/storefront/checkout-store-credit/add-store-credit",
+            "api-reference/storefront/checkout-store-credit/remove-store-credit"
+          ]
+        },
+        {
+          "group": "Products",
+          "pages": [
+            "api-reference/storefront/products/list-all-products",
+            "api-reference/storefront/products/retrieve-a-product"
+          ]
+        },
+        {
+          "group": "Stores",
+          "pages": [
+            "api-reference/storefront/stores/return-the-current-store"
+          ]
+        },
+        {
+          "group": "Taxons",
+          "pages": [
+            "api-reference/storefront/taxons/list-all-taxons",
+            "api-reference/storefront/taxons/retrieve-a-taxon"
+          ]
+        },
+        {
+          "group": "Countries",
+          "pages": [
+            "api-reference/storefront/countries/list-all-countries",
+            "api-reference/storefront/countries/retrieve-a-country",
+            "api-reference/storefront/countries/get-default-country"
+          ]
+        },
+        {
+          "group": "CMS Pages",
+          "pages": [
+            "api-reference/storefront/cms-pages/list-all-cms-pages",
+            "api-reference/storefront/cms-pages/retrieve-a-cms-page"
+          ]
+        },
+        {
+          "group": "Menus",
+          "pages": [
+            "api-reference/storefront/menus/list-all-menus",
+            "api-reference/storefront/menus/retrieve-a-menu"
+          ]
+        },
+        {
+          "group": "Wishlists",
+          "pages": [
+            "api-reference/storefront/wishlists/list-all-wishlists",
+            "api-reference/storefront/wishlists/create-a-wishlist",
+            "api-reference/storefront/wishlists/retrieve-a-wishlist",
+            "api-reference/storefront/wishlists/delete-a-wishlist",
+            "api-reference/storefront/wishlists/update-a-wishlist",
+            "api-reference/storefront/wishlists/retrieve-the-default-wishlist"
+          ]
+        },
+        {
+          "group": "Wishlists / Wished Items",
+          "pages": [
+            "api-reference/storefront/wishlists-wished-items/add-item-to-wishlist",
+            "api-reference/storefront/wishlists-wished-items/set-wished-item-quantity",
+            "api-reference/storefront/wishlists-wished-items/delete-item-from-wishlist"
+          ]
+        },
+        {
+          "group": "Digital Downloads",
+          "pages": [
+            "api-reference/storefront/digital-downloads/download-a-digital-asset"
+          ]
+        }
+      ]
+    }
+  ],
+  "footerSocials": {
+    "twitter": "https://twitter.com/spreecommerce",
+    "github": "https://github.com/spree/spree"
+  },
+  "feedback": {
+    "thumbsRating": true,
+    "suggestEdit": true,
+    "raiseIssue": true
+  }
+}

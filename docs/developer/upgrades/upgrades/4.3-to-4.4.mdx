@@ -1,0 +1,145 @@
+---
+description: This guide covers upgrading a 4.3 Spree application to Spree 4.4.
+---
+
+# 4.3 to 4.4
+
+If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
+
+**If you're on an older version than 4.3 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+
+1. [upgrade 4.0 to 4.1](four-dot-oh-to-four-dot-one.md)
+2. [upgrade 4.1 to 4.2](four-dot-one-to-four-dot-two.md)
+3. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three.md)
+
+This is the safest and recommended method.
+
+## Update Gemfile
+
+```ruby
+gem 'spree', '>= 4.4.0.rc1'
+```
+
+## Remove gems merged into Spree Core
+
+### (Optional) Remove Spree Digital
+
+If you used that gem in the past you need to remove it. Digital products are now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_digital` from your `Gemfile`
+
+### (Optional) Remove Spree Wishlist
+
+If you used that gem in the past you need to remove it. Wishlists are now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_wishlist` from your `Gemfile`
+2. (Optional) Remove `//= require spree/frontend/spree_wishlist` from `vendor/assets/javascripts/spree/frontend/all.js`
+3. (Optional) Remove `*= require spree/frontend/spree_wishlist` from `vendor/assets/stylesheets/spree/frontend/all.css`
+
+## Update gems
+
+```bash
+bundle update
+```
+
+## Install missing migrations
+
+```bash
+bin/rake railties:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+## Update Spree Dashboard (`spree_backend`)
+
+### Update Gemfile
+
+```ruby
+gem 'spree_backend', '>= 4.4.0.rc1'
+```
+
+### Update gems
+
+```shell
+bundle update
+```
+
+### Install `jsbundling-rails` gem
+
+`spree_backend` 4.4 uses [Hotwire (Turbo and Stimulus)](https://hotwired.dev/) and requires some javascript bundling provided by the excellent [jsbundling-rails](https://github.com/rails/jsbundling-rails) gem developed by the Rails core team.
+
+This requires that you have both Node and yarn installed on your system.
+
+```bash
+bin/rails javascript:install:esbuild
+```
+
+### Install `@spree/dashboard` NPM package
+
+JavaScript required by the `spree_backend` gem is distributed as [a NPM package](https://www.npmjs.com/package/@spree/dashboard).
+
+```
+bin/rails g spree:backend:install
+```
+
+From now on when you run your app locally you need to use `bin/dev` instead of `bin/rails s`.
+
+### Make sure that Node is available in your cloud environment
+
+On Heroku, you need to add the node buildpack - [https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks](https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks)
+
+## Additional fixes and hints
+
+### Add ActiveJob queues
+
+Spree uses ActiveJob for processing long running operations to not interrupt your web server performance. You need to update your `config/sidekiq.yml` file if you're using the Sidekiq gem.
+
+Make sure that `spree_stock_location_stock_items` and `spree_webhooks` queues are there. You can check [spree\_starter's config](https://github.com/spree/spree\_starter/blob/main/config/sidekiq.yml) as a guideline.
+
+### Disabling webhooks
+
+Spree 4.4 introduces webhook events for most of the Spree resources (Products, Orders, Customers, etc). If you wish to disable this globally you can set the environment variable:
+
+```
+DISABLE_SPREE_WEBHOOKS=true
+```
+
+If you would like to disable firing webhooks for certain elements of your application you can wrap these methods in a block:
+
+```
+Spree::Webhooks.disable_webhooks do
+  ... run your code here ...
+end
+```
+
+Webhooks do not fire on touch events. Webhooks also do not do anything until there is a first webhook subscriber created which can be done in the Admin Dashboard or via Platform API.
+
+### Update Spree SDK
+
+To use the new features such as Wishlists and Digital Products in your storefront please update [Spree SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) to [v4.12](https://github.com/spree/spree-storefront-api-v2-js-sdk/releases/tag/v4.12.0) at least.&#x20;
+
+### Update Spree Dependencies that was renamed
+
+Please change in your codebase:
+
+```ruby
+Spree::Dependencies.account_update_address_service
+```
+
+to
+
+```ruby
+Spree::Dependencies.address_update_service
+```
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/blob/master/CHANGELOG.md).
+
+## More info
+
+If you have any questions or suggestions feel free to [contact us via email](https://spreecommerce.org/contact) or through [Spree slack channels](http://slack.spreecommerce.org/)

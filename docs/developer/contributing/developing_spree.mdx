@@ -1,0 +1,181 @@
+---
+description: >-
+  This guide covers all the necessary steps to contributing to Spree source
+  code. We're happy you're here!
+---
+
+# Developing Spree
+
+## Spree codebase
+
+Spree API is written in Ruby on Rails framework and is mounted into a Rails application as [a Rails Engine](https://guides.rubyonrails.org/engines.html).
+
+You don't need to be a Rails developer to work with Spree. You can install Spree via Spree Starter or Docker and not touch the underlying codebase at all and work only with the APIs.&#x20;
+
+### Spree namespace
+
+All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/master/core/app/models/spree/product.rb).
+
+## Forking Spree repo
+
+Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **Fork** button. This will create a copy of the Spree repository on your GitHub account. See [Github Documentation](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) for more information on forking.
+
+## Local setup
+
+1. Clone your fork repository
+
+    ```bash
+     git clone git://github.com/your_github_username/spree.git
+     cd spree
+    ```
+
+2. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/)
+3. Install required libraries
+
+    You will need SQLite (or PostgreSQL or MySQL) and libvips installed on your system. You can install them using the following commands:
+
+    ```bash
+    brew install vips
+    ```
+
+    If you are using Ubuntu or Windows Linux Subsystem, you can install libvips using the following command:
+
+    ```bash
+    sudo apt-get install libvips
+    ```
+
+    Please refer to the [libvips installation guide](https://libvips.github.io/libvips/install.html) for more information.
+
+4. Install the gem dependencies
+
+    ```bash
+     bundle install
+    ```
+
+## Creating Sandbox application
+
+Bellow command will setup a Rails application with Spree pre-installed with some data seeded:
+
+```bash
+bin/sandbox.sh
+```
+
+By default, Sandbox uses the **SQLite** database. But you can switch to **PostgreSQL** or **MySQL**:
+
+```bash
+DB=postgres bin/sandbox.sh
+```
+
+When developing [Spree Dashboard](https://github.com/spree/spree\_backend) you can also pass `SPREE_`DASHBOARD`_PATH`
+
+```bash
+SPREE_DASHBOARD_PATH=../../spree_backend bin/sandbox.sh
+```
+
+Start the server
+
+```bash
+cd sandbox
+bin/rails s
+```
+
+### Performance in development mode
+
+You may notice that your Spree store runs slower in development environment. This is caused by disabled caching and automatic reloading of code after each change.
+
+### Caching
+
+Caching is disabled by default. To turn on caching please run:
+
+```bash
+bin/rails dev:cache
+```
+
+You will need to restart rails server after this change.
+
+## Making changes
+
+Create a new branch for your changes. Do not push changes to the main branch. Branch name should be human-readable and informative, eg.
+
+* bug fixes: `fix/order-recalculation-total-bug`
+* features: `feature/my-new-amazing-feature`
+
+## Running Tests
+
+We use [CircleCI](https://circleci.com/) to run the tests for Spree.
+
+You can see the build statuses at [https://circleci.com/gh/spree/spree](https://circleci.com/gh/spree/spree).
+
+Each gem contains its own series of tests, and for each directory, you need to do a quick one-time creation of a test application and then you can use it to run the tests. For example, to run the tests for the core project.
+
+```bash
+cd core
+bundle exec rake test_app
+bundle exec rspec
+```
+
+If you would like to run specs against a particular database you may specify the dummy app's database, which defaults to sqlite3.
+
+```bash
+DB=postgres bundle exec rake test_app
+```
+
+If you want to run specs for only a single spec file
+
+```bash
+cd core
+bundle exec rspec spec/models/spree/state_spec.rb
+```
+
+If you want to run a particular line of spec
+
+```bash
+cd core
+bundle exec rspec spec/models/spree/state_spec.rb:7
+```
+
+If a large number of tests fail when you run rspec for the first time, confirm that you have Redis installed and running. You can use the command `brew services info redis` to check if Redis is running. If it is not running, start Redis with `brew services start redis`.
+
+### Running integration tests on MacOS (only applicable for Admin Panel)
+
+We use chromedriver to run integration tests. To install it please use this command:
+
+```bash
+brew cask install chromedriver
+```
+
+## Submitting Changes
+
+Please keep your commit history meaningful and clear. [This guide](https://about.gitlab.com/blog/2018/06/07/keeping-git-commit-history-clean/) covers it quite well and we recommend reading it, not only for Spree project but for any IT project overall.
+
+1. Push your changes to a topic branch in your fork of the repository.
+
+    ```bash
+    git push -u origin fix/order-recalculation-total-bug
+    ```
+
+2. Create a Pull request - [please follow this guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+
+    If your changes references Github issues, please mark which issue you're fixing by adding `Fixes #<number or url of the issue>` in the commit name or PR title/description. This will automatically mark that issue as closed when your PR will be merged.
+3. Wait for CI to pass
+4. If CI passed wait for Spree Core team code review
+
+    We're aiming to review and leave feedback as soon as possible. We'll leave you a meaningul feedback if needed.
+
+## Troubleshooting
+
+This section will help you troubleshoot common issues with Spree.
+
+#### libvips error
+
+If you are using Spree 4.5 or higher, you may encounter the following libvips error:
+
+```bash
+LoadError: Could not open library 'vips.so.42'
+```
+
+This error is usually an indication that you do not have libvips installed locally on your machine. Check that libvips is installed with `vips -v`, and if it is not installed, follow [installation instructions here](https://www.libvips.org/install.html).
+
+## That's a wrap!
+
+Thank you for participating in Open Source and improving Spree - you're awesome!

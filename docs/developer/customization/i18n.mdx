@@ -1,0 +1,142 @@
+---
+title: Internationalization
+section: customization
+order: 8
+description: >-
+  This guide covers how Spree uses Rails' internationalization features, and how
+  you can leverage and extend these features in your Spree contributions and
+  extensions.
+---
+
+# Internationalization
+
+## Default Locale
+
+Each [**Store**](../internals/stores.md) has their own `default_locale` attribute. Alongside that, you can also set `supported_locales` which will enable multi-language capabilities for that Store.
+
+For locales, we use symbols such as `en`,`es-MX` etc - full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree\_i18n/tree/master/config/locales).
+
+## Default Currency
+
+Each [**Store**](../internals/stores.md) has their own `default_currency` attribute. Alongside that, you can also set  `supported_currencies` which will enable multi-currency capabilities for that Store.
+
+For currencies, we use [ISO 4217](https://en.wikipedia.org/wiki/ISO\_4217) symbols, eg. `USD` , `CAD`, `EUR`
+
+## Resource Translations
+
+As of Spree 4.6, resources with user-facing content fields now have built in support for translations. Translation functionality is handled by the [Mobility gem](https://github.com/shioyama/mobility). Spree allows you to translate the following resources:
+
+| Resource         | Translatable Fields                                                                                                                                                                 |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Product          | name, description, slug, meta\_description, meta\_keywords, meta\_title                                                                                                             |
+| Taxon            | name, description, permalink                                                                                                                                                        |
+| Taxonomy         | name                                                                                                                                                                                |
+| Option Type      | name, presentation                                                                                                                                                                  |
+| Option Value     | name, presentation                                                                                                                                                                  |
+| Property         | name, presentation, filter\_param                                                                                                                                                   |
+| Product Property | value, filter\_param                                                                                                                                                                |
+| Store            | name, meta\_description, meta\_keywords, seo\_title, facebook, twitter, instagram, customer\_support\_email, description, address, contact\_phone, new\_order\_notifications\_email |
+
+Our translatable resources are configured with Mobility’s [Table Backend](https://github.com/shioyama/mobility#table-backend-like-globalize) storage strategy. The way this works is that each translatable resource has a corresponding translations table in the database, in which translation values are stored - for example, product translations are stored in `spree_product_translations`.
+
+As of 4.6, data for translatable fields exists solely in the the translation tables so that there is a single source of truth. In the database, the translatable fields on the resource itself will always null. Even if there is only data for a single language, the data for those fields will be stored in the corresponding translations table. In the code, the data will still be accessible via attribute accessors like `.name` and `.description` in the code.\
+\
+Read more about how to work with translations by reading [Mobility's usage docs](https://github.com/shioyama/mobility#usage).
+
+### Resource Translations Implementation
+
+Each translatable resource includes the `TranslatableResource` module, which sets the default scope for the resource to `i18n`. This makes it so that when querying the translatable resource on a translatable field, Mobility will know to search in the translation tables. Read more about querying translatable fields and the i18n scope in the [Mobility docs](https://github.com/shioyama/mobility#querying).
+
+Due to some shortcomings of the Mobility gem, not all Active Record Query Interface methods work with translations. This includes:
+
+* selecting `distinct` when ordering by a translated field raises an error. To work around this, explicitly select the translated field that you are ordering by. For example, instead of `Spree::Product.order(:name).distinct` do `Spree::Product.select(:name).order(:name).distinct`
+* calling `first_or_create` or `first_or_initialize` on a clause that checks for a translated field does not work correctly with Mobility. For example, the following line of code will not perform as expected: `Spree::Product.where(name: ‘Denim Shirt').first_or_create!` Instead, you’ll need to rewrite it as an if statement that calls either `first` or `create` like so:
+
+```
+if Spree::Product.where(name: 'Denim Shirt').any?
+  Spree::Product.where(name: 'Denim Shirt').first
+else
+  Spree::Product.create!(name: 'Denim Shirt')
+end
+```
+
+* Joining on a resource with translations and then filtering by a translated field on the resource that you joined does not work correctly. For example, the following statement will not select the correct products: `Spree::Product.joins(:taxons).where(taxons: {name: "30% Off"})`. Instead, you can make use of the `join_translation_table` method in in the `TranslatableResourceScopes` Module. The above query can be rewritten like this:
+
+```
+Spree::Product.joins(:taxons)
+              .joins_translation_table(Spree::Taxon)
+              .where(Spree::Taxon.translation_table_alias => {name: "30% Off"})
+```
+
+### Spree 4.5 and lower
+
+If you are using Spree version 4.5 or lower and are currently unable to upgrade, you need to install [Spree Globalize extension](https://github.com/spree-contrib/spree\_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood.
+
+This gem will allow you to translate:
+
+* Products
+* Promotions
+* Option Types
+* Taxonomies
+* Taxons
+* Properties
+* Shipping Methods
+
+## The spree\_i18n project
+
+Spree now stores all of the translation information in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree\_i18n). This is a stand alone project with a large number of volunteer committers who maintain the locale files. This is basically the same approach followed by the Rails project which keeps their localizations in [rails-i18n](https://github.com/svenfuchs/rails-i18n).
+
+The project is actually a Spree extension. This extension contains translations files. To translate models (provide translations for Products, Taxons, etc) you will need to install also [Spree Globalize](https://github.com/spree-contrib/spree\_globalize).
+
+### Translation Files
+
+Each language is stored in a YAML file located in `config/locales`. Each YAML file contains one top level key which is the language code for the translations contained within that file. The following is a snippet showing the basic layout of a locale file:
+
+```yaml
+pt-BR:
+  spree:
+    say_no: "Não"
+    say_yes: "Sim"
+```
+
+&#x20;All translations for Spree are "namespaced" within the `spree` key so that they don't conflict with translations from other parts of the parent application.
+
+Please submit Pull Requests or issues directly to [Spree I18n](https://github.com/spree/spree\_i18n) for missing translations.
+
+### Localization Files
+
+Spree maintains its localization information in a YAML file using a naming convention similar to that of the Rails project. Each of the localization filenames contains a prefix representing the language code of the locale. For example, the Russian translation is contained in `config/locales/ru.yml`.
+
+&#x20;Spree has over 43 locale files and counting. See the \[GitHub Repository]\(https://github.com/spree/spree\_i18n/tree/master/config/locales) for a complete list.
+
+### Required Files
+
+Each locale that you wish to support will require both a Rails and Spree translation. The required Spree translation files are available automatically when you install the `spree_i18n` gem.
+
+You don't need to copy any files from `spree_i18n` or `rails-i18n` for their translations to be available within your application. They are made available automatically, because both `spree_i18n` and `rails-i18n` are railties.
+
+## Translating Views
+
+{% hint style="info" %}
+This section is only applicable for  optional`spree_frontend` and `spree_backend` gems
+{% endhint %}
+
+When reviewing the source of any view in Spree you'll notice that all text is rendered by passing a string to a helper method similar to:
+
+```
+<%= Spree.t(:price) %>
+```
+
+The _Spree.t()_ helper method looks up the currently configured locale and retrieves the translated value from the relevant locale YAML file. Assuming a default locale, this translation would be fetched from the en translations collated from the application, `spree_i18n` and `rails-i18n`. Its relative key within those translation files would need to be this:
+
+```yaml
+en:
+  spree:
+    price: Price
+```
+
+## Localizing Extensions
+
+Spree extensions can contain their own `config/locales` directory where developers can include YAML files for each language they wish to support.
+
+We strongly urge all extension developers to ensure all customer facing text is rendered via the `Spree.t()` helper method even if they only include a single default language locale file (as other users can simply include the required YAML file and translations in their site extension).
