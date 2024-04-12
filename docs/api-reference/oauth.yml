@@ -1,0 +1,233 @@
+openapi: 3.0.3
+servers:
+  - url: 'https://demo.spreecommerce.org'
+    description: demo
+  - url: 'http://localhost:3000'
+    description: localhost
+info:
+  version: 1.0.0
+  title: Authentication
+  description: Spree uses oAuth based Authentication via short-lived Bearer tokens. You can either create a new one or refresh existing token.
+  contact:
+    name: Spark Solutions
+    url: 'https://sparksolutions.co'
+    email: we@sparksolutions.co
+  license:
+    url: 'https://github.com/spree/spree/blob/master/license.md'
+    name: BSD-3-Clause
+paths:
+  /spree_oauth/token:
+    post:
+      description: |-
+        This endpoint creates a new Bearer Token or refreshes an existing Bearer Token.
+
+        The `token` found in the response body is required to authorize API calls.
+      operationId: create-or-refresh-token
+      responses:
+        '200':
+          description: Token was successfully created or refreshed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+              examples:
+                Storefront User Token:
+                  value:
+                    access_token: SfM3k8kq5Wkc6xz6rgMlsl-mbygJ1ptq4DR0Ah51vjA
+                    token_type: Bearer
+                    expires_in: 7200
+                    refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+                    created_at: 1581873931
+                Platform User Token:
+                  value:
+                    access_token: 2480c16561d1391ea81ca5336b651e9a29f4524f6dee8c7f3f02a600159189c3
+                    token_type: Bearer
+                    expires_in: 7200
+                    refresh_token: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
+                    scope: admin
+                    created_at: 1539863418
+                Refreshed Token:
+                  value:
+                    access_token: Es9lLPW2mVaDB80I-I_OdQCw3JfOT1s19YN1naFWx98
+                    token_type: Bearer
+                    expires_in: 7200
+                    refresh_token: j92BxulqIIYtiiaBsuAM1TzGsGSVxaykT4kk8OYHGNY
+                    created_at: 1581876572
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateTokenBody'
+                - $ref: '#/components/schemas/ClientTokenBody'
+                - $ref: '#/components/schemas/RefreshTokenBody'
+            examples:
+              Create Storefront API User Token:
+                value:
+                  grant_type: password
+                  username: spree@example.com
+                  password: spree123
+              Create Platform API User Token:
+                value:
+                  client_id: 7ZY15L7crVZul8i3PZPrnpOkEURK7xnXEWRZdE6K39M
+                  client_secret: cxMZ0tbe604qj_13hibNmc3GDsXUQfpzHt9PvweihFc
+                  grant_type: password
+                  username: spree@example.com
+                  password: spree123
+                  scope: admin
+              Create Platform API Application Token:
+                value:
+                  grant_type: client_credentials
+                  client_id: 7ZY15L7crVZul8i3PZPrnpOkEURK7xnXEWRZdE6K39M
+                  client_secret: cxMZ0tbe604qj_13hibNmc3GDsXUQfpzHt9PvweihFc
+                  scope: admin
+              Refresh a Token:
+                value:
+                  grant_type: refresh_token
+                  refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+        description: ''
+      summary: Create or Refresh a Token
+      tags:
+        - Token
+components:
+  schemas:
+    Token:
+      x-examples:
+        create token:
+          access_token: SfM3k8kq5Wkc6xz6rgMlsl-mbygJ1ptq4DR0Ah51vjA
+          token_type: Bearer
+          expires_in: 7200
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+          created_at: 1581873931
+        refresh token:
+          access_token: Es9lLPW2mVaDB80I-I_OdQCw3JfOT1s19YN1naFWx98
+          token_type: Bearer
+          expires_in: 7200
+          refresh_token: j92BxulqIIYtiiaBsuAM1TzGsGSVxaykT4kk8OYHGNY
+          created_at: 1581876572
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: 2480c16561d1391ea81ca5336b651e9a29f4524f6dee8c7f3f02a600159189c3
+        token_type:
+          type: string
+          example: Bearer
+          default: Bearer
+        expires_in:
+          type: integer
+          example: 7200
+          description: Time (in seconds) after which the access token will expire
+        refresh_token:
+          type: string
+          example: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
+        scope:
+          type: string
+          example: admin
+          default: admin
+        created_at:
+          type: integer
+          example: 1539863418
+      required:
+        - access_token
+        - token_type
+        - expires_in
+        - refresh_token
+        - created_at
+      x-internal: false
+    CreateTokenBody:
+      type: object
+      x-examples:
+        User Token:
+          grant_type: password
+          username: spree@example.com
+          password: spree123
+        Application Token:
+          grant_type: password
+          username: spree@example.com
+          password: spree123
+          scope: admin
+      x-internal: false
+      title: 'Create a new token (grant_type: password)'
+      description: ''
+      properties:
+        grant_type:
+          type: string
+          description: ''
+          example: password
+          enum:
+            - password
+        username:
+          type: string
+          description: User email address
+          example: spree@example.com
+        password:
+          type: string
+          description: User password
+          example: spree123
+        scope:
+          type: string
+          enum:
+            - admin
+          description: 'Pass the value `admin` to create a Platform User Token, allowing access to the Platform API.'
+          nullable: true
+      required:
+        - grant_type
+        - username
+        - password
+    ClientTokenBody:
+      type: object
+      x-examples:
+        example-1:
+          grant_type: refresh_token
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+      x-internal: false
+      title: 'Create a new token (grant_type: client_credentials)'
+      description: ''
+      properties:
+        grant_type:
+          type: string
+          example: client_credentials
+          enum:
+            - client_credentials
+        client_id:
+          type: string
+          description: Use the client id
+          example: 27af95fd57a424e5d01aaf5eab
+        client_secret:
+          type: string
+          example: 1324a8d5c0ca57daf384fae39f811a5144330143301'
+          description: Client secret key.
+      required:
+        - grant_type
+        - client_id
+        - client_secret
+    RefreshTokenBody:
+      type: object
+      x-examples:
+        example-1:
+          grant_type: refresh_token
+          refresh_token: SqJDIwX00fehqHxS6xmb-kzqAlrYe_0EHgekMexVT8k
+      x-internal: false
+      title: 'Refresh an existing token (grant_type: refresh_token)'
+      description: ''
+      properties:
+        grant_type:
+          type: string
+          example: refresh_token
+          enum:
+            - refresh_token
+        refresh_token:
+          type: string
+          description: Refresh token obtained from the create token response
+          example: 27af95fd57a424e5d01aaf5eab1324a8d5c0ca57daf384fae39f811a5144330143301'
+      required:
+        - grant_type
+        - refresh_token
+tags:
+  - name: Token

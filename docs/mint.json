@@ -2,20 +2,23 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Spree Commerce Guides",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/Spree-LOGO.png"
+    "dark": "/logo/logo.svg",
+    "light": "/logo/logo.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
     "primary": "#0085FF",
-    "light": "#07C983",
+    "light": "#0085FF",
     "dark": "#0085FF",
     "anchors": {
       "from": "#0085FF",
-      "to": "#07C983"
+      "to": "#99CC01"
     }
   },
-  "openapi": "https://raw.githubusercontent.com/spree/spree/main/api/docs/v2/storefront/index.yaml",
+  "openapi": [
+    "/api-reference/storefront.yaml",
+    "/api-reference/platform.yaml"
+  ],
   "topbarLinks": [
     {
       "name": "Support",
@@ -28,8 +31,12 @@
   },
   "tabs": [
     {
-        "name": "API Reference",
-        "url": "api-reference"
+      "name": "User Guide",
+      "url": "user-guide"
+    },
+    {
+      "name": "API Reference",
+      "url": "api-reference"
     }
   ],
   "primaryTab": {
@@ -53,12 +60,22 @@
     }
   ],
   "navigation": [
+
     {
       "group": "Getting started",
       "pages": [
         "developer/getting-started/installation"
       ]
     },
+
+    
+    {
+      "group": "Introduction",
+      "pages": [
+        "user-guide/introduction"
+      ]
+    },
+
     {
       "group": "API basics",
       "pages": [
@@ -243,6 +260,446 @@
           "group": "Digital Downloads",
           "pages": [
             "api-reference/storefront/digital-downloads/download-a-digital-asset"
+          ]
+        }
+      ]
+    },
+
+    {
+      "group": "Platform API",
+      "pages": [
+        {
+          "group": "Addresses",
+          "pages": [
+            "api-reference/platform/addresses/return-a-list-of-addresses",
+            "api-reference/platform/addresses/create-an-address",
+            "api-reference/platform/addresses/return-an-address",
+            "api-reference/platform/addresses/delete-an-address",
+            "api-reference/platform/addresses/update-an-address"
+          ]
+        },
+        {
+          "group": "Adjustments",
+          "pages": [
+            "api-reference/platform/adjustments/return-a-list-of-adjustments",
+            "api-reference/platform/adjustments/create-an-adjustment",
+            "api-reference/platform/adjustments/return-an-adjustment",
+            "api-reference/platform/adjustments/delete-an-adjustment",
+            "api-reference/platform/adjustments/update-an-adjustment"
+          ]
+        },
+        {
+          "group": "Classifications",
+          "pages": [
+            "api-reference/platform/classifications/return-a-list-of-classifications",
+            "api-reference/platform/classifications/create-a-classification",
+            "api-reference/platform/classifications/return-a-classification",
+            "api-reference/platform/classifications/delete-a-classification",
+            "api-reference/platform/classifications/update-a-classification"
+          ]
+        },
+        {
+          "group": "CMS Pages",
+          "pages": [
+            "api-reference/platform/cms-pages/return-a-list-of-cms-pages",
+            "api-reference/platform/cms-pages/create-a-cms-page",
+            "api-reference/platform/cms-pages/return-a-cms-page",
+            "api-reference/platform/cms-pages/delete-a-cms-page",
+            "api-reference/platform/cms-pages/update-a-cms-page"
+          ]
+        },
+        {
+          "group": "CMS Sections",
+          "pages": [
+            "api-reference/platform/cms-sections/return-a-list-of-cms-sections",
+            "api-reference/platform/cms-sections/create-a-cms-section",
+            "api-reference/platform/cms-sections/return-a-cms-section",
+            "api-reference/platform/cms-sections/delete-a-cms-section",
+            "api-reference/platform/cms-sections/update-a-cms-section"
+          ]
+        },
+        {
+          "group": "Countries",
+          "pages": [
+            "api-reference/platform/countries/returns-a-list-of-countries",
+            "api-reference/platform/countries/returns-a-country"
+          ]
+        },
+        {
+          "group": "Data Feeds",
+          "pages": [
+            "api-reference/platform/data-feeds/return-a-list-of-data-feeds",
+            "api-reference/platform/data-feeds/create-a-data-feed",
+            "api-reference/platform/data-feeds/return-a-data-feed",
+            "api-reference/platform/data-feeds/delete-a-data-feed",
+            "api-reference/platform/data-feeds/update-a-data-feed"
+          ]
+        },
+        {
+          "group": "Digital Links",
+          "pages": [
+            "api-reference/platform/digital-links/return-a-list-of-digital-links",
+            "api-reference/platform/digital-links/create-a-digital-link",
+            "api-reference/platform/digital-links/return-a-digital-link",
+            "api-reference/platform/digital-links/delete-a-digital-link",
+            "api-reference/platform/digital-links/update-a-digital-link",
+            "api-reference/platform/digital-links/reset-a-digital-link"
+          ]
+        },
+        {
+          "group": "Digital Assets",
+          "pages": [
+            "api-reference/platform/digital-assets/return-a-list-of-digital-assets",
+            "api-reference/platform/digital-assets/create-a-digital-asset",
+            "api-reference/platform/digital-assets/return-a-digital-asset",
+            "api-reference/platform/digital-assets/delete-a-digital-asset",
+            "api-reference/platform/digital-assets/update-a-digital-asset"
+          ]
+        },
+        {
+          "group": "Line Items",
+          "pages": [
+            "api-reference/platform/line-items/return-a-list-of-line-items",
+            "api-reference/platform/line-items/create-a-line-item",
+            "api-reference/platform/line-items/return-a-line-item",
+            "api-reference/platform/line-items/delete-a-line-item",
+            "api-reference/platform/line-items/update-a-line-item"
+          ]
+        },
+        {
+          "group": "Menu Items",
+          "pages": [
+            "api-reference/platform/menu-items/return-a-list-of-menu-items",
+            "api-reference/platform/menu-items/create-a-menu-item",
+            "api-reference/platform/menu-items/return-a-menu-item",
+            "api-reference/platform/menu-items/delete-a-menu-item",
+            "api-reference/platform/menu-items/update-a-menu-item",
+            "api-reference/platform/menu-items/reposition-a-menu-item"
+          ]
+        },
+        {
+          "group": "Menus",
+          "pages": [
+            "api-reference/platform/menus/return-a-list-of-menus",
+            "api-reference/platform/menus/create-a-menu",
+            "api-reference/platform/menus/return-a-menu",
+            "api-reference/platform/menus/delete-a-menu",
+            "api-reference/platform/menus/update-a-menu"
+          ]
+        },
+        {
+          "group": "Option Types",
+          "pages": [
+            "api-reference/platform/option-types/return-a-list-of-option-types",
+            "api-reference/platform/option-types/create-an-option-type",
+            "api-reference/platform/option-types/return-an-option-type",
+            "api-reference/platform/option-types/delete-an-option-type",
+            "api-reference/platform/option-types/update-an-option-type"
+          ]
+        },
+        {
+          "group": "Option Values",
+          "pages": [
+            "api-reference/platform/option-values/return-a-list-of-option-values",
+            "api-reference/platform/option-values/create-an-option-value",
+            "api-reference/platform/option-values/return-an-option-value",
+            "api-reference/platform/option-values/delete-an-option-value",
+            "api-reference/platform/option-values/update-an-option-value"
+          ]
+        },
+        {
+          "group": "Orders",
+          "pages": [
+            "api-reference/platform/orders/return-a-list-of-orders",
+            "api-reference/platform/orders/creates-an-order",
+            "api-reference/platform/orders/return-an-order",
+            "api-reference/platform/orders/delete-an-order",
+            "api-reference/platform/orders/update-an-order",
+            "api-reference/platform/orders/advances-an-order",
+            "api-reference/platform/orders/next-an-order",
+            "api-reference/platform/orders/completes-an-order",
+            "api-reference/platform/orders/empties-an-order",
+            "api-reference/platform/orders/approves-an-order",
+            "api-reference/platform/orders/cancels-an-order",
+            "api-reference/platform/orders/use-store-credit-for-an-order",
+            "api-reference/platform/orders/apply-coupon-code-for-an-order"
+          ]
+        },
+        {
+          "group": "Payment Methods",
+          "pages": [
+            "api-reference/platform/payment-methods/return-a-list-of-payment-methods",
+            "api-reference/platform/payment-methods/create-a-payment-method",
+            "api-reference/platform/payment-methods/return-a-payment-method",
+            "api-reference/platform/payment-methods/delete-a-payment-method",
+            "api-reference/platform/payment-methods/update-a-payment-method"
+          ]
+        },
+        {
+          "group": "Payments",
+          "pages": [
+            "api-reference/platform/payments/return-a-list-of-payments",
+            "api-reference/platform/payments/return-a-payment",
+            "api-reference/platform/payments/delete-a-payment"
+          ]
+        },
+        {
+          "group": "Products",
+          "pages": [
+            "api-reference/platform/products/return-a-list-of-products",
+            "api-reference/platform/products/create-a-product",
+            "api-reference/platform/products/return-a-product",
+            "api-reference/platform/products/delete-a-product",
+            "api-reference/platform/products/update-a-product"
+          ]
+        },
+        {
+          "group": "Promotion Actions",
+          "pages": [
+            "api-reference/platform/promotion-actions/return-a-list-of-promotion-actions",
+            "api-reference/platform/promotion-actions/create-a-promotion-action",
+            "api-reference/platform/promotion-actions/return-a-promotion-action",
+            "api-reference/platform/promotion-actions/delete-a-promotion-action",
+            "api-reference/platform/promotion-actions/update-a-promotion-action"
+          ]
+        },
+        {
+          "group": "Promotion Categories",
+          "pages": [
+            "api-reference/platform/promotion-categories/return-a-list-of-promotion-categories",
+            "api-reference/platform/promotion-categories/create-a-promotion-category",
+            "api-reference/platform/promotion-categories/return-a-promotion-category",
+            "api-reference/platform/promotion-categories/delete-a-promotion-category",
+            "api-reference/platform/promotion-categories/update-a-promotion-category"
+          ]
+        },
+        {
+          "group": "Promotion Rules",
+          "pages": [
+            "api-reference/platform/promotion-rules/return-a-list-of-promotion-rules",
+            "api-reference/platform/promotion-rules/create-a-promotion-rule",
+            "api-reference/platform/promotion-rules/return-a-promotion-rule",
+            "api-reference/platform/promotion-rules/delete-a-promotion-rule",
+            "api-reference/platform/promotion-rules/update-a-promotion-rule"
+          ]
+        },
+        {
+          "group": "Promotions",
+          "pages": [
+            "api-reference/platform/promotions/return-a-list-of-promotions",
+            "api-reference/platform/promotions/create-a-promotion",
+            "api-reference/platform/promotions/return-a-promotion",
+            "api-reference/platform/promotions/delete-a-promotion",
+            "api-reference/platform/promotions/update-a-promotion"
+          ]
+        },
+        {
+          "group": "Roles",
+          "pages": [
+            "api-reference/platform/roles/return-a-list-of-roles",
+            "api-reference/platform/roles/create-a-role",
+            "api-reference/platform/roles/return-a-role",
+            "api-reference/platform/roles/delete-a-role",
+            "api-reference/platform/roles/update-a-role"
+          ]
+        },
+        {
+          "group": "Shipments",
+          "pages": [
+            "api-reference/platform/shipments/return-a-list-of-shipments",
+            "api-reference/platform/shipments/create-a-shipment",
+            "api-reference/platform/shipments/return-a-shipment",
+            "api-reference/platform/shipments/delete-a-shipment",
+            "api-reference/platform/shipments/update-a-shipment",
+            "api-reference/platform/shipments/adds-item-variant-to-an-existing-shipment",
+            "api-reference/platform/shipments/removes-item-variant-from-shipment",
+            "api-reference/platform/shipments/mark-shipment-as-ready-to-be-shipped",
+            "api-reference/platform/shipments/mark-shipment-as-shipped",
+            "api-reference/platform/shipments/cancels-the-shipment",
+            "api-reference/platform/shipments/resumes-the-shipment",
+            "api-reference/platform/shipments/moves-shipment-back-to-pending-state"
+          ]
+        },
+        {
+          "group": "Shipping Categories",
+          "pages": [
+            "api-reference/platform/shipping-categories/return-a-list-of-shipping-categories",
+            "api-reference/platform/shipping-categories/create-a-shipping-category",
+            "api-reference/platform/shipping-categories/return-a-shipping-category",
+            "api-reference/platform/shipping-categories/delete-a-shipping-category",
+            "api-reference/platform/shipping-categories/update-a-shipping-category"
+          ]
+        },
+        {
+          "group": "Shipping Methods",
+          "pages": [
+            "api-reference/platform/shipping-methods/return-a-list-of-shipping-methods",
+            "api-reference/platform/shipping-methods/create-a-shipping-method",
+            "api-reference/platform/shipping-methods/return-a-shipping-method",
+            "api-reference/platform/shipping-methods/delete-a-shipping-method",
+            "api-reference/platform/shipping-methods/update-a-shipping-method"
+          ]
+        },
+        {
+          "group": "States",
+          "pages": [
+            "api-reference/platform/states/returns-a-list-of-states",
+            "api-reference/platform/states/returns-a-state"
+          ]
+        },
+        {
+          "group": "Stock Items",
+          "pages": [
+            "api-reference/platform/stock-items/return-a-list-of-stock-items",
+            "api-reference/platform/stock-items/create-a-stock-item",
+            "api-reference/platform/stock-items/return-a-stock-item",
+            "api-reference/platform/stock-items/delete-a-stock-item",
+            "api-reference/platform/stock-items/update-a-stock-item"
+          ]
+        },
+        {
+          "group": "Stock Locations",
+          "pages": [
+            "api-reference/platform/stock-locations/return-a-list-of-stock-locations",
+            "api-reference/platform/stock-locations/create-a-stock-location",
+            "api-reference/platform/stock-locations/return-a-stock-location",
+            "api-reference/platform/stock-locations/delete-a-stock-location",
+            "api-reference/platform/stock-locations/update-a-stock-location"
+          ]
+        },
+        {
+          "group": "Store Credit Categories",
+          "pages": [
+            "api-reference/platform/store-credit-categories/return-a-list-of-store-credit-categories",
+            "api-reference/platform/store-credit-categories/create-a-store-credit-category",
+            "api-reference/platform/store-credit-categories/return-a-store-credit-category",
+            "api-reference/platform/store-credit-categories/delete-a-store-credit-category",
+            "api-reference/platform/store-credit-categories/update-a-store-credit-category"
+          ]
+        },
+        {
+          "group": "Store Credit Types",
+          "pages": [
+            "api-reference/platform/store-credit-types/return-a-list-of-store-credit-types",
+            "api-reference/platform/store-credit-types/create-a-store-credit-type",
+            "api-reference/platform/store-credit-types/return-a-store-credit-type",
+            "api-reference/platform/store-credit-types/delete-a-store-credit-type",
+            "api-reference/platform/store-credit-types/update-a-store-credit-type"
+          ]
+        },
+        {
+          "group": "Store Credits",
+          "pages": [
+            "api-reference/platform/store-credits/return-a-list-of-store-credits",
+            "api-reference/platform/store-credits/create-a-store-credit",
+            "api-reference/platform/store-credits/return-a-store-credit",
+            "api-reference/platform/store-credits/delete-a-store-credit",
+            "api-reference/platform/store-credits/update-a-store-credit"
+          ]
+        },
+        {
+          "group": "Tax Categories",
+          "pages": [
+            "api-reference/platform/tax-categories/return-a-list-of-tax-categories",
+            "api-reference/platform/tax-categories/create-a-tax-category",
+            "api-reference/platform/tax-categories/return-a-tax-category",
+            "api-reference/platform/tax-categories/delete-a-tax-category",
+            "api-reference/platform/tax-categories/update-a-tax-category"
+          ]
+        },
+        {
+          "group": "Tax Rates",
+          "pages": [
+            "api-reference/platform/tax-rates/return-a-list-of-tax-rates",
+            "api-reference/platform/tax-rates/create-a-tax-rate",
+            "api-reference/platform/tax-rates/return-a-tax-rate",
+            "api-reference/platform/tax-rates/delete-a-tax-rate",
+            "api-reference/platform/tax-rates/update-a-tax-rate"
+          ]
+        },
+        {
+          "group": "Taxonomies",
+          "pages": [
+            "api-reference/platform/taxonomies/return-a-list-of-taxonomies",
+            "api-reference/platform/taxonomies/create-a-taxonomy",
+            "api-reference/platform/taxonomies/return-a-taxonomy",
+            "api-reference/platform/taxonomies/delete-a-taxonomy",
+            "api-reference/platform/taxonomies/update-a-taxonomy"
+          ]
+        },
+        {
+          "group": "Taxons",
+          "pages": [
+            "api-reference/platform/taxons/return-a-list-of-taxons",
+            "api-reference/platform/taxons/create-a-taxon",
+            "api-reference/platform/taxons/return-a-taxon",
+            "api-reference/platform/taxons/delete-a-taxon",
+            "api-reference/platform/taxons/update-a-taxon",
+            "api-reference/platform/taxons/reposition-a-taxon"
+          ]
+        },
+        {
+          "group": "Users",
+          "pages": [
+            "api-reference/platform/users/return-a-list-of-users",
+            "api-reference/platform/users/create-a-user",
+            "api-reference/platform/users/return-a-user",
+            "api-reference/platform/users/delete-a-user",
+            "api-reference/platform/users/update-a-user"
+          ]
+        },
+        {
+          "group": "Variants",
+          "pages": [
+            "api-reference/platform/variants/return-a-list-of-variants",
+            "api-reference/platform/variants/return-a-variant",
+            "api-reference/platform/variants/delete-a-variant"
+          ]
+        },
+        {
+          "group": "Webhook Events",
+          "pages": [
+            "api-reference/platform/webhook-events/return-a-list-of-webhook-events"
+          ]
+        },
+        {
+          "group": "Webhook Subscribers",
+          "pages": [
+            "api-reference/platform/webhook-subscribers/return-a-list-of-webhook-subscribers",
+            "api-reference/platform/webhook-subscribers/create-a-webhook-subscriber",
+            "api-reference/platform/webhook-subscribers/return-a-webhook-subscriber",
+            "api-reference/platform/webhook-subscribers/delete-a-webhook-subscriber",
+            "api-reference/platform/webhook-subscribers/update-a-webhook-subscriber"
+          ]
+        },
+        {
+          "group": "Wished Items",
+          "pages": [
+            "api-reference/platform/wished-items/return-a-list-of-wished-items",
+            "api-reference/platform/wished-items/create-a-wished-item",
+            "api-reference/platform/wished-items/return-a-wished-item",
+            "api-reference/platform/wished-items/delete-a-wished-item",
+            "api-reference/platform/wished-items/update-a-wished-item"
+          ]
+        },
+        {
+          "group": "Wishlists",
+          "pages": [
+            "api-reference/platform/wishlists/return-a-list-of-wishlists",
+            "api-reference/platform/wishlists/create-a-wishlist",
+            "api-reference/platform/wishlists/return-a-wishlist",
+            "api-reference/platform/wishlists/delete-a-wishlist",
+            "api-reference/platform/wishlists/update-a-wishlist"
+          ]
+        },
+        {
+          "group": "Zones",
+          "pages": [
+            "api-reference/platform/zones/return-a-list-of-zones",
+            "api-reference/platform/zones/create-a-zone",
+            "api-reference/platform/zones/return-a-zone",
+            "api-reference/platform/zones/delete-a-zone",
+            "api-reference/platform/zones/update-a-zone"
           ]
         }
       ]

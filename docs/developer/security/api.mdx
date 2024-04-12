@@ -6,9 +6,9 @@ order: 3
 
 # API
 
-{% hint style="warning" %}
+<Warning>
 This section is only applicatable to API v1
-{% endhint %}
+</Note>
 
 The REST API behaves slightly differently than a standard user. First, an admin has to create the access key before any user can query the REST API. This includes generating the key for the admin him/herself. This is not the case if `Spree::Api::Config[:requires_authentication]` is set to `false`.
 
