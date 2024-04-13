@@ -67,6 +67,15 @@
         "developer/getting-started/installation"
       ]
     },
+    {
+      "group": "Core Concepts",
+      "pages": [
+        "developer/core-concepts/stores",
+        "developer/core-concepts/orders",
+        "developer/core-concepts/products",
+        "developer/core-concepts/inventory"
+      ]
+    },
 
     
     {
