@@ -1850,7 +1850,7 @@ components:
         Order token to authorize Cart and Checkout requests.
         Useful for guest checouts when you don't have the user token (bearerAuth)
 
-        You can obtain it from the [/cart](index.yaml/paths/~1cart/post) endpoint - it's part of the response (value of the `token` attribute).
+        You can obtain it from the [Retrieve a Cart endpoint](/api-reference/storefront/cart/retrieve-a-cart) - it's the `token` field that you will find it in the JSON response.
       name: X-Spree-Order-Token
   schemas:
     Address:
