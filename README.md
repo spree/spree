@@ -1,13 +1,14 @@
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
-[![Github README - Header](https://github.com/spree/spree/assets/6420475/8c3be6ab-3ac9-41ce-accd-ae97f3c1b536)](https://github.com/spree/spree/releases/tag/v4.7.0)
+[![Spree Commerce Logo](docs/logo/logo.svg)](https://spreecommerce.org)
 
-**Spree** is a headless open source e-commerce platform for global brands.
+**Spree** is an open source e-commerce platform for global brands that require custom solutions to meet their business needs.
 
+* [Documentation](https://docs.spreecommerce.org)
+* [Join our Slack community](http://slack.spreecommerce.org/)
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
-* [Join our Slack community](http://slack.spreecommerce.org/)
 
 ## Key Features
 
@@ -23,16 +24,11 @@
 * **Run everywhere** - cloud, VPS, Docker, Kubernetes
 * **Battle Tested** - used by thousands of merchants around the globe in all categories since 2007!
 * **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
-* **More features available via extensions** - dozens of extensions built by community, ready for use for free!
-
-## Documentation
-
-* [Getting Started](https://dev-docs.spreecommerce.org/getting-started/installation)
-* [Developer Documentation](https://dev-docs.spreecommerce.org/)
+* **More features available via extensions** - dozens of extensions built by community, **ready** for use for free!
 
 ## API
 
-* [API Reference](https://api.spreecommerce.org/)
+* [API Reference](https://docs.spreecommerce.org/api-reference)
 * [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 
 ## Contributing
@@ -47,24 +43,17 @@ Get Spree support on [Slack](https://spree-commerce.slack.com/join/shared_invite
 
 [![GitHub README - Spree Slack](https://github.com/spree/spree/assets/43988137/d0fc8423-5f38-4514-bfb1-c26eeb752639)](https://spree-commerce.slack.com/join/shared_invite/zt-ico7d35e-OeoAYXKO8XNtrZR1ZvBb5A#/shared-invite/email)
 
-## Sponsored by
+## Maintained by
 
-### Upside
-[![Github README Sponsor Upside](https://github.com/spree/spree/assets/43988137/8b0a50a8-640e-4561-b833-2ab6de2da68d)](https://upsidelab.io/)
+[Vendo](https://www.getvendo.com/) is a great fit for marketplaces of all sizes - either with its own fulfillment and multiple warehouses or in a dropshipping model.
 
-Upside is a leading software development consultancy that specializes in helping global digital commerce brands scale their technology. Upside provides a range of end-to-end software development services, making it a one-stop shop for all digital commerce technology needs.
+Vendo automates everything from vendor onboarding, accepting buyer payments in over 135 currencies, to supplier payouts in 50 countries.
 
-Visit the website: [upsidelab.io](https://upsidelab.io)
+<a href="https://sparksolutions.co/">
+  <img src="docs/images/spark_solutions_logo.svg" height="50px" alt="Spark Solutions">
+</a>
 
-### Vendo
-
-[![Github README Sponsor Vendo](https://github.com/spree/spree/assets/43988137/7d0ab67c-7484-414d-bed4-156fcb00c149)](https://www.getvendo.com/)
-
-Vendo helps your eCommerce brand to sell more and effortlessly through tens of super motivated influencers only at the cost of a sales commission.
-
-While getting your brand and all the products promoted for free to millions of social media followers interested in your products, Vendo automatically pulls and syncs your products and later pushes orders to your dashboard for fulfillment. No extra work.
-
-👉 [Get more sales now!](https://www.getvendo.com/vendo-seller-network)
+[Spark Solutions](https://sparksolutions.co/) is a software development agency that builds custom eCommerce solutions for enterprises.
 
 ## License
 
