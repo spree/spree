@@ -60,11 +60,11 @@ As of version 4.6, the `Store` resource allows for translating many of its field
 * `contact_phone`
 * `new_order_notifications_email`
 
-Read more about how resource translations work in [Internationalization](../customization/i18nresource-translations).
+Read more about how resource translations work in [Internationalization](../customization/i18n#resource-translations).
 
 ## Checkout configuration
 
-Each Store can be configured to ship to only selected countries. This is achieved via the `checkout_zone_id` attribute which holds the ID of the selected [Zone record](shipmentszones).
+Each Store can be configured to ship to only selected countries. This is achieved via the `checkout_zone_id` attribute which holds the ID of the selected [Zone record](shipments#zones).
 
 Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](shipments).
 
@@ -80,5 +80,5 @@ This will also have an effect on what [Shipping / Billing Addresses](addresses) 
 | **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
 | **CMS Page**                                      | One Page belongs to one Store                                                                                                              |
 | **Navigation Menu**                               | One Menu belongs to one Store                                                                                                              |
-| [**Taxonomy**](productstaxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
+| [**Taxonomy**](products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
 | [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
