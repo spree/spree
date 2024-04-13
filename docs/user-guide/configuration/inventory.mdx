@@ -4,19 +4,19 @@ title: Store Credit Categories
 
 # Inventory
 
-### [Introduction](inventory.md#introduction) <a href="#introduction" id="introduction"></a>
+### [Introduction](inventory#introduction) <a href="#introduction" id="introduction"></a>
 
-The Spree store gives you a great deal of leverage in managing your business’ inventory. You can set up multiple [stock locations](inventory.md#stock-locations), each of which represents a physical location where you store your products for delivery to customers. As you add new products and make sales, [stock movements](inventory.md#stock-movements) are recorded. You can receive stock from a supplier, and even move products from one stock location to another by recording [stock transfers](inventory.md#stock-transfers). All of this helps to keep your inventorying manageable and current.
+The Spree store gives you a great deal of leverage in managing your business’ inventory. You can set up multiple [stock locations](inventory#stock-locations), each of which represents a physical location where you store your products for delivery to customers. As you add new products and make sales, [stock movements](inventory#stock-movements) are recorded. You can receive stock from a supplier, and even move products from one stock location to another by recording [stock transfers](inventory#stock-transfers). All of this helps to keep your inventorying manageable and current.
 
-### [Stock Locations](inventory.md#stock-locations) <a href="#stock-locations" id="stock-locations"></a>
+### [Stock Locations](inventory#stock-locations) <a href="#stock-locations" id="stock-locations"></a>
 
 To reach the Stock Locations management panel, go to your Admin Interface, click “Configuration”, then click “Stock Locations”. Your store should already have at least one default stock location. If you keep all of your inventory in one place, this may be all you need.
 
-#### [Creating a New Stock Location](inventory.md#creating-a-new-stock-location) <a href="#creating-a-new-stock-location" id="creating-a-new-stock-location"></a>
+#### [Creating a New Stock Location](inventory#creating-a-new-stock-location) <a href="#creating-a-new-stock-location" id="creating-a-new-stock-location"></a>
 
 To add a stock location to your store, click the “New Stock Location” button.
 
-![New Stock Location](</images//image (8).png>)
+![New Stock Location](</images/image (8).png>)
 
 Here, you can input everything of relevance about your stock location: name, address, and phone are the most obvious. The three checkboxes on the right-hand side merit more explanation:
 
@@ -26,39 +26,39 @@ Here, you can input everything of relevance about your stock location: name, add
 
 Input the values for all of the fields, and click “Create” to add your new stock location.
 
-#### [Editing a Stock Location](inventory.md#editing-a-stock-location) <a href="#editing-a-stock-location" id="editing-a-stock-location"></a>
+#### [Editing a Stock Location](inventory#editing-a-stock-location) <a href="#editing-a-stock-location" id="editing-a-stock-location"></a>
 
 To edit a stock location, click the “Edit” icon next to it in the Stock Locations list.
 
-![Edit Stock Location Icon](</images//image (124).png>)
+![Edit Stock Location Icon](</images/image (124).png>)
 
 Make the desired changes in the form and click “Update”.
 
-#### [Deleting a Stock Location](inventory.md#deleting-a-stock-location) <a href="#deleting-a-stock-location" id="deleting-a-stock-location"></a>
+#### [Deleting a Stock Location](inventory#deleting-a-stock-location) <a href="#deleting-a-stock-location" id="deleting-a-stock-location"></a>
 
 To remove a stock location, click the “Delete” icon next to it in the Stock Locations list.
 
-![Delete Stock Location Icon](</images//image (125).png>)
+![Delete Stock Location Icon](</images/image (125).png>)
 
 Click “OK” to confirm the deletion.
 
-### [Stock Movements](inventory.md#stock-movements) <a href="#stock-movements" id="stock-movements"></a>
+### [Stock Movements](inventory#stock-movements) <a href="#stock-movements" id="stock-movements"></a>
 
 Note the “Stock Movements” link on the Stock Locations list.
 
-![Stock Movements Link](</images//image (130).png>)
+![Stock Movements Link](</images/image (130).png>)
 
 Clicking this link will show you all of the stock movements that have taken place for this stock location, both positive and negative.
 
 Stock movements are actions that happen automatically through the normal management and functioning of your store. You do not have to (and in fact, can not) manually manipulate them. This is just a way for you to see which things are moving in and out of a particular stock location.
 
-### [Stock Transfers](inventory.md#stock-transfers) <a href="#stock-transfers" id="stock-transfers"></a>
+### [Stock Transfers](inventory#stock-transfers) <a href="#stock-transfers" id="stock-transfers"></a>
 
 If you have more than one stock location, your Spree store offers you a way to record the movement of inventory from one location to another: the stock transfer.
 
 To create a new stock transfer, go to your Admin Interface, click “Configuration”, followed by “Stock Transfers”, then click the “New Stock Transfer” button.
 
-![New Stock Transfer](</images//image (6).png>)
+![New Stock Transfer](</images/image (6).png>)
 
 You can enter an optional Reference Number that can correlate to a PO number, a transfer request number, a tracking number, or any other identifier you wish to use.
 
@@ -66,16 +66,16 @@ Next, select your Source and Destination stock locations. If you are receiving s
 
 Select a product variant from the “Variant” drop-down list and enter the quantity of the product being transferred. Click the “Add” button.
 
-![Stock Transfer Readied](</images//image (7).png>)
+![Stock Transfer Readied](</images/image (7).png>)
 
-{% hint style="danger" %}
+<Warning>
 If you try to transfer an item that you do not have in stock at your Source location, the Spree system will record a stock transfer with a quantity of 0.
-</Note>
+</Warning>
 
 The new stock transfer is readied. Once you have added all of the items you want to transfer, click the “Transfer Stock” button.
 
-![Stock Transfer Complete](</images//image (131).png>)
+![Stock Transfer Complete](</images/image (131).png>)
 
-Now, when you look at the [Stock Movements](inventory.md#stock-movements) for each of the stock locations, you see that there are two new entries that correspond to the stock transfer, both with a system-assigned “Action” number (actually, the ID for the stock transfer).
+Now, when you look at the [Stock Movements](inventory#stock-movements) for each of the stock locations, you see that there are two new entries that correspond to the stock transfer, both with a system-assigned “Action” number (actually, the ID for the stock transfer).
 
-![Resulting Stock Movements](</images//image (132).png>)
+![Resulting Stock Movements](</images/image (132).png>)

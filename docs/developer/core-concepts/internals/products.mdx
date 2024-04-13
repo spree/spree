@@ -8,7 +8,7 @@ order: 2
 
 ## Overview
 
-`Product` records track unique products within your store. These differ from [Variants](products.md#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors. Together, Products and Variants describe what is for sale. Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](../customization/i18n.md#resource-translations)).
+`Product` records track unique products within your store. These differ from [Variants](products#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors. Together, Products and Variants describe what is for sale. Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](../customization/i18n#resource-translations)).
 
 Products have the following attributes:
 
@@ -36,19 +36,19 @@ The `name` and `presentation` fields for option types are translatable as of ver
 
 `Variant` records track the individual variants of a `Product`. Variants are of two types: master variants and normal variants.
 
-Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](products.md#product-properties), which apply to all variants of that product.
+Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](products#product-properties), which apply to all variants of that product.
 
 ### Master Variants
 
 Every single product has a master variant, which tracks basic information such as a count on hand, a price and a SKU. Whenever a product is created, a master variant for that product will be created too.
 
-Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and [line items](orders.md#line-items). If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
+Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and [line items](orders#line-items). If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
 
 By having a master variant, the code within Spree to track is simplified.
 
 ### Normal Variants
 
-Variants which are not the master variant are unique based on [option type and option value](products.md#option-types-and-option-values) combinations. For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green" and "Blue". For this combination of sizes and colors, you would be able to create 9 unique variants:
+Variants which are not the master variant are unique based on [option type and option value](products#option-types-and-option-values) combinations. For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green" and "Blue". For this combination of sizes and colors, you would be able to create 9 unique variants:
 
 * Small, Red
 * Small, Green
@@ -68,13 +68,13 @@ To simplify things you can call `product.default_variant` to get the default Var
 
 Images link to a product through its master variant. The sub-variants for the product may also have their own unique images to differentiate them in the frontend.
 
-Spree automatically handles the creation and storage of several size versions of each image (via Active Storage). See [Images Customization](../customization/images.md) section.
+Spree automatically handles the creation and storage of several size versions of each image (via Active Storage). See [Images Customization](../customization/images) section.
 
 ## Product Properties
 
 Product properties track individual attributes for a product that don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
 
-A `Property` should not be confused with an [`OptionType`](products.md#option-types-and-option-values), which is used when defining [Variants](products.md#variants) for a product.
+A `Property` should not be confused with an [`OptionType`](products#option-types-and-option-values), which is used when defining [Variants](products#variants) for a product.
 
 You can retrieve the value for a property on a `Product` object by calling the `property` method on it and passing through that property's name:
 
@@ -95,7 +95,7 @@ As of version 4.6, product property `value` and `filter_param` fields are transl
 
 ## Prices
 
-`Price` objects track a price for a particular currency and variant combination. For instance, a [Variant](products.md#variants) may be available for $15 (15 USD) and €7 (7 Euro).
+`Price` objects track a price for a particular currency and variant combination. For instance, a [Variant](products#variants) may be available for $15 (15 USD) and €7 (7 Euro).
 
 Spree behind the scenes uses [Ruby Money gem](https://github.com/RubyMoney/money) with some [additional](https://github.com/spree/spree/blob/master/core/app/models/concerns/spree/display\_money.rb) [tweaks](https://github.com/spree/spree/blob/master/core/lib/spree/money.rb).
 

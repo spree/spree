@@ -39,9 +39,9 @@ There are four actions that come with Spree:
 
 When a `CreateAdjustment` action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.
 
-Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Promotion#eligible?` method, which uses `Promotion#eligible_rules` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](promotions.md#rules) below.
+Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Promotion#eligible?` method, which uses `Promotion#eligible_rules` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](promotions#rules) below.
 
-An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators.md).
+An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
 
 ### Creating an item adjustment
 
@@ -49,7 +49,7 @@ When a `CreateItemAdjustments` action is undertaken, an adjustment is automatica
 
 The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based on the rules of the promotion.
 
-An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators.md).
+An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
 
 ### Free Shipping
 

@@ -1,20 +1,20 @@
 # Creating a New Product
 
-### [Introduction](creating-a-new-product.md#introduction) <a id="introduction"></a>
+### [Introduction](creating-a-new-product#introduction) <a id="introduction"></a>
 
 To create a new product for your store, go into the Admin Interface, click the “Products” tab, and click the “New Product” button.
 
-![New Product Entry Form](/images//cre1.png)
+![New Product Entry Form](/images/cre1.png)
 
 The three mandatory fields \(“Name”, “Master Price”, and “Shipping Categories”\) are denoted with an asterisk \(\*\) next to the label. You can leave SKU blank. If you don’t add a value for “Available On” the product will not be shown in your store.
 
-[Prototypes](prototypes.md) are a more complex topic and are covered in their own guide.
+[Prototypes](prototypes) are a more complex topic and are covered in their own guide.
 
-### [Product Details](creating-a-new-product.md#product-details) <a id="product-details"></a>
+### [Product Details](creating-a-new-product#product-details) <a id="product-details"></a>
 
 After you click the “Create” button, the Spree application brings you to a more detailed product entry page, where you can input more information about your new product.§
 
-![Product Edit Form](/images//cre2.png)
+![Product Edit Form](/images/cre2.png)
 
 * **Name** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **Slug/Permalink** - The permalink is automatically created by the application for you when the product is first saved. It is based on the product’s name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
@@ -31,15 +31,15 @@ After you click the “Create” button, the Spree application brings you to a m
 * **Height** - The product’s height in inches. May be used to calculate shipping cost.
 * **Width** - The product’s width in inches. May be used to calculate shipping cost.
 * **Depth** - The product’s depth or breadth in inches. May be used to calculate shipping cost.
-* **Shipping Categories** - You will learn about setting up Shipping Categories in the [Shipping Categories](../shipments/shipping-categories.md).
-* **Tax Category** - You will learn about setting up Tax Categories in the [Taxes Guide](../configuration/taxes.md).
-* **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](taxonomies-and-taxons.md).
-* **Option Types** - You can select any number of Options to associate your new product with. You’ll learn more about Options in the [Options Guide](product-options.md#option-types-and-option-values).
+* **Shipping Categories** - You will learn about setting up Shipping Categories in the [Shipping Categories](../shipments/shipping-categories).
+* **Tax Category** - You will learn about setting up Tax Categories in the [Taxes Guide](../configuration/taxes).
+* **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](taxonomies-and-taxons).
+* **Option Types** - You can select any number of Options to associate your new product with. You’ll learn more about Options in the [Options Guide](product-options#option-types-and-option-values).
 * **Meta Title** - The name of the product site that is visible in the browser navigation bar. We highly recommended filling out Meta Title/Keywords/Description for each product since it does improve SEO and will index the site name in Google Search.
 * **Meta Keywords** - These words are appended to the website’s keywords you established in the Store Settings and can help improve your site’s search engine ratings, bringing you more web traffic. They should be words that are key to your new product.
 * **Meta Description** - The summary that someone sees when your product’s page is returned in a web search. It should be descriptive but not overly verbose.
 
-### [Images](creating-a-new-product.md#images) <a id="images"></a>
+### [Images](creating-a-new-product#images) <a id="images"></a>
 
 A store without products images would be pretty boring - and probably not garner a lot of sales. It would be very time-consuming to have to upload, crop, resize, and associate several photos to each product, if you had to do so manually. Luckily, Spree makes maintaining images of your products quick and painless.
 
@@ -53,7 +53,7 @@ You have the option to associate a photo only with a particular “Variant” \(
 
 When you click “Update”, not only is the product photo uploaded, it is automatically resized and cropped to fit your store’s requirements. It is associated with the correct versions of your product.
 
-### [Understanding Variants](creating-a-new-product.md#understanding-variants) <a id="understanding-variants"></a>
+### [Understanding Variants](creating-a-new-product#understanding-variants) <a id="understanding-variants"></a>
 
 Suppose that you sell drink tumblers in your store. All of the tumblers are made by the same manufacturer and have the same basic product specifications -such as materials used and machine washability rating but your inventory includes several options:
 
@@ -86,9 +86,9 @@ The _Option Types_ you would create for this inventory are - Size, Wrap, and Lid
 | Wrap | Stars, Owls, Pink Paisley, Purple Paisley, Skulls |
 | Lid Color | Blue, Orange, Pink, White, Black |
 
-Read the [Product Options Guide](product-options.md) for directions on creating Option Types and Option Values. You must establish your Option Types and Option Values before you can set up your Variants. Don’t forget to associate the Option Types with the tumbler product so they’ll be available to you when you make your Variants.
+Read the [Product Options Guide](product-options) for directions on creating Option Types and Option Values. You must establish your Option Types and Option Values before you can set up your Variants. Don’t forget to associate the Option Types with the tumbler product so they’ll be available to you when you make your Variants.
 
-### [Creating Variants](creating-a-new-product.md#creating-variants)
+### [Creating Variants](creating-a-new-product#creating-variants)
 
 Now that you have set up the appropriate options for your Product’s Variants and associated those options with the product, you can create the Variants themselves.
 
@@ -102,17 +102,17 @@ Select the appropriate values for the Option Types. As you can see, you also hav
 
 ![Variants List](https://guides.spreecommerce.org/static/ac480c4387bf8dabddc2c75e492800a9/453c6/variants_list.jpg)
 
-### [Product Properties](creating-a-new-product.md#product-properties) <a id="product-properties"></a>
+### [Product Properties](creating-a-new-product#product-properties) <a id="product-properties"></a>
 
 You can set as many individual product properties as you like. These include things like the item’s country of manufacture, material\(s\) used, design style, etc. Typically, these are characteristics that do not change across variants of a product.
 
-You can read much more in-depth information about this feature in the [Product Properties Guide](product-properties.md).
+You can read much more in-depth information about this feature in the [Product Properties Guide](product-properties).
 
-### [Stock Management](creating-a-new-product.md#stock-management) <a id="stock-management"></a>
+### [Stock Management](creating-a-new-product#stock-management) <a id="stock-management"></a>
 
-As of Spree version 2.0, you now have much more granular control over how inventory is tracked through your store. You will learn more about stock locations in the [Stock Locations Guide](../configuration/inventory.md), but for now, it’s enough to understand that you enter the number of each product variant that you have at each of your individual stock locations.
+As of Spree version 2.0, you now have much more granular control over how inventory is tracked through your store. You will learn more about stock locations in the [Stock Locations Guide](../configuration/inventory), but for now, it’s enough to understand that you enter the number of each product variant that you have at each of your individual stock locations.
 
-Let’s assume that you have two stock locations - your main New York warehouse and your satellite Detroit warehouse. Refer to the instructions on creating stock locations in the [Stock Locations Guide](../configuration/inventory.md) to add your warehouses.
+Let’s assume that you have two stock locations - your main New York warehouse and your satellite Detroit warehouse. Refer to the instructions on creating stock locations in the [Stock Locations Guide](../configuration/inventory) to add your warehouses.
 
 Now, go back to the Tumblers product page, and click the “Stock Management” link.
 
@@ -130,5 +130,5 @@ Your Stock Location Info table should now look like the one pictured above.
 
 “Backorderable” may or may not be checked for your individual Stock Locations, depending on how you configured them. Each Stock Location has defaults for this value, but you can change it on a variant-by-variant basis in this dialog.
 
-You should be sure to read the [Stock Locations](../configuration/inventory.md#stock-locations) and [Stock Movements](../configuration/inventory.md#stock-movements) guides for further information on managing your store’s inventory.
+You should be sure to read the [Stock Locations](../configuration/inventory#stock-locations) and [Stock Movements](../configuration/inventory#stock-movements) guides for further information on managing your store’s inventory.
 

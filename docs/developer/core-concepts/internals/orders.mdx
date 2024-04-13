@@ -21,7 +21,7 @@ Orders have the following attributes:
 * `additional_tax_total`: The sum of all shipments' and line items' `additional_tax`.
 * `included_tax_total`: The sum of all shipments' and line items' `included_tax`.
 * `promo_total`: The sum of all shipments', line items' and promotions' `promo_total`.
-* `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](orders.md#the-order-state-machine) section of this guide.
+* `state`: The current state of the order. To read more about the states an order goes through, read [The Order State Machine](orders#the-order-state-machine) section of this guide.
 * `email`: The email address for the user who placed this order. Stored in case this order is for a guest user.
 * `user_id`: The ID for the corresponding user record for this order. Stored only if the order is placed by a signed-in user.
 * `completed_at`: The timestamp of when the order was completed.
@@ -29,8 +29,8 @@ Orders have the following attributes:
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
 * `shipping_method_id`: The ID for the related `ShippingMethod` object.
 * `created_by_id`: The ID of object that created this order.
-* `shipment_state`: The current shipment state of the order. It takes into account all shipments. Described below in [Order Shipment states section](orders.md#order-shipment-states).
-* `payment_state`: The current payment state of the order. It takes into account all payments. Described below in [Order Payment states section](orders.md#order-payment-states).
+* `shipment_state`: The current shipment state of the order. It takes into account all shipments. Described below in [Order Shipment states section](orders#order-shipment-states).
+* `payment_state`: The current payment state of the order. It takes into account all payments. Described below in [Order Payment states section](orders#order-payment-states).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
 * `currency`: The currency for this order. Determined by the `Store#default_currency` currency in which this order was created
 * `last_ip_address`: The last IP address used to update this order in the frontend.
@@ -52,7 +52,7 @@ Some methods you may find useful:
 
 ## The Order State Machine
 
-Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](../customization/checkout.md#the-checkout-flow-dsl).
+Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](../customization/checkout#the-checkout-flow-dsl).
 
 The default states are as follows:
 
@@ -79,12 +79,12 @@ Assuming that an order meets the criteria for the next state, you will be able t
 Alongside the global Order state there's also `shipment_state` column which indicates the state of all shipments. Order can have multiple shipments.
 
 * `shipped` - all Shipments are in the `shipped` state
-* `partial` - at least one Shipment has a state of `shipped` and there is another Shipment with a state other than `shipped` or there are [InventoryUnits](inventory.md) associated with the order that have a state of `sold` but are not associated with a Shipment
+* `partial` - at least one Shipment has a state of `shipped` and there is another Shipment with a state other than `shipped` or there are [InventoryUnits](inventory) associated with the order that have a state of `sold` but are not associated with a Shipment
 * `ready` - all Shipments are in the `ready` state
 * `backorder` - there is backordered inventory associated with an order
 * `pending` - all Shipments are in the `pending` state
 
-For more on this please go to [Shipment States page](shipments.md#overview).
+For more on this please go to [Shipment States page](shipments#overview).
 
 ### Order Payment states
 
@@ -96,13 +96,13 @@ Alongside the global Order state there's also `payment_state` column which indic
 * `failed` - most recent payment is in the `failed` state
 * `void` - order is canceled and `payment_total` isequal to `zero`
 
-For more on this please go to [Payment States page](payments.md#overview).
+For more on this please go to [Payment States page](payments#overview).
 
 ### Order Shipment states
 
 ## Line Items
 
-Line items are used to keep track of items within the context of an order. These records provide a link between orders, and [Variants](products.md#variants).
+Line items are used to keep track of items within the context of an order. These records provide a link between orders, and [Variants](products#variants).
 
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
 
@@ -112,17 +112,17 @@ An order can link to two `Address` objects. The shipping address indicates where
 
 The billing address indicates where the user who's paying for the order is located. This can alter the tax rate for the order, which in turn can change how much the final order total can be.
 
-For more information about addresses, please read the [Addresses](addresses.md) guide.
+For more information about addresses, please read the [Addresses](addresses) guide.
 
 ## Adjustments
 
-Adjustments are used to affect an order's final cost, either by decreasing it \([Promotions](promotions.md)\) or by increasing it \([Shipping](shipments.md), [Taxes](taxation.md)\).
+Adjustments are used to affect an order's final cost, either by decreasing it \([Promotions](promotions)\) or by increasing it \([Shipping](shipments), [Taxes](taxation)\).
 
-For more information about adjustments, please see the [Adjustments](adjustments.md) guide.
+For more information about adjustments, please see the [Adjustments](adjustments) guide.
 
 ## Payments
 
-Payment records are used to track payment information about an order. For more information, please read the [Payments](payments.md) guide.
+Payment records are used to track payment information about an order. For more information, please read the [Payments](payments) guide.
 
 ## Return Authorizations
 

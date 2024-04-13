@@ -31,7 +31,7 @@ In Spree 4.0 we've removed Paperclip support in favor of ActiveStorage.
 
 Please remove also any occurrences of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` from your codebase.
 
-Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md).
+Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING).
 
 ## Replace OrderContents with services in your codebase
 
@@ -197,7 +197,7 @@ end
 Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
 ```
 
-Please also consider other options for [Logic Customization](../../customization/logic.md).
+Please also consider other options for [Logic Customization](../../customization/logic).
 
 We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
 

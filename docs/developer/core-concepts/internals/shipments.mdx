@@ -140,7 +140,7 @@ If you are using shipping categories, these can be used to qualify or disqualify
 
 ### Zones
 
-Zones serve as a mechanism for grouping geographic areas together into a single entity. You can read all about how to configure and use Zones in the [Zones Guide](addresses.md#zones).
+Zones serve as a mechanism for grouping geographic areas together into a single entity. You can read all about how to configure and use Zones in the [Zones Guide](addresses#zones).
 
 The Shipping Address entered during checkout will define the zone the customer is in and limit the Shipping Methods available to him.
 
@@ -174,7 +174,7 @@ Spree ships with 5 default Calculators:
 
 Flexible rate is defined as a flat rate for the first product, plus a different flat rate for each additional product.
 
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](calculators.md).
+You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](calculators).
 
 ## UI
 
@@ -202,7 +202,7 @@ There are a few Spree extensions which provide additional shipping methods, incl
 
 ### Writing Your Own
 
-For more detailed information, check out the section on [Calculators](calculators.md).
+For more detailed information, check out the section on [Calculators](calculators).
 
 Your calculator should accept an array of `LineItem` objects and return a cost. It can look at any reachable data, but typically uses the address, the order and the information from variants which are contained in the line\_items.
 
@@ -402,11 +402,11 @@ Split shipments are a feature for more complex Spree applications that require s
 
 ### Creating Proposed Shipments
 
-This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](shipments.md#components-of-split-shipments) section of this guide.
+This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](shipments#components-of-split-shipments) section of this guide.
 
 The process of determining shipments for an order is triggered by calling `create_proposed_shipments` on an `Order` object while transitioning to the `delivery` state during checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
 
-`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](shipments.md#the-packer).
+`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](shipments#the-packer).
 
 After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
 
@@ -414,7 +414,7 @@ At this point, the checkout process can continue to the delivery step.
 
 ## Components of Split Shipments
 
-This section describes the four main components that power split shipments: [The Coordinator](shipments.md#the-coordinator), [The Packer](shipments.md#the-packer), [The Prioritizer](shipments.md#the-prioritizer), and [The Estimator](shipments.md#the-estimator).
+This section describes the four main components that power split shipments: [The Coordinator](shipments#the-coordinator), [The Packer](shipments#the-packer), [The Prioritizer](shipments#the-prioritizer), and [The Estimator](shipments#the-estimator).
 
 ### The Coordinator
 

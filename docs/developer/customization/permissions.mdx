@@ -64,7 +64,7 @@ end
 
 ## Replacing all permissions
 
-As we've mentioned earlier, Spree uses the main Ability class. You can change that to use your own custom Ability class via [Dependencies](dependencies.md) in Spree initializer \(`config/initializers/spree.rb`\), eg.
+As we've mentioned earlier, Spree uses the main Ability class. You can change that to use your own custom Ability class via [Dependencies](dependencies) in Spree initializer \(`config/initializers/spree.rb`\), eg.
 
 ```ruby
 Spree::Dependencies.ability_class = 'MyProject::Ability'

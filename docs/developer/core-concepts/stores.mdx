@@ -1,10 +1,6 @@
 ---
 title: Stores
-section: internals
-order: 0
 ---
-
-# Stores
 
 ## Overview
 
@@ -14,7 +10,7 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 * Store B, `eu.example.com`
 * Store C, `another-brand.com`
 
-![](/images//mulit\_store\_978x2.png)
+![](/images/mulit\_store\_978x2.png)
 
 ## `current_store` method
 
@@ -64,25 +60,25 @@ As of version 4.6, the `Store` resource allows for translating many of its field
 * `contact_phone`
 * `new_order_notifications_email`
 
-Read more about how resource translations work in [Internationalization](../customization/i18n.md#resource-translations).
+Read more about how resource translations work in [Internationalization](../customization/i18nresource-translations).
 
 ## Checkout configuration
 
-Each Store can be configured to ship to only selected countries. This is achieved via the `checkout_zone_id` attribute which holds the ID of the selected [Zone record](shipments.md#zones).
+Each Store can be configured to ship to only selected countries. This is achieved via the `checkout_zone_id` attribute which holds the ID of the selected [Zone record](shipmentszones).
 
-Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](shipments.md).
+Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](shipments).
 
-This will also have an effect on what [Shipping / Billing Addresses](addresses.md) user can add/ select during Checkout. Only Addresses from Countries or States available in the selected Zone can be used and will be visible in the User's Address Book.
+This will also have an effect on what [Shipping / Billing Addresses](addresses) user can add/ select during Checkout. Only Addresses from Countries or States available in the selected Zone can be used and will be visible in the User's Address Book.
 
 ## Store resources
 
 | Resource                                          | Relationship                                                                                                                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| [**Order**](orders.md)                            | One Order belongs to one Store                                                                                                             |
-| [**Product**](products.md)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
-| [**Payment Method**](payments.md)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
+| [**Order**](orders)                            | One Order belongs to one Store                                                                                                             |
+| [**Product**](products)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
+| [**Payment Method**](payments)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
 | **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
 | **CMS Page**                                      | One Page belongs to one Store                                                                                                              |
 | **Navigation Menu**                               | One Menu belongs to one Store                                                                                                              |
-| [**Taxonomy**](products.md#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
-| [**Promotion**](promotions.md)                    | One Promotion can be associated with multiple Stores                                                                                       |
+| [**Taxonomy**](productstaxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
+| [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |

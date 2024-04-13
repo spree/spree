@@ -6,9 +6,9 @@ description: This guide covers upgrading a 4.5 Spree application to Spree 4.6.
 
 **If you're on an older version than 4.5 please follow previous upgrade guides and perform those upgrades incrementally, e.g.**
 
-1. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three.md)
+1. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three)
 2. [upgrade 4.3 to 4.4](https://dev-docs.spreecommerce.org/upgrades/upgrades/4.3-to-4.4)
-3. [upgrade 4.4 to 4.5](4.4-to-4.5.md)
+3. [upgrade 4.4 to 4.5](4.4-to-4.5)
 
 This is the safest and recommended method.
 
@@ -36,7 +36,7 @@ If your application used the spree\_globalize extension, you can remove it from 
 
 We've configured Mobility to use [a strategy that uses a separate table to store translations](https://dejimata.com/2017/3/3/translating-with-mobility#strategy-2), just like how spree\_globalize did. This means, you won't need to make any changes to the database structure or migrate data.
 
-During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](../../customization/i18n.md) to make it easier to work with translatable models.
+During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](../../customization/i18n) to make it easier to work with translatable models.
 
 ## Update gems
 

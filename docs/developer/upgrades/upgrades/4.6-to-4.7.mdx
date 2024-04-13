@@ -7,20 +7,20 @@ description: This guide covers upgrading a 4.6 Spree application to Spree 4.7.
 **If you're on an older version than 4.6 please follow previous upgrade guides and perform those upgrades incrementally, e.g.**
 
 1. [upgrade 4.3 to 4.4](https://dev-docs.spreecommerce.org/upgrades/upgrades/4.3-to-4.4)
-2. [upgrade 4.4 to 4.5](4.4-to-4.5.md)
-3. [upgrade 4.5 to 4.6](4.5-to-4.6.md)
+2. [upgrade 4.4 to 4.5](4.4-to-4.5)
+3. [upgrade 4.5 to 4.6](4.5-to-4.6)
 
 This is the safest and recommended method.
 
 ## Update Gemfile
 
-```
+```ruby
 gem 'spree', '~> 4.7.0'
 ```
 
 Update all other spree gems used in your application to 4.7.0 or version compatible with 4.7:
 
-```
+```ruby
 gem 'spree_sample', '~> 4.7.0'
 gem 'spree_emails', '~> 4.7.0'
 gem 'spree_backend', '~> 4.7.0'
@@ -30,17 +30,15 @@ gem 'spree_auth_devise', '~> 4.6.0'
 gem 'spree_i18n', '~> 5.3.0'
 ```
 
-
-
 <Warning>
 If your Gemfile includes spree\_frontend, make sure it's defined below spree\_backend. This is required for a proper initialization of the admin action buttons defined by spree\_frontend.
-</Note>
+</Warning>
 
 ## (Optional) Upgrade to Rails 7.1
 
 Spree 4.7 brings support for Rails 7.1 - to receive security patches we recommend upgrading Rails version to the latest one.
 
-```
+```ruby
 gem 'rails', '~> 7.1.0'
 ```
 
