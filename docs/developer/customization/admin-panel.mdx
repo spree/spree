@@ -4,9 +4,9 @@ Starting with Spree 4.7, we've introduced a new way of customizing the admin pan
 
 ### Customizing the main menu
 
-When extending Spree with custom features, it's common to add new options to the menu on the left-hand side.&#x20;
+When extending Spree with custom features, it's common to add new options to the menu on the left-hand side.
 
-The menu is built with [`Spree::Admin::MainMenu::Section`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/section.rb) and [`Spree::Admin::MainMenu::Item`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/item.rb) objects.&#x20;
+The menu is built with [`Spree::Admin::MainMenu::Section`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/section.rb) and [`Spree::Admin::MainMenu::Item`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/item.rb) objects.
 
 Additionally, there are two builder classes [`Spree::Admin::MainMenu::SectionBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/section\_builder.rb) and [`Spree::Admin::MainMenu::ItemBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/item\_builder.rb) that make it easier to build more complex sections.
 
@@ -53,7 +53,7 @@ end
 
 ### Customizing actions
 
-A common case for extensions is to add a new action button in the admin panel.&#x20;
+A common case for extensions is to add a new action button in the admin panel.
 
 Action buttons are built with [`Spree::Admin::Actions::Action`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/actions/action.rb) or with a dedicated [`Spree::Admin::Actions::ActionBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/actions/action\_builder.rb) class. The action buttons are attached to `Rails.application.config.spree_backend.actions` and can be modified with an initializer.
 

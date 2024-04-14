@@ -49,6 +49,11 @@
       "url": "http://slack.spreecommerce.org/"
     },
     {
+      "name": "Showcase",
+      "icon": "trophy",
+      "url": "https://spreecommerce.org/success-stories/"
+    },
+    {
       "name": "Github",
       "icon": "github",
       "url": "https://github.com/spree/spree"
@@ -716,8 +721,8 @@
     }
   ],
   "footerSocials": {
-    "twitter": "https://twitter.com/spreecommerce",
-    "github": "https://github.com/spree/spree"
+    "github": "https://github.com/spree/spree",
+    "x": "https://x.com/spreecommerce"
   },
   "feedback": {
     "thumbsRating": true,

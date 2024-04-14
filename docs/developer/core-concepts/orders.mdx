@@ -127,13 +127,13 @@ Alongside the global Order state there's also `payment_state` column which indic
 
 For more on this please go to [Payment States page](payments).
 
-### Order Shipment states
-
 ## Line Items
 
 Line items are used to keep track of items within the context of an order. These records provide a link between orders, and [Variants](products#variants).
 
+<Warning>
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
+</Warning>
 
 ## Addresses
 
@@ -151,7 +151,9 @@ For more information about adjustments, please see the [Adjustments](adjustments
 
 ## Payments
 
-Payment records are used to track payment information about an order. For more information, please read the [Payments](payments) guide.
+Payment records are used to track payment information about an order. Each Order can hold multiple payments, eg. one for each credit card or debit card and one for the store credit. 
+
+For more information, please read the [Payments](payments) guide.
 
 ## Return Authorizations
 
@@ -159,9 +161,8 @@ An order can have many `ReturnAuthorization` objects. These records keeps track 
 
 ## Updating an Order
 
-If you change any aspect of an `Order` object within code and you wish to update the order's totals -- including associated adjustments and shipments -- call the `update_with_updater!` method on that object, which calls out to the `OrderUpdater` class.
+If you change any aspect of an `Order` object within code and you wish to update the order's totals -- including associated adjustments and shipments -- call the `update_with_updater!` method on that object, which calls out to the [OrderUpdater](https://github.com/spree/spree/blob/main/core/app/models/spree/order_updater.rb) class.
 
 For example, if you create or modify an existing payment for the order which would change the order's `payment_state` to a different value, calling `update_with_updater!` will cause the `payment_state` to be recalculated for that order.
 
 Another example is if a `LineItem` within the order had its price changed. Calling `update_with_updater!` will cause the totals for the order to be updated, the adjustments for the order to be recalculated, and then a final total to be established.
-

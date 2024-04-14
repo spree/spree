@@ -1,10 +1,10 @@
-Platform API is meant to be used by external applications to perform operations within Spree. Because of that, it uses a different authentication schema than the Storefront API.&#x20;
+Platform API is meant to be used by external applications to perform operations within Spree. Because of that, it uses a different authentication schema than the Storefront API.
 
 ### Creating an application inside Spree
 
 To generate a valid token for the Platform API, you'll first need to create an application inside Spree.
 
-1. Go to Spree's admin panel and open `Apps` -> `oAuth Applications` in the menu&#x20;
+1. Go to Spree's admin panel and open `Apps` -> `oAuth Applications` in the menu
 
     <img src="/images/Platform API 1.png"/>
 
@@ -22,7 +22,7 @@ To generate a valid token for the Platform API, you'll first need to create an a
 
 ### Generating OAuth token
 
-Once the application is configured inside Spree, you can use its credentials to generate an OAuth token that will give you access to the APIs.&#x20;
+Once the application is configured inside Spree, you can use its credentials to generate an OAuth token that will give you access to the APIs.
 
 To obtain the token, send the following `POST` request to `/spree_oauth/token`
 

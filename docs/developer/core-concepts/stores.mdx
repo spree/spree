@@ -12,13 +12,50 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 
 ![](/images/mulit\_store\_978x2.png)
 
-## `current_store` method
+### Store attributes
 
-All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/master/core/lib/spree/core/controller\_helpers/store.rb) have access to the `current_store` method which returns the currently in selected `Spree::Store` object.
+| Attribute                | Description                                                                 | Example Value |
+|--------------------------|-----------------------------------------------------------------------------|---------------|
+| `name`                   | The name of the store, typically displayed in the browser title bar and throughout the site. | Spree Demo Site |
+| `url`                    | The URL or domain associated with the store.                               | shop.example.com |
+| `meta_description`       | A brief description of the store for SEO purposes.                         | An exclusive selection of high-quality products. |
+| `meta_keywords`          | Relevant keywords associated with the store for SEO.                       | fashion, electronics, books |
+| `seo_title`              | A custom SEO title for the store.                                          | Shop the Best Deals Online - Spree Store |
+| `mail_from_address`      | The email address used for sending emails from the store.                  | noreply@example.com |
+| `default_currency`       | The default currency for prices within the store.                          | `USD` |
+| `code`                   | A unique code to identify the store.                                       | `spree-001` |
+| `default`                | Indicates if the store is the default store.                               | `true` |
+| `supported_currencies`   | A list of currencies supported by the store, separated by commas.          | `USD, EUR, GBP` |
+| `supported_locales`      | A list of locales supported by the store, separated by commas.             | `en, fr, de` |
+| `customer_support_email` | The email address for customer support inquiries.                          | support@example.com |
+| `facebook`               | The store's Facebook page URL.                                             | spree |
+| `twitter`                | The store's Twitter handle.                                                | @spreecommerce |
+| `instagram`              | The store's Instagram profile URL.                                         | https://www.instagram.com/spree |
+| `default_locale`         | The default locale/language for the store.                                 | `en` |
+| `description`            | A detailed description of the store.                                       | Your one-stop shop for everything you need. |
+| `address`                | The physical address of the store.                                         | 123 Example St, San Francisco, CA |
+| `contact_phone`          | The contact phone number for the store.                                    | `+1 234-567-8900` |
+| `new_order_notifications_email` | The email address to send notifications of new orders.                  | orders@example.com |
+
+## Current Store
+
+Spree will try to determine the current store based on the current URL. If the URL does not match any of the stores in the database, Spree will fall back to the default store.
+
+All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/master/core/lib/spree/core/controller\_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
 
 All parts of Spree (API v1, API v2, Storefront, Admin Panel) have this implemented. This method is also available in views and JSON serializers.
 
+<Info>
 Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/master/core/app/finders/spree/stores/find\_current.rb).
+
+This logic can be easily overwritten by setting 
+
+```ruby
+Spree::Dependencies..current_store_finder = 'MyStoreFinderClass'
+```
+
+in `config/initializers/spree.rb` file
+</Info>
 
 ## Default Store
 
@@ -40,10 +77,14 @@ Spree::Store.default
 
 Each Store can have multiple locales and currencies. This configuration is stored in Store model attributes:
 
-* `default_currency`- this is the default currency that will be pre-selected when visiting the store the first time, eg. `USD`
-* `supported_currencies` - if there is more than one supported currency, visitors will be able to choose which currency they would like to browse your store in, eg. `USD`, `CAD`, etc.
-* `default_locale` - this is the default locale/language which will be pre-selected when visiting the store the first time, eg. `en`
-* `supported_locales`, if there is more than one supported locale, visitors will be able to choose which locale they would like to browse your store in, eg. `en`, `fr`, etc. Locales are available upon installing [Spree I18n](https://github.com/spree-contrib/spree\_i18n)
+| Attribute             | Description                                                                                                   | Example(s)                  |
+|-----------------------|---------------------------------------------------------------------------------------------------------------|-----------------------------|
+| `default_currency`    | This is the default currency that will be pre-selected when visiting the store the first time.                | `USD`                       |
+| `supported_currencies`| If there is more than one supported currency, visitors will be able to choose which currency they browse in.  | `USD`, `CAD`, `EUR`          |
+| `default_locale`      | This is the default locale/language which will be pre-selected when visiting the store the first time.        | `en`                        |
+| `supported_locales`   | If there is more than one supported locale, visitors can choose which locale they browse in. Locales are available upon installing [Spree I18n](https://github.com/spree-contrib/spree_i18n). | `en`, `fr`, `de` |
+
+### Translations
 
 As of version 4.6, the `Store` resource allows for translating many of its fields. Translations are enabled when selecting more than one locale in `supported_locales`. The following fields are translatable:
 
@@ -72,13 +113,13 @@ This will also have an effect on what [Shipping / Billing Addresses](addresses) 
 
 ## Store resources
 
+Each Store can have its own resources. For example, a Store can have its own Products, Taxonomies, Promotions, etc.
+
 | Resource                                          | Relationship                                                                                                                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | [**Order**](orders)                            | One Order belongs to one Store                                                                                                             |
 | [**Product**](products)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
 | [**Payment Method**](payments)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
-| **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
-| **CMS Page**                                      | One Page belongs to one Store                                                                                                              |
-| **Navigation Menu**                               | One Menu belongs to one Store                                                                                                              |
 | [**Taxonomy**](products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
 | [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
+| **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
