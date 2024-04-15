@@ -54,10 +54,15 @@ Here is a list of methods you may find useful:
 
 To see all available methods, please check the [Order model source code](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb).
 
-
 ## The Order State Machine
 
-Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](../customization/checkout#the-checkout-flow-dsl).
+Each Order flows through a state machine, beginning at a `cart` state and ending up at a `complete` state.
+
+<Note>
+This is the default order flow and can be adjusted or overhauled completely.
+
+More on this topic at [Customizing Checkout page](../customization/checkout).
+</Note>
 
 The default states are as follows:
 

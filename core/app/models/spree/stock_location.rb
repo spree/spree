@@ -71,6 +71,11 @@ module Spree
       stock_item(variant_id) || propagate_variant(variant)
     end
 
+    # Returns the count on hand number for the variant
+    #
+    # @param variant Variant instance
+    #
+    # @return [Integer]
     def count_on_hand(variant)
       stock_item(variant).try(:count_on_hand)
     end

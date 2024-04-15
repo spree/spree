@@ -34,7 +34,7 @@ For a more extensive example, take a look at how the [default menu is built](htt
 
 In some cases you may need to add a new tab to a page for editing Orders, Products or Users.
 
-<img src="/images/Screenshot 2023-10-31 at 18.57.13.png" alt="">
+![](/images/Screenshot 2023-10-31 at 18.57.13.png)
 
 These tabs are built with [`Spree::Admin::Tabs::Tab`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/tabs/tab.rb). You can also use [`Spree::Admin::Tabs::TabBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/tabs/tab\_builder.rb) class to construct new Tab objects. The tabs are attached to `Rails.application.config.spree_backend.tabs` and can be modified via an initializer.
 

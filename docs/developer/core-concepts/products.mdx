@@ -47,11 +47,26 @@ The `name` and `presentation` fields for option types are translatable as of ver
 
 Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](products#product-properties), which apply to all variants of that product.
 
+| Attribute          | Description                                                                                   | Example Value          |
+|--------------------|-----------------------------------------------------------------------------------------------|------------------------|
+| `sku`              | Unique identifier for each variant                                                            | `123TSHRT-M-G`      |
+| `barcode`              | Barcode code                                                           | ``      |
+| `barcode`              | A unique code that represents a variant, often used for scanning purposes. | `123456789` |
+| `weight`           | The weight of the variant                                                                      | 2               |
+| `height`           | The height of the variant                                                                     | 150               |
+| `width`            | The width of the variant                                                                      | 150                |
+| `depth`            | The depth of the variant                                                                      | 100                 |
+| `is_master`        | Indicates if the variant is a master variant                                                  | `false`                  |
+| `track_inventory`  | Indicates if the inventory is tracked for this variant                                        | `true`                   |
+| `cost_price`       | The cost price of the variant                                                                 | 5.00                   |
+| `cost_currency`    | The currency of the cost price                                                                | `USD`                  |
+| `discontinue_on`   | Date when the variant will become unavailable for sale                                        | 2023-12-31 18:00           |
+
 ### Master Variants
 
-Every single product has a master variant, which tracks basic information such as a count on hand, a price and a <Tooltip tip="Stock Keeping Unit - In inventory management, a stock keeping unit (abbreviated as SKU) is the unit of measure in which the stocks of a material are managed.">SKU</Tooltip>. 
+Every single product has a master variant, which tracks basic information such as a count on hand, a price and a <Tooltip tip="Stock Keeping Unit - In inventory management, a stock keeping unit (abbreviated as SKU) is the unit of measure in which the stocks of a material are managed.">SKU</Tooltip>.
 
-Whenever a product is created, a master variant for that product will be created too. 
+Whenever a product is created, a master variant for that product will be created too.
 
 <Info>
 Logic behind is implemented in the `after_initialize` callback of the `Spree::Product` model in a [ensure_master](https://github.com/spree/spree/blob/d3927a3f646f0b4e72b137bf72606c885ec59829/core/app/models/spree/product.rb#L132) method.
@@ -63,25 +78,33 @@ Master variants are automatically created along with a product and exist for the
 
 Variants which are not the master variant are unique based on a [option type and option value](products#option-types-and-option-values) combinations.
 
-For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green" and "Blue". For this combination of sizes and colors, you would be able to create 9 unique variants:
+For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green". For this combination of sizes and colors, you would be able to create 9 unique variants:
 
-* Small, Red
-* Small, Green
-* Small, Blue
-* Medium, Red
-* Medium, Green
-* Medium, Blue
-* Large, Red
-* Large, Green
-* Large, Blue
-
-Each Variant should have it own unique SKU.
+| SKU       | Size  | Color |
+|-----------|-------|-------|
+| SKU-S-R   | Small | Red   |
+| SKU-S-G   | Small | Green |
+| SKU-M-R   | Medium| Red   |
+| SKU-M-G   | Medium| Green |
+| SKU-L-R   | Large | Red   |
+| SKU-L-G   | Large | Green |
 
 ### Default Variant
 
-To simplify things you can call `product.default_variant` to get the default Variant. If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the Admin Panel or Platform API.
+This all can sound complex and confusing, so we'll simplify things for you.
 
-If there are no non-master Variants it will return the Master Variant.
+To get the default Variant for a product, you can call:
+
+```ruby
+product.default_variant
+```
+
+How this works?
+
+* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the Admin Panel or Platform API.
+* If there are no non-master Variants it will return the Master Variant
+
+So you can easily rely on this method to get the default Variant for a product.
 
 ## Images
 
@@ -132,10 +155,10 @@ You can set a property on a product by calling the `set_property` method:
 product.set_property("material", "100% cotton")
 ```
 
-If this property doesn't already exist, a new `Property` instance with this name will be created.
+If this property doesn't already exist, a new `Property` instance with this name will be created on the fly.
 
 <Info>
-As of version 4.6, product property `value` and `filter_param` fields are translatable.
+As of version 4.6, product property `value` fields are translatable.
 </Info>
 
 ## Prices
