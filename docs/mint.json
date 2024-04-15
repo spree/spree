@@ -78,7 +78,8 @@
         "developer/core-concepts/stores",
         "developer/core-concepts/orders",
         "developer/core-concepts/products",
-        "developer/core-concepts/inventory"
+        "developer/core-concepts/inventory",
+        "developer/core-concepts/payments"
       ]
     },
 
