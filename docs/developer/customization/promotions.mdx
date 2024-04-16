@@ -1,0 +1,103 @@
+## Overview
+
+In this guide we will show you how to create custom promotion rules and actions in Spree.
+
+### Custom Promotion Actions
+
+You can create a new action for Spree's promotion engine by creating a new file in `app/models/spree/promotion/actions/` directory, inheriting from `Spree::PromotionAction`, like this:
+
+```ruby
+module Spree
+  module Promotion
+    module Actions
+      class MyPromotionAction < Spree::PromotionAction
+        def perform(options={})
+          ...
+        end
+      end
+    end
+  end
+end
+```
+
+You can access promotion information using the `promotion` method within any `Spree::PromotionAction`.
+
+This action must then be registered with Spree, which can be done by adding this code to `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.after_initialize do
+  Rails.application.config.spree.promotions.actions << MyPromotionAction
+end
+```
+
+Once this has been registered, it will be available within Spree's interface. To provide translations for the interface, you will need to define them within your locale file. For instance, to define English translations for your new promotion action, use this code within `config/locales/en.yml`:
+
+```yaml
+en:
+  spree:
+    promotion_action_types:
+      my_promotion_action:
+        name: My Promotion Action
+        description: Performs my promotion action.
+```
+
+### Custom Promotion Rules
+
+As a developer, you can create and register a new rule for your Spree app with custom business logic specific to your needs. First, define a class that inherits from `Spree::PromotionRule`, like this:
+
+```ruby
+module Spree
+  class Promotion
+    module Rules
+      class MyPromotionRule < Spree::PromotionRule
+        def applicable?(promotable)
+          promotable.is_a?(Spree::Order)
+        end
+
+        def eligible?(order, options = {})
+          ...
+        end
+
+        def actionable?(line_item)
+          ...
+        end
+      end
+    end
+  end
+end
+```
+
+The `eligible?` method should then return `true` or `false` to indicate if the promotion should be eligible for an order. You can retrieve promotion information by calling `promotion`.
+
+If your promotion supports some giving discounts on some line items, but not others, you should define `actionable?` to return true if the specified line item meets the criteria for promotion. It should return `true` or `false` to indicate if this line item can have a line item adjustment carried out on it.
+
+For example, if you are giving a promotion on specific products only, `eligible?` should return true if the order contains one of the products eligible for promotion, and `actionable?` should return true when the line item specified is one of the specific products for this promotion.
+
+To register this new rule add this block in your `config/initializers/spree.rb` file:
+
+```ruby
+Rails.application.config.after_initialize
+  Rails.application.config.spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
+end
+```
+
+ Proper location and file name for the rule in this example would be: `app/models/spree/promotion/rules/my_promotion_rule.rb`
+
+To get your rule to appear in the admin promotions interface you have a few more changes to make.
+
+Create a partial for your new rule in `app/views/spree/admin/promotions/rules/_my_promotion_rule.html.erb`.
+
+This file can be as simple as an empty file if your rule requires no parameters, or it may require more complex markup to enable setting values for your new rule. Check out some of the rule partials provided with Spree in the backend sources.
+
+And finally, your new rule must have a name and description defined for the locale you will be using it in. For English, edit `config/locales/en.yml` and add the following to support our new example rule:
+
+```yaml
+en:
+  spree:
+    promotion_rule_types:
+      my_promotion_rule:
+        name: "My Promotion Rule"
+        description: "Rule to define my new promotion"
+```
+
+Restart your application. Once this rule has been registered, it will be available within Spree's admin interface.

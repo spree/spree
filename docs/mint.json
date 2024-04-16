@@ -2,17 +2,20 @@
   "$schema": "https://mintlify.com/schema.json",
   "name": "Spree Commerce Guides",
   "logo": {
-    "dark": "/logo/logo.svg",
-    "light": "/logo/logo.svg"
+    "dark": "/logo/logo_dark.png",
+    "light": "/logo/logo_light.png"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "colors": {
-    "primary": "#0085FF",
-    "light": "#0085FF",
-    "dark": "#0085FF",
+    "primary": "#0A2242",
+    "light": "#D7DFE9",
+    "dark": "#D7DFE9",
     "anchors": {
-      "from": "#0085FF",
-      "to": "#99CC01"
+      "from": "#0A2242",
+      "to": "#061932"
+    },
+    "background": {
+      "light": "#F3F3F3"
     }
   },
   "openapi": [
@@ -78,12 +81,20 @@
       "pages": [
         "developer/core-concepts/stores",
         "developer/core-concepts/orders",
+        "developer/core-concepts/users",
         "developer/core-concepts/products",
         "developer/core-concepts/inventory",
         "developer/core-concepts/payments",
         "developer/core-concepts/taxes",
         "developer/core-concepts/promotions",
-        "developer/core-concepts/shipments"
+        "developer/core-concepts/shipments",
+        "developer/core-concepts/addresses"
+      ]
+    },
+    {
+      "group": "Customization",
+      "pages": [
+        "developer/customization/promotions"
       ]
     },
 

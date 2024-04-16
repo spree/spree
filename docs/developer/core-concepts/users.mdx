@@ -1,0 +1,81 @@
+---
+title: Users
+---
+
+In your Spree application you will usually have 2 types of users:
+
+* Customers - who are the users who will be purchasing products.
+* Admins - who are the users who will be managing the Spree store
+
+<Info>
+If you're using [Spree Auth Devise](https://github.com/spree/spree_auth_devise) which comes with Spree Starter the default user class will be `Spree::User`
+</Info>
+
+Customers can have:
+
+* **Addresses**, both billing and shipping
+* **Orders** - a list of products that the user has purchased
+* **Credit Cards** - used on the checkout page to pay for the order
+* **Store Credits** - assigned by the store owners, to be used to purchase products
+* **Wishlists** - a list of products that the user has marked as a wishlist
+
+## User attributes
+
+Here's the list of attributes for the default `Spree::User` model:
+
+| Attribute         | Description                                                                 | Example Value       |
+|-------------------|-----------------------------------------------------------------------------|---------------------|
+| `email`           | The email address of the user.                                              | `user@example.com`  |
+| `ship_address_id` | References the default shipping address associated with the user.                   | `2`                 |
+| `bill_address_id` | References the default billing address associated with the user.                    | `3`                 |
+
+There will be lots more attributes provided by [Devise](https://github.com/plataformatec/devise) gem, but these are the most important ones for the user.
+
+## User roles
+
+Each User can have different roles attached, eg. `admin` (which will grant them access to the Spree admin).
+
+To attach a role to a user, you can use this code:
+
+```ruby
+user = Spree::User.find_by(email: "spree@example.com")
+role = Spree::Role.find_or_create_by(name: 'admin')
+
+user.spree_roles << role
+```
+
+## User methods
+
+`Spree::User` includes several [ActiveRecord concerns](https://api.rubyonrails.org/v7.1.3.2/classes/ActiveSupport/Concern.html), which provide additional methods for the user model.
+
+Some handy methods are listed below:
+
+```ruby Returns the last incomplete order for the given store.
+user.last_incomplete_spree_order(store)
+```
+
+```ruby Returns the total amount available store credits for the user in the given store.
+user.available_store_credits(store)
+```
+
+```ruby Returns the default Wishlist for the given Store.
+user.default_wishlist_for_store(store)
+```
+
+```ruby Returns a list of all active payment sources, e.g., credit cards that can be used on the checkout.
+user.payment_sources
+```
+
+## User Permissions
+
+Spree under the hood uses library called [CanCanCan](https://github.com/CanCanCommunity/cancancan) to handle authorization.
+
+More on permissions can be found in the [Customize Permissions guide](/developer/customization/permissions). We recommend you check this guide after reading all other Core Concepts.
+
+## Rolling out your own User class
+
+You can change the default User class from `Spree::User` to your own class. This comes in handy when you want to integrate Spree with a 3rd party authentication provider or you need to integrate Spree with your current Rails application.
+
+You can also use different user classes for customers and admins.
+
+More information can be found in the [Customize Authentication guide](/developer/customization/authentication).

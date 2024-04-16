@@ -3,28 +3,37 @@ title: Addresses
 
 ---
 
-## Address
-
 The `Address` model in the `spree` gem is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) extension.
 
 Addresses have the following attributes:
 
-* `firstname`: The first name for the person at this address.
-* `lastname`: The last name for the person at this address.
-* `address1`: The address's first line.
-* `address2`: The address's second line.
-* `city`: The city where the address is.
-* `zipcode`: The postal code.
-* `phone`: The phone number.
-* `state_name`: The name for the state.
-* `alternative_phone`: The alternative phone number.
-* `company`: A company name.
+| Name               | Description                           | Example Value       |
+|--------------------|---------------------------------------|---------------------|
+| `firstname`        | The first name for the person at this address. | John               |
+| `lastname`         | The last name for the person at this address.  | Doe                |
+| `address1`         | The address's first line.             | 123 Main St         |
+| `address2`         | (Optional) The address's second line.            | Apt 4               |
+| `city`             | The city where the address is.        | Springfield         |
+| `zipcode`          | The postal code.                      | 12345               |
+| `phone`            | The phone number.                     | (123) 456-7890      |
+| `state_name`       | The name for the state.               | California          |
+| `alternative_phone`| (Optional) The alternative phone number.         | (098) 765-4321      |
+| `company`          | (Optional) A company name.                       | Acme Corporation    |
+| `country_id`        | The ID for the country.                | 1                   |
+| `state_id`          | (Optional) The ID for the state.                  | 2                   |
+| `user_id`            | (Optional) The ID of the user this address is associated with. | 10                  |
+| `label`             | (Optional) A label to identify the address. | Home               |
 
-Addresses can also link to countries and states. An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
 
-## Users
 
-As of Spree 4.0 `Spree::User` can have multiple addresses and can manage them on the Checkout and Account page. Previously this feature was part of the [Spree Address Book](https://github.com/spree-contrib/spree_address_book) extension. Each `Spree::Address` object has a `user_id` column which links to the User.
+
+<Note>
+An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
+</Note>
+
+## Customers
+
+`Spree::User` can have multiple addresses and can manage them on the Checkout and Account page (or via API). Each `Spree::Address` object has a `user_id` column which links to the User.
 
 Additionally in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
 
