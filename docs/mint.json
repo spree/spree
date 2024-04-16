@@ -69,7 +69,8 @@
     {
       "group": "Getting started",
       "pages": [
-        "developer/getting-started/installation"
+        "developer/getting-started/installation",
+        "developer/getting-started/architecture"
       ]
     },
     {
@@ -81,7 +82,8 @@
         "developer/core-concepts/inventory",
         "developer/core-concepts/payments",
         "developer/core-concepts/taxes",
-        "developer/core-concepts/promotions"
+        "developer/core-concepts/promotions",
+        "developer/core-concepts/shipments"
       ]
     },
 

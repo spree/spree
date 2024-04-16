@@ -18,20 +18,32 @@ The Shipment model is used to track how items are delivered to the buyer.
 
 Shipments have the following attributes:
 
-* `number`: The unique identifier for this shipment. It begins with the letter H and ends in an 11-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Shipment.find_by(number: number)`.
-* `tracking`: The identifier given for the shipping provider \(i.e. FedEx, UPS, etc\).
-* `shipped_at`: The time when the shipment was shipped.
-* `state`: The current state of the shipment.
-* `stock_location_id`: The ID of the Stock Location where the items for this shipment will be sourced from.
+| Attribute          | Description                                                                                   | Example Value                |
+|--------------------|-----------------------------------------------------------------------------------------------|------------------------------|
+| `number`           | The unique identifier for this shipment. It begins with the letter H and ends in an 11-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Shipment.find_by(number: number)`. | H12345678901                 |
+| `tracking`         | The identifier given for the shipping provider \(i.e. FedEx, UPS, etc\).                      | 1Z999AA10123456784           |
+| `shipped_at`       | The time when the shipment was shipped.                                                      | 2021-07-21T14:36:00.000Z     |
+| `state`            | The current state of the shipment.                                                            | `shipped`                      |
+| `stock_location_id`| The ID of the Stock Location where the items for this shipment will be sourced from.         | 3                            |
 
 A shipment can go through many different states, as illustrated below.
 
 An explanation of the different states:
 
-* `pending`: The shipment has backordered inventory units and/or the order is not paid for.
-* `ready`: The shipment has _no_ backordered inventory units and the order is paid for.
-* `shipped`: The shipment is on its way to the buyer.
-* `canceled`: When an order is cancelled, all of its shipments will also be cancelled. When this happens, all items in the shipment will be restocked. If an order is "resumed", then the shipment will also be resumed.
+<Steps>
+  <Step title="pending">
+  The shipment has backordered inventory units and/or the order is not paid for.
+  </Step>
+  <Step title="ready">
+  The shipment has _no_ backordered inventory units and the order is paid for.
+  </Step>
+  <Step title="shipped">
+  The shipment is on its way to the buyer.
+  </Step>
+  <Step title="canceled">
+  When an order is cancelled, all of its shipments will also be cancelled. When this happens, all items in the shipment will be restocked. If an order is "resumed", then the shipment will also be resumed.
+  </Step>
+</Steps>
 
 Explaining each piece of the shipment world inside of Spree separately and how each piece fits together can be a cumbersome task. Fortunately, using a few simple examples makes it much easier to grasp. In that spirit, the examples are shown first in this guide.
 
@@ -218,139 +230,6 @@ Each product has a `ShippingCategory`, which adds product-specific information t
 
 Variants can be specified with weight and dimension information. Some shipping method calculators will use this information if it is present.
 
-## Shipping Instructions
-
-The option `Spree::Config[:shipping_instructions]` controls collection of additional shipping instructions. This is turned off \(set to `false`\) by default. If an order has any shipping instructions attached, they will be shown in an order's shipment admin page and can also be edited at that stage. Observe that instructions are currently attached to the _order_ and not to actual _shipments_.
-
-## The Active Shipping Extension
-
-The popular `Spree Active Shipping` extension harnesses the `active_shipping` gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
-
-To install the `spree-active-shipping` extension add the following to your `Gemfile`:
-
-```ruby
-gem 'spree_active_shipping'
-gem 'active_shipping', git: 'git://github.com/Shopify/active_shipping.git'
-```
-
-and run `bundle install` from the command line.
-
-As an example of how to use the [Spree Active Shipping extension](https://github.com/spree/spree_active_shipping) we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
-
-For each USPS delivery service you want to offer \(e.g. "USPS Media Mail"\), you will need to create a `ShippingMethod` with a descriptive name \(`Configuration` -&gt; `Shipping Methods`\) and a `Calculator` \(registered in the `active_shipping` extension\) that ties the delivery service and the shipping method together.
-
-### Default Calculators
-
-The `spree_active_shipping` extension comes with several pre-configured calculators out of the box. For example, here are the ones provided for the USPS carrier:
-
-```ruby
-def activate
-  [
-    #... calculators for Fedex and UPS not shown ...
-    Calculator::Usps::MediaMail,
-    Calculator::Usps::ExpressMail,
-    Calculator::Usps::PriorityMail,
-    Calculator::Usps::PriorityMailSmallFlatRateBox,
-    Calculator::Usps::PriorityMailRegularMediumFlatRateBoxes,
-    Calculator::Usps::PriorityMailLargeFlatRateBox
-  ].each(&:register)
-end
-```
-
-Each USPS delivery service you want to make available at checkout has to be associated with a corresponding shipping method. Which shipping methods are made available at checkout is ultimately determined by the zone of the customer's shipping address. The USPS' basic shipping categories are domestic and international, so we'll set up zones to mimic this distinction. We need to set up two zones then - a domestic one, consisting of the USA and its territories; and an international one, consisting of all other countries.
-
-With zones in place, we can now start adding some shipping methods through the admin panel. The only other essential requirement to calculate the shipping total at checkout is that each product and variant be assigned a weight.
-
-The `spree_active_shipping` gem needs some configuration variables set in order to consume the carrier web services.
-
-```ruby
-  # these can be set in an initializer in your site extension
-  Spree::ActiveShipping::Config.set(usps_login: "YOUR_USPS_LOGIN")
-  Spree::ActiveShipping::Config.set(fedex_login: "YOUR_FEDEX_LOGIN")
-  Spree::ActiveShipping::Config.set(fedex_password: "YOUR_FEDEX_PASSWORD")
-  Spree::ActiveShipping::Config.set(fedex_account: "YOUR_FEDEX_ACCOUNT")
-  Spree::ActiveShipping::Config.set(fedex_key: "YOUR_FEDEX_KEY")
-```
-
-### Adding Additional Calculators
-
-Additional delivery services that are not pre-configured as a calculator in the `spree_active_shipping` extension can be easily added. Say, for example, you need First Class International Parcels via the US Postal Service.
-
-First, create a calculator class that inherits from `Calculator::Usps::Base` and implements a description class method:
-
-```ruby
-class Calculator::Usps::FirstClassMailInternationalParcels < Calculator::Usps::Base
-  def self.description
-    "USPS First-Class Mail International Package"
-  end
-end
-```
-
- Note that, unlike calculators that you write yourself, these calculators do not have to implement a \`compute\` instance method that returns a shipping amount. The superclasses take care of that requirement.
-
-There is one gotcha to bear in mind: the string returned by the `description` method must _exactly_ match the name of the USPS delivery service. To determine the exact spelling of the delivery service, you'll need to examine what gets returned from the API:
-
-```ruby
-class Calculator::ActiveShipping < Calculator
-  def compute(line_items)
-    #....
-    rates = retrieve_rates(origin, destination, packages(order))
-    # the key of this hash is the name you need to match
-    # raise rates.inspect
-
-    return nil unless rates
-    rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
-    return nil unless rate
-    # divide by 100 since active_shipping rates are expressed as cents
-
-    return rate/100.0
-  end
-
-  def retrieve_rates(origin, destination, packages)
-    #....
-    # carrier is an instance of ActiveMerchant::Shipping::USPS
-    response = carrier.find_rates(origin, destination, packages)
-    # turn this beastly array into a nice little hash
-    h = Hash[*response.rates.collect { |rate| [rate.service_name, rate.price] }.flatten]
-    #....
-  end
-end
-```
-
-As you can see in the code above, the `spree_active_shipping` gem returns an array of services with their corresponding prices, which the `retrieve_rates` method converts into a hash. Below is what would get returned for an order with an international destination:
-
-```ruby
-{
-  "USPS Priority Mail International Flat Rate Envelope"=>1345,
-  "USPS First-Class Mail International Large Envelope"=>376,
-  "USPS USPS GXG Envelopes"=>4295,
-  "USPS Express Mail International Flat Rate Envelope"=>2895,
-  "USPS First-Class Mail International Package"=>396,
-  "USPS Priority Mail International Medium Flat Rate Box"=>4345,
-  "USPS Priority Mail International"=>2800,
-  "USPS Priority Mail International Large Flat Rate Box"=>5595,
-  "USPS Global Express Guaranteed Non-Document Non-Rectangular"=>4295,
-  "USPS Global Express Guaranteed Non-Document Rectangular"=>4295,
-  "USPS Global Express Guaranteed (GXG)"=>4295,
-  "USPS Express Mail International"=>2895,
-  "USPS Priority Mail International Small Flat Rate Box"=>1345
-}
-```
-
-From all of the viable shipping services in this hash, the `compute` method selects the one that matches the description of the calculator. At this point, an optional flat handling fee \(set via preferences\) can be added:
-
-```ruby
-rate = rates[self.description].to_f + (Spree::ActiveShipping::Config[:handling_fee].to_f || 0.0)
-```
-
-Finally, don't forget to register the calculator you added. In extensions, this is accomplished with the `activate` method:
-
-```ruby
-def activate
-  Calculator::Usps::FirstClassMailInternationalParcels.register
-end
-```
-
 ## Filtering Shipping Methods On Criteria Other Than the Zone
 
 Ordinarily, it is the zone of the shipping address that determines which shipping methods are displayed to a customer at checkout. Here is how the availability of a shipping method is determined:
@@ -430,8 +309,14 @@ Spree comes with two default splitters which are run in sequence. This means tha
 
 Let's take a look at what the default splitters do:
 
-* **Shipping Category Splitter**: Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
-* **Weight Splitter**: Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing `Spree::Stock::Splitter::Weight.threshold` \(defaults to `150`\) in an initializer.
+<AccordionGroup>
+  <Accordion title="Shipping Category Splitter">
+    Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
+  </Accordion>
+  <Accordion title="Weight Splitter">
+    Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing <code>Spree::Stock::Splitter::Weight.threshold</code> (defaults to <code>150</code>) in an initializer.
+  </Accordion>
+</AccordionGroup>
 
 #### Custom Splitters
 
@@ -482,20 +367,18 @@ The `Adjuster` visits each package in an order and ensures the correct number of
 2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/my_store/spree/stock/coordinator_decorator.rb`:
 
 ```ruby
-module MyStore
-  module Spree
-    module Stock
-      module CoordinatorDecorator do
-        def prioritize_packages(packages)
-          prioritizer = Prioritizer.new(order, packages, ::Spree::Stock::CustomAdjuster)
-          prioritizer.prioritized_packages
-        end
+module Spree
+  module Stock
+    module CoordinatorDecorator do
+      def prioritize_packages(packages)
+        prioritizer = Prioritizer.new(order, packages, ::Spree::Stock::CustomAdjuster)
+        prioritizer.prioritized_packages
       end
     end
+
+    Coordinator.prepend(CoordinatorDecorator)
   end
 end
-
-::Spree::Stock::Coordinator.prepend(MyStore::Spree::Stock::CoordinatorDecorator)
 ```
 
 ### The Estimator

@@ -153,7 +153,7 @@ If you're using the [Address Book](https://github.com/spree-contrib/spree_addres
 
 Rails 6.0 ships with a [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
 
-Old decorator syntax - `app/models/spree/order_decorator.rb`
+Old decorator syntax:
 
 ```ruby
 Spree::Order.class_eval do
@@ -165,24 +165,22 @@ Spree::Order.class_eval do
 end
 ```
 
-New decorator syntax - `app/models/my_store/spree/order_decorator.rb`
+Replaced with:
 
 ```ruby
-module MyStore
-  module Spree
-    module OrderDecorator
-      def self.prepended(base)
-        base.has_many :new_custom_model
-      end
+module Spree
+  module OrderDecorator
+    def self.prepended(base)
+      base.has_many :new_custom_model
+    end
 
-      def some_method
-        # ...
-      end
+    def some_method
+      # ...
     end
   end
-end
 
-::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
+  Order.prepend(OrderDecorator)
+end
 ```
 
 When migrating a class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example:
