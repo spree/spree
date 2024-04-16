@@ -1,10 +1,7 @@
 ---
 title: Creating an Extension
-section: contributing
-order: 1
+description: Learn how to create a Spree extension.
 ---
-
-# Creating an extension
 
 ## Getting Started
 
@@ -12,7 +9,7 @@ Let's build a simple extension. Suppose we want the ability to mark certain prod
 
 Before we start, let's make sure we have Spree CLI installed by running:
 
-```ruby
+```bash
 gem install spree_cmd
 ```
 
@@ -41,14 +38,12 @@ bundle exec rails g migration add_sale_price_to_spree_variants sale_price:decima
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 
 ```ruby
-class AddSalePriceToSpreeVariants < SpreeExtension::Migration
+class AddSalePriceToSpreeVariants < ActiveRecord::Migration[7.1]
   def change
     add_column :spree_variants, :sale_price, :decimal, precision: 8, scale: 2
   end
 end
 ```
-
- We're not inheriting directly from ActiveRecord::Migration, instead we're using \[SpreeExtension::Migration\]\(https://github.com/spree-contrib/spree\_extension/blob/master/lib/spree\_extension/migration.rb\) to support multiple Rails versions.
 
 ## Adding Our Extension to the Spree Application
 
@@ -125,7 +120,7 @@ bundle exec rails c
 
 Now, follow the steps I take in selecting a product and updating its master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
 
-```text
+```ruby
 > product = Spree::Product.first
 => #<Spree::Product id: 107377505, name: "Spree Bag", description: "Lorem ipsum dolor sit amet, consectetuer adipiscing...", available_on: "2013-02-13 18:30:16", deleted_at: nil, permalink: "spree-bag", meta_description: nil, meta_keywords: nil, tax_category_id: 25484906, shipping_category_id: nil, count_on_hand: 10, created_at: "2013-02-13 18:30:16", updated_at: "2013-02-13 18:30:16", on_demand: false>
 
@@ -234,4 +229,3 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 ## Summary
 
 In this tutorial, you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
-
