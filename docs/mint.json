@@ -3,16 +3,17 @@
   "name": "Spree Commerce Guides",
   "logo": {
     "dark": "/logo/logo_dark.png",
-    "light": "/logo/logo_light.png"
+    "light": "/logo/logo_light.png",
+    "href": "https://spreecommerce.org"
   },
   "favicon": "/favicon.png",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
-    "dark": "#D7DFE9",
+    "dark": "#0A2242",
     "anchors": {
-      "from": "#0A2242",
-      "to": "#061932"
+      "from": "#233855",
+      "to": "#233855"
     },
     "background": {
       "light": "#F3F3F3"
@@ -29,8 +30,9 @@
     }
   ],
   "topbarCtaButton": {
-    "type": "github",
-    "url": "https://github.com/spree/spree"
+    "type": "link",
+    "name": "Get started",
+    "url": "https://spreecommerce.org/contact/"
   },
   "tabs": [
     {
@@ -68,10 +70,10 @@
     }
   ],
   "navigation": [
-
     {
       "group": "Getting started",
       "pages": [
+        "developer/getting-started/quickstart",
         "developer/getting-started/installation",
         "developer/getting-started/architecture"
       ]
