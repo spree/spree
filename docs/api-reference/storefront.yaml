@@ -1840,8 +1840,7 @@ components:
       scheme: bearer
       description: |-
         User token to authorize Cart and Checkout requests.
-
-        You can obtain it from [/spree_oauth/token](../../oauth/index.yml) endpoint.
+        
         It is required to associate Cart with the User.
     orderToken:
       type: apiKey

@@ -18,75 +18,72 @@ Welcome to the Spree Commerce documentation guide. Follow the instructions below
 
 ### 1. Installing Spree
 
-Spree Commerce are rendered from MDX files and configurations defined in our [starter template](https://github.com/mintlify/starter). We use Github to integrate your docs with your code, and make source control effortless.
-
 <AccordionGroup>
-  <Accordion icon="github" title="Creating Your Documentation Repository">
+  <Accordion icon="github" title="Creating Your Spree Repository">
 
-    If you've created a docs repo in our onboarding, this step is complete. You can find your docs repository on your Mintlify [dashboard](https://dashboard.mintlify.com).
+    To create your Spree store repository please, follow these instructions:
+    
+    1. Use [Spree starter template](https://github.com/new?template_name=spree_starter&template_owner=spree) to create your own repository
 
-    To create your docs repo without logging into Github, follow these instructions:
-    1. Clone our [starter template](https://github.com/mintlify/starter) into a new public repo. You can make the repo private later.
-    2. [Get in touch](mailto:support@mintlify.com) with our team to deploy your repo.
-
-    ![Starter Template](https://mintlify.s3-us-west-1.amazonaws.com/mintlify/images/starter-template.png)
+    ![Starter Template](/images/starter_template.png)
 
   </Accordion>
 
-  <Accordion icon="message-bot" title="Installing Our Github App">
-  
-    The next step is to install our Github app. This ensures that your updates are automatically deployed when you push changes. You can find the installation link in the [dashboard](https://dashboard.mintlify.com/settings), on the Settings page. Upon successful installation, a check mark will appear next to the commit hash of the repository.
+  <Accordion icon="rectangle-terminal" title="Setting up Your Development Environment">
 
-    ![Github Bot Verification](https://mintlify.s3-us-west-1.amazonaws.com/mintlify/images/github-bot-verification.png)
+    <Note>
+      If you're on Windows remember to [install the Linux subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) before proceeding.
+    </Note>
 
-  </Accordion>
-
-</AccordionGroup>
-
-### 2. Updating Your Docs
-
-Mintlify enables you to easily customize the style, structure, and content of your docs.
-
-<AccordionGroup>
-  <Accordion icon="rectangle-terminal" title="Setting up Your Editing Environment">
-  
-    **Edit Locally (Recommended for Developers):**
-
-    1. Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+    1. Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Ruby](https://www.ruby-lang.org/en/installation/)
     2. Once git is installed, clone your docs repository using `git clone <your-repo>`. If you haven't set it up yet, now would be a good time to do so with these [SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
-    3. Use your favorite IDE to open the repository.
-    4. Install our Mintlify CLI to preview changes with `npm i -g mintlify`. Learn more about this in our [development guide](/development).
+    3. Open a terminal and go to the repository directory
+    4. Run setup commands:
 
-    **Editing Online:**
+        ```bash
+        bin/setup
+        ```
+    5. And finally start the development server with:
 
-    Here are two ways to edit your repository online:
+        ```bash
+        bin/rails s
+        ```
+  </Accordion>  
 
-    * To edit a single file, locate and click the edit button. This will open a web editor right on Github.
-      ![Edit Online](https://mintlify.s3-us-west-1.amazonaws.com/mintlify/images/edit-online.png)
-    * For a more versatile online experience, open your git repository in Github's [github.dev](https://github.dev) online IDE. Simply replace `github.com` in your repo URL with `github.dev`. For example, use `github.dev/mintlify/docs` instead of `github.com/mintlify/docs`.
+  <Accordion icon="box" title="Adding sample data">
 
-  </Accordion>
+    To add sample data to your store, run:
 
-  <Accordion icon="palette" title="Customizing Your Brand (mint.json)">
-  
-    Easily customize colors, logos and buttons among other configurations in our `mint.json` file. Start with these basic configurations:
-
-    ```json
-    "name": "Your Company"
-    "logo": {
-      "light": "/logo/light.svg",
-      "dark": "/logo/dark.svg",
-      "href": "https://yourcompany.com"
-    },
-    "favicon": "/favicon.svg",
-    "colors": {
-      "primary": "#2AB673",
-      "light": "#55D799",
-      "dark": "#117866",
-    },
+    ```bash
+    bin/rake spree_sample:load
     ```
 
-    A full list of supported configurations can be found [here](/settings/global).
+    This will add a some products, categories, and will setup a checkout flow to your store.
+  </Accordion>
+</AccordionGroup>
+
+### 2. Exploring Your Store
+
+Spree enables you to easily customize your store. You can change the look and feel, checkout flow, add your own business logic, etc.
+
+<AccordionGroup>
+  <Accordion icon="key" title="Logging into the Admin Dashboard">
+    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
+      - login: `spree@example.com`
+      - password: `spree123`
+
+    Upon successful authentication, you should see the admin screen:
+
+    ![](/images/admin\_panel\_978-2x.jpg)
+
+    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
+  </Accordion>
+
+  <Accordion icon="palette" title="Browsing Storefront">
+  
+    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+    
+    You can later customize this Storefront or choose another one if you prefer Next.js or Vue.js.
 
   </Accordion>
 
@@ -115,9 +112,9 @@ Mintlify enables you to easily customize the style, structure, and content of yo
   </Accordion>
 </AccordionGroup>
 
-### 3. Supercharging Your Docs
+### 3. Deploying Your Store
 
-Mintlify supports an array of advanced features like API reference docs, analytics, and versioning to accommodate any of your documentation needs.
+Spree can be deployed on any platform - cloud, bare-metal, Docker, Kubernetes, etc. We've provided a [guide](/deployment/overview) to help you get started.
 
 <AccordionGroup>
   <Accordion icon="code-branch" title="Generating API References">
@@ -138,13 +135,13 @@ Mintlify supports an array of advanced features like API reference docs, analyti
 
     3. Finally, include the generated endpoint MDX files to your `mint.json` under `navigation`.
 
-    For a complete guide on using Mintlify with OpenAPI, check out [this guide](/api-playground/openapi/setup). [This guide](/api-playground/openapi/writing-openapi) explains how to configure your API authentication methods. For manual API references definition, explore [our syntax](/api-playground/overview).
+    For a complete guide on using Spree with OpenAPI, check out [this guide](/api-playground/openapi/setup). [This guide](/api-playground/openapi/writing-openapi) explains how to configure your API authentication methods. For manual API references definition, explore [our syntax](/api-playground/overview).
 
   </Accordion>
 
   <Accordion icon="star" title="Adding a Custom Domain">
 
-    Integrate your docs into your website by hosting them on a custom domain. This is included even in the free Mintlify plan. Navigate to your [dashboard settings](https://www.dashboard.mintlify.com/settings) to add a custom domain.
+    Integrate your docs into your website by hosting them on a custom domain. This is included even in the free Spree plan. Navigate to your [dashboard settings](https://www.dashboard.mintlify.com/settings) to add a custom domain.
 
     ![Custom Domain](/images/custom-domain.png)
 

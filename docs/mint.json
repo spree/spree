@@ -19,6 +19,9 @@
       "light": "#F3F3F3"
     }
   },
+  "api": {
+    "baseUrl": ["http://localhost:3000", "https://demo.spreecommerce.org"]
+  },
   "openapi": [
     "/api-reference/storefront.yaml",
     "/api-reference/platform.yaml"
@@ -73,14 +76,13 @@
     {
       "group": "Getting started",
       "pages": [
-        "developer/getting-started/quickstart",
-        "developer/getting-started/installation",
-        "developer/getting-started/architecture"
+        "developer/getting-started/quickstart"
       ]
     },
     {
       "group": "Core Concepts",
       "pages": [
+        "developer/core-concepts/architecture",
         "developer/core-concepts/stores",
         "developer/core-concepts/orders",
         "developer/core-concepts/users",
@@ -103,8 +105,8 @@
     {
       "group": "Extensions",
       "pages": [
-        "developer/extensions/extensions",
-        "developer/extensions/creating_an_extension"
+        "developer/extensions/extensions-list",
+        "developer/extensions/creating-an-extension"
       ]
     },
 
