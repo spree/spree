@@ -96,17 +96,17 @@
       ]
     },
     {
-      "group": "Customization",
+      "group": "Extending Spree",
       "pages": [
-        "developer/customization/promotions"
+        "developer/extending-spree/promotions",
+        "developer/extending-spree/3rd-party-extensions"
       ]
     },
 
     {
-      "group": "Extensions",
+      "group": "Contributing",
       "pages": [
-        "developer/extensions/extensions-list",
-        "developer/extensions/creating-an-extension"
+        "developer/contributing/creating-an-extension"
       ]
     },
 

@@ -3,6 +3,8 @@ title: Quickstart
 description: 'Start building awesome e-commerce applications with Spree'
 ---
 
+<Frame>
+
 <img
   className="block dark:hidden"
   src="/images/spree_header_978-2x.png"
@@ -11,6 +13,7 @@ description: 'Start building awesome e-commerce applications with Spree'
   className="hidden dark:block"
   src="/images/spree_header_978-2x.png"
 />
+</Frame>
 
 ## Getting Started with Spree Commerce
 
@@ -23,9 +26,7 @@ Welcome to the Spree Commerce documentation guide. Follow the instructions below
 
     To create your Spree store repository please, follow these instructions:
     
-    1. Use [Spree starter template](https://github.com/new?template_name=spree_starter&template_owner=spree) to create your own repository
-
-    ![Starter Template](/images/starter_template.png)
+    [Use Spree starter template](https://github.com/new?template_name=spree_starter&template_owner=spree) to create your own repository
 
   </Accordion>
 
@@ -36,7 +37,16 @@ Welcome to the Spree Commerce documentation guide. Follow the instructions below
     </Note>
 
     1. Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Ruby](https://www.ruby-lang.org/en/installation/)
-    2. Once git is installed, clone your docs repository using `git clone <your-repo>`. If you haven't set it up yet, now would be a good time to do so with these [SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
+    2. Once git is installed, clone your docs repository using 
+    
+        ```basgh
+        git clone <your-repo>
+        ```
+        
+        <Info>
+        If you haven't set it up yet, now would be a good time to do so with these [SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+        </Info>
+
     3. Open a terminal and go to the repository directory
     4. Run setup commands:
 
@@ -64,7 +74,7 @@ Welcome to the Spree Commerce documentation guide. Follow the instructions below
 
 ### 2. Exploring Your Store
 
-Spree enables you to easily customize your store. You can change the look and feel, checkout flow, add your own business logic, etc.
+Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
 
 <AccordionGroup>
   <Accordion icon="key" title="Logging into the Admin Dashboard">
@@ -84,72 +94,6 @@ Spree enables you to easily customize your store. You can change the look and fe
     Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
     
     You can later customize this Storefront or choose another one if you prefer Next.js or Vue.js.
-
-  </Accordion>
-
-  <Accordion icon="pencil" title="Adding Content">
-
-    Add content with simple MDX files. Initiate your pages with this template:
-
-    ```md
-    ---
-    title: "Page Title"
-    sidebarTitle: "Sidebar title (optional - if different from page title)"
-    description: "Subtitle (optional)"
-    ---
-    ```
-
-    Learn more about adding images, tables, lists, and more using the [MDX syntax](/content/text). We also offer a wide array of components which are listed [here](/content/components).
-
-  </Accordion>
-
-  <Accordion icon="rocket" title="Pushing Your Changes">
-
-    Once ready, commit and push your changes to update your docs site. Here is a [guide](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push) on how to do that. If the Github app is unable to successfully deploy your changes, you can manually update your docs through our [dashboard](https://dashboard.mintlify.com).
-
-    ![Manual Update](https://mintlify.s3-us-west-1.amazonaws.com/mintlify/images/manual-update.png)
-
-  </Accordion>
-</AccordionGroup>
-
-### 3. Deploying Your Store
-
-Spree can be deployed on any platform - cloud, bare-metal, Docker, Kubernetes, etc. We've provided a [guide](/deployment/overview) to help you get started.
-
-<AccordionGroup>
-  <Accordion icon="code-branch" title="Generating API References">
-
-    You can easily set up your API references using an OpenAPI document.
-
-    1. Add your `openapi.yaml` or `openapi.json` file into your docs repository or define the `openapi` field in `mint.json` with a URL.
-
-    ```json
-    "openapi": "link-to-your-openapi-file"
-    ```
-
-    2. Use our [scraper](/api-playground/openapi/setup#autogenerate-files-recommended) to autogenerate your OpenAPI endpoints files as:
-
-    ```bash
-    npx @mintlify/scraping@latest openapi-file <path-or-url-to-openapi-file>
-    ```
-
-    3. Finally, include the generated endpoint MDX files to your `mint.json` under `navigation`.
-
-    For a complete guide on using Spree with OpenAPI, check out [this guide](/api-playground/openapi/setup). [This guide](/api-playground/openapi/writing-openapi) explains how to configure your API authentication methods. For manual API references definition, explore [our syntax](/api-playground/overview).
-
-  </Accordion>
-
-  <Accordion icon="star" title="Adding a Custom Domain">
-
-    Integrate your docs into your website by hosting them on a custom domain. This is included even in the free Spree plan. Navigate to your [dashboard settings](https://www.dashboard.mintlify.com/settings) to add a custom domain.
-
-    ![Custom Domain](/images/custom-domain.png)
-
-  </Accordion>
-
-  <Accordion icon="chart-simple" title="Adding Analytics">
-
-    Our in-house analytics give you insights into page views, search analytics, session recordings and more. Access these on your [dashboard](https://dashboard.mintlify.com/analytics). We also support integrations with a range of analytics providers. You can find the list of providers [here](/integrations/analytics/overview).
 
   </Accordion>
 </AccordionGroup>
