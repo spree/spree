@@ -5,6 +5,38 @@ description: Learn how to authenticate requests to the Storefront API.
 
 Storefront API requires authorization only for certain actions associated with user account (e.g. updating saved addresses) or manipulating cart and checkout.
 
+## For guest users
+
+### Using X-Spree-Order-Token header
+
+[Cart](/api-reference/storefront/cart) and [Checkout](/api-reference/storefront/checkout) endpoints paths also allow interactions without the bearer token to allow creating and managing guest checkouts.
+
+When you first create a cart via:
+
+```bash
+curl --request POST \
+  --url 'https://demo.spreecommerce.org/api/v2/storefront/cart?fields%5Bcart%5D=number%2Ctoken' \
+  --header 'Content-Type: application/vnd.api+json'
+```
+
+You'll receive a response containing an empty cart. This response also contains a `data.token` attribute.
+
+```json
+{
+  "data": {
+    "id": "114",
+    "type": "cart",
+    "attributes": {
+      "number": "R522550303",
+      "token": "NswjLVjZOw4OpEm1yWqlJg1713367317414"
+    },
+    "relationships": {}
+  }
+}
+```
+
+You can store this token in the frontend session (eg. Session Storage or a cookie) and pass it in a `X-Spree-Order-Token: {token}` header.
+
 ## For signed in users
 
 For users who have an account in your store, you will need to generate oAuth tokens to authenticate requests to endpoints such as [Account](/api-reference/storefront/account), [Cart](/api-reference/storefront/cart) and [Checkout](/api-reference/storefront/checkout).
@@ -54,35 +86,3 @@ On a success, you'll receive a new bearer token to use when accessing the API, e
   "created_at": 1713367950
 }
 ```
-
-## For guest users
-
-### Using X-Spree-Order-Token header
-
-[Cart](/api-reference/storefront/cart) and [Checkout](/api-reference/storefront/checkout) endpoints paths also allow interactions without the bearer token to allow creating and managing guest checkouts.
-
-When you first create a cart via:
-
-```bash
-curl --request POST \
-  --url 'https://demo.spreecommerce.org/api/v2/storefront/cart?fields%5Bcart%5D=number%2Ctoken' \
-  --header 'Content-Type: application/vnd.api+json'
-```
-
-You'll receive a response containing an empty cart. This response also contains a `data.token` attribute.
-
-```json
-{
-  "data": {
-    "id": "114",
-    "type": "cart",
-    "attributes": {
-      "number": "R522550303",
-      "token": "NswjLVjZOw4OpEm1yWqlJg1713367317414"
-    },
-    "relationships": {}
-  }
-}
-```
-
-You can store this token in the frontend session (eg. Session Storage or a cookie) and pass it in a `X-Spree-Order-Token: {token}` header.

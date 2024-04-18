@@ -95,6 +95,16 @@
         "developer/core-concepts/addresses"
       ]
     },
+
+    {
+      "group": "Customizing Spree",
+      "pages": [
+        "developer/customization/quickstart",
+        "developer/customization/authentication",
+        "developer/customization/permissions"
+      ]
+    },
+
     {
       "group": "Extending Spree",
       "pages": [
@@ -106,6 +116,7 @@
     {
       "group": "Contributing",
       "pages": [
+        "developer/contributing/quickstart",
         "developer/contributing/creating-an-extension"
       ]
     },

@@ -10,8 +10,6 @@ description: >-
 
 Spree API is written in Ruby on Rails framework and is mounted into a Rails application as [a Rails Engine](https://guides.rubyonrails.org/engines.html).
 
-You don't need to be a Rails developer to work with Spree. You can install Spree via Spree Starter or Docker and not touch the underlying codebase at all and work only with the APIs.
-
 ### Spree namespace
 
 All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/master/core/app/models/spree/product.rb).
@@ -66,7 +64,7 @@ By default, Sandbox uses the **SQLite** database. But you can switch to **Postgr
 DB=postgres bin/sandbox.sh
 ```
 
-When developing [Spree Dashboard](https://github.com/spree/spree\_backend) you can also pass `SPREE_`DASHBOARD`_PATH`
+When developing [Spree Admin Dashboard](https://github.com/spree/spree\_backend) you can also pass `SPREE_DASHBOARD_PATH`
 
 ```bash
 SPREE_DASHBOARD_PATH=../../spree_backend bin/sandbox.sh

@@ -4,20 +4,30 @@ title: Users
 
 In your Spree application you will usually have 2 types of users:
 
-* Customers - who are the users who will be purchasing products.
+* Customers - who are the users who will be purchasing products
 * Admins - who are the users who will be managing the Spree store
-
-<Info>
-If you're using [Spree Auth Devise](https://github.com/spree/spree_auth_devise) which comes with Spree Starter the default user class will be `Spree::User`
-</Info>
 
 Customers can have:
 
-* **Addresses**, both billing and shipping
-* **Orders** - a list of products that the user has purchased
+* **[Addresses](addresses)**, both billing and shipping
+* **[Orders](orders)** - a list of products that the user has purchased
 * **Credit Cards** - used on the checkout page to pay for the order
 * **Store Credits** - assigned by the store owners, to be used to purchase products
 * **Wishlists** - a list of products that the user has marked as a wishlist
+
+## User model
+
+The default user class is `Spree::User` (which is provided by the [Auth Devise](https://github.com/spree/spree_auth_devise) extension).
+
+You should however reference Users with an universal `Spree.user_class` to avoid any potential issues, eg.
+
+```ruby
+Spree.user_class.find_by(email: "spree@example.com")
+```
+
+<Info>
+You can use your own User class. More on this in the [Customize Authentication guide](/developer/customization/authentication).
+</Info>
 
 ## User attributes
 
@@ -72,10 +82,10 @@ Spree under the hood uses library called [CanCanCan](https://github.com/CanCanCo
 
 More on permissions can be found in the [Customize Permissions guide](/developer/customization/permissions). We recommend you check this guide after reading all other Core Concepts.
 
-## Rolling out your own User class
+## Current user
 
-You can change the default User class from `Spree::User` to your own class. This comes in handy when you want to integrate Spree with a 3rd party authentication provider or you need to integrate Spree with your current Rails application.
+In all Spree controllers or any controller inheriting from `Spree::BaseController`, you can access the current user with `spree_current_user` method.
 
-You can also use different user classes for customers and admins.
-
-More information can be found in the [Customize Authentication guide](/developer/customization/authentication).
+```ruby
+spree_current_user
+```

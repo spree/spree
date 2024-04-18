@@ -1,14 +1,7 @@
 ---
-title: Updating Extensions for Spree 4
-section: contributing
-order: 2
+title: Updating Extensions
+description: How to upgrade your Spree extension to work with Spree 4
 ---
-
-# Upgrading extensions
-
-## Overview
-
-This guide covers the process of migrating an old Spree 2/3 extension to Spree 4.
 
 ## Zeitwerk compatibility
 
@@ -48,22 +41,6 @@ module YourExtensionName::OrderDecorator
 end
 
 ::Spree::Order.prepend(YourExtensionName::OrderDecorator)
-```
-
-## Travis CI configuration
-
-You can always find up-to-date Travis CI config here: [https://github.com/spree/spree/blob/master/cmd/lib/spree\_cmd/templates/extension/travis.yml](https://github.com/spree/spree/blob/master/cmd/lib/spree_cmd/templates/extension/travis.yml) For the rationale of the changes please look at the blame view: [https://github.com/spree/spree/blame/master/cmd/lib/spree\_cmd/templates/extension/travis.yml](https://github.com/spree/spree/blame/master/cmd/lib/spree_cmd/templates/extension/travis.yml)
-
-## Appraisals config
-
-You can always find up-to-date Appraisals config here: [https://github.com/spree/spree/blob/master/cmd/lib/spree\_cmd/templates/extension/Appraisals](https://github.com/spree/spree/blob/master/cmd/lib/spree_cmd/templates/extension/Appraisals)
-
-For the rationale of the changes please look at the blame view: [https://github.com/spree/spree/blame/master/cmd/lib/spree\_cmd/templates/extension/Appraisals](https://github.com/spree/spree/blame/master/cmd/lib/spree_cmd/templates/extension/Appraisals)
-
-After each change please remember to re-generate gemfiles by running:
-
-```bash
-bundle exec appraisal generate --travis
 ```
 
 ## Fixing Deface Overrides

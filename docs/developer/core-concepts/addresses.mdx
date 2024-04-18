@@ -3,7 +3,7 @@ title: Addresses
 
 ---
 
-The `Address` model in the `spree` gem is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) extension.
+The `Spree::Address` model is used to track address information, mainly for orders. Address information can also be tied to the `Spree.user_class` which by default is `Spree::User` ([More on Users](users)).
 
 Addresses have the following attributes:
 
@@ -55,7 +55,18 @@ In addition to tax zones, orders also have shipping methods. These are provided 
 
 Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.
 
+Country data is provided by [Carmen gem](https://github.com/carmen-ruby/carmen) which is a library for manipulating country data.
+
+`Spree::Country` model includes these attributes:
+
+| Name               | Description                           | Example Value       |
+|--------------------|---------------------------------------|---------------------|
+| `iso_name`        | The ISO 3166-1 alpha-2 code for the country. | US                  |
+| `iso`              | The ISO 3166-1 alpha-3 code for the country. | USA                |
+| `iso_numeric`      | The ISO 3166-1 numeric code for the country. | 840                |
+| `name`             | The name of the country.               | United States      |
+
 ## States
 
-States within Spree are used to scope address data slightly more than country. States are useful for tax purposes, as different states in a country may impose different tax rates on different products. In addition to this, different states may cause different tax rates and shipping methods to be used for an order, similar to how countries affect it also.
+States, or regions, provinces, or districts are used to scope address data slightly more than country. States are useful for tax purposes, as different states in a country may impose different tax rates on different products. In addition to this, different states may cause different tax rates and shipping methods to be used for an order, similar to how countries affect it also.
 

@@ -1,6 +1,6 @@
 # [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 
-[![Spree Commerce Logo](docs/logo/logo.svg)](https://spreecommerce.org)
+[![Spree Commerce Logo](docs/images/spree_header_978-2x.png)](https://spreecommerce.org)
 
 **Spree** is an open source e-commerce platform for global brands that require custom solutions to meet their business needs.
 
@@ -50,7 +50,7 @@ Get Spree support on [Slack](https://spree-commerce.slack.com/join/shared_invite
 Vendo automates everything from vendor onboarding, accepting buyer payments in over 135 currencies, to supplier payouts in 50 countries.
 
 <a href="https://sparksolutions.co/">
-  <img src="docs/images/spark_solutions_logo.svg" height="50px" alt="Spark Solutions">
+  <img src="docs/images/spark_solutions_logo.png" height="50px" alt="Spark Solutions">
 </a>
 
 [Spark Solutions](https://sparksolutions.co/) is a software development agency that builds custom eCommerce solutions for enterprises.
