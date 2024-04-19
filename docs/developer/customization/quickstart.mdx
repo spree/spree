@@ -45,7 +45,14 @@ There are several ways you can achieve this:
       | `tax_using_ship_address`           | Determines if tax information should be based on shipping address, rather than the billing address.  | `true`              |
       | `track_inventory_levels`           | Determines if inventory levels should be tracked when products are purchased at checkout. This option causes new `InventoryUnit` objects to be created when a product is bought. | `true` |
 
+      To change these you need to edit your `config/initializers/spree.rb` file.
 
+      For example, to disable the `expedited_exchanges` feature, you would add the following line:
 
+      ```ruby
+      Spree.config do |config|
+        config.expedited_exchanges = false
+      end
+      ```
   </Accordion>
 </AccordionGroup>
