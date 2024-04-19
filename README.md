@@ -24,6 +24,15 @@
   </p>
 </p>
 
+<p align="center">
+  <a href="https://rubygems.org/gems/spree">
+    <img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" />
+  </a>
+  <a href="https://slack.spreecommerce.org">
+    <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-6.5K-blue" />
+  </a>
+</p>
+
 ## Getting Started
 
 Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-started) to set up Spree in 5 minutes.
@@ -32,8 +41,8 @@ Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-st
 
 * **Composable**
   * connect with your existing ecosystem, build custom workflows with ease
-  * [Storefront and Admin API](https://docs.spreecommerce.org/developer/api-reference)
-  * [Webhooks](https://docs.spreecommerce.org/developer/webhooks)
+  * [Storefront and Admin API](https://docs.spreecommerce.org/api-reference)
+  * Webhooks
 * **Customizable and modular**
   * pick and choose parts you want to use
   * customize everything else (storefront, order processing, API, etc)
@@ -61,7 +70,7 @@ Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-st
 
 Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
 
-Follow our [Contributing Guide](https://docs.spreecommerce.org//developer/contributing)
+Follow our [Contributing Guide](https://docs.spreecommerce.org/developer/contributing)
 
 [Join our Slack](https://slack.spreecommerce.org) to meet other community members.
 

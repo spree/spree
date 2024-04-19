@@ -39,8 +39,7 @@ module SpreeCli
         Congrats, Your extension has been generated :rocket:
 
         Next steps:
-        * Read Spree Developer Documentation at: https://docs.spreecommerce.org/customization
-        * Start your extension at: https://docs.spreecommerce.org/extensions/extensions
+        * Read Spree Developer Documentation at: https://docs.spreecommerce.org/developer/customization
 
         #{'*' * 80}
       }
