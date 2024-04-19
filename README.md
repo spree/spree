@@ -35,7 +35,7 @@
 
 Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
 
-Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contributing/index) and see the list of our amazing [Contributors](https://github.com/spree/spree/graphs/contributors).
+Please review the [Contributing Guide](https://docs.spreecommerce.org/contributing) and see the list of our amazing [Contributors](https://github.com/spree/spree/graphs/contributors).
 
 ## Support
 

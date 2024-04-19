@@ -11,7 +11,7 @@
 # config.setting_name = 'new value'
 #
 # More on configuring Spree preferences can be found at:
-# https://dev-docs.spreecommerce.org/internals/preferences
+# https://docs.spreecommerce.org/developer/customization
 Spree.config do |config|
   # Example:
   # Uncomment to stop tracking inventory levels in the application
@@ -42,7 +42,7 @@ end
 #       Just removing an entry from this initializer will make the dependency value go away.
 #
 # More on how to use Spree dependencies can be found at:
-# https://dev-docs.spreecommerce.org/customization/dependencies
+# https://docs.spreecommerce.org/customization/dependencies
 Spree.dependencies do |dependencies|
   # Example:
   # Uncomment to change the default Service handling adding Items to Cart

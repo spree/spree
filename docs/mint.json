@@ -39,10 +39,6 @@
   },
   "tabs": [
     {
-      "name": "User Guide",
-      "url": "user-guide"
-    },
-    {
       "name": "API Reference",
       "url": "api-reference"
     }
@@ -118,14 +114,6 @@
       "pages": [
         "developer/contributing/quickstart",
         "developer/contributing/creating-an-extension"
-      ]
-    },
-
-    
-    {
-      "group": "Introduction",
-      "pages": [
-        "user-guide/introduction"
       ]
     },
 

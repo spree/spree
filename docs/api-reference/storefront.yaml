@@ -984,7 +984,7 @@ paths:
 
         System will automatically invalidate previous (non-finalized) payments (excluding store credit / gift card payments).
 
-        [More details on payment system](https://dev-docs.spreecommerce.org/internals/payments)
+        [More details on payment system](https://dev-docs.spreecommerce.org/developer/core-concepts/payments)
       operationId: create-payment
       responses:
         '200':
@@ -1271,7 +1271,7 @@ paths:
   /api/v2/storefront/store:
     get:
       summary: Return the current Store
-      description: 'Returns the current Store. [Read more about Stores](https://dev-docs.spreecommerce.org/internals/stores)'
+      description: 'Returns the current Store. [Read more about Stores](https://dev-docs.spreecommerce.org/developer/core-concepts/stores)'
       tags:
         - Stores
       operationId: show-current-store
@@ -1287,7 +1287,7 @@ paths:
         - bearerAuth: []
   /api/v2/storefront/taxons:
     get:
-      description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/internals/products#taxons-and-taxonomies)'
+      description: 'Returns a list of Taxons. [Read more about Taxons](https://dev-docs.spreecommerce.org/developer/core-concepts/products#taxons-and-taxonomies)'
       tags:
         - Taxons
       operationId: taxons-list
@@ -1974,7 +1974,7 @@ components:
         - city
         - country_iso
     Cart:
-      description: 'The Cart provides a central place to collect information about an order, including line items, adjustments, payments, addresses, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/internals/orders)'
+      description: 'The Cart provides a central place to collect information about an order, including line items, adjustments, payments, addresses, and shipments. [Read more in Spree docs](https://dev-docs.spreecommerce.org/developer/core-concepts/orders)'
       type: object
       title: Cart
       x-internal: false
@@ -2042,7 +2042,7 @@ components:
                 - confirm
                 - complete
               description: |-
-                State of the Cart in the Checkout flow. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#the-order-state-machine">
+                State of the Cart in the Checkout flow. Please see <a href="https://dev-docs.spreecommerce.org/developer/core-concepts/orders#the-order-state-machine">
                   The Order State machine
                 </a> for a full list with description.
             email:
@@ -2107,7 +2107,7 @@ components:
                 - shipped
                 - null
               description: |-
-                Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-shipment-states-1">
+                Overall state of the Shipments. Please see <a href="https://dev-docs.spreecommerce.org/developer/core-concepts/orders#order-shipment-states-1">
                   Order Shipments states
                 </a> for a full list with description.
               nullable: true
@@ -2121,7 +2121,7 @@ components:
                 - void
                 - null
               description: |-
-                Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/internals/orders#order-payment-states">
+                Overall state of the Payments. Please see <a href="https://dev-docs.spreecommerce.org/developer/core-concepts/orders#order-payment-states">
                   Order Payments states
                 </a> for a full list with description.
               nullable: true
@@ -2363,7 +2363,7 @@ components:
         - relationships
     Country:
       title: Country
-      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/internals/addresses#countries)'
+      description: 'Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.[Read more about Countries in Spree](https://dev-docs.spreecommerce.org/developer/core-concepts/addresses#countries)'
       type: object
       x-internal: false
       properties:
@@ -3347,7 +3347,7 @@ components:
                 - shipped
                 - canceled
               description: |-
-                Status of the Shipment. For a list of all available statuses please refer: <a href="https://dev-docs.spreecommerce.org/internals/shipments" target="_blank" rel="noopener">
+                Status of the Shipment. For a list of all available statuses please refer: <a href="https://dev-docs.spreecommerce.org/developer/core-concepts/shipments" target="_blank" rel="noopener">
                   Shipment section in Spree Guides
                 </a>
             shipped_at:

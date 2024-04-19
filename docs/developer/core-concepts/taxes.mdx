@@ -33,7 +33,7 @@ A `tax_category` can have many `tax_rates`, which indicate the rate at which the
 | `name`               | The name of the tax rate.                                                   | California Sales Tax |
 | `show_rate_in_label` | Indicates if the tax rate (8%) should be shown in the label.                     | `true`              |
 
-A tax rate links to a particular Zone \(see [Addresses](addresses) for more information about zones\). When an order is placed in a specific zone, any of the products for that order which have a tax zone that matches the order's tax zone will be taxed.
+A tax rate links to a particular Zone \(see [Addresses](/developer/core-concepts/addresses) for more information about zones\). When an order is placed in a specific zone, any of the products for that order which have a tax zone that matches the order's tax zone will be taxed.
 
 The standard sales tax policies commonly found in the USA can be modeled as well as Value Added Tax \(VAT\) which is commonly used in Europe. These are not the only types of tax rules that you can model in Spree. Once you obtain a sufficient understanding of the basic concepts you should be able to model the tax rules of your country or jurisdiction.
 
@@ -47,7 +47,7 @@ Let's say you need to charge 5% tax for all items that ship to New York and 6% o
 
 Here's another hypothetical scenario. You would like to charge 10% tax on all electronic items and 5% tax on everything else. This tax should apply to all countries in the European Union \(EU\). In this case you would construct just a single zone consisting of all the countries in the EU. The fact that you want to charge two different rates depending on the type of good does not mean you need two zones.
 
- Please see the [Addresses guide](addresses) for more information on constructing a zone.
+ Please see the [Addresses guide](/developer/core-concepts/addresses) for more information on constructing a zone.
 
 ## Default Tax Zone
 
@@ -91,7 +91,7 @@ If the customer purchases a single clothing item for $17.99 and they live in the
 
 The sales tax calculation is $17.99 x 5% for a total tax of $0.8995, which is rounded up to two decimal places, to $0.90. This tax amount is then applied to the order as an adjustment.
 
- See the \[Adjustments Guide\]\(/developer/internals/adjustments.html\) if you need more information on adjustments.
+ See the \[Adjustments Guide\]\(/developer/core-concepts/adjustments.html\) if you need more information on adjustments.
 
 If the quantity of the item is changed to 2, then the tax amount doubles: \($17.99 x 2\) x 0.05 is $1.799, which is again rounded up to two decimal places, applying a tax adjustment of $1.80.
 
