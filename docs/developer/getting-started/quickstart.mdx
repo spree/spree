@@ -1,0 +1,100 @@
+---
+title: Quickstart
+description: 'Start building awesome e-commerce applications with Spree'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/spree_header_978-2x.png"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/spree_header_978-2x.png"
+/>
+
+## Getting Started with Spree Commerce
+
+Welcome to the Spree Commerce documentation guide. Follow the instructions below to learn how to build and deploy your Spree Commerce store.
+
+### 1. Installing Spree
+
+<AccordionGroup>
+  <Accordion icon="github" title="Creating Your Spree Repository">
+
+    To create your Spree store repository please, follow these instructions:
+    
+    [Use Spree starter template](https://github.com/new?template_name=spree_starter&template_owner=spree) to create your own repository
+
+  </Accordion>
+
+  <Accordion icon="rectangle-terminal" title="Setting up Your Development Environment">
+
+    <Note>
+      If you're on Windows remember to [install the Linux subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) before proceeding.
+    </Note>
+
+    1. Install [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [Ruby](https://www.ruby-lang.org/en/installation/)
+    2. Once git is installed, clone your docs repository using 
+    
+        ```basgh
+        git clone <your-repo>
+        ```
+        
+        <Info>
+        If you haven't set it up yet, now would be a good time to do so with these [SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+        </Info>
+
+    3. Open a terminal and go to the repository directory
+    4. Run setup commands:
+
+        ```bash
+        bin/setup
+        ```
+    5. And finally start the development server with:
+
+        ```bash
+        bin/rails s
+        ```
+  </Accordion>  
+
+  <Accordion icon="box" title="Adding sample data">
+
+    To add sample data to your store, run:
+
+    ```bash
+    bin/rake spree_sample:load
+    ```
+
+    This will add a some products, categories, and will setup a checkout flow to your store.
+  </Accordion>
+</AccordionGroup>
+
+### 2. Exploring Your Store
+
+Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
+
+<AccordionGroup>
+  <Accordion icon="key" title="Logging into the Admin Dashboard">
+    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
+      - login: `spree@example.com`
+      - password: `spree123`
+
+    Upon successful authentication, you should see the admin screen:
+
+    ![](/images/admin\_panel\_978-2x.jpg)
+
+    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
+  </Accordion>
+
+  <Accordion icon="palette" title="Browsing Storefront">
+  
+    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+    
+    You can later customize this Storefront or choose another one if you prefer Next.js or Vue.js.
+
+  </Accordion>
+</AccordionGroup>
+
+### All Done!
+
+Congrats! You've set up your Spree Commerce and it's looking amazing! Need support or want to give some feedback? You can join our [community](https://slack.spreecommerce.org/) or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).

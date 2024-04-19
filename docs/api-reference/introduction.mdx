@@ -1,0 +1,18 @@
+Spree comes with a fully-featured API that allows it to operate in a fully headless mode. This means that you can use Spree as a backend and build your custom storefront, mobile app, or any other application that needs to interact with an e-commerce platform.
+
+## APIs
+
+Currently Spree includes 2 APIs:
+
+<CardGroup cols={2}>
+  <Card title="Storefront API" href="storefront">
+    Designed to allow customers to interact with the store via external applications (e.g. Vue Storefront or a dedicated mobile app)
+  </Card>
+  <Card title="Platform API" href="platform">
+    Provides management capabilities, allowing third party apps to perform actions otherwise available via the admin panel.
+  </Card>
+</CardGroup>
+
+### Legacy REST API v1
+
+Legacy REST API v1 was extracted to `spree_api_v1` gem. It is not recommended to use it in new projects, but it's still available for existing ones.

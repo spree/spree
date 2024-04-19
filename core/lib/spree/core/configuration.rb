@@ -22,16 +22,16 @@ module Spree
   module Core
     class Configuration < Preferences::Configuration
       # Alphabetized to more easily lookup particular preferences
-      preference :address_requires_state, :boolean, default: true # should state/state_name be required
+      preference :address_requires_state, :boolean, default: true, deprecated: true # should state/state_name be required
       preference :address_requires_phone, :boolean, default: true # Determines whether we require phone in address
       preference :allow_checkout_on_gateway_error, :boolean, default: false
-      preference :allow_guest_checkout, :boolean, default: true
+      preference :allow_guest_checkout, :boolean, default: true # this is only used in the rails frontend, and is not implemented in API
       preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
       preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
       preference :always_put_site_name_in_title, :boolean, deprecated: true
       preference :auto_capture, :boolean, default: false # automatically capture the credit card (as opposed to just authorize and capture later)
       preference :auto_capture_on_dispatch, :boolean, default: false # Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized.
-      preference :binary_inventory_cache, :boolean, default: false # only invalidate product cache when a stock item changes whether it is in_stock
+      preference :binary_inventory_cache, :boolean, default: false, deprecated: true # only invalidate product cache when a stock item changes whether it is in_stock
       preference :checkout_zone, :string, default: nil, deprecated: true # replace with the name of a zone if you would like to limit the countries
       preference :company, :boolean, default: false # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true

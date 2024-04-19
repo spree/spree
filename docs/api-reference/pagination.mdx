@@ -1,0 +1,37 @@
+All lists implement the same method for pagination with `page` and `per_page` parameters, eg.
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products?page=1&per_page=25' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+Both of these parameters are optional. There is a limit of 500 records that can be fetched by a single request. If this doesn't work for your use case, please contact us so we can work on resolving this issue.
+
+Response for that call will include a `meta` node with:
+
+```json
+"meta": {
+  "count": 25,
+  "total_count": 26,
+  "total_pages": 2
+}
+```
+
+`count` is the number of records returned on the current page  
+`total_count` is the total number of records in the collection  
+`total_pages` is the total number of pages
+
+The response will also include the`links` node:
+
+```json
+"links": {
+    "self": "https://demo.spreecommerce.org/api/v2/storefront/products?per_page=25",
+    "next": "https://demo.spreecommerce.org/api/v2/storefront/products?page=2&per_page=25",
+    "prev": "https://demo.spreecommerce.org/api/v2/storefront/products?page=1&per_page=25",
+    "last": "https://demo.spreecommerce.org/api/v2/storefront/products?page=2&per_page=25",
+    "first": "https://demo.spreecommerce.org/api/v2/storefront/products?page=1&per_page=25"
+  }
+```
+
+With fully generates API URLs for pagination.
