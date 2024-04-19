@@ -3,7 +3,7 @@
     <img src="docs/images/spree_header_978-2x.png" alt="Spree Commerce">
   </a>
 
-  <h1 align="center">Spree</h2>
+  <h1 align="center">Spree Commerce</h2>
 
   <p align="center">
     Open Source e-commerce platform for global brands.
@@ -40,9 +40,9 @@ Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-st
 * **[Global Commerce](https://spreecommerce.org/use-cases/international-sales-demo/)**
   * multi-currency
   * multi-language
+  * full translation support for products, categories, and more
   * different shipping methods / costs for different regions
   * advanced tax calculation
-  * full translation support for products, categories, and more
 * **Multi-Store** - host multiple brands / stores on one Spree instance with different branding, configuration, payment methods, shipping options, product catalogs etc
 * **[Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)** - run your own marketplace with multiple suppliers with dedicated Supplier Dashboard
 * **Responsive Admin Panel** - manage and curate products, users, orders, returns, shipments & more
@@ -54,18 +54,20 @@ Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-st
 * **Extensions** adding new features to Spree
 
 <a href="https://docs.spreecommerce.org/developer/getting-started">
-  <img src="docs/images/admin_panel_978-2x.jpg" alt="Spree Admin Dashboard" />
+  <img src="docs/images/admin_panel_978-2x.png" alt="Spree Admin Dashboard" />
 </a>
 
 ## Community & Contributing
 
 Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
 
-Please review the [Contributing Guide](https://docs.spreecommerce.org/contributing) and see the list of our amazing [Contributors](https://github.com/spree/spree/graphs/contributors).
+Follow our [Contributing Guide](https://docs.spreecommerce.org//developer/contributing)
 
-## Support
+[Join our Slack](https://slack.spreecommerce.org) to meet other community members.
 
-Get Spree support on [Slack](https://spree-commerce.slack.com/join/shared_invite/zt-ico7d35e-OeoAYXKO8XNtrZR1ZvBb5A#/shared-invite/email) or directly through a form on our [website](https://spreecommerce.org/contact/).
+## Enterprise support
+
+[Contact us](https://spreecommerce.org/contact/) for enterprise support. We offer migration services, can help with custom development, launch your own Spree applications, optimize your Spree stack, etc.
 
 ## License
 
