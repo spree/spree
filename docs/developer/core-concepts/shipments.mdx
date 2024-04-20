@@ -371,7 +371,7 @@ module Spree
   module Stock
     module CoordinatorDecorator do
       def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(order, packages, ::Spree::Stock::CustomAdjuster)
+        prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomAdjuster)
         prioritizer.prioritized_packages
       end
     end

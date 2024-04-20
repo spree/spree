@@ -40,7 +40,7 @@ module YourExtensionName::OrderDecorator
   end
 end
 
-::Spree::Order.prepend(YourExtensionName::OrderDecorator)
+Spree::Order.prepend(YourExtensionName::OrderDecorator)
 ```
 
 ## Fixing Deface Overrides

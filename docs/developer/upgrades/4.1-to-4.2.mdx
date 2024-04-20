@@ -1,18 +1,16 @@
 ---
-title: Upgrading Spree 4.1 to 4.2
+title: 4.1 to 4.2
 section: upgrades
 order: 0
 description: This guide covers upgrading a 4.1 Spree application to Spree 4.2.
 ---
 
-# 4.1 to 4.2
-
 If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
 
 **If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
 
-1. [upgrade 3.7 to 4.0](https://docs.spreecommerce.org/developer/upgrades/upgrades/three-dot-seven-to-four-dot-oh)
-2. [upgrade 4.0 to 4.1](https://docs.spreecommerce.org/developer/upgrades/upgrades/four-dot-oh-to-four-dot-one)
+1. [upgrade 3.7 to 4.0](/developer/upgrades/three-dot-seven-to-four-dot-oh)
+2. [upgrade 4.0 to 4.1](/developer/upgrades/four-dot-oh-to-4.1)
 
 This is the safest and recommended method.
 
@@ -22,7 +20,7 @@ This is the safest and recommended method.
 gem 'spree', '~> 4.2'
 gem 'spree_auth_devise', '~> 4.3'
 gem 'spree_gateway', '~> 3.9'
-gem 'spree_i18n', '~> 5.0'
+gem 'spree_i18n', '~> 5'
 ```
 
 ## Remove SpreeMultiCurrency \(optional\)
@@ -100,7 +98,7 @@ bundle update spree_related_products
 
 Please follow [this guide to migrate your custom serializers](https://github.com/jsonapi-serializer/jsonapi-serializer#migrating-from-netflixfast_jsonapi).
 
-### Migrate select2 3.5 to 4.x
+### Migrate select2 3.5 to 4
 
 Only if you've added new Admin Panel pages with Select2 dropdown - [this guide will help](https://select2.org/upgrading/migrating-from-35)
 

@@ -1,23 +1,22 @@
 ---
+title: 4.3 to 4.4
 description: This guide covers upgrading a 4.3 Spree application to Spree 4.4.
 ---
 
-# 4.3 to 4.4
-
 If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
 
-**If you're on an older version than 4.3 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+<Note>
+If you're on an older version than 4.3 please follow previous upgrade guides and perform those upgrades incrementally, eg.
 
-1. [upgrade 4.0 to 4.1](four-dot-oh-to-four-dot-one)
-2. [upgrade 4.1 to 4.2](four-dot-one-to-four-dot-two)
-3. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three)
-
-This is the safest and recommended method.
+1. [upgrade 4.0 to 4.1](four-dot-oh-to-4.1)
+2. [upgrade 4.1 to 4.2](4.1-to-4.2)
+3. [upgrade 4.2 to 4.3](4.2-to-4.3)
+</Note>
 
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '>= 4.4.0.rc1'
+gem 'spree', '~> 4.4'
 ```
 
 ## Remove gems merged into Spree Core

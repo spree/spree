@@ -1,16 +1,15 @@
 ---
+title: 4.4 to 4.5
 description: This guide covers upgrading a 4.4 Spree application to Spree 4.5.
 ---
 
-# 4.4 to 4.5
+<Note>
+If you're on an older version than 4.4 please follow previous upgrade guides and perform those upgrades incrementally, eg.
 
-**If you're on an older version than 4.4 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
-
-1. [upgrade 4.1 to 4.2](four-dot-one-to-four-dot-two)
-2. [upgrade 4.2 to 4.3](fout-dot-two-to-four-dot-three)
-3. [upgrade 4.3 to 4.4](https://docs.spreecommerce.org/developer/upgrades/upgrades/4.3-to-4.4)
-
-This is the safest and recommended method.
+1. [upgrade 4.1 to 4.2](4.1-to-4.2)
+2. [upgrade 4.2 to 4.3](4.2-to-4.3)
+3. [upgrade 4.3 to 4.4](4.3-to-4.4)
+</Note>
 
 ## Upgrade Rails
 
@@ -53,25 +52,25 @@ end
 
 ## Update Gemfile
 
-```
-gem 'spree', '>= 4.5.0'
+```ruby
+gem 'spree', '> 4.5'
 ```
 
 Update all other spree gems used in your application to 4.5.0 or version compatible with 4.5:
 
-```
-gem 'spree_sample', '~> 4.5.0'
-gem 'spree_emails', '~> 4.5.0'
-gem 'spree_frontend', '>= 4.5.0'
-gem 'spree_backend', '>= 4.5.0'
+```ruby
+gem 'spree_sample', '~> 4.5'
+gem 'spree_emails', '~> 4.5'
+gem 'spree_frontend', '>= 4.5'
+gem 'spree_backend', '>= 4.5'
 gem 'spree_gateway', '~> 3.10'
-gem 'spree_auth_devise', '>= 4.5.0'
+gem 'spree_auth_devise', '>= 4.5'
 gem 'spree_i18n', '~> 5.1'
 ```
 
 If your application depends on the Spree v1 API, you'll have to include it as a gem, as it has been extracted from the spree gem:
 
-```
+```ruby
 gem 'spree_api_v1'
 ```
 
@@ -95,9 +94,9 @@ bin/rails db:migrate
 
 ## Run Additional Commands for Frontend
 
-If using [Spree Frontend](https://github.com/spree/spree\_legacy\_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+If using [Spree Frontend](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
 
-```
+```bash
 bin/rails javascript:install:esbuild
 bin/rails turbo:install
 bin/rails g spree:frontend:install
@@ -109,7 +108,3 @@ And that's a wrap! :tada:
 ## Read the release notes
 
 For information about changes contained within this release, please read the[ Spree 4.5.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.5.0).
-
-## More info
-
-If you have any questions, issues or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/).
