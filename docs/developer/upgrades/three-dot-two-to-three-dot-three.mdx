@@ -1,8 +1,8 @@
 ---
-title: Upgrading Spree from 3.2 to 3.3
+title: 3.2 to 3.3
 section: upgrades
 order: 7
-description: 'This guide covers upgrading a 3.2.x Spree store, to a 3.3.x store.'
+description: 'This guide covers upgrading a 3.2 Spree store, to a 3.3 store.'
 ---
 
 # 3.2 to 3.3
@@ -14,7 +14,7 @@ Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgra
 ### Update Gemfile
 
 ```ruby
-gem 'spree', '~> 3.3.0'
+gem 'spree', '~> 3.3'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
@@ -70,13 +70,13 @@ end
 Spree 3.3 comes with paperclip 5.1 support so if you're using Amazon S3 storage you need to change in your Gemfile, from:
 
 ```ruby
-gem 'aws-sdk', '< 2.0'
+gem 'aws-sdk', '< 2'
 ```
 
 to:
 
 ```ruby
-gem 'aws-sdk', '>= 2.0'
+gem 'aws-sdk', '>= 2'
 ```
 
 and run `bundle update aws-sdk`

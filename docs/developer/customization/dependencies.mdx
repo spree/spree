@@ -14,23 +14,22 @@ With Dependencies, you can easily replace parts of Spree internals with your cus
 
 To replace [serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) or Services in a specific API endpoint you can create a simple decorator:
 
-Create a `app/controllers/my_store/spree/cart_controller_decorator.rb`
+Create a `app/controllers/spree/cart_controller_decorator.rb`
 
 ```ruby
-  module MyStore
-    module Spree
-      module CartControllerDecorator
-        def resource_serializer
-          MyNewAwesomeCartSerializer
-        end
+module Spree
+  module CartControllerDecorator
+    def resource_serializer
+      MyNewAwesomeCartSerializer
+    end
 
-        def add_item_service
-          MyNewAwesomeAddItemToCart
-        end
-      end
+    def add_item_service
+      MyNewAwesomeAddItemToCart
     end
   end
-  Spree::Api::V2::Storefront::CartController.prepend MyStore::Spree::CartControllerDecorator
+
+  CartController.prepend(CartControllerDecorator)
+end
 ```
 
 This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.

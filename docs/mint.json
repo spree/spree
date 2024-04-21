@@ -118,6 +118,25 @@
     },
 
     {
+      "group": "Upgrading",
+      "pages": [
+        "developer/upgrades/quickstart",
+        {
+          "group": "Upgrade Guides",
+          "pages": [
+            "developer/upgrades/4.6-to-4.7",
+            "developer/upgrades/4.5-to-4.6",
+            "developer/upgrades/4.4-to-4.5",
+            "developer/upgrades/4.3-to-4.4",
+            "developer/upgrades/4.2-to-4.3",
+            "developer/upgrades/4.1-to-4.2",
+            "developer/upgrades/4.0-to-4.1"
+          ]
+        }
+      ]
+    },
+
+    {
       "group": "API basics",
       "pages": [
         "api-reference/introduction",

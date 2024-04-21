@@ -1,8 +1,8 @@
 ---
-title: Upgrading Spree from 3.0 to 3.1
+title: 3.0 to 3.1
 section: upgrades
 order: 9
-description: 'This guide covers upgrading a 3.0.x Spree store, to a 3.1.x store'
+description: 'This guide covers upgrading a 3.0 Spree store, to a 3.1 store'
 ---
 
 # 3.0 to 3.1
@@ -17,7 +17,7 @@ gem 'rails', '~> 4.2.6'
 
 ## Upgrade Spree
 
-For best results, use the spree gem in version 3.1.x:
+For best results, use the spree gem in version 3.1:
 
 ```ruby
 gem 'spree', '~> 3.1.0.rc1'
@@ -29,7 +29,7 @@ Run `bundle update spree`.
 
 Copy over the migrations from Spree \(and any other engine\) and run them using these commands:
 
-```text
+```bash
 rake railties:install:migrations
 rake db:migrate
 ```
@@ -45,7 +45,7 @@ gem 'spree_gateway', '~> 3.1.0.rc1'
 
 For Spree Auth Devise run installer:
 
-```text
+```bash
 rails g spree:auth:install
 ```
 
