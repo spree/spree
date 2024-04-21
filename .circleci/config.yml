@@ -1,132 +1,95 @@
-version: 2.1 # use CircleCI 2.0
+version: 2.1
 
 defaults: &defaults
+  parameters: &default_parameters
+    restore_cache_key_1:
+      type: string
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
+    restore_cache_key_2:
+      type: string
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}'
+    save_cache_key:
+      type: string
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
+    run_file_path:
+      type: string
+    rails_version:
+      type: string
+      default: '~> 7.1.0'
+    store_artefacts:
+      type: boolean
+      default: false
   environment: &environment
-    CIRCLE_TEST_REPORTS: /tmp/test-results
-    CIRCLE_ARTIFACTS: /tmp/test-artifacts
-    BUNDLE_JOBS: 4
-    BUNDLE_RETRY: 3
-    BUNDLE_PATH: ~/spree/vendor/bundle
-    RAILS_VERSION: '~> 7.0.0'
+      CIRCLE_TEST_REPORTS: /tmp/test-results
+      CIRCLE_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+      BUNDLE_PATH: ~/spree/vendor/bundle
+      RAILS_VERSION: << parameters.rails_version >>
+      DB: postgres # default value, this will speed up bundle install for all postgres builds
   working_directory: ~/spree
   docker:
-    - image: &ruby_3_2_image cimg/ruby:3.2.0-browsers
-    - image: &redis_image circleci/redis:6.2-alpine
+    - image: &ruby_image cimg/ruby:3.3.0-browsers
 
-run_tests_3_2: &run_tests_3_2
-  <<: *defaults
-  parallelism: 3
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-3-2-{{ .Branch }}
-          - spree-bundle-v10-ruby-3-2
-    - run:
-        name: Install libvips
-        command: sudo apt-get update && sudo apt-get install libvips42
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
 
 jobs:
-  bundle_ruby_3_2:
+  run_test: &run_test
     <<: *defaults
-    steps:
+    parallelism: 8
+    steps: &default_steps
       - checkout
+      - attach_workspace:
+          at: /tmp
       - restore_cache:
           keys:
-            - spree-bundle-v10-ruby-3-2-{{ .Branch }}
-            - spree-bundle-v10-ruby-3-2
+            - << parameters.restore_cache_key_1 >>
+            - << parameters.restore_cache_key_2 >>
       - run:
-          name: Install libvips
-          command: sudo apt-get update && sudo apt-get install libvips42
+          name: Allow executing given file
+          command: chmod +x << parameters.run_file_path >>
       - run:
-          name: Bundle Install
-          command: |
-            bundle check || bundle install
-            ./bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v10-ruby-3-1-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
+          name: Run << parameters.run_file_path >> file
+          command: bash << parameters.run_file_path >>
+      - when:
+          condition: << parameters.save_cache_key >>
+          steps:
+              - save_cache:
+                  key: << parameters.save_cache_key >>
+                  paths:
+                    - ~/spree/vendor/bundle
+      - when:
+          condition: <<  parameters.store_artefacts >>
+          steps:
+              - store_artifacts:
+                  path: /tmp/test-artifacts
+                  destination: test-artifacts
+              - store_artifacts:
+                  path: /tmp/failed_tests
+                  destination: failed_tests
+              - store_artifacts:
+                  path: /tmp/test-results
+                  destination: raw-test-output
+              - store_test_results:
+                  path: /tmp/test-results
 
-  brakeman:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-brakeman-{{ .Branch }}
-            - spree-brakeman
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install
-            ./bin/build-ci.rb install
-      - run:
-          name: Run Brakeman spree/api
-          command: |
-            bundle exec brakeman -p api/ --ignore-config api/brakeman.ignore --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
-      - run:
-          name: Run Brakeman spree/core
-          command: |
-            bundle exec brakeman -p core/ --ignore-config core/brakeman.ignore --exit-on-warn --exit-on-error
-      - save_cache:
-          key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
-
-  tests_ruby_3_2_rails_7_0_postgres: &tests_ruby_3_2_rails_7_0_postgres
-    <<: *run_tests_3_2
-    environment: &postgres_environment
-      <<: *environment
-      DB: postgres
-      DB_HOST: localhost
-      DB_USERNAME: postgres
-    docker:
-      - image: *ruby_3_2_image
-      - image: &postgres_image circleci/postgres:12-alpine
-        environment:
-          POSTGRES_USER: postgres
-      - image: *redis_image
-
-  tests_ruby_3_2_rails_7_1_postgres: &tests_ruby_3_2_rails_7_0_postgres
-    <<: *run_tests_3_2
-    environment: &postgres_environment
-      <<: *environment
-      DB: postgres
-      DB_HOST: localhost
-      DB_USERNAME: postgres
-      RAILS_VERSION: '~> 7.1.0'
-    docker:
-      - image: *ruby_3_2_image
-      - image: &postgres_image circleci/postgres:12-alpine
-        environment:
-          POSTGRES_USER: postgres
-      - image: *redis_image
-
-  tests_ruby_3_2_rails_6_1_postgres:
-    <<: *tests_ruby_3_2_rails_7_0_postgres
+  tests_postgres:
+    <<: *run_test
+    parameters:
+        <<: *default_parameters
     environment:
-      <<: *postgres_environment
-      RAILS_VERSION: '~> 6.1.0'
+      <<: *environment
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
 
-  tests_ruby_3_2_rails_7_0_mysql:
-    <<: *run_tests_3_2
+  tests_mysql:
+    <<: *run_test
+    parameters:
+        <<: *default_parameters
     environment:
       <<: *environment
       DB: mysql
@@ -135,42 +98,9 @@ jobs:
       COVERAGE: true
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
-      - image: *ruby_3_2_image
-      - image: *redis_image
-      - image: circleci/mysql:8-ram
+      - image: *ruby_image
+      - image: cimg/mysql:8.0
         command: [--default-authentication-plugin=mysql_native_password]
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v10-ruby-3-2-{{ .Branch }}
-            - spree-bundle-v10-ruby-3-2
-      - run:
-          name: Add keyserver
-          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
-      - run:
-          name: Install libvips
-          command: sudo apt-get update && sudo apt-get install libvips
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install
-            ./bin/build-ci.rb install
-      - run:
-          name: Run rspec in parallel
-          command: ./bin/build-ci.rb test
-      - store_artifacts:
-          path: /tmp/test-artifacts
-          destination: test-artifacts
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: raw-test-output
-      - store_test_results:
-          path: /tmp/test-results
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - simplecov
 
   send_test_coverage:
     <<: *defaults
@@ -179,49 +109,65 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name:  Download cc-test-reporter
-          command: |
-            mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-            chmod +x ./tmp/cc-test-reporter
+          name: Merge coverage reports
+          command:
+              bundle check || bundle install &&
+              bundle exec rake coverage:report
       - run:
-          name: Setup ENVs
-          command: |
-            export GIT_BRANCH="$CIRCLE_BRANCH"
-            export GIT_COMMIT_SHA="$CIRCLE_SHA1"
-            export GIT_COMMITTED_AT="$(date +%s)"
+          name: Allow executing given file
+          command: chmod +x << parameters.run_file_path >>
       - run:
-          name: Format test coverage
-          command: |
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.api.json /tmp/workspace/simplecov/api/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
-            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+          name:  Send test coverage
+          command: bash << parameters.run_file_path >>
+
 
 workflows:
-  version: 2
   main:
     jobs:
-      - bundle_ruby_3_2
-      - brakeman:
+      - run_test:
+          name: bundle_ruby
+          run_file_path: ./bin/bundle_ruby.sh
+      - run_test:
+          name: brakeman
+          restore_cache_key_1: spree-brakeman-{{ .Branch }}
+          restore_cache_key_2: spree-brakeman
+          save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          run_file_path: ./bin/brakeman.sh
           requires:
-            - bundle_ruby_3_2
-      - tests_ruby_3_2_rails_7_0_postgres:
+              - bundle_ruby
+      - tests_postgres:
+          name: tests_rails_postgres
+          store_artefacts: true
+          run_file_path: ./bin/tests_database_ci.sh
           requires:
-            - bundle_ruby_3_2
-      - tests_ruby_3_2_rails_7_1_postgres:
+              - bundle_ruby
+      - tests_postgres:
+          name: tests_rails_7_0_postgres
+          rails_version: '~> 7.0.0'
+          store_artefacts: true
+          run_file_path: ./bin/tests_database_ci.sh
           requires:
-            - bundle_ruby_3_2
-      - tests_ruby_3_2_rails_6_1_postgres:
+              - bundle_ruby
+      - tests_postgres:
+          name: tests_rails_6_1_postgres
+          rails_version: '~> 6.1.0'
+          store_artefacts: true
+          run_file_path: ./bin/tests_database_ci.sh
           requires:
-            - bundle_ruby_3_2
-      - tests_ruby_3_2_rails_7_0_mysql:
+              - bundle_ruby
+      - tests_mysql:
+          name: tests_rails_mysql
+          store_artefacts: true
+          run_file_path: ./bin/tests_database_ci.sh
+          post-steps:
+              - persist_to_workspace:
+                  root: /tmp/workspace
+                  paths:
+                    - simplecov
           requires:
-            - bundle_ruby_3_2
+              - bundle_ruby
       - send_test_coverage:
+          name: send_test_coverage
+          run_file_path: ./bin/tests_coverage.sh
           requires:
-            - tests_ruby_3_2_rails_7_0_mysql
+              - tests_rails_mysql
