@@ -5,14 +5,13 @@ order: 0
 description: This guide covers upgrading a 4.1 Spree application to Spree 4.2.
 ---
 
-If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
 
-**If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+<Note>
+If you're on an older version than 4.1 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
 
-1. [upgrade 3.7 to 4.0](/developer/upgrades/three-dot-seven-to-four-dot-oh)
-2. [upgrade 4.0 to 4.1](/developer/upgrades/four-dot-oh-to-4.1)
-
-This is the safest and recommended method.
+1. [upgrade 3.7 to 4.0](3.7-to-4.0)
+2. [upgrade 4.0 to 4.1](4.0-to-4.1)
+</Note>
 
 ## Update Gemfile
 
@@ -74,8 +73,7 @@ class AddStockLocationToRMA < ActiveRecord::Migration[4.2]
 ## Install missing migrations
 
 ```bash
-rails spree:install:migrations
-rails active_storage:update
+rake railties:install:migrations
 ```
 
 ## Run migrations
@@ -125,5 +123,5 @@ For information about changes contained within this release, please read the [4.
 
 ## More info
 
-If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
+
 

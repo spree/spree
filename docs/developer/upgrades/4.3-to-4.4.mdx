@@ -3,12 +3,10 @@ title: 4.3 to 4.4
 description: This guide covers upgrading a 4.3 Spree application to Spree 4.4.
 ---
 
-If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
-
 <Note>
 If you're on an older version than 4.3 please follow previous upgrade guides and perform those upgrades incrementally, eg.
 
-1. [upgrade 4.0 to 4.1](four-dot-oh-to-4.1)
+1. [upgrade 4.0 to 4.1](4.0-to-4.1)
 2. [upgrade 4.1 to 4.2](4.1-to-4.2)
 3. [upgrade 4.2 to 4.3](4.2-to-4.3)
 </Note>
@@ -58,7 +56,7 @@ bin/rails db:migrate
 ### Update Gemfile
 
 ```ruby
-gem 'spree_backend', '>= 4.4.0.rc1'
+gem 'spree_backend', '~> 4.4'
 ```
 
 ### Update gems
@@ -81,7 +79,7 @@ bin/rails javascript:install:esbuild
 
 JavaScript required by the `spree_backend` gem is distributed as [a NPM package](https://www.npmjs.com/package/@spree/dashboard).
 
-```
+```bash
 bin/rails g spree:backend:install
 ```
 
@@ -103,13 +101,13 @@ Make sure that `spree_stock_location_stock_items` and `spree_webhooks` queues ar
 
 Spree 4.4 introduces webhook events for most of the Spree resources (Products, Orders, Customers, etc). If you wish to disable this globally you can set the environment variable:
 
-```
+```bash
 DISABLE_SPREE_WEBHOOKS=true
 ```
 
 If you would like to disable firing webhooks for certain elements of your application you can wrap these methods in a block:
 
-```
+```ruby
 Spree::Webhooks.disable_webhooks do
   ... run your code here ...
 end
@@ -137,7 +135,7 @@ Spree::Dependencies.address_update_service
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/blob/master/CHANGELOG).
+For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/releases).
 
 ## More info
 

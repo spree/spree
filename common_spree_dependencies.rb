@@ -22,7 +22,7 @@ platforms :ruby do
   elsif ENV['DB'] == 'postgres'
     gem 'pg'
   else
-    gem 'sqlite3'
+    gem 'sqlite3', '~> 1.4'
   end
 end
 
