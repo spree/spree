@@ -5,8 +5,6 @@ order: 7
 description: 'This guide covers upgrading a 3.2 Spree store, to a 3.3 store.'
 ---
 
-# 3.2 to 3.3
-
 ### Update your Rails version to 5.1
 
 Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-0-to-rails-5-1) to upgrade your store.
@@ -40,9 +38,7 @@ gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
 ### Install missing migrations
 
 ```bash
-rails spree:install:migrations
-rails spree_auth:install:migrations
-rails spree_gateway:install:migrations
+rake railties:install:migrations
 ```
 
 ### Run migrations
@@ -91,9 +87,4 @@ If your application.js file includes line `//= require jquery.validate/jquery.va
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [3.3.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_3_0.html).
-
-## Verify that everything is OK
-
-Run your test suite, click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
-
+For information about changes contained within this release, please read the [3.3.0 Release Notes](https://github.com/spree/spree/releases/tag/v3.3.0).

@@ -38,9 +38,7 @@ gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
 ### Install missing migrations
 
 ```bash
-rails spree:install:migrations
-rails spree_auth:install:migrations
-rails spree_gateway:install:migrations
+rake railties:install:migrations
 ```
 
 ### Run migrations
@@ -51,9 +49,4 @@ rails db:migrate
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [3.2.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_2_0.html).
-
-## Verify that everything is OK
-
-Run your test suite, click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
-
+For information about changes contained within this release, please read the [3.2.0 Release Notes](https://github.com/spree/spree/releases/tag/v3.2.0).

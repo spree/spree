@@ -5,21 +5,18 @@ order: 2
 description: This guide covers upgrading a 3.7 Spree application to Spree 4.0.
 ---
 
-If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
 
-**If you're on an older version than 3.7 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+<Note>
+If you're on an older version than 3.7 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
 
-1. [upgrade 3.2 to 3.3](/developer/upgrades/three-dot-two-to-three-dot-three)
-2. [upgrade 3.3 to 3.4](/developer/upgrades/three-dot-three-to-three-dot-four)
-3. [upgrade 3.4 to 3.5](/developer/upgrades/three-dot-four-to-three-dot-five)
-4. [upgrade 3.5 to 3.6](/developer/upgrades/three-dot-five-to-three-dot-six)
-5. [upgrade 3.6 to 3.7](/developer/upgrades/three-dot-six-to-three-dot-seven)
+1. [upgrade 3.4 to 3.5](3.4-to-3.5)
+2. [upgrade 3.5 to 3.6](3.5-to-3.6)
+3. [upgrade 3.6 to 3.7](3.6-to-3.7)
+</Note>
 
-This is the safest and recommended method.
+## Update your Ruby version to 2.5
 
-## Update your Ruby version to 2.5.0 at least
-
-Spree 4.0 requires Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
+Spree 4.0 requires Ruby 2.5 o you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
 
 ## Migrate from Paperclip to ActiveStorage
 
@@ -31,71 +28,9 @@ Please remove also any occurrences of `Rails.application.config.use_paperclip` a
 
 Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING).
 
-## Replace OrderContents with services in your codebase
-
-`OrderContents` was deprecated in Spree 3.7 and removed in 4.0. We've replaced it with [service objects](https://guides.spreecommerce.org/release_notes/3_7_0.html#service-oriented-architecture).
-
-You need to replace any instances of `OrderContents` usage with corresponding services in your codebase.
-
-### `OrderContents#update_cart`
-
-before:
-
-```ruby
-order.contents.update_cart(line_items_attributes)
-```
-
-after:
-
-```ruby
-Spree::Cart::Update.call(order: order, params: line_items_attributes)
-```
-
-### `OrderContents#add`
-
-before:
-
-```ruby
-order.contents.add(variant, quantity, shipment: shipment)
-```
-
-after:
-
-```ruby
-Spree::Cart::AddItem.call(
-  order: order,
-  variant: variant,
-  quantity: quantity,
-  options: {
-    shipment: @shipment
-  }
-)
-```
-
-### `OrderContents#remove`
-
-before:
-
-```ruby
-order.contents.remove(variant, quantity, shipment: shipment)
-```
-
-after:
-
-```ruby
-Spree::Cart::RemoveItem.call(
-  order: order,
-  variant: variant,
-  quantity: quantity,
-  options: {
-    shipment: shipment
-  }
-)
-```
-
 ## Remove `spree_address_book` extension
 
-If you're using the [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it as this feature was merged into [core Spree](https://guides.spreecommerce.org/release_notes/4_0_0.html#address-book-support).
+If you're using the [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it as this feature was merged into [core Spree](https://github.com/spree/spree/releases/tag/v4.0.0).
 
 1. Remove this line from `Gemfile`
 
@@ -187,8 +122,8 @@ As we know this is a big portion of work you can still use Bootstrap 3 for your 
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4'
-gem 'spree_auth_devise', '~> 4'
+gem 'spree', '~> 4.0'
+gem 'spree_auth_devise', '~> 4.0'
 gem 'spree_gateway', '~> 3.6'
 ```
 
@@ -197,10 +132,7 @@ gem 'spree_gateway', '~> 3.6'
 ## Install missing migrations
 
 ```bash
-rails spree:install:migrations
-rails spree_api:install:migrations
-rails spree_auth:install:migrations
-rails spree_gateway:install:migrations
+rake railties:install:migrations
 ```
 
 ## Run migrations
@@ -211,9 +143,4 @@ rails db:migrate
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [4.0.0 Release Notes](https://guides.spreecommerce.org/release_notes/spree_4_0_0.html).
-
-## More info
-
-If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
-
+For information about changes contained within this release, please read the [4.0.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.0.0)

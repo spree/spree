@@ -1,12 +1,9 @@
 ---
 title: 2.1 to 2.2
 section: upgrades
-order: 11
-hidden: true
 description: 'This guide covers upgrading a 2.1 Spree store, to a 2.2 store.'
 ---
 
-# 2.1 to 2.2
 
 ## Overview
 
@@ -27,7 +24,8 @@ gem 'rails', '~> 4.0.6'
 For best results, use the 2-2-stable branch from GitHub:
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-2-stable'```
+gem 'spree', '~> 2.2'
+```
 
 Run `bundle update spree`.
 
@@ -36,8 +34,13 @@ Run `bundle update spree`.
 Copy over the migrations from Spree (and any other engine) and run them using
 these commands:
 
-    rake railties:install:migrations
-    rake db:migrate
+```bash
+rake railties:install:migrations
+```
+
+```bash
+rake db:migrate
+```
 
 ## Read the release notes
 
@@ -56,8 +59,5 @@ This applies across the board on Spree, and may need to be done in your store's 
 
 Please consult [this section](http://guides.spreecommerce.org/release_notes/spree_2_2_0.html#paperclip-settings-have-been-removed) of the release notes if you were using custom Paperclip settings. This will direct you what to do in that particular case.
 
-## Verify that everything is OK
 
-Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
-```
 
