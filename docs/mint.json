@@ -110,14 +110,6 @@
     },
 
     {
-      "group": "Contributing",
-      "pages": [
-        "developer/contributing/quickstart",
-        "developer/contributing/creating-an-extension"
-      ]
-    },
-
-    {
       "group": "Upgrading",
       "pages": [
         "developer/upgrades/quickstart",
@@ -130,9 +122,18 @@
             "developer/upgrades/4.3-to-4.4",
             "developer/upgrades/4.2-to-4.3",
             "developer/upgrades/4.1-to-4.2",
-            "developer/upgrades/4.0-to-4.1"
+            "developer/upgrades/4.0-to-4.1",
+            "developer/upgrades/3.7-to-4.0"
           ]
         }
+      ]
+    },
+
+    {
+      "group": "Contributing",
+      "pages": [
+        "developer/contributing/quickstart",
+        "developer/contributing/creating-an-extension"
       ]
     },
 

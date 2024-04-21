@@ -70,13 +70,13 @@ end
 Spree 3.3 comes with paperclip 5.1 support so if you're using Amazon S3 storage you need to change in your Gemfile, from:
 
 ```ruby
-gem 'aws-sdk', '< 2'
+gem 'aws-sdk', '< 2.0'
 ```
 
 to:
 
 ```ruby
-gem 'aws-sdk', '>= 2'
+gem 'aws-sdk', '>= 2.0'
 ```
 
 and run `bundle update aws-sdk`

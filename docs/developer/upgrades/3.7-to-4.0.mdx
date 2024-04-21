@@ -93,38 +93,6 @@ Spree::Cart::RemoveItem.call(
 )
 ```
 
-## Replace `add_store_credit_payments` with `Checkout::AddStoreCredit`
-
-Similar to `OrderContents` method `add_store_credit_payments` was replaced with `Checkout::AddStoreCredit` service.
-
-before:
-
-```ruby
-order.add_store_credit_payments
-```
-
-after:
-
-```ruby
-Spree::Checkout::AddStoreCredit.call(order: order)
-```
-
-## Replace `remove_store_credit_payments` with `Checkout::RemoveStoreCredit`
-
-Similar to `OrderContents` method `remove_store_credit_payments` was replaced with `Checkout::RemeoveStoreCredit` service.
-
-before:
-
-```ruby
-order.remove_store_credit_payments
-```
-
-after:
-
-```ruby
-Spree::Checkout::RemoveStoreCredit.call(order: order)
-```
-
 ## Remove `spree_address_book` extension
 
 If you're using the [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it as this feature was merged into [core Spree](https://guides.spreecommerce.org/release_notes/4_0_0.html#address-book-support).

@@ -1,10 +1,11 @@
 ---
 title: Taxes
+description: Learn how to configure taxes in Spree
 ---
 
-## Overview
 
-Spree represents taxes for an order by using `tax_categories` and `tax_rates`.
+
+Spree represents taxes for an order by using Tax Categories and `tax_rates`.
 
 Products within Spree can be linked to Tax Categories, which are then used to influence the taxation rate for the products when they are purchased. One Tax Category can be set to being the default for the entire system, which means that if a product doesn't have a related tax category, then this default tax category would be used.
 
@@ -61,7 +62,11 @@ We may also reduce the order total by the tax amount if the order is being shipp
 
 Most tax jurisdictions base the tax on the shipping address of where the order is being shipped to. So in these cases the shipping address is used when determining the tax zone. Spree does, however, allow you to use the billing address to determine the zone.
 
-To determine tax based on billing address instead of shipping address you will need to set the `Spree::Config[:tax_using_ship_address]` preference to `false`.
+To determine tax based on billing address instead of shipping address you will need to add this line to your `config/initializers/spree.rb`
+
+```ruby
+Spree::Config[:tax_using_ship_address] = false
+```
 
  `Spree::Zone.match` is a method used to determine the most applicable zone for taxation. In the case of multiple matches, the closer match will be used, with State zone matches having priority over Country zone matches.
 
