@@ -12,44 +12,21 @@ If you're on an older version than 4.6 please follow previous upgrade guides and
 </Note>
 
 <AccordionGroup>
-  <Accordion title="1. Update Gemfile">
-
-    ```ruby
-    gem 'spree', '~> 4.7'
-    ```
-
-    Update all other spree gems used in your application to 4.7.0 or version compatible with 4.7:
-
-    ```ruby
-    gem 'spree_sample', '~> 4.7'
-    gem 'spree_emails', '~> 4.7'
-    gem 'spree_backend', '~> 4.7'
-    gem 'spree_frontend', '~> 4.7'
-    gem 'spree_gateway', '~> 3.10'
-    gem 'spree_auth_devise', '~> 4.6'
-    gem 'spree_i18n', '~> 5.3'
-    ```
-
-    <Warning>
-    If your Gemfile includes spree\_frontend, make sure it's defined below spree\_backend. This is required for a proper initialization of the admin action buttons defined by spree\_frontend.
-    </Warning>
-  </Accordion>
-
-  <Accordion title="2. Update gems">
+  <Accordion title="1. Update gems">
 
     ```bash
     bundle update
     ```
   </Accordion>
 
-  <Accordion title="3. Install and run missing migrations">
+  <Accordion title="2. Install and run missing migrations">
 
     ```bash
     bin/rake railties:install:migrations && bin/rails db:migrate
     ```
   </Accordion>
 
-  <Accordion title="4. Re-Run Spree Frontend install (Optional)">
+  <Accordion title="3. (Optional) Re-Run Spree Frontend install">
 
     If you're using [Spree Frontend gem](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
 

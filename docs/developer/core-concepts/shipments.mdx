@@ -70,7 +70,7 @@ To achieve this setup you need the following configuration:
 | Name | Zone | Calculator |
 | ---: | ---: | ---: |
 | USPS Ground | US | Flexi Rate\($5,$2\) |
-| FedEx | EU\_VAT | FlatRate-per-item\($10\) |
+| FedEx | EU_VAT | FlatRate-per-item\($10\) |
 
 ### Advanced Setup
 
@@ -194,7 +194,7 @@ After entering a shipping address, the system displays the available shipping op
 
 The customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
 
- You can enable collection of extra \_shipping instructions\_ by setting the option \`Spree::Config.shipping\_instructions\` to \`true\`. This is set to \`false\` by default. See \[Shipping Instructions\]\(\#shipping-instructions\) below.
+ You can enable collection of extra _shipping instructions_ by setting the option \`Spree::Config.shipping_instructions\` to \`true\`. This is set to \`false\` by default. See \[Shipping Instructions\]\(\#shipping-instructions\) below.
 
 ### What the Order's Administrator Sees
 
@@ -212,7 +212,7 @@ There are a few Spree extensions which provide additional shipping methods, incl
 
 For more detailed information, check out the section on [Calculators](calculators).
 
-Your calculator should accept an array of `LineItem` objects and return a cost. It can look at any reachable data, but typically uses the address, the order and the information from variants which are contained in the line\_items.
+Your calculator should accept an array of `LineItem` objects and return a cost. It can look at any reachable data, but typically uses the address, the order and the information from variants which are contained in the line_items.
 
 ## Product Configuration
 

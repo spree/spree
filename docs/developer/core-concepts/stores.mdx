@@ -11,7 +11,7 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 * Store C, `another-brand.com`
 
 <Frame type="glass" caption="Spree multi-store setup">
-![](/images/mulit\_store\_978x2.png)
+![](/images/mulit_store_978x2.png)
 </Frame>
 
 ### Store attributes
@@ -43,12 +43,12 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 
 Spree will try to determine the current store based on the current URL. If the URL does not match any of the stores in the database, Spree will fall back to the default store.
 
-All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/master/core/lib/spree/core/controller\_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
+All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
 
 All parts of Spree (API v1, API v2, Storefront, Admin Panel) have this implemented. This method is also available in views and JSON serializers.
 
 <Info>
-Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/master/core/app/finders/spree/stores/find\_current.rb).
+Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/master/core/app/finders/spree/stores/find_current.rb).
 
 This logic can be easily overwritten by setting 
 

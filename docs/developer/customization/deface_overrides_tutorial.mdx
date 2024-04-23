@@ -89,18 +89,18 @@ Deface currently supports the following actions:
 
 * :remove - Removes all elements that match the supplied selector
 * :replace - Replaces all elements that match the supplied selector, with the content supplied
-* :replace\_contents - Replaces the contents of all elements that match the supplied selector
-* :surround - Surrounds all elements that match the supplied selector, expects replacement markup to contain &lt;%%= render\_original %&gt; placeholder
-* :surround\_contents - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain &lt;%%= render\_original %&gt; placeholder
-* :insert\_after - Inserts after all elements that match the supplied selector
-* :insert\_before - Inserts before all elements that match the supplied selector
-* :insert\_top - Inserts inside all elements that match the supplied selector, as the first child
-* :insert\_bottom - Inserts inside all elements that match the supplied selector, as the last child
-* :set\_attributes - Sets attributes on all elements that match the supplied selector, replacing existing attribute value if present or adding if not. Expects :attributes option to be passed.
-* :add\_to\_attributes - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
-* :remove\_from\_attributes - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
+* :replace_contents - Replaces the contents of all elements that match the supplied selector
+* :surround - Surrounds all elements that match the supplied selector, expects replacement markup to contain &lt;%%= render_original %&gt; placeholder
+* :surround_contents - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain &lt;%%= render_original %&gt; placeholder
+* :insert_after - Inserts after all elements that match the supplied selector
+* :insert_before - Inserts before all elements that match the supplied selector
+* :insert_top - Inserts inside all elements that match the supplied selector, as the first child
+* :insert_bottom - Inserts inside all elements that match the supplied selector, as the last child
+* :set_attributes - Sets attributes on all elements that match the supplied selector, replacing existing attribute value if present or adding if not. Expects :attributes option to be passed.
+* :add_to_attributes - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
+* :remove_from_attributes - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
 
- Not all actions are applicable to all elements. For example, \`:insert\_top\` and \`:insert\_bottom\` expects a parent element with children.
+ Not all actions are applicable to all elements. For example, \`:insert_top\` and \`:insert_bottom\` expects a parent element with children.
 
 ### Supplying content
 

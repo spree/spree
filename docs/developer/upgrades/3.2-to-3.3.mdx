@@ -7,33 +7,13 @@ description: 'This guide covers upgrading a 3.2 Spree store, to a 3.3 store.'
 
 ### Update your Rails version to 5.1
 
-Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-0-to-rails-5-1) to upgrade your store.
+Spree 3.3 requires Rails 5.1 at a minimum. Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-0-to-rails-5-1) to upgrade your application.
 
-### Update Gemfile
+### Update gems
 
-```ruby
-gem 'spree', '~> 3.3'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
+```bash
+bundle update
 ```
-
-### Update your extensions
-
-We're changing how extensions dependencies work. Previously you had to match the extension branch to the Spree branch. Starting from Spree 3.2 release date `master` branch of all `spree-contrib` extensions should work with Spree &gt;= `3.1` and &lt; `4.0`. Please change your extensions in Gemfile eg.:
-
-from:
-
-```ruby
-gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero', branch: '3-1-stable'
-```
-
-to:
-
-```ruby
-gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
-```
-
-### Run `bundle update`
 
 ### Install missing migrations
 
@@ -77,7 +57,7 @@ gem 'aws-sdk', '>= 2.0'
 
 and run `bundle update aws-sdk`
 
-In your paperclip configuration, you also need to specify `s3_region` attribute eg. [https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3\_storage.md\#L27](https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3_storage#L27)
+In your paperclip configuration, you also need to specify `s3_region` attribute eg. [https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3_storage.md\#L27](https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3_storage#L27)
 
 See also [RubyThursday episode](https://rubythursday.com/episodes/ruby-snack-27-upgrade-paperclip-and-aws-sdk-in-prep-for-rails-5) walkthrough of upgrading paperclip in your project.
 
