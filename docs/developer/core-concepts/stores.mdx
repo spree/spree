@@ -53,7 +53,7 @@ Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).e
 This logic can be easily overwritten by setting 
 
 ```ruby
-Spree::Dependencies..current_store_finder = 'MyStoreFinderClass'
+Spree::Dependencies.current_store_finder = 'MyStoreFinderClass'
 ```
 
 in `config/initializers/spree.rb` file
