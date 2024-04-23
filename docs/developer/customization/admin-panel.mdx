@@ -1,14 +1,14 @@
 # Admin Panel
 
-Starting with Spree 4.7, we've introduced a new way of customizing the admin panel, that enables extensions to modify the admin panel UI without depending on the Deface gem. For Spree 4.6 and earlier, please see how to use [deface\_overrides\_tutorial.md](../advanced/deface\_overrides\_tutorial.md "mention") overrides.
+Starting with Spree 4.7, we've introduced a new way of customizing the admin panel, that enables extensions to modify the admin panel UI without depending on the Deface gem. For Spree 4.6 and earlier, please see how to use [deface_overrides_tutorial.md](../advanced/deface_overrides_tutorial.md "mention") overrides.
 
 ### Customizing the main menu
 
 When extending Spree with custom features, it's common to add new options to the menu on the left-hand side.
 
-The menu is built with [`Spree::Admin::MainMenu::Section`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/section.rb) and [`Spree::Admin::MainMenu::Item`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/item.rb) objects.
+The menu is built with [`Spree::Admin::MainMenu::Section`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/section.rb) and [`Spree::Admin::MainMenu::Item`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/item.rb) objects.
 
-Additionally, there are two builder classes [`Spree::Admin::MainMenu::SectionBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/section\_builder.rb) and [`Spree::Admin::MainMenu::ItemBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/item\_builder.rb) that make it easier to build more complex sections.
+Additionally, there are two builder classes [`Spree::Admin::MainMenu::SectionBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/section_builder.rb) and [`Spree::Admin::MainMenu::ItemBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/item_builder.rb) that make it easier to build more complex sections.
 
 The menu is available under `Rails.application.config.spree_backend.main_menu` and can be modified by both extensions as well as the Rails application code.
 
@@ -28,7 +28,7 @@ Rails.application.config.after_initialize do
 end
 ```
 
-For a more extensive example, take a look at how the [default menu is built](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/main\_menu/default\_configuration\_builder.rb).
+For a more extensive example, take a look at how the [default menu is built](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/default_configuration_builder.rb).
 
 ### Customizing tabs
 
@@ -36,7 +36,7 @@ In some cases you may need to add a new tab to a page for editing Orders, Produc
 
 ![](/images/Screenshot 2023-10-31 at 18.57.13.png)
 
-These tabs are built with [`Spree::Admin::Tabs::Tab`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/tabs/tab.rb). You can also use [`Spree::Admin::Tabs::TabBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/tabs/tab\_builder.rb) class to construct new Tab objects. The tabs are attached to `Rails.application.config.spree_backend.tabs` and can be modified via an initializer.
+These tabs are built with [`Spree::Admin::Tabs::Tab`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/tabs/tab.rb). You can also use [`Spree::Admin::Tabs::TabBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/tabs/tab_builder.rb) class to construct new Tab objects. The tabs are attached to `Rails.application.config.spree_backend.tabs` and can be modified via an initializer.
 
 #### Example: adding an additional tab to the product edit admin page
 
@@ -55,7 +55,7 @@ end
 
 A common case for extensions is to add a new action button in the admin panel.
 
-Action buttons are built with [`Spree::Admin::Actions::Action`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/actions/action.rb) or with a dedicated [`Spree::Admin::Actions::ActionBuilder`](https://github.com/spree/spree\_backend/blob/main/app/models/spree/admin/actions/action\_builder.rb) class. The action buttons are attached to `Rails.application.config.spree_backend.actions` and can be modified with an initializer.
+Action buttons are built with [`Spree::Admin::Actions::Action`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/actions/action.rb) or with a dedicated [`Spree::Admin::Actions::ActionBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/actions/action_builder.rb) class. The action buttons are attached to `Rails.application.config.spree_backend.actions` and can be modified with an initializer.
 
 **Example: adding a new button to the order page**
 

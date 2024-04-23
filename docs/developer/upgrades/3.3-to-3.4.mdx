@@ -5,15 +5,11 @@ order: 6
 description: 'This guide covers upgrading a 3.3 Spree store, to a 3.4 store.'
 ---
 
-### Update Gemfile
+### Update gems
 
-```ruby
-gem 'spree', '~> 3.4'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
+```bash
+bundle update
 ```
-
-### Run `bundle update`
 
 ### Install missing migrations
 

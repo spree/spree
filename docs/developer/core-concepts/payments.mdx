@@ -75,7 +75,7 @@ You can decide which Payment Method will appear on which Store. This allows you 
 
 ## Payment Processing
 
-Payment processing in Spree supports many different gateways, but also attempts to comply with the API provided by the [active\_merchant](https://github.com/shopify/active_merchant) gem where possible.
+Payment processing in Spree supports many different gateways, but also attempts to comply with the API provided by the [active_merchant](https://github.com/shopify/active_merchant) gem where possible.
 
 ### Gateway Options
 
@@ -150,9 +150,9 @@ payment.log_entries
 
 If the `purchase!` route is taken and is successful, the payment is marked as `completed`. If it fails, it is marked as `failed`. If the `authorize` method is successful, the payment is transitioned to the `pending` state so that it can be manually captured later by calling the `capture!` method. If it is unsuccessful, it is also transitioned to the `failed` state.
 
- Once a payment has been saved, it also updates the order. This may trigger the \`payment\_state\` to change, which would reflect the current payment state of the order. The possible states are: \* \`balance\_due\`: Indicates that payment is required for this order \* \`failed\`: Indicates that the last payment for the order failed \* \`credit\_owed\`: This order has been paid for in excess of its total \* \`paid\`: This order has been paid for in full.
+ Once a payment has been saved, it also updates the order. This may trigger the \`payment_state\` to change, which would reflect the current payment state of the order. The possible states are: \* \`balance_due\`: Indicates that payment is required for this order \* \`failed\`: Indicates that the last payment for the order failed \* \`credit_owed\`: This order has been paid for in excess of its total \* \`paid\`: This order has been paid for in full.
 
- You may want to keep tabs on the number of orders with a \`payment\_state\` of \`failed\`. A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction. You should check the latest \`log\_entries\` for the most recent payments in the store if this is happening.
+ You may want to keep tabs on the number of orders with a \`payment_state\` of \`failed\`. A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction. You should check the latest \`log_entries\` for the most recent payments in the store if this is happening.
 
 ### Log Entries
 
@@ -194,7 +194,7 @@ Access to a number of payment gateways is handled with the usage of the [Spree G
 With the `spree_gateway` gem included in your application's `Gemfile`, these gateways will be selectable in the admin backend for payment methods.
 
 <Info>
- These are just some of the gateways which are supported by the Active Merchant gem. You can see a [list of all the Active Merchant gateways on that project's GitHub page](https://github.com/activemerchant/active\_merchant\#supported-payment-gateways).
+ These are just some of the gateways which are supported by the Active Merchant gem. You can see a [list of all the Active Merchant gateways on that project's GitHub page](https://github.com/activemerchant/active_merchant\#supported-payment-gateways).
 </Info>
 
 ## Adding your custom Payment Method

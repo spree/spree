@@ -14,7 +14,7 @@ The customization of the flow of the checkout can be done by using Spree's `chec
 
 The Spree checkout process consists of the following steps. With the exception of the Registration step, each of these steps corresponds to a state of the [Order object](/developer/core-concepts/orders):
 
-* Registration \(Optional - only if using [spree\_auth\_devise](https://github.com/spree/spree_auth_devise) extension, can be toggled through the `Spree::Auth::Config[:registration_step]` configuration setting\)
+* Registration \(Optional - only if using [spree_auth_devise](https://github.com/spree/spree_auth_devise) extension, can be toggled through the `Spree::Auth::Config[:registration_step]` configuration setting\)
 * Address Information
 * Delivery Options \(Shipping Method\)
 * Payment
@@ -53,7 +53,7 @@ The address fields include a select box for choosing state/province. The list of
 
  The default "seed" data for Spree only includes the U.S. states. It's easy enough to add states or provinces for other countries but beyond the scope of the Spree project to maintain such a list.
 
- The state field can be disabled entirely by using the \`Spree::Config\[:address\_requires\_state\]\` preference. You can also allow for an "alternate phone" field by using the \`Spree::Config\[:alternative\_shipping\_phone\]\` and \`Spree::Config\[:alternative\_shipping\]\` fields.
+ The state field can be disabled entirely by using the \`Spree::Config\[:address_requires_state\]\` preference. You can also allow for an "alternate phone" field by using the \`Spree::Config\[:alternative_shipping_phone\]\` and \`Spree::Config\[:alternative_shipping\]\` fields.
 
 The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by [setting the Store's checkout zone](/developer/core-concepts/stores#checkout-configuration). Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.
 
@@ -87,13 +87,13 @@ The following is a detailed summary of the checkout architecture. A complete und
 
 ### The Order Model and State Machine
 
-The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state\_machines](https://github.com/state-machines/state_machines) gem in the `Spree::Order` model as well as in several other places \(such as `Spree::Shipment` and `Spree::InventoryUnit`.\)
+The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state_machines](https://github.com/state-machines/state_machines) gem in the `Spree::Order` model as well as in several other places \(such as `Spree::Shipment` and `Spree::InventoryUnit`.\)
 
-The default checkout flow for the `Spree::Order` model is defined in `app/models/spree/order/checkout.rb` of spree\_core.
+The default checkout flow for the `Spree::Order` model is defined in `app/models/spree/order/checkout.rb` of spree_core.
 
 An `Spree::Order` object has an initial state of 'cart'. From there any number of events transition the `Spree::Order` to different states. Spree does not have a separate model or database table for the shopping cart. What the user considers a "shopping cart" is actually an in-progress `Spree::Order`. An order is considered in-progress, or incomplete when its `completed_at` attribute is `nil`. Incomplete orders can be easily filtered during reporting and it's also simple enough to write a quick script to periodically purge incomplete orders from the system. The end result is a simplified data model along with the ability for store owners to search and report on incomplete/abandoned orders.
 
- For more information on the state machines gem please see the \[README\]\(https://github.com/state-machines/state\_machines\)
+ For more information on the state machines gem please see the \[README\]\(https://github.com/state-machines/state_machines\)
 
 ## Checkout Customization
 
@@ -101,7 +101,7 @@ It is possible to override the default checkout workflow to meet your store's ne
 
 ### Adding Logic Before or After a Particular Step
 
-The [state\_machines](https://github.com/state-machines/state_machines) gem allows you to implement callbacks before or after transitioning to a particular step. These callbacks work similarly to [Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html) in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a before\_transition returns false, then the transition will not execute.
+The [state_machines](https://github.com/state-machines/state_machines) gem allows you to implement callbacks before or after transitioning to a particular step. These callbacks work similarly to [Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html) in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a before_transition returns false, then the transition will not execute.
 
 So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a `valid_zip_code?` method, and then tell the state machine to run this method before that transition, placing this code in a file called `app/models/spree/order_decorator.rb`:
 

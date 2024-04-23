@@ -8,19 +8,17 @@ description: >-
   extensions.
 ---
 
-# Internationalization
-
 ## Default Locale
 
 Each [**Store**](/developer/core-concepts/stores) has their own `default_locale` attribute. Alongside that, you can also set `supported_locales` which will enable multi-language capabilities for that Store.
 
-For locales, we use symbols such as `en`,`es-MX` etc - full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree\_i18n/tree/master/config/locales).
+For locales, we use symbols such as `en`,`es-MX` etc - full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree_i18n/tree/master/config/locales).
 
 ## Default Currency
 
 Each [**Store**](/developer/core-concepts/stores) has their own `default_currency` attribute. Alongside that, you can also set  `supported_currencies` which will enable multi-currency capabilities for that Store.
 
-For currencies, we use [ISO 4217](https://en.wikipedia.org/wiki/ISO\_4217) symbols, eg. `USD` , `CAD`, `EUR`
+For currencies, we use [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) symbols, eg. `USD` , `CAD`, `EUR`
 
 ## Resource Translations
 
@@ -28,14 +26,14 @@ As of Spree 4.6, resources with user-facing content fields now have built in sup
 
 | Resource         | Translatable Fields                                                                                                                                                                 |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Product          | name, description, slug, meta\_description, meta\_keywords, meta\_title                                                                                                             |
+| Product          | name, description, slug, meta_description, meta_keywords, meta_title                                                                                                             |
 | Taxon            | name, description, permalink                                                                                                                                                        |
 | Taxonomy         | name                                                                                                                                                                                |
 | Option Type      | name, presentation                                                                                                                                                                  |
 | Option Value     | name, presentation                                                                                                                                                                  |
-| Property         | name, presentation, filter\_param                                                                                                                                                   |
-| Product Property | value, filter\_param                                                                                                                                                                |
-| Store            | name, meta\_description, meta\_keywords, seo\_title, facebook, twitter, instagram, customer\_support\_email, description, address, contact\_phone, new\_order\_notifications\_email |
+| Property         | name, presentation, filter_param                                                                                                                                                   |
+| Product Property | value, filter_param                                                                                                                                                                |
+| Store            | name, meta_description, meta_keywords, seo_title, facebook, twitter, instagram, customer_support_email, description, address, contact_phone, new_order_notifications_email |
 
 Our translatable resources are configured with Mobility’s [Table Backend](https://github.com/shioyama/mobility#table-backend-like-globalize) storage strategy. The way this works is that each translatable resource has a corresponding translations table in the database, in which translation values are stored - for example, product translations are stored in `spree_product_translations`.
 
@@ -70,7 +68,7 @@ Spree::Product.joins(:taxons)
 
 ### Spree 4.5 and lower
 
-If you are using Spree version 4.5 or lower and are currently unable to upgrade, you need to install [Spree Globalize extension](https://github.com/spree-contrib/spree\_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood.
+If you are using Spree version 4.5 or lower and are currently unable to upgrade, you need to install [Spree Globalize extension](https://github.com/spree-contrib/spree_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood.
 
 This gem will allow you to translate:
 
@@ -82,11 +80,11 @@ This gem will allow you to translate:
 * Properties
 * Shipping Methods
 
-## The spree\_i18n project
+## The spree_i18n project
 
-Spree now stores all of the translation information in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree\_i18n). This is a stand alone project with a large number of volunteer committers who maintain the locale files. This is basically the same approach followed by the Rails project which keeps their localizations in [rails-i18n](https://github.com/svenfuchs/rails-i18n).
+Spree now stores all of the translation information in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree_i18n). This is a stand alone project with a large number of volunteer committers who maintain the locale files. This is basically the same approach followed by the Rails project which keeps their localizations in [rails-i18n](https://github.com/svenfuchs/rails-i18n).
 
-The project is actually a Spree extension. This extension contains translations files. To translate models (provide translations for Products, Taxons, etc) you will need to install also [Spree Globalize](https://github.com/spree-contrib/spree\_globalize).
+The project is actually a Spree extension. This extension contains translations files. To translate models (provide translations for Products, Taxons, etc) you will need to install also [Spree Globalize](https://github.com/spree-contrib/spree_globalize).
 
 ### Translation Files
 
@@ -101,13 +99,13 @@ pt-BR:
 
 All translations for Spree are "namespaced" within the `spree` key so that they don't conflict with translations from other parts of the parent application.
 
-Please submit Pull Requests or issues directly to [Spree I18n](https://github.com/spree/spree\_i18n) for missing translations.
+Please submit Pull Requests or issues directly to [Spree I18n](https://github.com/spree/spree_i18n) for missing translations.
 
 ### Localization Files
 
 Spree maintains its localization information in a YAML file using a naming convention similar to that of the Rails project. Each of the localization filenames contains a prefix representing the language code of the locale. For example, the Russian translation is contained in `config/locales/ru.yml`.
 
-Spree has over 43 locale files and counting. See the \[GitHub Repository]\(https://github.com/spree/spree\_i18n/tree/master/config/locales) for a complete list.
+Spree has over 43 locale files and counting. See the \[GitHub Repository]\(https://github.com/spree/spree_i18n/tree/master/config/locales) for a complete list.
 
 ### Required Files
 

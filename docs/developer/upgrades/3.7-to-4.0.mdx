@@ -14,9 +14,14 @@ If you're on an older version than 3.7 please follow previous upgrade guides and
 3. [upgrade 3.6 to 3.7](3.6-to-3.7)
 </Note>
 
-## Update your Ruby version to 2.5
+## Update your Ruby version to 2.5 or later
 
-Spree 4.0 requires Ruby 2.5 o you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
+Spree 4.0 requires Ruby 2.5 so you need to change the ruby version in your project's `Gemfile` and `.ruby-version` files. And of course you need to install Ruby 2.5 or later. If you're using RVM you can do it like this:
+
+```bash
+rvm install 2.5
+rvm use 2.5
+```
 
 ## Migrate from Paperclip to ActiveStorage
 
@@ -34,9 +39,9 @@ If you're using the [Address Book](https://github.com/spree-contrib/spree_addres
 
 1. Remove this line from `Gemfile`
 
-   ```ruby
-    gem 'spree_address_book', github: 'spree-contrib/spree_address_book'
-   ```
+    ```bash
+    bundle remove spree_address_book
+    ```
 
 2. Remove this line from `vendor/assets/javascripts/spree/frontend/all.js`
 
@@ -49,6 +54,20 @@ If you're using the [Address Book](https://github.com/spree-contrib/spree_addres
    ```text
     //= require spree/frontend/spree_address_book
    ```
+
+## Update your `Gemfile`
+
+```ruby
+gem 'spree', '~> 4.0'
+gem 'spree_auth_devise', '~> 4.0'
+gem 'spree_gateway', '~> 3.6'
+```
+
+and run
+
+```bash
+bundle update
+```
 
 ## Replace `class_eval` with `Module.prepend` \(only for Rails 6\)
 
@@ -118,16 +137,6 @@ As we know this is a big portion of work you can still use Bootstrap 3 for your 
 ### Move to Bootstrap 4
 
 [Follow the official Bootstrap 3 to 4 migration guide](https://getbootstrap.com/docs/4.0/migration/)
-
-## Update Gemfile
-
-```ruby
-gem 'spree', '~> 4.0'
-gem 'spree_auth_devise', '~> 4.0'
-gem 'spree_gateway', '~> 3.6'
-```
-
-## Run `bundle update`
 
 ## Install missing migrations
 

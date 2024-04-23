@@ -7,30 +7,12 @@ description: 'This guide covers upgrading a 3.1 Spree store, to a 3.2 store.'
 
 ### Update your Rails version to 5.0
 
-Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-4-2-to-rails-5-0) to upgrade your store.
+Spree 3.1 requires Rails 4.2 at a minimum. Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-4-2-to-rails-5-0) to upgrade your application.
 
-### Update Gemfile
+### Update gems
 
-```ruby
-gem 'spree', '~> 3.2'
-gem 'spree_auth_devise', '~> 3.2'
-gem 'spree_gateway', '~> 3.2'
-```
-
-### Update your extensions
-
-We're changing how extensions dependencies work. Previously you had to match the extension branch to the Spree branch. Starting from now `master` branch of all `spree-contrib` extensions should work with Spree &gt;= `3.1` and &lt; `4.0`. Please change your extensions in Gemfile eg.:
-
-from:
-
-```ruby
-gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero', branch: '3-1-stable'
-```
-
-to:
-
-```ruby
-gem 'spree_braintree_vzero', github: 'spree-contrib/spree_braintree_vzero'
+```bash
+bundle update
 ```
 
 ### Run `bundle update`

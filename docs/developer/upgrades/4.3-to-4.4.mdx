@@ -11,13 +11,19 @@ If you're on an older version than 4.3 please follow previous upgrade guides and
 3. [upgrade 4.2 to 4.3](4.2-to-4.3)
 </Note>
 
-## Update Gemfile
+## Update Gems
 
-```ruby
-gem 'spree', '~> 4.4'
+Run the following command to update your gems to 4.4:
+
+```bash
+bundle update
 ```
 
+to install the new gems.
+
 ## Remove gems merged into Spree Core
+
+These gems were merged into Spree Core in version 4.4. All of their functionality is now included in the `spree` gem so you can remove them.
 
 ### (Optional) Remove Spree Digital
 
@@ -65,25 +71,19 @@ gem 'spree_backend', '~> 4.4'
 bundle update
 ```
 
-### Install `jsbundling-rails` gem
+### Run install generators
 
-`spree_backend` 4.4 uses [Hotwire (Turbo and Stimulus)](https://hotwired.dev/) and requires some javascript bundling provided by the excellent [jsbundling-rails](https://github.com/rails/jsbundling-rails) gem developed by the Rails core team.
-
-This requires that you have both Node and yarn installed on your system.
-
-```bash
-bin/rails javascript:install:esbuild
-```
-
-### Install `@spree/dashboard` NPM package
-
-JavaScript required by the `spree_backend` gem is distributed as [a NPM package](https://www.npmjs.com/package/@spree/dashboard).
+This will copy some files from `spree_backend` to your application.
 
 ```bash
 bin/rails g spree:backend:install
 ```
 
-From now on when you run your app locally you need to use `bin/dev` instead of `bin/rails s`.
+If you're using `spree_frontend` you need to run the frontend install generator as well:
+
+```bash
+bin/rails g spree:frontend:install
+```
 
 ### Make sure that Node is available in your cloud environment
 
@@ -91,11 +91,14 @@ On Heroku, you need to add the node buildpack - [https://devcenter.heroku.com/ar
 
 ## Additional fixes and hints
 
-### Add ActiveJob queues
+### Add Spree ActiveJob queues to your Sidekiq config
 
-Spree uses ActiveJob for processing long running operations to not interrupt your web server performance. You need to update your `config/sidekiq.yml` file if you're using the Sidekiq gem.
+Spree uses ActiveJob for processing long running operations to not interrupt your web server performance.
 
-Make sure that `spree_stock_location_stock_items` and `spree_webhooks` queues are there. You can check [spree\_starter's config](https://github.com/spree/spree\_starter/blob/main/config/sidekiq.yml) as a guideline.
+If you're using [Sidekiq](https://github.com/mperham/sidekiq) you need to update your `config/sidekiq.yml` file and 2 new queues:
+
+* `spree_stock_location_stock_items`
+* `spree_webhooks`
 
 ### Disabling webhooks
 
@@ -135,7 +138,7 @@ Spree::Dependencies.address_update_service
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/releases).
+For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/releases/tag/v4.4.0).
 
 ## More info
 

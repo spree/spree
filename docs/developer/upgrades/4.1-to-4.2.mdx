@@ -13,13 +13,12 @@ If you're on an older version than 4.1 please follow previous upgrade guides and
 2. [upgrade 4.0 to 4.1](4.0-to-4.1)
 </Note>
 
-## Update Gemfile
+## Update gems
 
-```ruby
-gem 'spree', '~> 4.2'
-gem 'spree_auth_devise', '~> 4.3'
-gem 'spree_gateway', '~> 3.9'
-gem 'spree_i18n', '~> 5'
+Run the following command to update your gems to 4.2:
+
+```bash
+bundle update
 ```
 
 ## Remove SpreeMultiCurrency \(optional\)
@@ -27,6 +26,11 @@ gem 'spree_i18n', '~> 5'
 If you used that gem in the past you need to remove it. Multi-Currency is now incorporated into Spree core and you cannot use that gem anymore.
 
 1. Remove `spree_multi_currency` from your `Gemfile`
+
+   ```bash
+   bundle remove spree_multi_currency
+   ```
+
 2. Remove these preferences from your Spree initializer \(`config/initializers/spree.rb`\):
    * `allow_currency_change`
    * `show_currency_selector`
@@ -40,20 +44,12 @@ All international configuration is now kept on the `Store` model in the database
 
 If you used `spree_i18n` gem before please remove any `SpreeI18n::Config`references from your `config/initializers/spree.rb` file.
 
-## \(Optional\) Add `deface` gem \(optional\)
+## \(Optional\) Add `deface` gem
 
 If you used [Deface overrides](../../advanced/deface_overrides_tutorial#organizing-overrides) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
 
-Simply add it to your `Gemfile`:
-
-```ruby
-gem 'deface'
-```
-
-## Update gems
-
 ```bash
-bundle update
+bundle add deface
 ```
 
 ## Fix RMA migration
@@ -73,21 +69,13 @@ class AddStockLocationToRMA < ActiveRecord::Migration[4.2]
 ## Install missing migrations
 
 ```bash
-rake railties:install:migrations
+bin/rake railties:install:migrations
 ```
 
 ## Run migrations
 
 ```bash
-rails db:migrate
-```
-
-## Upgrade all of your Spree extensions to the newest versions
-
-To avoid errors and compatibility issues, please update all of your Spree extension gems to the newest versions which usually includes fixes for the new Spree release, eg.
-
-```bash
-bundle update spree_related_products
+bin/rails db:migrate
 ```
 
 ## Other things to remember
@@ -104,16 +92,16 @@ Only if you've added new Admin Panel pages with Select2 dropdown - [this guide w
 
 If you're using Spree default Storefront \(`spree_frontend` gem\) make sure to update your templates, especially:
 
-* [app/views/spree/shared/\_head.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_head.html.erb)
-* [app/views/spree/shared/\_locale\_and\_currency.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_and_currency.html.erb)
-* [app/views/spree/shared/\_link\_to\_account.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_link_to_account.html.erb)
-* [app/views/spree/shared/\_internationalization\_options.html.erb](https://github.com/spree/spree/blob/master/frontend/app/views/spree/shared/_internationalization_options.html.erb)
-* [app/views/spree/shared/\_locale\_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_dropdown.html.erb)
-* [app/views/spree/shared/\_currency\_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_currency_dropdown.html.erb)
-* [app/views/spree/shared/\_mobile\_navigation.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_navigation.html.erb)
-* [app/views/spree/shared/\_mobile\_internationalization\_options.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_internationalization_options.html.erb)
-* [app/views/spree/shared/\_nav\_bar.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_nav_bar.html.erb)
-* [app/views/spree/shared/\_line\_item.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_line_item.html.erb)
+* [app/views/spree/shared/_head.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_head.html.erb)
+* [app/views/spree/shared/_locale_and_currency.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_and_currency.html.erb)
+* [app/views/spree/shared/_link_to_account.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_link_to_account.html.erb)
+* [app/views/spree/shared/_internationalization_options.html.erb](https://github.com/spree/spree/blob/master/frontend/app/views/spree/shared/_internationalization_options.html.erb)
+* [app/views/spree/shared/_locale_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_dropdown.html.erb)
+* [app/views/spree/shared/_currency_dropdown.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_currency_dropdown.html.erb)
+* [app/views/spree/shared/_mobile_navigation.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_navigation.html.erb)
+* [app/views/spree/shared/_mobile_internationalization_options.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_mobile_internationalization_options.html.erb)
+* [app/views/spree/shared/_nav_bar.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_nav_bar.html.erb)
+* [app/views/spree/shared/_line_item.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_line_item.html.erb)
 
 Or simply run `bundle exec rails g spree:frontend:copy_storefront`
 
