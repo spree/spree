@@ -72,7 +72,61 @@ yarn build
 
 And that's a wrap! :tada:
 
+## Additional fixes and hints
+
+### Update migrations for translation tables with additional columns
+
+If you want to translate more fields in [translated resources](https://dev-docs.spreecommerce.org/customization/i18n#resource-translations), you have to alter copied migrations or add new ones.
+We're using the `Spree::TranslationMigrations` to help with migrating data, see [here](https://github.com/spree/spree/blob/main/core/lib/spree/translation_migrations.rb).
+
+### Add or update the behavior of the translated model
+
+Each translated resource has a corresponding `Translation` model, see [here](https://github.com/spree/spree/blob/v4.6.5/core/app/models/spree/product.rb#L44) for reference.
+If you want to add some more behavior to the translation, you need to do it within the `Translation.class_eval` block.
+
+If you replaced Spree models, you have to define this block yourself. Apart from that, please include these modules: 
+- `Spree::TranslatableResource` - required for all translated models
+- `Spree::TranslatableResourceSlug` - required for translated models with slugs/permalinks
+
+You can read more how Spree handles resources translations [here](https://dev-docs.spreecommerce.org/customization/i18n#resource-translations-implementation).
+
+### Generating slugs with friendly_id
+
+Generating slugs/permalinks in `Spree::Product` and `Spree::Taxon` models is now based on the translated name. If you use the `history` plugin, read [here](https://github.com/shioyama/friendly_id-mobility?tab=readme-ov-file#slug-history) on how to use it with the `mobility` plugin.
+
+### Resource translations and encryption
+
+Currently, it's not possible to translate encrypted data. If you're already encrypting data that Spree translates, you need to remove that functionality.
+
+### Full text search with pg_search scopes
+
+If you use the [pg_search](https://github.com/Casecommons/pg_search) for the full text search in [translated resources](https://dev-docs.spreecommerce.org/customization/i18n#resource-translations), you need to move your scopes to the translated model, eg. from the `Spree::Product` to the `Spree::Product::Translation`. If you still want to have the original scope, you can rewrite it like this:
+
+#### Before
+
+```ruby
+class Spree::Product < Spree::Base
+  include PgSearch::Model
+  pg_search_scope :search_by_name, against: :name
+end
+```
+
+#### After
+
+```ruby
+class Spree::Product < Spree::Base
+  self::Translation.class_eval do
+    include PgSearch::Model
+    pg_search_scope :search_by_name, against: :name
+  end
+  
+  scope :search_by_name, lambda { |query|
+    product_ids = Spree::Product::Translation.search_by_name(query).pluck(:spree_product_id)
+    where(id: product_ids)
+  }
+end
+```
+
 ## Read the release notes
 
 For information about changes contained within this release, please read the [Spree 4.6.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.6.0).
-
