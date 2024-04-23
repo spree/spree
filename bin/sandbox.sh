@@ -34,38 +34,16 @@ fi
 
 cd ./sandbox
 
-if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
-else
-  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'"
-fi
-
-if [ "$SPREE_GATEWAY_PATH" != "" ]; then
-  SPREE_GATEWAY_GEM="gem 'spree_gateway', path: '$SPREE_GATEWAY_PATH'"
-else
-  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'"
-fi
-
-if [ "$SPREE_DASHBOARD_PATH" != "" ]; then
-  SPREE_BACKEND_GEM="gem 'spree_backend', path: '$SPREE_DASHBOARD_PATH'"
-else
-  SPREE_BACKEND_GEM="gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'"
-fi
-
-if [ "$SPREE_STOREFRONT_PATH" != "" ]; then
-  SPREE_STOREFRONT_PATH="gem 'spree_frontend', path: '$SPREE_STOREFRONT_PATH'"
-else
-  SPREE_STOREFRONT_PATH="gem 'spree_frontend', github: 'spree/spree_rails_frontend', branch: 'main'"
-fi
+git submodule update --init --recursive
 
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
-$SPREE_BACKEND_GEM
-$SPREE_GATEWAY_GEM
-$SPREE_STOREFRONT_PATH
-$SPREE_AUTH_DEVISE_GEM
+gem 'spree_backend', path: '../backend'
+gem 'spree_frontend', path: '../frontend'
+gem 'spree_auth_devise', path: '../auth_devise'
+gem 'spree_gateway', path: '../gateway'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do

@@ -64,19 +64,6 @@ By default, Sandbox uses the **SQLite** database. But you can switch to **Postgr
 DB=postgres bin/sandbox.sh
 ```
 
-When developing [Spree Admin Dashboard](https://github.com/spree/spree\_backend) you can also pass `SPREE_DASHBOARD_PATH`
-
-```bash
-SPREE_DASHBOARD_PATH=../../spree_backend bin/sandbox.sh
-```
-
-Start the server
-
-```bash
-cd sandbox
-bin/rails s
-```
-
 ### Performance in development mode
 
 You may notice that your Spree store runs slower in development environment. This is caused by disabled caching and automatic reloading of code after each change.
