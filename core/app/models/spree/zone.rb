@@ -1,6 +1,6 @@
 module Spree
   class Zone < Spree::Base
-    include UniqueName
+    include Spree::UniqueName
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

@@ -1,6 +1,6 @@
 module Spree
   class ShippingCategory < Spree::Base
-    include UniqueName
+    include Spree::UniqueName
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

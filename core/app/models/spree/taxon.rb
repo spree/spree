@@ -3,9 +3,9 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
-    include TranslatableResource
-    include TranslatableResourceSlug
-    include Metadata
+    include Spree::TranslatableResource
+    include Spree::TranslatableResourceSlug
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

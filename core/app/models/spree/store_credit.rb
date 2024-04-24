@@ -1,7 +1,7 @@
 module Spree
   class StoreCredit < Spree::Base
-    include SingleStoreResource
-    include Metadata
+    include Spree::SingleStoreResource
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

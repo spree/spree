@@ -1,6 +1,6 @@
 module Spree
   class Role < Spree::Base
-    include UniqueName
+    include Spree::UniqueName
 
     has_many :role_users, class_name: 'Spree::RoleUser', dependent: :destroy
     has_many :users, through: :role_users, class_name: "::#{Spree.user_class}"

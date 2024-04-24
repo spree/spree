@@ -1,7 +1,7 @@
 module Spree
   class Promotion < Spree::Base
-    include MultiStoreResource
-    include Metadata
+    include Spree::MultiStoreResource
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

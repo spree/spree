@@ -1,7 +1,7 @@
 module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

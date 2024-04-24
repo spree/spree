@@ -1,7 +1,7 @@
 module Spree
   class Reimbursement < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
-    include NumberIdentifier
+    include Spree::NumberIdentifier
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
