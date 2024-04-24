@@ -13,11 +13,15 @@ If you're on an older version than 4.4 please follow previous upgrade guides and
 
 ## Upgrade Rails
 
-Rails 6.0 is no longer supported - if you haven’t already, you’ll need to upgrade to **Rails 6.1 or 7.0**. 
+<Warning>
+Rails 6.0 is no longer supported - if you haven’t already, you’ll need to upgrade to **Rails 6.1 or 7.x**. 
+</Warning>
 
-The effort to upgrade to Rails 6.1 is relatively low, but brings a lot of improvements around ActiveStorage and handling of CDNs. See the Rails docs [for upgrading from 6.0 to 6.1](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-0-to-rails-6-1), and for [upgrading from 6.1 to 7.0](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-1-to-rails-7-0).
+The effort to upgrade to Rails 6.1 is relatively low and brings a lot of improvements around ActiveStorage and handling of CDNs. See the Rails docs [for upgrading from 6.0 to 6.1](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-0-to-rails-6-1), and for [upgrading from 6.1 to 7.0](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-1-to-rails-7-0).
 
+<Note>
 If using Rails 7, you will need to [install libvips](https://www.libvips.org/install.html) on your cloud environment, as Rails 7 uses vips as its default variant processor. You can still use imagemagick, but you’ll need to manually set it in your [Rails config](https://edgeapi.rubyonrails.org/classes/ActiveStorage/Variant.html).
+</Note>
 
 ### Rails 7 specific changes
 

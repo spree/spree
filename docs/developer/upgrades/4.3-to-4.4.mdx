@@ -57,21 +57,7 @@ bin/rake railties:install:migrations
 bin/rails db:migrate
 ```
 
-## Update Spree Dashboard (`spree_backend`)
-
-### Update Gemfile
-
-```ruby
-gem 'spree_backend', '~> 4.4'
-```
-
-### Update gems
-
-```shell
-bundle update
-```
-
-### Run install generators
+## Run install generators
 
 This will copy some files from `spree_backend` to your application.
 
@@ -85,11 +71,11 @@ If you're using `spree_frontend` you need to run the frontend install generator 
 bin/rails g spree:frontend:install
 ```
 
+## Additional fixes and hints
+
 ### Make sure that Node is available in your cloud environment
 
 On Heroku, you need to add the node buildpack - [https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks](https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks)
-
-## Additional fixes and hints
 
 ### Add Spree ActiveJob queues to your Sidekiq config
 
@@ -117,10 +103,6 @@ end
 ```
 
 Webhooks do not fire on touch events. Webhooks also do not do anything until there is a first webhook subscriber created which can be done in the Admin Dashboard or via Platform API.
-
-### Update Spree SDK
-
-To use the new features such as Wishlists and Digital Products in your storefront please update [Spree SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) to [v4.12](https://github.com/spree/spree-storefront-api-v2-js-sdk/releases/tag/v4.12.0) at least.
 
 ### Update Spree Dependencies that was renamed
 
