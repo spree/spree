@@ -1,6 +1,6 @@
 module Spree
   class Menu < Spree::Base
-    include SingleStoreResource
+    include Spree::SingleStoreResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

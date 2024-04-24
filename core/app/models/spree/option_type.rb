@@ -1,8 +1,8 @@
 module Spree
   class OptionType < Spree::Base
-    include UniqueName
-    include Metadata
-    include TranslatableResource
+    include Spree::UniqueName
+    include Spree::Metadata
+    include Spree::TranslatableResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

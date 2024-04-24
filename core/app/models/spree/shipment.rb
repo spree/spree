@@ -3,9 +3,9 @@ require 'ostruct'
 module Spree
   class Shipment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
-    include NumberIdentifier
-    include NumberAsParam
-    include Metadata
+    include Spree::NumberIdentifier
+    include Spree::NumberAsParam
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

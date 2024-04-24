@@ -1,7 +1,7 @@
 module Spree
   class CmsPage < Base
-    include SingleStoreResource
-    include DisplayLink
+    include Spree::SingleStoreResource
+    include Spree::DisplayLink
 
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
