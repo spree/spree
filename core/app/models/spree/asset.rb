@@ -1,7 +1,7 @@
 module Spree
   class Asset < Spree::Base
     include Support::ActiveStorage
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

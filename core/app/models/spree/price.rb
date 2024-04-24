@@ -1,6 +1,6 @@
 module Spree
   class Price < Spree::Base
-    include VatPriceCalculation
+    include Spree::VatPriceCalculation
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
