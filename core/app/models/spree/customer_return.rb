@@ -1,8 +1,8 @@
 module Spree
   class CustomerReturn < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
-    include NumberIdentifier
-    include Metadata
+    include Spree::NumberIdentifier
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

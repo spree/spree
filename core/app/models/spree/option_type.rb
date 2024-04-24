@@ -1,7 +1,7 @@
 module Spree
   class OptionType < Spree::Base
     include UniqueName
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

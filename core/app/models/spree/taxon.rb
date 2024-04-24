@@ -3,7 +3,7 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

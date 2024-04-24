@@ -3,8 +3,8 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    include MemoizedData
-    include Metadata
+    include Spree::MemoizedData
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

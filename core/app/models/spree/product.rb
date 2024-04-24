@@ -22,9 +22,9 @@ module Spree
   class Product < Spree::Base
     extend FriendlyId
     include ProductScopes
-    include MultiStoreResource
-    include MemoizedData
-    include Metadata
+    include Spree::MultiStoreResource
+    include Spree::MemoizedData
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end

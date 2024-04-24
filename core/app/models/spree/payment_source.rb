@@ -1,6 +1,6 @@
 module Spree
   class PaymentSource < Spree::Base
-    include Metadata
+    include Spree::Metadata
 
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
     belongs_to :user, class_name: 'Spree::User', optional: true

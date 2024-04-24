@@ -1,7 +1,7 @@
 module Spree
   class Property < Spree::Base
     include Spree::FilterParam
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks)
       include Spree::Webhooks::HasWebhooks
     end
