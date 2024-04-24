@@ -20,10 +20,10 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
-    include NumberIdentifier
-    include NumberAsParam
-    include SingleStoreResource
-    include MemoizedData
+    include Spree::NumberIdentifier
+    include Spree::NumberAsParam
+    include Spree::SingleStoreResource
+    include Spree::MemoizedData
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

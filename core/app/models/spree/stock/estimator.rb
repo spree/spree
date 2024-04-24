@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Estimator
-      include VatPriceCalculation
+      include Spree::VatPriceCalculation
 
       attr_reader :order, :currency
 

@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
-    include MultiStoreResource
+    include Spree::MultiStoreResource
     include Spree::Metadata
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods

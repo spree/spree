@@ -1,9 +1,9 @@
 module Spree
   class StockTransfer < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'T')
-    include NumberIdentifier
-    include NumberAsParam
-    include Metadata
+    include Spree::NumberIdentifier
+    include Spree::NumberAsParam
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

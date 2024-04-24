@@ -1,6 +1,6 @@
 module Spree
   class Refund < Spree::Base
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

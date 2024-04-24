@@ -3,9 +3,9 @@ require_dependency 'spree/payment/processing'
 module Spree
   class Payment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
-    include NumberIdentifier
-    include NumberAsParam
-    include Metadata
+    include Spree::NumberIdentifier
+    include Spree::NumberAsParam
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

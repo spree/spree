@@ -2,7 +2,7 @@ module Spree
   class StockItem < Spree::Base
     acts_as_paranoid
 
-    include Metadata
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

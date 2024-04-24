@@ -1,7 +1,7 @@
 module Spree
   class Taxonomy < Spree::Base
-    include TranslatableResource
-    include Metadata
+    include Spree::TranslatableResource
+    include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
