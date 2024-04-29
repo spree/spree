@@ -29,18 +29,18 @@ To use your own authentication system with Spree, please follow these steps:
   </Accordion>
 
   <Accordion title="2. Generate Spree Authentication Helpers">
-    Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension \(that lives at `lib/spree/authentication_helpers.rb`\) to the `Spree::Core::AuthenticationHelpers` module inside of Spree.
+    Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension that lives at `lib/spree/authentication_helpers.rb` to the `Spree::Core::AuthenticationHelpers` module inside of Spree.
 
     Run this generator with this command:
 
     ```bash
-    bundle exec rails g spree:custom_user User
+    bin/rails g spree:custom_user User
     ```
 
     This will tell the generator that you want to use the `User` class as the class that represents users in Spree. Run the new migration by running this:
 
     ```bash
-    bundle exec rails db:migrate
+    bin/rails db:migrate
     ```
 
     Next you will need to define some methods to tell Spree where to find your application's authentication routes.

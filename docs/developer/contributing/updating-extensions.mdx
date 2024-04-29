@@ -7,7 +7,7 @@ description: How to upgrade your Spree extension to work with Spree 4
 
 Zeitwerk is the [new default code autoloader in Rails 6](https://weblog.rubyonrails.org/2019/2/22/zeitwerk-integration-in-rails-6-beta-2/).
 
-This doesn't work well with the old approach to decorators \(files that name ends with decorator.rb, eg. `app/models/spree/order_decorator.rb`\) using [class_eval](https://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval/).
+This doesn't work well with the old approach to decorators files that name ends with decorator.rb, eg. `app/models/spree/order_decorator.rb` using [class_eval](https://www.jimmycuadra.com/posts/metaprogramming-ruby-class-eval-and-instance-eval/).
 
 To fix this we need to convert all `class_eval` decorators to modules and use [Module.prepend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073). Also we need to name them properly according to [Zeitwerk naming rules](https://github.com/fxn/zeitwerk#file-structure)
 

@@ -6,12 +6,12 @@ section: advanced
 # Deface
 
 <Warning>
-Using Deface is no longer recommended
+Using Deface is no longer recommended, we strongly encourage you to use other ways to customize Spree.
 </Warning>
 
 ## What is Deface?
 
-Deface is a standalone Rails library that enables you to customize Erb templates without needing to directly edit the underlying view file. Deface allows you to use standard CSS3 style selectors to target any element \(including Ruby blocks\), and perform an action against all the matching elements.
+Deface is a standalone Rails library that enables you to customize Erb templates without needing to directly edit the underlying view file. Deface allows you to use standard CSS3 style selectors to target any element including Ruby blocks, and perform an action against all the matching elements.
 
 ## Improving Our Extension Using Deface
 
@@ -31,7 +31,7 @@ First, let's create the overrides directory with the following command:
 mkdir app/overrides
 ```
 
-So we want to override `spree/admin/products/_form.html.erb`. Here is the part of the file we are going to add content to \(you can also view the [full file](https://github.com/spree/spree/blob/master/backend/app/views/spree/admin/products/_form.html.erb)\):
+So we want to override `spree/admin/products/_form.html.erb`. Here is the part of the file we are going to add content to you can also view the [full file](https://github.com/spree/spree/blob/master/backend/app/views/spree/admin/products/_form.html.erb):
 
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
@@ -71,11 +71,11 @@ module Spree
 end
 ```
 
-Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application \(created in the [Getting Started tutorial](../getting-started/installation)\).
+Now, when we head to `http://localhost:3000/admin/products` and edit a product, we should be able to set a sale price for the product and be able to view it on our sale page, `http://localhost:3000/sale`. Note that you will likely need to restart our example Spree application created in the [Getting Started tutorial](../getting-started/installation).
 
 ### Available actions
 
-Deface applies an **action** to element\(s\) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element\(s\) is the value, for example:
+Deface applies an **action** to elements matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target elements is the value, for example:
 
 ```ruby
 remove: "p.junk"
@@ -114,9 +114,9 @@ Deface supports three options for supplying content to be used by an override:
 
 ### Targeting elements
 
-While Deface allows you to use a large subset of CSS3 style selectors \(as provided by Nokogiri\), the majority of Spree's views have been updated to include a custom HTML attribute \(data-hook\), which is designed to provide consistent targets for your overrides to use.
+While Deface allows you to use a large subset of CSS3 style selectors as provided by Nokogiri, the majority of Spree's views have been updated to include a custom HTML attribute data-hook, which is designed to provide consistent targets for your overrides to use.
 
-As Spree views are changed over coming versions, the original HTML elements maybe edited or be removed. We will endeavour to ensure that data-hook / id combination will remain consistent within any single view file \(where possible\), thus making your overrides more robust and upgrade proof.
+As Spree views are changed over coming versions, the original HTML elements maybe edited or be removed. We will endeavour to ensure that data-hook / id combination will remain consistent within any single view file where possible, thus making your overrides more robust and upgrade proof.
 
 For example, spree/products/show.html.erb looks as follows:
 
@@ -202,7 +202,7 @@ You can also use a combination of both styles of selectors in a single override 
 
 ### Targeting ruby blocks
 
-Deface evaluates all the selectors passed against the original erb view contents \(and importantly not against the finished / generated HTML\). In order for Deface to make ruby blocks contained in a view parseable they are converted into a pseudo markup as follows.
+Deface evaluates all the selectors passed against the original erb view contents and importantly not against the finished / generated HTML. In order for Deface to make ruby blocks contained in a view parseable they are converted into a pseudo markup as follows.
 
 Given the following Erb file:
 

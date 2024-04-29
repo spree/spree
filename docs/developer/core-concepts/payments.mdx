@@ -126,7 +126,7 @@ We don't store the full credit card number, only the last 4 digits and the card 
 
 ### Processing Walkthrough
 
-When an order is completed in spree, each `Payment` object associated with the order has the `process!` method called on it \(unless `payment_required?` for the order returns `false`\), in order to attempt to automatically fulfill the payment required for the order. If the payment method requires a source (eg. `Spree::CreditCard`), and the payment has a source associated with it, then Spree will attempt to process the payment. Otherwise, the payment will need to be processed manually.
+When an order is completed in spree, each `Payment` object associated with the order has the `process!` method called on it unless `payment_required?` for the order returns `false`, in order to attempt to automatically fulfill the payment required for the order. If the payment method requires a source (eg. `Spree::CreditCard`), and the payment has a source associated with it, then Spree will attempt to process the payment. Otherwise, the payment will need to be processed manually.
 
 If the `PaymentMethod` object is configured to auto-capture payments, then the `Payment#purchase!` method will be called, which will call `PaymentMethod#purchase` like this:
 
@@ -142,7 +142,7 @@ payment_method.authorize(<amount>, <source>, <gateway options>)
 
 How the payment is actually put through depends on the `PaymentMethod` sub-class' implementation of the `purchase` and `authorize` methods.
 
-The returned object from both the `purchase` and `authorize` methods on the payment method objects must be an [ActiveMerchant::Billing::Response](https://github.com/activemerchant/active_merchant/blob/master/lib/active_merchant/billing/response.rb) object. This response object is then stored \(in YAML\) in the `spree_log_entries` table. Log entries can be retrieved with a call to the `log_entries` association on any `Payment` object, eg.
+The returned object from both the `purchase` and `authorize` methods on the payment method objects must be an [ActiveMerchant::Billing::Response](https://github.com/activemerchant/active_merchant/blob/master/lib/active_merchant/billing/response.rb) object. This response object is then stored in YAML in the `spree_log_entries` table. Log entries can be retrieved with a call to the `log_entries` association on any `Payment` object, eg.
 
 ```ruby
 payment.log_entries
@@ -169,15 +169,15 @@ payment.log_entries.first.details
 Access to a number of payment gateways is handled with the usage of the [Spree Gateway](https://github.com/spree/spree_gateway) extension. This extension currently supports the following gateways:
 
 * Authorize.net
-* Apple Pay \(via Stripe\)
+* Apple Pay via Stripe
 * BanWire
-* Bambora \(previously Beanstream\)
+* Bambora previously Beanstream
 * Braintree
 * CyberSource
 * ePay
 * eWay
 * maxipago
-* MasterCard Payment Gateway Service \(formerly MiGS\)
+* MasterCard Payment Gateway Service formerly MiGS
 * Moneris
 * PayJunction
 * Payflow
@@ -187,9 +187,9 @@ Access to a number of payment gateways is handled with the usage of the [Spree G
 * sage Pay
 * SecurePay
 * Spreedly
-* Stripe \(with Stripe Elements\)
+* Stripe with Stripe Elements
 * USAePay
-* Worldpay \(previously Cardsave\)
+* Worldpay previously Cardsave
 
 With the `spree_gateway` gem included in your application's `Gemfile`, these gateways will be selectable in the admin backend for payment methods.
 

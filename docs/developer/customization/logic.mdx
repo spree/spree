@@ -12,7 +12,7 @@ It is highly recommended to use [Dependencies](dependencies) and [Extensions](..
 
 ## Extending Classes
 
-All of Spree's business logic \(models, controllers, helpers, etc\) can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
+All of Spree's business logic models, controllers, helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
 
 Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended.
 
@@ -47,8 +47,8 @@ end
 Assume you want to add a new model called `Video` associated to `Spree::Product`. Let's start with creating a database migration:
 
 ```bash
-bundle exec rails g migration CreateVideos url:string product:references
-bundle exec rails db:migrate
+bin/rails g migration CreateVideos url:string product:references
+bin/rails db:migrate
 ```
 
 Add new model to `app/models/videos.rb`:

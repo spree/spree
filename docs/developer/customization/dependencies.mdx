@@ -1,14 +1,71 @@
 ---
-title: Dependency system
+title: Dependencies
 section: customization
-order: 3
 ---
-
-# Dependencies
 
 ## Overview
 
-With Dependencies, you can easily replace parts of Spree internals with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), Abilities, and [Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2). More will come in the future.
+With Dependencies, you can easily replace parts of Spree core with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), CanCanCan Abilities (user for [Permissions](permissions)), and [API Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2) (used for generating JSON API responses). 
+
+We plan to expand this feature to include more classes in the future.
+
+## Application (global) customization
+
+This will change every aspect of the application (both APIs, Admin Panel, and default Rails frontend if you're using it).
+
+In your `config/initializers/spree.rb` file, you can set the following:
+
+```ruby
+Spree::Dependencies.cart_add_item_service = 'MyAddToCartService'
+```
+
+or
+
+```ruby
+Spree.dependencies do |dependencies|
+  dependencies.cart_add_item_service = 'MyAddToCartService'
+end
+```
+
+Now let's create your custom service.
+
+```bash
+mkdir app/services -f && touch app/services/my_add_to_cart_service.rb
+```
+
+And add the following code to it:
+
+```ruby
+module MyAddToCartService < Spree::Cart::AddItem
+  def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
+    ApplicationRecord.transaction do
+      run :add_to_line_item
+      run Spree::Dependencies.cart_recalculate_service.constantize
+      run :send_notification
+    end
+  end
+
+  private
+
+  def send_notification(new_order_line_item)
+
+  end
+end
+```
+
+This code will:
+
+1. Inherit from `Spree::Cart::AddItem`
+2. Override the `call` method to add your custom logic
+3. Call `run :add_to_line_item` to add the item to the cart
+4. Call `run Spree::Dependencies.cart_recalculate_service.constantize` to recalculate the cart
+5. Call `run :send_notification` to send a notification
+
+<Warning>
+Values set in the initializer have to be strings, eg. `'MyNewAwesomeAddItemToCart'`
+</Warning>
+
+
 
 ## Controller level customization
 
@@ -49,24 +106,6 @@ Spree::Api::Dependencies.storefront_cart_add_item_service = 'MyNewAwesomeAddItem
 
 This will swap the default Cart serializer and Add Item to Cart service for your custom ones within all Storefront API endpoints that use those classes.
 
-Values set in the initializer have to be strings, eg. \`'MyNewAwesomeAddItemToCart'\`
-
-## Application (global) customization
-
-You can also inject classes globally into the entire Spree stack. Be careful about this though as this touches every aspect of the application (both APIs, Admin Panel, and default Rails frontend if you're using it).
-
-```ruby
-Spree::Dependencies.cart_add_item_service = 'MyNewAwesomeAddItemToCart'
-```
-
-or
-
-```ruby
-Spree.dependencies do |dependencies|
-  dependencies.cart_add_item_service = 'MyNewAwesomeAddItemToCart'
-end
-```
-
 You can mix and match both global and API-level customizations:
 
 ```ruby
@@ -75,8 +114,6 @@ Spree::Api::Dependencies.storefront_cart_add_item_service = 'AnotherAddItemToCar
 ```
 
 The second line will have precedence over the first one, and the Storefront API will use `AnotherAddItemToCart` and the rest of the application will use `MyNewAwesomeAddItemToCart`
-
-Values set in the initializer have to be strings, eg. `'MyNewAwesomeAddItemToCart'`
 
 ## Default values
 

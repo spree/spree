@@ -4,7 +4,7 @@ title: Calculators
 
 ## Overview
 
-Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations \(flat rate, percentage discount, sales tax, VAT, etc.\) All calculators extend the `Spree::Calculator` class and must provide the following methods:
+Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations flat rate, percentage discount, sales tax, VAT, etc. All calculators extend the `Spree::Calculator` class and must provide the following methods:
 
 ```ruby
 def self.description
@@ -63,7 +63,7 @@ This calculator is typically used for promotional discounts when you want a spec
 
 This calculator takes three preferences:
 
-* `first_item`: The discounted price of the first item\(s\).
+* `first_item`: The discounted price of the first items.
 * `additional_item`: The discounted price of subsequent items.
 * `max_items`: The maximum number of items this discount applies to.
 
@@ -90,7 +90,7 @@ This calculator takes two preferences:
 * `amount`: The amount per item to calculate.
 * `currency`: The currency for this calculator.
 
-This calculator depends on its `calculable` responding to a `promotion` method, which should return a `Spree::Promotion` \(or similar\) object. This object should then return a list of rules, which should respond to a `products` method. This is used to return a result of matching products.
+This calculator depends on its `calculable` responding to a `promotion` method, which should return a `Spree::Promotion` or similar object. This object should then return a list of rules, which should respond to a `products` method. This is used to return a result of matching products.
 
 The list of matching products is compared against the line items for the order being calculated. If any of the matching products are included in the order, they are eligible for this calculator. The calculation is this:
 
@@ -98,9 +98,9 @@ The list of matching products is compared against the line items for the order b
 
 Every matching product within an order will add to the calculator's total. For example, assuming the calculator has an `amount` of 5 and there's an order with the following line items:
 
-* Product A: $15.00 x 2 \(within matching products\)
-* Product B: $10.00 x 1 \(within matching products\)
-* Product C: $20.00 x 4 \(excluded from matching products\)
+* Product A: $15.00 x 2 within matching products
+* Product B: $10.00 x 1 within matching products
+* Product C: $20.00 x 4 excluded from matching products
 
 The calculation would be:
 
@@ -117,9 +117,9 @@ The Percent Per Item calculator works in a near-identical fashion to the [Per It
 
 Assuming a calculator amount of 10% and an order such as this:
 
-* Product A: $15.00 x 2 \(within matching products\)
-* Product B: $10.00 x 1 \(within matching products\)
-* Product C: $20.00 x 4 \(excluded from matching products\)
+* Product A: $15.00 x 2 within matching products
+* Product B: $10.00 x 1 within matching products
+* Product C: $20.00 x 4 excluded from matching products
 
 The calculation would be:
 
@@ -172,7 +172,7 @@ class CustomCalculator < Spree::ShippingCalculator
 end
 ```
 
-The second thing is to register this calculator as a tax, shipping, or promotion adjustment calculator by calling code like this at the end of `config/initializers/spree.rb` inside your application \(`config` variable defined for brevity\):
+The second thing is to register this calculator as a tax, shipping, or promotion adjustment calculator by calling code like this at the end of `config/initializers/spree.rb` inside your application `config` variable defined for brevity:
 
 ```ruby
 config = Rails.application.config

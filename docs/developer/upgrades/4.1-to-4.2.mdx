@@ -21,7 +21,7 @@ Run the following command to update your gems to 4.2:
 bundle update
 ```
 
-## Remove SpreeMultiCurrency \(optional\)
+## Remove SpreeMultiCurrency optional
 
 If you used that gem in the past you need to remove it. Multi-Currency is now incorporated into Spree core and you cannot use that gem anymore.
 
@@ -31,20 +31,20 @@ If you used that gem in the past you need to remove it. Multi-Currency is now in
    bundle remove spree_multi_currency
    ```
 
-2. Remove these preferences from your Spree initializer \(`config/initializers/spree.rb`\):
+2. Remove these preferences from your Spree initializer `config/initializers/spree.rb`:
    * `allow_currency_change`
    * `show_currency_selector`
    * `supported_currencies`
 3. Remove `//= require spree/frontend/spree_multi_currency` from `vendor/assets/javascripts/spree/frontend/all.js`
 4. Remove `//= require spree/backend/spree_multi_currency` from `vendor/assets/javascripts/spree/backend/all.js`
 
-## \(Optional\) Remove SpreeI18n config
+## Optional Remove SpreeI18n config
 
 All international configuration is now kept on the `Store` model in the database rather than in initializer files.
 
 If you used `spree_i18n` gem before please remove any `SpreeI18n::Config`references from your `config/initializers/spree.rb` file.
 
-## \(Optional\) Add `deface` gem
+## Optional Add `deface` gem
 
 If you used [Deface overrides](../../advanced/deface_overrides_tutorial#organizing-overrides) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
 
@@ -88,9 +88,9 @@ Please follow [this guide to migrate your custom serializers](https://github.com
 
 Only if you've added new Admin Panel pages with Select2 dropdown - [this guide will help](https://select2.org/upgrading/migrating-from-35)
 
-### Make sure you've got up to date Spree templates \(Storefront\)
+### Make sure you've got up to date Spree templates Storefront
 
-If you're using Spree default Storefront \(`spree_frontend` gem\) make sure to update your templates, especially:
+If you're using Spree default Storefront `spree_frontend` gem make sure to update your templates, especially:
 
 * [app/views/spree/shared/_head.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_head.html.erb)
 * [app/views/spree/shared/_locale_and_currency.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_locale_and_currency.html.erb)
@@ -103,7 +103,7 @@ If you're using Spree default Storefront \(`spree_frontend` gem\) make sure to u
 * [app/views/spree/shared/_nav_bar.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_nav_bar.html.erb)
 * [app/views/spree/shared/_line_item.html.erb](https://github.com/spree/spree/blob/4-2-stable/frontend/app/views/spree/shared/_line_item.html.erb)
 
-Or simply run `bundle exec rails g spree:frontend:copy_storefront`
+Or simply run `bin/rails g spree:frontend:copy_storefront`
 
 ## Read the release notes
 

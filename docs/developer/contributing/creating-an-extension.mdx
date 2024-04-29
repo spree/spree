@@ -36,7 +36,7 @@ The first thing we need to do is create a migration that adds a sale_price colum
 We can do this with the following command:
 
 ```bash
-bundle exec rails g migration add_sale_price_to_spree_variants sale_price:decimal
+bin/rails g migration add_sale_price_to_spree_variants sale_price:decimal
 ```
 
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
@@ -67,11 +67,11 @@ Once you have added the gem, it's time to bundle:
 bundle install
 ```
 
-Finally, let's run the `spree_simple_sales` install generator to copy over the migration we just created \(answer **yes** if prompted to run migrations\):
+Finally, let's run the `spree_simple_sales` install generator to copy over the migration we just created answer **yes** if prompted to run migrations:
 
 ```bash
 # context: Your Spree store's app root (i.e. Rails.root); not the extension's root path.
-bundle exec rails g spree_simple_sales:install
+bin/rails g spree_simple_sales:install
 ```
 
 ## Adding a Controller Action to HomeController
@@ -119,7 +119,7 @@ end
 Now that our variants have the attribute `sale_price` available to them, let's update the sample data so we have at least one product that is on sale in our application. We will need to do this in the rails console for the time being, as we have no admin interface to set sale prices for variants. So, in order to do this, first open up the rails console:
 
 ```bash
-bundle exec rails c
+bin/rails c
 ```
 
 Now, follow the steps I take in selecting a product and updating its master variant to have a sale price. Note, you may not be editing the exact same product as I am, but this is not important. We just need one "on sale" product to display on the sales page.
@@ -165,7 +165,7 @@ end
 Spree::Variant.prepend SpreeSimpleSalesSpree::VariantDecorator
 ```
 
-If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in` \(using `return super`\).
+If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in` using `return super`.
 
 ## Testing Our Decorator
 

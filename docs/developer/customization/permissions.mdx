@@ -22,7 +22,7 @@ For authorization Spree uses [CanCanCan](https://github.com/CanCanCommunity/canc
 
 ## Adding custom permissions
 
-Let's assume you would like to add a new Role `customer_service` with some limited access to Admin Panel \(only Orders section\).
+Let's assume you would like to add a new Role `customer_service` with some limited access to Admin Panel only Orders section.
 
 Create a new file called `app/models/customer_service_ability.rb`
 
@@ -56,7 +56,7 @@ end
 
 ## Replacing all permissions
 
-As we've mentioned earlier, Spree uses the main Ability class. You can change that to use your own custom Ability class via [Dependencies](dependencies) in Spree initializer \(`config/initializers/spree.rb`\), eg.
+As we've mentioned earlier, Spree uses the main Ability class. You can change that to use your own custom Ability class via [Dependencies](dependencies) in Spree initializer `config/initializers/spree.rb`, eg.
 
 ```ruby
 Spree::Dependencies.ability_class = 'CustomAbility'

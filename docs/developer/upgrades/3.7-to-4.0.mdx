@@ -69,7 +69,7 @@ and run
 bundle update
 ```
 
-## Replace `class_eval` with `Module.prepend` \(only for Rails 6\)
+## Replace `class_eval` with `Module.prepend` only for Rails 6
 
 Rails 6.0 ships with a [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
 

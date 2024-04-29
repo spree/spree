@@ -21,7 +21,7 @@ Shipments have the following attributes:
 | Attribute          | Description                                                                                   | Example Value                |
 |--------------------|-----------------------------------------------------------------------------------------------|------------------------------|
 | `number`           | The unique identifier for this shipment. It begins with the letter H and ends in an 11-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Shipment.find_by(number: number)`. | H12345678901                 |
-| `tracking`         | The identifier given for the shipping provider \(i.e. FedEx, UPS, etc\).                      | 1Z999AA10123456784           |
+| `tracking`         | The identifier given for the shipping provider i.e. FedEx, UPS, etc.                      | 1Z999AA10123456784           |
 | `shipped_at`       | The time when the shipment was shipped.                                                      | 2021-07-21T14:36:00.000Z     |
 | `state`            | The current state of the shipment.                                                            | `shipped`                      |
 | `stock_location_id`| The ID of the Stock Location where the items for this shipment will be sourced from.         | 3                            |
@@ -53,8 +53,8 @@ Explaining each piece of the shipment world inside of Spree separately and how e
 
 Consider you sell T-shirts to the US and Europe and ship from a single location, and you work with 2 deliverers:
 
-* USPS Ground \(to US\)
-* FedEx \(to EU\)
+* USPS Ground to US
+* FedEx to EU
 
 and their pricing is as follow:
 
@@ -65,21 +65,21 @@ To achieve this setup you need the following configuration:
 
 * Shipping Categories: All your products are the same, so you only need to define one default shipping category. Each of your products would then need to be assigned to this shipping category.
 * 1 Stock Location: You are shipping all items from the same location, so you can use the default.
-* 2 Shipping Methods \(Configuration-&gt;Shipping Methods\) as follows:
+* 2 Shipping Methods Configuration-&gt;Shipping Methods as follows:
 
 | Name | Zone | Calculator |
 | ---: | ---: | ---: |
-| USPS Ground | US | Flexi Rate\($5,$2\) |
-| FedEx | EU_VAT | FlatRate-per-item\($10\) |
+| USPS Ground | US | Flexi Rate$5,$2 |
+| FedEx | EU_VAT | FlatRate-per-item$10 |
 
 ### Advanced Setup
 
-Consider you sell products to a single zone \(US\) and you ship from 2 locations \(Stock Locations\):
+Consider you sell products to a single zone US and you ship from 2 locations Stock Locations:
 
 * New York
 * Los Angeles
 
-and you work with 3 deliverers \(Shipping Methods\):
+and you work with 3 deliverers Shipping Methods:
 
 * FedEx
 * DHL
@@ -112,14 +112,14 @@ USPS charges:
 To achieve this setup you need the following configuration:
 
 * 4 Shipping Categories: Default, Light, Regular and Heavy
-* 3 Shipping Methods \(Configuration-&gt;Shipping Methods\): FedEx, DHL, USPS
-* 2 Stock Locations \(Configuration-&gt;Stock Locations\): New York, Los Angeles
+* 3 Shipping Methods Configuration-&gt;Shipping Methods: FedEx, DHL, USPS
+* 2 Stock Locations Configuration-&gt;Stock Locations: New York, Los Angeles
 
 | S. Category / S. Method | DHL | FedEx | USPS |
 | ---: | ---: | ---: | ---: |
-| Light | Per Item \($5\) | Flat Rate \($10\) | Per Item \($8\) |
-| Regular | Per Item \($5\) | Per Item \($2\) | Per Item \($8\) |
-| Heavy | Per Item \($50\) | Flexi Rate\($20,$15\) | Per Item \($20\) |
+| Light | Per Item $5 | Flat Rate $10 | Per Item $8 |
+| Regular | Per Item $5 | Per Item $2 | Per Item $8 |
+| Heavy | Per Item $50 | Flexi Rate$20,$15 | Per Item $20 |
 
 ## Design & Functionality
 
@@ -128,7 +128,7 @@ To properly leverage Spree's shipping system's flexibility you must understand a
 * Shipping Methods
 * Zones
 * Shipping Categories
-* Calculators \(through Shipping Rates\)
+* Calculators through Shipping Rates
 
 ### Shipping Methods
 
@@ -140,7 +140,7 @@ Shipping methods are the actual services used to send the product. For example:
 * FedEx Overnight
 * DHL International
 
-Each shipping method is only applicable to a specific `Zone`. For example, you wouldn't be able to get a package delivered internationally using a domestic-only shipping method. You can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground \(a US-only carrier\).
+Each shipping method is only applicable to a specific `Zone`. For example, you wouldn't be able to get a package delivered internationally using a domestic-only shipping method. You can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground a US-only carrier.
 
 If you are using shipping categories, these can be used to qualify or disqualify a given shipping method.
 
@@ -154,17 +154,17 @@ The Shipping Address entered during checkout will define the zone the customer i
 
 ### Shipping Categories
 
-Shipping Categories are useful if you sell products whose shipping pricing vary depending on the type of product \(TVs and Mugs, for instance\).
+Shipping Categories are useful if you sell products whose shipping pricing vary depending on the type of product TVs and Mugs, for instance.
 
- For simple setups, where shipping for all products is priced the same \(ie. T-shirt-only shop\), all products would be assigned to the default shipping category for the store.
+ For simple setups, where shipping for all products is priced the same ie. T-shirt-only shop, all products would be assigned to the default shipping category for the store.
 
 Some examples of Shipping Categories would be:
 
-* Light \(for lightweight items like stickers\)
+* Light for lightweight items like stickers
 * Regular
-* Heavy \(for items over a certain weight\)
+* Heavy for items over a certain weight
 
-Shipping Categories are created in the admin interface \(`Configuration` -&gt; `Shipping Categories`\) and then assigned to products \(`Products` -&gt; `Edit`\).
+Shipping Categories are created in the admin interface `Configuration` -&gt; `Shipping Categories` and then assigned to products `Products` -&gt; `Edit`.
 
 During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
 
@@ -174,8 +174,8 @@ A Calculator is the component responsible for calculating the shipping price for
 
 Spree ships with 5 default Calculators:
 
-* Flat rate \(per order\)
-* Flat rate \(per item/product\)
+* Flat rate per order
+* Flat rate per item/product
 * Flat percent
 * Flexible rate
 * Price sack
@@ -194,11 +194,11 @@ After entering a shipping address, the system displays the available shipping op
 
 The customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
 
- You can enable collection of extra _shipping instructions_ by setting the option \`Spree::Config.shipping_instructions\` to \`true\`. This is set to \`false\` by default. See \[Shipping Instructions\]\(\#shipping-instructions\) below.
+ You can enable collection of extra _shipping instructions_ by setting the option \`Spree::Config.shipping_instructions\` to \`true\`. This is set to \`false\` by default. See \[Shipping Instructions\]\#shipping-instructions below.
 
 ### What the Order's Administrator Sees
 
-`Shipment` objects are created during checkout for an order. Initially each records just the shipping method and the order it applies to. The administrator can update the record with the actual shipping cost and a tracking code, and may also \(once only\) confirm the dispatch. This confirmation causes a shipping date to be set as the time of confirmation.
+`Shipment` objects are created during checkout for an order. Initially each records just the shipping method and the order it applies to. The administrator can update the record with the actual shipping cost and a tracking code, and may also once only confirm the dispatch. This confirmation causes a shipping date to be set as the time of confirmation.
 
 ## Advanced Shipping Methods
 
@@ -224,7 +224,7 @@ Each product has a `ShippingCategory`, which adds product-specific information t
 * Variants and quantities
 * Weight and dimension information, if given, for a variant
 
-`ShippingCategory` is basically a wrapper for a string. One use is to code up specific rates, eg. "Fixed $20" or "Fixed $40", from which a calculator could extract imposed prices \(and not go through its other calculations\).
+`ShippingCategory` is basically a wrapper for a string. One use is to code up specific rates, eg. "Fixed $20" or "Fixed $40", from which a calculator could extract imposed prices and not go through its other calculations.
 
 ### Variant Configuration
 

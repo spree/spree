@@ -98,7 +98,11 @@
       "pages": [
         "developer/customization/quickstart",
         "developer/customization/authentication",
-        "developer/customization/permissions"
+        "developer/customization/images",
+        "developer/customization/checkout",
+        "developer/customization/permissions",
+        "developer/customization/dependencies",
+        "developer/customization/decorators"
       ]
     },
 
