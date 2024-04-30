@@ -7,9 +7,8 @@ require '<%= file_name %>/version'
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = '<%= file_name %>'
-  s.version     = <%= class_name %>.version
-  s.summary     = 'Add extension summary here'
-  s.description = 'Add (optional) extension description here'
+  s.version     = <%= class_name %>::VERSION
+  s.summary     = "Spree Commerce <%= human_name %> Extension"
   s.required_ruby_version = '>= 3.0'
 
   s.author    = 'You'

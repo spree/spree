@@ -1,109 +1,97 @@
 version: 2.1
 
 defaults: &defaults
-  parameters: &default_parameters
-    ruby_image:
-      type: string
-    restore_cache_key_1:
-      type: string
-      default: 'spree-bundle-v10-ruby-3-3-{{ .Branch }}'
-    restore_cache_key_2:
-      type: string
-      default: spree-bundle-v10-ruby-3-3
-    save_cache_key:
-      type: string
-      default: "n"
-    run_file_path:
-      type: string
-    rails_version:
-      type: string
-      default: '~> 7.0.0'
-    store_artefacts:
-      type: boolean
-      default: false
   environment: &environment
-      CIRCLE_TEST_REPORTS: /tmp/test-results
-      CIRCLE_ARTIFACTS: /tmp/test-artifacts
-      BUNDLE_JOBS: 4
-      BUNDLE_RETRY: 3
-      BUNDLE_PATH: ~/spree/vendor/bundle
-      RAILS_VERSION: << parameters.rails_version >>
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
   working_directory: ~/spree
   docker:
-    - image: &ruby_image << parameters.ruby_image >>
+    - image: &ruby_image cimg/ruby:3.3-browsers
 
+run_tests: &run_tests
+  <<: *defaults
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-{{ .Branch }}
+          - spree-bundle
+    - run:
+        name: Add keyserver
+        command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
+    - run:
+        name: Install libvips
+        command: sudo apt-get update && sudo apt-get install libvips
+    - run:
+        name: Set bundle path
+        command: bundle config --local path vendor/bundle
+    - run:
+        name: Ensure bundle Install
+        command: |
+          bundle check || bundle install
+    - run:
+        name: Create test app
+        command: |
+          bundle exec rake test_app
+    - run:
+        name: Run Rspec
+        command: |
+          TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+          bundle exec rspec --format documentation \
+                            --format RspecJunitFormatter \
+                            -o ~/rspec/rspec.xml \
+                            -- ${TESTFILES}
+    - store_test_results:
+        path: ~/rspec
+    - store_artifacts:
+        path: tmp/capybara
 
 jobs:
-  run_test: &run_test
+  bundle:
     <<: *defaults
-    steps: &default_steps
+    steps:
       - checkout
-      - attach_workspace:
-          at: /tmp
       - restore_cache:
           keys:
-            - << parameters.restore_cache_key_1 >>
-            - << parameters.restore_cache_key_2 >>
+            - spree-bundle-{{ .Branch }}
+            - spree-bundle
       - run:
-          name: Allow executing given file
-          command: chmod +x << parameters.run_file_path >>
+          name: Add keyserver
+          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
       - run:
-          name: Run << parameters.run_file_path >> file
-          command: bash << parameters.run_file_path >>
-      - when:
-          condition: << parameters.save_cache_key >>
-          steps:
-              - save_cache:
-                  key: << parameters.save_cache_key >>
-                  paths:
-                    - ~/spree/vendor/bundle
-      - when:
-          condition: <<  parameters.store_artefacts >>
-          steps:
-              - store_artifacts:
-                  path: /tmp/test-artifacts
-                  destination: test-artifacts
-              - store_artifacts:
-                  path: /tmp/failed_tests
-                  destination: failed_tests
-              - store_artifacts:
-                  path: /tmp/test-results
-                  destination: raw-test-output
-              - store_test_results:
-                  path: /tmp/test-results
+          name: Install libvips
+          command: sudo apt-get update && sudo apt-get install libvips
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Bundle Install
+          command: |
+            bundle check || bundle install
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: spree-bundle-{{ checksum "Gemfile.lock" }}
 
-  tests_postgres:
-    <<: *run_test
-    parallelism: << parameters.parallelism >>
-    parameters:
-        <<: *default_parameters
-        postgres_image:
-            type: string
-        parallelism:
-            type: integer
-            default: 8
-    environment:
+  tests_postgres: &tests_postgres
+    <<: *run_tests
+    environment: &postgres_environment
       <<: *environment
       DB: postgres
       DB_HOST: localhost
       DB_USERNAME: postgres
     docker:
       - image: *ruby_image
-      - image: << parameters.postgres_image >>
+      - image: &postgres_image cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
 
-  tests_mysql:
-    <<: *run_test
-    parallelism: << parameters.parallelism >>
-    parameters:
-        <<: *default_parameters
-        mysql_image:
-            type: string
-        parallelism:
-            type: integer
-            default: 8
-    environment:
+  tests_mysql: &tests_mysql
+    <<: *run_tests
+    environment: &mysql_environment
       <<: *environment
       DB: mysql
       DB_HOST: 127.0.0.1
@@ -112,25 +100,16 @@ jobs:
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *ruby_image
-      - image: << parameters.mysql_image >>
-        command: [--default-authentication-plugin=mysql_native_password]
+      - image: &mysql_image cimg/mysql:8.0
 
-  send_test_coverage:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          name: Merge coverage reports
-          command:
-              bundle check || bundle install &&
-              bundle exec rake coverage:report
-      - run:
-          name: Allow executing given file
-          command: chmod +x << parameters.run_file_path >>
-      - run:
-          name:  Send test coverage
-          command: bash << parameters.run_file_path >>
-
-# create your workflows here
+workflows:
+  version: 2
+  main:
+    jobs:
+      - bundle
+      - tests_postgres:
+          requires:
+            - bundle
+      - tests_mysql:
+          requires:
+            - bundle

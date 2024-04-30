@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string/inflections'
+
 module SpreeCli
   class Extension < Thor::Group
     include Thor::Actions
@@ -17,6 +19,15 @@ module SpreeCli
       directory 'bin',      "#{file_name}/bin"
       directory 'spec',     "#{file_name}/spec"
 
+      empty_directory "#{file_name}/app/models/spree"
+      empty_directory "#{file_name}/app/models/#{file_name}"
+      empty_directory "#{file_name}/app/views/spree"
+      empty_directory "#{file_name}/app/views/#{file_name}"
+      empty_directory "#{file_name}/app/controllers/spree"
+      empty_directory "#{file_name}/app/controllers/#{file_name}"
+      empty_directory "#{file_name}/app/services/spree"
+      empty_directory "#{file_name}/app/services/#{file_name}"
+
       chmod "#{file_name}/bin/rails", 0o755
 
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
@@ -29,17 +40,19 @@ module SpreeCli
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
       template '.circleci/config.yml', "#{file_name}/.circleci/config.yml"
+      template '.github/.dependabot.yml', "#{file_name}/.github/.dependabot.yml"
       template '.rubocop.yml', "#{file_name}/.rubocop.yml"
+      template '.gem_release.yml', "#{file_name}/.gem_release.yml"
     end
 
     def final_banner
       say %{
         #{'*' * 80}
 
-        Congrats, Your extension has been generated :rocket:
+        Congrats, Your Spree #{human_name} extension has been generated 🚀
 
         Next steps:
-        * Read Spree Developer Documentation at: https://docs.spreecommerce.org/developer/customization
+        * Read Spree Developer Documentation at: https://docs.spreecommerce.org/developer
 
         #{'*' * 80}
       }
@@ -48,6 +61,10 @@ module SpreeCli
     no_tasks do
       def class_name
         Thor::Util.camel_case file_name
+      end
+
+      def human_name
+        file_name.to_s.gsub('spree_', '').humanize
       end
 
       def use_prefix(prefix)
