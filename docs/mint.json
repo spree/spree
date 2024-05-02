@@ -791,5 +791,11 @@
     "thumbsRating": true,
     "suggestEdit": true,
     "raiseIssue": true
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-NCVLCVHL5Y"
+    }
   }
 }
+
