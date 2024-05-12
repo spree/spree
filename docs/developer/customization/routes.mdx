@@ -1,0 +1,40 @@
+---
+title: Routes
+description: Learn how to customize the routes in Spree
+---
+
+## Default configuration
+
+By default Spree is mounted at the root of your domain, this code will be inserted into `config/routes.rb`:
+
+```ruby
+mount Spree::Core::Engine, at: '/'
+```
+
+This means that Spree will be available at the root of your domain, for example `http://localhost:3000`.
+
+## Customizing the mount point
+
+You can customize this simply by changing the `:at` specification in `config/routes.rb` to be something else. For example, if you would like Spree to be mounted at `/shop`, you can write this:
+
+```ruby
+mount Spree::Core::Engine, at: `/shop`
+```
+
+The different parts of Spree (API, Admin) will be mounted there as well, eg. `http://localhost:3000/shop/products`.
+
+## Customizing admin panel path
+
+<Info>
+Remember to have the `spree_backend` installed.
+</Info>
+
+By default, Spree Admin is mounted at `/admin` and is accessible at `http://localhost:3000/admin`.
+
+You can change the path of the admin panel by setting the `admin_path` option in your `config/initializers/spree.rb` file, eg.
+
+```ruby
+Spree.admin_path = '/dashboard'
+```
+
+This will change the path of the Spree Admin to `http://localhost:3000/dashboard`.

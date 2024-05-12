@@ -72,7 +72,8 @@
     {
       "group": "Getting started",
       "pages": [
-        "developer/getting-started/quickstart"
+        "developer/getting-started/quickstart",
+        "developer/getting-started/adding_spree_to_rails_app"
       ]
     },
     {
@@ -102,7 +103,8 @@
         "developer/customization/checkout",
         "developer/customization/permissions",
         "developer/customization/dependencies",
-        "developer/customization/decorators"
+        "developer/customization/decorators",
+        "developer/customization/routes"
       ]
     },
 
