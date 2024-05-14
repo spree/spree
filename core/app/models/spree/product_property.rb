@@ -3,7 +3,7 @@ module Spree
     include Spree::FilterParam
     include Spree::TranslatableResource
 
-    TRANSLATABLE_FIELDS = %i[value filter_param].freeze
+    TRANSLATABLE_FIELDS = %i[value].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do

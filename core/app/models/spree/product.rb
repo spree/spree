@@ -376,16 +376,24 @@ module Spree
     end
 
     def brand
-      @brand ||= taxons.joins(:taxonomy).
-                 join_translation_table(Taxonomy).
-                 find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+      @brand ||= if I18n.default_locale == I18n.locale
+                   taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                 else
+                   taxons.joins(:taxonomy).
+                     join_translation_table(Taxonomy).
+                     find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                 end
     end
 
     def category
-      @category ||= taxons.joins(:taxonomy).
-                    join_translation_table(Taxonomy).
-                    order(depth: :desc).
-                    find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+      @category ||= if I18n.default_locale == I18n.locale
+                      taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                    else
+                      taxons.joins(:taxonomy).
+                        join_translation_table(Taxonomy).
+                        order(depth: :desc).
+                        find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                    end
     end
 
     def taxons_for_store(store)

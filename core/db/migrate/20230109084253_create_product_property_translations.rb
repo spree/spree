@@ -9,7 +9,6 @@ class CreateProductPropertyTranslations < ActiveRecord::Migration[6.1]
       create_table :spree_product_property_translations do |t|
         # Translated attribute(s)
         t.string :value
-        t.string :filter_param
 
         t.string  :locale, null: false
         t.references :spree_product_property, null: false, foreign_key: true, index: false

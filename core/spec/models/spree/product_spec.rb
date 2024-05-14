@@ -62,8 +62,9 @@ describe Spree::Product, type: :model do
 
       it 'duplicates product' do
         clone = product.duplicate
-        expect(clone.name).to eq('COPY OF ' + product.name)
-        expect(clone.master.sku).to eq('COPY OF ' + product.master.sku)
+        expect(clone.name).to eq("COPY OF #{product.name}")
+        expect(clone.slug).to eq("copy-of-#{product.slug}")
+        expect(clone.master.sku).to eq("COPY OF #{product.master.sku}")
         expect(clone.taxons).to eq(product.taxons)
         expect(clone.stores).to eq(product.stores)
         expect(clone.images.size).to eq(product.images.size)

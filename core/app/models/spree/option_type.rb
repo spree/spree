@@ -7,7 +7,7 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    TRANSLATABLE_FIELDS = %i[name presentation].freeze
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     acts_as_list
