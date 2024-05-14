@@ -249,7 +249,7 @@ describe Spree::Product, type: :model do
       context 'when product destroyed' do
         it 'renames slug' do
           product.destroy
-          expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+          expect(product.slug).to match(/[0-9]+_product-[0-9]+/)
         end
 
         context 'when more than one translation exists' do
@@ -260,7 +260,7 @@ describe Spree::Product, type: :model do
 
           it 'renames slug for all translations' do
             product.destroy
-            expect(product.translations.with_deleted.where(locale: :en).first.slug).to match(/[0-9]+_product-[0-9]+/)
+            expect(product.slug).to match(/[0-9]+_product-[0-9]+/)
             expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/[0-9]+_french-slug/)
           end
         end
@@ -401,6 +401,18 @@ describe Spree::Product, type: :model do
 
       product.set_property('the_prop', 'value2')
       expect(product.property('the_prop')).to eq('value2')
+
+      I18n.with_locale(:pl) do
+        product.set_property('the_prop', 'translated-value1', 'the_translated_prop')
+        expect(product.property('the_prop')).to eq('translated-value1')
+
+        product.set_property('the_prop', 'translated-value2')
+        expect(product.property('the_prop')).to eq('translated-value2')
+
+        expect(product.properties[0].presentation).to eq('the_translated_prop')
+      end
+
+      expect(product.properties[0].presentation).to eq('the_prop')
     end
 
     it 'does not create duplicate properties when set_property is called' do
@@ -921,7 +933,7 @@ describe Spree::Product, type: :model do
 
   describe '#localized_slugs_for_store' do
     let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
-    let(:product) { create(:product, stores: [store], name: 'Test product', slug: 'test_slug_en') }
+    let(:product) { create(:product, stores: [store], name: 'Test product', slug: 'test-slug-en') }
     let!(:product_translation_fr) { product.translations.create(slug: 'test_slug_fr', locale: 'fr') }
 
     before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }

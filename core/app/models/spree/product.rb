@@ -332,16 +332,17 @@ module Spree
     end
 
     def property(property_name)
-      product_properties.joins(:property).
-        join_translation_table(Property).
-        find_by(Property.translation_table_alias => { name: property_name }).try(:value)
+      product_properties.joins(:property).find_by(Property.table_name => { name: property_name }).try(:value)
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
       ApplicationRecord.transaction do
         # Manual first_or_create to work around Mobility bug
         property = if Property.where(name: property_name).exists?
-                     Property.where(name: property_name).first
+                     existing_property = Property.where(name: property_name).first
+                     existing_property.presentation ||= property_presentation
+                     existing_property.save
+                     existing_property
                    else
                      Property.create(name: property_name, presentation: property_presentation)
                    end
@@ -459,6 +460,8 @@ module Spree
     def punch_slug
       # punch slug with date prefix to allow reuse of original
       return if frozen?
+
+      update_column(:slug, "#{Time.current.to_i}_#{slug}"[0..254])
 
       translations.with_deleted.each do |t|
         t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]
