@@ -166,7 +166,7 @@ module Spree
     private
 
     def sync_taxonomy_name
-      if saved_change_to_name? && root?
+      if saved_changes.key?(:name) && root?
         return if taxonomy.name.to_s == name.to_s
 
         taxonomy.update(name: name)
