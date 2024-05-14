@@ -1,12 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Money do
-  before do
-    configure_spree_preferences do |config|
-      config.currency = 'USD'
-    end
-  end
-
   let(:money)    { described_class.new(10) }
   let(:currency) { Money::Currency.new('USD') }
 
@@ -78,7 +72,7 @@ describe Spree::Money do
 
   context 'JPY' do
     before do
-      Spree::Store.default.update(default_currency: 'JPY')
+      Spree::Store.default.update!(default_currency: 'JPY')
     end
 
     it 'formats correctly' do
@@ -113,9 +107,7 @@ describe Spree::Money do
 
   context 'Money formatting rules' do
     before do
-      configure_spree_preferences do |config|
-        config.currency = 'EUR'
-      end
+      Spree::Store.default.update!(default_currency: 'EUR')
     end
 
     after do
