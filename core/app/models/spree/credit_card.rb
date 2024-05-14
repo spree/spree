@@ -99,12 +99,14 @@ module Spree
     def cc_type=(type)
       self[:cc_type] = case type
                        when 'mastercard', 'maestro' then 'master'
-                       when 'amex' then 'american_express'
+                      when 'amex' then 'american_express'
                        when 'dinersclub' then 'diners_club'
                        when '' then try_type_from_number
                        else type
                        end
     end
+
+    alias_method :brand=, :cc_type=
 
     def verification_value=(value)
       @verification_value = value.to_s.gsub(/\s/, '')
