@@ -8,7 +8,7 @@ module Spree
     end
 
     TRANSLATABLE_FIELDS = %i[name presentation].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     acts_as_list
     auto_strip_attributes :name, :presentation

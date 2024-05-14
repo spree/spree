@@ -8,11 +8,13 @@ module Spree
     end
 
     TRANSLATABLE_FIELDS = %i[name presentation filter_param].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do
       auto_strip_attributes :name, :presentation
     end
+
+    auto_strip_attributes :name, :presentation
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'

@@ -7,7 +7,7 @@ module Spree
     end
 
     TRANSLATABLE_FIELDS = %i[name presentation].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
 
