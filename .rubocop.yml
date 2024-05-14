@@ -143,6 +143,9 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: false
 
+Style/Alias:
+  Enabled: false
+
 RSpec/NestedGroups:
   Max: 7
 

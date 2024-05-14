@@ -46,7 +46,9 @@ module Spree
     end
 
     alias_attribute :price, :amount
+    alias_method :price=, :amount=
     alias_attribute :compare_at_price, :compare_at_amount
+    alias_method :compare_at_price=, :compare_at_amount=
 
     def price_including_vat_for(price_options)
       options = price_options.merge(tax_category: variant.tax_category)
