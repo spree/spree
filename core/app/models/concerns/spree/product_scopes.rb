@@ -133,15 +133,15 @@ module Spree
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
       add_search_scope :with_property_value do |property, value|
-        if I18n.default_locale == I18n.locale
-          joins(:properties).
-            where("#{ProductProperty.table_name}.value = ?", value).
-            where(property_conditions(property))
-        else
+        if Spree.use_translations?
           joins(:properties).
             join_translation_table(Property).
             join_translation_table(ProductProperty).
             where("#{ProductProperty.translation_table_alias}.value = ?", value).
+            where(property_conditions(property))
+        else
+          joins(:properties).
+            where("#{ProductProperty.table_name}.value = ?", value).
             where(property_conditions(property))
         end
       end

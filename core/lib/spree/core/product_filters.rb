@@ -99,10 +99,10 @@ module Spree
           scope = scope.or(new_scope)
         end
 
-        if I18n.default_locale == I18n.locale
-          Product.with_property('brand').where(scope)
-        else
+        if Spree.use_translations?
           Product.with_property('brand').join_translation_table(ProductProperty).where(scope)
+        else
+          Product.with_property('brand').where(scope)
         end
       end
 
@@ -111,7 +111,7 @@ module Spree
         brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
 
         conditions = brands.map do |brand|
-          table_name = I18n.default_locale == I18n.locale ? ProductProperty.table_name : ProductProperty.translation_table_alias
+          table_name = Spree.use_translations? ? ProductProperty.translation_table_alias : ProductProperty.table_name
 
           [brand, { table_name.to_s => { value: brand } }]
         end.to_h

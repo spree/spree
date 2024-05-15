@@ -119,10 +119,10 @@ module Spree
 
     # Creates permalink base for friendly_id
     def set_permalink
-      if I18n.default_locale.to_s == I18n.locale.to_s
-        self.permalink = generate_slug
-      else
+      if Spree.use_translations?
         translations.each(&:set_permalink)
+      else
+        self.permalink = generate_slug
       end
     end
 
