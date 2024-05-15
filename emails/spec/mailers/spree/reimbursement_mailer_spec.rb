@@ -7,6 +7,12 @@ describe Spree::ReimbursementMailer, type: :mailer do
 
   let(:reimbursement) { create(:reimbursement) }
 
+  before do
+    # Make sure we always start with the default locale
+    I18n.locale = :en
+    Spree::Store.default.update(default_locale: 'en')
+  end
+
   context ':from not set explicitly' do
     it 'uses store mail from address' do
       message = Spree::ReimbursementMailer.reimbursement_email(reimbursement)
@@ -51,6 +57,7 @@ describe Spree::ReimbursementMailer, type: :mailer do
     context 'reimbursement_email' do
       context 'pt-BR locale' do
         before do
+          reimbursement
           I18n.enforce_available_locales = false
           pt_br_shipped_email = { spree: { reimbursement_mailer: { reimbursement_email: { dear_customer: 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email

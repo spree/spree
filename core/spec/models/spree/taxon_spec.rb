@@ -223,11 +223,12 @@ describe Spree::Taxon, type: :model do
 
     context 'when setting the slug translations for taxonomy' do
       let!(:root_taxon_translation_pl) { root_taxon.translations.create(slug: 'slug with space', locale: 'pl') }
+      let!(:root_taxon_translation_fr) { root_taxon.translations.create(slug: 'categories-fr', locale: 'fr') }
 
       let(:expected_slugs) do
         {
           'en' => 'categories',
-          'fr' => 'categories',
+          'fr' => 'categories-fr',
           'pl' => 'slug-with-space'
         }
       end
