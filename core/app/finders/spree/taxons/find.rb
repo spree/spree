@@ -9,6 +9,7 @@ module Spree
         @taxonomy         = params.dig(:filter, :taxonomy_id)
         @name             = params.dig(:filter, :name)
         @roots            = params.dig(:filter, :roots)
+        @use_translations = params[:use_translations]
       end
 
       def execute
@@ -24,7 +25,11 @@ module Spree
 
       private
 
-      attr_reader :ids, :parent, :parent_permalink, :taxonomy, :roots, :name, :scope
+      attr_reader :ids, :parent, :parent_permalink, :taxonomy, :roots, :name, :scope, :use_translations
+
+      def use_translations?
+        use_translations.present?
+      end
 
       def ids?
         ids.present?
@@ -65,9 +70,13 @@ module Spree
       def by_parent_permalink(taxons)
         return taxons unless parent_permalink?
 
-        taxons.joins(:parent).
-          join_translation_table(Taxon, 'parents_spree_taxons').
-          where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
+        if use_translations?
+          taxons.joins(:parent).
+            join_translation_table(Taxon, 'parents_spree_taxons').
+            where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
+        else
+          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
+        end
       end
 
       def by_taxonomy(taxons)

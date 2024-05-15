@@ -8,7 +8,7 @@ module Spree
           protected
 
           def sorted_collection
-            collection_sorter.new(collection, current_currency, params, allowed_sort_attributes).call
+            collection_sorter.new(collection, current_currency, sorter_params, allowed_sort_attributes).call
           end
 
           def collection
