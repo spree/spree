@@ -4,6 +4,7 @@ module Spree
       def initialize(scope, current_currency, params = {}, allowed_sort_attributes = [])
         super(scope, params, allowed_sort_attributes)
         @currency = params[:currency] || current_currency
+        @use_translations = params[:use_translations] || Spree.use_translations?
       end
 
       def call
@@ -11,7 +12,7 @@ module Spree
         products = by_price(products)
         products = by_sku(products)
 
-        products = select_translatable_fields(products)
+        products = select_translatable_fields(products) if use_translations?
 
         products.distinct
       end
@@ -19,6 +20,10 @@ module Spree
       private
 
       attr_reader :sort, :scope, :currency, :allowed_sort_attributes
+
+      def use_translations?
+        @use_translations.present?
+      end
 
       def by_price(scope)
         return scope unless (value = sort_by?('price'))
