@@ -8,9 +8,7 @@ class CreatePropertyTranslations < ActiveRecord::Migration[6.1]
     else
       create_table :spree_property_translations do |t|
         # Translated attribute(s)
-        t.string :name
         t.string :presentation
-        t.string :filter_param
 
         t.string  :locale, null: false
         t.references :spree_property, null: false, foreign_key: true, index: false

@@ -98,7 +98,12 @@ module Spree
         conds.each do |new_scope|
           scope = scope.or(new_scope)
         end
-        Product.with_property('brand').join_translation_table(ProductProperty).where(scope)
+
+        if Spree.use_translations?
+          Product.with_property('brand').join_translation_table(ProductProperty).where(scope)
+        else
+          Product.with_property('brand').where(scope)
+        end
       end
 
       def self.brand_filter
@@ -106,7 +111,9 @@ module Spree
         brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
 
         conditions = brands.map do |brand|
-          [brand, { ProductProperty.translation_table_alias => { value: brand } }]
+          table_name = Spree.use_translations? ? ProductProperty.translation_table_alias : ProductProperty.table_name
+
+          [brand, { table_name.to_s => { value: brand } }]
         end.to_h
 
         {

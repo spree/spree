@@ -9,7 +9,6 @@ class CreateOptionTypeTranslations < ActiveRecord::Migration[6.1]
       create_table :spree_option_type_translations do |t|
 
         # Translated attribute(s)
-        t.string :name
         t.string :presentation
 
         t.string  :locale, null: false

@@ -39,7 +39,7 @@ module Spree
                           purchasable? in_stock? backorderable?]
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do
       before_save :set_slug
@@ -332,16 +332,17 @@ module Spree
     end
 
     def property(property_name)
-      product_properties.joins(:property).
-        join_translation_table(Property).
-        find_by(Property.translation_table_alias => { name: property_name }).try(:value)
+      product_properties.joins(:property).find_by(Property.table_name => { name: property_name }).try(:value)
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
       ApplicationRecord.transaction do
         # Manual first_or_create to work around Mobility bug
         property = if Property.where(name: property_name).exists?
-                     Property.where(name: property_name).first
+                     existing_property = Property.where(name: property_name).first
+                     existing_property.presentation ||= property_presentation
+                     existing_property.save
+                     existing_property
                    else
                      Property.create(name: property_name, presentation: property_presentation)
                    end
@@ -375,16 +376,24 @@ module Spree
     end
 
     def brand
-      @brand ||= taxons.joins(:taxonomy).
-                 join_translation_table(Taxonomy).
-                 find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+      @brand ||= if Spree.use_translations?
+                    taxons.joins(:taxonomy).
+                     join_translation_table(Taxonomy).
+                     find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                 else
+                   taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                 end
     end
 
     def category
-      @category ||= taxons.joins(:taxonomy).
-                    join_translation_table(Taxonomy).
-                    order(depth: :desc).
-                    find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+      @category ||= if Spree.use_translations?
+                      taxons.joins(:taxonomy).
+                        join_translation_table(Taxonomy).
+                        order(depth: :desc).
+                        find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                    else
+                      taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                    end
     end
 
     def taxons_for_store(store)
@@ -459,6 +468,8 @@ module Spree
     def punch_slug
       # punch slug with date prefix to allow reuse of original
       return if frozen?
+
+      update_column(:slug, "#{Time.current.to_i}_#{slug}"[0..254])
 
       translations.with_deleted.each do |t|
         t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]

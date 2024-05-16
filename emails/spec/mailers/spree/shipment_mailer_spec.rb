@@ -5,13 +5,16 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let!(:store) { create(:store) }
+  let(:store) { create(:store) }
 
   let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
   let(:shipment) { order.shipments.first }
   let(:shipping_method) { shipment.shipping_method }
 
   before do
+    # Make sure we always start with the default locale
+    I18n.locale = :en
+
     shipping_method.update(tracking_url: 'http://example.com/tracking')
   end
 
@@ -53,6 +56,8 @@ describe Spree::ShipmentMailer, type: :mailer do
 
         after do
           I18n.enforce_available_locales = true
+          I18n.locale = :en
+          store.update(default_locale: 'en')
         end
 
         specify do

@@ -7,12 +7,14 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    TRANSLATABLE_FIELDS = %i[name presentation filter_param].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do
-      auto_strip_attributes :name, :presentation
+      auto_strip_attributes :presentation
     end
+
+    auto_strip_attributes :name, :presentation
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'

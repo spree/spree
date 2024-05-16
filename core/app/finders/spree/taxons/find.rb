@@ -65,9 +65,13 @@ module Spree
       def by_parent_permalink(taxons)
         return taxons unless parent_permalink?
 
-        taxons.joins(:parent).
-          join_translation_table(Taxon, 'parents_spree_taxons').
-          where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
+        if Spree.use_translations?
+          taxons.joins(:parent).
+            join_translation_table(Taxon, 'parents_spree_taxons').
+            where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
+        else
+          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
+        end
       end
 
       def by_taxonomy(taxons)

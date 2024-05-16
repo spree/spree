@@ -12,5 +12,6 @@ Mobility.configure do |config|
     locale_accessors
     presence
     dirty
+    column_fallback
   end
 end

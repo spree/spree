@@ -30,6 +30,8 @@ module Spree
           t.name = "COPY OF #{t.name}"
           t.slug = nil
         end
+
+        new_product.name = "COPY OF #{product.name}"
         new_product.taxons = product.taxons
         new_product.stores = product.stores
         new_product.created_at = nil

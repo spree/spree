@@ -11,7 +11,7 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
                              twitter instagram customer_support_email description
                              address contact_phone new_order_notifications_email].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do
       acts_as_paranoid

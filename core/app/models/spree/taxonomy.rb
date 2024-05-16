@@ -7,7 +7,7 @@ module Spree
     end
 
     TRANSLATABLE_FIELDS = %i[name].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     acts_as_list
 
@@ -32,7 +32,7 @@ module Spree
     end
 
     def set_root_taxon_name
-      return unless saved_change_to_name?
+      return unless saved_changes.key?(:name)
       return if name.to_s == root.name.to_s
 
       root.update(name: name)

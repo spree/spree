@@ -8,6 +8,13 @@ describe Spree::OrderMailer, type: :mailer do
   let(:first_store) { create(:store, name: 'First Store', default: true) }
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
+  before do
+    # Make sure we always start with the default locale
+    I18n.locale = :en
+    first_store.update!(default_locale: 'en')
+    second_store.update!(default_locale: 'en')
+  end
+
   let(:order) do
     order = create(:completed_order_with_totals, email: 'test@example.com')
     product = create(:product, name: %{The "BEST" product})
@@ -196,6 +203,10 @@ describe Spree::OrderMailer, type: :mailer do
 
       context 'via I18n' do
         before do
+          # We need to create the order record before changing locales for translations
+          # Since I18n.default_locale is "en" in specs
+          order
+
           I18n.locale = :'pt-BR'
           first_store.update(default_locale: 'pt-BR')
         end
@@ -208,7 +219,10 @@ describe Spree::OrderMailer, type: :mailer do
       end
 
       context 'via Store locale' do
-        before { order.store.update!(default_locale: 'pt-BR') }
+        before do
+          order
+          order.store.update!(default_locale: 'pt-BR')
+        end
 
         it_behaves_like 'translates emails'
       end

@@ -8,7 +8,12 @@ describe 'Taxons Spec', type: :request do
   let(:store2)     { create(:store)}
   let!(:taxonomy2)  { create(:taxonomy, store: store2) }
 
-  before { Spree::Api::Config[:api_v2_per_page_limit] = 2 }
+  before do
+    default_store.update_column(:supported_locales, 'en,pl,es')
+    Spree::Api::Config[:api_v2_per_page_limit] = 2
+  end
+
+  after { I18n.locale = :en }
 
   shared_examples 'returns valid taxon resource JSON' do
     it 'returns a valid taxon resource JSON response' do
@@ -69,7 +74,21 @@ describe 'Taxons Spec', type: :request do
       let!(:taxonomy_3) { create(:taxonomy, store: taxonomy.store) }
       let!(:taxon_3) { create(:taxon, taxonomy: taxonomy_3, parent: taxonomy_3.root) }
 
-      before { get "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink}" }
+      let(:request_path) { "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink}" }
+
+      before do
+        taxonomy_root_name = taxonomy.root.name
+        taxon_1_name = taxons[0].name
+        taxon_2_name = taxons[1].name
+
+        Mobility.with_locale(:pl) do
+          taxonomy.root.update!(name: "#{taxonomy_root_name}_pl")
+          taxons[0].update!(name: "#{taxon_1_name}_pl")
+          taxons[1].update!(name: "#{taxon_2_name}_pl")
+        end
+
+        get request_path
+      end
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -77,6 +96,22 @@ describe 'Taxons Spec', type: :request do
         expect(json_response['data'].size).to eq(2)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
         expect(json_response['data'][1]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
+      end
+
+      context 'with another locale' do
+        let(:request_path) { "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink_pl}&locale=pl" }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns children taxons by parent' do
+          expect(json_response['data'].size).to eq(2)
+
+          expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
+          expect(json_response['data'][1]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
+
+          expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:name).with_value(taxons[0].name_pl)))
+          expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:name).with_value(taxons[1].name_pl)))
+        end
       end
     end
 

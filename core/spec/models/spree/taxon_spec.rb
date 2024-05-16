@@ -122,7 +122,7 @@ describe Spree::Taxon, type: :model do
     let(:taxon) { build(:taxon, parent: parent, taxonomy: nil) }
 
     it { expect(taxon.valid?).to eq(true) }
-    it { expect { taxon.save }.to change(taxon, :taxonomy).to(taxonomy) }
+    it { expect { taxon.save! }.to change(taxon, :taxonomy).to(taxonomy) }
   end
 
   describe '#sync_taxonomy_name' do
@@ -131,8 +131,7 @@ describe Spree::Taxon, type: :model do
 
     context 'when none root taxon name is updated' do
       it 'does not update the taxonomy name' do
-        taxon.update(name: 'Shoes')
-        taxon.save!
+        taxon.update!(name: 'Shoes')
         taxonomy.reload
 
         expect(taxonomy.name).not_to eql taxon.name
@@ -144,8 +143,7 @@ describe Spree::Taxon, type: :model do
       it 'updates the taxonomy name' do
         root_taxon = described_class.find_by(name: 'Soft Goods')
 
-        root_taxon.update(name: 'Hard Goods')
-        root_taxon.save!
+        root_taxon.update!(name: 'Hard Goods')
         taxonomy.reload
 
         expect(taxonomy.name).not_to eql 'Soft Goods'
@@ -157,8 +155,7 @@ describe Spree::Taxon, type: :model do
       it 'updates the taxonomy name' do
         root_taxon = described_class.find_by(name: 'Soft Goods')
 
-        root_taxon.update(name: 'spÉcial Numérique ƒ ˙ ¨ πø∆©')
-        root_taxon.save!
+        root_taxon.update!(name: 'spÉcial Numérique ƒ ˙ ¨ πø∆©')
         taxonomy.reload
 
         expect(taxonomy.name).not_to eql 'Soft Goods'
@@ -172,8 +169,7 @@ describe Spree::Taxon, type: :model do
         taxonomy_updated_at = taxonomy.updated_at.to_s
 
         expect {
-          root_taxon.update(permalink: 'something-else')
-          root_taxon.save!
+          root_taxon.update!(permalink: 'something-else')
           root_taxon.reload
           taxonomy.reload
         }.not_to change { taxonomy.updated_at.to_s }.from(taxonomy_updated_at)
@@ -227,11 +223,12 @@ describe Spree::Taxon, type: :model do
 
     context 'when setting the slug translations for taxonomy' do
       let!(:root_taxon_translation_pl) { root_taxon.translations.create(slug: 'slug with space', locale: 'pl') }
+      let!(:root_taxon_translation_fr) { root_taxon.translations.create(slug: 'categories-fr', locale: 'fr') }
 
       let(:expected_slugs) do
         {
           'en' => 'categories',
-          'fr' => 'categories',
+          'fr' => 'categories-fr',
           'pl' => 'slug-with-space'
         }
       end

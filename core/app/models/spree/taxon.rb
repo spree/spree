@@ -48,6 +48,8 @@ module Spree
     after_update :sync_taxonomy_name
     after_touch :touch_ancestors_and_taxonomy
 
+    has_one :store, through: :taxonomy
+
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
     scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
@@ -58,7 +60,7 @@ module Spree
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
     TRANSLATABLE_FIELDS = %i[name description permalink].freeze
-    translates(*TRANSLATABLE_FIELDS)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink
@@ -117,7 +119,21 @@ module Spree
 
     # Creates permalink base for friendly_id
     def set_permalink
-      translations.each(&:set_permalink)
+      if Spree.use_translations?
+        translations.each(&:set_permalink)
+      else
+        self.permalink = generate_slug
+      end
+    end
+
+    def generate_slug
+      if parent.present?
+        [parent.permalink, (permalink.blank? ? name.to_url : permalink.split('/').last.to_url)].join('/')
+      elsif permalink.blank?
+        name.to_url
+      else
+        permalink.to_url
+      end
     end
 
     def active_products
@@ -150,7 +166,7 @@ module Spree
     private
 
     def sync_taxonomy_name
-      if saved_change_to_name? && root?
+      if saved_changes.key?(:name) && root?
         return if taxonomy.name.to_s == name.to_s
 
         taxonomy.update(name: name)
