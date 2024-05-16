@@ -17,6 +17,7 @@ describe Spree::Api::V2::ResourceController, type: :controller do
     let(:locale) { store.default_locale }
     let(:user) { nil }
     let(:params) { {} }
+    let(:use_translations) { false }
 
     shared_examples 'returns proper values' do
       before do
@@ -25,6 +26,8 @@ describe Spree::Api::V2::ResourceController, type: :controller do
         allow(dummy_controller).to receive(:current_locale).and_return(locale)
         allow(dummy_controller).to receive(:spree_current_user).and_return(user)
         allow(dummy_controller).to receive(:params).and_return(params)
+
+        allow(I18n).to receive(:locale).and_return(locale.to_sym)
       end
 
       it do
@@ -33,7 +36,8 @@ describe Spree::Api::V2::ResourceController, type: :controller do
             store: store,
             currency: currency,
             user: user,
-            locale: locale
+            locale: locale,
+            use_translations: use_translations
           )
         )
       end
@@ -49,6 +53,7 @@ describe Spree::Api::V2::ResourceController, type: :controller do
       let(:locale) { 'de' }
       let(:store) { create(:store, default_locale: locale, default_currency: currency) }
       let(:params) { { filter: {}, page: 1, per_page: 10 } }
+      let(:use_translations) { true }
 
       it_behaves_like 'returns proper values'
     end
