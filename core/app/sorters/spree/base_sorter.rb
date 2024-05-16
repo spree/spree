@@ -4,7 +4,6 @@ module Spree
       @scope = scope
       @allowed_sort_attributes = allowed_sort_attributes
       @sort = sort_fields(params[:sort])
-      @use_translations = params[:use_translations]
     end
 
     def call
@@ -13,11 +12,7 @@ module Spree
 
     protected
 
-    attr_reader :scope, :collection, :sort, :allowed_sort_attributes, :use_translations
-
-    def use_translations?
-      use_translations.present?
-    end
+    attr_reader :scope, :collection, :sort, :allowed_sort_attributes
 
     def by_param_attributes(scope)
       return scope if sort.empty?

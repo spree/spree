@@ -11,7 +11,7 @@ module Spree
         products = by_price(products)
         products = by_sku(products)
 
-        products = select_translatable_fields(products) if use_translations?
+        products = select_translatable_fields(products) if Spree.use_translations?
 
         products.distinct
       end

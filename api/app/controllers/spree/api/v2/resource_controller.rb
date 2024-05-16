@@ -62,14 +62,9 @@ module Spree
           params.merge(
             store: current_store,
             locale: current_locale,
-            use_translations: Spree.use_translations?,
             currency: current_currency,
             user: spree_current_user
           )
-        end
-
-        def sorter_params
-          params.merge(use_translations: Spree.use_translations?)
         end
 
         def collection_sorter
