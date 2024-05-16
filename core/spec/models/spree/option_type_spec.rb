@@ -3,6 +3,25 @@ require 'spec_helper'
 describe Spree::OptionType, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'translations' do
+    let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
+
+    before do
+      Mobility.with_locale(:pl) do
+        option_type.update!(presentation: 'Rozmiar')
+      end
+    end
+
+    let(:option_type_pl_translation) { option_type.translations.find_by(locale: 'pl') }
+
+    it 'translates option type fields' do
+      expect(option_type.presentation).to eq('Size')
+
+      expect(option_type_pl_translation).to be_present
+      expect(option_type_pl_translation.presentation).to eq('Rozmiar')
+    end
+  end
+
   context 'touching' do
     it 'touches a product' do
       product_option_type = create(:product_option_type)

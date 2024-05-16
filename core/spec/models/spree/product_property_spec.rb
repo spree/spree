@@ -21,6 +21,25 @@ describe Spree::ProductProperty, type: :model do
     end
   end
 
+  describe 'translations' do
+    let!(:product_property) { create(:product_property, value: 'EN value') }
+
+    before do
+      Mobility.with_locale(:pl) do
+        product_property.update!(value: 'PL value')
+      end
+    end
+
+    let(:product_property_pl_translation) { product_property.translations.find_by(locale: 'pl') }
+
+    it 'translates product property fields' do
+      expect(product_property.value).to eq('EN value')
+
+      expect(product_property_pl_translation).to be_present
+      expect(product_property_pl_translation.value).to eq('PL value')
+    end
+  end
+
   context 'touching' do
     let(:product_property) { create(:product_property) }
 

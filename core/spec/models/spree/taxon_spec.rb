@@ -39,6 +39,33 @@ describe Spree::Taxon, type: :model do
     end
   end
 
+  context 'when using another locale' do
+    before do
+      root_taxon = taxon.taxonomy.root
+      taxon.update!(name: 'EN name', parent: taxon.taxonomy.root)
+
+      Mobility.with_locale(:pl) do
+        root_taxon.update!(name: 'PL taxonomy')
+
+        taxon.update!(
+          name: 'PL name',
+          description: 'PL description'
+        )
+      end
+    end
+
+    let(:taxon_pl_translation) { taxon.translations.find_by(locale: 'pl') }
+
+    it 'translates taxon fields' do
+      expect(taxon.name).to eq('EN name')
+
+      expect(taxon_pl_translation).to be_present
+      expect(taxon_pl_translation.name).to eq('PL name')
+      expect(taxon_pl_translation.permalink).to eq('pl-taxonomy/pl-name')
+      expect(taxon_pl_translation.description).to eq('PL description')
+    end
+  end
+
   context 'set_permalink' do
     it 'sets permalink correctly when no parent present' do
       taxon.set_permalink
