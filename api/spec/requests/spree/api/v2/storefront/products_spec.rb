@@ -321,6 +321,60 @@ describe 'API V2 Storefront Products Spec', type: :request do
           expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
         end
       end
+
+      context 'with locale set to polish' do
+        let!(:store) do
+          default_store = Spree::Store.default
+          default_store.default_locale = 'en'
+          default_store.supported_locales = 'en,pl'
+          default_store.save
+          default_store
+        end
+
+        let!(:product_localized) do
+          product = create(:product, stores: [store])
+          Mobility.with_locale(:pl) { product.update!(name: 'Produkt Superowy') }
+
+          product
+        end
+
+        let!(:property_localized) do
+          property = create(:property)
+          presentation = option_type.presentation
+
+          Mobility.with_locale(:pl) { property.update!(presentation: "#{presentation} PL") }
+
+          property
+        end
+
+        let!(:product_property_localized) do
+          product_property = create(:product_property, property: property_localized, product: product_localized)
+          value = product_property.value
+
+          Mobility.with_locale(:pl) { product_property.update!(value: "#{value} PL") }
+
+          product_property
+        end
+
+        before do
+          get "/api/v2/storefront/products?filter[properties][#{property_localized.name}]=#{product_property_localized.value_pl}&include=product_properties&locale=pl"
+        end
+
+        it 'returns products with specified properties in polish' do
+          expect(json_response['data'].first).to have_id(product_localized.id.to_s)
+          expect(json_response['data'].first).to have_attribute(:name).with_value('Produkt Superowy')
+          expect(json_response['data'].first).to have_attribute(:localized_slugs).with_value(
+            'en' => product_localized.slug_en,
+            'pl' => product_localized.slug_pl
+          )
+
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property_localized.name)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:description).with_value(property_localized.presentation_pl)))
+
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property_localized.value_pl)))
+          expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:filter_param).with_value(product_property_localized.filter_param)))
+        end
+      end
     end
 
     context 'with specified multiple filters' do

@@ -44,6 +44,59 @@ describe 'Taxons Spec', type: :request do
       end
     end
 
+    context 'with locale set to pl' do
+      let!(:default_store) do
+        store = taxonomy.store
+        store.supported_locales = 'en,pl'
+        store.save
+        store
+      end
+
+      let!(:taxonomy) do
+        taxonomy_localized = create(:taxonomy)
+        taxonomy_root_localized = taxonomy_localized.root
+
+        name = taxonomy_localized.name
+
+        Mobility.with_locale(:pl) do
+          taxonomy_localized.update!(name: "Localized Taxonomy PL")
+          taxonomy_root_localized.update!(name: "Localized Taxonomy PL")
+        end
+
+        taxonomy_localized
+      end
+
+      let!(:taxons) do
+        taxons_localized = create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root)
+        taxons_localized.each_with_index do |taxon, index|
+          name = taxon.name
+          Mobility.with_locale(:pl) { taxon.update!(name: "Localized Taxon #{index + 1} PL") }
+        end
+
+        taxons_localized
+      end
+
+      before { get '/api/v2/storefront/taxons?locale=pl' }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns all taxons' do
+        expect(json_response['data'].size).to eq(3)
+
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:name).with_value("Localized Taxonomy PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:pretty_name).with_value("Localized Taxonomy PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:permalink).with_value('localized-taxonomy-pl')))
+
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:name).with_value("Localized Taxon 1 PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:pretty_name).with_value("Localized Taxonomy PL -> Localized Taxon 1 PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:permalink).with_value('localized-taxonomy-pl/localized-taxon-1-pl')))
+
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:name).with_value("Localized Taxon 2 PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:pretty_name).with_value("Localized Taxonomy PL -> Localized Taxon 2 PL")))
+        expect(json_response['data']).to include(have_type('taxon').and(have_attribute(:permalink).with_value('localized-taxonomy-pl/localized-taxon-2-pl')))
+      end
+    end
+
     context 'by roots' do
       before { get '/api/v2/storefront/taxons?filter[roots]=true' }
 
