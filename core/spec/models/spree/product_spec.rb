@@ -391,6 +391,36 @@ describe Spree::Product, type: :model do
         expect(product.reload.total_on_hand).to eq corrent_total_on_hand
       end
     end
+
+    context 'when using another locale' do
+      before do
+        product.update!(name: 'EN name')
+
+        Mobility.with_locale(:pl) do
+          product.update!(
+            name: 'PL name',
+            description: 'PL description',
+            meta_title: 'PL meta title',
+            meta_description: 'PL meta description',
+            meta_keywords: 'PL meta keywords'
+          )
+        end
+      end
+
+      let(:product_pl_translation) { product.translations.find_by(locale: 'pl') }
+
+      it 'translates product fields' do
+        expect(product.name).to eq('EN name')
+
+        expect(product_pl_translation).to be_present
+        expect(product_pl_translation.name).to eq('PL name')
+        expect(product_pl_translation.slug).to eq('pl-name')
+        expect(product_pl_translation.description).to eq('PL description')
+        expect(product_pl_translation.meta_title).to eq('PL meta title')
+        expect(product_pl_translation.meta_description).to eq('PL meta description')
+        expect(product_pl_translation.meta_keywords).to eq('PL meta keywords')
+      end
+    end
   end
 
   context 'properties' do

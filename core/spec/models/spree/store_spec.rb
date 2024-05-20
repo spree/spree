@@ -160,6 +160,29 @@ describe Spree::Store, type: :model do
     end
   end
 
+  describe 'translations' do
+    let!(:store) { create(:store, name: 'Store EN') }
+
+    before do
+      Mobility.with_locale(:pl) do
+        store.update!(
+          name: 'Store PL',
+          description: 'PL description'
+        )
+      end
+    end
+
+    let(:store_pl_translation) { store.translations.find_by(locale: 'pl') }
+
+    it 'translates store fields' do
+      expect(store.name).to eq('Store EN')
+
+      expect(store_pl_translation).to be_present
+      expect(store_pl_translation.name).to eq('Store PL')
+      expect(store_pl_translation.description).to eq('PL description')
+    end
+  end
+
   describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }

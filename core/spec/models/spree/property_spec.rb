@@ -5,6 +5,25 @@ describe Spree::Property, type: :model do
 
   it_behaves_like 'metadata'
 
+  describe 'translations' do
+    let!(:property) { create(:property, name: 'brand', presentation: 'Brand') }
+
+    before do
+      Mobility.with_locale(:pl) do
+        property.update!(presentation: 'Marka')
+      end
+    end
+
+    let(:property_pl_translation) { property.translations.find_by(locale: 'pl') }
+
+    it 'translates property fields' do
+      expect(property.presentation).to eq('Brand')
+
+      expect(property_pl_translation).to be_present
+      expect(property_pl_translation.presentation).to eq('Marka')
+    end
+  end
+
   context 'setting filter param' do
     subject { build(:property, name: 'Brand Name') }
 
