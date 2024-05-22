@@ -1,0 +1,15 @@
+module Spree
+  module CurrentUserHelpers
+    def self.included(receiver)
+      receiver.send :helper_method, :spree_current_user
+    end
+
+    def spree_current_user
+      current_user
+    end
+  end
+end
+
+
+ApplicationController.include Spree::CurrentUserHelpers if defined?(ApplicationController)
+Spree::Api::BaseController.include Spree::CurrentUserHelpers if defined?(Spree::Api::BaseController)

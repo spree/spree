@@ -28,8 +28,8 @@ To use your own authentication system with Spree, please follow these steps:
     ```
   </Accordion>
 
-  <Accordion title="2. Generate Spree Authentication Helpers">
-    Next, you need to run the custom user generator for Spree which will create two files. The first is a migration that will add the necessary Spree fields to your users table, and the second is an extension that lives at `lib/spree/authentication_helpers.rb` to the `Spree::Core::AuthenticationHelpers` module inside of Spree.
+  <Accordion title="2. Update User model">
+    Next, you need to run the custom user generator for Spree which will create a migration that will add the necessary Spree fields to your users table.
 
     Run this generator with this command:
 
@@ -43,10 +43,50 @@ To use your own authentication system with Spree, please follow these steps:
     bin/rails db:migrate
     ```
 
-    Next you will need to define some methods to tell Spree where to find your application's authentication routes.
+    This generator will also create a file at `lib/spree/current_user_helpers.rb` which will be automatically included in your application's controllers allowing you to override the `spree_current_user` method to return the current user of the request.
   </Accordion>
-  <Accordion title="3. Customize Spree Authentication Helpers">
-    There are some authentication helpers of Spree's that you will need to possibly override. The file at `lib/spree/authentication_helpers.rb` contains the following code to help you do that:
+  <Accordion title="3. Include User concerns in your User model">
+    In your User Model please include the following lines:
+
+    ```ruby
+    include Spree::UserMethods
+    include Spree::UserAddress
+    include Spree::UserPaymentSource
+    ```
+
+    The first of these methods are the ones added for the `has_and_belongs_to_many` association called `spree_roles`. This association will retrieve all the roles that a user has for Spree.
+
+    The second of these is the `spree_orders` association. This will return all orders associated with the user in Spree. There's also a `last_incomplete_spree_order` method which will return the last incomplete spree order for the user. This is used internal to Spree to persist order data across a user's login sessions.
+
+    The third and fourth associations are for address information for a user. When a user places an order, the address information for that order will be linked to that user so that it is available for subsequent orders.
+
+    The next method is one called `has_spree_role?` which can be used to check if a user has a specific role. This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
+
+    ```ruby
+    user = User.find_by(email: 'master@example.com')
+    user.spree_roles << Spree::Role.where(name: 'admin').first_or_create
+    ```
+
+    To test that this has worked, use the `has_spree_role?` method, like this:
+
+    ```ruby
+    user.has_spree_role?('admin')
+    ```
+
+    If this returns `true`, then the user has admin permissions within Spree.
+  </Accordion>
+  <Accordion title="4. Customize Spree Authentication Helpers (Optional)">
+    <Note>
+      This step is required if you're using `spree_backend` and/or `spree_frontend` gems.
+    </Note>
+
+    Run a generator to create a file at `lib/spree/authentication_helpers.rb` which will contain the following code to help you do that:
+
+    ```bash
+    bin/rails g spree:custom_authentication
+    ```
+
+    This will create a file at `lib/spree/authentication_helpers.rb` which will contain the following code to help you do that:
 
     ```ruby
     module Spree
@@ -77,19 +117,6 @@ To use your own authentication system with Spree, please follow these steps:
     end
     ```
 
-    In your `ApplicationController` add these lines:
-
-    ```ruby
-    include Spree::AuthenticationHelpers
-    include Spree::Core::ControllerHelpers::Auth
-    include Spree::Core::ControllerHelpers::Order
-    include Spree::Core::ControllerHelpers::Store
-    include Spree::Core::ControllerHelpers::Currency
-    include Spree::Core::ControllerHelpers::Locale
-
-    helper 'spree/base', 'spree/locale', 'spree/currency', 'spree/store'
-    ```
-
     Each of the methods defined in this module return values that are the most common in Rails applications today, but you may need to customize them. In order, they are:
 
     * `spree_current_user` Used to tell Spree what the current user of a request is.
@@ -115,36 +142,6 @@ To use your own authentication system with Spree, please follow these steps:
     You can also customize the `spree_login_path`, `spree_signup_path` and `spree_logout_path` methods inside `lib/spree/authentication_helpers.rb` to use the routing helper methods already provided by the authentication setup you have, if you wish.
 
      Any modifications made to `lib/spree/authentication_helpers.rb` while the server is running will require a restart, as with any other modification to other files in `lib`.
-  </Accordion>
-  <Accordion title="4. Include Spree::UserMethods in your User model">
-    In your User Model you have to add:
-
-    ```ruby
-    include Spree::UserMethods
-    include Spree::UserAddress
-    include Spree::UserPaymentSource
-    ```
-
-    The first of these methods are the ones added for the `has_and_belongs_to_many` association called `spree_roles`. This association will retrieve all the roles that a user has for Spree.
-
-    The second of these is the `spree_orders` association. This will return all orders associated with the user in Spree. There's also a `last_incomplete_spree_order` method which will return the last incomplete spree order for the user. This is used internal to Spree to persist order data across a user's login sessions.
-
-    The third and fourth associations are for address information for a user. When a user places an order, the address information for that order will be linked to that user so that it is available for subsequent orders.
-
-    The next method is one called `has_spree_role?` which can be used to check if a user has a specific role. This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
-
-    ```ruby
-    user = User.find_by(email: 'master@example.com')
-    user.spree_roles << Spree::Role.where(name: 'admin').first_or_create
-    ```
-
-    To test that this has worked, use the `has_spree_role?` method, like this:
-
-    ```ruby
-    user.has_spree_role?('admin')
-    ```
-
-    If this returns `true`, then the user has admin permissions within Spree.
   </Accordion>
   <Accordion title="5. Remove Auth Devise gem">
     The `spree_auth_devise` gem is not needed when using an existing application authentication unless the goal is to have two separate authentication methods.
