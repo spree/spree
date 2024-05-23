@@ -91,7 +91,9 @@ module Spree
   # This method is defined within the core gem on purpose.
   # Some people may only wish to use the Core part of Spree.
   def self.config
-    yield(Spree::Config)
+    Rails.application.config.after_initialize do
+      yield(Spree::Config)
+    end
   end
 
   # Used to set dependencies for Spree.
