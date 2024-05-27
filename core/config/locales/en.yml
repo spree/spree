@@ -1038,8 +1038,8 @@ en:
       go_to_previous_menu: Go to previous menu
       log_in: LOG IN
       log_out: LOG OUT
-      my_account: MY ACCOUNT
-      my_orders: MY ORDERS
+      my_account: My Account
+      my_orders: My Orders
       show_menu: Show menu
       show_search: Show search
       show_user_menu: Show user menu
@@ -1234,14 +1234,6 @@ en:
     payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
-    pdp:
-      checkout: Checkout
-      description: Description
-      details: Details
-      products_included_in_promotion: Products included in the promotion
-      quantity: Quantity
-      view_cart: View cart
-      you_may_also_like: You may also like
     percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
@@ -1251,32 +1243,6 @@ en:
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
-    plp:
-      best_selling: BEST SELLING
-      clear_all: CLEAR ALL
-      collection: COLLECTION
-      color: COLOR
-      done: DONE
-      default: DEFAULT
-      filter_by: FILTER BY
-      newest_first: NEWEST FIRST
-      no_results: No results
-      no_results_found: No results found
-      not_found_filters1: We couldn’t find a match for these filters.
-      not_found_filters2: Please try another choose.
-      not_found_text1: We couldn’t find products for '%{keywords}'.
-      not_found_text2: Please try another search.
-      price: price
-      price_high_to_low: PRICE (HIGH - LOW)
-      price_low_to_high: PRICE (LOW - HIGH)
-      name_a_z: NAME (A-Z)
-      name_z_a: NAME (Z-A)
-      result: RESULT
-      results_for: RESULTS FOR
-      size: SIZE
-      sort_by: SORT BY
-      top_sellers: TOP SELLERS
-      type: TYPE
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
