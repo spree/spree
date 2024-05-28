@@ -22,7 +22,7 @@ description: This guide covers upgrading a Spree 4 application to Spree 4.8.
     ```
   </Accordion>
 
-  <Accordion title="5. (Optional) Install importmap-rails gem">
+  <Accordion title="3. (Optional) Install importmap-rails gem">
     We've switched to using [importmap-rails](https://github.com/rails/importmap-rails) for asset management. If you're using the `spree_backend` or `spree_frontend` gem, you'll need to install the `importmap-rails` gem.
 
     ```bash
@@ -39,6 +39,14 @@ description: This guide covers upgrading a Spree 4 application to Spree 4.8.
 
     ```bash
     bundle remove jsbundling-rails
+    ```
+  </Accordion>
+
+  <Accordion title="3. (Optional) Apply fix when upgrading from 4.5/4.6/4.7">
+    If you're upgrading from 4.5/4.6/4.7, you need to set this configuration in your `config/initializers/spree.rb`:
+
+    ```ruby
+    Spree::RuntimeConfig.always_use_translations = true
     ```
   </Accordion>
 </AccordionGroup>
