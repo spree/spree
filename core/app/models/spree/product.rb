@@ -39,7 +39,7 @@ module Spree
                           purchasable? in_stock? backorderable?]
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
       before_save :set_slug

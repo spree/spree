@@ -60,7 +60,7 @@ module Spree
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
     TRANSLATABLE_FIELDS = %i[name description permalink].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink

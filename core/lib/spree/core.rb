@@ -76,6 +76,10 @@ module Spree
     end
   end
 
+  def self.always_use_translations?
+    Spree::RuntimeConfig.always_use_translations
+  end
+
   def self.use_translations?
     Spree::RuntimeConfig.always_use_translations || I18n.default_locale != I18n.locale
   end
