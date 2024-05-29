@@ -7,7 +7,7 @@ module Spree
     end
 
     TRANSLATABLE_FIELDS = %i[name].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     acts_as_list
 

@@ -3,8 +3,13 @@ module Spree
     include Spree::FilterParam
     include Spree::TranslatableResource
 
-    TRANSLATABLE_FIELDS = %i[value].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    if Spree.always_use_translations?
+      TRANSLATABLE_FIELDS = %i[value filter_param].freeze
+      translates(*TRANSLATABLE_FIELDS)
+    else
+      TRANSLATABLE_FIELDS = %i[value].freeze
+      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    end
 
     self::Translation.class_eval do
       auto_strip_attributes :value

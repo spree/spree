@@ -7,8 +7,13 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    TRANSLATABLE_FIELDS = %i[presentation].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    if Spree.always_use_translations?
+      TRANSLATABLE_FIELDS = %i[name presentation].freeze
+      translates(*TRANSLATABLE_FIELDS)
+    else
+      TRANSLATABLE_FIELDS = %i[presentation].freeze
+      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    end
 
     acts_as_list
     auto_strip_attributes :name, :presentation

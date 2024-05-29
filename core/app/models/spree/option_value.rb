@@ -6,8 +6,13 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    TRANSLATABLE_FIELDS = %i[presentation].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    if Spree.always_use_translations?
+      TRANSLATABLE_FIELDS = %i[name presentation].freeze
+      translates(*TRANSLATABLE_FIELDS)
+    else
+      TRANSLATABLE_FIELDS = %i[presentation].freeze
+      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    end
 
     belongs_to :option_type, class_name: 'Spree::OptionType', touch: true, inverse_of: :option_values
 
