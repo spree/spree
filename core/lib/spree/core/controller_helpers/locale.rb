@@ -19,6 +19,7 @@ module Spree
         end
 
         def set_locale
+          I18n.default_locale = default_locale unless Spree.always_use_translations?
           I18n.locale = current_locale
         end
 

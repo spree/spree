@@ -110,4 +110,40 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
       it { expect(controller.locale_param).to eq('de') }
     end
   end
+
+  describe '#set_locale' do
+    subject(:set_locale) { controller.set_locale }
+
+    let!(:store) { create :store, default: true, default_locale: 'de', supported_locales: 'en,pl,de' }
+
+    before do
+      I18n.default_locale = :en
+      I18n.locale = :en
+    end
+
+    after do
+      I18n.default_locale = :en
+      I18n.locale = :en
+    end
+
+    it 'sets the default and the current locale' do
+      set_locale
+
+      expect(I18n.default_locale).to eq(:de)
+      expect(I18n.locale).to eq(:pl)
+    end
+
+    context 'when always using translations' do
+      before do
+        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(true)
+      end
+
+      it 'sets only the current locale' do
+        set_locale
+
+        expect(I18n.default_locale).to eq(:en)
+        expect(I18n.locale).to eq(:pl)
+      end
+    end
+  end
 end
