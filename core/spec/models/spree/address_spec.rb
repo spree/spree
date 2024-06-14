@@ -436,10 +436,17 @@ describe Spree::Address, type: :model do
 
     let(:address) { create(:address, user: user) }
     let(:address2) { create(:address, user: user) }
+    let(:address3) { create(:address, user: user) }
+
     let(:order) { create(:completed_order_with_totals) }
+    let(:order2) { create(:order_with_line_items) }
+
     let(:user) { create(:user) }
 
-    before { order.update_attribute(:bill_address, address2) }
+    before do
+      order.update_attribute(:bill_address, address2)
+      order2.update_attribute(:ship_address, address3)
+    end
 
     it 'has required attributes' do
       expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone])
@@ -457,8 +464,12 @@ describe Spree::Address, type: :model do
       expect(address2).to_not be_editable
     end
 
-    it "can't be deleted when there is an associated order" do
+    it "can't be deleted when there is a complete associated order" do
       expect(address2).to_not be_can_be_deleted
+    end
+
+    it 'can be deleted when there is an incomplete associated order' do
+      expect(address3).to be_can_be_deleted
     end
 
     it 'is destroyed without saving used' do
@@ -488,7 +499,10 @@ describe Spree::Address, type: :model do
         end
 
         context 'when deleted address was the only one' do
-          before { address2.destroy }
+          before do
+            address2.destroy
+            address3.destroy
+          end
 
           it 'does not assign any address' do
             destroy_address

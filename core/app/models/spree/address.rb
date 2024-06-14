@@ -142,7 +142,7 @@ module Spree
     end
 
     def can_be_deleted?
-      shipments.empty? && !Order.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
+      shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
     end
 
     def check
