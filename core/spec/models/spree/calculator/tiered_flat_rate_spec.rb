@@ -13,8 +13,11 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
     end
 
     context 'when tiers is a hash' do
+      before { calculator.preferred_tiers = { 'nope' => 20 } }
+
+      it { is_expected.to be true }
+      
       context 'and one of the keys is not a positive number' do
-        before { calculator.preferred_tiers = { 'nope' => 20 } }
 
         it { is_expected.to be false }
       end
