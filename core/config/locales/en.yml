@@ -1580,6 +1580,7 @@ en:
     states_required: States Required
     status: Status
     stock: Stock
+    default_stock_location_name: Shop location
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
