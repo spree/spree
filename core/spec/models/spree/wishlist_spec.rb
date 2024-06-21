@@ -96,4 +96,31 @@ describe Spree::Wishlist, type: :model do
       end.to change(Spree::WishedItem, :count).by(-1)
     end
   end
+
+  describe '#product_ids' do
+    let(:product) { create(:product) }
+    let(:variant) { create(:variant, product: product) }
+    let(:variant_2) { create(:variant, product: product) }
+
+    before do
+      wishlist.wished_items << create(:wished_item, variant: variant)
+      wishlist.wished_items << create(:wished_item, variant: variant_2)
+    end
+
+    it 'returns the product ids' do
+      expect(wishlist.product_ids).to eq [product.id]
+    end
+  end
+
+  describe '#wished_items_count' do
+    let(:variant) { create(:variant) }
+
+    before do
+      wishlist.wished_items << create(:wished_item, variant: variant)
+    end
+
+    it 'returns the wished items count' do
+      expect(wishlist.wished_items_count).to eq 1
+    end
+  end
 end
