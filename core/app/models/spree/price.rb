@@ -68,6 +68,41 @@ module Spree
       Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
     end
 
+    # returns the name of the price in a format of variant name and currency
+    #
+    # @return [String]
+    def name
+      "#{variant.name} - #{currency.upcase}"
+    end
+
+    # returns true if the price is discounted
+    #
+    # @return [Boolean]
+    def discounted?
+      compare_at_amount.to_i.positive? && compare_at_amount > amount
+    end
+
+    # returns true if the price was discounted
+    #
+    # @return [Boolean]
+    def was_discounted?
+      compare_at_amount_was.to_i.positive? && compare_at_amount_was > amount_was
+    end
+
+    # returns true if the price is zero
+    #
+    # @return [Boolean]
+    def zero?
+      amount.nil? || amount.zero?
+    end
+
+    # returns true if the price is not zero
+    #
+    # @return [Boolean]
+    def non_zero?
+      !zero?
+    end
+
     private
 
     def ensure_currency

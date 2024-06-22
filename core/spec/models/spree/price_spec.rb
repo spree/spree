@@ -217,4 +217,30 @@ describe Spree::Price, type: :model do
       subject.display_compare_at_price_including_vat_for(nil)
     end
   end
+
+  describe '#discounted?' do
+    subject { price.discounted? }
+
+    let(:price) { build(:price, amount: 10, compare_at_amount: compare_at_amount, currency: 'USD') }
+
+    context 'when compare at amount is higher' do
+      let(:compare_at_amount) { 15 }
+      it { is_expected.to be(true) }
+    end
+
+    context 'when compare at amount is lower' do
+      let(:compare_at_amount) { 9 }
+      it { is_expected.to be(false) }
+    end
+
+    context 'when compare at amount is the same' do
+      let(:compare_at_amount) { 10 }
+      it { is_expected.to be(false) }
+    end
+
+    context 'when there is no compare at amount' do
+      let(:compare_at_amount) { nil }
+      it { is_expected.to be(false) }
+    end
+  end
 end
