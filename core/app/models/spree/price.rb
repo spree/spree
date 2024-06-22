@@ -12,6 +12,7 @@ module Spree
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
+    before_save :remove_compare_at_amount_if_equals_amount
 
     validates :amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,
@@ -111,6 +112,11 @@ module Spree
 
     def ensure_currency
       self.currency ||= Spree::Store.default.default_currency
+    end
+
+    # removes the compare at amount if it is the same as the amount
+    def remove_compare_at_amount_if_equals_amount
+      self.compare_at_amount = nil if compare_at_amount == amount
     end
   end
 end

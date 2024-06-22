@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 describe Spree::Price, type: :model do
+  describe 'Callbacks' do
+    context 'when compare_at_amount is equal to amount' do
+      let(:variant) { create(:variant) }
+
+      let(:price) do
+        build(
+          :price,
+          amount: 10,
+          compare_at_amount: 10,
+          currency: 'GBP',
+          variant: variant
+        )
+      end
+
+      it 'sets compare_at_amount to nil' do
+        price.save
+        expect(price.compare_at_amount).to be_nil
+      end
+    end
+  end
+
   describe '#amount=' do
     let(:price) { build :price }
     let(:amount) { '3,0A0' }
