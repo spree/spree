@@ -23,6 +23,10 @@ module Spree
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }
 
+    scope :with_currency, ->(currency) { where(currency: currency) }
+    scope :non_zero, -> { where.not(amount: [nil, 0]) }
+    scope :discounted, -> { where('compare_at_amount > amount') }
+
     extend DisplayMoney
     money_methods :amount, :price, :compare_at_amount
     alias display_compare_at_price display_compare_at_amount
