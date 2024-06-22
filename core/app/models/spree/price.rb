@@ -12,6 +12,7 @@ module Spree
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
+    before_save :remove_compare_at_amount_if_equals_amount
 
     validates :amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,
@@ -22,6 +23,10 @@ module Spree
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }
+
+    scope :with_currency, ->(currency) { where(currency: currency) }
+    scope :non_zero, -> { where.not(amount: [nil, 0]) }
+    scope :discounted, -> { where('compare_at_amount > amount') }
 
     extend DisplayMoney
     money_methods :amount, :price, :compare_at_amount
@@ -68,10 +73,50 @@ module Spree
       Spree::Money.new(compare_at_price_including_vat_for(price_options), currency: currency)
     end
 
+    # returns the name of the price in a format of variant name and currency
+    #
+    # @return [String]
+    def name
+      "#{variant.name} - #{currency.upcase}"
+    end
+
+    # returns true if the price is discounted
+    #
+    # @return [Boolean]
+    def discounted?
+      compare_at_amount.to_i.positive? && compare_at_amount > amount
+    end
+
+    # returns true if the price was discounted
+    #
+    # @return [Boolean]
+    def was_discounted?
+      compare_at_amount_was.to_i.positive? && compare_at_amount_was > amount_was
+    end
+
+    # returns true if the price is zero
+    #
+    # @return [Boolean]
+    def zero?
+      amount.nil? || amount.zero?
+    end
+
+    # returns true if the price is not zero
+    #
+    # @return [Boolean]
+    def non_zero?
+      !zero?
+    end
+
     private
 
     def ensure_currency
       self.currency ||= Spree::Store.default.default_currency
+    end
+
+    # removes the compare at amount if it is the same as the amount
+    def remove_compare_at_amount_if_equals_amount
+      self.compare_at_amount = nil if compare_at_amount == amount
     end
   end
 end

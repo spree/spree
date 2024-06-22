@@ -172,6 +172,18 @@ module Spree
       !!deleted_at
     end
 
+    # Returns an array of hashes with the option type name, value and presentation
+    # @return [Array<Hash>]
+    def options
+      option_values.includes(:option_type).map do |option_value|
+        {
+          name: option_value.option_type.name,
+          value: option_value.name,
+          presentation: option_value.presentation
+        }
+      end
+    end
+
     def options=(options = {})
       options.each do |option|
         next if option[:name].blank? || option[:value].blank?

@@ -16,15 +16,30 @@ describe Spree::Variants::OptionsPresenter do
     it 'orders by bar than foo' do
       expect(to_sentence).to eq 'Bar Type: Bar, Foo Type: Foo'
     end
+  end
 
-    context 'when OptionType is color' do
-      let(:option_type) { create :option_type, name: 'color', presentation: 'Color' }
-      let(:option_value) { create :option_value, option_type: option_type, name: 'white', presentation: '#FFFFFF' }
+  describe '#to_hash' do
+    subject { described_class.new(variant).to_hash }
 
-      let(:variant) { build :variant, option_values: [option_value] }
+    let(:option_type_1) { create :option_type, name: 'color', presentation: 'Color' }
+    let(:option_value_1) { create :option_value, option_type: option_type_1, name: 'white', presentation: 'White' }
+    let(:option_type_2) { create :option_type, name: 'size', presentation: 'Size' }
+    let(:option_value_2) { create :option_value, option_type: option_type_2, name: 'Medium', presentation: 'Medium' }
 
-      it 'uses name of OptionValue instead of presentation' do
-        expect(to_sentence).to eq 'Color: white'
+    context 'when variant has option values' do
+      let(:variant) { create :variant, option_values: [option_value_1, option_value_2] }
+
+      it 'returns valid hash' do
+        expect(subject).to eq({ color: 'White', size: 'Medium' })
+      end
+    end
+
+    context 'when variant has no option values' do
+      let(:product) { create(:product) }
+      let(:variant) { product.master }
+
+      it 'returns empty hash' do
+        expect(subject).to eq({})
       end
     end
   end
