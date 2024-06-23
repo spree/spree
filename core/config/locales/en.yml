@@ -553,8 +553,8 @@ en:
     adjustment_amount: Amount
     adjustment_labels:
       tax_rates:
-        including_tax: '%{name} %{amount} (Included in Price)'
-        excluding_tax: '%{name} %{amount}'
+        including_tax: '%{name}%{amount} (Included in Price)'
+        excluding_tax: '%{name}%{amount}'
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total

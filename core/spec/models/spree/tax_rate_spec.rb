@@ -564,7 +564,7 @@ describe Spree::TaxRate, type: :model do
 
     it 'returns a string with the percentage when the amount is not 0' do
       tax_rate = Spree::TaxRate.new(amount: 0.1)
-      expect(tax_rate.send(:amount_for_label)).to eq('10%')
+      expect(tax_rate.send(:amount_for_label)).to eq(' 10%')
     end
   end
 end
