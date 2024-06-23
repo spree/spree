@@ -64,6 +64,7 @@ module Spree
     scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
+    scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: 'Spree::ReturnAuthorization') }
     scope :is_included, -> { where(included: true) }
@@ -85,6 +86,10 @@ module Spree
 
     def promotion?
       source_type == 'Spree::PromotionAction'
+    end
+
+    def tax?
+      source_type == 'Spree::TaxRate'
     end
 
     # Passing a target here would always be recommended as it would avoid
