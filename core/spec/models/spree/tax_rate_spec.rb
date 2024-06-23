@@ -548,4 +548,23 @@ describe Spree::TaxRate, type: :model do
       end
     end
   end
+
+  describe '#label' do
+    it 'returns the name and amount for the tax rate' do
+      tax_rate = Spree::TaxRate.new(name: 'Sales Tax', amount: 0.1)
+      expect(tax_rate.send(:label)).to eq('Sales Tax 10%')
+    end
+  end
+
+  describe '#amount_for_label' do
+    it 'returns an empty string when the amount is 0' do
+      tax_rate = Spree::TaxRate.new(amount: 0)
+      expect(tax_rate.send(:amount_for_label)).to eq('')
+    end
+
+    it 'returns a string with the percentage when the amount is not 0' do
+      tax_rate = Spree::TaxRate.new(amount: 0.1)
+      expect(tax_rate.send(:amount_for_label)).to eq(' 10%')
+    end
+  end
 end
