@@ -144,6 +144,17 @@ describe Spree::CustomerReturn, type: :model do
     it "returns the order associated with the return item's inventory unit" do
       expect(subject).to eq return_item.inventory_unit.order
     end
+
+    context 'return item without inventory unit' do
+      before do
+        return_item.inventory_unit.destroy
+        return_item.reload
+      end
+
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
   end
 
   describe '#order_id' do
