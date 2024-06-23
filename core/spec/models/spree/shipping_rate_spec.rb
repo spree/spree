@@ -99,6 +99,16 @@ describe Spree::ShippingRate, type: :model do
         expect(shipping_rate.display_price.to_s).to eq('¥205')
       end
     end
+
+    context 'when tax rate is not shown in label' do
+      let(:tax_rate) { create(:tax_rate, name: 'Sales Tax', amount: 0.1, show_rate_in_label: false) }
+
+      before { shipping_rate.tax_rate = tax_rate }
+
+      it 'shows no tax amount' do
+        expect(shipping_rate.display_price.to_s).to eq('$10.00')
+      end
+    end
   end
 
   # Regression test for #3829

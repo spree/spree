@@ -14,7 +14,7 @@ module Spree
     def display_price
       price = display_base_price.to_s
 
-      return price if tax_rate.nil? || tax_amount.zero?
+      return price if tax_rate.nil? || tax_amount.zero? || !tax_rate.show_rate_in_label
 
       Spree.t(
         tax_rate.included_in_price? ? :including_tax : :excluding_tax,
