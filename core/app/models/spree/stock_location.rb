@@ -14,6 +14,8 @@ module Spree
       include Spree::VendorConcern
     end
 
+    acts_as_paranoid
+
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :variants, through: :stock_items
