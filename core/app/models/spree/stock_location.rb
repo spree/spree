@@ -7,6 +7,9 @@ module Spree
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
     end
+    if defined?(Spree::Security::StockLocations)
+      include Spree::Security::StockLocations
+    end
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -120,6 +123,20 @@ module Spree
       else
         [0, 0]
       end
+    end
+
+    def address
+      Spree::Address.new(
+        address1: address1,
+        address2: address2,
+        city: city,
+        state: state,
+        state: state,
+        state_name: state_name,
+        country: country,
+        zipcode: zipcode,
+        phone: phone
+      )
     end
 
     private

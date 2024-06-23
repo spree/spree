@@ -313,5 +313,11 @@ module Spree
         it { expect { subject.update(name: 'my other warehouse').to change(variant, :updated_at) } }
       end
     end
+
+    describe '#address' do
+      it 'returns Spree::Address instance' do
+        expect(subject.address).to be_an_instance_of(Spree::Address)
+      end
+    end
   end
 end
