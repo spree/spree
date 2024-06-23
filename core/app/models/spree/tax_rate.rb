@@ -117,14 +117,12 @@ module Spree
       return '' unless show_rate_in_label?
       return '' if amount.zero?
 
-      percentage = ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
+      ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
         amount * 100,
         locale: I18n.locale,
         strip_insignificant_zeros: true,
         precision: 2
       )
-
-      percentage
     end
   end
 end
