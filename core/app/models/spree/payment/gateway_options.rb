@@ -5,6 +5,10 @@ module Spree
         @payment = payment
       end
 
+      def statement_descriptor_suffix
+        order.number
+      end
+
       def email
         order.email
       end

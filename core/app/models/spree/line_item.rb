@@ -99,6 +99,13 @@ module Spree
       amount + taxable_adjustment_total
     end
 
+    # returns the total tax amount
+    #
+    # @return [BigDecimal]
+    def tax_total
+      included_tax_total + additional_tax_total
+    end
+
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
@@ -115,6 +122,20 @@ module Spree
 
     def insufficient_stock?
       !sufficient_stock?
+    end
+
+    # returns true if any of the inventory units are shipped
+    #
+    # @return [Boolean]
+    def any_shipped?
+      inventory_units.any?(&:shipped?)
+    end
+
+    # returns true if all of the inventory units are shipped
+    #
+    # @return [Boolean]
+    def fully_shipped?
+      inventory_units.all?(&:shipped?)
     end
 
     def options=(options = {})
