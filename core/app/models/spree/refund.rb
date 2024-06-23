@@ -13,6 +13,7 @@ module Spree
       belongs_to :reimbursement, optional: true
     end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
+    belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :log_entries, as: :source
 
@@ -31,8 +32,10 @@ module Spree
 
     attr_reader :response
 
+    delegate :order, :currency, to: :payment
+
     def money
-      Spree::Money.new(amount, currency: payment.currency)
+      Spree::Money.new(amount, currency: currency)
     end
     alias display_amount money
 
@@ -46,6 +49,15 @@ module Spree
       payment.payment_method.name
     end
 
+    # return items for the refund
+    #
+    # @return [Array<Spree::ReturnItem>]
+    def return_items
+      return [] unless reimbursement.present?
+
+      reimbursement.customer_return&.return_items || reimbursement.return_items
+    end
+
     private
 
     # attempts to perform the refund.
@@ -53,7 +65,7 @@ module Spree
     def perform!
       return true if transaction_id.present?
 
-      credit_cents = Spree::Money.new(amount.to_f, currency: payment.currency).amount_in_cents
+      credit_cents = Spree::Money.new(amount.to_f, currency: currency).amount_in_cents
 
       @response = process!(credit_cents)
 
