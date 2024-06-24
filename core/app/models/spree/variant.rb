@@ -108,6 +108,14 @@ module Spree
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
+
+    scope :with_option_value, lambda { |option_name, option_value|
+      option_type_ids = OptionType.where(name: option_name).ids
+      return none if option_type_ids.empty?
+
+      joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
+    }
+
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 

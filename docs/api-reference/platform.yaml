@@ -18052,7 +18052,7 @@ components:
               example: My home address
             company:
               type: string
-              example: Vendo Cloud Inc
+              example: Vendo Connect Inc
             user_id:
               type: string
             public_metadata:
@@ -18110,7 +18110,7 @@ components:
               example: My home address
             company:
               type: string
-              example: Vendo Cloud Inc
+              example: Vendo Connect Inc
             user_id:
               type: string
             public_metadata:
