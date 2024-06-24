@@ -6,7 +6,7 @@ describe Spree::Shipment, type: :model do
   let!(:order) { create(:order, number: 'S12345') }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
-    create(:shipment, cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
+    create(:shipment, number: 'H21265865494', cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
       allow(shipment).to receive_messages order: order
       allow(shipment).to receive_messages shipping_method: shipping_method
     end
@@ -28,6 +28,47 @@ describe Spree::Shipment, type: :model do
       # prevent it from updating pre_tax_amount
       allow_any_instance_of(Spree::LineItem).to receive(:update_tax_charge)
       expect(line_item.reload.pre_tax_amount).to eq(4.2051)
+    end
+  end
+
+  describe '#name' do
+    it 'returns the shipment number and shipping method name' do
+      expect(shipment.name).to eq('H21265865494 UPS')
+    end
+  end
+
+  describe '#tracked?' do
+    it 'returns true if the shipment is tracked' do
+      expect(shipment.tracked?).to eq(true)
+    end
+
+    context 'when the shipment is not tracked' do
+      let(:shipment) { build(:shipment, number: nil, tracking: nil) }
+
+      it 'returns false' do
+        expect(shipment.tracked?).to eq(false)
+      end
+    end
+  end
+
+  describe '#partial?' do
+    subject { shipment.partial? }
+
+    let(:shipment) { create(:shipment, order: order) }
+
+    let!(:line_item) { create(:line_item, quantity: 5, order: order) }
+    let(:order) { create(:order) }
+
+    context 'when all products are included in the shipment' do
+      it { is_expected.to be(false) }
+    end
+
+    context 'when not all products are included in the shipment' do
+      before do
+        shipment.inventory_units.first.update!(quantity: 3)
+      end
+
+      it { is_expected.to be(true) }
     end
   end
 
@@ -56,6 +97,11 @@ describe Spree::Shipment, type: :model do
 
     it 'returns canceled if order is canceled?' do
       allow(order).to receive_messages canceled?: true
+      expect(shipment.determine_state(order)).to eq 'canceled'
+    end
+
+    it 'returns canceled when shipment is canceled' do
+      allow(shipment).to receive_messages canceled?: true
       expect(shipment.determine_state(order)).to eq 'canceled'
     end
 

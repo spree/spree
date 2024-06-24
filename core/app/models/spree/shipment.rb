@@ -12,12 +12,16 @@ module Spree
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
+    if defined?(Spree::VendorConcern)
+      include Spree::VendorConcern
+    end
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
       belongs_to :order, class_name: 'Spree::Order', touch: true
     end
-    belongs_to :stock_location, class_name: 'Spree::StockLocation'
+    belongs_to :stock_location, -> { with_deleted }, class_name: 'Spree::StockLocation'
+    has_many :variants, through: :inventory_units
 
     with_options dependent: :delete_all do
       has_many :adjustments, as: :adjustable
@@ -47,8 +51,18 @@ module Spree
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order(Arel.sql('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc'), id: :desc) }
     scope :valid, -> { where.not(state: :canceled) }
+    scope :canceled, -> { with_state('canceled') }
+    scope :not_canceled, -> { where.not(state: 'canceled') }
+    scope :shipped_but_canceled, -> { canceled.where.not(shipped_at: nil) }
+    # This scope will select the shipping_method_id from the shipments' selected shipping rate
+    scope :with_selected_shipping_method, lambda {
+                                                 joins(:selected_shipping_rate).
+                                                   where(Spree::ShippingRate.arel_table[:shipping_method_id].not_eq(nil)).
+                                                   select(Spree::ShippingRate.arel_table[:shipping_method_id])
+                                               }
 
     delegate :store, :currency, to: :order
+    delegate :amount_in_cents, to: :display_cost
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
@@ -93,8 +107,19 @@ module Spree
     self.whitelisted_ransackable_attributes = ['number']
 
     extend DisplayMoney
-    money_methods :cost, :discounted_cost, :final_price, :item_cost
+    money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total
     alias display_amount display_cost
+
+    # Returns the shipment number and shipping method name
+    #
+    # @return [String]
+    def name
+      [number, shipping_method&.name].compact.join(' ').strip
+    end
+
+    def amount
+      cost
+    end
 
     def add_shipping_method(shipping_method, selected = false)
       shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)
@@ -108,8 +133,35 @@ module Spree
       manifest.each { |item| manifest_unstock(item) }
     end
 
+    # Returns true if the shipment has any backordered inventory units
+    #
+    # @return [Boolean]
     def backordered?
       inventory_units.any?(&:backordered?)
+    end
+
+    # Returns true if the shipment is tracked
+    #
+    # @return [Boolean]
+    def tracked?
+      tracking.present? || tracking_url.present?
+    end
+
+    # Returns true if the shipment is shippable
+    #
+    # @return [Boolean]
+    def shippable?
+      can_ship? && tracked?
+    end
+
+    # Returns true if not all of the shipment's line items are fully shipped
+    #
+    # @return [Boolean]
+    def partial?
+      manifest.any? do |manifest_item|
+        line_item = manifest_item.line_item
+        line_item.quantity > manifest_item.quantity
+      end
     end
 
     # Determines the appropriate +state+ according to the following logic:
@@ -118,7 +170,7 @@ module Spree
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
-      return 'canceled' if order.canceled?
+      return 'canceled' if canceled? || order.canceled?
       return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if shipped?
