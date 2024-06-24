@@ -21,7 +21,6 @@ module Spree
       belongs_to :order, class_name: 'Spree::Order', touch: true
     end
     belongs_to :stock_location, -> { with_deleted }, class_name: 'Spree::StockLocation'
-    has_many :variants, through: :inventory_units
 
     with_options dependent: :delete_all do
       has_many :adjustments, as: :adjustable
@@ -30,6 +29,7 @@ module Spree
       has_many :state_changes, as: :stateful
     end
     has_many :shipping_methods, through: :shipping_rates
+    has_many :variants, through: :inventory_units
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate.to_s
 
     after_save :update_adjustments
