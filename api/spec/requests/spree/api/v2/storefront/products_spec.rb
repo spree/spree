@@ -1171,6 +1171,21 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'with old slug' do
+      before do
+        old_slug = product.slug
+        product.update(slug: 'new-slug')
+        expect(product.reload.slug).to eq 'new-slug'
+        get "/api/v2/storefront/products/#{old_slug}"
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'still finds the product' do
+        expect(json_response['data']['id']).to eq(product.id.to_s)
+      end
+    end
+
     context 'with product image data' do
       shared_examples 'returns product image data' do
         it 'returns product image data' do
