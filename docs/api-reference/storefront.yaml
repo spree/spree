@@ -1268,6 +1268,41 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
       summary: Retrieve a Product
+  /api/v2/storefront/products/{product_slug}/variants:
+    get:
+      description: |-
+        Returns a list of product variants. You can use product permalink:
+
+        ```
+        GET /api/v2/storefront/products/knitted-high-neck-sweater/variants
+        ```
+
+        Or Product ID:
+
+        ```
+        GET /api/v2/storefront/products/21/variants
+        ```
+
+        **Note** API will attempt a permalink lookup before an ID lookup.
+      tags:
+        - Variants
+      operationId: variants-list
+      parameters:
+        - $ref: '#/components/parameters/ProductSlug'
+        - in: query
+          name: 'filter[options][color]'
+          schema:
+            type: string
+          example: red
+          description: 'Find Variants that have the specified option (eg. color, size) and value (eg. red, XS)'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/VariantIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsVariant'
+      responses:
+        '200':
+          $ref: '#/components/responses/VariantList'
+      summary: List all Product Variants
   /api/v2/storefront/store:
     get:
       summary: Return the current Store
@@ -2918,6 +2953,51 @@ components:
         - type
         - attributes
         - relationships
+    OptionValue:
+      title: Option Value
+      type: object
+      x-internal: true
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: option_value
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: color
+            presentation:
+              type: string
+              example: Color
+            position:
+              type: integer
+              example: 1
+        relationships:
+          type: object
+          properties:
+            option_type:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            filter_value:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
     PaymentMethod:
       title: Payment Method
       description: ''
@@ -3092,6 +3172,13 @@ components:
         - $ref: '#/components/schemas/Variant'
         - $ref: '#/components/schemas/Image'
         - $ref: '#/components/schemas/Taxon'
+    VariantIncludes:
+      x-internal: true
+      title: Product Includes
+      anyOf:
+        - $ref: '#/components/schemas/Product'
+        - $ref: '#/components/schemas/Image'
+        - $ref: '#/components/schemas/OptionValue'
     StoreIncludes:
       x-internal: false
       title: Store Includes
@@ -4084,6 +4171,20 @@ components:
         type: string
       example: '150'
       description: 'Check for the presence of a variant in a wishlist by passing the variant ID, if the variant is present in the wishlist, the `variant_included` attribute will return `true`'
+    VariantIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: |-
+        Specify what related resources (relationships) you would like to receive in the response body. Eg.
+
+        ```
+        product,option_values,images,filter_values
+        ```
+
+        [More information](https://jsonapi.org/format/#fetching-includes)
+      example: 'product,option_values,images,filter_values'
     FilterByIds:
       in: query
       name: 'filter[ids]'
@@ -4168,6 +4269,13 @@ components:
       schema:
         type: string
       example: 'price,description,name'
+    SparseFieldsVariant:
+      name: 'fields[variant]'
+      in: query
+      description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      schema:
+        type: string
+      example: 'price,currency,options,options_text'
     SparseFieldsStore:
       name: 'fields[store]'
       in: query
@@ -8569,6 +8677,29 @@ components:
                   prev: 'http://localhost:3000/api/v2/storefront/products?page=1'
                   last: 'http://localhost:3000/api/v2/storefront/products?page=5'
                   first: 'http://localhost:3000/api/v2/storefront/products?page=1'
+    VariantList:
+      description: 200 Success - Returns an array of `variant` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Variant'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VariantIncludes'
+              meta:
+                $ref: '#/components/schemas/ListMeta'
+              links:
+                $ref: '#/components/schemas/ListLinks'
+            required:
+              - data
+              - meta
+              - links
     Store:
       description: 200 Success - Returns the `store` object.
       content:
@@ -16520,6 +16651,7 @@ tags:
   - name: Menus
   - name: Order Status
   - name: Products
+  - name: Variants
   - name: Stores
   - name: Taxons
   - name: Wishlists

@@ -45,6 +45,7 @@ Spree::Core::Engine.add_routes do
         get '/countries/:iso', to: 'countries#show', as: :country
         get '/order_status/:number', to: 'order_status#show', as: :order_status
         resources :products, only: %i[index show]
+        get '/products/:id/variants', to: 'variants#index', as: :product_variants
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
         get '/store', to: 'stores#current', as: :current_store

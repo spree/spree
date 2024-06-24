@@ -60,6 +60,7 @@ module Spree
         storefront_estimated_shipment_serializer: 'Spree::V2::Storefront::EstimatedShippingRateSerializer',
         storefront_store_serializer: 'Spree::V2::Storefront::StoreSerializer',
         storefront_order_serializer: 'Spree::V2::Storefront::OrderSerializer',
+        storefront_variant_serializer: 'Spree::V2::Storefront::VariantSerializer',
 
         # sorters
         storefront_collection_sorter: -> { Spree::Dependencies.collection_sorter },
@@ -81,6 +82,7 @@ module Spree
         storefront_find_by_variant_finder: -> { Spree::Dependencies.line_item_by_variant_finder },
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
+        storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
 
         error_handler: 'Spree::Api::ErrorHandler',
 

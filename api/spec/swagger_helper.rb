@@ -112,7 +112,7 @@ RSpec.configure do |config|
                   firstname: { type: :string, example: 'John' },
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
-                  company: { type: :string, example: 'Vendo Cloud Inc' },
+                  company: { type: :string, example: 'Vendo Connect Inc' },
                   user_id: { type: :string },
                   public_metadata: { type: :object, example: { 'distance_from_nearest_city_in_km' => 10, 'location_type' => 'building' } },
                   private_metadata: { type: :object, example: { 'close_to_shop' => true } }
@@ -140,7 +140,7 @@ RSpec.configure do |config|
                   firstname: { type: :string, example: 'John' },
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
-                  company: { type: :string, example: 'Vendo Cloud Inc' },
+                  company: { type: :string, example: 'Vendo Connect Inc' },
                   user_id: { type: :string },
                   public_metadata: { type: :object, example: { 'distance_from_city_in_km' => 10, 'location_type' => 'building' } },
                   private_metadata: { type: :object, example: { 'close_to_shop' => true } }
