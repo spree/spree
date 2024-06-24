@@ -155,8 +155,6 @@ module Spree
         end
 
         def access_denied_401(exception)
-          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
-
           render_error_payload(exception.message, 401)
         end
 
