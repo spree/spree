@@ -142,11 +142,15 @@ module Spree
           }
         end
 
-        def record_not_found
+        def record_not_found(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
           render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
         end
 
         def access_denied(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
           render_error_payload(exception.message, 403)
         end
 
@@ -155,6 +159,8 @@ module Spree
         end
 
         def gateway_error(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
           render_error_payload(exception.message)
         end
 
