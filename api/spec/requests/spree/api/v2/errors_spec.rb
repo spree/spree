@@ -28,6 +28,16 @@ describe 'API v2 Errors spec', type: :request do
     it 'returns proper error message' do
       expect(json_response['error']).to eq('You are not authorized to access this page.')
     end
+
+    it 'calls error handler' do
+      expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
+        expect(instance).to receive(:call).with(
+          exception: instance_of(CanCan::AccessDenied),
+          opts: { user: user }
+        )
+      end
+      patch '/api/v2/storefront/cart/empty', headers: headers_bearer
+    end
   end
 
   context 'expired token failure' do
