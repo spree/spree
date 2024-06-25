@@ -17,6 +17,7 @@ module Spree
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
     include Spree::Order::Emails
+    include Spree::Order::Webhooks
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
@@ -25,9 +26,6 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::MemoizedData
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::Security::Orders)
       include Spree::Security::Orders
     end
@@ -401,6 +399,8 @@ module Spree
       deliver_order_confirmation_email unless confirmation_delivered?
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
+      send_order_placed_webhook
+
       consider_risk
     end
 
@@ -726,11 +726,13 @@ module Spree
 
       send_cancel_email
       update_with_updater!
+      send_order_canceled_webhook
     end
 
     def after_resume
       shipments.each(&:resume!)
       consider_risk
+      send_order_resumed_webhook
     end
 
     def use_billing?
