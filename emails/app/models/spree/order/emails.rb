@@ -1,6 +1,6 @@
 module Spree
-  module Emails
-    module OrderDecorator
+  class Order < Spree::Base
+    module Emails
       def deliver_order_confirmation_email
         OrderMailer.confirm_email(id).deliver_later
         update_column(:confirmation_delivered, true)
@@ -21,8 +21,6 @@ module Spree
       def send_cancel_email
         OrderMailer.cancel_email(id).deliver_later
       end
-
-      ::Spree::Order.prepend(self)
     end
   end
 end

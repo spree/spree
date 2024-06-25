@@ -1,13 +1,9 @@
 module Spree
-  module Emails
-    module ShipmentHandlerDecorator
-      protected
-
+  class Shipment < Spree::Base
+    module Emails
       def send_shipped_email
         ShipmentMailer.shipped_email(@shipment.id).deliver_later
       end
-
-      ::Spree::ShipmentHandler.prepend(self)
     end
   end
 end

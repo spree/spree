@@ -5,6 +5,7 @@ module Spree
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    include Spree::Reimbursement::Emails
 
     class IncompleteReimbursementError < StandardError; end
 
@@ -139,12 +140,6 @@ module Spree
       if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }
         errors.add(:base, :return_items_order_id_does_not_match)
       end
-    end
-
-    def send_reimbursement_email
-      # you can overwrite this method in your application / extension to send out the confirmation email
-      # or use `spree_emails` gem
-      # YourEmailVendor.deliver_reimbursement_email(id) # `id` = ID of the Reimbursement being sent, you can also pass the entire object using `self`
     end
 
     # If there are multiple different reimbursement types for a single

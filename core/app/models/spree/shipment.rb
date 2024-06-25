@@ -15,6 +15,7 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
+    include Spree::Shipment::Emails
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
