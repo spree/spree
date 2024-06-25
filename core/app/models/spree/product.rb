@@ -27,9 +27,7 @@ module Spree
     include Spree::TranslatableResourceSlug
     include Spree::MemoizedData
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
+    include Spree::Product::Webhooks
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -181,17 +179,17 @@ module Spree
       event :activate do
         transition to: :active
       end
-      after_transition to: :active, do: :after_activate
+      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook]
 
       event :archive do
         transition to: :archived
       end
-      after_transition to: :archived, do: :after_archive
+      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook]
 
       event :draft do
         transition to: :draft
       end
-      after_transition to: :draft, do: :after_draft
+      after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
@@ -584,15 +582,15 @@ module Spree
     end
 
     def after_activate
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def after_archive
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def after_draft
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
   end
 end
