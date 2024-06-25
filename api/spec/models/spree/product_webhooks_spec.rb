@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::Webhooks::ProductDecorator do
+describe Spree::Product::Webhooks do
   let(:product) { create(:product) }
   let(:webhook_payload_body) do
     Spree::Api::V2::Platform::ProductSerializer.new(

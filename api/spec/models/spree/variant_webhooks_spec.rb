@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::Webhooks::VariantDecorator do
+describe Spree::Variant::Webhooks do
   let(:variant) { create(:variant) }
 
   context 'emitting variant.discontinued' do

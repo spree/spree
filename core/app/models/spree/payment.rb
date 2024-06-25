@@ -6,14 +6,12 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end
 
     include Spree::Payment::Processing
+    include Spree::Payment::Webhooks
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -105,11 +103,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: :after_completed
+      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: :after_void
+      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -209,11 +207,11 @@ module Spree
     private
 
     def after_void
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def after_completed
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def has_invalid_state?

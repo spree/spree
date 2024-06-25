@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Api::Webhooks::StockMovementDecorator do
+describe Spree::StockMovement::Webhooks do
   let(:webhook_payload_body) do
     Spree::Api::V2::Platform::VariantSerializer.new(
       variant.reload,
