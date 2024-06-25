@@ -8,6 +8,12 @@ module Spree
         after_update_commit :queue_webhooks_requests_for_order_resumed!
       end
 
+      class_methods do
+        def custom_webhook_events
+          %w[order.canceled order.placed order.resumed order.shipped]
+        end
+      end
+
       def send_order_canceled_webhook
         queue_webhooks_requests!('order.canceled')
       end
