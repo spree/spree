@@ -5,9 +5,7 @@ module Spree
       min: -2**31
     }.freeze
 
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
+    include Spree::StockMovement::Webhooks
 
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
