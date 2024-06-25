@@ -3,9 +3,7 @@ module Spree
     acts_as_paranoid
 
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
+    include Spree::StockItem::Webhooks
 
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
