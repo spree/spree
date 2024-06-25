@@ -6,9 +6,6 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
@@ -16,6 +13,7 @@ module Spree
       include Spree::VendorConcern
     end
     include Spree::Shipment::Emails
+    include Spree::Shipment::Webhooks
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
@@ -81,7 +79,7 @@ module Spree
       event :ship do
         transition from: %i(ready canceled), to: :shipped
       end
-      after_transition to: :shipped, do: :after_ship
+      after_transition to: :shipped, do: [:after_ship, :send_shipment_shipped_webhook]
 
       event :cancel do
         transition to: :canceled, from: %i(pending ready)
