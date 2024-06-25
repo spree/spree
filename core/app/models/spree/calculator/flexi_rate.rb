@@ -6,6 +6,7 @@ module Spree
     preference :additional_item, :decimal, default: 0.0
     preference :max_items,       :integer, default: 0
     preference :currency,        :string,  default: -> { Spree::Store.default.default_currency }
+    preference :apply_only_on_full_priced_items, :boolean, default: false
 
     def self.description
       Spree.t(:flexible_rate)
@@ -16,6 +17,8 @@ module Spree
     end
 
     def compute(object)
+      return 0 if preferred_apply_only_on_full_priced_items && object.variant.compare_at_amount_in(object.currency).present?
+
       compute_from_quantity(object.quantity)
     end
 
