@@ -70,11 +70,7 @@ module Spree
     def update_price
       currency_price = variant.price_in(order.currency)
 
-      self.price = if currency_price.amount.present?
-                     currency_price.price_including_vat_for(tax_zone: tax_zone)
-                   else
-                     0
-                   end
+      self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
     end
 
     def copy_tax_category

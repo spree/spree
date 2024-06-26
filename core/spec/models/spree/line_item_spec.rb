@@ -159,6 +159,8 @@ describe Spree::LineItem, type: :model do
 
   # Test for #3391
   context '#copy_price' do
+    let(:variant) { line_item.variant }
+
     it "copies over a variant's prices" do
       line_item.price = nil
       line_item.cost_price = nil
@@ -168,6 +170,38 @@ describe Spree::LineItem, type: :model do
       expect(line_item.price).to eq(variant.price)
       expect(line_item.cost_price).to eq(variant.cost_price)
       expect(line_item.currency).to eq(variant.currency)
+    end
+
+    context "variant price amount is equal 0" do
+      before do
+        variant.prices.where(currency: order.currency).update_all(amount: 0.0)
+        line_item.price = nil
+        line_item.copy_price
+      end
+
+      it "copies over a variant's price" do
+        expect(line_item.price).to eq(0)
+      end
+
+      it "should be valid" do
+        expect(line_item).to be_valid
+      end
+    end
+
+    context 'no price available in the selected currency' do
+      before do
+        variant.prices.where(currency: order.currency).delete_all
+        line_item.price = nil
+        line_item.copy_price
+      end
+
+      it "doesn't copy the price" do
+        expect(line_item.price).to be_nil
+      end
+
+      it "shouldn't be valid" do
+        expect(line_item).not_to be_valid
+      end
     end
   end
 
