@@ -133,7 +133,6 @@ module Spree
         address2: address2,
         city: city,
         state: state,
-        state: state,
         state_name: state_name,
         country: country,
         zipcode: zipcode,
