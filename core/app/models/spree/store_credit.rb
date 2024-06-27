@@ -19,13 +19,13 @@ module Spree
     DEFAULT_CREATED_BY_EMAIL = 'spree@example.com'.freeze
 
     belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
-    belongs_to :category, class_name: 'Spree::StoreCreditCategory'
-    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id'
-    belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
+    belongs_to :category, class_name: 'Spree::StoreCreditCategory', optional: true
+    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", foreign_key: 'created_by_id', optional: true
+    belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
     belongs_to :store, class_name: 'Spree::Store'
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
 
-    validates :user, :category, :credit_type, :created_by, :currency, :store, presence: true
+    validates :currency, :store, presence: true
     validates :amount, numericality: { greater_than: 0 }
     validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
@@ -36,7 +36,6 @@ module Spree
 
     scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
-    before_validation :associate_credit_type
     after_save :store_event
     before_destroy :validate_no_amount_used
 
@@ -247,13 +246,6 @@ module Spree
       if amount_used > 0
         errors.add(:amount_used, :greater_than_zero_restrict_delete)
         throw(:abort)
-      end
-    end
-
-    def associate_credit_type
-      unless type_id
-        credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
-        self.credit_type = Spree::StoreCreditType.find_or_create_by(name: credit_type_name)
       end
     end
   end
