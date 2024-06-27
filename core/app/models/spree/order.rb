@@ -89,9 +89,9 @@ module Spree
       belongs_to :user, optional: true
     end
     if Spree.admin_user_class
-      belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
-      belongs_to :approver, class_name: Spree.admin_user_class.to_s, optional: true
-      belongs_to :canceler, class_name: Spree.admin_user_class.to_s, optional: true
+      belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
+      belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
+      belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
     else
       belongs_to :created_by, optional: true
       belongs_to :approver, optional: true
