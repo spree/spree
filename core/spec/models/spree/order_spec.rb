@@ -1726,4 +1726,20 @@ describe Spree::Order, type: :model do
       it { expect(subject).to eq(false) }
     end
   end
+
+  describe '#total_weight' do
+    subject { order.total_weight }
+
+    let!(:line_items) { create_list(:line_item, 2, order: order, quantity: 2) }
+    let(:order) { create(:order) }
+
+    before do
+      line_items.each do |line_item|
+        line_item.variant.weight = 10
+        line_item.variant.save!
+      end
+    end
+
+    it { expect(subject).to eq(40) }
+  end
 end

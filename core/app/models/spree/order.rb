@@ -522,6 +522,14 @@ module Spree
       self.shipments = Spree::Stock::Coordinator.new(self).shipments
     end
 
+    # Returns the total weight of the inventory units in the order
+    # This is used to calculate the shipping rates for the order
+    #
+    # @return [BigDecimal] the total weight of the inventory units in the order
+    def total_weight
+      @total_weight ||= line_items.joins(:variant).includes(:variant).map { |li| li.variant.weight * li.quantity }.sum
+    end
+
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
       shipments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
