@@ -65,6 +65,8 @@ module Spree
     scope :processing, -> { with_state('processing') }
     scope :failed, -> { with_state('failed') }
 
+    scope :incomplete, -> { where.not(state: 'completed') }
+
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: INVALID_STATES) }
 
