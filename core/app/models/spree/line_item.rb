@@ -13,7 +13,7 @@ module Spree
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
 
-    has_one :product, through: :variant
+    has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
