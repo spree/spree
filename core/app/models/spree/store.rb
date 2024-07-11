@@ -110,11 +110,7 @@ module Spree
     after_commit :clear_cache
 
     def self.current(url = nil)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `Spree::Store.current` is deprecated and will be removed in Spree 5.0
-        Please use `Spree::Stores::FindCurrent.new(url: "https://example.com").execute` instead
-      DEPRECATION
-      Stores::FindCurrent.new(url: url).execute
+      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
     end
 
     # FIXME: we need to drop `or_initialize` in v5
