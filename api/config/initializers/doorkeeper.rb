@@ -45,4 +45,6 @@ Doorkeeper.configure do
   # using Bcrupt for token secrets is currently not supported by Doorkeeper
   hash_token_secrets fallback: :plain
   hash_application_secrets fallback: :plain, using: '::Doorkeeper::SecretStoring::BCrypt'
+
+  access_token_expires_in 1.month
 end
