@@ -8,7 +8,7 @@ module Spree
 
         payment_method = Spree::PaymentMethod::StoreCredit.find_or_initialize_by(
           name: Spree.t(:store_credits),
-          description: 'Store Credit',
+          description: Spree.t(:store_credits),
           active: true
         )
 
