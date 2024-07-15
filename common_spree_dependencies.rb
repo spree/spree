@@ -63,4 +63,6 @@ end
 group :development do
   # gem 'github_fast_changelog'
   gem 'solargraph'
+  gem 'ruby-lsp'
+  gem 'ruby-lsp-rails'
 end

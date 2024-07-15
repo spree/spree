@@ -189,7 +189,10 @@ RSpec/NamedSubject:
 RSpec/MultipleExpectations:
   Enabled: false
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/SpecFilePathSuffix:
   Enabled: false
 
 RSpec/LetSetup:

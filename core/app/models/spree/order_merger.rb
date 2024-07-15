@@ -16,6 +16,7 @@ module Spree
       end
 
       set_user(user)
+      clear_addresses(other_order)
       persist_merge
 
       # So that the destroy doesn't take out line items which may have been re-assigned
@@ -37,6 +38,11 @@ module Spree
 
     def set_user(user = nil)
       order.associate_user!(user) if !order.user && !user.blank?
+    end
+
+    def clear_addresses(other_order)
+      other_order.ship_address = nil
+      other_order.bill_address = nil
     end
 
     # The idea is the end developer can choose to override the merge

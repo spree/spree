@@ -129,5 +129,18 @@ module Spree
         expect(order_1.errors.full_messages).not_to be_empty
       end
     end
+
+    context 'merging an order with addresses assigned to an other complete order' do
+      let!(:complete_order) { create(:order_ready_to_ship) }
+
+      before do
+        order_2.update!(ship_address: complete_order.ship_address, bill_address: complete_order.bill_address)
+      end
+
+      it 'destroys the other order' do
+        subject.merge!(order_2)
+        expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end
