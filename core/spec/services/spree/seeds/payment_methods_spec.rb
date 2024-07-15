@@ -6,12 +6,14 @@ RSpec.describe Spree::Seeds::PaymentMethods do
   let(:store_credit_payment_method) { Spree::PaymentMethod::StoreCredit.last }
   let(:store) { Spree::Store.default }
 
+  let!(:other_store) { create(:store) }
+
   it 'creates a Store Credit payment method' do
     expect { subject }.to change(Spree::PaymentMethod::StoreCredit, :count).by(1)
 
     expect(store_credit_payment_method).to be_present
     expect(store_credit_payment_method).to be_active
-    expect(store_credit_payment_method.stores).to eq([store])
+    expect(store_credit_payment_method.stores).to contain_exactly(store, other_store)
     expect(store_credit_payment_method.name).to eq('Store Credit')
     expect(store_credit_payment_method.description).to eq('Store Credit')
   end
@@ -20,7 +22,7 @@ RSpec.describe Spree::Seeds::PaymentMethods do
     before do
       create(
         :store_credit_payment_method,
-        stores: [store],
+        stores: [store, other_store],
         name: 'Store Credit',
         description: 'Store Credit',
         active: true
@@ -32,7 +34,7 @@ RSpec.describe Spree::Seeds::PaymentMethods do
 
       expect(store_credit_payment_method).to be_present
       expect(store_credit_payment_method).to be_active
-      expect(store_credit_payment_method.stores).to eq([store])
+      expect(store_credit_payment_method.stores).to contain_exactly(store, other_store)
       expect(store_credit_payment_method.name).to eq('Store Credit')
       expect(store_credit_payment_method.description).to eq('Store Credit')
     end
