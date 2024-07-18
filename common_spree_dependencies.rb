@@ -27,7 +27,6 @@ platforms :ruby do
 end
 
 gem 'sprockets-rails', '>= 2.0.0'
-gem 'request_store', '~> 1.7.0'
 
 group :test do
   gem 'capybara'
