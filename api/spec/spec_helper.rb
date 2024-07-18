@@ -77,7 +77,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
-    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+    Spree::Webhooks.disabled = true
 
     Rails.cache.clear
     reset_spree_preferences

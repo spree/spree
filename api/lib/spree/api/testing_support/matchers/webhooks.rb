@@ -61,7 +61,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
 end
 
 def with_webhooks_enabled
-  ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+  Spree::Webhooks.disabled = false
   yield
-  ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+  Spree::Webhooks.disabled = true
 end
