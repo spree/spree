@@ -21,12 +21,12 @@ describe Spree::Webhooks do
     after { Spree::Webhooks.disabled = true }
 
     describe 'the value of spree_webhooks_disabled request variable' do
-      before { RequestStore.store[:disable_spree_webhooks] = 'some_value' }
+      before { RequestStore.store[:disable_spree_webhooks] = false }
 
       describe 'when an error is not raised' do
         it 'sets it to the original value' do
           described_class.disable_webhooks { variant.discontinue! }
-          expect(RequestStore.store[:disable_spree_webhooks]).to eq('some_value')
+          expect(RequestStore.store[:disable_spree_webhooks]).to eq(false)
         end
       end
 
@@ -36,7 +36,7 @@ describe Spree::Webhooks do
             described_class.disable_webhooks { raise StandardError }
           rescue StandardError
           end
-          expect(RequestStore.store[:disable_spree_webhooks]).to eq('some_value')
+          expect(RequestStore.store[:disable_spree_webhooks]).to eq(false)
         end
       end
     end
