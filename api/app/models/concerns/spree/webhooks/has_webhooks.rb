@@ -74,7 +74,7 @@ module Spree
       end
 
       def disable_spree_webhooks?
-        ENV['DISABLE_SPREE_WEBHOOKS'] == 'true'
+        Spree::Webhooks.disabled?
       end
 
       def webhooks_request_options
