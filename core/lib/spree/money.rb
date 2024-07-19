@@ -28,7 +28,7 @@ module Spree
 
     def initialize(amount, options = {})
       ::Money.default_currency ||= Spree::Store.default.default_currency || 'USD'
-      @money   = Monetize.parse([amount, (options[:currency] || Spree::Store.default.default_currency)].join)
+      @money   = Monetize.parse(amount, (options[:currency] || Spree::Store.default.default_currency))
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
 
