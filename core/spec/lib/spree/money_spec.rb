@@ -81,6 +81,17 @@ describe Spree::Money do
     end
   end
 
+  context 'DKK' do
+    before do
+      Spree::Store.default.update!(default_currency: 'DKK')
+    end
+
+    it 'formats correctly' do
+      money = described_class.new(1000, html_wrap: false)
+      expect(money.to_s).to eq('1,000.00 kr.')
+    end
+  end
+
   context 'EUR' do
     before do
       Spree::Store.default.update(default_currency: 'EUR')
