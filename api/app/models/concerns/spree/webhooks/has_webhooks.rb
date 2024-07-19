@@ -43,7 +43,9 @@ module Spree
       end
 
       def included_relationships
-        if resource_serializer.relationships_to_serialize
+        if self.class.respond_to?(:webhook_included_relationships)
+          self.class.webhook_included_relationships
+        elsif resource_serializer.relationships_to_serialize
           resource_serializer.relationships_to_serialize.keys
         else
           []
