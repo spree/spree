@@ -5,6 +5,7 @@ module Spree
         class RefundSerializer < BaseSerializer
           include ResourceSerializerConcern
 
+          belongs_to :refunder, serializer: Dependencies.platform_admin_user_serializer.constantize
           belongs_to :payment
           belongs_to :reimbursement
           belongs_to :refund_reason, object_method_name: :reason
