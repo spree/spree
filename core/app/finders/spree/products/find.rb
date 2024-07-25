@@ -263,7 +263,7 @@ module Spree
       def taxon_ids(taxons_ids)
         return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxons = store.taxons.where(id: taxons_ids.to_s.split(','))
+        taxons = Spree::Taxon.for_store(store).where(id: taxons_ids.to_s.split(','))
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
 
