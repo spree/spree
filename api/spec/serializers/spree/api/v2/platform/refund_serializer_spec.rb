@@ -24,7 +24,7 @@ describe Spree::Api::V2::Platform::RefundSerializer do
         refunder: {
           data: {
             id: resource.refunder_id.to_s,
-            type: :user
+            type: :admin_user
           }
         }
       )
