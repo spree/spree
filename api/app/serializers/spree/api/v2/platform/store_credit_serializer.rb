@@ -6,7 +6,7 @@ module Spree
           include ResourceSerializerConcern
 
           belongs_to :user
-          belongs_to :created_by, serializer: :user, type: :user
+          belongs_to :created_by, serializer: Dependencies.platform_admin_user_serializer.constantize
           belongs_to :store_credit_category, object_method_name: :category, id_method_name: :category_id
           belongs_to :store_credit_type, object_method_name: :credit_type, id_method_name: :type_id
 
