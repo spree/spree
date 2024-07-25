@@ -24,7 +24,7 @@ describe Spree::Api::V2::Platform::StoreCreditSerializer do
         created_by: {
           data: {
             id: resource.created_by_id.to_s,
-            type: :user
+            type: :admin_user
           }
         }
       )
