@@ -87,7 +87,7 @@ module Spree
         error_handler: 'Spree::Api::ErrorHandler',
 
         # serializers
-        platform_admin_user_serializer: 'Spree::Api::V2::Platform::UserSerializer',
+        platform_admin_user_serializer: 'Spree::Api::V2::Platform::AdminUserSerializer',
 
         # coupon code handler
         platform_coupon_handler: -> { Spree::Dependencies.coupon_handler },
