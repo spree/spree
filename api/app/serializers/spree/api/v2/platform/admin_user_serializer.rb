@@ -3,7 +3,7 @@ module Spree
     module V2
       module Platform
         class AdminUserSerializer < UserSerializer
-          set_type :user
+          set_type :admin_user
         end
       end
     end
