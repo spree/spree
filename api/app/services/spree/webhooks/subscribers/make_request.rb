@@ -45,7 +45,7 @@ module Spree
         def http
           http = Net::HTTP.new(uri_host, uri_port)
           http.read_timeout = webhooks_timeout.to_i if custom_read_timeout?
-          http.use_ssl = true if use_ssl?
+          http.use_ssl = use_ssl?
           http
         end
 
@@ -71,7 +71,7 @@ module Spree
         end
 
         def use_ssl?
-          !(Rails.env.development? || Rails.env.test?)
+          uri.scheme == 'https'
         end
 
         def uri
