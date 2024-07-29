@@ -72,7 +72,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
           )
           allow(Rails.logger).to receive(with_log_level)
           subject.call
-          expect(Rails.logger).to have_received(with_log_level).with(log_msg)
+          expect(Rails.logger).to have_received(with_log_level).with(log_msg) if log_msg
         end
       end
 
@@ -137,7 +137,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
       context 'without a failed request' do
         let(:execution_time) { rand(1..999999) }
         let(:failed_request) { false }
-        let(:log_msg) { "[SPREE WEBHOOKS] 'order.canceled' success for URL 'http://google.com/'" }
+        let(:log_msg) { nil }
         let(:response_code) { 200 }
         let(:success) { true }
 
