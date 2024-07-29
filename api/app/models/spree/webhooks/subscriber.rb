@@ -26,7 +26,7 @@ module Spree
       before_save :parse_subscriptions
 
       def latest_event_at
-        @last_event_at = events.order(:created_at).last&.created_at
+        events.order(:created_at).last&.created_at
       end
       
       def self.with_urls_for(event)
