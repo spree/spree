@@ -48,4 +48,32 @@ describe Spree::Image, type: :model do
       expect(res[:size]).to eq described_class.styles[random_style_name]
     end
   end
+
+  context 'cache expiration' do
+    let!(:image) { create(:image, position: 1, viewable: viewable) }
+    let!(:image_2) { create(:image, position: 2, viewable: viewable) }
+
+    describe 'update position' do
+      let(:product) { create(:product) }
+      let!(:variants) { create_list(:variant, 2, product: product) }
+
+      context 'when viewable is a master variant' do
+        let(:viewable) { product.master }
+
+        it 'touches product variants' do
+          expect(image).to receive(:touch_product_variants)
+          image.set_list_position(2)
+        end
+      end
+
+      context 'when viewable is a variant' do
+        let(:viewable) { variants.first }
+
+        it 'does not touch product variants' do
+          expect(image).not_to receive(:touch_product_variants)
+          image.set_list_position(2)
+        end
+      end
+    end
+  end
 end
