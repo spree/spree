@@ -1,12 +1,13 @@
 module Spree
   module PromotionHandler
     class Coupon
-      attr_reader :order, :store
+      attr_reader :order, :store, :options
       attr_accessor :error, :success, :status_code
 
-      def initialize(order)
+      def initialize(order, options = {})
         @order = order
         @store = order.store
+        @options = options
       end
 
       def apply

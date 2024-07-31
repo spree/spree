@@ -10,7 +10,12 @@ module Spree
 
         def eligible?(order, options = {})
           @user = order.try(:user) || options[:user]
-          @email = order.email
+          @email = if options[:email].present?
+                     order.email = options[:email]
+                     order.email
+                   elsif order.email.present?
+                     order.email
+                   end
           @store = order.store
 
           if user || email
