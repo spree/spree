@@ -113,7 +113,8 @@ describe Spree::Order, type: :model do
   context 'creates shipments cost' do
     let(:shipment) { double }
 
-    before { allow(order).to receive_messages shipments: [shipment] }
+    let(:order) { create(:order_with_line_items) }
+    let(:shipment) { order.shipments.first }
 
     it 'update and persist totals' do
       expect(shipment).to receive :update_amounts

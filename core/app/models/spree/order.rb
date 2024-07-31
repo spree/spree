@@ -574,6 +574,7 @@ module Spree
     def set_shipments_cost
       shipments.each(&:update_amounts)
       updater.update_shipment_total
+      updater.update_adjustment_total
       persist_totals
     end
 
