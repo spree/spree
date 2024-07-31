@@ -13,6 +13,19 @@ module Spree
         def compute_amount(shipment)
           shipment.cost * -1
         end
+
+        # we need to persist 0 amount adjustment
+        def create_adjustment(order, adjustable, included = false)
+          amount = compute_amount(adjustable)
+
+          adjustments.new(
+            adjustable: adjustable,
+            amount: amount,
+            included: included,
+            label: label,
+            order: order
+          ).save
+        end
       end
     end
   end
