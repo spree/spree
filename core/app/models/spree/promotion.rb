@@ -128,10 +128,10 @@ module Spree
     end
 
     # called anytime order.update_with_updater! happens
-    def eligible?(promotable)
+    def eligible?(promotable, options = {})
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
 
-      !!eligible_rules(promotable, {})
+      !!eligible_rules(promotable, options)
     end
 
     # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
