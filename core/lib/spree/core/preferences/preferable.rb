@@ -101,14 +101,16 @@ module Spree::Preferences::Preferable
 
   private
 
-  def convert_preference_value(value, type)
+  def convert_preference_value(value, type, nullable: false)
     case type
     when :string, :text
       value.to_s
     when :password
       value.to_s
     when :decimal
-      (value.presence || 0).to_s.to_d
+      decimal_value = value.presence
+      decimal_value ||= 0 unless nullable
+      decimal_value.present? ? decimal_value.to_s.to_d : decimal_value
     when :integer
       value.to_i
     when :boolean
