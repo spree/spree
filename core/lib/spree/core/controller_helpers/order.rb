@@ -83,11 +83,7 @@ module Spree
         def find_order_by_token_or_user(options = {}, with_adjustments = false)
           options[:lock] ||= false
 
-          includes = if options[:includes]
-                       { line_items: [variant: [:images, :option_values, :product]] }
-                     else
-                       {}
-                     end
+          includes = if options[:includes] ? order_includes : {}
 
           # Find any incomplete orders for the token
           incomplete_orders = current_store.orders.incomplete.includes(includes)
@@ -103,6 +99,10 @@ module Spree
           order = last_incomplete_order(includes) if order.nil? && try_spree_current_user
 
           order
+        end
+
+        def order_includes
+          { line_items: [variant: [:images, :option_values, :product]] }
         end
       end
     end
