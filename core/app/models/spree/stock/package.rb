@@ -34,6 +34,10 @@ module Spree
         contents.detect { |item| !!item.try(:inventory_unit).try(:order) }.try(:inventory_unit).try(:order)
       end
 
+      def item_total
+        contents.sum(&:amount)
+      end
+
       def weight
         contents.sum(&:weight)
       end
