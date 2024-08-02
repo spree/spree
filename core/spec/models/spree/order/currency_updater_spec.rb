@@ -19,12 +19,16 @@ describe Spree::Order, type: :model do
           expect { line_item.order.update!(currency: 'EUR') }.to change { line_item.reload.amount }.to(8)
         end
 
-        it 'fails to change the order currency when no prices are available in that currency' do
-          expect { line_item.order.update!(currency: 'GBP') }.to raise_error("no GBP price found for #{line_item.product.name} (#{line_item.variant.sku})")
-        end
-
         it 'calculates the item total in the order.currency' do
           expect { line_item.order.update!(currency: 'EUR') }.to change { line_item.order.item_total }.to(8)
+        end
+
+        context 'when there is a price with nil amount' do
+          let!(:euro_price) { create(:price, variant: line_item.variant, amount: nil, currency: 'EUR') }
+
+          it 'destroys the line item when we switch to that price\'s currency' do
+            expect { line_item.order.update!(currency: 'EUR') }.to change(Spree::LineItem, :count).by(-1)
+          end
         end
       end
     end
