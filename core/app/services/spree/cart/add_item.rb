@@ -16,6 +16,8 @@ module Spree
         options ||= {}
         quantity ||= 1
 
+        return failure(variant, "#{variant.name} is not available in #{order.currency}") if variant.amount_in(order.currency).nil?
+
         line_item = Spree::Dependencies.line_item_by_variant_finder.constantize.new.execute(order: order, variant: variant, options: options)
 
         line_item_created = line_item.nil?

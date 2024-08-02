@@ -231,5 +231,18 @@ module Spree
         end
       end
     end
+
+    context 'when variant has price in the cart currency, but with amount set to nil' do
+      let(:call_service) { subject.call(order: order, variant: variant, quantity: 1) }
+
+      before do
+        variant.prices.first.update(amount: nil)
+      end
+
+      it 'does not add the item and raises error' do
+        expect(call_service).to be_failure
+        expect(call_service.error).not_to be_nil
+      end
+    end
   end
 end
