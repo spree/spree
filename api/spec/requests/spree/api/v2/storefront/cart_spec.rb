@@ -6,7 +6,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:product) { create(:product, stores: [store]) }
-  let(:variant) { create(:variant, product: product) }
+  let(:variant) { create(:variant, product: product, prices: [create(:price, currency: store.default_currency)]) }
 
   include_context 'API v2 tokens'
 
@@ -259,6 +259,21 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'doesnt add item with no price with cart currency' do
+      let(:variant) { create(:variant, product: product) }
+      let(:price) { create(:price, currency: 'MKD') }
+
+      before do
+        variant.default_price = price
+        variant.save
+        execute
+      end
+
+      it 'returns an error' do
+        expect(json_response[:error]).to eq("#{variant.name} is not available in #{order.currency}")
+      end
+    end
+
     context 'as a signed in user' do
       include_context 'order with a physical line item'
 
@@ -267,6 +282,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item with no price with cart currency'
         it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
@@ -281,6 +297,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'doesnt add item with quantity unnavailble'
         it_behaves_like 'doesnt add item from different store'
         it_behaves_like 'doesnt add non-existing item'
+        it_behaves_like 'doesnt add item with no price with cart currency'
         it_behaves_like 'doesnt add item if metadata is not a hash'
       end
 
