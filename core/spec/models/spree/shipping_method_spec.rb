@@ -11,6 +11,30 @@ describe Spree::ShippingMethod, type: :model do
 
   it_behaves_like 'metadata'
 
+  describe 'scopes' do
+    let!(:shipping_methods) { create_list(:shipping_method, 2, display_on: 'both') }
+    let!(:frontend_shipping_methods) { create_list(:shipping_method, 2, display_on: 'front_end') }
+    let!(:backend_shipping_methods) { create_list(:shipping_method, 2, display_on: 'back_end') }
+
+    describe '.available' do
+      subject { described_class.available }
+
+      it { is_expected.to match_array(shipping_methods) }
+    end
+
+    describe '.available_on_front_end' do
+      subject { described_class.available_on_front_end }
+
+      it { is_expected.to match_array(shipping_methods + frontend_shipping_methods) }
+    end
+
+    describe '.available_on_back_end' do
+      subject { described_class.available_on_back_end }
+
+      it { is_expected.to match_array(shipping_methods + backend_shipping_methods) }
+    end
+  end
+
   context 'calculators' do
     it "rejects calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
