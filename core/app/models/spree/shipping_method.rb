@@ -35,7 +35,7 @@ module Spree
 
     validate :at_least_one_shipping_category
 
-    scope :available,              -> { where(display_on: [:front_end, :back_end, :both]) }
+    scope :available,              -> { where(display_on: [:both]) }
     scope :available_on_front_end, -> { where(display_on: [:front_end, :both]) }
     scope :available_on_back_end,  -> { where(display_on: [:back_end, :both]) }
 
