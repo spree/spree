@@ -32,6 +32,7 @@ module Spree
       def report_error(exception:, message:, opts:)
         # overwrite this method in your application to support different error handlers
         # eg. Sentry, Rollbar, etc
+        Sentry.capture_exception(exception) if defined?(Sentry)
 
         success(exception: exception, message: message)
       end
