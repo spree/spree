@@ -1714,6 +1714,61 @@ paths:
         name: token
         in: path
         required: true
+  '/api/v2/storefront/wishlists/{token}/add_items':
+    post:
+      summary: Add Items to Wishlist
+      description: |-
+        The Add Items to Wishlist endpoint adds variants to an existing wishlist by creating a new `wished_item` objects. A wished item in a wishlist is comparable to a line item in a cart.
+
+        Each wished item references a single variant, holds the desired quantity and returns price information determined by the variant price in current currency, and desired quantity.
+      operationId: add-item-to-wishlist
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                wished_items:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      variant_id:
+                        type: string
+                        example: '1'
+                        description: The variant ID that is to be added to the wishlist.
+                      quantity:
+                        type: number
+                        example: 10
+                        description: 'Set a quantity greater than 0, or omit the quantity param if your wishlist does not support quantities. If omitted, quantity will be set to 1.'
+                    required:
+                      - variant_id
+            examples:
+              Add a variant:
+                value:
+                  wished_items:
+                    - variant_id: '1'
+                      quantity: 10
+                    - variant_id: '2'
+                      quantity: 5
+        description: |-
+          Passing a quantity value is optional for those wishlist systems that do not support quantities. In this scenario, the returned quantity value will always be `1`, allowing the add-to-cart and pricing to reflect the single representation of the wished item accurately.
+
+          If the wishlist system you are building allows for setting quantity, add the quantity attribute to the request body with an integer value greater than zero.
+      responses:
+        '200':
+          $ref: '#/components/responses/Wishlist'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - bearerAuth: []
+      tags:
+        - Wishlists / Wished Items
   '/api/v2/storefront/wishlists/{token}/set_item_quantity/{item_id}':
     patch:
       description: This endpoint sets the wished item quantity.
@@ -1778,6 +1833,43 @@ paths:
         name: item_id
         in: path
         required: true
+  '/api/v2/storefront/wishlists/{token}/remove_items':
+    delete:
+      description: Removes wished items from a wishlist.
+      summary: Delete Items from Wishlist
+      operationId: delete-wished-variant-from-wishlist
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                wished_items_ids:
+                  type: array
+                  items:
+                    type: string
+                    example: '1'
+                    description: The Wished Item ID that is to be removed from wishlist.
+            examples:
+              Remove wished items:
+                value:
+                  wished_items_ids:
+                    - '1'
+                    - '2'
+      responses:
+        '200':
+          $ref: '#/components/responses/Wishlist'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - bearerAuth: [ ]
+      tags:
+        - Wishlists / Wished Items
   '/api/v2/storefront/digitals/{token}':
     get:
       summary: Download a Digital Asset

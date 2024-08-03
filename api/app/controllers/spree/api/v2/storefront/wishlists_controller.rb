@@ -100,6 +100,41 @@ module Spree
             end
           end
 
+          def add_items
+            spree_authorize! :create, Spree::WishedItem
+
+            @wished_items = resource.wished_items
+            ApplicationRecord.transaction do
+              wished_items_attributes.each do |wished_item_attributes|
+                wished_item = @wished_items.find_by(variant_id: wished_item_attributes[:variant_id])
+
+                if wished_item
+                  wished_item.update!(quantity: wished_item_attributes[:quantity] || 1)
+                else
+                  Spree::WishedItem.create!(wished_item_attributes.merge(wishlist: resource))
+                end
+              end
+            end
+
+            resource.reload
+            render_serialized_payload { serialize_resource(resource) }
+          rescue ActiveRecord::RecordInvalid => e
+            render json: { error: e.record.errors.full_messages.to_sentence }, status: 422
+          end
+
+          def remove_items
+            spree_authorize! :destroy, Spree::WishedItem
+
+            ApplicationRecord.transaction do
+              resource.wished_items.where(id: wished_items_ids).each(&:destroy!)
+            end
+
+            resource.reload
+            render_serialized_payload { serialize_resource(resource) }
+          rescue ActiveRecord::RecordNotDestroyed => e
+            render json: { error: e.record.errors.full_messages.to_sentence }, status: 422
+          end
+
           private
 
           def scope(skip_cancancan: true)
@@ -163,6 +198,14 @@ module Spree
                                 else
                                   1
                                 end
+          end
+
+          def wished_items_attributes
+            params.permit(wished_items: permitted_wished_item_attributes).require(:wished_items)
+          end
+
+          def wished_items_ids
+            params.require(:wished_items_ids)
           end
         end
       end
