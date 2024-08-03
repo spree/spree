@@ -41,6 +41,12 @@ Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-st
   * delivering your Spree application,
   * optimizing your Spree stack.
 
+## Enterprise version - [Vendo](https://getvendo.com)
+
+Besides Enterprise support we also offer an enterprise Spree version called [Vendo](https://getvendo.com) - which is a commercial offering from the Spree team that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+
+To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
+
 ## Features
 ### Customizable and modular
   * pick and choose parts you want to use
@@ -126,6 +132,17 @@ Follow our [Contributing Guide](https://docs.spreecommerce.org/developer/contrib
 ## Contact
 
 [Contact us](https://spreecommerce.org/contact/) and let's go! 
+
+## Developed by
+
+Spree is developed ant maintained by
+
+<a href="https://getvendo.com">
+<img alt="Vendo" src="https://cdn.getvendo.com/assets/vendo-logo-4bda02af8c99bc2ecc5a400120f0ebe4eafcd385e02e25f198a8c355ab75d1ff.png" />
+</a>
+
+> Vendo is an eCommerce platform based on Spree which you can customize to your exact needs (source available).
+Go global on day 1. DTC x B2B x Marketplace. API-first. One or multiple storefronts.
 
 ## License
 
