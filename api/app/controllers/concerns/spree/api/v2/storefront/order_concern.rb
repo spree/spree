@@ -9,7 +9,7 @@ module Spree
             if result.success?
               render_serialized_payload { serialized_current_order }
             else
-              render_error_payload(result.error)
+              render_error_payload(result.error&.value || result.value)
             end
           end
 
@@ -18,7 +18,7 @@ module Spree
           end
 
           def order_token
-            request.headers['X-Spree-Order-Token'] || params[:order_token]
+            request.headers['X-Vendo-Order-Token'] || request.headers['X-Spree-Order-Token'] || params[:order_token]
           end
 
           def spree_current_order
