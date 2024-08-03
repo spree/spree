@@ -60,6 +60,8 @@ Spree::Core::Engine.add_routes do
             post :add_item
             patch 'set_item_quantity/:item_id', to: 'wishlists#set_item_quantity', as: :set_item_quantity
             delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
+            post :add_items
+            delete :remove_items
           end
         end
 
