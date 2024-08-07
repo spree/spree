@@ -6,7 +6,7 @@
   <h1 align="center">Spree Commerce</h2>
 
   <p align="center">
-    An open source eCommerce platform giving you full control and customizability.
+    An open-source eCommerce platform giving you full control and customizability.
     <br />
     Build any eCommerce solution that your business requires.
     <br />
@@ -16,6 +16,8 @@
     <a href="https://docs.spreecommerce.org">Documentation</a>
     ·
     <a href="https://spreecommerce.org">Website</a>
+    ·
+    <a href="https://demo.spreecommerce.org">Demo</a>
     ·
     <a href="https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open">Roadmap</a>
   </p>
@@ -135,7 +137,7 @@ Follow our [Contributing Guide](https://docs.spreecommerce.org/developer/contrib
 
 ## Developed by
 
-Spree is developed ant maintained by
+Spree is developed and maintained by
 
 <a href="https://getvendo.com">
 <img alt="Vendo" src="https://cdn.getvendo.com/assets/vendo-logo-4bda02af8c99bc2ecc5a400120f0ebe4eafcd385e02e25f198a8c355ab75d1ff.png" />
