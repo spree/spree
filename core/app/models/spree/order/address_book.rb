@@ -30,7 +30,7 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-        user.bill_address = bill_address if user && user.bill_address.nil?
+        user.class.unscoped.where(id: user).update_all(bill_address_id: bill_address.id) if user && user.bill_address.nil?
       end
 
       def ship_address_id=(id)
@@ -44,8 +44,13 @@ module Spree
       end
 
       def ship_address_attributes=(attributes)
-        self.ship_address = update_or_create_address(attributes)
-        user.ship_address = ship_address if user && user.ship_address.nil?
+        self.ship_address =
+          if use_billing_form_choice
+            nil
+          else
+            update_or_create_address(attributes)
+          end
+        user.class.unscoped.where(id: user).update_all(ship_address_id: ship_address&.id) if user && user.ship_address.nil?
       end
 
       private
@@ -65,7 +70,7 @@ module Spree
           return default_address
         end
 
-        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
+        default_address_scope.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
       end
     end
   end
