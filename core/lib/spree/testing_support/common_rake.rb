@@ -17,7 +17,7 @@ namespace :common do
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}"]
 
     # install frontend libraries
-    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+    unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
       system('bin/rails importmap:install')
       system('bin/rails turbo:install')
       system('bin/rails stimulus:install')

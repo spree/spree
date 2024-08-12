@@ -1,3 +1,5 @@
+require 'spree/core/dependencies_helper'
+
 module Spree
   module Api
     class ApiDependencies
