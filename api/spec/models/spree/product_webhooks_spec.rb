@@ -18,7 +18,7 @@ describe Spree::Product::Webhooks do
         it do
           expect do
             product.discontinue!
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, product)
         end
       end
 
@@ -49,7 +49,7 @@ describe Spree::Product::Webhooks do
       before { product.update_column(:status, :draft) }
 
       it do
-        expect { product.activate }.to emit_webhook_event(event_name)
+        expect { product.activate }.to emit_webhook_event(event_name, product)
       end
     end
 
@@ -57,7 +57,7 @@ describe Spree::Product::Webhooks do
       let(:event_name) { 'product.drafted' }
 
       it do
-        expect { product.draft }.to emit_webhook_event(event_name)
+        expect { product.draft }.to emit_webhook_event(event_name, product)
       end
     end
 
@@ -65,7 +65,7 @@ describe Spree::Product::Webhooks do
       let(:event_name) { 'product.archived' }
 
       it do
-        expect { product.archive }.to emit_webhook_event(event_name)
+        expect { product.archive }.to emit_webhook_event(event_name, product)
       end
     end
   end

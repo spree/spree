@@ -18,7 +18,7 @@ describe Spree::Variant::Webhooks do
         it do
           expect do
             variant.discontinue!
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, variant)
         end
       end
 
@@ -28,7 +28,7 @@ describe Spree::Variant::Webhooks do
         it do
           expect do
             variant.update(discontinue_on: nil)
-          end.not_to emit_webhook_event(event_name)
+          end.not_to emit_webhook_event(event_name, variant)
         end
       end
     end
@@ -37,7 +37,7 @@ describe Spree::Variant::Webhooks do
       it do
         expect do
           variant.update(width: 180)
-        end.not_to emit_webhook_event(event_name)
+        end.not_to emit_webhook_event(event_name, variant)
       end
     end
   end

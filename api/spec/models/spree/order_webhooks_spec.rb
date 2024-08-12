@@ -15,7 +15,7 @@ describe Spree::Order::Webhooks do
       let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
       let(:order) { create(:completed_order_with_totals, store: store) }
 
-      it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event(event_name) }
+      it { expect { Timecop.freeze { order.cancel } }.to emit_webhook_event(event_name, order) }
     end
   end
 
@@ -25,7 +25,7 @@ describe Spree::Order::Webhooks do
       let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
       let(:order) { create(:order, email: 'test@example.com', store: store) }
 
-      it { expect { order.finalize! }.to emit_webhook_event(event_name) }
+      it { expect { order.finalize! }.to emit_webhook_event(event_name, order) }
     end
   end
 
@@ -40,13 +40,13 @@ describe Spree::Order::Webhooks do
           # this case does not create a state change record
           subject { Timecop.freeze { order.update(state: 'resumed') } }
 
-          it { expect { subject }.to emit_webhook_event(event_name) }
+          it { expect { subject }.to emit_webhook_event(event_name, order) }
         end
 
         context 'when doing it through resume!' do
           subject { order.resume! }
 
-          it { expect { subject }.to emit_webhook_event(event_name) }
+          it { expect { subject }.to emit_webhook_event(event_name, order) }
 
           context 'after emitting the webhook' do
             it 'correctly sets state_machine_resumed used to avoid emitting the same event twice' do
@@ -65,7 +65,7 @@ describe Spree::Order::Webhooks do
         it do
           expect do
             order.update(email: 'me@spreecommerce.org')
-          end.not_to emit_webhook_event(event_name)
+          end.not_to emit_webhook_event(event_name, order)
         end
       end
     end

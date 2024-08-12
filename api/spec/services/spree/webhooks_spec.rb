@@ -57,7 +57,7 @@ describe Spree::Webhooks do
         it 'emits the event' do
           expect do
             variant.discontinue!
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, variant)
         end
       end
 
