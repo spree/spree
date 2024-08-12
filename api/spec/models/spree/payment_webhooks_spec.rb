@@ -22,17 +22,17 @@ describe Spree::Payment::Webhooks do
     context 'processing -> completed' do
       before { payment.started_processing }
 
-      it { expect { payment.complete }.to emit_webhook_event(event_name) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name, payment) }
     end
 
     context 'pending -> completed' do
       before { payment.pend }
 
-      it { expect { payment.complete }.to emit_webhook_event(event_name) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name, payment) }
     end
 
     context 'checkout -> completed' do
-      it { expect { payment.complete }.to emit_webhook_event(event_name) }
+      it { expect { payment.complete }.to emit_webhook_event(event_name, payment) }
     end
   end
 
@@ -43,23 +43,23 @@ describe Spree::Payment::Webhooks do
     context 'pending -> void' do
       before { payment.pend }
 
-      it { expect { payment.void }.to emit_webhook_event(event_name) }
+      it { expect { payment.void }.to emit_webhook_event(event_name, payment) }
     end
 
     context 'processing -> void' do
       before { payment.started_processing }
 
-      it { expect { payment.void }.to emit_webhook_event(event_name) }
+      it { expect { payment.void }.to emit_webhook_event(event_name, payment) }
     end
 
     context 'completed -> void' do
       before { payment.complete }
 
-      it { expect { payment.void }.to emit_webhook_event(event_name) }
+      it { expect { payment.void }.to emit_webhook_event(event_name, payment) }
     end
 
     context 'checkout -> void' do
-      it { expect { payment.void }.to emit_webhook_event(event_name) }
+      it { expect { payment.void }.to emit_webhook_event(event_name, payment) }
     end
   end
 
@@ -85,7 +85,7 @@ describe Spree::Payment::Webhooks do
           another_payment.started_processing
         end
 
-        it { expect { subject }.to emit_webhook_event(event_name) }
+        it { expect { subject }.to emit_webhook_event(event_name, order) }
       end
 
       context 'pending -> complete' do
@@ -95,13 +95,13 @@ describe Spree::Payment::Webhooks do
           another_payment.pend
         end
 
-        it { expect { subject }.to emit_webhook_event(event_name) }
+        it { expect { subject }.to emit_webhook_event(event_name, order) }
       end
 
       context 'checkout -> complete' do
         before { payment.complete }
 
-        it { expect { subject }.to emit_webhook_event(event_name) }
+        it { expect { subject }.to emit_webhook_event(event_name, order) }
       end
     end
 
@@ -114,17 +114,17 @@ describe Spree::Payment::Webhooks do
       context 'processing -> complete' do
         before { payment.started_processing }
 
-        it { expect { subject }.not_to emit_webhook_event(event_name) }
+        it { expect { subject }.not_to emit_webhook_event(event_name, order) }
       end
 
       context 'pending -> complete' do
         before { payment.pend }
 
-        it { expect { subject }.not_to emit_webhook_event(event_name) }
+        it { expect { subject }.not_to emit_webhook_event(event_name, order) }
       end
 
       context 'checkout -> complete' do
-        it { expect { subject }.not_to emit_webhook_event(event_name) }
+        it { expect { subject }.not_to emit_webhook_event(event_name, order) }
       end
     end
   end

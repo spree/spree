@@ -34,13 +34,13 @@ describe Spree::Shipment::Webhooks do
           shipment.ready
         end
 
-        it { expect { shipment.ship }.to emit_webhook_event(event_name) }
+        it { expect { shipment.ship }.to emit_webhook_event(event_name, shipment) }
       end
 
       context 'canceled -> ship' do
         before { shipment.cancel }
 
-        it { expect { shipment.ship }.to emit_webhook_event(event_name) }
+        it { expect { shipment.ship }.to emit_webhook_event(event_name, shipment) }
       end
     end
 
@@ -78,13 +78,11 @@ describe Spree::Shipment::Webhooks do
             shipments.each { |s| s.state_changes.destroy_all }
           end
 
-          it do
-            expect { shipments[1].ship }.to emit_webhook_event(event_name)
-          end
+          it { expect { shipments[1].ship }.to emit_webhook_event(event_name, order) }
         end
 
         context 'without all order shipments shipped' do
-          it { expect { shipments[0].ship }.not_to emit_webhook_event(event_name) }
+          it { expect { shipments[0].ship }.not_to emit_webhook_event(event_name, shipments[0]) }
         end
       end
 
@@ -98,11 +96,11 @@ describe Spree::Shipment::Webhooks do
             shipments.each { |s| s.state_changes.destroy_all }
           end
 
-          it { expect { shipments[1].ship }.to emit_webhook_event(event_name) }
+          it { expect { shipments[1].ship }.to emit_webhook_event(event_name, order) }
         end
 
         context 'without all order shipments shipped' do
-          it { expect { shipments[0].ship }.not_to emit_webhook_event(event_name) }
+          it { expect { shipments[0].ship }.not_to emit_webhook_event(event_name, shipments[0]) }
         end
       end
     end

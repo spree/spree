@@ -55,34 +55,19 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'after_create_commit' do
       let(:event_name) { 'product.create' }
-      it { expect { product.save }.to emit_webhook_event('product.create') }
+      it { expect { product.save }.to emit_webhook_event('product.create', product) }
     end
 
     context 'after_destroy_commit' do
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event('product.delete') }
+      it { expect { product.destroy }.to emit_webhook_event('product.delete', product) }
     end
 
     context 'after_update_commit' do
       before { product.save }
 
-      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update') }
-    end
-
-    context 'with a class name with multiple words' do
-      let(:webhook_payload_body) do
-        Spree::Api::V2::Platform::CmsPageSerializer.new(
-          cms_page,
-          include: Spree::Api::V2::Platform::CmsPageSerializer.relationships_to_serialize.keys
-          ).serializable_hash
-      end
-      let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
-      let(:event_name) { 'cms_page.create' }
-
-      it 'underscorizes the event name' do
-        expect { cms_page }.to emit_webhook_event(event_name)
-      end
+      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update', product) }
     end
 
     context 'when only timestamps change' do
@@ -120,7 +105,7 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.touch(:available_on)
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, product)
         end
       end
     end

@@ -32,13 +32,13 @@ describe Spree::StockItem::Webhooks do
         context 'when one of the variants is made backorderable' do
           let(:backorderable) { true }
 
-          it { expect { subject }.to emit_webhook_event(event_name) }
+          it { expect { subject }.to emit_webhook_event(event_name, product) }
         end
 
         context 'when none of the variants is made backorderable' do
           let(:backorderable) { false }
 
-          it { expect { subject }.not_to emit_webhook_event(event_name) }
+          it { expect { subject }.not_to emit_webhook_event(event_name, product) }
         end
       end
 
@@ -52,7 +52,7 @@ describe Spree::StockItem::Webhooks do
             another_stock_item.update(backorderable: true)
           end
 
-          it { expect { subject }.not_to emit_webhook_event(event_name) }
+          it { expect { subject }.not_to emit_webhook_event(event_name, product) }
         end
       end
     end
@@ -68,7 +68,7 @@ describe Spree::StockItem::Webhooks do
         end
       end
 
-      it { expect { subject }.not_to emit_webhook_event(event_name) }
+      it { expect { subject }.not_to emit_webhook_event(event_name, product) }
     end
   end
 
@@ -90,7 +90,7 @@ describe Spree::StockItem::Webhooks do
       context 'when variant was backorderable' do
         before { stock_item.backorderable = true }
 
-        it { expect { subject }.not_to emit_webhook_event(event_name) }
+        it { expect { subject }.not_to emit_webhook_event(event_name, variant) }
       end
 
       context 'when variant was not backorderable' do
@@ -99,13 +99,13 @@ describe Spree::StockItem::Webhooks do
         context 'when variant is not set as backorderable' do
           before { stock_item.backorderable = false }
 
-          it { expect { subject }.not_to emit_webhook_event(event_name) }
+          it { expect { subject }.not_to emit_webhook_event(event_name, variant) }
         end
 
         context 'when variant is set as backorderable' do
           before { stock_item.backorderable = true }
 
-          it { expect { subject }.to emit_webhook_event(event_name) }
+          it { expect { subject }.to emit_webhook_event(event_name, variant) }
         end
       end
     end
@@ -121,7 +121,7 @@ describe Spree::StockItem::Webhooks do
         stock_item.backorderable = true
       end
 
-      it { expect { subject }.not_to emit_webhook_event(event_name) }
+      it { expect { subject }.not_to emit_webhook_event(event_name, variant) }
     end
   end
 end
