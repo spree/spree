@@ -154,6 +154,7 @@ module Spree
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
+      :weight_unit, :dimensions_unit, 
       { options: [:name, :value], option_value_ids: [] }
     ]
 
