@@ -123,6 +123,7 @@
         {
           "group": "Upgrade Guides",
           "pages": [
+            "developer/upgrades/4.8-to-4.9",
             "developer/upgrades/4.x-to-4.8",
             "developer/upgrades/4.6-to-4.7",
             "developer/upgrades/4.5-to-4.6",
