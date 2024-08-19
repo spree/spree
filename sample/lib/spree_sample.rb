@@ -5,7 +5,6 @@ module SpreeSample
   class Engine < Rails::Engine
     engine_name 'spree_sample'
 
-    config.active_record.yaml_column_permitted_classes = [Symbol]
     # Needs to be here so we can access it inside the tests
     def self.load_samples
       Spree::Webhooks.disable_webhooks do
