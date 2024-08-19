@@ -34,16 +34,14 @@ fi
 
 cd ./sandbox
 
-git submodule update --init --recursive
-
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
-gem 'spree_backend', path: '../backend'
-gem 'spree_frontend', path: '../frontend'
-gem 'spree_auth_devise', path: '../auth_devise'
-gem 'spree_gateway', path: '../gateway'
+gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'
+gem 'spree_frontend', github: 'spree/spree_rails_frontend', branch: 'main'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'
+gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
