@@ -102,7 +102,7 @@ describe Spree::ShippingMethod, type: :model do
     end
   end
 
-  context 'generating tracking URLs' do
+  describe '#build_tracking_url' do
     context 'shipping method has a tracking URL mask on file' do
       let(:tracking_url) { 'https://track-o-matic.com/:tracking' }
 
@@ -110,13 +110,23 @@ describe Spree::ShippingMethod, type: :model do
 
       context 'tracking number has spaces' do
         let(:tracking_numbers) { ['1234 5678 9012 3456', 'a bcdef'] }
-        let(:expectations) { %w[https://track-o-matic.com/1234%205678%209012%203456 https://track-o-matic.com/a%20bcdef] }
+        let(:expectations) { %w[https://track-o-matic.com/1234%205678%209012%203456 https://track-o-matic.com/A%20BCDEF] }
 
         it "returns a single URL with '%20' in lieu of spaces" do
           tracking_numbers.each_with_index do |num, i|
             expect(subject.build_tracking_url(num)).to eq(expectations[i])
           end
         end
+      end
+    end
+
+    context 'shipping method does not have a tracking URL mask on file' do
+      let(:usps_tracking_number) { '1Z879E930346834440' }
+
+      before { allow(subject).to receive(:tracking_url) { nil } }
+
+      it 'uses tracking number gem to build tracking url' do
+        expect(subject.build_tracking_url(usps_tracking_number)).to eq('https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z879E930346834440')
       end
     end
   end
