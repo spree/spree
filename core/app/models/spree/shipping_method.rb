@@ -48,9 +48,22 @@ module Spree
     end
 
     def build_tracking_url(tracking)
-      return if tracking.blank? || tracking_url.blank?
+      return if tracking.blank?
 
-      tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking)) # :url_encode exists in 1.8.7 through 2.1.0
+      tracking = tracking.upcase
+
+      # build tracking url automatically
+      if tracking_url.blank?
+        # use tracking number gem to build tracking url
+        # we need to upcase the tracking number
+        # https://github.com/jkeen/tracking_number/pull/85
+
+        tracking_number_service = Spree::Dependencies.tracking_number_service.constantize.new(tracking)
+        tracking_number_service.tracking_url if tracking_number_service.valid?
+      else
+        # build tracking url manually
+        tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking)) # :url_encode exists in 1.8.7 through 2.1.0
+      end
     end
 
     def self.calculators

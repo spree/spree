@@ -43,6 +43,9 @@ module Spree
         shipment_add_item_service: 'Spree::Shipments::AddItem',
         shipment_remove_item_service: 'Spree::Shipments::RemoveItem',
 
+        # tracking numbers
+        tracking_number_service: 'Spree::TrackingNumbers::BaseService',
+
         # sorter
         collection_sorter: 'Spree::BaseSorter',
         order_sorter: 'Spree::BaseSorter',
