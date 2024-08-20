@@ -91,7 +91,7 @@ describe Spree::Price, type: :model do
           allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
         end
 
-        it { binding.pry; is_expected.to be_valid }
+        it { is_expected.to be_valid }
       end
 
       context 'new behavior' do
