@@ -57,13 +57,16 @@ module Spree
         # use tracking number gem to build tracking url
         # we need to upcase the tracking number
         # https://github.com/jkeen/tracking_number/pull/85
-
-        tracking_number_service = Spree::Dependencies.tracking_number_service.constantize.new(tracking)
-        tracking_number_service.tracking_url if tracking_number_service.valid?
+        tracking_number_service(tracking).tracking_url if tracking_number_service(tracking).valid?
       else
         # build tracking url manually
         tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking)) # :url_encode exists in 1.8.7 through 2.1.0
       end
+    end
+
+    # your shipping method subclasses can override this method to provide a custom tracking number service
+    def tracking_number_service(tracking)
+      @tracking_number_service ||= Spree::Dependencies.tracking_number_service.constantize.new(tracking)
     end
 
     def self.calculators
