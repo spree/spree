@@ -14,7 +14,7 @@ module Spree
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
 
-    validates :amount, allow_nil: true, numericality: {
+    validates :amount, allow_nil: -> { Spree::RuntimeConfig.allow_empty_price_amount }, numericality: {
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }
