@@ -86,7 +86,17 @@ describe Spree::Price, type: :model do
     context 'when the amount is nil' do
       let(:amount) { nil }
 
-      it { is_expected.to be_valid }
+      context 'legacy behavior' do
+        before do
+          allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context 'new behavior' do
+        it { is_expected.not_to be_valid }
+      end
     end
 
     context 'when the amount is less than 0' do

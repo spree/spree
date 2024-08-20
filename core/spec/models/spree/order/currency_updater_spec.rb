@@ -24,7 +24,10 @@ describe Spree::Order, type: :model do
         end
 
         context 'when there is a price with nil amount' do
-          let!(:euro_price) { create(:price, variant: line_item.variant, amount: nil, currency: 'EUR') }
+          let!(:euro_price) do
+            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+            create(:price, variant: line_item.variant, amount: nil, currency: 'EUR')
+          end
 
           it 'destroys the line item when we switch to that price\'s currency' do
             expect { line_item.order.update!(currency: 'EUR') }.to change(Spree::LineItem, :count).by(-1)

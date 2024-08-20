@@ -176,6 +176,10 @@ describe Spree::Variant, type: :model do
         end
 
         context 'when price do not have amount' do
+          before do
+            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+          end
+
           let!(:price_1) { create(:price, currency: currency, variant: variant, amount: nil) }
 
           it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
@@ -192,6 +196,10 @@ describe Spree::Variant, type: :model do
         end
 
         context 'when price do not have amount' do
+          before do
+            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+          end
+
           let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }
 
           it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
