@@ -28,9 +28,14 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', ">= #{s.version}"
 
+  s.add_dependency 'active_link_to'
   s.add_dependency 'bootstrap', '~> 4.6'
   s.add_dependency 'dartsass-rails', '~> 0.5'
+  s.add_dependency 'importmap-rails'
   s.add_dependency 'inline_svg', '~> 1.5'
+  s.add_dependency 'payment_icons'
+  s.add_dependency 'turbo-rails'
+  s.add_dependency 'stimulus-rails'
   s.add_dependency 'responders'
   s.add_dependency 'sprockets', '>= 4.0'
   s.add_dependency 'tinymce-rails', '~> 5.0'
