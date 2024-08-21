@@ -1,0 +1,6 @@
+eval_gemfile('../common_spree_dependencies.rb')
+
+gem 'spree_core', path: '../core'
+gem 'bootstrap', github: 'twbs/bootstrap-rubygem', branch: '4.6-stable'
+
+gemspec
