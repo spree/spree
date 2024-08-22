@@ -261,7 +261,7 @@ describe Spree::Taxon, type: :model do
       end
 
       it "sets the slugs in slug format" do
-        expect(root_taxon.localized_slugs_for_store(store)).to match(expected_slugs)
+        expect(root_taxon.reload.localized_slugs_for_store(store)).to match(expected_slugs)
       end
     end
 

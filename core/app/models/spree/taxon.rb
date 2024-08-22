@@ -66,8 +66,8 @@ module Spree
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink
-      before_create :set_pretty_name
       before_save :set_permalink
+      before_save :set_pretty_name
 
       def set_permalink
         self.permalink = generate_slug
@@ -152,7 +152,7 @@ module Spree
     end
 
     def generate_pretty_name
-      [parent.pretty_name, name].compact.join(' -> ')
+      [parent&.pretty_name, name].compact.join(' -> ')
     end
 
     def generate_slug
