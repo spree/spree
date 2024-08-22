@@ -213,12 +213,6 @@ module Spree
       saved_changes.key?(:name) || saved_changes.key?(:permalink)
     end
 
-    def generate_pretty_name
-      return name unless parent_id.present?
-
-      "#{parent.pretty_name} -> #{name}"
-    end
-
     def sync_taxonomy_name
       if saved_changes.key?(:name) && root?
         return if taxonomy.name.to_s == name.to_s

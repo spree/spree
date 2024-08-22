@@ -282,4 +282,60 @@ describe Spree::Taxon, type: :model do
       end
     end
   end
+
+  describe '#pretty_name' do
+    let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
+
+    context '1 lvl deep' do
+      it 'returns only name' do
+        expect(taxon.pretty_name).to eq('Category#1')
+      end
+    end
+
+    context '2+ lvl deep' do
+      let(:taxon_parent) { create(:taxon, name: 'Parent', taxonomy: taxonomy) }
+
+      before do
+        taxon.parent = taxon_parent
+        taxon.save!
+      end
+
+      it 'returns name and parent names' do
+        expect(taxon.reload.pretty_name).to eq('Parent -> Category#1')
+      end
+
+      context 'when taxon name is "Categories"' do
+        before do
+          taxon_parent.name = 'Categories'
+          taxon_parent.save!
+        end
+
+        it 'should still return correct pretty name' do
+          expect(taxon.reload.pretty_name).to eq('Categories -> Category#1')
+        end
+      end
+
+      context 'when name is updated' do
+        before do
+          taxon.name = 'New Name'
+          taxon.save!
+        end
+
+        it 'returns the updated pretty name' do
+          expect(taxon.reload.pretty_name).to eq('Parent -> New Name')
+        end
+      end
+
+      context 'when parent name is updated' do
+        before do
+          taxon_parent.name = 'New Parent'
+          taxon_parent.save!
+        end
+
+        it 'returns the updated pretty name' do
+          expect(taxon.reload.pretty_name).to eq('New Parent -> Category#1')
+        end
+      end
+    end
+  end
 end
