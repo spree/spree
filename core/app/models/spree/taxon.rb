@@ -147,12 +147,19 @@ module Spree
       meta_title.blank? ? name : meta_title
     end
 
+    def pretty_name
+      self[:pretty_name].presence || generate_pretty_name
+    end
+
     def set_pretty_name
       self[:pretty_name] = generate_pretty_name
     end
 
     def generate_pretty_name
-      [parent&.pretty_name, name].compact.join(' -> ')
+      ancestor_chain = ancestors.inject('') do |name, ancestor|
+        name += "#{ancestor.name} -> "
+      end
+      ancestor_chain + name.to_s
     end
 
     def generate_slug

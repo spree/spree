@@ -288,7 +288,7 @@ describe Spree::Taxon, type: :model do
 
     context '1 lvl deep' do
       it 'returns only name' do
-        expect(taxon.pretty_name).to eq('Category#1')
+        expect(taxon.attributes['pretty_name']).to eq("#{taxonomy.name} -> #{taxon.name}")
       end
     end
 
@@ -301,7 +301,7 @@ describe Spree::Taxon, type: :model do
       end
 
       it 'returns name and parent names' do
-        expect(taxon.reload.pretty_name).to eq('Parent -> Category#1')
+        expect(taxon.reload.attributes['pretty_name']).to eq("#{taxonomy.name} -> #{taxon_parent.name} -> #{taxon.name}")
       end
 
       context 'when taxon name is "Categories"' do
@@ -311,7 +311,7 @@ describe Spree::Taxon, type: :model do
         end
 
         it 'should still return correct pretty name' do
-          expect(taxon.reload.pretty_name).to eq('Categories -> Category#1')
+          expect(taxon.reload.attributes['pretty_name']).to eq("#{taxonomy.name} -> Categories -> #{taxon.name}")
         end
       end
 
@@ -322,7 +322,7 @@ describe Spree::Taxon, type: :model do
         end
 
         it 'returns the updated pretty name' do
-          expect(taxon.reload.pretty_name).to eq('Parent -> New Name')
+          expect(taxon.reload.attributes['pretty_name']).to eq("#{taxonomy.name} -> #{taxon_parent.name} -> New Name")
         end
       end
 
@@ -333,7 +333,20 @@ describe Spree::Taxon, type: :model do
         end
 
         it 'returns the updated pretty name' do
-          expect(taxon.reload.pretty_name).to eq('New Parent -> Category#1')
+          expect(taxon.reload.attributes['pretty_name']).to eq("#{taxonomy.name} -> New Parent -> #{taxon.name}")
+        end
+      end
+
+      context 'old records without pretty_name persisted' do
+        before do
+          taxon.parent.update_column(:pretty_name, nil)
+          taxon.update_column(:pretty_name, nil)
+          taxon.reload
+          taxon.parent.reload
+        end
+
+        it 'returns the pretty name generated dynamically' do
+          expect(taxon.reload.pretty_name).to eq("#{taxonomy.name} -> #{taxon_parent.name} -> #{taxon.name}")
         end
       end
     end
