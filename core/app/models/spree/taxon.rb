@@ -44,7 +44,6 @@ module Spree
     end
 
     before_validation :copy_taxonomy_from_parent
-    before_create :set_pretty_name
     after_save :touch_ancestors_and_taxonomy
     after_update :sync_taxonomy_name
     after_touch :touch_ancestors_and_taxonomy
@@ -62,15 +61,28 @@ module Spree
 
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
 
-    TRANSLATABLE_FIELDS = %i[name description permalink].freeze
+    TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
       alias_attribute :slug, :permalink
+      before_create :set_pretty_name
       before_save :set_permalink
 
       def set_permalink
         self.permalink = generate_slug
+      end
+
+      def set_pretty_name
+        self[:pretty_name] = generate_pretty_name
+      end
+
+      def name_with_fallback
+        name.blank? ? translated_model.name : name
+      end
+
+      def pretty_name_with_fallback
+        pretty_name.blank? ? translated_model.pretty_name : pretty_name
       end
 
       private
@@ -85,12 +97,22 @@ module Spree
         end
       end
 
+      def generate_pretty_name
+        if parent.present?
+          generate_pretty_name_including_parent
+        elsif pretty_name.blank?
+          pretty_name_with_fallback
+        else
+          pretty_name
+        end
+      end
+
       def generate_permalink_including_parent
         [parent_permalink_with_fallback, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
       end
 
-      def name_with_fallback
-        name.blank? ? translated_model.name : name
+      def generate_pretty_name_including_parent
+        [parent_pretty_name_with_fallback, (pretty_name.blank? ? name_with_fallback : pretty_name)].compact.join(' -> ')
       end
 
       def parent
@@ -100,6 +122,11 @@ module Spree
       def parent_permalink_with_fallback
         localized_parent = parent.translations.find_by(locale: locale)
         localized_parent.present? ? localized_parent.permalink : parent.permalink
+      end
+
+      def parent_pretty_name_with_fallback
+        localized_parent = parent.translations.find_by(locale: locale)
+        localized_parent.present? ? localized_parent.pretty_name : parent.pretty_name
       end
     end
 
@@ -120,19 +147,12 @@ module Spree
       meta_title.blank? ? name : meta_title
     end
 
-    def pretty_name
-      self[:pretty_name]
-    end
-
     def set_pretty_name
       self[:pretty_name] = generate_pretty_name
     end
 
     def generate_pretty_name
-      return name unless parent_id.present?
-      return name if parent_id == taxonomy.root_id && category?
-
-      "#{parent.pretty_name} -> #{name}"
+      [parent.pretty_name, name].compact.join(' -> ')
     end
 
     def generate_slug

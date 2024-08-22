@@ -3,17 +3,17 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::TaxonSerializer do
   include_context 'API v2 serializers params'
 
-  subject { described_class.new(taxon, params: serializer_params).serializable_hash }
+  subject { described_class.new(taxon.reload, params: serializer_params).serializable_hash }
 
   let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:taxon) { create(:taxon, products: create_list(:product, 2, stores: [store]), taxonomy: taxonomy) }
-  let!(:children) { [create(:taxon, parent: taxon, taxonomy: taxonomy), create(:taxon, parent: taxon, taxonomy: taxonomy)] }
+  let(:taxon) { create(:taxon, taxonomy: taxonomy, products: create_list(:product, 2, stores: [store])) }
+  let!(:children) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxon) }
 
   it { expect(subject).to be_kind_of(Hash) }
 
   context 'without products' do
     it do
-      expect(subject).to eq(
+      expect(subject).to match(
         {
           data: {
             id: taxon.id.to_s,
@@ -83,7 +83,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
     end
 
     it do
-      expect(subject).to eq(
+      expect(subject).to match(
         {
           data: {
             id: taxon.id.to_s,
@@ -141,7 +141,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                 ]
               },
               children: {
-                data: [
+                data: contain_exactly(
                   {
                     id: taxon.children.first.id.to_s,
                     type: :taxon
@@ -150,7 +150,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                     id: taxon.children.second.id.to_s,
                     type: :taxon
                   }
-                ]
+                )
               }
             }
           }

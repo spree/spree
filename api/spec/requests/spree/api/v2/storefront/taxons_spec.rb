@@ -60,7 +60,7 @@ describe 'Taxons Spec', type: :request do
 
         Mobility.with_locale(:pl) do
           taxonomy_localized.update!(name: "Localized Taxonomy PL")
-          taxonomy_root_localized.update!(name: "Localized Taxonomy PL")
+          taxonomy_root_localized.update!(name: "Localized Taxonomy PL", pretty_name: "Localized Taxonomy PL")
         end
 
         taxonomy_localized
@@ -70,7 +70,7 @@ describe 'Taxons Spec', type: :request do
         taxons_localized = create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root)
         taxons_localized.each_with_index do |taxon, index|
           name = taxon.name
-          Mobility.with_locale(:pl) { taxon.update!(name: "Localized Taxon #{index + 1} PL") }
+          Mobility.with_locale(:pl) { taxon.update!(name: "Localized Taxon #{index + 1} PL", pretty_name: "Localized Taxon #{index + 1} PL") }
         end
 
         taxons_localized
