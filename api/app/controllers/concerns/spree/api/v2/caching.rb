@@ -5,8 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         def collection_cache_key(collection)
-          # Calling reselect('*') is a workaround for the joined translations table
-          collection_cache_key = collection.unscope(:includes).unscope(:order).unscope(:group).reselect('*').cache_key_with_version
+          collection_cache_key = collection.unscope(:includes).unscope(:order).unscope(:group).cache_key_with_version
 
           params.delete(:page) if params[:page] == 1
 
