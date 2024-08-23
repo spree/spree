@@ -44,6 +44,8 @@ module Spree
     end
 
     before_validation :copy_taxonomy_from_parent
+    before_save :set_pretty_name
+    before_save :set_permalink
     after_save :touch_ancestors_and_taxonomy
     after_update :sync_taxonomy_name
     after_touch :touch_ancestors_and_taxonomy

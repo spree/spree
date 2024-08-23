@@ -287,8 +287,8 @@ describe Spree::Taxon, type: :model do
     let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
 
     context '1 lvl deep' do
-      it 'returns only name' do
-        expect(taxon.pretty_name).to eq('Category#1')
+      it 'returns taxonomy name and taxon name' do
+        expect(taxon.pretty_name).to eq("#{taxonomy.root.pretty_name} -> #{taxon.name}")
       end
     end
 
@@ -300,19 +300,8 @@ describe Spree::Taxon, type: :model do
         taxon.save!
       end
 
-      it 'returns name and parent names' do
-        expect(taxon.reload.pretty_name).to eq('Parent -> Category#1')
-      end
-
-      context 'when taxon name is "Categories"' do
-        before do
-          taxon_parent.name = 'Categories'
-          taxon_parent.save!
-        end
-
-        it 'should still return correct pretty name' do
-          expect(taxon.reload.pretty_name).to eq('Categories -> Category#1')
-        end
+      it 'returns parent name and taxon name' do
+        expect(taxon.reload.pretty_name).to eq("#{taxonomy.root.pretty_name} -> Parent -> Category#1")
       end
 
       context 'when name is updated' do
@@ -322,7 +311,7 @@ describe Spree::Taxon, type: :model do
         end
 
         it 'returns the updated pretty name' do
-          expect(taxon.reload.pretty_name).to eq('Parent -> New Name')
+          expect(taxon.reload.pretty_name).to eq("#{taxonomy.root.pretty_name} -> Parent -> New Name")
         end
       end
 
@@ -333,8 +322,28 @@ describe Spree::Taxon, type: :model do
         end
 
         it 'returns the updated pretty name' do
-          expect(taxon.reload.pretty_name).to eq('New Parent -> Category#1')
+          expect(taxon.reload.pretty_name).to eq("#{taxonomy.root.pretty_name} -> New Parent -> Category#1")
         end
+      end
+    end
+
+    context 'when `always_use_translations` is disabled' do
+      before do
+        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(false)
+      end
+
+      it 'sets the pretty name' do
+        expect(taxon.reload.pretty_name).to eq("#{taxonomy.name} -> #{taxon.name}")
+      end
+    end
+
+    context 'when `always_use_translations` is enabled' do
+      before do
+        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(true)
+      end
+
+      it 'sets the pretty name' do
+        expect(taxon.reload.pretty_name).to eq("#{taxonomy.name} -> #{taxon.name}")
       end
     end
   end
