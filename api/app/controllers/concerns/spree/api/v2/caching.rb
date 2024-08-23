@@ -5,12 +5,10 @@ module Spree
         extend ActiveSupport::Concern
 
         def collection_cache_key(collection)
-          collection_cache_key = collection.unscope(:includes).unscope(:order).unscope(:group).cache_key_with_version
-
           params.delete(:page) if params[:page] == 1
 
           cache_key_parts = [
-            collection_cache_key,
+            collection.cache_key_with_version,
             resource_includes,
             sparse_fields,
             serializer_params_cache_key,
