@@ -147,10 +147,6 @@ module Spree
       meta_title.blank? ? name : meta_title
     end
 
-    def pretty_name=(value)
-      self[:pretty_name] = value
-    end
-
     def pretty_name
       self[:pretty_name].presence || generate_pretty_name
     end
