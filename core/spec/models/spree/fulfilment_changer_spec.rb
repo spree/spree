@@ -380,6 +380,17 @@ describe Spree::FulfilmentChanger do
       expect { subject }.to change { Spree::Shipment.count }.by(1)
     end
 
+    it 'updates desired shipment cost after selecting the shipping rate' do
+      Spree::ShippingMethod.delete_all
+      calculator = Spree::Calculator::Shipping::FlatRate.create!(preferred_amount: 10)
+      shipping_method_that_should_be_selected = create(:shipping_method, calculator: calculator)
+
+      subject
+
+      expect(desired_shipment.reload.shipping_method).to eq(shipping_method_that_should_be_selected)
+      expect(desired_shipment.reload.cost).to eq(10)
+    end
+
     context 'if the desired shipment is invalid' do
       let(:desired_shipment) { order.shipments.build(stock_location_id: 99_999_999) }
 
