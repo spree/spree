@@ -109,6 +109,7 @@ module Spree
       end
 
       desired_shipment.refresh_rates
+      desired_shipment.update_amounts
 
       desired_shipment.order.reload
       desired_shipment.order.update_with_updater!
