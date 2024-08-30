@@ -1,6 +1,8 @@
 module Spree
   module Orders
     class FindCurrent
+      include Spree::Orders::FinderHelper
+
       def execute(user:, store:, **params)
         params = params.merge(store_id: store.id)
 
@@ -15,7 +17,7 @@ module Spree
       private
 
       def incomplete_orders
-        Spree::Order.incomplete.not_canceled
+        Spree::Order.incomplete.not_canceled.includes(order_includes)
       end
     end
   end

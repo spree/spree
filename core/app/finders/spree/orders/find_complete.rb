@@ -1,6 +1,8 @@
 module Spree
   module Orders
     class FindComplete
+      include Spree::Orders::FinderHelper
+
       attr_reader :user, :number, :token, :store
 
       def initialize(user: nil, number: nil, token: nil, store: nil)
@@ -22,7 +24,7 @@ module Spree
       private
 
       def scope
-        user? ? user.orders.complete.includes(scope_includes) : Spree::Order.complete.includes(scope_includes)
+        user? ? user.orders.complete.includes(order_includes) : Spree::Order.complete.includes(order_includes)
       end
 
       def user?
@@ -63,18 +65,6 @@ module Spree
         return orders unless store?
 
         orders.where(store: store)
-      end
-
-      def scope_includes
-        {
-          line_items: [
-            variant: [
-              :images,
-              option_values: :option_type,
-              product: :product_properties,
-            ]
-          ]
-        }
       end
     end
   end
