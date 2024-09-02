@@ -347,4 +347,13 @@ describe Spree::Taxon, type: :model do
       end
     end
   end
+
+  describe '#store' do
+    let(:taxonomy) { create(:taxonomy) }
+    let(:taxon) { build(:taxon, taxonomy: taxonomy) }
+
+    it 'returns the store from the taxonomy' do
+      expect(taxon.store).to eq(taxonomy.store)
+    end
+  end
 end

@@ -21,6 +21,8 @@ module Spree
     has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
     has_many :products, through: :classifications
 
+    delegate :store, to: :taxonomy
+
     has_many :menu_items, as: :linked_resource
     has_many :cms_sections, as: :linked_resource
 
