@@ -127,9 +127,7 @@ module Spree
     end
 
     def self.available_locales
-      Rails.cache.fetch('stores_available_locales') do
-        Spree::Store.all.map(&:supported_locales_list).flatten.uniq
-      end
+      Spree::Store.all.map(&:supported_locales_list).flatten.uniq
     end
 
     def default_menu(location)
@@ -245,7 +243,6 @@ module Spree
 
     def clear_cache
       Rails.cache.delete('default_store')
-      Rails.cache.delete('stores_available_locales')
     end
 
     def ensure_default_country
