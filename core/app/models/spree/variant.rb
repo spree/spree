@@ -128,13 +128,18 @@ module Spree
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
+      sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
+      query_pattern = "%#{sanitized_query}%"
+      sku_condition = arel_table[:sku].lower.matches(query_pattern)
+
       if Spree.use_translations?
+        product_name_condition = Product.translation_table[:name].lower.matches(query_pattern)
         joins(:product).
           join_translation_table(Product).
-          where("LOWER(#{Product.translation_table_alias}.name) LIKE LOWER(:query)
-                 OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+          where(product_name_condition.or(sku_condition))
       else
-        joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+        product_name_condition = Product.arel_table[:name].lower.matches(query_pattern)
+        joins(:product).where(product_name_condition.or(sku_condition))
       end
     end
 
