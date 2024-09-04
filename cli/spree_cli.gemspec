@@ -5,12 +5,12 @@ require_relative '../core/lib/spree/core/version.rb'
 Gem::Specification.new do |s|
   s.name        = "spree_cli"
   s.version     = Spree.version
-  s.authors     = ['Chris Mar', 'Spark Solutions']
+  s.authors     = ['Chris Mar', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = ['hello@spreecommerce.org']
   s.summary     = 'Spree Commerce CLI'
   s.description = 'Spree Commerce command line interface'
   s.homepage    = 'https://spreecommerce.org'
-  s.license     = 'BSD-3-Clause'
+  s.licences    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",

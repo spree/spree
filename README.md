@@ -148,4 +148,20 @@ Go global on day 1. DTC x B2B x Marketplace. API-first. One or multiple storefro
 
 ## License
 
-Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
+Spree Commerce is a free, open-source eCommerce framework giving you full control and customizability.
+
+For Spree Commerce versions 4.10 and later in the [spree/spree](https://github.com/spree/spree) repository two licenses apply simultaneously and users are required to comply with the terms of these two licenses at the same time:
+
+* [AGPL-3.0](https://opensource.org/license/agpl-v3) - for all contributions from version 4.10 onwards
+
+* [BSD-3-Clause](https://opensource.org/license/bsd-3-clause) - for all other contributions predating version 4.10
+
+Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
+
+Spree Commerce versions 4.9 and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the BSD-3-Clause license and users are required to comply with its terms.
+
+If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for a SaaS business, please talk to us about obtaining a [Commercial License](LICENSE.md#commercial-license).
+
+All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
+
+Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions
