@@ -25,6 +25,18 @@ describe Spree::LineItem, type: :model do
     end
   end
 
+  describe '#quantity' do
+    it 'has a default quantity of 1' do
+      line_item = build(:line_item)
+      expect(line_item.quantity).to eq(1)
+    end
+
+    it 'allows to set different value for quantity' do
+      line_item = build(:line_item, quantity: 5)
+      expect(line_item.quantity).to eq(5)
+    end
+  end
+
   describe '#ensure_valid_quantity' do
     context 'quantity.nil?' do
       before do
@@ -32,7 +44,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to be_zero }
+      it { expect(line_item.quantity).to eq(1) }
     end
 
     context 'quantity < 0' do
@@ -41,7 +53,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to be_zero }
+      it { expect(line_item.quantity).to eq(1) }
     end
 
     context 'quantity = 0' do
@@ -50,7 +62,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to be_zero }
+      it { expect(line_item.quantity).to eq(1) }
     end
 
     context 'quantity > 0' do
