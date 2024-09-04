@@ -14,6 +14,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       expect(json_response['data'][0]).to have_attribute(:month)
       expect(json_response['data'][0]).to have_attribute(:year)
       expect(json_response['data'][0]).to have_attribute(:name)
+      expect(json_response['data'][0]).to have_attribute(:gateway_payment_profile_id)
       expect(json_response['data'][0]).to have_attribute(:public_metadata)
     end
   end
