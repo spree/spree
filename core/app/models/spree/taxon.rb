@@ -13,7 +13,6 @@ module Spree
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
     before_validation :set_permalink, on: :create, if: :name
-    alias_attribute :slug, :permalink
 
     acts_as_nested_set dependent: :destroy
 
@@ -68,10 +67,25 @@ module Spree
     TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
+    def slug
+      permalink
+    end
+
+    def slug=(value)
+      self.permalink = value
+    end
+
     self::Translation.class_eval do
-      alias_attribute :slug, :permalink
       before_save :set_permalink
       before_save :set_pretty_name
+
+      def slug
+        permalink
+      end
+
+      def slug=(value)
+        self.permalink = value
+      end
 
       def set_permalink
         self.permalink = generate_slug

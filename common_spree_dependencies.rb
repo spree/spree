@@ -9,7 +9,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
   actionmailer actionpack actionview activejob activemodel activerecord
   activestorage activesupport railties
 ].each do |rails_gem|
-  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.1.0'), require: false
+  gem rails_gem, ENV.fetch('RAILS_VERSION', '~> 7.2.0'), require: false
 end
 
 platforms :jruby do
