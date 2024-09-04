@@ -5,6 +5,8 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
+    attribute :quantity, :integer, default: 1
+
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do
@@ -27,7 +29,7 @@ module Spree
     # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
-      less_than_or_equal_to: DatabaseTypeUtilities.maximum_value_for(:integer),
+      in: 0..DatabaseTypeUtilities.maximum_value_for(:integer),
       only_integer: true, message: Spree.t('validation.must_be_int')
     }
 
