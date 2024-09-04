@@ -44,7 +44,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to eq(1) }
+      it { expect(line_item.quantity).to be_zero }
     end
 
     context 'quantity < 0' do
@@ -53,7 +53,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to eq(1) }
+      it { expect(line_item.quantity).to be_zero }
     end
 
     context 'quantity = 0' do
@@ -62,7 +62,7 @@ describe Spree::LineItem, type: :model do
         line_item.valid?
       end
 
-      it { expect(line_item.quantity).to eq(1) }
+      it { expect(line_item.quantity).to be_zero }
     end
 
     context 'quantity > 0' do

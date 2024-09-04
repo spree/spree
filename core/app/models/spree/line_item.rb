@@ -29,7 +29,7 @@ module Spree
     # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
-      in: 1..DatabaseTypeUtilities.maximum_value_for(:integer),
+      in: 0..DatabaseTypeUtilities.maximum_value_for(:integer),
       only_integer: true, message: Spree.t('validation.must_be_int')
     }
 
@@ -150,7 +150,7 @@ module Spree
     private
 
     def ensure_valid_quantity
-      self.quantity = 1 if quantity.nil? || quantity < 1
+      self.quantity = 0 if quantity.nil? || quantity < 0
     end
 
     def update_price_from_modifier(currency, opts)
