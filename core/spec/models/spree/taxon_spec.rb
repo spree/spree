@@ -211,7 +211,6 @@ describe Spree::Taxon, type: :model do
     let(:taxonomy) { create(:taxonomy, name: 'categories', store: store) }
     let(:taxon) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
     let!(:taxon_translation_fr) { taxon.translations.create(slug: 'test_slug_fr', locale: 'fr') }
-    let!(:taxon_translation_en) { taxon.translations.create!(slug: 'test_slug_en', locale: 'en') }
     let!(:root_taxon) { taxonomy.taxons.find_by(parent_id: nil) }
 
     before { Spree::Locales::SetFallbackLocaleForStore.new.call(store: store) }
@@ -219,8 +218,8 @@ describe Spree::Taxon, type: :model do
     subject { taxon.localized_slugs_for_store(store) }
 
     context 'when there are slugs in locales not supported by the store' do
-      let!(:taxon_translation_pl) { taxon.translations.create!(slug: 'test_slug_pl', locale: 'pl') }
-      let!(:taxon_translation_de) { taxon.translations.create!(slug: 'test_slug_de', locale: 'de') }
+      let!(:taxon_translation_pl) { taxon.translations.create(slug: 'test_slug_pl', locale: 'pl') }
+      let!(:taxon_translation_de) { taxon.translations.create(slug: 'test_slug_de', locale: 'de') }
 
       let(:expected_slugs) do
         {
@@ -252,8 +251,6 @@ describe Spree::Taxon, type: :model do
     context 'when setting the slug translations for taxonomy' do
       let!(:root_taxon_translation_pl) { root_taxon.translations.create(slug: 'slug with space', locale: 'pl') }
       let!(:root_taxon_translation_fr) { root_taxon.translations.create(slug: 'categories-fr', locale: 'fr') }
-      let!(:root_taxon_translation_en) { root_taxon.translations.create(slug: 'categories', locale: 'en') }
-
 
       let(:expected_slugs) do
         {
