@@ -1967,14 +1967,14 @@ components:
       scheme: bearer
       description: |-
         User token to authorize Cart and Checkout requests.
-        
+
         It is required to associate Cart with the User.
     orderToken:
       type: apiKey
       in: header
       description: |-
         Order token to authorize Cart and Checkout requests.
-        
+
         [How to obtain X-Spree-Order-Token](../authentication#for-guest-users)
       name: X-Spree-Order-Token
   schemas:
@@ -2580,6 +2580,10 @@ components:
               type: string
               example: John Doe
               description: Card holder name
+            gateway_payment_profile_id:
+              type: string
+              example: card_1JqvNB2eZvKYlo2C5OlqLV7S
+              description: ID of a gateway's payment method
             default:
               type: boolean
               example: true
@@ -6446,6 +6450,7 @@ components:
                     year: 2026
                     name: John Doe
                     default: true
+                    gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
                   relationships:
                     payment_method:
                       data:
@@ -6494,6 +6499,7 @@ components:
                       month: 12
                       year: 2026
                       name: John Doe
+                      gateway_payment_profile_id: card_1JqvNB2eZvKYlo2C5OlqLV7S
                       default: true
                     relationships:
                       payment_method:
