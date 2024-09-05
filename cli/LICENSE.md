@@ -21,7 +21,7 @@ If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for
 
 All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
 
-Please refer to our Licensing FAQ in case of questions (WIP)
+Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions.
 
 ## AGPL-3.0 License - Spree 4.10 upwards
 
@@ -35,7 +35,7 @@ This program is free software: you can redistribute it and/or modify it under th
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
 
 ## BSD 3-Clause License
 
