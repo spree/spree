@@ -164,4 +164,4 @@ If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for
 
 All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
 
-Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions
+Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions.
