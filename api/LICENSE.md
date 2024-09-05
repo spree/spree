@@ -13,7 +13,6 @@ For **Spree Commerce versions 4.10** and later in the [spree/spree](https://gith
 * [AGPL-3.0](https://opensource.org/license/agpl-v3) - for all contributions from version 4.10 onwards
 
 * [BSD-3-Clause](https://opensource.org/license/bsd-3-clause) - for all other contributions predating version 4.10
-
 Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
 
 **Spree Commerce versions 4.9** and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the **BSD-3-Clause** license and users are required to comply with its terms.
@@ -30,13 +29,13 @@ If you decide to accept the AGPL-3.0 license by using Spree Commerce version 4.1
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see [https://www.gnu.org/licenses/](https://www.gnu.org/licenses/).
 
 ## BSD 3-Clause License
 

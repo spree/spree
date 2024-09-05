@@ -12,14 +12,14 @@ info:
 
     Download [official JavaScript & TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
 
-    Import to [Postman](https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml)
+    Import to [Postman](https://raw.githubusercontent.com/spree/spree/main/docs/api-reference/storefront.yaml)
   contact:
-    name: Spark Solutions
-    url: 'https://sparksolutions.co'
-    email: we@sparksolutions.co
+    name: Vendo Connect Inc.
+    url: 'https://getvendo.com'
+    email: sales@getvendo.com
   license:
-    name: BSD-3-Clause
-    url: 'https://github.com/spree/spree/blob/master/license.md'
+    name: AGPL-3.0-or-later
+    url: 'https://github.com/spree/spree/blob/main/LICENSE.md'
 paths:
   /api/v2/storefront/account:
     get:

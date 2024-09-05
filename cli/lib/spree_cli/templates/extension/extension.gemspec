@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.author    = 'You'
   s.email     = 'you@example.com'
   s.homepage  = 'https://github.com/your-github-handle/<%= file_name %>'
-  s.license = 'BSD-3-Clause'
+  s.license = 'AGPL-3.0-or-later'
 
   s.files       = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
