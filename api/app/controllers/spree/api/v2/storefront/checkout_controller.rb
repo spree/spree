@@ -36,7 +36,7 @@ module Spree
             result = update_service.call(
               order: spree_current_order,
               params: params,
-              # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
+              # defined in https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes,
               request_env: request.headers.env
             )

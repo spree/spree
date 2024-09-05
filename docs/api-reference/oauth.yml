@@ -9,12 +9,12 @@ info:
   title: Authentication
   description: Spree uses oAuth based Authentication via short-lived Bearer tokens. You can either create a new one or refresh existing token.
   contact:
-    name: Spark Solutions
-    url: 'https://sparksolutions.co'
-    email: we@sparksolutions.co
+    name: Vendo Connect Inc.
+    url: 'https://getvendo.com'
+    email: sales@getvendo.com
   license:
-    url: 'https://github.com/spree/spree/blob/master/license.md'
-    name: BSD-3-Clause
+    url: 'https://github.com/spree/spree/blob/main/LICENSE.md'
+    name: AGPL-3.0-or-later
 paths:
   /spree_oauth/token:
     post:

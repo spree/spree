@@ -6,12 +6,12 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_core'
   s.version     = Spree.version
-  s.authors     = ['Sean Schofield', 'Spark Solutions']
+  s.authors     = ['Sean Schofield', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
   s.summary     = 'The bare bones necessary for Spree'
   s.description = 'Spree Models, Helpers, Services and core libraries'
   s.homepage    = 'https://spreecommerce.org'
-  s.license     = 'BSD-3-Clause'
+  s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",

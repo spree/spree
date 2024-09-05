@@ -13,7 +13,6 @@ For **Spree Commerce versions 4.10** and later in the [spree/spree](https://gith
 * [AGPL-3.0](https://opensource.org/license/agpl-v3) - for all contributions from version 4.10 onwards
 
 * [BSD-3-Clause](https://opensource.org/license/bsd-3-clause) - for all other contributions predating version 4.10
-
 Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
 
 **Spree Commerce versions 4.9** and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the **BSD-3-Clause** license and users are required to comply with its terms.

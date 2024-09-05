@@ -21,9 +21,9 @@ RSpec.configure do |config|
       info: {
         title: 'Platform API',
         contact: {
-          name: 'Spark Solutions',
-          url: 'https://sparksolutions.co',
-          email: 'we@sparksolutions.co',
+          name: 'Vendo Connect Inc.',
+          url: 'https://getvendo.com',
+          email: 'sales@getvendo.com',
         },
         description: 'Spree Platform API',
         version: 'v2'

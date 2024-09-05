@@ -363,7 +363,7 @@ The prioritizer is also a customization point. If you want to customize which pa
 
 The `Adjuster` visits each package in an order and ensures the correct number of items are in each package. To customize this functionality, you need to do two things:
 
-1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/master/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
+1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/main/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
 2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/my_store/spree/stock/coordinator_decorator.rb`:
 
 ```ruby
