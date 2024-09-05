@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Headless API-first open source eCommerce platform'
   s.description = 'A complete open source e-commerce solution with multi-store, multi-currency and multi-language capabilities'
   s.homepage    = 'https://spreecommerce.org'
-  s.licences    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
+  s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",

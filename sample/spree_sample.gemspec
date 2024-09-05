@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Sample data for Spree Commerce'
   s.description = 'Optional package containing example data of products, stores, shipping methods, categories and others to quickly setup a demo Spree store'
   s.homepage    = 'https://spreecommerce.org'
-  s.licences    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
+  s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
