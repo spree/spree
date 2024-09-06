@@ -1,4 +1,12 @@
 {
   "signedContributors": [
+    {
+      "name": "damianlegawiec",
+      "id": 55154,
+      "comment_id": 2333846512,
+      "created_at": "2024-09-06T11:25:02Z",
+      "repoId": 3314,
+      "pullRequestNo": 12152
+    }
   ]
 }
