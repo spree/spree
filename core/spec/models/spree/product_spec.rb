@@ -55,7 +55,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#duplicate' do
+    describe '#duplicate' do
       before do
         allow(product).to receive_messages taxons: [create(:taxon)], stores: [store]
       end
@@ -130,7 +130,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'product has no variants' do
-      context '#destroy' do
+      describe '#destroy' do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
@@ -144,7 +144,7 @@ describe Spree::Product, type: :model do
         create(:variant, product: product)
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
@@ -153,7 +153,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#price' do
+    describe '#price' do
       # Regression test for #1173
       it 'strips non-price characters' do
         product.price = '$10'
@@ -161,7 +161,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#display_price' do
+    describe '#display_price' do
       before { product.price = 10.55 }
 
       it 'shows the amount' do
@@ -181,7 +181,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#available?' do
+    describe '#available?' do
       it 'is available if status is set to active' do
         product.status = 'active'
         expect(product).to be_available
@@ -193,7 +193,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#can_supply?' do
+    describe '#can_supply?' do
       it 'is true' do
         expect(product.can_supply?).to be(true)
       end
@@ -490,7 +490,7 @@ describe Spree::Product, type: :model do
     end
 
     # Regression test for #4416
-    context '#possible_promotions' do
+    describe '#possible_promotions' do
       let!(:possible_promotion) { create(:promotion, advertise: true, starts_at: 1.day.ago) }
       let!(:unadvertised_promotion) { create(:promotion, advertise: false, starts_at: 1.day.ago) }
       let!(:inactive_promotion) { create(:promotion, advertise: true, starts_at: 1.day.since) }
@@ -583,7 +583,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#images' do
+  describe '#images' do
     let(:product) { create(:product, stores: [store]) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
@@ -623,7 +623,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#total_on_hand' do
+  describe '#total_on_hand' do
     let(:product) { create(:product, stores: [store]) }
 
     it 'is infinite if track_inventory_levels is false' do
@@ -649,7 +649,7 @@ describe Spree::Product, type: :model do
   end
 
   # Regression spec for https://github.com/spree/spree/issues/5588
-  context '#validate_master when duplicate SKUs entered' do
+  describe '#validate_master when duplicate SKUs entered' do
     subject { second_product }
 
     let!(:first_product) { create(:product, sku: 'a-sku', stores: [store]) }
@@ -663,7 +663,7 @@ describe Spree::Product, type: :model do
     expect(product.master.is_master).to be true
   end
 
-  context '#discontinue!' do
+  describe '#discontinue!' do
     let(:product) { create(:product, sku: 'a-sku', stores: [store]) }
 
     it 'sets the discontinued' do
@@ -685,7 +685,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#discontinued?' do
+  describe '#discontinued?' do
     let(:product_live) { build(:product, sku: 'a-sku') }
     let(:product_discontinued) { build(:product, sku: 'a-sku', discontinue_on: Time.now - 1.day) }
 
@@ -698,7 +698,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#brand' do
+  describe '#brand' do
     let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_brands_name')) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
@@ -707,7 +707,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#category' do
+  describe '#category' do
     let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_categories_name')) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
@@ -716,7 +716,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let!(:product) { create(:product, stores: [store]) }
 
     it 'returns true when out of stock and backorderable' do
@@ -745,7 +745,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#default_variant' do
+  describe '#default_variant' do
     let(:product) { create(:product, stores: [store]) }
 
     context 'track inventory levels' do
@@ -806,7 +806,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#default_variant_id' do
+  describe '#default_variant_id' do
     let(:product) { create(:product, stores: [store]) }
 
     context 'product has variants' do
@@ -854,6 +854,32 @@ describe Spree::Product, type: :model do
       let(:product) { build(:product, slug: 'My-slug') }
 
       it { expect { product.valid? }.to change(product, :slug).to('my-slug') }
+    end
+  end
+
+  describe '#default_image' do
+    let(:product) { create(:product, stores: [store]) }
+    let!(:image) { create(:image, viewable: product.master) }
+
+    it 'returns the first image for the product' do
+      expect(product.default_image).to eq(image)
+    end
+
+    context 'with variants' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image2) { create(:image, viewable: variant) }
+
+      it 'returns the first image for the product' do
+        expect(product.default_image).to eq(image)
+      end
+
+      context 'when master has no images' do
+        let!(:image) { nil }
+
+        it 'returns the first image for the variant' do
+          expect(product.default_image).to eq(image2)
+        end
+      end
     end
   end
 

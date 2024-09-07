@@ -320,14 +320,14 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#cost_price=' do
+  describe '#cost_price=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.cost_price = '1,599.99'
     end
   end
 
-  context '#in_stock_or_backorderable?' do
+  describe '#in_stock_or_backorderable?' do
     subject { variant.in_stock_or_backorderable? }
 
     let!(:variant) { create(:variant) }
@@ -373,34 +373,34 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#price=' do
+  describe '#price=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.price = '1,599.99'
     end
   end
 
-  context '#weight=' do
+  describe '#weight=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.weight = '1,599.99'
     end
   end
 
-  context '#currency' do
+  describe '#currency' do
     it 'returns the globally configured currency' do
       expect(variant.currency).to eql 'USD'
     end
   end
 
-  context '#display_amount' do
+  describe '#display_amount' do
     it 'returns a Spree::Money' do
       variant.price = 21.22
       expect(variant.display_amount.to_s).to eql '$21.22'
     end
   end
 
-  context '#cost_currency' do
+  describe '#cost_currency' do
     context 'when cost currency is nil' do
       before { variant.cost_currency = nil }
 
@@ -848,7 +848,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#volume' do
+  describe '#volume' do
     let(:variant_zero_width) { create(:variant, width: 0) }
     let(:variant) { create(:variant) }
 
@@ -862,7 +862,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#dimension' do
+  describe '#dimension' do
     let(:variant) { create(:variant) }
 
     it 'return the dimension if the dimension parameters are different of zero' do
@@ -871,7 +871,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#discontinue!' do
+  describe '#discontinue!' do
     let(:variant) { create(:variant) }
 
     it 'sets the discontinued' do
@@ -887,7 +887,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#discontinued?' do
+  describe '#discontinued?' do
     let(:variant_live) { build(:variant) }
     let(:variant_discontinued) { build(:variant, discontinue_on: Time.now - 1.day) }
 
@@ -1053,7 +1053,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let!(:variant) { create(:variant) }
 
     it 'returns true when out of stock and backorderable' do
@@ -1097,6 +1097,36 @@ describe Spree::Variant, type: :model do
       variant.destroy
       expect(order.reload.line_items).to be_empty
       expect(order.total).to eq(0)
+    end
+  end
+
+  describe '#default_image' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+
+    it 'returns the first image for the variant' do
+      expect(variant.default_image).to eq(image)
+    end
+  end
+
+  describe '#secondary_image' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image2) { create(:image, position: 2, viewable: variant) }
+
+    it 'returns the second image for the variant' do
+      expect(variant.secondary_image).to eq(image2)
+    end
+  end
+
+  describe '#additional_images' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image2) { create(:image, position: 2, viewable: variant) }
+    let!(:image3) { create(:image, position: 3, viewable: variant) }
+
+    it 'returns the additional images for the variant' do
+      expect(variant.additional_images).to eq([image2, image3])
     end
   end
 end
