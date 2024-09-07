@@ -201,27 +201,21 @@ module Spree
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      if product.images.any?
-        product.images.first
-      elsif product.default_variant.images.any?
-        product.default_variant.images.first
-      elsif product.variant_images.any?
-        product.variant_images.first
-      end
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
+        `BaseHelper#default_image_for_product` is deprecated and will be removed in Spree 6.0.
+        Please use `product.default_image` instead
+      DEPRECATION
+
+      product.default_image
     end
 
     def default_image_for_product_or_variant(product_or_variant)
-      Rails.cache.fetch("spree/default-image/#{product_or_variant.cache_key_with_version}") do
-        if product_or_variant.is_a?(Spree::Product)
-          default_image_for_product(product_or_variant)
-        elsif product_or_variant.is_a?(Spree::Variant)
-          if product_or_variant.images.any?
-            product_or_variant.images.first
-          else
-            default_image_for_product(product_or_variant.product)
-          end
-        end
-      end
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
+        `BaseHelper#default_image_for_product_or_variant` is deprecated and will be removed in Spree 6.0.
+        Please use `product_or_variant.default_image` instead
+      DEPRECATION
+
+      product_or_variant.default_image
     end
 
     def base_cache_key

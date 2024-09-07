@@ -183,6 +183,32 @@ module Spree
       !!deleted_at
     end
 
+    # Returns default Image for Variant
+    # @return [Spree::Image]
+    def default_image
+      @default_image ||= if images.size.positive?
+                           images.first
+                         else
+                           product.default_image
+                         end
+    end
+
+    # Returns secondary Image for Variant
+    # @return [Spree::Image]
+    def secondary_image
+      @secondary_image ||= if images.size > 1
+                             images.second
+                           else
+                             product.secondary_image
+                           end
+    end
+
+    # Returns additional Images for Variant
+    # @return [Array<Spree::Image>]
+    def additional_images
+      @additional_images ||= (images + product.images).uniq.find_all { |image| image.id != default_image&.id }
+    end
+
     # Returns an array of hashes with the option type name, value and presentation
     # @return [Array<Hash>]
     def options

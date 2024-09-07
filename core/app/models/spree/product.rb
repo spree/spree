@@ -240,6 +240,35 @@ module Spree
       @default_variant_id ||= default_variant.id
     end
 
+    # Returns default Image for Product
+    # @return [Spree::Image]
+    def default_image
+      @default_image ||= if images.size.positive?
+                           images.first
+                         elsif default_variant.images.size.positive?
+                           default_variant.default_image
+                         elsif variant_images.size.positive?
+                           variant_images.first
+                         end
+    end
+    alias featured_image default_image
+
+    # Returns secondary Image for Product
+    # @return [Spree::Image]
+    def secondary_image
+      @secondary_image ||= if images.size > 1
+                             images.second
+                           elsif images.size == 1 && default_variant.images.size.positive?
+                             default_variant.images.first
+                           elsif default_variant.images.size > 1
+                             default_variant.secondary_image
+                           elsif variant_images.size > 1
+                             variant_images.second
+                           end
+    end
+
+    # Returns tax category for Product
+    # @return [Spree::TaxCategory]
     def tax_category
       @tax_category ||= super || TaxCategory.find_by(is_default: true)
     end
