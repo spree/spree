@@ -2,6 +2,7 @@ module Spree
   module Api
     module V2
       class BaseController < ActionController::API
+        include ActiveStorage::SetCurrent
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
