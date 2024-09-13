@@ -58,7 +58,6 @@ module Spree
     #
     # Attributes
     #
-    attribute :filterable, :boolean, default: true
     accepts_nested_attributes_for :option_values, reject_if: ->(ov) { ov[:name].blank? || ov[:presentation].blank? }, allow_destroy: true
 
     #
