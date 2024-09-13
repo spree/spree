@@ -3,6 +3,10 @@ require 'spec_helper'
 describe Spree::OptionType, type: :model do
   it_behaves_like 'metadata'
 
+  describe '#filterable' do
+    it { expect(subject.filterable).to eq(true) }
+  end
+
   describe 'callbacks' do
     describe '#normalize_name' do
       let!(:option_type) { build(:option_type, name: 'Shirt Size') }
