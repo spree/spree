@@ -55,8 +55,14 @@ module Spree
       scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") }
     end
 
+    #
+    # Attributes
+    #
     accepts_nested_attributes_for :option_values, reject_if: ->(ov) { ov[:name].blank? || ov[:presentation].blank? }, allow_destroy: true
 
+    #
+    # Callbacks
+    #
     after_touch :touch_all_products
 
     # legacy, name itself is now parameterized before saving
