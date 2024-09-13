@@ -3,6 +3,18 @@ require 'spec_helper'
 describe Spree::OptionType, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'callbacks' do
+    describe '#normalize_name' do
+      let!(:option_type) { build(:option_type, name: 'Shirt Size') }
+
+      it 'should parameterize the name' do
+        option_type.name = 'Shirt Size'
+        option_type.save!
+        expect(option_type.name).to eq('shirt-size')
+      end
+    end
+  end
+
   describe 'translations' do
     let!(:option_type) { create(:option_type, name: 'size', presentation: 'Size') }
 
@@ -19,6 +31,27 @@ describe Spree::OptionType, type: :model do
 
       expect(option_type_pl_translation).to be_present
       expect(option_type_pl_translation.presentation).to eq('Rozmiar')
+    end
+  end
+
+  describe 'color methods' do
+    let!(:option_type) { create(:option_type, name: 'Color') }
+
+    describe '.color' do
+      it 'should return the first option type with name "color"' do
+        expect(described_class.color).to eq(option_type)
+      end
+    end
+
+    describe '#color?' do
+      it 'should return true if the name is "color" or "colour"' do
+        expect(option_type.color?).to be_truthy
+      end
+
+      it 'should return false if the name is not "color" or "colour"' do
+        option_type.update(name: 'Size')
+        expect(option_type.color?).to be_falsy
+      end
     end
   end
 

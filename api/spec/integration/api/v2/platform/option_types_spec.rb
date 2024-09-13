@@ -27,6 +27,7 @@ describe 'Option Types API', swagger: true do
   let(:invalid_param_value) do
     {
       name: '',
+      presentation: ''
     }
   end
 
