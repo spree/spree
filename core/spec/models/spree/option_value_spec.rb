@@ -3,6 +3,47 @@ require 'spec_helper'
 describe Spree::OptionValue, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'callbacks' do
+    describe '#normalize_name' do
+      let!(:option_value) { build(:option_value, name: 'Red Color') }
+
+      it 'should parameterize the name' do
+        option_value.name = 'Red Color'
+        option_value.valid?
+        expect(option_value.name).to eq('red-color')
+      end
+    end
+
+    describe '#touch_all_variants' do
+      let!(:option_value) { create(:option_value) }
+
+      it 'touches all variants associated with the option value' do
+        variant1 = create(:variant, option_values: [option_value])
+        variant2 = create(:variant, option_values: [option_value])
+        variant3 = create(:variant)
+
+        expect { option_value.send(:touch_all_variants) }.to change { [variant1.reload.updated_at, variant2.reload.updated_at, variant3.reload.updated_at] }
+      end
+    end
+
+    describe '#touch_products' do
+      let!(:option_value) { create(:option_value) }
+      let!(:product1) { create(:product) }
+      let!(:product2) { create(:product) }
+      let!(:product3) { create(:product) }
+
+      before do
+        create(:variant, product: product1, option_values: [option_value])
+        create(:variant, product: product2, option_values: [option_value])
+        create(:variant, product: product3)
+      end
+
+      it 'touches all products associated with the option value' do
+        expect { option_value.send(:touch_products) }.to change { [product1.reload.updated_at, product2.reload.updated_at, product3.reload.updated_at] }
+      end
+    end
+  end
+
   describe 'translations' do
     let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
 
@@ -19,16 +60,6 @@ describe Spree::OptionValue, type: :model do
 
       expect(option_value_pl_translation).to be_present
       expect(option_value_pl_translation.presentation).to eq('Czerwony')
-    end
-  end
-
-  context 'touching' do
-    it 'touches a variant' do
-      variant = create(:variant)
-      option_value = variant.option_values.first
-      variant.update_column(:updated_at, 1.day.ago)
-      option_value.touch
-      expect(variant.reload.updated_at).to be_within(3.seconds).of(Time.current)
     end
   end
 end
