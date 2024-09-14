@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :property, class: Spree::Property do
-    name         { 'baseball_cap_color' }
+    sequence(:name) { |n| "baseball_cap_color_#{n}" }
     presentation { 'cap color' }
 
     trait :filterable do
