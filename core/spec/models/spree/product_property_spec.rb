@@ -61,7 +61,8 @@ describe Spree::ProductProperty, type: :model do
 
     it 'assigns property' do
       @pp.property_name = 'Size'
-      expect(@pp.property.name).to eq('Size')
+      expect(@pp.property.name).to eq('size')
+      expect(@pp.property.presentation).to eq('Size')
     end
   end
 
