@@ -24,6 +24,42 @@ describe Spree::Property, type: :model do
     end
   end
 
+  describe 'scopes' do
+    let!(:properties) { create_list(:property, 2, display_on: 'both') }
+    let!(:frontend_properties) { create_list(:property, 2, display_on: 'front_end') }
+    let!(:backend_properties) { create_list(:property, 2, display_on: 'back_end') }
+
+    describe '.available' do
+      subject { described_class.available }
+
+      it { is_expected.to match_array(properties) }
+    end
+
+    describe '.available_on_front_end' do
+      subject { described_class.available_on_front_end }
+
+      it { is_expected.to match_array(properties + frontend_properties) }
+    end
+
+    describe '.available_on_back_end' do
+      subject { described_class.available_on_back_end }
+
+      it { is_expected.to match_array(properties + backend_properties) }
+    end
+  end
+
+  describe 'callbacks' do
+    describe '#normalize_name' do
+      let!(:option_type) { build(:option_type, name: 'Shirt Size') }
+
+      it 'should parameterize the name' do
+        option_type.name = 'Shirt Size'
+        option_type.save!
+        expect(option_type.name).to eq('shirt-size')
+      end
+    end
+  end
+
   context 'setting filter param' do
     subject { build(:property, name: 'Brand Name') }
 

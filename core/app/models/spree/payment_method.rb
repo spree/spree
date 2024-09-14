@@ -5,11 +5,10 @@ module Spree
 
     include Spree::MultiStoreResource
     include Spree::Metadata
+    include Spree::DisplayOn
     if defined?(Spree::Security::PaymentMethods)
       include Spree::Security::PaymentMethods
     end
-
-    DISPLAY = [:both, :front_end, :back_end].freeze
 
     scope :active,                 -> { where(active: true).order(position: :asc) }
     scope :available,              -> { active.where(display_on: [:front_end, :back_end, :both]) }
