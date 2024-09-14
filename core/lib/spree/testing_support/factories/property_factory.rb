@@ -8,19 +8,19 @@ FactoryBot.define do
     end
 
     trait :brand do
-      sequence(:name) { |n| "brand-#{n}" }
+      name         { 'brand' }
       presentation { 'Brand' }
       filter_param { 'brand' }
     end
 
     trait :manufacturer do
-      sequence(:name) { |n| "manufacturer-#{n}" }
+      name         { 'manufacturer' }
       presentation { 'Manufacturer' }
       filter_param { 'manufacturer' }
     end
 
     trait :material do
-      sequence(:name) { |n| "material-#{n}" }
+      name         { 'material' }
       presentation { 'Material' }
       filter_param { 'material' }
     end
