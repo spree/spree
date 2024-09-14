@@ -2,6 +2,8 @@ module Spree
   class Property < Spree::Base
     include Spree::FilterParam
     include Spree::Metadata
+    include Spree::ParameterizableName
+    include Spree::DisplayOn
     include Spree::TranslatableResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
