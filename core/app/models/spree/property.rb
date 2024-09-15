@@ -22,6 +22,7 @@ module Spree
     end
 
     auto_strip_attributes :name, :presentation
+    acts_as_list
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
     has_many :prototypes, through: :property_prototypes, class_name: 'Spree::Prototype'
@@ -31,6 +32,7 @@ module Spree
 
     validates :name, :presentation, presence: true
 
+    default_scope { order(:position) }
     scope :sorted, -> { order(:name) }
     scope :filterable, -> { where(filterable: true) }
 
