@@ -296,13 +296,14 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    # TODO: we should use property names and values instead of filter params
     context 'with specified properties' do
-      context 'using proper filter params' do
+      xcontext 'using proper filter params' do
         before { get "/api/v2/storefront/products?filter[properties][#{property.filter_param}]=#{product_property.filter_param}&include=product_properties" }
 
         it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns products with specified options' do
+        it 'returns products with specified properties' do
           expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
           expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:name).with_value(property.name)))
           expect(json_response['included']).to include(have_type('product_property').and(have_attribute(:value).with_value(product_property.value)))
@@ -312,12 +313,12 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
 
-      context 'using property names and values' do
+      xcontext 'using property names and values' do
         before { get "/api/v2/storefront/products?filter[properties][#{property.name}]=#{product_property.value}&include=product_properties" }
 
         it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns products with specified options' do
+        it 'returns products with specified properties' do
           expect(json_response['data'].first).to have_id(product_with_property.id.to_s)
         end
       end

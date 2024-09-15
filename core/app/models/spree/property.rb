@@ -10,7 +10,7 @@ module Spree
     end
 
     if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation filter_param].freeze
+      TRANSLATABLE_FIELDS = %i[name presentation].freeze
       translates(*TRANSLATABLE_FIELDS)
     else
       TRANSLATABLE_FIELDS = %i[presentation].freeze
