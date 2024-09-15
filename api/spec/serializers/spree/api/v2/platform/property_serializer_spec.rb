@@ -21,6 +21,7 @@ describe Spree::Api::V2::Platform::PropertySerializer do
           filterable: resource.filterable,
           filter_param: resource.filter_param,
           display_on: resource.display_on,
+          position: resource.position,
           public_metadata: resource.public_metadata,
           private_metadata: resource.private_metadata
         }
