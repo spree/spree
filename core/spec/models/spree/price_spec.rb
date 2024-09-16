@@ -88,7 +88,7 @@ describe Spree::Price, type: :model do
 
       context 'legacy behavior' do
         before do
-          allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+          allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
         end
 
         it { is_expected.to be_valid }

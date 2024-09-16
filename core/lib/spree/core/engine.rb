@@ -1,13 +1,11 @@
 require_relative 'dependencies'
 require_relative 'configuration'
-require_relative 'runtime_configuration'
 
 module Spree
   module Core
     class Engine < ::Rails::Engine
       Environment = Struct.new(:calculators,
                                :preferences,
-                               :runtime_preferences,
                                :dependencies,
                                :payment_methods,
                                :adjusters,
@@ -25,11 +23,11 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::RuntimeConfiguration.new, Spree::Core::Dependencies.new)
+        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes << [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess]
         Spree::Config = app.config.spree.preferences
-        Spree::RuntimeConfig = app.config.spree.runtime_preferences
+        Spree::Config = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new
       end

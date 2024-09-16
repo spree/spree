@@ -7,6 +7,12 @@ module Spree
         end
       end
 
+      def reset
+        self.class.defaults.each do |key, value|
+          self[key] = value
+        end
+      end
+
       def configure
         yield(self) if block_given?
       end
@@ -17,8 +23,13 @@ module Spree
 
       alias [] get
 
-      def set(preference, value)
-        send("#{preference}=", value)
+      def set(*args)
+        options = args.extract_options!
+        options.each do |name, value|
+          send("#{name}=", value)
+        end
+
+        send("#{args[0]}=", args[1]) if args.size == 2
       end
 
       alias []= set
