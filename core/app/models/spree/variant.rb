@@ -230,7 +230,6 @@ module Spree
         next if option[:name].blank? || option[:value].blank?
 
         set_option_value(option[:name], option[:value], option[:position])
-        set_option_value(option[:name], option[:value])
       end
     end
 
