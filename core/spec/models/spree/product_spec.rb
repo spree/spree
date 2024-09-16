@@ -884,31 +884,33 @@ describe Spree::Product, type: :model do
   end
 
   describe '#ensure_store_presence' do
-    let(:valid_record) { build(:product, stores: [create(:store)]) }
-    let(:invalid_record) { build(:product, stores: []) }
+    let(:product) { create(:product) }
 
-    it { expect(valid_record).to be_valid }
-    it { expect(invalid_record).not_to be_valid }
+    context 'no store passed' do
+      it 'auto-assigns store' do
+        expect(product.stores).to eq([Spree::Store.default])
+      end
+    end
+
+    context 'store passed' do
+      let(:store) { create(:store) }
+      let(:product) { create(:product, stores: [store]) }
+
+      it 'does not auto-assign store' do
+        expect(product.stores).to eq([store])
+      end
+    end
 
     context 'validation disabled' do
-      context 'method overwrite' do
-        before { allow_any_instance_of(described_class).to receive(:disable_store_presence_validation?).and_return(true) }
-
-        it { expect(valid_record).to be_valid }
-        it { expect(invalid_record).to be_valid }
-      end
-
       context 'preference set' do
         before { Spree::Config[:disable_store_presence_validation] = true }
 
-        it { expect(valid_record).to be_valid }
-        it { expect(invalid_record).to be_valid }
+        it { expect(product.stores).to eq([]) }
       end
     end
   end
 
   describe '#taxons_for_store' do
-    let(:store) { create(:store) }
     let(:store_2) { create(:store) }
     let(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
     let(:taxonomy) { create(:taxonomy, store: store) }
