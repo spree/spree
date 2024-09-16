@@ -475,6 +475,30 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe '#options' do
+    let(:product) { create(:product, option_types: [option_type, option_type2]) }
+    let(:variant) { create(:variant, product: product, option_values: [option_value, option_value2]) }
+    let!(:option_type2) { create(:option_type, name: "material") }
+    let!(:option_type) { Spree::OptionType.find_by(name: "size") || create(:option_type, name: "size") }
+    let(:option_value) { create(:option_value, name: "medium", presentation: "M", option_type: option_type) }
+    let(:option_value2) { create(:option_value, name: "wool", presentation: "Wool", option_type: option_type2) }
+
+    it "returns an array of hashes with option type name, value, and presentation orderd by option type position" do
+      expect(variant.options).to eq([
+                                      {
+                                        name: "size",
+                                        value: "medium",
+                                        presentation: "M"
+                                      },
+                                      {
+                                        name: "material",
+                                        value: "wool",
+                                        presentation: "Wool"
+                                      }
+                                    ])
+    end
+  end
+
   describe '#options_text' do
     let(:variant) { build :variant }
     let(:fake_presenter) { double :fake_presenter }

@@ -212,28 +212,32 @@ module Spree
     # Returns an array of hashes with the option type name, value and presentation
     # @return [Array<Hash>]
     def options
-      option_values.includes(:option_type).map do |option_value|
-        {
-          name: option_value.option_type.name,
-          value: option_value.name,
-          presentation: option_value.presentation
-        }
-      end
+      @options ||= option_values.
+                   includes(option_type: :product_option_types).
+                   merge(product.product_option_types).
+                   reorder('spree_product_option_types.position').
+                   map do |option_value|
+                     {
+                       name: option_value.option_type.name,
+                       value: option_value.name,
+                       presentation: option_value.presentation
+                     }
+                   end
     end
 
     def options=(options = {})
       options.each do |option|
         next if option[:name].blank? || option[:value].blank?
 
-        set_option_value(option[:name], option[:value])
+        set_option_value(option[:name], option[:value], option[:position])
       end
     end
 
-    def set_option_value(opt_name, opt_value)
+    def set_option_value(opt_name, opt_value, opt_type_position = nil)
       # no option values on master
       return if is_master
 
-      option_type = Spree::OptionType.where(['LOWER(name) = ?', opt_name.downcase.strip]).first_or_initialize do |o|
+      option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
         o.name = o.presentation = opt_name
         o.save!
       end
@@ -242,16 +246,21 @@ module Spree
 
       if current_value.nil?
         # then we have to check to make sure that the product has the option type
-        unless product.option_types.include? option_type
-          product.option_types << option_type
-        end
+        product_option_type = if (existing_prod_ot = product.product_option_types.find { |ot| ot.option_type_id == option_type.id })
+                                existing_prod_ot
+                              else
+                                product_option_type = product.product_option_types.new
+                                product_option_type.option_type = option_type
+                              end
+        product_option_type.position = opt_type_position if opt_type_position
+        product_option_type.save! if product_option_type.new_record? || product_option_type.changed?
       else
-        return if current_value.name.downcase.strip == opt_value.downcase.strip
+        return if current_value.name.parameterize == opt_value.parameterize
 
         option_values.delete(current_value)
       end
 
-      option_value = option_type.option_values.where(['LOWER(name) = ?', opt_value.downcase.strip]).first_or_initialize do |o|
+      option_value = option_type.option_values.where(name: opt_value.parameterize).first_or_initialize do |o|
         o.name = o.presentation = opt_value
         o.save!
       end
@@ -261,11 +270,15 @@ module Spree
     end
 
     def find_option_value(opt_name)
-      option_values.detect { |o| o.option_type.name.downcase.strip == opt_name.downcase.strip }
+      option_values.includes(:option_type).detect { |o| o.option_type.name.parameterize == opt_name.parameterize }
     end
 
-    def option_value(opt_name)
-      find_option_value(opt_name).try(:presentation)
+    def option_value(option_type)
+      if option_type.is_a?(Spree::OptionType)
+        option_values.detect { |o| o.option_type_id == option_type.id }.try(:presentation)
+      else
+        find_option_value(option_type).try(:presentation)
+      end
     end
 
     def price_in(currency)
