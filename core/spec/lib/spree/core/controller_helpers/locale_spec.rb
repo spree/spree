@@ -135,7 +135,7 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
 
     context 'when always using translations' do
       before do
-        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(true)
+        allow(Spree::Config).to receive(:always_use_translations).and_return(true)
       end
 
       it 'sets only the current locale' do

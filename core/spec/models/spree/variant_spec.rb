@@ -51,11 +51,11 @@ describe Spree::Variant, type: :model do
 
       context 'disabled validation' do
         before do
-          Spree::RuntimeConfig[:disable_sku_validation] = true
+          Spree::Config[:disable_sku_validation] = true
         end
 
         after do
-          Spree::RuntimeConfig[:disable_sku_validation] = false
+          Spree::Config[:disable_sku_validation] = false
         end
 
         context 'valid' do
@@ -177,7 +177,7 @@ describe Spree::Variant, type: :model do
 
         context 'when price do not have amount' do
           before do
-            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+            allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
           end
 
           let!(:price_1) { create(:price, currency: currency, variant: variant, amount: nil) }
@@ -197,7 +197,7 @@ describe Spree::Variant, type: :model do
 
         context 'when price do not have amount' do
           before do
-            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+            allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
           end
 
           let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }

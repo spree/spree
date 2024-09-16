@@ -329,7 +329,7 @@ describe Spree::Taxon, type: :model do
 
     context 'when `always_use_translations` is disabled' do
       before do
-        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(false)
+        allow(Spree::Config).to receive(:always_use_translations).and_return(false)
       end
 
       it 'sets the pretty name' do
@@ -339,7 +339,7 @@ describe Spree::Taxon, type: :model do
 
     context 'when `always_use_translations` is enabled' do
       before do
-        allow(Spree::RuntimeConfig).to receive(:always_use_translations).and_return(true)
+        allow(Spree::Config).to receive(:always_use_translations).and_return(true)
       end
 
       it 'sets the pretty name' do

@@ -18,13 +18,13 @@ module Spree
     validates :amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: MAXIMUM_AMOUNT
-    }, if: -> { Spree::RuntimeConfig.allow_empty_price_amount }
+    }, if: -> { Spree::Config.allow_empty_price_amount }
 
     # new behavior
     validates :amount, allow_nil: false, numericality: {
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: MAXIMUM_AMOUNT
-    }, unless: -> { Spree::RuntimeConfig.allow_empty_price_amount }
+    }, unless: -> { Spree::Config.allow_empty_price_amount }
 
     validates :compare_at_amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,

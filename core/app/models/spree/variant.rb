@@ -455,7 +455,7 @@ module Spree
     end
 
     def disable_sku_validation?
-      Spree::RuntimeConfig[:disable_sku_validation]
+      Spree::Config[:disable_sku_validation]
     end
   end
 end

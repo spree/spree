@@ -25,7 +25,7 @@ describe Spree::Order, type: :model do
 
         context 'when there is a price with nil amount' do
           let!(:euro_price) do
-            allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+            allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
             create(:price, variant: line_item.variant, amount: nil, currency: 'EUR')
           end
 

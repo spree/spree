@@ -236,7 +236,7 @@ module Spree
       let(:call_service) { subject.call(order: order, variant: variant, quantity: 1) }
 
       before do
-        allow(Spree::RuntimeConfig).to receive(:allow_empty_price_amount).and_return(true)
+        allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
         variant.prices.first.update(amount: nil)
       end
 
