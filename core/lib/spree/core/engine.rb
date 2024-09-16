@@ -1,6 +1,5 @@
 require_relative 'dependencies'
-require_relative 'configuration'
-require_relative 'runtime_configuration'
+require_relative 'preferences/runtime_configuration'
 
 module Spree
   module Core
