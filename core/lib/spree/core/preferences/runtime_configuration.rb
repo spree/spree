@@ -7,6 +7,12 @@ module Spree
         end
       end
 
+      def reset
+        self.class.defaults.each do |key, value|
+          self[key] = value
+        end
+      end
+
       def configure
         yield(self) if block_given?
       end
