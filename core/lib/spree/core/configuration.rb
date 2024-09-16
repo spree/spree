@@ -16,6 +16,7 @@
 # a.preferred_color
 #
 require 'spree/core/search/base'
+require 'spree/core/preferences/configuration' # for compatibility reasons
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/preferable'
 
