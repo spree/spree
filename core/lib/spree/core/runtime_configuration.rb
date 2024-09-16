@@ -5,6 +5,7 @@ module Spree
     class RuntimeConfiguration < Preferences::RuntimeConfiguration
       preference :always_use_translations, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
+      preference :disable_sku_validation, :boolean, default: false
     end
   end
 end

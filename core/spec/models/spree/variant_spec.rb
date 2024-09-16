@@ -51,11 +51,11 @@ describe Spree::Variant, type: :model do
 
       context 'disabled validation' do
         before do
-          Spree::Config[:disable_sku_validation] = true
+          Spree::RuntimeConfig[:disable_sku_validation] = true
         end
 
         after do
-          Spree::Config[:disable_sku_validation] = false
+          Spree::RuntimeConfig[:disable_sku_validation] = false
         end
 
         context 'valid' do
