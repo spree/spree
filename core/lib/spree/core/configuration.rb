@@ -50,7 +50,7 @@ module Spree
       preference :max_level_in_taxons_menu, :integer, deprecated: true
       preference :non_expiring_credit_types, :array, default: []
       preference :products_per_page, :integer, default: 12
-      preference :require_master_price, :boolean, default: true
+      preference :require_master_price, :boolean, default: false
       preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received
       preference :return_eligibility_number_of_days, :integer, default: 365
       preference :send_core_emails, :boolean, default: true # Default mail headers settings
