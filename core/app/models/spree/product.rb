@@ -69,7 +69,7 @@ module Spree
     # https://github.com/rails/rails/issues/3458
     before_destroy :ensure_not_in_complete_orders
 
-    has_many :product_option_types, dependent: :destroy, inverse_of: :product
+    has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
     has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
