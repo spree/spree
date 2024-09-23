@@ -102,24 +102,6 @@ jobs:
       - image: cimg/mysql:8.0
         command: [--default-authentication-plugin=mysql_native_password]
 
-  send_test_coverage:
-    <<: *defaults
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          name: Merge coverage reports
-          command:
-              bundle check || bundle install &&
-              bundle exec rake coverage:report
-      - run:
-          name: Allow executing given file
-          command: chmod +x << parameters.run_file_path >>
-      - run:
-          name:  Send test coverage
-          command: bash << parameters.run_file_path >>
-
 
 workflows:
   main:
@@ -127,14 +109,6 @@ workflows:
       - run_test:
           name: bundle_ruby
           run_file_path: ./bin/bundle_ruby.sh
-      - run_test:
-          name: brakeman
-          restore_cache_key_1: spree-brakeman-{{ .Branch }}
-          restore_cache_key_2: spree-brakeman
-          save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          run_file_path: ./bin/brakeman.sh
-          requires:
-              - bundle_ruby
       - tests_postgres:
           name: tests_rails_postgres
           store_artefacts: true
@@ -148,6 +122,7 @@ workflows:
           run_file_path: ./bin/tests_database_ci.sh
           requires:
               - bundle_ruby
+              - tests_rails_postgres
       - tests_postgres:
           name: tests_rails_7_0_postgres
           rails_version: '~> 7.0.0'
@@ -155,6 +130,7 @@ workflows:
           run_file_path: ./bin/tests_database_ci.sh
           requires:
               - bundle_ruby
+              - tests_rails_postgres
       - tests_postgres:
           name: tests_rails_6_1_postgres
           rails_version: '~> 6.1.0'
@@ -162,20 +138,21 @@ workflows:
           run_file_path: ./bin/tests_database_ci.sh
           requires:
               - bundle_ruby
+              - tests_rails_postgres
       - tests_mysql:
           name: tests_rails_mysql
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
-          post-steps:
-              - persist_to_workspace:
-                  root: /tmp/workspace
-                  paths:
-                    - simplecov
           requires:
               - bundle_ruby
-      - send_test_coverage:
-          name: send_test_coverage
-          run_file_path: ./bin/tests_coverage.sh
+              - tests_rails_postgres
+      - run_test:
+          name: brakeman
+          restore_cache_key_1: spree-brakeman-{{ .Branch }}
+          restore_cache_key_2: spree-brakeman
+          save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          run_file_path: ./bin/brakeman.sh
           requires:
-              - tests_rails_mysql
+              - bundle_ruby
+              - tests_rails_postgres
 
