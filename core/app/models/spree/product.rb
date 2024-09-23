@@ -274,7 +274,7 @@ module Spree
     # Returns tax category for Product
     # @return [Spree::TaxCategory]
     def tax_category
-      @tax_category ||= super || TaxCategory.find_by(is_default: true)
+      @tax_category ||= super || TaxCategory.default
     end
 
     # Adding properties and option types on creation based on a chosen prototype
