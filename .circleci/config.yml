@@ -35,7 +35,6 @@ defaults: &defaults
 jobs:
   run_test: &run_test
     <<: *defaults
-    parallelism: 8
     steps: &default_steps
       - checkout
       - attach_workspace:
@@ -74,6 +73,7 @@ jobs:
 
   tests_postgres:
     <<: *run_test
+    parallelism: 8
     parameters:
         <<: *default_parameters
     environment:
@@ -88,6 +88,7 @@ jobs:
 
   tests_mysql:
     <<: *run_test
+    parallelism: 8
     parameters:
         <<: *default_parameters
     environment:
@@ -107,21 +108,21 @@ workflows:
   main:
     jobs:
       - run_test:
-          name: bundle_ruby
+          name: build
           run_file_path: ./bin/bundle_ruby.sh
       - tests_postgres:
           name: tests_rails_postgres
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby
+              - build
       - tests_postgres:
           name: tests_rails_7_1_postgres
           rails_version: '~> 7.1.0'
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby
+              - build
               - tests_rails_postgres
       - tests_postgres:
           name: tests_rails_7_0_postgres
@@ -129,7 +130,7 @@ workflows:
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby
+              - build
               - tests_rails_postgres
       - tests_postgres:
           name: tests_rails_6_1_postgres
@@ -137,14 +138,14 @@ workflows:
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby
+              - build
               - tests_rails_postgres
       - tests_mysql:
           name: tests_rails_mysql
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
-              - bundle_ruby
+              - build
               - tests_rails_postgres
       - run_test:
           name: brakeman
@@ -153,6 +154,6 @@ workflows:
           save_cache_key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           run_file_path: ./bin/brakeman.sh
           requires:
-              - bundle_ruby
+              - build
               - tests_rails_postgres
 
