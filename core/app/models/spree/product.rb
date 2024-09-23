@@ -78,6 +78,7 @@ module Spree
 
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
+    has_many :taxonomies, through: :taxons
 
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
     has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
@@ -578,11 +579,6 @@ module Spree
 
     def taxon_and_ancestors
       @taxon_and_ancestors ||= taxons.map(&:self_and_ancestors).flatten.uniq
-    end
-
-    # Get the taxonomy ids of all taxons assigned to this product and their ancestors.
-    def taxonomy_ids
-      @taxonomy_ids ||= taxon_and_ancestors.map(&:taxonomy_id).flatten.uniq
     end
 
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
