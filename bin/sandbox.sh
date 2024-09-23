@@ -38,8 +38,7 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
-gem 'spree_backend', github: 'spree/spree_backend', branch: 'main'
-gem 'spree_frontend', github: 'spree/spree_rails_frontend', branch: 'main'
+gem 'spree_admin', path: '../admin'
 gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'
 gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
@@ -76,8 +75,7 @@ bin/rails stimulus:install
 bin/rails db:drop || true
 bin/rails db:create
 bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-bin/rails g spree:backend:install
-bin/rails g spree:frontend:install
 bin/rails g spree:emails:install
+bin/rails g spree:admin:install
 bin/rails g spree:auth:install
 bin/rails g spree_gateway:install

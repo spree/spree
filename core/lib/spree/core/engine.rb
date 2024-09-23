@@ -27,7 +27,7 @@ module Spree
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes << [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess]
         Spree::Config = app.config.spree.preferences
-        Spree::Config = app.config.spree.preferences # for compatibility
+        Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new
       end
