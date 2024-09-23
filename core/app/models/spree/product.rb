@@ -230,7 +230,7 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      @default_variant ||= Rails.cache.fetch(default_variant_cache_key) do
+      @default_variant ||= begin
         if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
           available_variant
         else
@@ -492,6 +492,8 @@ module Spree
     end
 
     def default_variant_cache_key
+      Spree::Deprecation.warn('Spree::Product#default_variant_cache_key is deprecated and will be removed in Spree 6. Please remove any occurrences of it.')
+
       "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end
 

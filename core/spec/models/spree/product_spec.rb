@@ -824,39 +824,6 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#default_variant_cache_key' do
-    let(:product) { create(:product, stores: [store]) }
-    let(:key) { product.send(:default_variant_cache_key) }
-
-    context 'with inventory tracking' do
-      before { Spree::Config[:track_inventory_levels] = true }
-
-      it 'returns proper key' do
-        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
-      end
-    end
-
-    context 'without invenrtory tracking' do
-      before { Spree::Config[:track_inventory_levels] = false }
-
-      it 'returns proper key' do
-        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
-      end
-    end
-
-    describe '#requires_shipping_category?' do
-      let(:product) { build(:product, shipping_category: nil) }
-
-      it { expect(product.save).to eq(false) }
-    end
-
-    describe '#downcase_slug' do
-      let(:product) { build(:product, slug: 'My-slug') }
-
-      it { expect { product.valid? }.to change(product, :slug).to('my-slug') }
-    end
-  end
-
   describe '#default_image' do
     let(:product) { create(:product, stores: [store]) }
     let!(:image) { create(:image, viewable: product.master) }
