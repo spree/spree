@@ -371,7 +371,7 @@ module Spree
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
-      property_name = property_name.parameterize
+      property_name = property_name.to_s.parameterize
       ApplicationRecord.transaction do
         # Manual first_or_create to work around Mobility bug
         property = if Property.where(name: property_name).exists?
