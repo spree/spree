@@ -34,7 +34,7 @@ module Spree
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
-                          purchasable? in_stock? backorderable?]
+                          purchasable? in_stock? backorderable? has_variants?]
 
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
@@ -199,12 +199,12 @@ module Spree
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      default_variant.purchasable? || variants.any?(&:purchasable?)
+      @purchasable ||= default_variant.purchasable? || variants.in_stock_or_backorderable.any?
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      default_variant.in_stock? || variants.any?(&:in_stock?)
+      @in_stock ||= default_variant.in_stock? || variants.in_stock.any?
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
@@ -218,7 +218,7 @@ module Spree
 
     # the master variant is not a member of the variants array
     def has_variants?
-      variants.any?
+      @has_variants ||= variants.loaded? ? variants.size.positive? : variants.any?
     end
 
     # Returns default Variant for Product
@@ -234,7 +234,7 @@ module Spree
         if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
           available_variant
         else
-          has_variants? ? variants.first : master
+          has_variants? ? variants.first : find_or_build_master
         end
       end
     end
@@ -285,8 +285,9 @@ module Spree
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
 
-      required_option_type_ids = option_values_hash.keys.map(&:to_i)
-      missing_option_type_ids = required_option_type_ids - option_type_ids
+      # we need to convert the keys to string to make it work with UUIDs
+      required_option_type_ids = option_values_hash.keys.map(&:to_s)
+      missing_option_type_ids = required_option_type_ids - option_type_ids.map(&:to_s)
       missing_option_type_ids.each do |id|
         product_option_types.create(option_type_id: id)
       end
