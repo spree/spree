@@ -363,10 +363,15 @@ module Spree
     end
 
     def property(property_name)
-      product_properties.joins(:property).find_by(Property.table_name => { name: property_name }).try(:value)
+      if product_properties.loaded?
+        product_properties.detect { |property| property.property.name == property_name }.try(:value)
+      else
+        product_properties.joins(:property).find_by(spree_properties: { name: property_name }).try(:value)
+      end
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
+      property_name = property_name.to_s.parameterize
       ApplicationRecord.transaction do
         # Manual first_or_create to work around Mobility bug
         property = if Property.where(name: property_name).exists?
@@ -381,12 +386,16 @@ module Spree
         product_property = if ProductProperty.where(product: self, property: property).exists?
                              ProductProperty.where(product: self, property: property).first
                            else
-                             ProductProperty.create(product: self, property: property)
+                             ProductProperty.new(product: self, property: property)
                            end
 
         product_property.value = property_value
         product_property.save!
       end
+    end
+
+    def remove_property(property_name)
+      product_properties.joins(:property).find_by(spree_properties: { name: property_name.parameterize })&.destroy
     end
 
     def total_on_hand
