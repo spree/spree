@@ -61,7 +61,7 @@ module Spree
       end
     end
 
-    friendly_id :slug_candidates, use: [:history, :mobility]
+    friendly_id :slug_candidates, use: [:history, :scoped, :mobility], scope: spree_base_uniqueness_scope
     acts_as_paranoid
     auto_strip_attributes :name
 
