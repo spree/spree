@@ -152,6 +152,9 @@ module Spree
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
+    scope :draft, -> { where(status: 'draft') }
+    scope :archived, -> { where(status: 'archived') }
+    scope :not_archived, -> { where.not(status: 'archived') }
 
     attr_accessor :option_values_hash
 
