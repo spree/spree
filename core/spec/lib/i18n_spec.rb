@@ -28,9 +28,8 @@ describe 'i18n' do
 
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
-        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :sv, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
-        expect(locales).to match_array(expected_locales)
+        expect(locales).to contain_exactly(:en, :de, :nl)
       end
 
       it 'returns an array with the string "en" removed' do
@@ -41,12 +40,10 @@ describe 'i18n' do
     end
 
     context 'when SpreeI18n is not defined' do
-      it 'returns just default locales' do
+      it 'returns just default locale' do
         locales = Spree.available_locales
 
-        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sv, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
-
-        expect(locales).to match_array(expected_locales)
+        expect(locales).to contain_exactly(:en)
       end
     end
   end
