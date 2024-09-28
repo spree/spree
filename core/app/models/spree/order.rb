@@ -83,6 +83,8 @@ module Spree
 
     attribute :state_machine_resumed, :boolean
 
+    acts_as_taggable_on :tags
+
     if Spree.user_class
       belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
     else
@@ -488,10 +490,10 @@ module Spree
 
     def coupon_code=(code)
       @coupon_code = begin
-                       code.strip.downcase
-                     rescue StandardError
-                       nil
-                     end
+        code.strip.downcase
+      rescue StandardError
+        nil
+      end
     end
 
     def can_add_coupon?

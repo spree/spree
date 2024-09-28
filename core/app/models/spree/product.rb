@@ -64,6 +64,7 @@ module Spree
     friendly_id :slug_candidates, use: [:history, :scoped, :mobility], scope: spree_base_uniqueness_scope
     acts_as_paranoid
     auto_strip_attributes :name
+    acts_as_taggable_on :tags, :labels
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -163,7 +164,7 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
 
@@ -230,13 +231,11 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      @default_variant ||= begin
-        if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
-          available_variant
-        else
-          has_variants? ? variants.first : find_or_build_master
-        end
-      end
+      @default_variant ||= if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
+                             available_variant
+                           else
+                             has_variants? ? variants.first : find_or_build_master
+                           end
     end
 
     # Returns default Variant ID for Product
@@ -417,7 +416,7 @@ module Spree
 
     def brand
       @brand ||= if Spree.use_translations?
-                    taxons.joins(:taxonomy).
+                   taxons.joins(:taxonomy).
                      join_translation_table(Taxonomy).
                      find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
                  else
@@ -599,7 +598,7 @@ module Spree
 
     def remove_taxon(taxon)
       removed_classifications = classifications.where(taxon: taxon)
-      removed_classifications.each &:remove_from_list
+      removed_classifications.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_make_active_at

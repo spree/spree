@@ -76,6 +76,7 @@ bin/rails db:drop || true
 bin/rails db:create
 bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
 bin/rails g spree:emails:install
-bin/rails g spree:admin:install
+# bin/rails g spree:admin:install
 bin/rails g spree:auth:install
 bin/rails g spree_gateway:install
+bin/rake acts_as_taggable_on_engine:install:migrations

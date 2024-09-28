@@ -94,7 +94,11 @@ module Spree
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
       :cost_currency, :cost_price, :compare_at_price,
-      { option_type_ids: [], taxon_ids: [] }
+      {
+        tag_list: [],
+        option_type_ids: [],
+        taxon_ids: []
+      }
     ]
 
     @@property_attributes = [:name, :presentation]
@@ -147,14 +151,15 @@ module Spree
 
     # TODO: Should probably use something like Spree.user_class.attributes
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
-                         :password_confirmation, { public_metadata: {}, private_metadata: {} }, :selected_locale]
+                         :password_confirmation, :selected_locale,
+                         { public_metadata: {}, private_metadata: {}, tag_list: [] }]
 
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory,
       :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
-      :weight_unit, :dimensions_unit, 
+      :weight_unit, :dimensions_unit,
       { options: [:name, :value], option_value_ids: [] }
     ]
 

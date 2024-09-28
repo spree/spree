@@ -28,6 +28,7 @@ module Spree
         @in_stock         = params.dig(:filter, :in_stock)
         @backorderable    = params.dig(:filter, :backorderable)
         @purchasable      = params.dig(:filter, :purchasable)
+        @tags             = params.dig(:filter, :tags).to_s.split(',').compact_blank
       end
 
       def execute
@@ -41,6 +42,7 @@ module Spree
         products = by_options(products)
         products = by_option_value_ids(products)
         products = by_properties(products)
+        products = by_tags(products)
         products = include_deleted(products)
         products = include_discontinued(products)
         products = show_only_stock(products)
@@ -54,7 +56,7 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
-                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable
+                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags
 
       def ids?
         ids.present?
@@ -192,6 +194,12 @@ module Spree
         end
 
         products.where(id: product_ids)
+      end
+
+      def by_tags(products)
+        return products if tags.empty?
+
+        products.tagged_with(tags, any: true)
       end
 
       def option_types_count(option_value_ids)

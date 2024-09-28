@@ -16,6 +16,8 @@ module Spree
 
       attr_accessor :use_billing
 
+      acts_as_taggable_on :tags
+
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
 
@@ -27,7 +29,7 @@ module Spree
 
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses]
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
       self.whitelisted_ransackable_attributes = %w[id email]
 
       def self.with_email(query)
