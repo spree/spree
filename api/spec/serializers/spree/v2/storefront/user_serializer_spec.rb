@@ -7,7 +7,7 @@ describe Spree::V2::Storefront::UserSerializer do
 
   let(:user) { create(:user_with_addresses) }
 
-  it { expect(subject.serializable_hash).to be_kind_of(Hash) }
+  it { expect(subject.serializable_hash).to be_a(Hash) }
 
   it do
     expect(subject.serializable_hash).to eq(
@@ -22,6 +22,7 @@ describe Spree::V2::Storefront::UserSerializer do
             last_name: user.last_name,
             public_metadata: {},
             selected_locale: nil,
+            tags: [],
             store_credits: 0
           },
           relationships: {
@@ -53,14 +54,15 @@ describe Spree::V2::Storefront::UserSerializer do
 
     it do
       expect(subject.serializable_hash[:data][:attributes]).to eq({
-        completed_orders: 2,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        public_metadata: {},
-        selected_locale: nil,
-        store_credits: 0.1e3
-      })
+                                                                    completed_orders: 2,
+                                                                    email: user.email,
+                                                                    first_name: user.first_name,
+                                                                    last_name: user.last_name,
+                                                                    public_metadata: {},
+                                                                    selected_locale: nil,
+                                                                    store_credits: 0.1e3,
+                                                                    tags: []
+                                                                  })
     end
   end
 
