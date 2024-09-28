@@ -7,6 +7,7 @@ require 'active_storage/engine'
 
 require 'active_merchant'
 require 'acts_as_list'
+require 'acts-as-taggable-on'
 require 'auto_strip_attributes'
 require 'awesome_nested_set'
 require 'cancan'
@@ -154,4 +155,4 @@ require 'spree/core/preferences/store'
 require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 
-require "spree/core/webhooks"
+require 'spree/core/webhooks'

@@ -3199,6 +3199,16 @@ components:
             localized_slugs:
               type: object
               description: Provides product's slugs in other locales
+            tags:
+              type: array
+              items:
+                type: string
+              description: List of tags associated with the product
+            labels:
+              type: array
+              items:
+                type: string
+              description: List of labels associated with the product
         relationships:
           type: object
           properties:
@@ -3853,6 +3863,11 @@ components:
               type: number
               example: 3
               description: Number of placed Orders by this User
+            tags:
+              type: array
+              items:
+                type: string
+              description: List of tags associated with the user
             public_metadata:
               type: object
               example:
@@ -5329,6 +5344,9 @@ components:
                     selected_locale: 'en'
                     store_credits: 0
                     completed_orders: 0
+                    tags:
+                      - VIP
+                      - supplier
                     public_metadata:
                       user_segment: supplier
                   relationships:
@@ -6581,6 +6599,13 @@ components:
                       en: bomber-jacket
                       de: bomberjacke
                       fr: blouson
+                    tags:
+                      - bomber
+                      - jacket
+                      - winter
+                    labels:
+                      - new
+                      - sale
                   relationships:
                     variants:
                       data:
