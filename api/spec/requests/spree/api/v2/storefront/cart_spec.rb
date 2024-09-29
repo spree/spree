@@ -114,6 +114,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['data']).to have_attribute(:shipment_state).with_value(new_order.shipment_state)
             expect(json_response['data']).to have_attribute(:token).with_value(new_order.token)
             expect(json_response['data']).to have_attribute(:total).with_value(new_order.total.to_s)
+            expect(json_response['data']).to have_attribute(:total_minus_store_credits).with_value(new_order.total_minus_store_credits.to_s)
+            expect(json_response['data']).to have_attribute(:display_total_minus_store_credits).with_value(new_order.display_total_minus_store_credits.to_s)
             expect(json_response['data']).to have_attribute(:item_total).with_value(new_order.item_total.to_s)
             expect(json_response['data']).to have_attribute(:ship_total).with_value(new_order.ship_total.to_s)
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(new_order.adjustment_total.to_s)
@@ -390,7 +392,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     shared_examples 'destroying order' do
       it 'destroys the order' do
-        expect{ execute }.to change { Spree::Order.count }.by(-1)
+        expect { execute }.to change { Spree::Order.count }.by(-1)
       end
     end
 
@@ -601,10 +603,10 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       include_context 'order with a physical line item'
       it_behaves_like 'showing the cart'
 
-      it 'will return included bill_address' do
+      it 'returns included bill_address' do
         get '/api/v2/storefront/cart', params: bill_addr_params, headers: headers
         expect(json_response[:included][0]).to have_id(order.bill_address_id.to_s)
-        expect(json_response[:included][0]).to have_type("address")
+        expect(json_response[:included][0]).to have_type('address')
         expect(json_response[:included][0]).to have_attribute(:firstname).with_value(order.bill_address.firstname)
         expect(json_response[:included][0]).to have_attribute(:lastname).with_value(order.bill_address.lastname)
         expect(json_response[:included][0]).to have_attribute(:address1).with_value(order.bill_address.address1)
@@ -620,14 +622,14 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.bill_address.public_metadata)
       end
 
-      it 'will return included ship_address' do
+      it 'returns included ship_address' do
         addr = create(:address)
         order.update(ship_address: addr)
 
         get '/api/v2/storefront/cart', params: ship_addr_params, headers: headers
 
         expect(json_response[:included][0]).to have_id(order.ship_address_id.to_s)
-        expect(json_response[:included][0]).to have_type("address")
+        expect(json_response[:included][0]).to have_type('address')
         expect(json_response[:included][0]).to have_attribute(:firstname).with_value(order.ship_address.firstname)
         expect(json_response[:included][0]).to have_attribute(:lastname).with_value(order.ship_address.lastname)
         expect(json_response[:included][0]).to have_attribute(:address1).with_value(order.ship_address.address1)
@@ -811,6 +813,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'removes coupon code correctly' do
           let!(:coupon_code) { promotion_with_order_adjustment.code }
+
           before { execute }
 
           it_behaves_like 'returns 200 HTTP status'
@@ -827,6 +830,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'tries to remove an empty string' do
           let!(:coupon_code) { '' }
+
           before { execute }
 
           it 'changes the adjustment total to 0.0' do
@@ -840,6 +844,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'tries to remove nil' do
           let(:coupon_code) { nil }
+
           before { execute }
 
           it 'changes the adjustment total to 0.0' do
@@ -869,6 +874,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'tries to remove nil' do
           let(:coupon_code) { nil }
+
           before { execute }
 
           it_behaves_like 'returns 422 HTTP status'
@@ -876,6 +882,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'tries to remove an empty string' do
           let(:coupon_code) { '' }
+
           before { execute }
 
           it_behaves_like 'returns 422 HTTP status'
@@ -926,17 +933,17 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid shipments JSON' do
-        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
-          expect(json_response['data']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
+        [{ shipping_method: shipping_method, shipping_rate: shipping_rate }, { shipping_method: shipping_method_2, shipping_rate: shipping_rate_2 }].each do |shipping|
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:name).with_value(shipping[:shipping_method].name)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:selected).with_value(shipping[:shipping_rate].selected)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:free).with_value(shipping[:shipping_rate].free?)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s)))
+          expect(json_response['data']).to include(have_type('shipping_rate').and(have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s)))
         end
       end
     end
@@ -958,7 +965,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:order) { create(:order, user: assigned_user, store: store, currency: currency) }
 
     before do
-      patch '/api/v2/storefront/cart/associate', params: { guest_order_token: guest_order_token}, headers: headers
+      patch '/api/v2/storefront/cart/associate', params: { guest_order_token: guest_order_token }, headers: headers
     end
 
     context 'as a signed in user' do
@@ -998,7 +1005,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   describe 'cart#change_currency' do
     let(:order) { create(:order, store: store, currency: currency) }
     let!(:line_item) { create(:line_item, order: order) }
-    let!(:price) { create(:price, currency: 'EUR', variant: order.line_items.first.variant)}
+    let!(:price) { create(:price, currency: 'EUR', variant: order.line_items.first.variant) }
 
     before do
       patch '/api/v2/storefront/cart/change_currency', params: { currency: currency, new_currency: new_currency, order_token: order.token }, headers: headers
