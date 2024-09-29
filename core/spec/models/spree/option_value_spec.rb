@@ -26,7 +26,7 @@ describe Spree::OptionValue, type: :model do
       end
     end
 
-    describe '#touch_products' do
+    describe '#touch_all_products' do
       let!(:option_value) { create(:option_value) }
       let!(:product1) { create(:product) }
       let!(:product2) { create(:product) }
@@ -39,7 +39,7 @@ describe Spree::OptionValue, type: :model do
       end
 
       it 'touches all products associated with the option value' do
-        expect { option_value.send(:touch_products) }.to change { [product1.reload.updated_at, product2.reload.updated_at, product3.reload.updated_at] }
+        expect { option_value.send(:touch_all_products) }.to change { [product1.reload.updated_at, product2.reload.updated_at, product3.reload.updated_at] }
       end
     end
   end

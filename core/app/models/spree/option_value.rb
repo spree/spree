@@ -56,8 +56,8 @@ module Spree
     # Callbacks
     #
     after_touch :touch_all_variants
-    after_update :touch_products, if: -> { saved_change_to_presentation? }
-    after_touch :touch_products
+    after_update :touch_all_products, if: -> { saved_change_to_presentation? }
+    after_touch :touch_all_products
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
@@ -67,7 +67,7 @@ module Spree
       variants.touch_all
     end
 
-    def touch_products
+    def touch_allproducts
       products.touch_all
     end
   end
