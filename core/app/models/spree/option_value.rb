@@ -67,7 +67,7 @@ module Spree
       variants.touch_all
     end
 
-    def touch_allproducts
+    def touch_all_products
       products.touch_all
     end
   end
