@@ -37,6 +37,7 @@ module Spree
     scope :filterable, -> { where(filterable: true) }
 
     after_touch :touch_all_products
+    after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_save :ensure_product_properties_have_filter_params
 
     self.whitelisted_ransackable_attributes = ['presentation', 'filterable']
@@ -52,7 +53,7 @@ module Spree
     private
 
     def touch_all_products
-      products.update_all(updated_at: Time.current)
+      products.touch_all
     end
 
     def with_uniq_values_cache_key(product_properties_scope, &block)

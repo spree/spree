@@ -60,13 +60,20 @@ describe Spree::OptionType, type: :model do
   end
 
   context 'touching' do
-    it 'touches a product' do
-      product_option_type = create(:product_option_type)
-      option_type = product_option_type.option_type
-      product = product_option_type.product
+    let(:option_type) { create(:option_type) }
+    let(:product) { create(:product) }
+    let!(:product_option_type) { create(:product_option_type, option_type: option_type, product: product) }
+
+    before do
       product.update_column(:updated_at, 1.day.ago)
-      option_type.touch
-      expect(product.reload.updated_at).to be_within(3.seconds).of(Time.current)
+    end
+
+    it 'touches a product on touch' do
+      expect { option_type.touch }.to change { product.reload.updated_at }
+    end
+
+    it 'touches a product on update' do
+      expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
     end
   end
 
