@@ -411,11 +411,11 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '.price_in' do
+  describe '#price_in' do
     subject { variant.price_in(currency).display_amount }
 
     before do
-      variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
+      create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
 
     context 'when currency is not specified' do
@@ -439,6 +439,70 @@ describe Spree::Variant, type: :model do
 
       it 'returns the value in the USD' do
         expect(subject.to_s).to eql '$19.99'
+      end
+    end
+
+    context 'when there is no price with present amount in given currency' do
+      let(:currency) { 'GBP' }
+
+      before do
+        variant.prices.create(currency: 'GBP', amount: nil)
+      end
+
+      it 'returns 0' do
+        expect(subject.to_s).to eql '£0.00'
+      end
+    end
+  end
+
+  describe '#on_sale?' do
+    subject { variant.on_sale?(currency) }
+
+    let!(:eur_price) { create(:price, variant: variant, currency: 'EUR', amount: 100.00, compare_at_amount: eur_compare_at_amount) }
+    let!(:gbp_price) { create(:price, variant: variant, currency: 'GBP', amount: 100.00, compare_at_amount: gbp_compare_at_amount) }
+    let(:usd_compare_at_amount) { nil }
+    let(:eur_compare_at_amount) { nil }
+    let(:gbp_compare_at_amount) { nil }
+
+    before do
+      variant.prices.where(currency: 'USD').take.update(amount: 100.00, compare_at_amount: usd_compare_at_amount)
+    end
+
+    context 'when existing currency is passed' do
+      let(:currency) { 'GBP' }
+      let(:gbp_compare_at_amount) { 200.00 }
+
+      it 'checks if variant is discounted in that currency' do
+        expect(subject).to be true
+      end
+
+      context 'when variant is discounted' do
+        let(:currency) { 'EUR' }
+        let(:eur_compare_at_amount) { 200.00 }
+        let(:gbp_compare_at_amount) { nil }
+
+        it 'returns true' do
+          expect(subject).to be true
+        end
+      end
+
+      context 'when variant is not discounted' do
+        let(:currency) { 'EUR' }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+    end
+
+    context 'when passed currency does not exist' do
+      let(:currency) { 'NON_EXISTING_CURRENCY' }
+      let(:usd_compare_at_amount) { 200.00 }
+      let(:eur_compare_at_amount) { 200.00 }
+      let(:gbp_compare_at_amount) { 200.00 }
+
+      it 'returns false' do
+        expect(subject).to be false
       end
     end
   end

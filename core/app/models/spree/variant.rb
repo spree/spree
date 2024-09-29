@@ -7,7 +7,7 @@ module Spree
     include Spree::Metadata
     include Spree::Variant::Webhooks
 
-    MEMOIZED_METHODS = %w(purchasable in_stock backorderable tax_category options_text compare_at_price)
+    MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
 
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
@@ -66,7 +66,7 @@ module Spree
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
-
+    after_commit :clear_line_items_cache, on: :update
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
@@ -283,19 +283,26 @@ module Spree
 
     def price_in(currency)
       currency = currency&.upcase
-      find_or_build_price = lambda do
-        if prices.loaded?
-          prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
-        else
-          prices.find_or_initialize_by(currency: currency)
-        end
+
+      price = if prices.loaded? && prices.any?
+                prices.detect { |p| p.currency == currency }
+              else
+                prices.find_by(currency: currency)
+              end
+
+      if price.nil?
+        return Spree::Price.new(
+          currency: currency,
+          variant_id: id
+        )
       end
 
-      Rails.cache.fetch("spree/prices/#{cache_key_with_version}/price_in/#{currency}") do
-        find_or_build_price.call
-      end
+      price
     rescue TypeError
-      find_or_build_price.call
+      Spree::Price.new(
+        currency: currency,
+        variant_id: id
+      )
     end
 
     def amount_in(currency)
@@ -345,19 +352,23 @@ module Spree
     end
 
     def in_stock?
-      # Issue 10280
-      # Check if model responds to cache version and fall back to updated_at for older rails versions
-      # This makes sure a version is supplied when recyclable cache keys are disabled.
-      version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
-      @in_stock ||= Rails.cache.fetch(in_stock_cache_key, version: version) do
-        total_on_hand > 0
-      end
+      @in_stock ||= if association(:stock_items).loaded? && association(:stock_locations).loaded?
+                      total_on_hand.positive?
+                    else
+                      Rails.cache.fetch(in_stock_cache_key, version: cache_version) do
+                        total_on_hand.positive?
+                      end
+                    end
     end
 
     def backorderable?
       @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
         quantifier.backorderable?
       end
+    end
+
+    def on_sale?(currency)
+      @on_sale ||= price_in(currency)&.discounted?
     end
 
     delegate :total_on_hand, :can_supply?, to: :quantifier
@@ -456,6 +467,10 @@ module Spree
 
     def disable_sku_validation?
       Spree::Config[:disable_sku_validation]
+    end
+
+    def clear_line_items_cache
+      line_items.update_all(updated_at: Time.current)
     end
   end
 end
