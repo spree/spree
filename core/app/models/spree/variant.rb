@@ -399,6 +399,10 @@ module Spree
       digitals.present?
     end
 
+    def clear_in_stock_cache
+      Rails.cache.delete(in_stock_cache_key)
+    end
+
     private
 
     def ensure_not_in_complete_orders
@@ -448,10 +452,6 @@ module Spree
 
     def in_stock_cache_key
       "variant-#{id}-in_stock"
-    end
-
-    def clear_in_stock_cache
-      Rails.cache.delete(in_stock_cache_key)
     end
 
     def disable_sku_validation?
