@@ -64,7 +64,7 @@ module Spree
     # Callbacks
     #
     after_touch :touch_all_products
-    after_update :touch_all_products, if: -> { saved_change_to_presentation? }
+    after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_destroy :touch_all_products
 
     # legacy, name itself is now parameterized before saving

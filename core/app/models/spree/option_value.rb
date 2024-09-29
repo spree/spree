@@ -56,7 +56,7 @@ module Spree
     # Callbacks
     #
     after_touch :touch_all_variants
-    after_update :touch_all_products, if: -> { saved_change_to_presentation? }
+    after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_touch :touch_all_products
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true

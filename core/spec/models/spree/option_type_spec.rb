@@ -73,7 +73,7 @@ describe Spree::OptionType, type: :model do
     end
 
     it 'touches a product on update' do
-      expect { option_type.update(presentation: 'New Presentation') }.to change { product.reload.updated_at }
+      expect { option_type.update!(presentation: 'New Presentation') }.to change { product.reload.updated_at }
     end
   end
 
