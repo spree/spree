@@ -5,7 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          validates :attachment, attached: true, content_type: /\Aimage\/.*\z/
+          validates :attachment, attached: true, content_type: Rails.application.config.active_storage.web_image_content_types
 
           def self.styles
             @styles ||= {

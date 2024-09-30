@@ -5,7 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          validates :attachment, content_type: /\Aimage\/.*\z/
+          validates :attachment, content_type: Rails.application.config.active_storage.web_image_content_types
 
           default_scope { includes(attachment_attachment: :blob) }
 
