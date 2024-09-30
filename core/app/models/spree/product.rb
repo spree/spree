@@ -449,8 +449,13 @@ module Spree
       end
     end
 
+    # Check if the product is digital by checking if any of its shipping methods are digital delivery
+    # This is used to determine if the product is digital and should have a digital delivery price
+    # instead of a physical shipping price
+    #
+    # @return [Boolean]
     def digital?
-      shipping_category&.name == I18n.t('spree.seed.shipping.categories.digital')
+      shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
     private

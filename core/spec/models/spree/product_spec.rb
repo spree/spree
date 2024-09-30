@@ -943,16 +943,19 @@ describe Spree::Product, type: :model do
     end
 
     describe '#digital?' do
-      context 'when product is not digital' do
-        let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product, stores: [store], shipping_category: shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
 
-        it { expect(product.digital?).to eq(false) }
-      end
-
-      context 'when product is digital' do
-        let(:product) { create(:product, stores: [store], shipping_category: create(:shipping_category, name: 'Digital')) }
+      context 'when product has a shipping method with DigitalDelivery calculator' do
+        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::DigitalDelivery.new, shipping_categories: [shipping_category]) }
 
         it { expect(product.digital?).to eq(true) }
+      end
+
+      context 'when product does not have a shipping method with DigitalDelivery calculator' do
+        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::FlatRate.new, shipping_categories: [shipping_category]) }
+
+        it { expect(product.digital?).to eq(false) }
       end
     end
   end
