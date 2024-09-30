@@ -16,12 +16,12 @@ describe Spree::Image, type: :model do
       expect(spree_image).not_to be_valid
     end
 
-    it 'has allowed attachment content type' do
+    it 'allows only web image content types' do
       spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
       expect(spree_image).to be_valid
     end
 
-    it 'has no allowed attachment content type' do
+    it 'does not allow non-web image content types' do
       spree_image.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
       expect(spree_image).not_to be_valid
     end
