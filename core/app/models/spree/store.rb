@@ -26,6 +26,11 @@ module Spree
       s.integer :digital_asset_authorized_clicks, default: 5, null: false # number of times a customer can download a digital file.
       s.integer :digital_asset_authorized_days, default: 7, null: false # number of days after initial purchase the customer can download a file.
       s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
+
+      # store configuration
+      s.string :timezone, default: -> { Time.zone.name }, null: false
+      s.string :weight_unit, default: 'kg', null: false
+      s.string :unit_system, default: 'metric', null: false
     end
 
     attr_accessor :skip_validate_not_last
