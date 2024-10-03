@@ -196,6 +196,21 @@ module Spree
           link_to label, url, role: 'tab', 'aria-controls': 'pills-general', class: link_class, 'aria-selected': active
         end
       end
+
+      def external_link_to(label, url, opts = {})
+        opts[:target] ||= :blank
+        opts[:rel] ||= :nofollow
+        opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
+
+        link_to url, opts do
+          (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+        end
+      end
+
+      def help_bubble(text = '', placement = 'bottom', css: nil)
+        css ||= 'text-muted font-size-base'
+        content_tag :small, icon('help', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+      end
     end
   end
 end

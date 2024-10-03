@@ -200,10 +200,6 @@ module Spree
         )
       end
 
-      def current_currency_money
-        @current_currency_money ||= ::Money::Currency.find(current_currency)
-      end
-
       def path_from_url(url)
         url.to_s.gsub('https://', '').gsub('http://', '')
       end
