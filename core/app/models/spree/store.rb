@@ -28,7 +28,7 @@ module Spree
       s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
 
       # store configuration
-      s.string :timezone, default: -> { Time.zone.name }, null: false
+      s.string :timezone, default: Time.zone.name, null: false
       s.string :weight_unit, default: 'kg', null: false
       s.string :unit_system, default: 'metric', null: false
     end
