@@ -1,3 +1,13 @@
 ---
 openapi: patch /api/v2/platform/products/{id}
 ---
+
+```json
+{
+  "product": {
+    "taxon_ids": [28, 27]
+  }
+}
+```
+
+taxon_ids type is in Array not in String as mention in doc.
