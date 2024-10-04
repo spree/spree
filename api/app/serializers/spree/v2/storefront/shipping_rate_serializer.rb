@@ -10,6 +10,10 @@ module Spree
         attribute :free do |shipping_rate|
           shipping_rate.free?
         end
+
+        attribute :final_price_cents do |shipping_rate|
+          shipping_rate.display_final_price.cents
+        end
       end
     end
   end
