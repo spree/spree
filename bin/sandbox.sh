@@ -48,11 +48,6 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'awesome_print'
 end
-
-# temporary fix for sassc segfaults on ruby 3.0.0 on Mac OS Big Sur
-# this change fixes the issue:
-# https://github.com/sass/sassc-ruby/commit/04407faf6fbd400f1c9f72f752395e1dfa5865f7
-gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 RUBY
 
 touch config/initializers/bullet.rb
