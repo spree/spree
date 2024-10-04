@@ -9,6 +9,7 @@ module Spree
   class Order < Spree::Base
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
+    LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
