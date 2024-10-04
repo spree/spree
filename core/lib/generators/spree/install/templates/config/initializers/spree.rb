@@ -18,6 +18,9 @@ Spree.config do |config|
   # config.track_inventory_levels = false
 end
 
+# Background job queue name
+# Spree.default_queue_name = 'default'
+
 # Use a CDN host for images, eg. Cloudfront
 # This is used in the frontend to generate absolute URLs to images
 # Default is nil and your application host will be used
@@ -28,13 +31,6 @@ end
 #   Spree.private_storage_service_name = :amazon_public # public assets, such as product images
 #   Spree.public_storage_service_name = :amazon_private # private assets, such as invoices, etc
 # end
-
-# Use a different search engine for products
-# You can check the default search class at:
-# https://github.com/spree/spree/blob/main/core/lib/spree/core/search/base.rb
-# and use it as base class for your custom searcher
-# eg. MySearcher < Spree::Core::Search::Base
-# Spree.searcher_class = 'MySearcher'
 
 # Configure Spree Dependencies
 #

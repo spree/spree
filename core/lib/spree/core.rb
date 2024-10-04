@@ -28,7 +28,8 @@ StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
   mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
-                 :public_storage_service_name, :cdn_host, :searcher_class
+                 :public_storage_service_name, :cdn_host, :searcher_class,
+                 :default_queue_name
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
@@ -66,6 +67,10 @@ module Spree
         raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
     end
+  end
+
+  def self.default_queue_name
+    @@default_queue_name ||= 'default'
   end
 
   def self.searcher_class(constantize: true)
