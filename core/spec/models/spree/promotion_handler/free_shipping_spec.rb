@@ -28,6 +28,10 @@ module Spree
 
           expect { subject.activate }.to change { shipment.adjustments.count }
         end
+
+        it 'does not adjust the shipment when not applied to order' do
+          expect { subject.activate }.not_to change { shipment.adjustments.count }
+        end
       end
 
       context 'if promo has multiple codes' do
@@ -38,6 +42,10 @@ module Spree
           order.promotions << promotion
 
           expect { subject.activate }.to change { shipment.adjustments.count }
+        end
+
+        it 'does not adjust the shipment when not applied to order' do
+          expect { subject.activate }.not_to change { shipment.adjustments.count }
         end
       end
 
