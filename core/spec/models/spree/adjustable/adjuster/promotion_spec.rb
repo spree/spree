@@ -82,6 +82,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
         create(:promotion,
                :with_order_adjustment,
                :with_item_total_rule,
+               kind: :automatic,
                weighted_order_adjustment_amount: 5,
                item_total_threshold_amount: 10)
       end
@@ -90,6 +91,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
         create(:promotion,
                :with_order_adjustment,
                :with_item_total_rule,
+               kind: :automatic,
                weighted_order_adjustment_amount: 10,
                item_total_threshold_amount: 20)
       end
@@ -100,6 +102,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
         create(:promotion,
                :with_line_item_adjustment,
                :with_item_total_rule,
+               kind: :automatic,
                adjustment_rate: 2.5,
                item_total_threshold_amount: 10)
       end
@@ -108,6 +111,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
         create(:promotion,
                :with_line_item_adjustment,
                :with_item_total_rule,
+               kind: :automatic,
                adjustment_rate: 5,
                item_total_threshold_amount: 20)
       end

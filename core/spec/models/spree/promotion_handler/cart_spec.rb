@@ -8,7 +8,7 @@ module Spree
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
 
-      let(:promotion) { create(:promotion, name: 'At line items', stores: [order.store]) }
+      let(:promotion) { create(:promotion, name: 'At line items', stores: [order.store], kind: :automatic) }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
       context 'activates in LineItem level' do

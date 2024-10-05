@@ -722,6 +722,7 @@ en:
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     coupon_code_removed: The coupon code was successfully removed from your order.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
+    coupon_code_used: The coupon code you entered has already been used. Please try again.
     create: Create
     create_a_new_account: Create a new account
     create_new_order: Create new order

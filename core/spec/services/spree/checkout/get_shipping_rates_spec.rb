@@ -24,7 +24,7 @@ module Spree
     let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
     let(:address) { create(:address, country: country) }
 
-    let(:free_shipping_promotion) { create(:free_shipping_promotion) }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, kind: :automatic) }
 
     shared_examples 'generates shipping rates' do
       it 'returns shipping rates' do

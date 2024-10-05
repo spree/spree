@@ -153,7 +153,7 @@ describe Spree::ShippingRate, type: :model do
   end
 
   context '#final_price' do
-    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
     let(:order) { shipment.order }
 
     it 'returns 0 if free shipping promotion is applied' do

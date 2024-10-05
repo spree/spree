@@ -98,7 +98,7 @@ module Spree
               before do
                 order.update_with_updater!
 
-                2.times { create :promotion_with_order_adjustment }
+                2.times { create :promotion_with_order_adjustment, kind: :automatic }
                 Spree::PromotionHandler::Cart.new(order).activate
 
                 allow(action.calculator).to receive(:compute).and_return(3)

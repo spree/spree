@@ -18,8 +18,9 @@ Spree.config do |config|
   # config.track_inventory_levels = false
 end
 
-# Background job queue name
-# Spree.default_queue_name = 'default'
+# Background job queue names
+# Spree.queues.stock_location_stock_items = 'default'
+# Spree.queues.coupon_codes = 'default'
 
 # Use a CDN host for images, eg. Cloudfront
 # This is used in the frontend to generate absolute URLs to images
