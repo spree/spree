@@ -65,7 +65,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'running promotions' do
-      let(:promotion) { create(:promotion, stores: [store]) }
+      let(:promotion) { create(:promotion, stores: [store], kind: :automatic) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       shared_context 'discount changes order total' do

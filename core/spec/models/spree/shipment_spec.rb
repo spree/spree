@@ -218,7 +218,7 @@ describe Spree::Shipment, type: :model do
   context '#free?' do
     let!(:order) { create(:order) }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
-    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
 
     it 'returns true if final_price is equal to 0' do
       shipment.adjustment_total = -10

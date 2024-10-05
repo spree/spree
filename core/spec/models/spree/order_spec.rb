@@ -1110,22 +1110,48 @@ describe Spree::Order, type: :model do
   end
 
   describe '#promo_code' do
-    let(:new_order_x) { create(:order) }
-
-    context 'without promo_code applied' do
-      it { expect(new_order_x.promo_code).to eq nil }
+    context 'without promo code' do
+      let(:order) { build_stubbed(:order, user: nil, email: nil) }
+      it 'returns nil' do
+        expect(order.promo_code).to be_nil
+      end
     end
 
-    context 'with_promo_code applied' do
-      let(:promo_code) { '10off' }
-      let(:promotion) { create :promotion, code: promo_code }
+    context 'with promo code' do
+      let(:order) { create(:order_with_line_items, line_items_count: 2, store: Spree::Store.default) }
+      let(:promotion) { create(:free_shipping_promotion, code: 'GWP', kind: :coupon_code) }
 
-      before do
-        promotion.orders << new_order_x
+      context 'with single coupon code' do
+        before do
+          order.coupon_code = promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+          order.reload
+        end
+
+        it 'returns the promotion code' do
+          expect(order.promo_code).to eq('gwp')
+        end
       end
 
-      it 'returns applied promo_code' do
-        expect(new_order_x.promo_code).to eq promo_code
+      context 'with coupon code batches' do
+        let(:promotion) { create(:free_shipping_promotion, kind: :coupon_code, code: nil, multi_codes: true, number_of_codes: 1) }
+        let(:coupon_code) { promotion.coupon_codes.first }
+
+        before do
+          order.coupon_code = coupon_code.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+          order.reload
+        end
+
+        it 'returns the promotion code' do
+          expect(order.promo_code).to eq(coupon_code.code)
+          expect(coupon_code.reload.order).to eq(order)
+        end
+
+        it 'returns the same promotion code after line item removal' do
+          Spree::Cart::RemoveLineItem.call(order: order, line_item: order.line_items.first)
+          expect(order.reload.promo_code).to eq(coupon_code.code)
+        end
       end
     end
   end
@@ -1330,7 +1356,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'with promotions' do
-      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
       let(:line_item_promotion) { create(:promotion_with_item_adjustment, code: 'li_discount', adjustment_rate: 10) }
       let(:order_promotion) { create(:promotion_with_order_adjustment, code: 'discount', weighted_order_adjustment_amount: 10) }
 
@@ -1406,7 +1432,7 @@ describe Spree::Order, type: :model do
     let(:line_items_count) { 10 }
 
     context 'when promotion is applied' do
-      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
 
       before do
         order.coupon_code = free_shipping_promotion.code
@@ -1418,6 +1444,7 @@ describe Spree::Order, type: :model do
       context 'when free shipping promotion has item total rule' do
         let(:free_shipping_promotion) do
           create(:free_shipping_promotion_with_item_total_rule,
+                 kind: :coupon_code,
                  code: 'freeship',
                  starts_at: 1.day.ago,
                  expires_at: 1.day.from_now)

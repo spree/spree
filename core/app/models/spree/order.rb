@@ -454,15 +454,14 @@ module Spree
     end
 
     def empty!
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `Order#empty!` is deprecated and will be removed in Spree 5.0.
-        Please use `Spree::Cart::Empty.call(order: order)` instead.
-      DEPRECATION
-
       raise Spree.t(:cannot_empty_completed_order) if completed?
 
       result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
       result.value
+    end
+
+    def use_all_coupon_codes
+      Spree::CouponCodes::CouponCodesHandler.new(order: self).use_all_codes
     end
 
     def has_step?(step)
@@ -657,7 +656,7 @@ module Spree
     alias fully_discounted fully_discounted?
 
     def promo_code
-      promotions.pluck(:code).compact.first
+      Spree::CouponCode.find_by(order: self, promotion: promotions).try(:code) || promotions.pluck(:code).compact.first
     end
 
     def validate_payments_attributes(attributes)

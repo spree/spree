@@ -18,6 +18,9 @@ FactoryBot.define do
 
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
+    sequence :code do |n|
+      "CODE-#{n}"
+    end
 
     before(:create) do |promotion, _evaluator|
       if promotion.stores.empty?

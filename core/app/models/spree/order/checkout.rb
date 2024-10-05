@@ -115,6 +115,7 @@ module Spree
               before_transition to: :resumed, do: proc { |order| order.state_machine_resumed = true }
 
               after_transition to: :complete, do: :finalize!
+              after_transition to: :complete, do: :use_all_coupon_codes
               after_transition to: :resumed, do: :after_resume
               after_transition to: :canceled, do: :after_cancel
 

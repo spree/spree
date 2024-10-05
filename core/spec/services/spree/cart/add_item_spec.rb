@@ -63,7 +63,7 @@ module Spree
     end
 
     context 'running promotions' do
-      let(:promotion) { create(:promotion) }
+      let(:promotion) { create(:promotion, kind: :automatic) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       context 'one active order promotion' do
