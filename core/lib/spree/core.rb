@@ -29,7 +29,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
                  :public_storage_service_name, :cdn_host, :searcher_class,
-                 :default_queue_name
+                 :queues
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
@@ -69,8 +69,12 @@ module Spree
     end
   end
 
-  def self.default_queue_name
-    @@default_queue_name ||= 'default'
+  def self.queues
+    @@queues ||= OpenStruct.new(
+      default: :default,
+      stock_location_stock_items: :default,
+      coupon_codes: :default
+    )
   end
 
   def self.searcher_class(constantize: true)
