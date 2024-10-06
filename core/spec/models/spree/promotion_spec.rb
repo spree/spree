@@ -838,5 +838,15 @@ describe Spree::Promotion, type: :model do
         expect(promotion.coupon_codes.first.display_code).to start_with('ABC')
       end
     end
+
+    context 'when number of codes is greater than the web limit', :job do
+      let(:promotion) { create(:promotion, code: nil, multi_codes: true, number_of_codes: 10) }
+
+      it 'generates the codes in a background job' do
+        expect {
+          promotion.update(number_of_codes: 501)
+        }.to enqueue_job(Spree::CouponCodes::BulkGenerateJob).with(promotion.id, 501 - promotion.coupon_codes.count)
+      end
+    end
   end
 end

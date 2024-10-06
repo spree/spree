@@ -67,7 +67,7 @@ module Spree
     validates :number_of_codes, numericality: {
       only_integer: true,
       greater_than: 0,
-      less_than_or_equal_to: ENV.fetch('SPREE_PROMOTION_MAX_NUMBER_OF_CODES', 5000).to_i
+      less_than_or_equal_to: Spree::Config.coupon_codes_total_limit
     }, if: -> { multi_codes? }
 
     #
@@ -308,7 +308,7 @@ module Spree
       return if number_of_codes <= coupon_codes.count
       return unless saved_change_to_number_of_codes?
 
-      if number_of_codes > 500
+      if number_of_codes > Spree::Config.coupon_codes_web_limit
         Spree::CouponCodes::BulkGenerateJob.perform_later(id, number_of_codes - coupon_codes.count)
       else
         Spree::CouponCodes::BulkGenerate.call(promotion: self, quantity: number_of_codes - coupon_codes.count)

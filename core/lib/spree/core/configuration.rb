@@ -69,6 +69,9 @@ module Spree
       preference :storefront_taxons_path, :string, default: 't'
       preference :storefront_pages_path, :string, default: 'pages'
 
+      # coupon codes
+      preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job
+      preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
 
       attr_writer :searcher_class
     end
