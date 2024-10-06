@@ -1,4 +1,4 @@
-class AddMultiCodeToSpreePromotions < ActiveRecord::Migration[7.2]
+class AddMultiCodeToSpreePromotions < ActiveRecord::Migration[6.1]
   def change
     add_column :spree_promotions, :code_prefix, :string, if_not_exists: true
     add_column :spree_promotions, :number_of_codes, :integer, if_not_exists: true
