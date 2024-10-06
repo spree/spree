@@ -72,6 +72,7 @@ module Spree
   def self.queues
     @@queues ||= OpenStruct.new(
       default: :default,
+      variants: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default
     )
