@@ -69,11 +69,6 @@ module Spree
       preference :storefront_taxons_path, :string, default: 't'
       preference :storefront_pages_path, :string, default: 'pages'
 
-      # searcher_class allows spree extension writers to provide their own Search class
-      def searcher_class
-        Spree::Deprecation.warn('`Spree::Config.searcher_class` is deprecated and will be removed in Spree v5, please use `Spree.searcher_class` instead.')
-        @searcher_class ||= Spree.searcher_class
-      end
 
       attr_writer :searcher_class
     end
