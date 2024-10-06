@@ -27,7 +27,9 @@ module Spree
 
       def coupon_attributes(promotion)
         {
-          promotion_id: promotion.id
+          promotion_id: promotion.id,
+          created_at: Time.current,
+          updated_at: Time.current
         }
       end
     end
