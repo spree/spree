@@ -85,6 +85,7 @@ module Spree
     attribute :state_machine_resumed, :boolean
 
     acts_as_taggable_on :tags
+    acts_as_taggable_tenant :store_id
 
     if Spree.user_class
       belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
