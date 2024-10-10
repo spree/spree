@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     options[:host] = Spree.cdn_host if Spree.cdn_host.present?
     options[:host] ||= Rails.application.routes.default_url_options[:host]
 
+    options[:protocol] = 'https://' if Rails.env.production?
+
     options[:only_path] = true if options[:host].blank?
 
     if model.blob.service_name == 'cloudinary' && defined?(Cloudinary)
