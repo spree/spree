@@ -1,3 +1,7 @@
+Rails.application.config.after_initialize do
+  require 'mobility/action_text'
+end
+
 Mobility.configure do |config|
   config.plugins do
     ransack

@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   %w[
     actionpack actionview activejob activemodel activerecord
-    activestorage activesupport railties
+    activestorage actiontext activesupport railties
   ].each do |rails_gem|
     s.add_dependency rails_gem, '>= 6.1', '< 8.0'
   end
@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'activerecord-typedstore'
   s.add_dependency 'mobility', '~> 1.2'
   s.add_dependency 'mobility-ransack', '~> 1.2'
+  s.add_dependency 'mobility-actiontext', '~> 1.1'
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'request_store', '~> 1.7'
 end
