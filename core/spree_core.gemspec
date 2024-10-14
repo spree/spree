@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   %w[
     actionpack actionview activejob activemodel activerecord
-    activestorage activesupport railties
+    activestorage actiontext activesupport railties
   ].each do |rails_gem|
     s.add_dependency rails_gem, '>= 6.1', '< 8.0'
   end
