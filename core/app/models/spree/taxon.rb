@@ -78,6 +78,7 @@ module Spree
     self::Translation.class_eval do
       before_save :set_permalink
       before_save :set_pretty_name
+      after_save :regenerate_pretty_name_and_permalink, if: :should_regenerate_pretty_name_and_permalink?
 
       def slug
         permalink
@@ -96,11 +97,19 @@ module Spree
       end
 
       def name_with_fallback
-        name.blank? ? translated_model.name : name
+        name.blank? ? translated_model['name'] : name
       end
 
       def pretty_name_with_fallback
-        pretty_name.blank? ? translated_model.pretty_name : pretty_name
+        pretty_name.blank? ? translated_model['pretty_name'] : pretty_name
+      end
+
+      def regenerate_pretty_name_and_permalink
+        Spree::Taxon::Translation.where(spree_taxon_id: translated_model.cached_self_and_descendants_ids).each(&:update_pretty_name_and_permalink)
+      end
+
+      def update_pretty_name_and_permalink
+        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
       end
 
       private
@@ -130,7 +139,7 @@ module Spree
       end
 
       def generate_pretty_name_including_parent
-        [parent_pretty_name_with_fallback, (pretty_name.blank? ? name_with_fallback : pretty_name)].compact.join(' -> ')
+        [parent_pretty_name_with_fallback, (name.blank? ? name_with_fallback : name)].compact.join(' -> ')
       end
 
       def parent
@@ -139,12 +148,16 @@ module Spree
 
       def parent_permalink_with_fallback
         localized_parent = parent.translations.find_by(locale: locale)
-        localized_parent.present? ? localized_parent.permalink : parent.permalink
+        localized_parent.present? ? localized_parent.permalink : parent['permalink']
       end
 
       def parent_pretty_name_with_fallback
         localized_parent = parent.translations.find_by(locale: locale)
-        localized_parent.present? ? localized_parent.pretty_name : parent.pretty_name
+        localized_parent.present? ? localized_parent.pretty_name : parent['pretty_name']
+      end
+
+      def should_regenerate_pretty_name_and_permalink?
+        saved_changes.key?(:name) || saved_changes.key?(:permalink)
       end
     end
 
@@ -196,15 +209,21 @@ module Spree
     end
 
     def regenerate_pretty_name_and_permalink
-      set_permalink
-      update_columns(pretty_name: generate_pretty_name, updated_at: Time.current)
+      if Spree.use_translations?
+        regenerate_translations_pretty_name_and_permalink
+      else
+        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+      end
 
       children.reload.each(&:regenerate_pretty_name_and_permalink_as_child)
     end
 
     def regenerate_pretty_name_and_permalink_as_child
-      set_permalink
-      update_columns(pretty_name: generate_pretty_name, updated_at: Time.current)
+      if Spree.use_translations?
+        regenerate_translations_pretty_name_and_permalink
+      else
+        update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
+      end
 
       children.reload.each(&:regenerate_pretty_name_and_permalink_as_child)
     end
@@ -260,6 +279,10 @@ module Spree
 
     def copy_taxonomy_from_parent
       self.taxonomy = parent.taxonomy if parent.present? && taxonomy.blank?
+    end
+
+    def regenerate_translations_pretty_name_and_permalink
+      translations.each(&:regenerate_pretty_name_and_permalink)
     end
   end
 end

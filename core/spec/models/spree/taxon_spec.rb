@@ -283,6 +283,55 @@ describe Spree::Taxon, type: :model do
     end
   end
 
+  describe '#regenerate_pretty_name_and_permalink' do
+    let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
+
+    it 'regenerates pretty name and permalink' do
+      expect(taxon.pretty_name).to eq("#{taxon.parent.pretty_name} -> #{taxon.name}")
+      expect(taxon.permalink).to eq("#{taxon.parent.permalink}/#{taxon.name.to_url}")
+    end
+
+    context "when parent's permalink is changed" do
+      before do
+        taxon.parent.update!(permalink: 'new-permalink')
+      end
+
+      it 'updates the pretty name and permalink' do
+        expect(taxon.reload.pretty_name).to eq("#{taxon.parent.pretty_name} -> #{taxon.name}")
+        expect(taxon.permalink).to eq("new-permalink/#{taxon.name.to_url}")
+      end
+    end
+
+    context 'when parent name is changed' do
+      before do
+        taxon.parent.update!(name: 'New Parent')
+      end
+
+      it 'updates the pretty name and permalink' do
+        expect(taxon.reload.pretty_name).to eq("New Parent -> #{taxon.name}")
+        expect(taxon.permalink).to eq("#{taxon.parent.permalink}/#{taxon.name.to_url}")
+      end
+    end
+
+    context 'with translations' do
+      before do
+        I18n.with_locale(:pl) do
+          taxon.update!(name: 'Kategoria#1')
+          taxon.reload
+
+          taxon.parent.update!(name: 'Kategoria')
+        end
+      end
+
+      it 'updates the pretty name and permalink for translations as well' do
+        I18n.with_locale(:pl) do
+          expect(taxon.reload.pretty_name).to eq('Kategoria -> Kategoria#1')
+          expect(taxon.permalink).to eq('kategoria/kategoria-number-1')
+        end
+      end
+    end
+  end
+
   describe '#pretty_name' do
     let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
 
