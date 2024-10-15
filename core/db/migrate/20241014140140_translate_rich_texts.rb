@@ -1,4 +1,4 @@
-class TranslateRichTexts < ActiveRecord::Migration[7.2]
+class TranslateRichTexts < ActiveRecord::Migration[6.1]
   def change
     if table_exists?(:action_text_rich_texts)
       add_column :action_text_rich_texts, :locale, :string, null: false
