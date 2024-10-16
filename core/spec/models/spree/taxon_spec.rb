@@ -315,7 +315,7 @@ describe Spree::Taxon, type: :model do
 
     context 'with translations' do
       before do
-        I18n.with_locale(:pl) do
+        Mobility.with_locale(:pl) do
           taxon.update!(name: 'Kategoria#1')
           taxon.reload
 
@@ -324,9 +324,70 @@ describe Spree::Taxon, type: :model do
       end
 
       it 'updates the pretty name and permalink for translations as well' do
-        I18n.with_locale(:pl) do
+        Mobility.with_locale(:pl) do
           expect(taxon.reload.pretty_name).to eq('Kategoria -> Kategoria#1')
           expect(taxon.permalink).to eq('kategoria/kategoria-number-1')
+        end
+      end
+    end
+
+    context 'when taxon is moved' do
+      let(:parent2) { create(:taxon, name: 'Parent2', permalink: 'parent2', taxonomy: taxonomy) }
+      let(:taxon2) { create(:taxon, name: 'Child', parent: parent2, permalink: 'child', taxonomy: taxonomy) }
+
+      before do
+        taxon.parent.update!(name: 'Grandparent', permalink: 'grandparent')
+        taxon.update!(name: 'Parent', permalink: 'parent')
+
+        parent2
+        taxon2
+
+        Mobility.with_locale(:pl) do
+          taxon.parent.update!(name: 'Dziadek', permalink: 'dziadek')
+          taxon.update!(name: 'Rodzic')
+
+          parent2.update!(name: 'Rodzic2', permalink: 'rodzic2')
+          taxon2.update!(name: 'Dziecko')
+        end
+
+        expect(taxon.permalink).to eq('grandparent/parent')
+        expect(taxon.pretty_name).to eq('Grandparent -> Parent')
+
+        expect(taxon2.permalink).to eq('grandparent/parent2/child')
+        expect(taxon2.pretty_name).to eq('Grandparent -> Parent2 -> Child')
+
+        Mobility.with_locale(:pl) do
+          expect(taxon.reload.pretty_name).to eq('Dziadek -> Rodzic')
+          expect(taxon.permalink).to eq('dziadek/rodzic')
+
+          expect(taxon2.pretty_name).to eq('Dziadek -> Rodzic2 -> Dziecko')
+          expect(taxon2.permalink).to eq('dziadek/rodzic2/dziecko')
+        end
+      end
+
+      it 'updates the pretty name and permalink' do
+        taxon2.move_to_child_with_index(taxon, 0)
+
+        expect(taxon2.reload.pretty_name).to eq('Grandparent -> Parent -> Child')
+        expect(taxon2.permalink).to eq('grandparent/parent/child')
+
+        Mobility.with_locale(:pl) do
+          expect(taxon2.reload.pretty_name).to eq('Dziadek -> Rodzic -> Dziecko')
+          expect(taxon2.permalink).to eq('dziadek/rodzic/dziecko')
+        end
+      end
+
+      it 'updates the pretty name and permalink when move is done inside different locales' do
+        Mobility.with_locale(:pl) do
+          taxon2.move_to_child_with_index(taxon, 0)
+        end
+
+        expect(taxon2.permalink).to eq('grandparent/parent/child')
+        expect(taxon2.reload.pretty_name).to eq('Grandparent -> Parent -> Child')
+
+        Mobility.with_locale(:pl) do
+          expect(taxon2.reload.pretty_name).to eq('Dziadek -> Rodzic -> Dziecko')
+          expect(taxon2.permalink).to eq('dziadek/rodzic/dziecko')
         end
       end
     end

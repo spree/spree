@@ -52,6 +52,7 @@ module Spree
     after_touch :touch_ancestors_and_taxonomy
     after_commit :regenerate_pretty_name_and_permalink, on: :update, if: :should_regenerate_pretty_name_and_permalink?
     after_move :regenerate_pretty_name_and_permalink
+    after_move :regenerate_translations_pretty_name_and_permalink
 
     has_one :store, through: :taxonomy
 
@@ -93,15 +94,15 @@ module Spree
       end
 
       def set_pretty_name
-        self[:pretty_name] = generate_pretty_name
+        self.pretty_name = generate_pretty_name
       end
 
       def name_with_fallback
-        name.blank? ? translated_model['name'] : name
+        name.blank? ? translated_model[:name] : name
       end
 
       def pretty_name_with_fallback
-        pretty_name.blank? ? translated_model['pretty_name'] : pretty_name
+        pretty_name.blank? ? translated_model[:pretty_name] : pretty_name
       end
 
       def regenerate_pretty_name_and_permalink
@@ -128,7 +129,7 @@ module Spree
         if parent.present?
           generate_pretty_name_including_parent
         elsif pretty_name.blank?
-          pretty_name_with_fallback
+          name_with_fallback
         else
           pretty_name
         end
@@ -148,12 +149,12 @@ module Spree
 
       def parent_permalink_with_fallback
         localized_parent = parent.translations.find_by(locale: locale)
-        localized_parent.present? ? localized_parent.permalink : parent['permalink']
+        localized_parent.present? ? localized_parent.permalink : parent[:permalink]
       end
 
       def parent_pretty_name_with_fallback
         localized_parent = parent.translations.find_by(locale: locale)
-        localized_parent.present? ? localized_parent.pretty_name : parent['pretty_name']
+        localized_parent.present? ? localized_parent.pretty_name : parent[:pretty_name]
       end
 
       def should_regenerate_pretty_name_and_permalink?
@@ -179,7 +180,7 @@ module Spree
     end
 
     def set_pretty_name
-      self[:pretty_name] = generate_pretty_name
+      self.pretty_name = generate_pretty_name
     end
 
     def generate_pretty_name
@@ -209,9 +210,7 @@ module Spree
     end
 
     def regenerate_pretty_name_and_permalink
-      if Spree.use_translations?
-        regenerate_translations_pretty_name_and_permalink
-      else
+      Mobility.with_locale(nil) do
         update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
       end
 
@@ -219,9 +218,7 @@ module Spree
     end
 
     def regenerate_pretty_name_and_permalink_as_child
-      if Spree.use_translations?
-        regenerate_translations_pretty_name_and_permalink
-      else
+      Mobility.with_locale(nil) do
         update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
       end
 
