@@ -1505,10 +1505,10 @@ describe Spree::Order, type: :model do
     context 'when user has default bill address' do
       let!(:user) { create(:user_with_addresses) }
 
-      it 'does not change user default bill addresss' do
-        expect(user.bill_address_id).not_to be nil
+      it 'changes user default bill address' do
+        expect(user.bill_address_id).not_to be_nil
 
-        expect { subject }.not_to change { user.bill_address_id }
+        expect { subject }.to(change { user.bill_address_id })
       end
     end
 
@@ -1573,7 +1573,7 @@ describe Spree::Order, type: :model do
       it 'does not change user default ship addresss' do
         expect(user.ship_address_id).not_to be nil
 
-        expect { subject }.not_to change { user.ship_address_id }
+        expect { subject }.to change { user.ship_address_id }
       end
     end
 

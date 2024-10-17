@@ -33,13 +33,17 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
 
     scope :not_deleted, -> { where(deleted_at: nil) }
 
+    scope :by_state_name_or_abbr, lambda { |state_name|
+      joins(:state).merge(Spree::State.where(name: state_name).or(Spree::State.where(abbr: state_name)))
+    }
+
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
+    belongs_to :user, class_name: Spree.user_class.name, optional: true, touch: true
 
     has_many :shipments, inverse_of: :address
 
@@ -66,6 +70,7 @@ module Spree
 
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
+    alias_attribute :postal_code, :zipcode
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
     self.whitelisted_ransackable_associations = %w[country state user]
@@ -86,6 +91,10 @@ module Spree
 
     def state_name_text
       state_name.present? ? state_name : state&.name
+    end
+
+    def street
+      [address1, address2].join(' ')
     end
 
     def to_s
@@ -148,11 +157,11 @@ module Spree
     end
 
     def editable?
-      new_record? || (shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?)
+      new_record? || Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end
 
     def can_be_deleted?
-      shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
+      shipments.empty? && Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end
 
     def check
@@ -162,11 +171,12 @@ module Spree
     end
 
     def destroy
+      assign_new_default_address_to_user
+
       if can_be_deleted?
         super
       else
         update_column :deleted_at, Time.current
-        assign_new_default_address_to_user
       end
     end
 
@@ -206,16 +216,14 @@ module Spree
       end
 
       # ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
-      if state_name.present?
-        if country.states.present?
-          states = country.states.find_all_by_name_or_abbr(state_name)
+      if state_name.present? && country.states.present?
+        states = country.states.find_all_by_name_or_abbr(state_name)
 
-          if states.size == 1
-            self.state = states.first
-            clear_state_name
-          else
-            errors.add(:state, :invalid)
-          end
+        if states.size == 1
+          self.state = states.first
+          clear_state_name
+        else
+          errors.add(:state, :invalid)
         end
       end
 
@@ -238,8 +246,16 @@ module Spree
     def assign_new_default_address_to_user
       return unless user
 
-      user.bill_address = user.addresses.last if user.bill_address == self
-      user.ship_address = user.addresses.last if user.ship_address == self
+      user.reload
+      return if user.bill_address != self && user.ship_address != self
+
+      last_address = user.
+                     addresses.
+                     reorder(created_at: :desc).
+                     find { |address| address.id != id && address.valid? }
+
+      user.bill_address = last_address if user.bill_address == self
+      user.ship_address = last_address if user.ship_address == self
       user.save!
     end
   end

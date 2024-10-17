@@ -493,8 +493,8 @@ describe Spree::Address, type: :model do
           it 'assigns last available address as default to bill and ship address' do
             destroy_address
 
-            expect(user.reload.bill_address_id).to eq address2.id
-            expect(user.reload.ship_address_id).to eq address2.id
+            expect(user.reload.bill_address_id).to eq address3.id
+            expect(user.reload.ship_address_id).to eq address3.id
           end
         end
 
