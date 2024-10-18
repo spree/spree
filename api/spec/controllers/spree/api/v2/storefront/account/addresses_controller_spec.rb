@@ -154,7 +154,7 @@ describe 'Spree::Api::V2::Storefront::Account::AddressesController', type: :requ
     end
 
     context 'when address is not editable' do
-      let!(:shipment) { create(:shipment, address: address) }
+      let!(:complete_order) { create(:completed_order_with_totals, ship_address: address) }
 
       context 'valid request' do
         let(:new_attributes) do

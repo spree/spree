@@ -200,6 +200,13 @@ describe Spree::Address, type: :model do
         expect(address.errors['zipcode']).not_to include('is invalid')
       end
 
+      it 'accepts an unformatted zip code' do
+        allow(address.country).to receive(:iso).and_return('GB')
+        address.zipcode = '	AL38QE'
+        address.valid?
+        expect(address.errors['zipcode']).not_to include('is invalid')
+      end
+
       context 'does not validate' do
         it 'does not have a country' do
           address.country = nil
@@ -439,14 +446,9 @@ describe Spree::Address, type: :model do
     let(:address3) { create(:address, user: user) }
 
     let(:order) { create(:completed_order_with_totals) }
-    let(:order2) { create(:order_with_line_items) }
-
     let(:user) { create(:user) }
 
-    before do
-      order.update_attribute(:bill_address, address2)
-      order2.update_attribute(:ship_address, address3)
-    end
+    before { order.update_attribute(:bill_address, address2) }
 
     it 'has required attributes' do
       expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone])
@@ -464,7 +466,7 @@ describe Spree::Address, type: :model do
       expect(address2).to_not be_editable
     end
 
-    it "can't be deleted when there is a complete associated order" do
+    it "can't be deleted when there is an associated order" do
       expect(address2).to_not be_can_be_deleted
     end
 
@@ -483,34 +485,104 @@ describe Spree::Address, type: :model do
       expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
     end
 
-    context 'when address can not be deleted' do
-      let!(:order) { create(:completed_order_with_totals, bill_address: address, ship_address: address) }
+    context 'when saving user raises error' do
+      before do
+        user.update(ship_address: address2, bill_address: address2)
+        user.reload
+        allow_any_instance_of(Spree::LegacyUser).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new)
+      end
 
-      context 'when address is default user address' do
-        before { user.update(bill_address: address, ship_address: address) }
+      it 'does not set deleted_at attribute for address' do
+        expect { address2.destroy }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(address2.reload.deleted_at).to be_nil
+      end
+    end
 
-        context 'when user have many addresses' do
+    describe '#assign_new_default_address_to_user' do
+      shared_examples 'default address' do
+        context 'when 2 addresses are available' do
+          let!(:address3) { create(:address, user: user) }
+
           it 'assigns last available address as default to bill and ship address' do
+            user.update!(bill_address: address, ship_address: address)
             destroy_address
+            expect(user.bill_address).to eq(address3)
+            expect(user.ship_address).to eq(address3)
 
-            expect(user.reload.bill_address_id).to eq address3.id
-            expect(user.reload.ship_address_id).to eq address3.id
-          end
-        end
-
-        context 'when deleted address was the only one' do
-          before do
-            address2.destroy
             address3.destroy
-          end
 
-          it 'does not assign any address' do
-            destroy_address
-
-            expect(user.reload.bill_address_id).to be nil
-            expect(user.reload.ship_address_id).to be nil
+            expect(user.bill_address).to eq(address2)
+            expect(user.ship_address).to eq(address2)
           end
         end
+
+        context 'when the only address left is invalid' do
+          before do
+            address2.update_columns(address1: nil, city: nil, zipcode: nil, phone: nil)
+            user.update_columns(bill_address_id: address.id, ship_address_id: address.id)
+          end
+
+          it 'does not raise errors and sets addresses to nil' do
+            expect { destroy_address }.not_to raise_error
+            expect(user.bill_address).to be_nil
+            expect(user.ship_address).to be_nil
+          end
+        end
+
+        context 'when the only address left is soft-deleted' do
+          before do
+            address2.update_columns(deleted_at: Time.current)
+          end
+
+          it 'does not raise errors and sets addresses to nil' do
+            expect { destroy_address }.not_to raise_error
+            expect(user.bill_address).to be_nil
+            expect(user.ship_address).to be_nil
+          end
+        end
+
+        context 'when deleted address was not assigned to the user' do
+          before { address.update(user: nil) }
+
+          it 'does not touch user' do
+            expect{ destroy_address }.not_to change{ user.reload.updated_at }
+          end
+        end
+
+        context 'when deleted address was not default' do
+          before do
+            user.update_columns(bill_address_id: address2.id, ship_address_id: address2.id)
+            user.reload
+          end
+
+          it 'does not change user bill address' do
+            expect{ destroy_address }.not_to change{ user.reload.bill_address_id }
+          end
+
+          it 'does not change user ship address' do
+            expect{ destroy_address }.not_to change{ user.reload.ship_address_id }
+          end
+        end
+      end
+
+      context 'when address is deleted' do
+        it 'is deleted' do
+          destroy_address
+          expect(Spree::Address.find_by(id: address.id)).to be_nil
+        end
+
+        it_behaves_like 'default address'
+      end
+
+      context 'when address is soft deleted' do
+        let!(:order) { create(:completed_order_with_totals, bill_address: address, ship_address: address) }
+
+        it 'is soft deleted' do
+          destroy_address
+          expect(Spree::Address.find_by(id: address.id).deleted_at).to be_present
+        end
+
+        it_behaves_like 'default address'
       end
     end
   end
