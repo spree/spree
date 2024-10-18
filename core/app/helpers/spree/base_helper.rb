@@ -218,6 +218,11 @@ module Spree
       product_or_variant.default_image
     end
 
+    def base_cache_key
+      Spree::Deprecation.warn('`base_cache_key` is deprecated and will be removed in Spree 6. Please use `spree_base_cache_key` instead')
+      spree_base_cache_key
+    end
+
     def spree_base_cache_key
       [I18n.locale, current_currency, defined?(try_spree_current_user) && try_spree_current_user.present?,
        defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')]
