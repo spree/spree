@@ -1473,7 +1473,7 @@ describe Spree::Order, type: :model do
     it { expect { order.valid? }.to change(order, :number).to('R1234') }
   end
 
-  describe "bill_address_id=" do
+  describe 'bill_address_id=' do
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
@@ -1505,10 +1505,43 @@ describe Spree::Order, type: :model do
     context 'when user has default bill address' do
       let!(:user) { create(:user_with_addresses) }
 
-      it 'does not change user default bill addresss' do
+      it 'changes user default bill address' do
         expect(user.bill_address_id).not_to be nil
 
-        expect { subject }.not_to change { user.bill_address_id }
+        expect { subject }.to(change { user.bill_address_id })
+      end
+    end
+
+    context 'when user\'s default address is invalid' do
+      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
+      let(:user) { create(:user, bill_address_id: invalid_address.id) }
+
+      before do
+        invalid_address.save(validate: false)
+        user
+        order.reload
+      end
+
+      it 'deletes it and assign new address' do
+        expect(user.bill_address_id).to eq invalid_address.id
+
+        subject
+
+        expect(user.reload.bill_address_id).to be_present
+        expect(user.bill_address_id).to_not eq(invalid_address.id)
+
+        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
+    end
+
+    context 'when user has no default address' do
+      let!(:user) { create(:user) }
+
+      it 'assigns a new default address' do
+        subject
+
+        expect(user.bill_address).to be_present
+        expect(user.bill_address.address1).to eq(address_attributes[:address1])
       end
     end
 
@@ -1538,7 +1571,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe "ship_address_id=" do
+  describe 'ship_address_id=' do
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
@@ -1570,17 +1603,48 @@ describe Spree::Order, type: :model do
     context 'when user has default ship address' do
       let!(:user) { create(:user_with_addresses) }
 
-      it 'does not change user default ship addresss' do
-        expect(user.ship_address_id).not_to be nil
+      it 'changes user default ship addresss' do
+        expect { subject }.to(change { user.ship_address_id })
+      end
+    end
 
-        expect { subject }.not_to change { user.ship_address_id }
+    context 'when user\'s default address is invalid' do
+      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
+      let(:user) { create(:user, ship_address_id: invalid_address.id) }
+
+      before do
+        invalid_address.save(validate: false)
+        user
+        order.reload
+      end
+
+      it 'deletes it and assign new address' do
+        expect(user.ship_address_id).to eq invalid_address.id
+
+        subject
+
+        expect(user.reload.ship_address_id).to be_present
+        expect(user.ship_address_id).not_to eq(invalid_address.id)
+
+        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
+      end
+    end
+
+    context 'when user has no default address' do
+      let!(:user) { create(:user) }
+
+      it 'assigns a new default address' do
+        subject
+
+        expect(user.ship_address).to be_present
+        expect(user.ship_address.address1).to eq(address_attributes[:address1])
       end
     end
 
     context 'when user does not have any addresses' do
       let!(:user) { create(:user) }
 
-      it 'changes user default ship addresss' do
+      it 'changes user default ship address' do
         expect(user.ship_address_id).to be nil
         expect(user.addresses).to be_empty
 
@@ -1594,7 +1658,7 @@ describe Spree::Order, type: :model do
 
       before { user.update(ship_address: nil) }
 
-      it 'changes user default ship addresss' do
+      it 'changes user default ship address' do
         expect(user.ship_address_id).to be nil
         expect(user.addresses).not_to be_empty
 
