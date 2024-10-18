@@ -155,7 +155,7 @@ module Spree
     end
 
     def common_product_cache_keys
-      base_cache_key + price_options_cache_key
+      spree_base_cache_key + price_options_cache_key
     end
 
     private

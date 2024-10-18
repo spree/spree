@@ -146,7 +146,7 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  context 'base_cache_key' do
+  context 'spree_base_cache_key' do
     let(:current_currency) { 'USD' }
 
     context 'when try_spree_current_user defined' do
@@ -159,7 +159,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { create(:admin_user) }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', true, true]
+          expect(spree_base_cache_key).to eq [:en, 'USD', true, true]
         end
       end
 
@@ -167,7 +167,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { create(:user) }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', true, false]
+          expect(spree_base_cache_key).to eq [:en, 'USD', true, false]
         end
       end
 
@@ -175,7 +175,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { nil }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', false, nil]
+          expect(spree_base_cache_key).to eq [:en, 'USD', false, nil]
         end
       end
     end
@@ -188,7 +188,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'returns base cache key' do
-        expect(base_cache_key).to eq [:en, 'USD', nil, nil]
+        expect(spree_base_cache_key).to eq [:en, 'USD', nil, nil]
       end
     end
   end
