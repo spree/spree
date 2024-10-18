@@ -66,7 +66,7 @@ module Spree
       end
 
       def config_locale
-        I18n.locale
+        I18n.default_locale
       end
 
       def current_timezone
