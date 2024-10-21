@@ -31,6 +31,11 @@ module Spree
           # Order promotion has to be destroyed before line item removing
           order.order_promotions.where(promotion_id: promotion.id).destroy_all
 
+          if promotion.multi_codes?
+            coupon_code = promotion.coupon_codes.find_by(order: order)
+            coupon_code&.remove_from_order
+          end
+
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)
           order.update_with_updater!
@@ -82,9 +87,9 @@ module Spree
       end
 
       def handle_present_promotion
+        return promotion_applied if promotion_exists_on_order?
         return set_error_code :coupon_code_used if promotion.coupon_codes.used.where(code: order.coupon_code).exists?
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
-        return promotion_applied if promotion_exists_on_order?
 
         unless promotion.eligible?(order, options)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
