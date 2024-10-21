@@ -319,6 +319,10 @@ module Spree
             expect(order.total).to eq(130)
             subject.apply
             expect(subject.success).to be_present
+
+            expect(coupon_code.reload).to be_used
+            expect(coupon_code.order).to eq(order)
+
             order.line_items.each do |line_item|
               expect(line_item.adjustments.count).to eq(1)
             end
@@ -340,6 +344,28 @@ module Spree
 
               expect(subject.success).to be_nil
               expect(subject.error).to eq Spree.t(:coupon_code_used)
+            end
+          end
+
+          describe '#remove' do
+            before do
+              subject.apply
+              order.reload
+            end
+
+            it 'removes the promotion' do
+              expect(order.total).to eq(100)
+
+              subject.remove(coupon_code.code)
+              expect(subject.success).to be_present
+
+              expect(order.reload.total).to eq(130)
+
+              expect(coupon_code.reload).to be_unused
+              expect(coupon_code.order).to be_nil
+
+              expect(order.promotions).to be_empty
+              expect(order.line_item_adjustments).to be_empty
             end
           end
         end
@@ -401,7 +427,10 @@ module Spree
               expect(subject.successful?).to be true
               # Simulate the order has been completed so the coupon code is marked as used
               Spree::CouponCodes::CouponCodesHandler.new(order: order).use_all_codes
-              expect(Spree::CouponCode.find_by(code: coupon_code).state).to eq 'used'
+
+              coupon = Spree::CouponCode.find_by(code: coupon_code)
+              expect(coupon.state).to eq 'used'
+              expect(coupon.order).to eq order
 
               subject_2.apply
               expect(subject_2.successful?).to be false
@@ -418,14 +447,20 @@ module Spree
             expect(subject.successful?).to be true
             # Simulate the order has been completed so the coupon code is marked as used
             Spree::CouponCodes::CouponCodesHandler.new(order: order).use_all_codes
-            expect(Spree::CouponCode.find_by(code: 'first_one_time_code').state).to eq 'used'
+
+            coupon = Spree::CouponCode.find_by(code: 'first_one_time_code')
+            expect(coupon.state).to eq 'used'
+            expect(coupon.order).to eq order
 
             order_2.coupon_code = 'second_one_time_code'
             subject_2.apply
             expect(subject_2.successful?).to be true
             # Simulate the order has been completed so the coupon code is marked as used
             Spree::CouponCodes::CouponCodesHandler.new(order: order_2).use_all_codes
-            expect(Spree::CouponCode.find_by(code: 'second_one_time_code').state).to eq 'used'
+
+            coupon = Spree::CouponCode.find_by(code: 'second_one_time_code')
+            expect(coupon.state).to eq 'used'
+            expect(coupon.order).to eq order_2
           end
         end
       end

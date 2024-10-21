@@ -24,7 +24,11 @@ module Spree
     end
 
     def apply_order!(order)
-      update(order: order)
+      update(order: order, state: 'used')
+    end
+
+    def remove_from_order
+      update(order: nil, state: 'unused')
     end
 
     def display_code
