@@ -6,27 +6,99 @@ module Spree
 
       attr_accessor :country
 
-      def call(address:, address_params:)
-        address_params[:country_id] ||= address.country_id
-        address_params = fill_country_and_state_ids(address_params)
-        address_params[:user_id] = address.user_id if address.user_id.present?
+      def call(address:, address_params:, **opts)
+        order = opts[:order]
+        default_billing = opts.fetch(:default_billing, false)
+        default_shipping = opts.fetch(:default_shipping, false)
+        address_changes_except = opts.fetch(:address_changes_except, [])
 
-        if address&.editable?
-          address.update(address_params) ? success(address) : failure(address)
-        else
-          if new_address(address_params).valid?
-            address.destroy
-            success(new_address)
+        prepare_address_params!(address, address_params)
+        address.assign_attributes(address_params)
+
+        address_changed = address.changes.except(*address_changes_except).any?
+
+        if !address_changed && defaults_changed?(address, default_billing, default_shipping)
+          assign_to_user_as_default(
+            user: address.user,
+            address_id: address.id,
+            default_billing: default_billing,
+            default_shipping: default_shipping
+          )
+        end
+
+        return success(address) unless address_changed
+
+        if address.editable?
+          if address.update(address_params)
+            if address.user.present?
+              assign_to_user_as_default(
+                user: address.user,
+                address_id: address.id,
+                default_billing: default_billing,
+                default_shipping: default_shipping
+              )
+            end
+
+            order.update(state: 'address') if order.present?
+
+            success(address)
           else
-            failure(new_address)
+            failure(address)
           end
+        elsif new_address(address_params).valid?
+          address.destroy
+
+          if new_address.user.present?
+            assign_to_user_as_default(
+              user: new_address.user,
+              address_id: new_address.id,
+              default_billing: address.user_default_billing? || default_billing,
+              default_shipping: address.user_default_shipping? || default_shipping
+            )
+          end
+
+          if order.present?
+            order.ship_address = new_address if order.ship_address_id == address.id
+            order.bill_address = new_address if order.bill_address_id == address.id
+            order.state = 'address'
+            order.save
+          end
+
+          success(new_address)
+        else
+          failure(new_address)
         end
       end
 
       private
 
+      def prepare_address_params!(address, address_params)
+        address_params[:user_id] = address&.user_id
+        address_params[:country_id] ||= address.country_id
+        address_params = fill_country_and_state_ids(address_params)
+        address_params.transform_values!(&:presence)
+      end
+
+      def defaults_changed?(address, default_billing, default_shipping)
+        user = address.user
+
+        user.present? && (
+          (default_billing.present? && user.bill_address != address) ||
+          (default_shipping.present? && user.ship_address != address)
+        )
+      end
+
+      def assign_to_user_as_default(user:, address_id:, default_billing: true, default_shipping: true)
+        attributes_to_update = {
+          ship_address_id: (address_id if default_shipping),
+          bill_address_id: (address_id if default_billing),
+        }.compact_blank
+
+        user.update_columns(**attributes_to_update, updated_at: Time.current) if attributes_to_update.present?
+      end
+
       def new_address(address_params = {})
-        @new_address ||= ::Spree::Address.find_or_create_by(address_params.except(:id, :updated_at, :created_at))
+        @new_address ||= ::Spree::Address.not_deleted.find_or_create_by(address_params.except(:id, :updated_at, :created_at))
       end
     end
   end
