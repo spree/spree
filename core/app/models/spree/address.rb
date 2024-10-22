@@ -81,6 +81,14 @@ module Spree
       end.flatten
     end
 
+    def user_default_billing?
+      user.present? && id == user.bill_address_id
+    end
+
+    def user_default_shipping?
+      user.present? && id == user.ship_address_id
+    end
+
     def full_name
       "#{firstname} #{lastname}".strip
     end
