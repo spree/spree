@@ -175,7 +175,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { nil }
 
         it 'returns base cache key' do
-          expect(spree_base_cache_key).to eq [:en, 'USD', false, nil]
+          expect(spree_base_cache_key).to eq [:en, 'USD', false]
         end
       end
     end
@@ -188,7 +188,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'returns base cache key' do
-        expect(spree_base_cache_key).to eq [:en, 'USD', nil, nil]
+        expect(spree_base_cache_key).to eq [:en, 'USD']
       end
     end
   end
