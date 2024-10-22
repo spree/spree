@@ -31,10 +31,13 @@ module Spree
         params
       end
 
-      def assign_to_user_as_default(user:, address_id:)
-        if user.addresses.pluck(:id) == [address_id] # check if it's user first address
-          user.update(bill_address_id: address_id, ship_address_id: address_id)
-        end
+      def assign_to_user_as_default(user:, address_id:, default_billing: true, default_shipping: true)
+        attributes_to_update = {
+          ship_address_id: (address_id if default_shipping),
+          bill_address_id: (address_id if default_billing),
+        }.compact_blank
+
+        user.update_columns(**attributes_to_update, updated_at: Time.current) if attributes_to_update.present?
       end
     end
   end
