@@ -34,6 +34,8 @@ module Spree
           if promotion.multi_codes?
             coupon_code = promotion.coupon_codes.find_by(order: order)
             coupon_code&.remove_from_order
+          else
+            promotion.touch
           end
 
           remove_promotion_adjustments(promotion)

@@ -11,7 +11,7 @@ module Spree
     scope :in_promotions, ->(promotion_ids) { where(promotion_id: promotion_ids) }
     scope :not_in_promotions, ->(promotion_ids) { where.not(promotion_id: promotion_ids) }
 
-    belongs_to :promotion, class_name: 'Spree::Promotion'
+    belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
     belongs_to :order, class_name: 'Spree::Order'
 
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }

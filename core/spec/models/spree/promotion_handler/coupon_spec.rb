@@ -367,6 +367,10 @@ module Spree
               expect(order.promotions).to be_empty
               expect(order.line_item_adjustments).to be_empty
             end
+
+            it 'touches the promotion' do
+              expect { subject.remove(coupon_code.code) }.to change { promotion.reload.updated_at }
+            end
           end
         end
       end
@@ -404,13 +408,21 @@ module Spree
           let!(:order_2) { create(:order_with_line_items, line_items_count: 3, user: user) }
           let!(:subject_2) { Spree::PromotionHandler::Coupon.new(order_2) }
           let!(:promotion) do
-            create(:promotion, name: 'promo',
-                               code: nil,
-                               usage_limit: 1,
-                               multi_codes: true,
-                               number_of_codes: 2,
-                               coupon_codes: [create(:coupon_code, code: 'first_one_time_code'), create(:coupon_code, code: 'second_one_time_code')])
+            create(
+              :promotion,
+              name: 'promo',
+              code: nil,
+              usage_limit: 1,
+              multi_codes: true,
+              number_of_codes: 2
+            )
           end
+
+          before do
+            promotion.coupon_codes[0].update!(code: 'first_one_time_code')
+            promotion.coupon_codes[1].update!(code: 'second_one_time_code')
+          end
+
           let!(:action) do
             Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion,
                                                                     calculator: calculator)

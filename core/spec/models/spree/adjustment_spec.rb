@@ -207,6 +207,10 @@ describe Spree::Adjustment, type: :model do
             subject
             expect(adjustment.eligible).to eq true
           end
+
+          it 'touches the promotion' do
+            expect { subject }.to change { promotion.reload.updated_at }
+          end
         end
 
         context "the promotion is not eligible" do
@@ -215,6 +219,10 @@ describe Spree::Adjustment, type: :model do
           it "sets the adjustment elgiible to false" do
             subject
             expect(adjustment.eligible).to eq false
+          end
+
+          it 'touches the promotion' do
+            expect { subject }.to change { promotion.reload.updated_at }
           end
         end
       end
