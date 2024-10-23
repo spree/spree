@@ -101,7 +101,10 @@ module Spree
       amount = source.compute_amount(target)
       attributes = { amount: amount, updated_at: Time.current }
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?
+
       update_columns(attributes)
+      source.promotion.touch if promotion?
+
       amount
     end
 
