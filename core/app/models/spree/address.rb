@@ -257,14 +257,15 @@ module Spree
       user.reload
       return if user.bill_address != self && user.ship_address != self
 
-      last_address = user.
-                     addresses.
-                     reorder(created_at: :desc).
-                     find { |address| address.id != id && address.valid? }
+      last_address = assign_new_default_address_to_user_scope.find { |address| address.id != id && address.valid? }
 
       user.bill_address = last_address if user.bill_address == self
       user.ship_address = last_address if user.ship_address == self
       user.save!
+    end
+
+    def assign_new_default_address_to_user_scope
+      user.addresses.reorder(created_at: :desc)
     end
   end
 end
