@@ -25,7 +25,11 @@ module Spree
       end
 
       def can_supply?(required = 1)
-        variant.available? && (total_on_hand >= required || backorderable?)
+        variant.available? && required_amount_sufficient?(required)
+      end
+
+      def required_amount_sufficient?(required = 1)
+        total_on_hand >= required || backorderable?
       end
 
       def stock_items
