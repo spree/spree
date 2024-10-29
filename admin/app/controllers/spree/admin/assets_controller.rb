@@ -1,8 +1,14 @@
 module Spree
   module Admin
     class AssetsController < ResourceController
+      ALLOWED_ASSET_TYPES = ['Spree::Image'].freeze
+      
       def create
-        @asset = asset_type.constantize.new(permitted_resource_params)
+        if ALLOWED_ASSET_TYPES.include?(asset_type)
+          @asset = asset_type.constantize.new(permitted_resource_params)
+        else
+          raise "Invalid asset type"
+        end
 
         # we only should check this for vendor users
         authorize! :update, @asset.viewable if @asset.viewable.present? && current_vendor
