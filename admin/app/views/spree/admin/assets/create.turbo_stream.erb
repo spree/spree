@@ -1,0 +1,5 @@
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace 'media-form' do %>
+  <%= render 'spree/admin/variants/form/media', viewable: @asset.viewable %>
+<% end %>

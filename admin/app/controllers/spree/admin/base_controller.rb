@@ -72,6 +72,10 @@ module Spree
       def current_timezone
         @current_timezone ||= current_store.timezone
       end
+
+      def current_vendor
+        nil
+      end
     end
   end
 end
