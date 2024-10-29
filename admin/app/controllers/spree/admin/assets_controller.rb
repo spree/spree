@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class AssetsController < ResourceController
-      ALLOWED_ASSET_TYPES = ['Spree::Image'].freeze
-      
+      ALLOWED_ASSET_TYPES = ['Spree::Asset', 'Spree::Image'].freeze
+
       def create
         if ALLOWED_ASSET_TYPES.include?(asset_type)
           @asset = asset_type.constantize.new(permitted_resource_params)
