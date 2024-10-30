@@ -26,12 +26,7 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  %w[
-    actionpack actionview activejob activemodel activerecord
-    activestorage actiontext activesupport railties
-  ].each do |rails_gem|
-    s.add_dependency rails_gem, '>= 6.1', '< 8.0'
-  end
+  s.add_dependency 'rails', '>= 6.1', '< 8.0'
 
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '>= 0.8'
