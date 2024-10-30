@@ -179,6 +179,8 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?,
              :display_compare_at_price, :images, to: :find_or_build_master
 
+    delegate :name, to: :brand, prefix: true, allow_nil: true
+
     alias master_images images
 
     state_machine :status, initial: :draft do
