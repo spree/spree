@@ -114,6 +114,8 @@ module Spree
 
     after_commit :clear_cache
 
+    delegate :iso, to: :default_country, prefix: true, allow_nil: true
+
     def self.current(url = nil)
       Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
     end
