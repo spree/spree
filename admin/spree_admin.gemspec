@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'dartsass-rails', '~> 0.5'
   s.add_dependency 'importmap-rails'
   s.add_dependency 'inline_svg', '~> 1.5'
-  # s.add_dependency 'payment_icons'
+  s.add_dependency 'payment_icons'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'
   s.add_dependency 'responders'
