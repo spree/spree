@@ -1,24 +1,15 @@
 FactoryBot.define do
-  sequence :user_authentication_token do |n|
-    "xxxx#{Time.current.to_i}#{rand(1000)}#{n}xxxxxxxxxxxxx"
-  end
-
   factory :user, class: Spree.user_class do
     email                 { generate(:random_email) }
     login                 { email }
     password              { 'secret' }
     password_confirmation { password }
-    authentication_token  { generate(:user_authentication_token) } if Spree.user_class.attribute_method? :authentication_token
 
-    first_name { FFaker::Name.first_name }
-    last_name  { FFaker::Name.last_name }
+    first_name { FFaker::Name.first_name } if Spree.user_class.attribute_method?(:first_name)
+    last_name  { FFaker::Name.last_name } if Spree.user_class.attribute_method?(:last_name)
 
     public_metadata { {} }
     private_metadata { {} }
-
-    factory :admin_user do
-      spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
-    end
 
     factory :user_with_addresses, aliases: [:user_with_addreses] do
       after(:create) do |user|
@@ -29,5 +20,14 @@ FactoryBot.define do
         user.save
       end
     end
+  end
+
+  factory :admin_user, class: Spree.admin_user_class do
+    email                 { generate(:random_email) }
+    login                 { email }
+    password              { 'secret' }
+    password_confirmation { password }
+
+    spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
   end
 end
