@@ -297,8 +297,7 @@ module Spree
     # for adding products which are closely related to existing ones
     # define "duplicate_extra" for site-specific actions, eg for additional fields
     def duplicate
-      duplicator = ProductDuplicator.new(self)
-      duplicator.duplicate
+      Products::Duplicator.call(product: self)
     end
 
     # use deleted? rather than checking the attribute directly. this
