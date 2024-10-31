@@ -61,7 +61,10 @@ describe Spree::Product, type: :model do
       end
 
       it 'duplicates product' do
-        clone = product.duplicate
+        duplicate_result = product.duplicate
+        expect(duplicate_result).to be_success
+
+        clone = duplicate_result.value
         expect(clone.name).to eq("COPY OF #{product.name}")
         expect(clone.slug).to eq("copy-of-#{product.slug}")
         expect(clone.master.sku).to eq("COPY OF #{product.master.sku}")
@@ -77,8 +80,11 @@ describe Spree::Product, type: :model do
         end
 
         it 'duplicates translations for all locales' do
-          clone = product.duplicate
-          expect(clone.name(locale: :fr)).to eq ('COPY OF ' + product.name(locale: :fr))
+          duplicate_result = product.duplicate
+          expect(duplicate_result).to be_success
+
+          clone = duplicate_result.value
+          expect(clone.name(locale: :fr)).to eq("COPY OF #{product.name(locale: :fr)}")
         end
       end
 
