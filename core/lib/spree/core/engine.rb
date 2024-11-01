@@ -12,7 +12,8 @@ module Spree
                                :stock_splitters,
                                :promotions,
                                :line_item_comparison_hooks,
-                               :data_feed_types)
+                               :data_feed_types,
+                               :export_types)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -130,6 +131,8 @@ module Spree
         Rails.application.config.spree.data_feed_types = [
           Spree::DataFeed::Google
         ]
+
+        Rails.application.config.spree.export_types = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
