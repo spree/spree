@@ -13,31 +13,29 @@ module Spree
       attr_accessor :product, :properties, :store, :currency
 
       def call
-        Rails.cache.fetch([@product.cache_key_with_version, currency, properties.map(&:id).join('-')]) do
-          [
-            product.id,
-            product.try(:vendor_name),
-            product.try(:brand_name),
-            product.name,
-            product.description&.html_safe,
-            product.amount_in(currency).to_f,
-            product.meta_title,
-            product.meta_description,
-            product.meta_keywords,
-            product.tag_list.to_s,
-            product.label_list.to_s,
-            product.width,
-            product.height,
-            product.depth,
-            product.weight,
-            product.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
-            product.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S'),
-            product.status,
-            *map_categories(product),
-            product.total_on_hand == BigDecimal::INFINITY ? '∞' : product.total_on_hand,
-            *present_properties
-          ]
-        end
+        [
+          product.id,
+          product.try(:vendor_name),
+          product.try(:brand_name),
+          product.name,
+          product.description&.html_safe,
+          product.amount_in(currency).to_f,
+          product.meta_title,
+          product.meta_description,
+          product.meta_keywords,
+          product.tag_list.to_s,
+          product.label_list.to_s,
+          product.width,
+          product.height,
+          product.depth,
+          product.weight,
+          product.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
+          product.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S'),
+          product.status,
+          *map_categories(product),
+          product.total_on_hand == BigDecimal::INFINITY ? '∞' : product.total_on_hand,
+          *present_properties
+        ]
       end
 
       private
