@@ -6,6 +6,10 @@ require 'active_record/railtie'
 require 'active_storage/engine'
 require 'action_text/engine'
 
+require 'mail'
+require 'action_mailer/railtie'
+require 'sprockets/railtie'
+
 require 'active_merchant'
 require 'acts_as_list'
 require 'acts-as-taggable-on'

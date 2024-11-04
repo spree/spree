@@ -132,7 +132,10 @@ module Spree
           Spree::DataFeed::Google
         ]
 
-        Rails.application.config.spree.export_types = []
+        Rails.application.config.spree.export_types = [
+          Spree::Exports::Products,
+          Spree::Exports::Orders
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
