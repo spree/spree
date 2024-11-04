@@ -16,7 +16,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[1]).to eq product.name
       expect(subject[2]).to eq product.slug
       expect(subject[3]).to eq product.status
-      expect(subject[4]).to eq product.vendor_name
+      expect(subject[4]).to eq product.try(:vendor_name)
       expect(subject[5]).to eq product.brand_name
       expect(subject[6]).to eq product.description&.html_safe
       expect(subject[7]).to eq product.meta_title
