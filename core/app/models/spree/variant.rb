@@ -390,6 +390,12 @@ module Spree
       (width || 0) + (height || 0) + (depth || 0)
     end
 
+    # Returns the weight unit for the variant
+    # @return [String]
+    def weight_unit
+      attributes['weight_unit'] || Spree::Store.default.weight_unit
+    end
+
     def discontinue!
       update_attribute(:discontinue_on, Time.current)
     end
