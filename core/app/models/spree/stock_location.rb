@@ -146,6 +146,7 @@ module Spree
     def ensure_one_default
       if default
         StockLocation.where(default: true).where.not(id: id).update_all(default: false)
+        StockLocation.where.not(id: id).update_all(updated_at: Time.current)
       end
     end
 
