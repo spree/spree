@@ -1,23 +1,12 @@
 module Spree
   class Promotion
     module Rules
-      module OptionValueWithNumerificationSupport
-        def preferred_eligible_values
-          values = super || {}
-          Hash[values.keys.zip(
-            values.values.map do |v|
-              (v.is_a?(Array) ? v : v.split(','))
-            end
-          )]
-        end
-      end
-
       class OptionValue < PromotionRule
-        prepend OptionValueWithNumerificationSupport
-
         MATCH_POLICIES = %w(any)
         preference :match_policy, :string, default: MATCH_POLICIES.first
-        preference :eligible_values, :hash
+        preference :eligible_values, :array, default: [], parse_on_set: lambda { |values|
+          values.flat_map { |v| v.to_s.split(',').compact_blank.map(&:strip) }
+        }
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
@@ -31,12 +20,8 @@ module Spree
         end
 
         def actionable?(line_item)
-          product_id = line_item.product_id
-          option_values_ids = line_item.variant.option_value_ids
-          eligible_product_ids = preferred_eligible_values.keys
-          eligible_value_ids = preferred_eligible_values[product_id]
-
-          eligible_product_ids.include?(product_id) && (eligible_value_ids & option_values_ids).present?
+          option_value_variant_ids = line_item.variant.option_value_variant_ids.map(&:to_s)
+          (preferred_eligible_values & option_value_variant_ids).any?
         end
       end
     end
