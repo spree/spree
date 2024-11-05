@@ -27,16 +27,16 @@
     <% end %>
   </td>
   <td>
-    <%= export.attachment.filename %>
+    <%= export.attachment.filename if export.done? %>
   </td>
   <td class="w-15"><%= local_time_ago(export.created_at, class: 'with-tip') %></td>
   <td>
-    <%= number_to_human_size(export.attachment.byte_size) %>
+    <%= number_to_human_size(export.attachment.byte_size) if export.done? %>
   </td>
   <td class="w-15 text-center">
     <%= link_to spree.admin_export_path(export), class: 'btn btn-sm btn-light mx-auto', target: '_blank' do %>
       <%= icon 'download', class: 'mr-1' %>
       <%= Spree.t(:download) %>
-    <% end %>
+    <% end if export.done? %>
   </td>
 </tr>
