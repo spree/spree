@@ -15,7 +15,7 @@ module Spree
       end
 
       def message_after_create
-        Spree.t(:export_created)
+        Spree.t('admin.export_created')
       end
 
       def collection

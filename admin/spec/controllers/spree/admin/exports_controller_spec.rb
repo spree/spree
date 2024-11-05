@@ -46,7 +46,7 @@ describe Spree::Admin::ExportsController, type: :controller do
 
     it 'sets a flash message' do
       subject
-      expect(flash[:success]).to eq(Spree.t(:export_created))
+      expect(flash[:success]).to eq('Your export was started. You will receive an email with a download link when it is ready!')
     end
 
     context 'when filtered is set to all' do
