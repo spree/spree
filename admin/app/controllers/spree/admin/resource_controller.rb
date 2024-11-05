@@ -37,11 +37,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       respond_with(@object) do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
-            flash.now[:success] = flash_message_for(@object, :successfully_updated)
+            flash.now[:success] = message_after_update
           end
         end
         format.html do
-          flash[:success] = flash_message_for(@object, :successfully_updated)
+          flash[:success] = message_after_update
           redirect_to location_after_save, status: :see_other
         end
       end
@@ -66,11 +66,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       respond_with(@object) do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
-            flash.now[:success] = flash_message_for(@object, :successfully_created)
+            flash.now[:success] = message_after_create
           end
         end
         format.html do
-          flash[:success] = flash_message_for(@object, :successfully_created)
+          flash[:success] = message_after_create
           redirect_to location_after_save, status: :see_other
         end
       end
@@ -238,6 +238,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def location_after_save
     edit_object_url(@object)
+  end
+
+  def message_after_create
+    flash_message_for(@object, :successfully_created)
+  end
+
+  def message_after_update
+    flash_message_for(@object, :successfully_updated)
   end
 
   def set_current_store
