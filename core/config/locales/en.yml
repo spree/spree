@@ -1598,6 +1598,7 @@ en:
       errors:
         must_have_variant: You must add at least one variant.
         variants_unavailable: "Some variants are not available on %{stock}"
+        same_location: "cannot be the same as the destination location"
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
