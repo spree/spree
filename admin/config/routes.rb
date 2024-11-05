@@ -6,5 +6,8 @@ Spree::Core::Engine.add_routes do
         delete :bulk_destroy
       end
     end
+
+    # audit log
+    resources :exports, only: %i[new create show index]
   end
 end

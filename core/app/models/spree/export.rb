@@ -112,7 +112,7 @@ module Spree
 
     def records_to_export
       if search_params.present?
-        scope.ransack(JSON.parse(search_params).to_h)
+        scope.ransack(search_params.is_a?(String) ? JSON.parse(search_params.to_s).to_h : search_params)
       else
         scope.ransack
       end.result
