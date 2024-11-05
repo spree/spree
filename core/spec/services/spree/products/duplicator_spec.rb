@@ -6,7 +6,7 @@ RSpec.describe Spree::Products::Duplicator do
   let(:store) { create(:store) }
 
   let!(:product_property) { create(:product_property, product: product) }
-  let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2']) }
+  let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2'], status: :active) }
 
   let(:filepath) { File.expand_path('../../../fixtures/thinking-cat.jpg', __dir__) }
   let(:master_image_params) do
@@ -23,6 +23,9 @@ RSpec.describe Spree::Products::Duplicator do
     new_image = Spree::Image.new(master_image_params)
     new_image.attachment.attach(io: file, filename: File.basename(file))
     new_image.save!
+
+    product.master.update!(barcode: '1234567890')
+    product.master.stock_items.last.update!(count_on_hand: 100, backorderable: true)
   end
 
   it { is_expected.to be_success }
@@ -54,6 +57,10 @@ RSpec.describe Spree::Products::Duplicator do
   describe 'product attributes' do
     let!(:new_product) { duplicate.value }
 
+    it 'always sets the product as draft' do
+      expect(new_product).to be_draft
+    end
+
     it 'sets an unique name' do
       expect(new_product.name).to eql "COPY OF #{product.name}"
     end
@@ -69,6 +76,15 @@ RSpec.describe Spree::Products::Duplicator do
 
     it 'copies tags' do
       expect(new_product.tag_list).to eq(['tag1', 'tag2'])
+    end
+
+    it 'clones barcode' do
+      expect(new_product.barcode).to eq('1234567890')
+    end
+
+    it 'clones backorderable and sets stock to 0' do
+      expect(new_product.master).to be_backorderable
+      expect(new_product.master.total_on_hand).to eq(0)
     end
   end
 
@@ -107,13 +123,14 @@ RSpec.describe Spree::Products::Duplicator do
     let(:option_value1) { create(:option_value, name: 'OptionValue1', option_type: option_type) }
     let(:option_value2) { create(:option_value, name: 'OptionValue2', option_type: option_type) }
 
-    let!(:variant1) { create(:variant, product: product, price: 24.99, compare_at_price: 25.99, option_values: [option_value1]) }
-    let!(:variant2) { create(:variant, product: product, price: 29.99, compare_at_price: 30.99, option_values: [option_value2]) }
+    let!(:variant1) { create(:variant, product: product, option_values: [option_value1], barcode: 'v1-123') }
+    let!(:variant2) { create(:variant, product: product, option_values: [option_value2], barcode: 'v2-456') }
 
     let(:new_product) { duplicate.value }
 
     before do
-      product.master.update!(compare_at_price: 20.99)
+      variant1.stock_items.last.update!(count_on_hand: 100, backorderable: true)
+      variant2.stock_items.last.update!(count_on_hand: 200, backorderable: false)
     end
 
     it 'duplicates the variants' do
@@ -123,6 +140,20 @@ RSpec.describe Spree::Products::Duplicator do
 
     it 'doesn\'t duplicate the option values' do
       expect { duplicate }.to change { Spree::OptionValue.count }.by(0)
+    end
+
+    it 'clones barcodes' do
+      expect(new_product.variants.pluck(:barcode)).to contain_exactly('v1-123', 'v2-456')
+    end
+
+    it 'clones backorderable and sets stock to 0' do
+      variant1_copy = new_product.variants.find_by!(barcode: 'v1-123')
+      expect(variant1_copy).to be_backorderable
+      expect(variant1_copy.total_on_hand).to eq(0)
+
+      variant2_copy = new_product.variants.find_by!(barcode: 'v2-456')
+      expect(variant2_copy).not_to be_backorderable
+      expect(variant2_copy.total_on_hand).to eq(0)
     end
 
     describe 'image duplication' do

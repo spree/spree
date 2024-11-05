@@ -27,6 +27,7 @@ module Spree
             t.slug = nil
           end
 
+          new_product.status = :draft
           new_product.name = "COPY OF #{product.name}"
           new_product.taxons = product.taxons
           new_product.stores = product.stores
@@ -44,6 +45,7 @@ module Spree
           new_master.sku = sku_generator(master.sku)
           new_master.deleted_at = nil
           new_master.prices = duplicate_prices(master.prices)
+          new_master.stock_items = duplicate_stock_items(master.stock_items)
 
           master.images.each { |image| duplicate_image(image, new_master) } if include_images
         end
@@ -55,6 +57,7 @@ module Spree
         new_variant.deleted_at = nil
         new_variant.option_values = variant.option_values.map { |option_value| option_value }
         new_variant.prices = duplicate_prices(variant.prices)
+        new_variant.stock_items = duplicate_stock_items(variant.stock_items)
 
         variant.images.each { |image| duplicate_image(image, new_variant) } if include_images
 
@@ -67,6 +70,14 @@ module Spree
           new_price.created_at = nil
           new_price.updated_at = nil
           new_price
+        end
+      end
+
+      def duplicate_stock_items(stock_items)
+        stock_items.map do |stock_item|
+          new_stock_item = stock_item.dup
+          new_stock_item.count_on_hand = 0
+          new_stock_item
         end
       end
 
