@@ -13,6 +13,8 @@ module Spree
         new_product.send(:duplicate_extra, product) if new_product.respond_to?(:duplicate_extra)
         new_product.save
 
+        new_product.product_properties = duplicate_properties(product.product_properties) if new_product.persisted?
+
         new_product.persisted? ? success(new_product) : failure(new_product, duplicate_error_message(new_product))
       end
 
@@ -31,10 +33,9 @@ module Spree
           new_product.created_at = nil
           new_product.deleted_at = nil
           new_product.updated_at = nil
+          new_product.tag_list = product.tag_list
           new_product.master = duplicate_master(product.master, include_images)
-          new_product.variants = product.variants.map { |variant| duplicate_variant(variant) }
-
-          duplicate_properties(product.product_properties, new_product)
+          new_product.variants = product.variants.map { |variant| duplicate_variant(variant, include_images) }
         end
       end
 
@@ -42,19 +43,31 @@ module Spree
         master.dup.tap do |new_master|
           new_master.sku = sku_generator(master.sku)
           new_master.deleted_at = nil
-          new_master.price = master.price
-          new_master.currency = master.currency
+          new_master.prices = duplicate_prices(master.prices)
 
           master.images.each { |image| duplicate_image(image, new_master) } if include_images
         end
       end
 
-      def duplicate_variant(variant)
+      def duplicate_variant(variant, include_images)
         new_variant = variant.dup
         new_variant.sku = sku_generator(new_variant.sku)
         new_variant.deleted_at = nil
         new_variant.option_values = variant.option_values.map { |option_value| option_value }
+        new_variant.prices = duplicate_prices(variant.prices)
+
+        variant.images.each { |image| duplicate_image(image, new_variant) } if include_images
+
         new_variant
+      end
+
+      def duplicate_prices(prices)
+        prices.map do |price|
+          new_price = price.dup
+          new_price.created_at = nil
+          new_price.updated_at = nil
+          new_price
+        end
       end
 
       def duplicate_image(image, viewable)
@@ -65,13 +78,13 @@ module Spree
         new_image
       end
 
-      def duplicate_properties(product_properties, new_product)
-        product_properties.each do |prop|
+      def duplicate_properties(product_properties)
+        product_properties.map do |prop|
           new_prop = prop.dup
+          new_prop.product = nil
           new_prop.created_at = nil
           new_prop.updated_at = nil
-          new_prop.product = new_product
-          new_prop.save
+          new_prop
         end
       end
 
