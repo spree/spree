@@ -855,6 +855,13 @@ en:
     excl: excl.
     expiration: Expiration
     expiration_date: Expiration Date
+    export: Export
+    export_mailer:
+      greeting: Hi %{user_name},
+      thanks: Thank you,
+      export_done:
+        subject: 'Your export %{export_number} was successfully processed!'
+        message: Good work, your export is ready! Please use the link below to download it.
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments

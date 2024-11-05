@@ -76,13 +76,10 @@ module Spree
     scope :eligible, -> {
       where(is_master: false).or(
         where(
-          <<-SQL
-            #{Variant.quoted_table_name}.id IN (
-              SELECT MIN(#{Variant.quoted_table_name}.id) FROM #{Variant.quoted_table_name}
-              GROUP BY #{Variant.quoted_table_name}.product_id
-              HAVING COUNT(*) = 1
-            )
-          SQL
+          product_id: Spree::Variant.
+                      select(:product_id).
+                      group(:product_id).
+                      having("COUNT(#{Spree::Variant.table_name}.id) = 1")
         )
       )
     }
@@ -391,6 +388,12 @@ module Spree
 
     def dimension
       (width || 0) + (height || 0) + (depth || 0)
+    end
+
+    # Returns the weight unit for the variant
+    # @return [String]
+    def weight_unit
+      attributes['weight_unit'] || Spree::Store.default.weight_unit
     end
 
     def discontinue!

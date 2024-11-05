@@ -459,6 +459,24 @@ module Spree
       shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
+    def to_csv(store = nil)
+      store ||= stores.default || stores.first
+      properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
+        [
+          property.name,
+          product_properties.find { |pp| pp.property_id == property.id }&.value
+        ]
+      end
+      taxons_for_csv ||= taxons.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      csv_lines = []
+      variants_including_master.each_with_index do |variant, index|
+        next if variant.is_master? && has_variants?
+
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
+      end
+      csv_lines
+    end
+
     private
 
     def add_associations_from_prototype
