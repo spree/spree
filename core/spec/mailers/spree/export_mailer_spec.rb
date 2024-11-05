@@ -9,7 +9,7 @@ RSpec.describe Spree::ExportMailer, type: :mailer do
   before do
     export.generate
     export.reload
-    allow(spree).to receive(:admin_export_url).and_return('http://test.com/admin/exports/1')
+    allow(spree).to receive(:admin_export_url).and_return("http://test.com/admin/exports/#{export.id}")
   end
 
   describe '#export_done' do
