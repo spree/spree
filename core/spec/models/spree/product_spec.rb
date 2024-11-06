@@ -1060,4 +1060,59 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe '#to_csv' do
+    let(:store) { create(:store) }
+    let(:product) { create(:product, stores: [store]) }
+    let(:property) { create(:property, name: 'my-property', position: 1) }
+    let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }
+    let(:taxon) { create(:taxon, name: 'My Taxon') }
+
+    before do
+      product_property
+      product.taxons << taxon
+    end
+
+    context 'when product has no variants' do
+      it 'returns an array with one line of CSV data' do
+        csv_lines = product.to_csv(store)
+        expect(csv_lines.size).to eq(1)
+
+        csv_line = csv_lines.first
+        expect(csv_line).to include(product.name)
+        expect(csv_line).to include(product.master.sku)
+        expect(csv_line).to include('my-property')
+        expect(csv_line).to include('MyValue')
+        expect(csv_line).to include(taxon.pretty_name)
+      end
+    end
+
+    context 'when product has variants' do
+      let!(:variant1) { create(:variant, product: product) }
+      let!(:variant2) { create(:variant, product: product) }
+
+      it 'returns an array with CSV data for each variant' do
+        csv_lines = product.to_csv(store)
+        expect(csv_lines.size).to eq(2)
+
+        expect(csv_lines.first).to include(product.name)
+        expect(csv_lines.first).to include(variant1.sku)
+        expect(csv_lines.second).not_to include(product.name)
+        expect(csv_lines.second).to include(variant2.sku)
+      end
+    end
+
+    context 'when store is not provided' do
+      it 'uses default store' do
+        allow(product.stores).to receive(:default).and_return(store)
+        expect(product.to_csv).to be_present
+      end
+
+      it 'falls back to first store if no default' do
+        allow(product.stores).to receive(:default).and_return(nil)
+        allow(product.stores).to receive(:first).and_return(store)
+        expect(product.to_csv).to be_present
+      end
+    end
+  end
 end

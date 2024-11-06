@@ -469,11 +469,15 @@ module Spree
       end
       taxons_for_csv ||= taxons.reorder(depth: :desc).first(3).pluck(:pretty_name)
       csv_lines = []
-      variants_including_master.each_with_index do |variant, index|
-        next if variant.is_master? && has_variants?
 
-        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
+      if has_variants?
+        variants.each_with_index do |variant, index|
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
+        end
+      else
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store).call
       end
+
       csv_lines
     end
 
