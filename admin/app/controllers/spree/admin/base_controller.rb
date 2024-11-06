@@ -73,6 +73,16 @@ module Spree
         @current_timezone ||= current_store.timezone
       end
 
+      def current_currency
+        @current_currency ||= if params[:currency].present? && supported_currency?(params[:currency])
+                                params[:currency]
+                              elsif current_store.present?
+                                current_store.default_currency
+                              else
+                                Spree::Store.default.default_currency
+                              end&.upcase
+      end
+
       def current_vendor
         nil
       end
