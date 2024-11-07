@@ -436,6 +436,10 @@ module Spree
                     end
     end
 
+    def main_taxon
+      category || taxons.first
+    end
+
     def taxons_for_store(store)
       Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
         taxons.for_store(store)
