@@ -157,11 +157,21 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
+        `BaseHelper#pretty_time` is deprecated and will be removed in Spree 6.0.
+        Please add `local_time` gem to your Gemfile and use `local_time(time)` instead
+      DEPRECATION
+
       [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
     end
 
     def pretty_date(date)
       return '' if date.blank?
+
+      Spree::Deprecation.warn(<<-DEPRECATION, caller)
+        `BaseHelper#pretty_date` is deprecated and will be removed in Spree 6.0.
+        Please add `local_time` gem to your Gemfile and use `local_date(date)` instead
+      DEPRECATION
 
       [I18n.l(date.to_date, format: :long)].join(' ')
     end
