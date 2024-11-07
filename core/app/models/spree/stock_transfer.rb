@@ -9,6 +9,7 @@ module Spree
     end
 
     has_many :stock_movements, as: :originator
+    accepts_nested_attributes_for :stock_movements, reject_if: :all_blank
 
     belongs_to :source_location, class_name: 'StockLocation', optional: true
     belongs_to :destination_location, class_name: 'StockLocation'

@@ -23,7 +23,7 @@ module Spree
 
     scope :recent, -> { order(created_at: :desc) }
 
-    delegate :variant, to: :stock_item
+    delegate :variant, to: :stock_item, allow_nil: true
     delegate :product, to: :variant
 
     self.whitelisted_ransackable_attributes = ['quantity']
