@@ -9,5 +9,8 @@ Spree::Core::Engine.add_routes do
 
     # audit log
     resources :exports, only: %i[new create show index]
+
+    # profile settings
+    resource :profile, controller: 'profile', only: %i[edit update]
   end
 end
