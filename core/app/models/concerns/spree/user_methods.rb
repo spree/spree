@@ -106,5 +106,13 @@ module Spree
     def use_billing?
       use_billing.in?([true, 'true', '1'])
     end
+
+    def scramble_email_and_names
+      self.email = "#{SecureRandom.uuid}@example.net"
+      self.first_name = 'Deleted'
+      self.last_name = 'User'
+      self.login = email
+      save
+    end
   end
 end

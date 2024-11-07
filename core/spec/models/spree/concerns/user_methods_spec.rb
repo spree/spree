@@ -156,4 +156,13 @@ describe Spree::UserMethods do
       expect(subject).not_to include(credit_card_with_inactive_payment_method)
     end
   end
+
+  describe '#scramble_email_and_names' do
+    it 'scramble email and names' do
+      expect { test_user.send(:scramble_email_and_names) }.to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
+      expect(test_user.login).to eq(test_user.email)
+      expect(test_user.first_name).to eq('Deleted')
+      expect(test_user.last_name).to eq('User')
+    end
+  end
 end
