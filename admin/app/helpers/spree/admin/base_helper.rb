@@ -1,8 +1,22 @@
 module Spree
   module Admin
     module BaseHelper
+      include Spree::ImagesHelper
+
       def available_countries_iso
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
+      end
+
+      def avatar_url_for(user)
+        return unless user.present?
+
+        if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
+          main_app.cdn_image_url(
+            user.avatar.variant(spree_image_variant_options(resize_to_fill: [128, 128]))
+          )
+        else
+          "https://eu.ui-avatars.com/api/?name=#{user.name&.initials}&background=random"
+        end
       end
 
       def display_on_options

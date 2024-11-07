@@ -149,9 +149,8 @@ module Spree
       :taxonomy_id, :meta_description, :meta_keywords, :meta_title, :child_index
     ]
 
-    # TODO: Should probably use something like Spree.user_class.attributes
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
-                         :password_confirmation, :selected_locale,
+                         :password_confirmation, :selected_locale, :avatar,
                          { public_metadata: {}, private_metadata: {}, tag_list: [] }]
 
     @@variant_attributes = [

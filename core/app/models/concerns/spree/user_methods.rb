@@ -31,6 +31,11 @@ module Spree
 
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id
 
+      #
+      # Attachments
+      #
+      has_one_attached :avatar, service: Spree.public_storage_service_name
+
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
       self.whitelisted_ransackable_attributes = %w[id email]
 
