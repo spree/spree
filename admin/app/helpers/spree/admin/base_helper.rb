@@ -56,6 +56,10 @@ module Spree
         content_tag :i, nil, class: "ti ti-#{icon_name} #{options[:class]}", style: styles
       end
 
+      def flag_emoji(iso)
+        ::Country.new(iso).emoji_flag
+      end
+
       def preference_field_tag(name, value, options)
         if options[:key] == :currency
           return select_tag(
