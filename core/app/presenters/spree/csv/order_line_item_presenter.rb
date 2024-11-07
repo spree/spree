@@ -1,8 +1,6 @@
 module Spree
   module CSV
     class OrderLineItemPresenter
-      include Spree::Admin::PaymentsHelper
-
       HEADERS = [
         'Number',
         'Email',
@@ -87,7 +85,7 @@ module Spree
           index.zero? ? order.total.to_f : nil,
           index.zero? ? order.shipping_method&.name : nil,
           index.zero? ? order.total_weight.to_f : nil,
-          index.zero? && order.payments.valid.any? ? payment_source_name(order.payments.valid.first) : nil,
+          index.zero? && order.payments.valid.any? ? order.payments.valid.first.display_source_name : nil,
           line_item.product_id,
           line_item.quantity,
           line_item.sku,

@@ -15,17 +15,6 @@ module Spree
         image_tag "payment_icons/#{payment_method}.svg", opts
       rescue Sprockets::Rails::Helper::AssetNotFound
       end
-
-      def payment_source_name(payment)
-        return if payment.source.blank?
-
-        source_class = payment.source.class
-        if source_class.respond_to?(:display_name)
-          source_class.display_name
-        else
-          source_class.name.demodulize.split(/(?=[A-Z])/).join(' ')
-        end
-      end
     end
   end
 end

@@ -581,6 +581,15 @@ module Spree
       persist_totals
     end
 
+    def shipping_method
+      # This query will select the first available shipping method from the shipments.
+      # It will use subquery to first select the shipping method id from the shipments' selected_shipping_rate.
+      Spree::ShippingMethod.
+        where(id: shipments.with_selected_shipping_method.limit(1)).
+        limit(1).
+        first
+    end
+
     def is_risky?
       !payments.risky.empty?
     end

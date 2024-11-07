@@ -206,6 +206,13 @@ module Spree
       checkout? || pending?
     end
 
+    def display_source_name
+      return if source.blank?
+
+      source_class = source.class
+      source_class.respond_to?(:display_name) ? source_class.display_name : source_class.name.demodulize.split(/(?=[A-Z])/).join(' ')
+    end
+
     private
 
     def after_void

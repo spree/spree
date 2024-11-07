@@ -1021,4 +1021,31 @@ describe Spree::Payment, type: :model do
       it { expect(payment.source).to be_nil }
     end
   end
+
+  describe '#display_source_name' do
+    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let(:payment) { build(:payment, payment_method: payment_method) }
+
+    before do
+      allow(payment).to receive(:source).and_return(source)
+    end
+
+    subject { payment.display_source_name }
+
+    context 'for source with display_name' do
+      let(:source) { double('Payment Source', class: double('Payment Source Class', display_name: 'Display 554')) }
+
+      it 'returns the display name of the source class' do
+        expect(subject).to eq('Display 554')
+      end
+    end
+
+    context 'for source without display_name' do
+      let(:source) { double('Payment Source', class: double('Payment Source Class', name: 'MyPaymentMethod')) }
+
+      it 'returns the display name of the source class' do
+        expect(subject).to eq('My Payment Method')
+      end
+    end
+  end
 end
