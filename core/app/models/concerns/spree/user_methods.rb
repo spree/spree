@@ -16,6 +16,8 @@ module Spree
 
       attr_accessor :use_billing
 
+      has_person_name
+      auto_strip_attributes :email, :first_name, :last_name
       acts_as_taggable_on :tags
 
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
