@@ -17,6 +17,7 @@ module Spree
       helper 'spree/currency'
 
       before_action :authorize_admin
+      after_action :set_return_to, only: [:index]
 
       protected
 
@@ -85,6 +86,24 @@ module Spree
 
       def current_vendor
         nil
+      end
+
+      def set_return_to
+        return unless defined?(model_class)
+        return unless request.format.html?
+
+        clear_return_to
+
+        session_key = "#{model_class.to_s.demodulize.pluralize.downcase}_return_to".to_sym
+        session[session_key] = "#{request.path}?#{request.query_string}"
+      rescue ActionDispatch::Cookies::CookieOverflow
+        clear_return_to
+      end
+
+      def clear_return_to
+        session.keys.find_all { |k| k.ends_with?('_return_to') }.each do |k|
+          session.delete(k)
+        end
       end
     end
   end
