@@ -199,6 +199,13 @@ module Spree
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
+    def default_stock_location
+      @default_stock_location ||= begin
+        stock_location_scope = Spree::StockLocation.order_default
+        stock_location_scope.first || stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
+      end
+    end
+
     def favicon
       return unless favicon_image&.attachment&.attached?
 

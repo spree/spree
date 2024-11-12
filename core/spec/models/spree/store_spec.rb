@@ -673,4 +673,23 @@ describe Spree::Store, type: :model do
       end
     end
   end
+
+  describe '#default_stock_location' do
+    context 'with default stock location' do
+      let!(:default_stock_location) { create(:stock_location, default: true) }
+
+      it 'returns the default stock location' do
+        expect(subject.default_stock_location).to eq(default_stock_location)
+      end
+    end
+
+    context 'without default stock location' do
+      it 'creates a new default stock location' do
+        expect { subject.default_stock_location }.to change(Spree::StockLocation, :count).by(1)
+        expect(subject.default_stock_location.default?).to eq(true)
+        expect(subject.default_stock_location.country).to eq(subject.default_country)
+        expect(subject.default_stock_location.name).to eq(Spree.t(:default_stock_location_name))
+      end
+    end
+  end
 end

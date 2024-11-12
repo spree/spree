@@ -319,5 +319,27 @@ module Spree
         expect(subject.address).to be_an_instance_of(Spree::Address)
       end
     end
+
+    describe '#display_name' do
+      it 'returns the name' do
+        expect(subject.display_name).to eq(subject.name)
+      end
+
+      context 'with admin name set' do
+        let(:admin_name) { 'admin name' }
+
+        before { subject.admin_name = admin_name }
+
+        it 'returns the admin name' do
+          expect(subject.display_name).to eq("#{admin_name} / #{subject.name}")
+        end
+      end
+    end
+
+    describe '#country_name' do
+      it 'returns the country name' do
+        expect(subject.country_name).to eq(subject.country.name)
+      end
+    end
   end
 end
