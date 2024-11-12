@@ -28,7 +28,7 @@ module Spree
     after_save :ensure_one_default
     after_update :conditional_touch_records
 
-    delegate :name, to: :country, prefix: true
+    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name

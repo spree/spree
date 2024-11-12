@@ -78,8 +78,17 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    #
+    # ActionText
+    #
+    has_rich_text :checkout_message
+    has_rich_text :customer_terms_of_service
+    has_rich_text :customer_privacy_policy
+    has_rich_text :customer_returns_policy
+    has_rich_text :customer_shipping_policy
+
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency, :code
+      validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
     end
 
     validates :digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
@@ -106,8 +115,10 @@ module Spree
     has_one :favicon_image, class_name: 'Spree::StoreFaviconImage', dependent: :destroy, as: :viewable
     accepts_nested_attributes_for :favicon_image, reject_if: :all_blank
 
+    before_validation :ensure_default_country
     before_save :ensure_default_exists_and_is_unique
-    before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
+    before_save :ensure_supported_currencies, :ensure_supported_locales
+    after_create :ensure_default_taxonomies_are_created
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
@@ -269,6 +280,11 @@ module Spree
                              else
                                Country.find_by(iso: 'US') || Country.first
                              end
+    end
+
+    def ensure_default_taxonomies_are_created
+      taxonomies.find_or_create_by(name: Spree.t(:taxonomy_categories_name))
+      taxonomies.find_or_create_by(name: Spree.t(:taxonomy_brands_name))
     end
   end
 end

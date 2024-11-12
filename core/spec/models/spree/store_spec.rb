@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
-  describe 'associations' do
+  context 'Associations' do
     subject { create(:store) }
 
     describe '#products' do
@@ -103,36 +103,6 @@ describe Spree::Store, type: :model do
       end
     end
 
-    describe '#menus' do
-      let!(:menu) { create(:menu, store: subject) }
-      let!(:menu_2) { create(:menu, store: create(:store)) }
-
-      it { expect(subject.menus).to eq([menu]) }
-
-      describe '#menu_items' do
-        let!(:menu_item) { menu.menu_items.first }
-        let!(:menu_item_2) { menu_2.menu_items.first }
-
-        it { expect(subject.menu_items).to eq([menu_item]) }
-      end
-    end
-
-    describe '#taxonomies' do
-      let!(:taxonomy) { create(:taxonomy, store: subject) }
-      let!(:taxonomy_2) { create(:taxonomy, store: create(:store)) }
-
-      it { expect(subject.taxonomies).to eq([taxonomy]) }
-
-      describe '#taxons' do
-        let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
-        let!(:taxon_2) { create(:taxon, taxonomy: taxonomy_2) }
-
-        it { expect(taxon).not_to be_nil }
-        it { expect(taxon_2).not_to be_nil }
-        it { expect(subject.taxons).to match_array([taxonomy.root, taxon]) }
-      end
-    end
-
     describe '#promotions' do
       let!(:promotion) { create(:promotion, stores: [subject, create(:store)]) }
       let!(:promotion_2) { create(:promotion, stores: [create(:store)]) }
@@ -141,7 +111,19 @@ describe Spree::Store, type: :model do
     end
   end
 
-  describe 'validations' do
+  context 'Callbacks' do
+    describe '#ensure_default_taxonomies_are_created' do
+      let(:store) { build(:store) }
+
+      it 'creates default taxonomies' do
+        expect { store.save! }.to change(Spree::Taxonomy, :count).by(2)
+        expect(store.taxonomies.count).to eq(2)
+        expect(store.taxonomies.pluck(:name)).to include(Spree.t(:taxonomy_categories_name), Spree.t(:taxonomy_brands_name))
+      end
+    end
+  end
+
+  context 'Validations' do
     describe 'code uniqueness' do
       context 'selected code was already used in a deleted store' do
         let(:store_code) { 'store_code' }
@@ -160,7 +142,7 @@ describe Spree::Store, type: :model do
     end
   end
 
-  describe 'translations' do
+  context 'Translations' do
     let!(:store) { create(:store, name: 'Store EN') }
 
     before do
