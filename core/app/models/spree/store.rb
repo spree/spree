@@ -197,11 +197,15 @@ module Spree
     end
 
     def countries_available_for_checkout
-      @countries_available_for_checkout ||= checkout_zone.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
+        checkout_zone.try(:country_list) || Spree::Country.all
+      end
     end
 
     def states_available_for_checkout(country)
-      checkout_zone.try(:state_list_for, country) || country.states
+      Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
+        checkout_zone.try(:state_list_for, country) || country.states
+      end
     end
 
     def checkout_zone_or_default
@@ -228,6 +232,14 @@ module Spree
     end
 
     private
+
+    def countries_available_for_checkout_cache_key
+      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/countries_available_for_checkout"
+    end
+
+    def states_available_for_checkout_cache_key(country)
+      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
+    end
 
     def ensure_default_exists_and_is_unique
       if default
