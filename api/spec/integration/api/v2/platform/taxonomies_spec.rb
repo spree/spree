@@ -19,7 +19,7 @@ describe 'Taxonomies API', swagger: true do
   end
   let(:valid_update_param_value) do
     {
-      name: 'Categories',
+      name: 'Updated Taxonomy',
       position: 1,
       public_metadata: { balanced: true }
     }
