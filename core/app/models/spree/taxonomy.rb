@@ -12,7 +12,7 @@ module Spree
 
     acts_as_list
 
-    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true, scope: :store_id }
+    validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
 
     has_many :taxons, inverse_of: :taxonomy

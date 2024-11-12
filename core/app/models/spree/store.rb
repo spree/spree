@@ -295,8 +295,9 @@ module Spree
     end
 
     def ensure_default_taxonomies_are_created
-      taxonomies.find_or_create_by(name: Spree.t(:taxonomy_categories_name))
-      taxonomies.find_or_create_by(name: Spree.t(:taxonomy_brands_name))
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_categories_name', default: I18n.t('spree.taxonomy_categories_name', locale: :en)))
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_brands_name', default: I18n.t('spree.taxonomy_brands_name', locale: :en)))
+    rescue ActiveRecord::NotNullViolation
     end
   end
 end
