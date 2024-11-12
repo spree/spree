@@ -33,6 +33,10 @@ describe 'Storefront API v2 Account spec', type: :request do
   describe 'account#show' do
     before do
       user.reload
+
+      allow_any_instance_of(Spree.user_class).to receive(:first_name).and_return(user.first_name)
+      allow_any_instance_of(Spree.user_class).to receive(:last_name).and_return(user.last_name)
+
       get '/api/v2/storefront/account', headers: headers
     end
 
