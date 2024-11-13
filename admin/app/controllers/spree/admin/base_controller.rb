@@ -15,6 +15,7 @@ module Spree
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
+      helper 'spree/addresses'
 
       before_action :authorize_admin
       after_action :set_return_to, only: [:index]

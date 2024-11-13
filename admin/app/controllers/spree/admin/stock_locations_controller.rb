@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class StockLocationsController < ResourceController
-      helper 'spree/addresses'
-
       before_action :set_country, only: :new
 
       def mark_as_default
