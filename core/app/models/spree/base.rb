@@ -50,7 +50,7 @@ class Spree::Base < ApplicationRecord
     false
   end
 
-  # this can overriden in subclasses to disallow deletion
+  # this can overridden in subclasses to disallow deletion
   def can_be_deleted?
     true
   end

@@ -492,6 +492,7 @@ en:
       continue: Continue
       create: Create
       approve: Approve
+      edit: Edit
       confirm: Confirm
       list: List
       listing: Listing
@@ -500,6 +501,8 @@ en:
       destroy: Delete
       disconnect: Disconnect
       refund: Refund
+      save: Save
+      update: Update
       reject: Reject
       receive: Mark as received
       resolve: Mark as resolved
