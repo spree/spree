@@ -12,5 +12,12 @@ Spree::Core::Engine.add_routes do
 
     # profile settings
     resource :profile, controller: 'profile', only: %i[edit update]
+
+    # store settings
+    resources :stock_locations, except: [:show] do
+      member do
+        put :mark_as_default
+      end
+    end
   end
 end

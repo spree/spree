@@ -1,0 +1,12 @@
+<% if target && target.errors.any? %>
+  <div class="alert alert-danger">
+    <p>
+      <strong><%= Spree.t(:errors_prohibited_this_record_from_being_saved, count: target.errors.size) %>:</strong><br>
+    </p>
+    <ul class="list-unstyled mb-0">
+     <% target.errors.full_messages.each do |msg| %>
+       <li><%= msg %></li>
+     <% end %>
+    </ul>
+  </div>
+<% end %>

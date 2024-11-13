@@ -29,6 +29,7 @@ module Spree
     after_update :conditional_touch_records
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
+    delegate :show_company_address_field?, to: :address
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
@@ -137,6 +138,20 @@ module Spree
         zipcode: zipcode,
         phone: phone
       )
+    end
+
+    # needed for address form
+    def require_name?
+      false
+    end
+
+    # needed for address form
+    def require_company?
+      false
+    end
+
+    def require_phone?
+      false
     end
 
     def display_name
