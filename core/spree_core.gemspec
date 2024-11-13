@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'tracking_number'
   s.add_dependency 'validates_zipcode'
   s.add_dependency 'image_processing', '~> 1.2'
-  s.add_dependency 'active_storage_validations', '1.3.0'
+  s.add_dependency 'active_storage_validations', '~> 1.3', '>= 1.3.3'
   s.add_dependency 'activerecord-typedstore'
   s.add_dependency 'mobility', '~> 1.2'
   s.add_dependency 'mobility-ransack', '~> 1.2'
