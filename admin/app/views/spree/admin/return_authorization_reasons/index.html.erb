@@ -16,16 +16,16 @@
       </thead>
       <tbody id="<%= plural_resource_name(Spree::ReturnAuthorizationReason).to_s.parameterize.underscore %>">
       <% @collection.each do |return_authorization_reason| %>
-        <tr id="<%= spree_dom_id return_authorization_reason %>" data-hook="named_type_row">
-          <td class="align-center">
+        <tr id="<%= spree_dom_id return_authorization_reason %>" data-controller="row-link">
+          <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
             <%= return_authorization_reason.name %>
           </td>
-          <td class="align-center">
+          <td class="w-20 align-center cursor-pointer" data-action="click->row-link#openLink">
             <%= active_badge(return_authorization_reason.active, label: Spree.t(return_authorization_reason.active? ? :active : :inactive)) %>
           </td>
-          <td class="actions">
+          <td class="actions w-10">
             <% if return_authorization_reason.mutable? %>
-              <%= link_to_edit(return_authorization_reason, no_text: true) if can? :edit, return_authorization_reason %>
+              <%= link_to_edit(return_authorization_reason, no_text: true, data: { row_link_target: :link }) if can? :edit, return_authorization_reason %>
             <% end %>
           </td>
         </tr>

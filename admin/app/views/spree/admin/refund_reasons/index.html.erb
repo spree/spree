@@ -11,21 +11,25 @@
       <tr data-hook="named_types_header">
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:status) %></th>
+        <th><%= Spree.t(:mutable) %></th>
         <th></th>
       </tr>
       </thead>
       <tbody id="<%= plural_resource_name(Spree::RefundReason).to_s.parameterize.underscore %>">
       <% @collection.each do |refund_reason| %>
         <tr id="<%= spree_dom_id refund_reason %>">
-          <td class="align-center">
+          <td class="w-40 align-center">
             <%= refund_reason.name %>
           </td>
-          <td class="align-center">
+          <td class="w-20 align-center">
             <%= active_badge(refund_reason.active, label: Spree.t(refund_reason.active? ? :active : :inactive)) %>
           </td>
-          <td class="actions">
+          <td class="w-10 align-center">
+            <%= active_badge(refund_reason.mutable) %>
+          </td>
+          <td class="actions w-10">
             <% if refund_reason.mutable? %>
-              <%= link_to_edit(refund_reason, no_text: true) if can? :edit, refund_reason %>
+              <%= link_to_edit(refund_reason, no_text: true, data: { row_link_target: :link }) if can? :edit, refund_reason %>
             <% end %>
           </td>
         </tr>
