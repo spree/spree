@@ -1,0 +1,13 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_store_credit_categories_url %>
+  <%= @store_credit_category.name %>
+<% end %>
+
+<%= render 'spree/admin/shared/error_messages', target: @store_credit_category %>
+
+<%= form_for [:admin, @store_credit_category] do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+    <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+  </fieldset>
+<% end %>

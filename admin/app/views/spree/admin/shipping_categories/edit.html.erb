@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_shipping_categories_url %>
+  <%= @shipping_category.name %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_category } %>
+
+<%= form_for [:admin, @shipping_category] do |f| %>
+  <%= render 'form',  f: f %>
+  <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+<% end %>
