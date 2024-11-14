@@ -6,25 +6,33 @@
 
 <% if @reimbursement_types.any? %>
   <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_reimbursement_types' data-hook>
+    <table class="table" id='listing_reimbursement_types'>
       <thead class="text-muted">
         <tr>
           <th><%= Spree.t(:name) %></th>
           <th><%= Spree.t(:type) %></th>
+          <th><%= Spree.t(:status) %></th>
+          <th><%= Spree.t(:mutable) %></th>
           <th class="actions"></th>
         </tr>
       </thead>
       <tbody>
       <% @reimbursement_types.each do |reimbursement_type| %>
-        <tr id="<%= spree_dom_id reimbursement_type %>">
-          <td class="align-center">
+        <tr id="<%= spree_dom_id reimbursement_type %>" data-controller="row-link">
+          <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
             <%= reimbursement_type.name.humanize %>
           </td>
-          <td>
+          <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
             <code><%= reimbursement_type.type.demodulize %></code>
           </td>
-          <td class="actions">
-            <%= link_to_edit reimbursement_type, no_text: true if can?(:edit, reimbursement_type) %>
+          <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
+            <%= active_badge(reimbursement_type.active, label: Spree.t(reimbursement_type.active? ? :active : :inactive)) %>
+          </td>
+          <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
+            <%= active_badge(reimbursement_type.mutable) %>
+          </td>
+          <td class="actions w-10">
+            <%= link_to_edit reimbursement_type, no_text: true, data: { row_link_target: :link } if can?(:edit, reimbursement_type) %>
           </td>
         </tr>
       <% end %>

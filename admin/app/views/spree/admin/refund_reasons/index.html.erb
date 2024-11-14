@@ -16,7 +16,7 @@
       </thead>
       <tbody id="<%= plural_resource_name(Spree::RefundReason).to_s.parameterize.underscore %>">
       <% @collection.each do |refund_reason| %>
-        <tr id="<%= spree_dom_id refund_reason %>" data-hook="named_type_row">
+        <tr id="<%= spree_dom_id refund_reason %>">
           <td class="align-center">
             <%= refund_reason.name %>
           </td>

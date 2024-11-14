@@ -8,7 +8,7 @@
     <%- if @reimbursement_type.new_record? %>
       <div class="form-group">
         <%= f.label :type, Spree.t(:type) %>
-        <%= f.select :type, options_for_select(Spree::ReimbursementType::KINDS.map { |kind| [kind.demodulize.humanize, kind] }), { include_blank: false}, { class: 'custom-select' } %>
+        <%= f.select :type, options_for_select(Spree::ReimbursementType::KINDS.map { |kind| [kind.demodulize.titleize, kind] }), { include_blank: false}, { class: 'custom-select' } %>
         <%= f.error_message_on :type %>
     </div>
     <% end %>
