@@ -1,0 +1,36 @@
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_reimbursement_type), new_object_url, { :class => "btn-primary", :icon => 'plus', :id => 'admin_new_reimbursement_type' } %>
+<% end if can?(:create, Spree::ReimbursementType) %>
+
+<%= render partial: 'spree/admin/shared/returns_and_refunds_nav' %>
+
+<% if @reimbursement_types.any? %>
+  <div class="table-responsive card-lg p-0">
+    <table class="table" id='listing_reimbursement_types' data-hook>
+      <thead class="text-muted">
+        <tr>
+          <th><%= Spree.t(:name) %></th>
+          <th><%= Spree.t(:type) %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @reimbursement_types.each do |reimbursement_type| %>
+        <tr id="<%= spree_dom_id reimbursement_type %>">
+          <td class="align-center">
+            <%= reimbursement_type.name.humanize %>
+          </td>
+          <td>
+            <code><%= reimbursement_type.type.demodulize %></code>
+          </td>
+          <td class="actions">
+            <%= link_to_edit reimbursement_type, no_text: true if can?(:edit, reimbursement_type) %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <%= render 'spree/admin/shared/no_resource_found' %>
+<% end %>

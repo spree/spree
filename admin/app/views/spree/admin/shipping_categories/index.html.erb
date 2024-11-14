@@ -1,0 +1,36 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:shipping) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_shipping_category), new_object_url, class: "btn-primary", icon: 'plus.svg' %>
+<% end if can? :create, Spree::ShippingCategory %>
+
+<%= render partial: 'spree/admin/shared/shipping_nav' %>
+
+<% if @shipping_categories.any? %>
+  <div class="table-responsive border rounded bg-white shadow-xs">
+    <table class="table">
+      <thead class="text-muted">
+        <tr>
+          <th><%= Spree.t(:name) %></th>
+          <th class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @shipping_categories.each do |shipping_category| %>
+          <tr id="<%= spree_dom_id shipping_category %>" class="cursor-pointer" data-controller="row-link">
+            <td data-action="click->row-link#openLink"><%= shipping_category.name %></td>
+            <td class="actions">
+              <span class="d-flex justify-content-end">
+                <%= link_to_edit(shipping_category, data: { row_link_target: :link }) if can? :edit, shipping_category %>
+              </span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <%= render 'spree/admin/shared/no_resource_found' %>
+<% end %>
