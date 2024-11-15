@@ -50,6 +50,11 @@ class Spree::Base < ApplicationRecord
     false
   end
 
+  # this can overridden in subclasses to disallow deletion
+  def can_be_deleted?
+    true
+  end
+
   def self.json_api_columns
     column_names.reject { |c| c.match(/_id$|id|preferences|(.*)password|(.*)token|(.*)api_key/) }
   end

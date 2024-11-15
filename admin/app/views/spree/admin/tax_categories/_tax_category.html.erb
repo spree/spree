@@ -1,0 +1,9 @@
+<tr id="<%= spree_dom_id tax_category %>" data-controller="row-link" class="cursor-pointer">
+  <td data-action="click->row-link#openLink"><%= tax_category.name %></td>
+  <td data-action="click->row-link#openLink"><%= tax_category.tax_code %></td>
+  <td data-action="click->row-link#openLink"><%= tax_category.description %></td>
+  <td data-action="click->row-link#openLink"><%= active_badge(tax_category.is_default?) %></td>
+  <td class="actions">
+    <%= link_to_edit(tax_category, data: { row_link_target: :link }) if can? :edit, tax_category %>
+  </td>
+</tr>
