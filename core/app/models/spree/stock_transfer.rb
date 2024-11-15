@@ -10,6 +10,7 @@ module Spree
 
     has_many :stock_movements, as: :originator
     accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|
+      attributes[:quantity] = attributes[:quantity].to_i
       attributes[:quantity].blank? || attributes[:quantity].zero? || attributes[:stock_item_id].blank? || attributes[:originator_id].blank?
     }
 
