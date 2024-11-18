@@ -41,10 +41,14 @@
     {
       "name": "API Reference",
       "url": "api-reference"
+    },
+    {
+      "name": "User Guides",
+      "url": "user"
     }
   ],
   "primaryTab": {
-    "name": "Docs"
+    "name": "Developer Guides"
   },
   "anchors": [
     {
@@ -53,19 +57,9 @@
       "url": "http://slack.spreecommerce.org/"
     },
     {
-      "name": "Showcase",
-      "icon": "trophy",
-      "url": "https://spreecommerce.org/success-stories/"
-    },
-    {
       "name": "Github",
       "icon": "github",
       "url": "https://github.com/spree/spree"
-    },
-    {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://spreecommerce.org/blog/"
     }
   ],
   "navigation": [
@@ -148,7 +142,6 @@
         }
       ]
     },
-
     {
       "group": "Contributing",
       "pages": [
@@ -784,6 +777,21 @@
             "api-reference/platform/zones/update-a-zone"
           ]
         }
+      ]
+    },
+
+    {
+      "group": "User Guides",
+      "pages": [
+        "user/getting-started"
+      ]
+    },
+    {
+      "group": "Managing products",
+      "pages": [
+        "user/products/listing-products",
+        "user/products/creating-a-product",
+        "user/products/editing-a-product"
       ]
     }
   ],
