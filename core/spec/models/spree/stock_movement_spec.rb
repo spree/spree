@@ -15,6 +15,16 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
+  describe 'validations' do
+    it "does not allow quantity that is less than the stock item's count on hand" do
+      stock_item = create(:stock_item, backorderable: false)
+      stock_movement = build(:stock_movement, quantity: -11, stock_item: stock_item)
+
+      expect(stock_movement).to be_invalid
+      expect(stock_movement.errors[:quantity]).to include('must be greater than or equal to -10')
+    end
+  end
+
   describe 'Scope' do
     describe '.recent' do
       it 'orders chronologically by created at' do
