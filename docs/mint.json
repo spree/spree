@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Spree Commerce Guides",
+  "name": "Spree Commerce documentation",
   "logo": {
     "dark": "/logo/logo_dark.png",
     "light": "/logo/logo_light.png",
@@ -810,4 +810,3 @@
     }
   }
 }
-
