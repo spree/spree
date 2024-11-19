@@ -101,7 +101,7 @@ module Spree
       }
     ]
 
-    @@property_attributes = [:name, :presentation]
+    @@property_attributes = [:name, :presentation, :position]
 
     @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes,
                                          :return_authorization_reason_id]
