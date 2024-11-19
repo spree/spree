@@ -781,13 +781,15 @@
     },
 
     {
-      "group": "User Guides",
+      "group": "Introduction",
       "pages": [
-        "user/getting-started"
+        "user/what-is-spree-commerce",
+        "user/using-spree",
+        "user/user-quickstart-guide"
       ]
-    },
+    },  
     {
-      "group": "Managing products",
+      "group": "Products",
       "pages": [
         "user/products/listing-products",
         "user/products/creating-a-product",
