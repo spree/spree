@@ -15,7 +15,7 @@ module Spree
     with_options presence: true do
       validates :stock_item
       validates :quantity, numericality: {
-        greater_than_or_equal_to: QUANTITY_LIMITS[:min],
+        greater_than_or_equal_to: :min_quantity,
         less_than_or_equal_to: QUANTITY_LIMITS[:max],
         only_integer: true
       }
@@ -38,6 +38,12 @@ module Spree
       return unless stock_item.should_track_inventory?
 
       stock_item.adjust_count_on_hand quantity
+    end
+
+    def min_quantity
+      return QUANTITY_LIMITS[:min] if stock_item.nil? || stock_item.backorderable?
+
+      -stock_item.count_on_hand
     end
   end
 end
