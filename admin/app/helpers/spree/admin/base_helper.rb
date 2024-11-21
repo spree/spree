@@ -103,7 +103,7 @@ module Spree
         when :string
           form.text_field(field, preference_field_options(options))
         when :password
-          form.password_field(field, preference_field_options(options))
+          render 'spree/admin/preferences/password_field', form: form, field: field, options: options
         when :text
           form.text_area(field, preference_field_options(options))
         else
