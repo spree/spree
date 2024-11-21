@@ -6,7 +6,7 @@ module Spree
 
     before_validation :set_name
 
-    validates :type, presence: true, inclusion: { in: -> { Spree::PaymentMethod.providers.map(&:to_s) } }
+    validates :type, presence: true, inclusion: { in: :valid_providers_list }
 
     def payment_source_class
       CreditCard
@@ -81,6 +81,10 @@ module Spree
 
     def set_name
       self.name ||= provider_class.name.demodulize.titleize
+    end
+
+    def valid_providers_list
+      Spree::PaymentMethod.providers.map(&:to_s)
     end
   end
 end
