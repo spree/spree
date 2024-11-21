@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://spreecommerce.org">
-    <img alt="Spree Commerce - Open Source e-commerce platform" src="https://github.com/spree/spree/assets/12614496/ff5372a4-e906-458e-83b6-7927ba0629c1">
+    <img alt="Spree Commerce - an open source eCommerce platform" src="https://github.com/spree/spree/assets/12614496/ff5372a4-e906-458e-83b6-7927ba0629c1">
   </a>
 
   <h1 align="center">Spree Commerce</h2>
@@ -13,7 +13,7 @@
     <br />
     <a href="https://slack.spreecommerce.org">Slack</a>
     ·
-    <a href="https://docs.spreecommerce.org">Documentation</a>
+    <a href="https://spreecommerce.org/docs/">Documentation</a>
     ·
     <a href="https://spreecommerce.org">Website</a>
     ·
@@ -34,7 +34,11 @@
 
 ## Getting Started
 
-Visit the [Quickstart Guide](https://docs.spreecommerce.org/developer/getting-started) to set up Spree in 5 minutes.
+Visit the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart) to set up Spree in 5 minutes.
+
+If you like what you see, consider giving Spree a GitHub star :star:
+
+Thank you for supporting Spree open-source :heart:
 
 ## Enterprise support
 
@@ -57,7 +61,7 @@ To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spre
 
 ### Composable and API-first
   * connect with your existing ecosystem, build custom workflows with ease
-  * [Storefront and Admin API](https://docs.spreecommerce.org/api-reference)
+  * [Storefront and Admin API](https://spreecommerce.org/docs/api-reference/introduction)
   * Webhooks
 <img alt="Spree Commerce - API   Integrations" src="https://github.com/spree/spree/assets/12614496/18e98e8e-15cd-4b74-8e58-80e5b3f281d8">
 
@@ -127,7 +131,7 @@ Launch a multi-tenant, multi-store platform for your customers, resellers, affil
 
 Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
 
-Follow our [Contributing Guide](https://docs.spreecommerce.org/developer/contributing)
+Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contributing/quickstart)
 
 [Join our Slack](https://slack.spreecommerce.org) to meet other community members.
 
