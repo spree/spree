@@ -126,7 +126,7 @@ module Spree
                           }
                         when :boolean
                           {
-                            class: 'custom-control custom-checkbox'
+                            class: 'custom-control-input'
                           }
                         when :string
                           {
@@ -173,7 +173,7 @@ module Spree
                     form.label(
                       "preferred_#{key}",
                       Spree.t(key),
-                      class: 'custom-control custom-checkbox',
+                      class: 'custom-control-label',
                       id: [object.class.to_s.parameterize, 'preference', key].join('-')
                     )
                 end
