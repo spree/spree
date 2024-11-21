@@ -5,6 +5,12 @@ describe Spree::PaymentMethod, type: :model do
 
   let(:store) { create(:store) }
 
+  # register test gateways
+  before do
+    Rails.application.config.spree.payment_methods << TestGateway
+    Rails.application.config.spree.payment_methods << Spree::Gateway::Test
+  end
+
   context 'visibility scopes' do
     before do
       [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
