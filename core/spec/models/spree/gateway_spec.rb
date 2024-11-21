@@ -29,6 +29,16 @@ describe Spree::Gateway, type: :model do
     gateway.imaginary_method('foo')
   end
 
+  context 'Validations' do
+    before do
+      expect(Spree::PaymentMethod).to receive(:providers).and_return([TestGateway, Spree::Gateway::Bogus])
+    end
+
+    it 'validates the type' do
+      expect(TestGateway.new).to be_valid
+    end
+  end
+
   context 'fetching payment sources' do
     let(:store) { create(:store) }
     let(:order) { store.orders.create(user_id: 1) }

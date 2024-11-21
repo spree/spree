@@ -46,6 +46,10 @@ module Spree
       type.demodulize.downcase
     end
 
+    def payment_icon_name
+      method_type
+    end
+
     def self.find_with_destroyed(*args)
       unscoped { find(*args) }
     end
@@ -55,6 +59,10 @@ module Spree
     end
 
     def source_required?
+      true
+    end
+
+    def show_in_admin?
       true
     end
 

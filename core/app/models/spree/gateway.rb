@@ -4,10 +4,9 @@ module Spree
 
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
-    validates :type, presence: true
+    before_validation :set_name
 
-    preference :server, :string, default: 'test'
-    preference :test_mode, :boolean, default: true
+    validates :type, presence: true, inclusion: { in: -> { Spree::PaymentMethod.providers.map(&:to_s) } }
 
     def payment_source_class
       CreditCard
@@ -76,6 +75,12 @@ module Spree
           []
         end
       end
+    end
+
+    private
+
+    def set_name
+      self.name ||= provider_class.name.demodulize.titleize
     end
   end
 end
