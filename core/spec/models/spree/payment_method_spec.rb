@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::PaymentMethod, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
 
   # register test gateways
   before do
@@ -127,7 +127,6 @@ describe Spree::PaymentMethod, type: :model do
   end
 
   describe '#available_for_store?' do
-    let!(:store) { create(:store) }
     let!(:store_1) { create(:store) }
     let!(:pm) { create(:credit_card_payment_method, stores: [store]) }
 
@@ -154,8 +153,12 @@ describe Spree::PaymentMethod, type: :model do
   end
 
   describe '#payment_source_class' do
-    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:payment_method) { build(:credit_card_payment_method) }
 
     it { expect(payment_method.payment_source_class).to eq(Spree::CreditCard) }
+  end
+
+  describe '#payment_icon_name' do
+    it { expect(build(:credit_card_payment_method, type: 'Spree::Gateway::AuthorizeNetGateway').payment_icon_name).to eq('authorizenet') }
   end
 end

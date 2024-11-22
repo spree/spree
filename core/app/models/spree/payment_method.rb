@@ -16,6 +16,7 @@ module Spree
     scope :available_on_back_end,  -> { active.where(display_on: [:back_end, :both]) }
 
     validates :name, presence: true
+    auto_strip_attributes :name
 
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
@@ -47,7 +48,7 @@ module Spree
     end
 
     def payment_icon_name
-      method_type
+      type.demodulize.gsub(/(^Spree::Gateway::|Gateway$)/, '').downcase.gsub(/\s+/, '').strip
     end
 
     def self.find_with_destroyed(*args)

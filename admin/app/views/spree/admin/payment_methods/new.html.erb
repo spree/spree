@@ -1,0 +1,16 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_payment_methods_path %>
+  <%= @payment_method.name %>
+<% end %>
+<% if @error %>
+  <div class="alert alert-danger">
+    <%= auto_link(@error) %>
+  </div>
+<% end %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment_method } %>
+
+<%= form_for @payment_method, as: :payment_method, url: spree.admin_payment_methods_path do |f| %>
+  <%= f.hidden_field :type %>
+  <%= render 'form', f: f %>
+  <%= render 'spree/admin/shared/new_resource_links' %>
+<% end %>

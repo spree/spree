@@ -31,16 +31,20 @@ describe Spree::Gateway, type: :model do
 
   context 'Validations' do
     before do
-      expect(Spree::PaymentMethod).to receive(:providers).and_return([TestGateway, Spree::Gateway::Bogus])
+      allow(Spree::PaymentMethod).to receive(:providers).and_return([TestGateway, Spree::Gateway::Bogus])
     end
 
     it 'validates the type' do
-      expect(TestGateway.new).to be_valid
+      expect(TestGateway.new.valid?).to be_truthy
+    end
+
+    it 'automatically sets the name' do
+      expect(TestGateway.new.name).to eq('Test')
     end
   end
 
   context 'fetching payment sources' do
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let(:order) { store.orders.create(user_id: 1) }
 
     let(:has_card) { create(:credit_card_payment_method, stores: [store]) }

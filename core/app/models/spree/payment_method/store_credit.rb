@@ -4,6 +4,10 @@ module Spree
       ::Spree::StoreCredit
     end
 
+    def method_type
+      'store_credit'
+    end
+
     def can_capture?(payment)
       ['checkout', 'pending'].include?(payment.state)
     end
