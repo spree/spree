@@ -1,0 +1,13 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_shipping_methods_url, @shipping_method %>
+  <%= @shipping_method.name %>
+<% end %>
+
+<div data-hook="admin_shipping_method_edit_form_header">
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_method } %>
+</div>
+
+<%= form_for [:admin, @shipping_method] do |f| %>
+  <%= render 'form', f: f %>
+  <%= render 'spree/admin/shared/edit_resource_links', f: f, turbo_frame: :_top %>
+<% end %>

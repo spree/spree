@@ -674,4 +674,22 @@ describe Spree::Store, type: :model do
       end
     end
   end
+
+  describe '#supported_shipping_zones' do
+    context 'with checkout zone set' do
+      let!(:checkout_zone) { create(:zone) }
+
+      subject { build(:store, checkout_zone: checkout_zone) }
+
+      it 'returns the checkout zone' do
+        expect(subject.supported_shipping_zones).to eq([checkout_zone])
+      end
+    end
+
+    context 'when checkout zone not set' do
+      it 'returns all shipping zones' do
+        expect(subject.supported_shipping_zones).to eq(Spree::Zone.includes(zone_members: :zoneable).all)
+      end
+    end
+  end
 end

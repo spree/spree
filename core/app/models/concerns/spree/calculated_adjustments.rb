@@ -8,6 +8,8 @@ module Spree
       validates :calculator, presence: true
       delegate :compute, to: :calculator
 
+      scope :with_calculator, ->(calculator) { joins(:calculator).where(calculator: { type: calculator.to_s }) }
+
       def self.calculators
         spree_calculators.send model_name_without_spree_namespace
       end

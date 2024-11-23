@@ -214,6 +214,14 @@ module Spree
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
+    def supported_shipping_zones
+      @supported_shipping_zones ||= if checkout_zone_id.present?
+                                      [checkout_zone]
+                                    else
+                                      Spree::Zone.includes(zone_members: :zoneable).all
+                                    end
+    end
+
     def default_stock_location
       @default_stock_location ||= begin
         stock_location_scope = Spree::StockLocation.order_default

@@ -1,0 +1,43 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:shipping) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:create, Spree::ShippingMethod) %>
+    <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  class: "btn-primary", icon: 'plus' %>
+  <% end %>
+
+  <% if current_vendor.present? && !current_vendor.shipping_rates_confirmed? && @shipping_methods.any? %>
+    <%= button_link_to 'Confirm Shipping Rates', spree.confirm_shipping_rates_admin_vendor_path(current_vendor), class: 'btn-primary ml-2', icon: 'check.svg', data: { turbo_method: :patch, turbo_confirm: Spree.t(:are_you_sure) } %>
+  <% end %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/shipping_nav' %>
+
+<% content_for :page_alerts do %>
+  <div class="alert alert-info">
+    Shipping methods are options that the customer sees when they reach the checkout, they are the carriers and services used to send your products.
+  </div>
+<% end %>
+
+<% if @shipping_methods.any? %>
+  <div class="table-responsive card-lg p-0">
+    <table class="table" id='listing_shipping_methods'>
+      <thead class="text-muted">
+        <tr data-hook="admin_shipping_methods_index_headers">
+          <th><%= Spree.t(:name) %></th>
+          <th><%= Spree.t(:zone) %></th>
+          <th><%= Spree.t(:estimated_delivery_time) %></th>
+          <th><%= Spree.t(:amount) %></th>
+          <th><%= Spree.t(:visibility) %></th>
+          <th data-hook="admin_shipping_methods_index_header_actions" class="actions"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'spree/admin/shipping_methods/shipping_method', collection: @shipping_methods.includes(:zones, :calculator), as: :shipping_method %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <<%= render 'spree/admin/shared/no_resource_found' %>
+<% end %>

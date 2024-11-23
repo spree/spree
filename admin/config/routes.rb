@@ -18,6 +18,7 @@ Spree::Core::Engine.add_routes do
 
     # store settings
     resources :payment_methods, except: :show
+    resources :shipping_methods, except: :show
     resources :shipping_categories, except: :show
     resources :store_credit_categories
     resources :tax_rates, except: :show
