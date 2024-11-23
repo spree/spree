@@ -166,4 +166,32 @@ describe Spree::ShippingMethod, type: :model do
     it { expect(backend_shipping_method.send(:backend?)).to be true }
     it { expect(front_and_back_end_shipping_method.send(:backend?)).to be true }
   end
+
+  describe '#delivery_range' do
+    context 'without set estimated_transit_business_days_min and estimated_transit_business_days_max' do
+      it { expect(shipping_method.delivery_range).to be_nil }
+    end
+
+    context 'with set estimated_transit_business_days_min and estimated_transit_business_days_max' do
+      let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+      it { expect(shipping_method.delivery_range).to eq('1-2') }
+    end
+
+    context 'when both are the same' do
+      let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 1) }
+
+      it { expect(shipping_method.delivery_range).to eq('1') }
+    end
+  end
+
+  describe '#display_estimated_price' do
+    it { expect(shipping_method.display_estimated_price).to eq('Flat rate: Free') }
+
+    context 'with calculator' do
+      let(:shipping_method) { build(:shipping_method, calculator: create(:shipping_calculator)) }
+
+      it { expect(shipping_method.display_estimated_price).to eq('Flat rate: $10.00') }
+    end
+  end
 end
