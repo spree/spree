@@ -2,7 +2,7 @@ module Spree
   module PromotionHandler
     class PromotionDuplicator
       def initialize(promotion, random_string: nil)
-        @promotion = promotion
+        @promotion = promotion.reload
         @random_string = random_string || generate_random_string(4)
       end
 
@@ -19,7 +19,7 @@ module Spree
           copy_actions
         end
 
-        @new_promotion
+        @new_promotion.reload
       end
 
       private
@@ -27,7 +27,8 @@ module Spree
       def copy_rules
         @promotion.promotion_rules.each do |rule|
           new_rule = rule.dup
-          @new_promotion.promotion_rules << new_rule
+          new_rule.promotion = @new_promotion
+          new_rule.save!
 
           new_rule.users = rule.users if rule.try(:users)
           new_rule.taxons = rule.taxons if rule.try(:taxons)
@@ -43,9 +44,9 @@ module Spree
       def copy_actions
         @promotion.promotion_actions.each do |action|
           new_action = action.dup
+          new_action.promotion = @new_promotion
           new_action.calculator = action.calculator.dup if action.try(:calculator)
-
-          @new_promotion.promotion_actions << new_action
+          new_action.save!
 
           next unless action.try(:promotion_action_line_items)
 

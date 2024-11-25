@@ -5,7 +5,7 @@ FactoryBot.define do
     end
 
     after(:create) do |promotion, evaluator|
-      rule = Spree::Promotion::Rules::ItemTotal.create!(
+      Spree::Promotion::Rules::ItemTotal.create!(
         promotion: promotion,
         preferred_operator_min: 'gte',
         preferred_operator_max: 'lte',
