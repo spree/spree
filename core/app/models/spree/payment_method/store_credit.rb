@@ -8,6 +8,10 @@ module Spree
       'store_credit'
     end
 
+    def description_partial_name
+      'store_credit'
+    end
+
     def can_capture?(payment)
       ['checkout', 'pending'].include?(payment.state)
     end
