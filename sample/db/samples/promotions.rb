@@ -12,15 +12,16 @@ promotion = Spree::Promotion.where(
   usage_limit: nil,
   path: nil,
   match_policy: 'any',
-  description: ''
-).first_or_create do |promo|
+  description: '',
+  code: 'FREESHIP'
+).first_or_create! do |promo|
   promo.stores = Spree::Store.all
 end
 
 Spree::PromotionRule.where(
-  promotion_id: promotion.id,
+  promotion: promotion,
   type: 'Spree::Promotion::Rules::OptionValue',
   preferences: { match_policy: 'any', eligible_values: { product.id.to_s => eligible_values } }
 ).first_or_create!
 
-Spree::Promotion::Actions::FreeShipping.where(promotion_id: promotion.id).first_or_create!
+Spree::Promotion::Actions::FreeShipping.where(promotion: promotion).first_or_create!

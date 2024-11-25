@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
   let(:order) { create(:order_with_line_items, line_items_count: 1) }
   let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
+  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new(promotion: promotion) }
   let(:payload) { { order: order } }
 
   it_behaves_like 'an adjustment source'

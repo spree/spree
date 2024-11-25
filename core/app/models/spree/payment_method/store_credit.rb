@@ -16,14 +16,6 @@ module Spree
       payment.pending?
     end
 
-    def editable?
-      amount_used.zero? && amount_authorized.zero?
-    end
-
-    def can_be_deleted?
-      amount_used.zero? && amount_authorized.zero?
-    end
-
     def authorize(amount_in_cents, store_credit, gateway_options = {})
       if store_credit.nil?
         ActiveMerchant::Billing::Response.new(false, Spree.t('store_credit_payment_method.unable_to_find'), {}, {})

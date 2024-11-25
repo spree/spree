@@ -4,8 +4,6 @@ module Spree
 
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
-    after_initialize :set_name, if: :new_record?
-
     validates :type, presence: true, inclusion: { in: :valid_providers_list }
 
     def payment_source_class
@@ -78,10 +76,6 @@ module Spree
     end
 
     private
-
-    def set_name
-      self.name ||= self.class.name.demodulize.titleize.gsub(/Gateway/, '').strip
-    end
 
     def valid_providers_list
       Spree::PaymentMethod.providers.map(&:to_s)
