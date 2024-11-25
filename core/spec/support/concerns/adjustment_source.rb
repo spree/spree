@@ -1,5 +1,11 @@
 shared_examples_for 'an adjustment source' do
-  subject(:source) { described_class.create }
+  subject(:source) do
+    if defined?(promotion) && described_class.reflect_on_association(:promotion)
+      described_class.create!(promotion: promotion)
+    else
+      described_class.create
+    end
+  end
 
   before do
     allow(Spree::Adjustable::AdjustmentsUpdater).to receive(:update)

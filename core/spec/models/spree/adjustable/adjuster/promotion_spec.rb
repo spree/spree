@@ -12,7 +12,8 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
 
   context 'best promotion is always applied' do
     let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
-    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
+    let(:promotion) { create(:promotion) }
+    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion) }
 
     def create_adjustment(label, amount)
       create(:adjustment,
