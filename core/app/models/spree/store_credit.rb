@@ -170,6 +170,14 @@ module Spree
       payment.completed? && payment.credit_allowed > 0
     end
 
+    def editable?
+      amount_used.zero? && amount_authorized.zero?
+    end
+
+    def can_be_deleted?
+      amount_used.zero? && amount_authorized.zero?
+    end
+
     def generate_authorization_code
       "#{id}-SC-#{Time.now.utc.strftime('%Y%m%d%H%M%S%6N')}"
     end
