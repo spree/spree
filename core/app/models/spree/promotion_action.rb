@@ -6,6 +6,8 @@ module Spree
 
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
+    validates :promotion, presence: true
+
     scope :of_type, ->(t) { where(type: t) }
 
     # This method should be overridden in subclass
