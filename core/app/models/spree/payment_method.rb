@@ -49,6 +49,10 @@ module Spree
       type.demodulize.downcase
     end
 
+    def default_name
+      self.class.name.demodulize.titleize.gsub(/Gateway/, '').strip
+    end
+
     def payment_icon_name
       type.demodulize.gsub(/(^Spree::Gateway::|Gateway$)/, '').downcase.gsub(/\s+/, '').strip
     end
@@ -116,7 +120,7 @@ module Spree
     end
 
     def set_name
-      self.name ||= self.class.name.demodulize.titleize.gsub(/Gateway/, '').strip
+      self.name ||= default_name
     end
   end
 end
