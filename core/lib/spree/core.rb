@@ -27,6 +27,7 @@ require 'state_machines-activerecord'
 require 'active_storage_validations'
 require 'activerecord-typedstore'
 require 'request_store'
+require 'wannabe_bool'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.

@@ -57,4 +57,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'mobility-actiontext', '~> 1.1'
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'request_store', '~> 1.7'
+  s.add_dependency 'wannabe_bool'
 end
