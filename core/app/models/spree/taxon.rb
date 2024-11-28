@@ -54,11 +54,6 @@ module Spree
     has_one_attached :square_image, service: Spree.public_storage_service_name
 
     #
-    # Action Text
-    #
-    translates :description, backend: :action_text
-
-    #
     # Validations
     #
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], case_sensitive: false }
@@ -125,8 +120,13 @@ module Spree
     #
     # Translations
     #
-    TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
+    TRANSLATABLE_FIELDS = %i[name pretty_name description permalink description].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    #
+    # Action Text
+    #
+    translates :description, backend: :action_text
 
     # Automatic taxons
     validates :rules_match_policy, inclusion: { in: RULES_MATCH_POLICIES }, presence: true

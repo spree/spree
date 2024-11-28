@@ -240,21 +240,19 @@ module Spree
       self.class.where.not(id: id).any?
     end
 
-    def ensure_default_automatic_taxons
-      collections_taxonomy = taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
+    def on_sale_collection
+      @on_sale_collection ||= begin
+        return unless collections_taxonomy.present?
 
-      if collections_taxonomy.present?
-        on_sale_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.on_sale')).first_or_create! do |taxon|
-          taxon.parent = collections_taxonomy.root
-          taxon.rules.new(type: 'Spree::TaxonRules::Sale', value: 'true')
-        end
+        collections_taxonomy.taxons.automatic.find_by(name: Spree.t('automatic_taxon_names.on_sale'))
+      end
+    end
 
-        new_arrivals_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.new_arrivals')).first_or_create! do |taxon|
-          taxon.parent = collections_taxonomy.root
-          taxon.rules.new(type: 'Spree::TaxonRules::AvailableOn', value: 30)
-        end
+    def new_arrivals_collection
+      @new_arrivals_collection ||= begin
+        return unless collections_taxonomy.present?
 
-        [on_sale_taxon, new_arrivals_taxon]
+        collections_taxonomy.taxons.automatic.find_by(name: Spree.t('automatic_taxon_names.new_arrivals'))
       end
     end
 
@@ -326,6 +324,26 @@ module Spree
       taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_brands_name', default: I18n.t('spree.taxonomy_brands_name', locale: :en)))
       taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_collections_name', default: I18n.t('spree.taxonomy_collections_name', locale: :en)))
     rescue ActiveRecord::NotNullViolation
+    end
+
+    def ensure_default_automatic_taxons
+      if collections_taxonomy.present?
+        on_sale_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.on_sale')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::Sale', value: 'true')
+        end
+
+        new_arrivals_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.new_arrivals')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::AvailableOn', value: 30)
+        end
+
+        [on_sale_taxon, new_arrivals_taxon]
+      end
+    end
+
+    def collections_taxonomy
+      taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
     end
   end
 end
