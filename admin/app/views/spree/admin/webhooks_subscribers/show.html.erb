@@ -1,0 +1,54 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_webhooks_subscribers_path %>
+  <%= @webhooks_subscriber.url %>
+<% end %>
+<fieldset class="card mb-4">
+  <table class="table card-body pb-0">
+    <tr>
+      <td><strong class="text-uppercase"><%= Spree.t('admin.url') %></strong></td>
+      <td><%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url %></td>
+    </tr>
+    <tr>
+      <td><strong><%= Spree.t('admin.active') %></strong></td>
+      <td><%= active_badge(@webhooks_subscriber.active) %></td>
+    </tr>
+    <tr>
+      <td><strong><%= Spree.t('admin.webhooks_subscribers.subscriptions') %></strong></td>
+      <td>
+        <% @webhooks_subscriber.subscriptions&.sort&.each do |subscription| %>
+          <span class="badge badge-light"><%= subscription %></span>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+<% if @events.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t('admin.webhooks_subscribers.webhooks_events') %>
+      </h5>
+    </div>
+    <table class="table card-body pb-0">
+      <thead class="text-muted">
+        <tr>
+          <th><%= Spree.t('admin.name') %></th>
+          <th><%= Spree.t('admin.successful') %></th>
+          <th><%= Spree.t('admin.created_at') %></th>
+          <th><%= Spree.t('admin.response_code') %></th>
+          <th><%= Spree.t('admin.execution_time') %></th>
+          <th><%= Spree.t('admin.errors') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'spree/admin/webhook_events/webhook_event', collection: @events, cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+    <%= render 'spree/admin/shared/index_table_options', collection: @events, simple: true %>
+  </div>
+<% else %>
+  <div class="text-center no-objects-found m-5">
+    <%= Spree.t('admin.webhooks_subscribers.no_events') %>
+  </div>
+<% end %>
