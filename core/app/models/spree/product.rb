@@ -141,6 +141,8 @@ module Spree
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
+    after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
+
     before_validation :downcase_slug
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
@@ -660,6 +662,18 @@ module Spree
 
     def requires_shipping_category?
       true
+    end
+
+    def auto_match_taxons
+      return if deleted?
+      return if archived?
+      return if store.taxons.automatic.none?
+
+      Spree::Products::AutoMatchTaxonsJob.set(wait: 10.seconds).perform_later(id)
+    end
+
+    def eligible_for_taxon_matching?
+      previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
     end
 
     def downcase_slug
