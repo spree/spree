@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { Spree::Store.default }
   let!(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
