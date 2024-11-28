@@ -9,9 +9,7 @@ module Spree
         :spree_forgot_password_path,
         :spree_edit_password_path,
         :spree_admin_login_path,
-        :spree_admin_login_url,
         :spree_admin_logout_path,
-        :spree_admin_logout_url
       )
     end
 
@@ -43,16 +41,8 @@ module Spree
       main_app.admin_login_path(opts)
     end
 
-    def spree_admin_login_url(opts = {})
-      main_app.admin_login_url(opts)
-    end
-
     def spree_admin_logout_path(opts = {})
       main_app.admin_logout_path(opts)
-    end
-
-    def spree_admin_logout_url(opts = {})
-      main_app.admin_logout_url(opts)
     end
   end
 end

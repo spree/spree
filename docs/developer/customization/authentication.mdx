@@ -100,9 +100,7 @@ To use your own authentication system with Spree, please follow these steps:
             :spree_forgot_password_path,
             :spree_edit_password_path,
             :spree_admin_login_path,
-            :spree_admin_login_url,
             :spree_admin_logout_path,
-            :spree_admin_logout_url
           )
         end
 
@@ -134,16 +132,8 @@ To use your own authentication system with Spree, please follow these steps:
           main_app.admin_login_path(opts)
         end
 
-        def spree_admin_login_url(opts = {})
-          main_app.admin_login_url(opts)
-        end
-
         def spree_admin_logout_path(opts = {})
           main_app.admin_logout_path(opts)
-        end
-
-        def spree_admin_logout_url(opts = {})
-          main_app.admin_logout_url(opts)
         end
       end
     end
@@ -157,8 +147,8 @@ To use your own authentication system with Spree, please follow these steps:
     * `spree_logout_path` The location of the logout feature of your application.
     * `spree_forgot_password_path` The location to reset a user's password.
     * `spree_edit_password_path` The location to edit a user's password.
-    * `spree_admin_login_path/url` The location of the login/sign in form for the admin panel.
-    * `spree_admin_logout_path/url` The location of the logout feature for the admin panel.
+    * `spree_admin_login_path` The location of the login/sign in form for the admin panel.
+    * `spree_admin_logout_path` The location of the logout feature for the admin panel.
 
      URLs inside the helpers **must** have `main_app` prefixed if they are inside your application. This is because Spree will otherwise attempt to route these paths to the Spree engine, which does not exist. By prefixing with `main_app`, you tell it to look at the application's routes.
 
