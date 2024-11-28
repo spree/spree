@@ -10,9 +10,9 @@
 
 <% if @tax_categories.any? %>
   <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_tax_categories' data-hook>
+    <table class="table" id='listing_tax_categories'>
       <thead class="text-muted">
-        <tr data-hook="tax_header">
+        <tr>
           <th><%= Spree.t(:name) %></th>
           <th><%= Spree.t(:tax_code) %></th>
           <th><%= Spree.t(:description) %></th>

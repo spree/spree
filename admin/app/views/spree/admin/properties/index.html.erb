@@ -13,14 +13,14 @@
 <% end if can?(:create, Spree::Property) %>
 
 <% content_for :table_filter do %>
-  <div data-hook="admin_property_sidebar">
+  <div>
     <%= search_form_for [:admin, @search] do |f| %>
 
       <%- locals = {f: f} %>
 
       <div class="row">
         <div class="col-12 col-lg-6">
-          <div data-hook="admin_property_index_search" class="form-group">
+          <div class="form-group">
             <%= f.label :name_or_presentation_cont, Spree.t(:name) %>
             <%= f.text_field :name_or_presentation_cont, class: "form-control js-quick-search-target js-filterable" %>
           </div>

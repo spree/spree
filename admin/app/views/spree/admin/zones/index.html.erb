@@ -14,9 +14,9 @@
 
 <% if @zones.any? %>
   <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_zones' data-hook>
+    <table class="table" id='listing_zones'>
       <thead class="text-muted">
-      <tr data-hook="zones_header">
+      <tr>
         <th><%= sort_link @search,:name, Spree.t(:name), title: 'zones_order_by_name_title' %></th>
         <th>
           <%= sort_link @search,:description, Spree.t(:description), {}, {title: 'zones_order_by_description_title'} %>

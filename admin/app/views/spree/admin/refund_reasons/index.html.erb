@@ -6,9 +6,9 @@
 
 <% if @collection.any? %>
   <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_named_types' data-hook>
+    <table class="table" id='listing_named_types">
       <thead class="text-muted">
-      <tr data-hook="named_types_header">
+      <tr>
         <th><%= Spree.t(:name) %></th>
         <th><%= Spree.t(:status) %></th>
         <th><%= Spree.t(:mutable) %></th>

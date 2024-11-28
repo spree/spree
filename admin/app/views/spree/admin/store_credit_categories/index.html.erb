@@ -10,14 +10,14 @@
 <div class="table-responsive card-lg p-0">
   <table class="table">
     <thead class="text-muted">
-      <tr data-hook="admin_store_credit_categories_index_headers">
+      <tr>
         <th><%= Spree.t(:name) %></th>
         <th class="actions"></th>
       </tr>
     </thead>
     <tbody>
       <% @store_credit_categories.each do |store_credit_category| %>
-        <tr id="<%= spree_dom_id store_credit_category %>" data-hook="admin_store_credit_categories_index_rows">
+        <tr id="<%= spree_dom_id store_credit_category %>">
           <td><%= store_credit_category.name %></td>
           <td class="actions">
             <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>

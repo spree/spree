@@ -3,14 +3,14 @@
 <%= content_for(:title, 'API Keys') %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to 'New API key', new_object_url, class: "btn-primary", icon: 'plus', id: 'admin_new_role_link' %>
+  <%= button_link_to 'New API key', new_object_url, class: "btn-primary", icon: 'plus' %>
 <% end if can? :create, Spree::OauthApplication %>
 
 <%= content_for :page_alerts do %>
   <div class="alert alert-info mb-3">
     <p>
-      Here you can manage API keys to access the <%= link_to 'Platform API', 'https://developers.getvendo.com/reference/authentication-2' %>.
-      For headless storefronts you don't need an API key, please use the <%= link_to 'Storefront API', 'https://developers.getvendo.com/reference/api-getting-started' %>.
+      Here you can manage API keys to access the <%= link_to 'Platform API', 'https://spreecommerce.org/docs/api-reference/platform/authentication', target: '_blank' %>.
+      For headless storefronts you don't need an API key, please use the <%= link_to 'Storefront API', 'https://spreecommerce.org/docs/api-reference/storefront/authentication', target: '_blank' %>.
     </p>
   </div>
 <% end %>
@@ -19,7 +19,7 @@
   <div class="table-responsive rounded border mt-4 bg-white shadow-xs">
     <table class="table">
       <thead class="text-muted">
-        <tr data-hook="admin_roles_index_headers">
+        <tr>
           <th><%= Spree.t(:name) %></th>
           <th>Client ID</th>
           <th><%= Spree.t('admin.oauth_applications.scopes') %></th>
@@ -29,7 +29,7 @@
       </thead>
       <tbody>
         <% @oauth_applications.each do |application| %>
-          <tr id="<%= spree_dom_id application %>" data-hook="admin_roles_index_rows">
+          <tr id="<%= spree_dom_id application %>">
             <td class="w-20"><%= application.name %></td>
             <td class="w-40">
               <div class="input-group" data-controller="password-toggle">
