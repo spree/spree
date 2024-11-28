@@ -8,20 +8,16 @@ module Spree
       'store_credit'
     end
 
+    def description_partial_name
+      'store_credit'
+    end
+
     def can_capture?(payment)
       ['checkout', 'pending'].include?(payment.state)
     end
 
     def can_void?(payment)
       payment.pending?
-    end
-
-    def editable?
-      amount_used.zero? && amount_authorized.zero?
-    end
-
-    def can_be_deleted?
-      amount_used.zero? && amount_authorized.zero?
     end
 
     def authorize(amount_in_cents, store_credit, gateway_options = {})

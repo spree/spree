@@ -7,8 +7,6 @@ module Spree
       end
 
       def build_sortable_tree(parent_resource, child_resource)
-        child_resource_name = child_resource.class.name.demodulize.underscore
-
         descendants = []
 
         unless child_resource.leaf?
@@ -24,7 +22,7 @@ module Spree
                     id: spree_dom_id(child_resource),
                     class: 'sortable-tree-item draggable',
                     data: {
-                      sortable_tree_resource_name_value: child_resource_name.singularize,
+                      sortable_tree_resource_name_value: :taxon,
                       sortable_tree_update_url_value: spree.reposition_admin_taxonomy_taxon_path(child_resource.taxonomy_id, child_resource.id)
                     })
       end
