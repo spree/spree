@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
-  let(:taxonomy) { create(:taxonomy) }
+  let(:store) { Spree::Store.default }
+  let(:taxonomy) { create(:taxonomy, store: store) }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
 
   it_behaves_like 'metadata'
@@ -12,7 +13,7 @@ describe Spree::Taxon, type: :model do
     it { is_expected.to eql taxon.permalink }
   end
 
-  context 'validations' do
+  context 'Validations' do
     describe '#check_for_root' do
       let(:valid_taxon) { build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy: taxonomy) }
 
@@ -27,7 +28,7 @@ describe Spree::Taxon, type: :model do
 
     describe '#parent_belongs_to_same_taxonomy' do
       let(:valid_parent) { create(:taxon, name: 'Valid Parent', taxonomy: taxonomy) }
-      let(:invalid_parent) { create(:taxon, name: 'Invalid Parent', taxonomy: create(:taxonomy)) }
+      let(:invalid_parent) { create(:taxon, name: 'Invalid Parent', taxonomy: create(:taxonomy, store: store)) }
 
       it 'does not validate the taxon' do
         expect(build(:taxon, taxonomy: taxonomy, parent: invalid_parent).valid?).to eq false
@@ -35,6 +36,54 @@ describe Spree::Taxon, type: :model do
 
       it 'validates the taxon' do
         expect(build(:taxon, taxonomy: taxonomy, parent: valid_parent).valid?).to eq true
+      end
+    end
+  end
+
+  context 'Scopes' do
+    describe '.for_taxonomy' do
+      let!(:root_category) { create(:taxon, taxonomy: taxonomy) }
+
+      let(:on_sale_taxon) { store.taxons.find_by(name: Spree.t(:on_sale)) }
+      let(:new_arrivals_taxon) { store.taxons.find_by(name: Spree.t(:new_arrivals)) }
+
+      context 'when translations are disabled' do
+        it 'returns the correct taxon' do
+          expect(described_class.for_taxonomy('Categories')).to contain_exactly(
+            root_category,
+            root_category.parent,
+            on_sale_taxon,
+            new_arrivals_taxon
+          )
+        end
+      end
+
+      context 'when translations are enabled' do
+        before do
+          taxonomy
+          on_sale_taxon
+          new_arrivals_taxon
+
+          Spree::Config.always_use_translations = true
+          I18n.locale = :de
+
+          taxonomy.name = "Kategorien"
+          taxonomy.save!
+        end
+
+        after do
+          Spree::Config.always_use_translations = false
+          I18n.locale = :en
+        end
+
+        it 'returns the correct taxon' do
+          expect(described_class.for_taxonomy('Kategorien')).to contain_exactly(
+            root_category,
+            root_category.parent,
+            on_sale_taxon,
+            new_arrivals_taxon
+          )
+        end
       end
     end
   end
@@ -129,7 +178,7 @@ describe Spree::Taxon, type: :model do
 
   # Regression test for #2620
   context 'creating a child node using first_or_create' do
-    let!(:taxonomy) { create(:taxonomy) }
+    let!(:taxonomy) { create(:taxonomy, store: store) }
 
     it 'does not error out' do
       expect { taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first_or_create }.not_to raise_error
@@ -153,7 +202,7 @@ describe Spree::Taxon, type: :model do
   end
 
   describe '#sync_taxonomy_name' do
-    let!(:taxonomy) { create(:taxonomy, name: 'Soft Goods') }
+    let!(:taxonomy) { create(:taxonomy, name: 'Soft Goods', store: store) }
     let!(:taxon) { create(:taxon, taxonomy: taxonomy, name: 'Socks' ) }
 
     context 'when none root taxon name is updated' do
@@ -459,11 +508,76 @@ describe Spree::Taxon, type: :model do
   end
 
   describe '#store' do
-    let(:taxonomy) { create(:taxonomy) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
     let(:taxon) { build(:taxon, taxonomy: taxonomy) }
 
     it 'returns the store from the taxonomy' do
-      expect(taxon.store).to eq(taxonomy.store)
+      expect(taxon.store).to eq(store)
+    end
+  end
+
+  describe '#active_products_with_descendants' do
+    let(:root_category) { create(:taxon, taxonomy: taxonomy) }
+
+    context 'when category has products' do
+      let!(:product) { create(:product, taxons: [root_category]) }
+
+      it 'returns true' do
+        expect(root_category.reload.active_products_with_descendants.exists?).to be true
+      end
+
+      it 'returns true when products aren\'t active' do
+        product.update(status: 'draft')
+
+        expect(root_category.reload.products.exists?).to be true
+      end
+    end
+
+    context 'when only children categories have products' do
+      let(:parent_category) { create(:taxon, taxonomy: taxonomy, parent: root_category) }
+      let(:child_category) { create(:taxon, taxonomy: taxonomy, parent: parent_category) }
+      let!(:product) { create(:product, taxons: [child_category]) }
+
+      it 'returns true' do
+        expect(root_category.reload.active_products_with_descendants.exists?).to be true
+      end
+
+      it 'returns false when products aren\'t active' do
+        product.update(status: 'draft')
+
+        expect(root_category.reload.active_products_with_descendants.exists?).to be false
+      end
+    end
+
+    context 'when category has no products' do
+      it 'returns false' do
+        expect(root_category.reload.active_products_with_descendants.exists?).to be false
+      end
+    end
+
+    context 'when category has products but children categories have no products' do
+      let(:parent_category) { create(:taxon, taxonomy: taxonomy, parent: root_category) }
+      let!(:child_category) { create(:taxon, taxonomy: taxonomy, parent: parent_category) }
+      let!(:product) { create(:product, taxons: [root_category]) }
+
+      it 'returns true' do
+        expect(root_category.reload.active_products_with_descendants.exists?).to be true
+      end
+
+      it 'returns false when products aren\'t active' do
+        product.update(status: 'draft')
+
+        expect(root_category.reload.active_products_with_descendants.exists?).to be false
+      end
+    end
+
+    context 'when children categories also have no products' do
+      let(:parent_category) { create(:taxon, taxonomy: taxonomy, parent: root_category) }
+      let!(:child_category) { create(:taxon, taxonomy: taxonomy, parent: parent_category) }
+
+      it 'returns false' do
+        expect(root_category.reload.active_products_with_descendants.exists?).to be false
+      end
     end
   end
 end
