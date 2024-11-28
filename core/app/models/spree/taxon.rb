@@ -251,15 +251,6 @@ module Spree
         update_columns(pretty_name: generate_pretty_name, permalink: generate_slug, updated_at: Time.current)
       end
 
-      # Overriding Spree::Webhooks::HasWebhooks methods
-      def resource_serializer
-        Spree::Api::V2::Platform::TaxonSerializer
-      end
-
-      def inferred_event_name(operation)
-        "taxon.#{operation}"
-      end
-
       private
 
       def generate_slug
