@@ -134,7 +134,7 @@ module Spree
 
     has_many :taxon_rules, class_name: 'Spree::TaxonRule', dependent: :destroy
     accepts_nested_attributes_for :taxon_rules, allow_destroy: true, reject_if: proc { |attributes| attributes['value'].blank? }
-    alias_attribute :rules, :taxon_rules
+    alias rules taxon_rules
 
     scope :manual, -> { where.not(automatic: true) }
     scope :automatic, -> { where(automatic: true) }

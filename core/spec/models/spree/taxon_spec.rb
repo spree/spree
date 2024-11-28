@@ -44,8 +44,8 @@ describe Spree::Taxon, type: :model do
     describe '.for_taxonomy' do
       let!(:root_category) { create(:taxon, taxonomy: taxonomy) }
 
-      let(:on_sale_taxon) { store.taxons.find_by(name: Spree.t(:on_sale)) }
-      let(:new_arrivals_taxon) { store.taxons.find_by(name: Spree.t(:new_arrivals)) }
+      let(:on_sale_taxon) { store.taxons.find_by(name: Spree.t('automatic_taxon_names.on_sale')) }
+      let(:new_arrivals_taxon) { store.taxons.find_by(name: Spree.t('automatic_taxon_names.new_arrivals')) }
 
       context 'when translations are disabled' do
         it 'returns the correct taxon' do

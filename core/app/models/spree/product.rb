@@ -119,6 +119,11 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+
+    has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
+
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
@@ -157,6 +162,12 @@ module Spree
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
+    scope :on_sale, lambda { |currency = nil|
+                      currency ||= Spree::Store.default.default_currency
+                      joins(:prices_including_master).with_currency(currency).
+                        where.not(spree_prices: { compare_at_amount: [nil, 0] }).
+                        where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
+                    }
 
     attr_accessor :option_values_hash
 
@@ -213,6 +224,10 @@ module Spree
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
       default_variant.backorderable? || variants.any?(&:backorderable?)
+    end
+
+    def on_sale?(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.any?(&:discounted?)
     end
 
     def find_or_build_master

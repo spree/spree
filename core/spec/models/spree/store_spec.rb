@@ -121,6 +121,16 @@ describe Spree::Store, type: :model do
         expect(store.taxonomies.pluck(:name)).to include(Spree.t(:taxonomy_categories_name), Spree.t(:taxonomy_brands_name))
       end
     end
+
+    describe '#ensure_default_automatic_taxons' do
+      let(:store) { build(:store) }
+
+      it 'creates automatic taxons' do
+        expect { store.save! }.to change(Spree::Taxon, :count).by(2)
+        expect(store.reload.taxons.automatic.count).to eq(2)
+        expect(store.taxons.automatic.pluck(:name)).to contain_exactly('New arrivals', 'On sale')
+      end
+    end
   end
 
   context 'Validations' do
