@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <p>To use translations, configure more than one locale for the store.</p>
+      <% if can?(:edit, current_store) %>
+        <%= button_link_to('Configure store', spree.edit_admin_store_path(current_store)) %>
+      <% end %>
+    </div>
+  </div>
+</div>

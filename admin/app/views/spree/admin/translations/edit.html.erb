@@ -1,0 +1,47 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button @back_path %>
+  <span class="mr-3"><%= Spree.t(:translations_for, resource_name: @resource_name) %></span>
+<% end %>
+<% if @locales.any?%>
+  <% if @locales.many? %>
+    <%= form_with url: spree.edit_admin_translation_path(@resource, resource_type: @resource.class.to_s), class: "w-100 d-flex justify-content-end", data: { auto_submit_target: 'form', controller: 'auto-submit', turbo_frame: 'translations_table'}, method: :get do |f| %>
+      <div class="form-inline gap-2">
+        <%= f.label :translation_locale, Spree.t(:language) %>
+        <%= f.select :translation_locale, options_for_select(@locales.map { |locale| [Spree.t('i18n.this_file_language', locale: locale), locale] }, @selected_translation_locale), {}, { class: 'custom-select', data: { action: 'change->auto-submit#submitForm' } } %>
+      </div>
+    <% end %>
+  <% end %>
+  <%= form_with url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
+    <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
+    <%= turbo_frame_tag :translations_table, class: "table-responsive border rounded bg-white my-3", refresh: "morph" do %>
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th scope="col" class="text-center"><%= Spree.t(:field) %></th>
+            <th scope="col" class="text-center" style="width: 40%;"><%= Spree.t('i18n.this_file_language', locale: :en) %> (<%= Spree.t(:default) %>)</th>
+            <th scope="col" class="text-center"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% options = { resource: @resource, selected_translation_locale: @selected_translation_locale } %>
+          <% case @resource %>
+          <% when Spree::Product %>
+            <%= render 'spree/admin/translations/products/form', options %>
+          <% when Spree::Taxon %>
+            <%= render 'spree/admin/translations/taxons/form', options %>
+          <% when Spree::Taxonomy %>
+            <%= render 'spree/admin/translations/taxonomies/form', options %>
+          <% when Spree::Store %>
+            <%= render 'spree/admin/translations/stores/form', options %>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+    <div class="form-actions">
+      <%= turbo_save_button_tag Spree.t('actions.update') %>
+      <%= link_to Spree.t('actions.cancel'), @back_path, class: 'btn btn-light ml-auto' %>
+    </div>
+  <% end %>
+<% else %>
+  <%= render partial: 'spree/admin/translations/translations_unavailable' %>
+<% end %>

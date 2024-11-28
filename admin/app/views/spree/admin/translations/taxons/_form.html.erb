@@ -1,0 +1,37 @@
+<% resource.class.translatable_fields.each do |field| %>
+  <% if field == :pretty_name %>
+    <% next %>
+  <% end %>
+  <tr>
+    <td class="text-left">
+      <%= Spree.t(field) %>
+    </td>
+    <% [@default_locale, selected_translation_locale].each do |translation_locale| %>
+      <% readonly = translation_locale == @default_locale %>
+      <td <% if readonly %>style="width: 40%;"<% else %>style="width: 60%;"<% end %>>
+        <% case field%>
+        <% when :description %>
+          <div class="trix-container mb-0">
+            <%= rich_text_area_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), { contenteditable: !readonly } %>
+          </div>
+        <% when :permalink %>
+          <% parent_permalink = resource.parent.present? ? I18n.with_locale(translation_locale) { resource.parent.permalink } + "/" : "" %>
+          <div class="form-group">
+            <div class="input-group">
+              <% if parent_permalink.present? %>
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <%= parent_permalink %>
+                  </span>
+                </div>
+              <% end %>
+              <%= text_field_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field)&.delete_prefix(parent_permalink), class: 'form-control', readonly: readonly %>
+            </div>
+          </div>
+        <% else %>
+          <%= text_field_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), class: 'form-control', readonly: readonly %>
+        <% end %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
