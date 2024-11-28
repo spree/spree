@@ -36,6 +36,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')
       taxon.products << product
+      perform_enqueued_jobs
     end
 
     it 'should be removed from the taxon' do
