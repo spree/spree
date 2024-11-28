@@ -1,0 +1,16 @@
+<tr id="<%= spree_dom_id webhooks_subscriber %>" data-controller="row-link" class="cursor-pointer">
+  <td data-action="click->row-link#openLink">
+    <%= webhooks_subscriber.url %>
+  </td>
+  <td data-action="click->row-link#openLink"><%= active_badge(webhooks_subscriber.active) %></td>
+  <td class="w-20" data-action="click->row-link#openLink">
+    <% webhooks_subscriber.subscriptions&.sort&.each do |subscription| %>
+      <span class="badge badge-light"><%= subscription %></span>
+    <% end %>
+  </td>
+  <td data-action="click->row-link#openLink"><%= local_time(webhooks_subscriber.latest_event_at) %></td>
+  <td class="actions">
+    <%= link_to_with_icon 'eye', Spree.t(:view), admin_webhooks_subscriber_path(webhooks_subscriber), class: "btn btn-light btn-sm", data: { row_link_target: 'link' } %>
+    <%= link_to_edit(webhooks_subscriber) if can? :edit, webhooks_subscriber %>
+  </td>
+</tr>

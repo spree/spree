@@ -1,0 +1,4 @@
+<%= content_for(:page_tabs) do %>
+  <%= nav_pill_list_item(:shipping_methods, url: spree.admin_shipping_methods_path, active: controller_name == 'shipping_methods' && action_name == 'index') if can?(:manage, Spree::ShippingMethod) %>
+  <%= nav_pill_list_item(:shipping_categories, url: spree.admin_shipping_categories_path) if can?(:manage, Spree::ShippingCategory) %>
+<% end %>

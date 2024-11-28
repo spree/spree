@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-12 col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">
+          <%= Spree.t(:general_settings) %>
+        </h5>
+      </div>
+      <div class="card-body pb-0">
+        <div class="row">
+          <div class="form-group col-12">
+            <%= f.label :url, raw(Spree.t('admin.url') + required_span_tag) %>
+            <%= f.text_field :url, class: 'form-control', placeholder: 'https://example.com/endpoint' %>
+            <%= f.error_message_on :url %>
+          </div>
+          <div class="form-group col-3">
+            <div class="custom-control custom-switch">
+              <%= f.check_box :active, class: 'custom-control-input' %>
+              <%= f.label :active, class: 'custom-control-label' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">
+          <%= Spree.t('admin.webhooks_subscribers.webhooks_events') %>
+        </h5>
+      </div>
+      <div class="card-body pb-0" data-controller="webhooks-subscriber-events">
+        <div class="form-group">
+          <div>
+            <div class="radio my-2">
+              <%= radio_button_tag :subscribe_to_all_events, true,
+                               subscribe_to_all_events?,
+                               {
+                                 'data-action' => 'webhooks-subscriber-events#hideCheckboxes',
+                                 'data-webhooks-subscriber-events-target' => 'subscribeToAll',
+                                  class: 'events' } %>
+              <%= label_tag :subscribe_to_all_events_true, Spree.t('admin.webhooks_subscribers.subscribe_to_all_events') %>
+            </div>
+            <div class="radio my-2">
+              <%= radio_button_tag :subscribe_to_all_events, false,
+                               !subscribe_to_all_events?,
+                               { 'data-action' => 'webhooks-subscriber-events#showCheckboxes',
+                                 class: 'events' } %>
+              <%= label_tag :subscribe_to_all_events_false, Spree.t('admin.webhooks_subscribers.select_events') %>
+            </div>
+          </div>
+          <br/>
+          <div data-webhooks-subscriber-events-target="eventsCheckboxesContainer" class="<%= subscribe_to_all_events? ? 'd-none' : '' %>">
+            <div class="row" >
+              <% Spree::Webhooks::Subscriber.supported_events.each_with_index do |se, index| %>
+                <% record, _ = se %>
+                <%= event_checkbox_for(record, f) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,10 @@
 Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
     # product catalog
-    resources :properties
+    resources :properties, except: :show
+    resources :option_types, except: :show do
+      resources :option_values, only: [:update]
+    end
 
     # media library
     resources :assets, only: [:create, :edit, :update, :destroy] do
@@ -32,5 +35,12 @@ Spree::Core::Engine.add_routes do
         put :mark_as_default
       end
     end
+
+    # account management
+    resources :roles, except: :show
+
+    # developer tools
+    resources :oauth_applications
+    resources :webhooks_subscribers
   end
 end

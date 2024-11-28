@@ -1,0 +1,29 @@
+<tr class="nested-form-wrapper"
+    data-new-record="<%= f.object.new_record? %>"
+    data-controller="slug-form"
+    <% if f.object.id.present? %>
+      id="spree_<%= dom_id(f.object) %>"
+      data-sortable-update-url="<%= spree.admin_option_type_option_value_path(option_type, f.object) %>"
+    <% else %>
+      id="spree_new_option_value"
+    <% end %>
+  >
+  <td class="w-5 <%= f.object.id.present? ? 'move-handle text-center' : 'text-center' %>">
+    <% if f.object.id.present? %>
+      <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+    <% end %>
+    <%= f.hidden_field :id %>
+  </td>
+  <td class="w-45 presentation">
+    <%= f.text_field :presentation, class: "form-control", data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
+  </td>
+  <td class="w-40 name">
+    <%= f.text_field :name, class: "form-control", data: { slug_form_target: :url } %>
+  </td>
+  <td class="w-10 actions">
+    <button type="button" class="btn btn-danger btn-sm remove_option_value_button" data-action="nested-form#remove">
+      <%= icon('trash', class: 'mr-0') %>
+    </button>
+    <%= f.hidden_field :_destroy %>
+  </td>
+</tr>

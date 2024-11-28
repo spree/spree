@@ -1,0 +1,29 @@
+<%= render 'spree/admin/shared/developers_nav' %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t('admin.webhooks_subscribers.new_webhooks_subscriber'), new_object_url, class: "btn-primary", icon: 'add.svg', id: 'admin_new_webhooks_subscriber_link' %>
+<% end if can?(:create, Spree::Webhooks::Subscriber) %>
+<% if @webhooks_subscribers.any? %>
+  <div class="border rounded bg-white">
+    <table class="table">
+      <thead class="text-muted">
+        <tr>
+          <th><%= Spree.t('admin.url') %></th>
+          <th><%= Spree.t('admin.active') %></th>
+          <th><%= Spree.t('admin.webhooks_subscribers.subscriptions') %></th>
+          <th><%= Spree.t('admin.webhooks_subscribers.time_of_last_event') %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'spree/admin/webhooks_subscribers/webhooks_subscriber', collection: @webhooks_subscribers, cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+  </div>
+  <%= render 'spree/admin/shared/index_table_options', collection: @webhooks_subscribers, simple: true %>
+<% else %>
+  <div class="text-center no-objects-found m-5">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Webhooks::Subscriber)) %>
+    <%= link_to_with_icon('plus', Spree.t(:add_one), new_object_url) if can? :create, Spree::Webhooks::Subscriber %>!
+  </div>
+<% end %>

@@ -1,0 +1,7 @@
+<%= content_for :page_title do %>
+  <%= Spree.t(:developers) %>
+<% end %>
+<%= content_for :page_tabs do %>
+  <%= nav_pill_list_item(:api_keys, label: Spree.t(:api_keys), url: spree.admin_oauth_applications_path) %>
+  <%= nav_pill_list_item(:webhooks, label: Spree.t(:webhooks), url: spree.admin_webhooks_subscribers_path) %>
+<% end %>

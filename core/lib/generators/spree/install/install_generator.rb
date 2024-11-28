@@ -75,8 +75,8 @@ module Spree
     end
 
     def install_admin
-      if @install_admin && Spree::Core::Engine.backend_available?
-        generate 'spree:backend:install'
+      if @install_admin && Spree::Core::Engine.admin_available?
+        generate 'spree:admin:install'
       end
     end
 
