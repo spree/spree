@@ -240,22 +240,6 @@ module Spree
       self.class.where.not(id: id).any?
     end
 
-    def on_sale_collection
-      @on_sale_collection ||= begin
-        return unless collections_taxonomy.present?
-
-        collections_taxonomy.taxons.automatic.find_by(name: Spree.t('automatic_taxon_names.on_sale'))
-      end
-    end
-
-    def new_arrivals_collection
-      @new_arrivals_collection ||= begin
-        return unless collections_taxonomy.present?
-
-        collections_taxonomy.taxons.automatic.find_by(name: Spree.t('automatic_taxon_names.new_arrivals'))
-      end
-    end
-
     private
 
     def countries_available_for_checkout_cache_key
@@ -327,6 +311,8 @@ module Spree
     end
 
     def ensure_default_automatic_taxons
+      collections_taxonomy = taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
+
       if collections_taxonomy.present?
         on_sale_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.on_sale')).first_or_create! do |taxon|
           taxon.parent = collections_taxonomy.root
@@ -340,10 +326,6 @@ module Spree
 
         [on_sale_taxon, new_arrivals_taxon]
       end
-    end
-
-    def collections_taxonomy
-      taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
     end
   end
 end
