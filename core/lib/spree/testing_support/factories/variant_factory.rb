@@ -19,7 +19,11 @@ FactoryBot.define do
     before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
 
     after(:create) do |variant|
-      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(variant) }
+      Spree::StockLocation.all.each do |stock_location|
+        next if stock_location.stock_item(variant).present?
+
+        stock_location.propagate_variant(variant)
+      end
     end
 
     factory :variant do

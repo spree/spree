@@ -789,10 +789,11 @@ describe Spree::Shipment, type: :model do
   context '#transfer_to_location' do
     # Order with 2 line items in order to be able to split one shipment into 2
     let(:order) { create(:completed_order_with_totals, line_items_count: 2) }
-    let(:stock_location) { create(:stock_location, propagate_all_variants: true, backorderable_default: true) }
+    let!(:stock_location) { create(:stock_location, propagate_all_variants: true, backorderable_default: true) }
     let(:variant) { order.line_items.first.variant }
 
     before do
+      perform_enqueued_jobs
       shipping_method = order.shipments.first.shipping_method
       shipping_method.calculator.preferences[:amount] = order.shipments.first.cost
       shipping_method.calculator.save!
