@@ -77,7 +77,7 @@ module Spree
 
     has_many :menu_items, as: :linked_resource
 
-    has_many :classifications, dependent: :delete_all, inverse_of: :product
+    has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
     has_many :taxonomies, through: :taxons
 
@@ -667,7 +667,9 @@ module Spree
     def auto_match_taxons
       return if deleted?
       return if archived?
-      return if store.taxons.automatic.none?
+
+      store = stores.default || stores.first
+      return if store.nil? || store.taxons.automatic.none?
 
       Spree::Products::AutoMatchTaxonsJob.set(wait: 10.seconds).perform_later(id)
     end

@@ -10,7 +10,7 @@ end
 describe Spree::Product, type: :model do
   it_behaves_like 'metadata'
 
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, default: true) }
 
   context 'product instance' do
     let(:product) { create(:product, stores: [store]) }

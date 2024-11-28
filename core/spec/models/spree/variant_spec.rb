@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let!(:store) { create(:store) }
-  let!(:variant) { create(:variant) }
+  let!(:store) { create(:store, default: true) }
+  let!(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
@@ -1174,7 +1174,14 @@ describe Spree::Variant, type: :model do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
     let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
-    before { variant.update(track_inventory: false) }
+    before do
+      variant.update(track_inventory: false)
+      ActiveJob::Base.queue_adapter = :inline
+    end
+
+    after do
+      ActiveJob::Base.queue_adapter = :test
+    end
 
     it 'schedules RemoveFromIncompleteOrdersJob' do
       expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)

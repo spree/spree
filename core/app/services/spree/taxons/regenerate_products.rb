@@ -25,14 +25,7 @@ module Spree
             position = previous_filtered_products_ids.index(product_id)
             position = position.present? ? position + 1 : max_products_position += 1
 
-            {
-              product_id: product_id,
-              taxon_id: taxon.id,
-              position: position,
-              created_at: Time.current,
-              updated_at: Time.current,
-              project_id: taxon.project_id
-            }
+            classification_attributes(product_id, taxon, position)
           end
 
           Spree::Classification.insert_all(records_to_insert)
@@ -42,6 +35,18 @@ module Spree
         end
 
         success(taxon)
+      end
+
+      private
+
+      def classification_attributes(product_id, taxon, position)
+        {
+          product_id: product_id,
+          taxon_id: taxon.id,
+          position: position,
+          created_at: Time.current,
+          updated_at: Time.current
+        }
       end
     end
   end
