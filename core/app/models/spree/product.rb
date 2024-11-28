@@ -668,10 +668,10 @@ module Spree
       return if deleted?
       return if archived?
 
-      store = stores.default || stores.first
+      store = stores.find_by(default: true) || stores.first
       return if store.nil? || store.taxons.automatic.none?
 
-      Spree::Products::AutoMatchTaxonsJob.set(wait: 10.seconds).perform_later(id)
+      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
     end
 
     def eligible_for_taxon_matching?
