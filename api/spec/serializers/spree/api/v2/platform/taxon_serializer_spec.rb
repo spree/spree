@@ -24,7 +24,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               permalink: taxon.permalink,
               lft: taxon.lft,
               rgt: taxon.rgt,
-              description: taxon.description,
+              description: taxon.description.to_plain_text,
               created_at: taxon.created_at,
               updated_at: taxon.updated_at,
               meta_title: taxon.meta_title,
@@ -36,6 +36,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               is_root: taxon.root?,
               is_child: taxon.child?,
               is_leaf: taxon.leaf?,
+              automatic: taxon.automatic?,
               public_metadata: {},
               private_metadata: {}
             },
