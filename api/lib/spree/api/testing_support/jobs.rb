@@ -1,4 +1,6 @@
 RSpec.configure do |config|
+  config.include ActiveJob::TestHelper
+
   # Force jobs to be executed in a synchronous way (see http://archive.today/xcb1E)
   config.around do |example|
     (ActiveJob::Base.descendants << ActiveJob::Base).each(&:disable_test_adapter)

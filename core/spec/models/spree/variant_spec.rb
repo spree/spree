@@ -1176,11 +1176,6 @@ describe Spree::Variant, type: :model do
 
     before do
       variant.update(track_inventory: false)
-      ActiveJob::Base.queue_adapter = :inline
-    end
-
-    after do
-      ActiveJob::Base.queue_adapter = :test
     end
 
     it 'schedules RemoveFromIncompleteOrdersJob' do
@@ -1189,8 +1184,8 @@ describe Spree::Variant, type: :model do
     end
 
     it 'deletes the line items from the order' do
-      variant.destroy
-      expect(order.reload.line_items).to be_empty
+      perform_enqueued_jobs { variant.destroy }
+      expect(order.line_items.reload).to be_empty
       expect(order.total).to eq(0)
     end
   end
