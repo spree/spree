@@ -43,6 +43,10 @@ module Spree
 
     self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
 
+    attribute :eligible_for_taxon_matching, :boolean, default: false
+    before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
+    after_commit -> { variant&.product&.auto_match_taxons }, if: -> { eligible_for_taxon_matching? }
+
     def money
       Spree::Money.new(amount || 0, currency: currency.upcase)
     end
