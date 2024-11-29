@@ -63,42 +63,34 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  config.before :suite do
+  config.before(:suite) do
     Capybara.match = :smart
     Capybara.javascript_driver = :selenium_chrome
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
-    DatabaseCleaner.clean_with :truncation
+    # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before do
-    Rails.cache.clear
-    WebMock.disable!
-    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
-                                 :truncation
-                               else
-                                 :transaction
-                               end
-    # TODO: Find out why open_transactions ever gets below 0
-    # See issue #3428
-    ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
-
-    DatabaseCleaner.start
-    reset_spree_preferences
-  end
-
-  config.after(:each, type: :feature) do |example|
-    if page&.body&.present?
-      missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
-      if missing_translations.any?
-        puts "Found missing translations: #{missing_translations.inspect}"
-        puts "In spec: #{example.location}"
-      end
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
     end
   end
 
-  config.append_after do
-    DatabaseCleaner.clean
+  config.before(:each) do
+    begin
+      Rails.cache.clear
+      reset_spree_preferences
+    rescue Errno::ENOTEMPTY
+    end
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.include FactoryBot::Syntax::Methods
