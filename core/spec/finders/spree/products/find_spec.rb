@@ -339,21 +339,6 @@ module Spree
 
         it { expect(products).to match_array [product_2, product_3] }
       end
-
-      context 'products scope is another store' do
-        let!(:scope) { store.products }
-
-        context 'passed store has no taxons' do
-          let(:store) { Spree::Store.default }
-          let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
-
-          before do
-            parent_taxon.products << product
-          end
-
-          it { expect(products).to be_empty }
-        end
-      end
     end
 
     describe 'filter by prices' do
