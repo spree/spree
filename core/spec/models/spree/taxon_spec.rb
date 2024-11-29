@@ -139,6 +139,8 @@ describe Spree::Taxon, type: :model do
           description: 'PL description'
         )
       end
+
+      taxon.reload
     end
 
     let(:taxon_pl_translation) { taxon.translations.find_by(locale: 'pl') }
@@ -149,7 +151,8 @@ describe Spree::Taxon, type: :model do
       expect(taxon_pl_translation).to be_present
       expect(taxon_pl_translation.name).to eq('PL name')
       expect(taxon_pl_translation.permalink).to eq('pl-taxonomy/pl-name')
-      expect(taxon_pl_translation.description).to eq('PL description')
+
+      expect(taxon.description_pl.to_plain_text).to eq('PL description')
     end
   end
 

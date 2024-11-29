@@ -120,7 +120,7 @@ module Spree
     #
     # Translations
     #
-    TRANSLATABLE_FIELDS = %i[name pretty_name description permalink description].freeze
+    TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     #

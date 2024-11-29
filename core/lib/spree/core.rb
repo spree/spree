@@ -81,7 +81,7 @@ module Spree
       default: :default,
       exports: :default,
       variants: :default,
-      classifications: :default,
+      taxons: :default,
       stock_location_stock_items: :default,
       coupon_codes: :default
     )

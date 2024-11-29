@@ -1,7 +1,7 @@
 module Spree
   module Products
     class AutoMatchTaxonsJob < ::Spree::BaseJob
-      queue_as Spree.queues.classifications
+      queue_as Spree.queues.taxons
 
       def perform(product_id)
         product = Spree::Product.find_by(id: product_id)
