@@ -43,6 +43,21 @@ Spree::Core::Engine.add_routes do
     resources :oauth_applications
     resources :webhooks_subscribers
 
+    # taxonomies and taxons
+    resources :taxonomies do
+      resources :taxons do
+        member do
+          put :reposition
+        end
+      end
+    end
+
+    resources :taxons, except: [:show] do |_taxon|
+      resources :classifications, only: %i[index new create update destroy]
+    end
+
+    get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
+
     # errors
     get '/forbidden', to: 'errors#forbidden', as: :forbidden
   end
