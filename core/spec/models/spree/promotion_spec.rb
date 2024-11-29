@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Spree::Promotion, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
   let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'validations' do
-    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [create(:store)], kind: :automatic) }
+    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
 
     it 'valid_promotion is valid' do
       expect(valid_promotion).to be_valid
