@@ -38,6 +38,7 @@ require 'ffaker'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/jobs'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
@@ -67,8 +68,6 @@ RSpec.configure do |config|
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
     DatabaseCleaner.clean_with :truncation
-    # Force jobs to be executed in a synchronous way
-    ActiveJob::Base.queue_adapter = :inline
   end
 
   config.before do

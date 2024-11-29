@@ -77,7 +77,7 @@ module Spree
 
     has_many :menu_items, as: :linked_resource
 
-    has_many :classifications, dependent: :delete_all, inverse_of: :product
+    has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
     has_many :taxonomies, through: :taxons
 
@@ -119,6 +119,11 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+
+    has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
+
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
@@ -135,6 +140,8 @@ module Spree
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
+
+    after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
 
     before_validation :downcase_slug
     before_validation :normalize_slug, on: :update
@@ -157,6 +164,12 @@ module Spree
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
+    scope :on_sale, lambda { |currency = nil|
+                      currency ||= Spree::Store.default.default_currency
+                      joins(:prices_including_master).with_currency(currency).
+                        where.not(spree_prices: { compare_at_amount: [nil, 0] }).
+                        where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
+                    }
 
     attr_accessor :option_values_hash
 
@@ -213,6 +226,10 @@ module Spree
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
       default_variant.backorderable? || variants.any?(&:backorderable?)
+    end
+
+    def on_sale?(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.any?(&:discounted?)
     end
 
     def find_or_build_master
@@ -463,6 +480,16 @@ module Spree
       shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
+    def auto_match_taxons
+      return if deleted?
+      return if archived?
+
+      store = stores.find_by(default: true) || stores.first
+      return if store.nil? || store.taxons.automatic.none?
+
+      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
+    end
+
     def to_csv(store = nil)
       store ||= stores.default || stores.first
       properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
@@ -645,6 +672,10 @@ module Spree
 
     def requires_shipping_category?
       true
+    end
+
+    def eligible_for_taxon_matching?
+      previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
     end
 
     def downcase_slug

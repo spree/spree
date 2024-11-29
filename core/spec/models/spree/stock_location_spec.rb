@@ -14,7 +14,7 @@ module Spree
 
       it 'creates stock_items for all variants' do
         expect do
-          create(:stock_location, propagate_all_variants: true)
+          perform_enqueued_jobs { create(:stock_location, propagate_all_variants: true) }
         end.to(
           change { Variant.count }.by(0).and(
             change { described_class.count }.from(0).to(1).and(

@@ -10,7 +10,7 @@ end
 describe Spree::Product, type: :model do
   it_behaves_like 'metadata'
 
-  let!(:store) { create(:store) }
+  let!(:store) { Spree::Store.default }
 
   context 'product instance' do
     let(:product) { create(:product, stores: [store]) }
@@ -1112,6 +1112,29 @@ describe Spree::Product, type: :model do
         allow(product.stores).to receive(:default).and_return(nil)
         allow(product.stores).to receive(:first).and_return(store)
         expect(product.to_csv).to be_present
+      end
+    end
+  end
+
+  describe '#on_sale?' do
+    subject { product.on_sale?(currency) }
+
+    let(:product) { create(:product) }
+    let(:currency) { 'EUR' }
+    let(:variant_1) { create(:variant, product: product) }
+    let(:variant_2) { create(:variant, product: product) }
+
+    context 'when at least one variant is on sale' do
+      let!(:eur_price_1) { create(:price, variant: variant_1, currency: 'EUR', compare_at_amount: 200.00) }
+
+      it 'returns true' do
+        expect(subject).to be true
+      end
+    end
+
+    context 'when no variant is on sale' do
+      it 'returns false' do
+        expect(subject).to be false
       end
     end
   end

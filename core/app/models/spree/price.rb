@@ -31,6 +31,8 @@ module Spree
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }
 
+    validates :currency, presence: true
+
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }

@@ -96,7 +96,7 @@ module Spree
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Store.default.default_currency
-      joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
+      joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     end
 
     scope :active, ->(currency = nil) do

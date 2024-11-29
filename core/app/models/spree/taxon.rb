@@ -3,6 +3,18 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
+    RULES_MATCH_POLICIES = %w[all any].freeze
+    SORT_ORDERS = %w[
+      manual
+      best-selling
+      name-a-z
+      name-z-a
+      price-high-to-low
+      price-low-to-high
+      newest-first
+      oldest-first
+    ]
+
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
     include Spree::Metadata
@@ -10,17 +22,21 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
+    #
+    # Magic methods
+    #
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    before_validation :set_permalink, on: :create, if: :name
-
     acts_as_nested_set dependent: :destroy
 
+    #
+    # Associations
+    #
     belongs_to :taxonomy, class_name: 'Spree::Taxonomy', inverse_of: :taxons
-    has_many :classifications, -> { order(:position) }, dependent: :delete_all, inverse_of: :taxon
+    has_one :store, through: :taxonomy
+    has_many :classifications, -> { order(:position) }, dependent: :destroy_async, inverse_of: :taxon
     has_many :products, through: :classifications
-
-    delegate :store, to: :taxonomy
+    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage' # TODO: remove this as this is deprecated
 
     has_many :menu_items, as: :linked_resource
     has_many :cms_sections, as: :linked_resource
@@ -31,6 +47,15 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
+    #
+    # Attachments
+    #
+    has_one_attached :image, service: Spree.public_storage_service_name
+    has_one_attached :square_image, service: Spree.public_storage_service_name
+
+    #
+    # Validations
+    #
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], case_sensitive: false }
     validates :taxonomy, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
@@ -43,7 +68,12 @@ module Spree
       validates :meta_description
       validates :meta_title
     end
+    validates :image, :square_image, content_type: Rails.application.config.active_storage.web_image_content_types
 
+    #
+    # Callbacks
+    #
+    before_validation :set_permalink, on: :create, if: :name
     before_validation :copy_taxonomy_from_parent
     before_save :set_pretty_name
     before_save :set_permalink
@@ -54,19 +84,127 @@ module Spree
     after_move :regenerate_pretty_name_and_permalink
     after_move :regenerate_translations_pretty_name_and_permalink
 
-    has_one :store, through: :taxonomy
-
-    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
-
+    #
+    # Scopes
+    #
     scope :for_store, ->(store) { joins(:taxonomy).where(spree_taxonomies: { store_id: store.id }) }
-
-    self.whitelisted_ransackable_associations = %w[taxonomy]
-    self.whitelisted_ransackable_attributes = %w[name permalink]
-
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
+    scope :for_taxonomy, lambda { |taxonomy_name|
+      if Spree.use_translations?
+        joins(:taxonomy).
+          join_translation_table(Taxonomy).
+          where(["LOWER(#{Taxonomy.translation_table_alias}.name) = ?", taxonomy_name.downcase.strip])
+      else
+        joins(:taxonomy).where(["LOWER(#{Spree::Taxonomy.table_name}.name) = ?", taxonomy_name.downcase.strip])
+      end
+    }
 
+    #
+    # Search
+    #
+    if defined?(PgSearch)
+      include PgSearch::Model
+      pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
+    else
+      def self.search_by_name(query)
+        i18n { name.lower.matches("%#{query.downcase}%") }
+      end
+    end
+
+    #
+    #  Ransack
+    #
+    self.whitelisted_ransackable_associations = %w[taxonomy]
+    self.whitelisted_ransackable_attributes = %w[name permalink automatic]
+
+    #
+    # Translations
+    #
     TRANSLATABLE_FIELDS = %i[name pretty_name description permalink].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    #
+    # Action Text
+    #
+    translates :description, backend: :action_text
+
+    # Automatic taxons
+    validates :rules_match_policy, inclusion: { in: RULES_MATCH_POLICIES }, presence: true
+    validates :sort_order, inclusion: { in: SORT_ORDERS }, presence: true
+
+    has_many :taxon_rules, class_name: 'Spree::TaxonRule', dependent: :destroy
+    accepts_nested_attributes_for :taxon_rules, allow_destroy: true, reject_if: proc { |attributes| attributes['value'].blank? }
+    alias rules taxon_rules
+
+    scope :manual, -> { where.not(automatic: true) }
+    scope :automatic, -> { where(automatic: true) }
+
+    after_commit :regenerate_taxon_products, on: [:update], if: -> { automatic? && saved_change_to_rules_match_policy? }
+    attribute :marked_for_regenerate_taxon_products, :boolean, default: true
+
+    def manual?
+      !automatic?
+    end
+
+    def manual_sort_order?
+      sort_order == 'manual'
+    end
+
+    def active_products_with_descendants
+      @active_products_with_descendants ||= store.products.
+                                            joins(:classifications).
+                                            active.
+                                            where(
+                                              Spree::Classification.table_name => {
+                                                taxon_id: descendants.ids + [id]
+                                              }
+                                            )
+    end
+
+    def products_matching_rules(opts = {})
+      return Spree::Product.none if manual? || rules.empty?
+
+      storefront = opts[:storefront] || false
+      currency = opts[:currency] || store.default_currency
+
+      all_products = store.products.not_archived
+
+      products_matcher_cache_key = [
+        'products_matching_rules',
+        cache_key_with_version,
+        storefront,
+        currency,
+        all_products.cache_key_with_version
+      ]
+
+      all_products = all_products.active(currency: currency) if storefront
+
+      any_rules_match_policy = rules_match_policy == 'any'
+      products = any_rules_match_policy ? Spree::Product.none : all_products
+
+      rules.each do |rule|
+        if any_rules_match_policy
+          product_ids = rule.apply(all_products).ids
+          # it's safer to use this approach with ids as it will not break if the rule is not a simple where clause
+          # and we will avoid `ArgumentError (Relation passed to #or must be structurally compatible. Incompatible values: [:group, :order, :joins, :readonly])` error
+          products = products.or(all_products.where(id: product_ids)) if product_ids.any?
+        else
+          products = rule.apply(products)
+        end
+      end
+
+      products
+    end
+
+    # we need to create a new taxon product (classification) record for each product that matches the rules
+    # so we can later use them for product filtering and so on
+    # if we want to fire the service once during object lifecycle - pass only_once: true
+    def regenerate_taxon_products(only_once: false)
+      if marked_for_regenerate_taxon_products?
+        Spree::Taxons::RegenerateProducts.call(taxon: self)
+        self.marked_for_regenerate_taxon_products = false if !frozen? && only_once
+      end
+    end
 
     def slug
       permalink

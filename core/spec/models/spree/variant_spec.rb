@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let!(:store) { create(:store) }
-  let!(:variant) { create(:variant) }
+  let!(:store) { Spree::Store.default }
+  let!(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
@@ -1174,7 +1174,9 @@ describe Spree::Variant, type: :model do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
     let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
-    before { variant.update(track_inventory: false) }
+    before do
+      variant.update(track_inventory: false)
+    end
 
     it 'schedules RemoveFromIncompleteOrdersJob' do
       expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
@@ -1182,8 +1184,8 @@ describe Spree::Variant, type: :model do
     end
 
     it 'deletes the line items from the order' do
-      variant.destroy
-      expect(order.reload.line_items).to be_empty
+      perform_enqueued_jobs { variant.destroy }
+      expect(order.line_items.reload).to be_empty
       expect(order.total).to eq(0)
     end
   end

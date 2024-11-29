@@ -116,9 +116,27 @@ describe Spree::Store, type: :model do
       let(:store) { build(:store) }
 
       it 'creates default taxonomies' do
-        expect { store.save! }.to change(Spree::Taxonomy, :count).by(2)
-        expect(store.taxonomies.count).to eq(2)
-        expect(store.taxonomies.pluck(:name)).to include(Spree.t(:taxonomy_categories_name), Spree.t(:taxonomy_brands_name))
+        expect { store.save! }.to change(Spree::Taxonomy, :count).by(3)
+
+        expect(store.taxonomies.count).to eq(3)
+        expect(store.taxonomies.pluck(:name)).to contain_exactly(
+          Spree.t(:taxonomy_categories_name),
+          Spree.t(:taxonomy_brands_name),
+          Spree.t(:taxonomy_collections_name)
+        )
+      end
+    end
+
+    describe '#ensure_default_automatic_taxons' do
+      let(:store) { build(:store) }
+      let(:collections_taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_collections_name)) }
+
+      it 'creates automatic taxons on the collections taxonomy' do
+        expect { store.save! }.to change(Spree::Taxon.automatic, :count).by(2)
+
+        expect(store.reload.taxons.automatic.count).to eq(2)
+        expect(store.taxons.automatic.pluck(:name)).to contain_exactly('New arrivals', 'On sale')
+        expect(store.taxons.automatic.pluck(:taxonomy_id).uniq).to contain_exactly(collections_taxonomy.id)
       end
     end
   end

@@ -119,6 +119,7 @@ module Spree
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
+    after_create :ensure_default_automatic_taxons
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
@@ -305,7 +306,26 @@ module Spree
     def ensure_default_taxonomies_are_created
       taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_categories_name', default: I18n.t('spree.taxonomy_categories_name', locale: :en)))
       taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_brands_name', default: I18n.t('spree.taxonomy_brands_name', locale: :en)))
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_collections_name', default: I18n.t('spree.taxonomy_collections_name', locale: :en)))
     rescue ActiveRecord::NotNullViolation
+    end
+
+    def ensure_default_automatic_taxons
+      collections_taxonomy = taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
+
+      if collections_taxonomy.present?
+        on_sale_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.on_sale')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::Sale', value: 'true')
+        end
+
+        new_arrivals_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.new_arrivals')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::AvailableOn', value: 30)
+        end
+
+        [on_sale_taxon, new_arrivals_taxon]
+      end
     end
   end
 end

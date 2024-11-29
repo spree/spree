@@ -7,6 +7,14 @@ module Spree
 
           attributes :pretty_name, :seo_title
 
+          attribute :description do |taxon|
+            taxon.description.to_plain_text
+          end
+
+          attribute :header_url do |taxon|
+            taxon.image.attachment&.url
+          end
+
           attribute :is_root do |taxon|
             taxon.root?
           end

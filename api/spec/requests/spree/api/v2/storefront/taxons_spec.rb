@@ -168,12 +168,12 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'by taxonomy' do
-      before { get "/api/v2/storefront/taxons?taxonomy_id=#{taxonomy.id}" }
+      before { get "/api/v2/storefront/taxons?filter[taxonomy_id]=#{taxonomy.id}" }
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns taxons by taxonomy' do
-        expect(json_response['data'].size).to eq(taxonomy.taxons.count + 1) # taxons + root
+        expect(json_response['data'].size).to eq(taxonomy.taxons.count)
         expect(json_response['data'][0]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
         expect(json_response['data'][1]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
         expect(json_response['data'][2]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
