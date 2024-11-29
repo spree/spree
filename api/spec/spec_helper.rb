@@ -37,13 +37,12 @@ require 'i18n/tasks'
 Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
 
 require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
 require 'spree/testing_support/next_instance_of'
 require 'spree/testing_support/rspec_retry_config'
 
-require 'spree/api/testing_support/caching'
-require 'spree/api/testing_support/jobs'
 require 'spree/api/testing_support/serializers'
 require 'spree/api/testing_support/spree_webhooks'
 require 'spree/api/testing_support/matchers/webhooks'
