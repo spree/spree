@@ -11,6 +11,10 @@ module Spree
             taxon.description.to_plain_text
           end
 
+          attribute :header_url do |taxon|
+            taxon.image.attachment&.url
+          end
+
           attribute :is_root do |taxon|
             taxon.root?
           end

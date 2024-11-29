@@ -11,6 +11,14 @@ module Spree
           taxon.description.to_plain_text
         end
 
+        attribute :has_products do |taxon|
+          taxon.active_products_with_descendants.exists?
+        end
+
+        attribute :header_url do |taxon|
+          taxon.image.attachment&.url
+        end
+
         attribute :is_root do |taxon|
           taxon.root?
         end
