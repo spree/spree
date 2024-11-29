@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::Products::Duplicator do
   subject(:duplicate) { described_class.call(product: product) }
 
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
 
   let!(:product_property) { create(:product_property, product: product) }
   let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2'], status: :active) }

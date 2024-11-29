@@ -344,7 +344,7 @@ module Spree
         let!(:scope) { store.products }
 
         context 'passed store has no taxons' do
-          let(:store) { create(:store) }
+          let(:store) { Spree::Store.default }
           let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
 
           before do

@@ -4,7 +4,7 @@ module Spree
   describe Payments::Create do
     subject { described_class }
 
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let(:order) { create(:order_with_totals, store: store, user: nil, email: 'john@snow.org') }
 
     let(:execute) { subject.call(order: order, params: params) }

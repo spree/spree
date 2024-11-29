@@ -866,7 +866,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'store passed' do
-      let(:store) { create(:store) }
+      let(:store) { Spree::Store.default }
       let(:product) { create(:product, stores: [store]) }
 
       it 'does not auto-assign store' do
@@ -1062,7 +1062,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#to_csv' do
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let(:product) { create(:product, stores: [store]) }
     let(:property) { create(:property, name: 'my-property', position: 1) }
     let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }

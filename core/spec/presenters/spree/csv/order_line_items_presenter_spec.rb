@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CSV::OrderLineItemPresenter do
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
   let(:order) { create(:completed_order_with_totals, store: store) }
   let(:line_item) { order.line_items.first }
   let(:index) { 0 }

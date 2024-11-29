@@ -6,7 +6,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   let!(:promo_category) { create(:promotion_category) }
   let!(:calculator) { create(:calculator) }
 
-  let(:store) { create(:store) }
+  let(:store) { Spree::Store.default }
   let(:store_2) { create(:store) }
   let!(:promotion) do
     create(:promotion_with_item_total_rule,

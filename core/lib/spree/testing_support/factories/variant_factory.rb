@@ -12,7 +12,7 @@ FactoryBot.define do
     is_master       { 0 }
     track_inventory { true }
 
-    product       { |p| p.association(:base_product, stores: [create(:store)]) }
+    product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
     option_values { [create(:option_value)] }
 
     # ensure stock item will be created for this variant
@@ -28,7 +28,7 @@ FactoryBot.define do
 
     factory :variant do
       # on_hand 5
-      product { |p| p.association(:product, stores: [create(:store)]) }
+      product { |p| p.association(:product, stores: [Spree::Store.default]) }
 
       factory :with_image_variant do
         images { create_list(:image, 1) }

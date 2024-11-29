@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Order, type: :model do
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let(:order) { create(:order, store: store) }
     let(:shirt) { create(:variant) }
 
