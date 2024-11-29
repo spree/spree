@@ -48,7 +48,7 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
   end
 
   context 'cms_hero_image_section' do
-     let!(:store) { create(:store) }
+     let!(:store) { Spree::Store.default }
      let!(:homepage) { create(:cms_homepage, store: store) }
      let!(:cms_section) do
        section = create(:cms_hero_image_section, cms_page: homepage)
@@ -69,7 +69,7 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
   end
 
   context 'cms_side_by_side_images_section' do
-    let!(:store) { create(:store) }
+    let!(:store) { Spree::Store.default }
     let!(:homepage) { create(:cms_homepage, store: store) }
     let!(:cms_section) do
       section = create(:cms_side_by_side_images_section, cms_page: homepage)
@@ -83,7 +83,7 @@ describe Spree::V2::Storefront::CmsSectionSerializer do
   end
 
   context 'cms_image_gallery_section' do
-    let!(:store) { create(:store) }
+    let!(:store) { Spree::Store.default }
     let!(:homepage) { create(:cms_homepage, store: store) }
     let!(:cms_section) do
       section = create(:cms_image_gallery_section, cms_page: homepage)

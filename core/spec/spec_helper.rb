@@ -42,6 +42,7 @@ require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
 require 'spree/testing_support/metadata'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
@@ -78,9 +79,6 @@ RSpec.configure do |config|
     begin
       Rails.cache.clear
       reset_spree_preferences
-
-      country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
-      create(:store, default: true, default_country: country, default_currency: 'USD')
     rescue Errno::ENOTEMPTY
     end
   end

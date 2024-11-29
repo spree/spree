@@ -4,7 +4,7 @@ module Spree
   describe Stores::FindCurrent do
     subject { described_class.new(scope: scope, url: url).execute }
 
-    let!(:store) { create(:store, default: true) }
+    let!(:store) { Spree::Store.default }
     let!(:store_2) { create(:store, url: 'another.com', default_currency: 'GBP') }
 
     let(:scope) { nil }

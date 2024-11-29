@@ -41,7 +41,7 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#spree_storefront_resource_url' do
-    let!(:store) { create(:store) }
+    let!(:store) { Spree::Store.default }
     let!(:taxon) { create(:taxon) }
     let!(:product) { create(:product) }
 

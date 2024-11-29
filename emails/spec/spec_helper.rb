@@ -15,8 +15,6 @@ if ENV['COVERAGE']
 
     coverage_dir "#{ENV['COVERAGE_DIR']}/emails_" + ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
     command_name "test_" + ENV.fetch('CIRCLE_NODE_INDEX', 0)
-
-
   end
 end
 
@@ -39,6 +37,8 @@ Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
@@ -58,26 +58,29 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  config.before do
-    Rails.cache.clear
-    WebMock.disable!
+  config.before(:suite) do
+    # Clean out the database state before the tests run
     DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.start
-    reset_spree_preferences
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
 
-    create(:store, default_country: country, default: true)
+  config.before(:each) do
+    begin
+      Rails.cache.clear
+      reset_spree_preferences
+    rescue Errno::ENOTEMPTY
+    end
   end
 
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
-
-  # Clean out the database state before the tests run
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-  end
 
   config.order = :random
   Kernel.srand config.seed
