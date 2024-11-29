@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::UserMethods do
   let(:test_user) { create :user }
-  let(:current_store) { create :store }
+  let(:current_store) { Spree::Store.default }
 
   describe '#has_spree_role?' do
     subject { test_user.has_spree_role? name }

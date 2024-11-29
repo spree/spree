@@ -9,7 +9,7 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_rate)               { nil }
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let(:order)                   { create(:shipped_order, line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0, store: store) }
     let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }

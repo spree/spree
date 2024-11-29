@@ -4,7 +4,7 @@ module Spree
   describe ProductsHelper, type: :helper do
     include ProductsHelper
 
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
 
     let(:product) { create(:product, stores: [store]) }
     let(:currency) { 'USD' }

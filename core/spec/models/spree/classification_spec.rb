@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Classification, type: :model do
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
 
     # Regression test for #3494
     let(:taxon_with_5_products) do

@@ -603,7 +603,7 @@ describe Spree::Store, type: :model do
     end
 
     context 'without an attached favicon image' do
-      let(:store) { create(:store) }
+      let(:store) { Spree::Store.default }
 
       it 'returns a blank favicon' do
         expect(favicon).to be(nil)

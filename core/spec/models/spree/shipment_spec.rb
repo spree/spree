@@ -234,7 +234,7 @@ describe Spree::Shipment, type: :model do
   end
 
   context '#store' do
-    let(:store) { create(:store) }
+    let(:store) { Spree::Store.default }
     let!(:order) { create(:order, store: store) }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
 
