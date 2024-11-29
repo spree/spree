@@ -10,7 +10,7 @@ describe Spree::Menu, type: :model do
   end
 
   describe '.for_store' do
-    let!(:store) { create(:store) }
+    let!(:store) { Spree::Store.default }
     let!(:store_b) { create(:store) }
 
     let!(:menu_a) { create(:menu, store: store) }
@@ -22,7 +22,7 @@ describe Spree::Menu, type: :model do
   end
 
   describe '.by_locale' do
-    let!(:store_milti) { create(:store) }
+    let!(:store_milti) { Spree::Store.default }
     let!(:menu_en) { create(:menu, store: store_milti, locale: 'en') }
     let!(:menu_fr) { create(:menu, store: store_milti, locale: 'fr') }
 
@@ -56,7 +56,7 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'creating new menu' do
-    let(:store_1) { create(:store) }
+    let(:store_1) { Spree::Store.default }
     let(:store_2) { create(:store) }
     let(:store_3) { create(:store) }
     let!(:menu) { create(:menu, name: 'Footer Menu', location: 'Footer', store: store_1) }
@@ -92,7 +92,7 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'updating the menu name' do
-    let(:store_a) { create(:store) }
+    let(:store_a) { Spree::Store.default }
     let(:m_x) { create(:menu, name: 'Main Menu', location: 'Header', store: store_a) }
 
     before do
@@ -105,7 +105,7 @@ describe Spree::Menu, type: :model do
   end
 
   describe 'touch store' do
-    let!(:store) { create(:store) }
+    let!(:store) { Spree::Store.default }
     let(:menu) { build(:menu, store: store) }
 
     it { expect { menu.save! }.to change(store, :updated_at) }

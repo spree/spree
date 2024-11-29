@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::LineItem, type: :model do
-  let!(:store) { create(:store) }
+  let!(:store) { Spree::Store.default }
   let(:order) { create :order_with_line_items, line_items_count: 1, store: store }
   let(:line_item) { order.line_items.first }
 

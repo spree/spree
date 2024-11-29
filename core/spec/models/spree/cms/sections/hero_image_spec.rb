@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Cms::Sections::HeroImage, type: :model do
-  let!(:store) { create(:store) }
+  let!(:store) { Spree::Store.default }
   let!(:homepage) { create(:cms_homepage, store: store) }
 
   it 'validates presence of name' do

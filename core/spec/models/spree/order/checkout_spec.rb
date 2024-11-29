@@ -2,9 +2,9 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { Spree::Store.default }
   let(:order) { build(:order, store: store) }
-  let(:country) { create(:country) }
+  let(:country) { store.default_country }
   let!(:state) { country.states.first || create(:state, country: country) }
 
   def assert_state_changed(order, from, to)

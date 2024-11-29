@@ -210,7 +210,7 @@ describe 'Order' do
       end
 
       context 'when store is provided' do
-        let!(:store) { create(:store) }
+        let!(:store) { Spree::Store.default }
         let!(:second_store) { create(:store) }
         let!(:store_credit) { create(:store_credit, amount: '100', user: user, store: store) }
 

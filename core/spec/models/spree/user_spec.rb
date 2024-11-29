@@ -170,7 +170,7 @@ describe Spree.user_class, type: :model do
     context 'user has several associated store credits' do
       subject { user }
 
-      let!(:store) { create(:store, default: true) }
+      let!(:store) { Spree::Store.default }
       let!(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }

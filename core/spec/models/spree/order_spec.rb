@@ -8,7 +8,7 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { create(:user) }
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { Spree::Store.default }
   let(:order) { create(:order, user: user, store: store) }
 
   before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }

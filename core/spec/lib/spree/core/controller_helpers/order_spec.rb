@@ -12,7 +12,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user, store: store) }
-  let!(:store) { create(:store, default: true, default_currency: 'USD') }
+  let!(:store) { Spree::Store.default }
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }

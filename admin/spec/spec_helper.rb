@@ -39,6 +39,7 @@ require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
@@ -84,10 +85,6 @@ RSpec.configure do |config|
 
     DatabaseCleaner.start
     reset_spree_preferences
-
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
-
-    create(:store, default_country: country, default: true)
   end
 
   config.after(:each, type: :feature) do |example|
