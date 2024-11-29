@@ -16,8 +16,4 @@ option_types_attributes = [
   },
 ]
 
-option_types_attributes.each do |attrs|
-  unless Spree::OptionType.where(attrs).exists?
-    Spree::OptionType.create!(attrs)
-  end
-end
+Spree::OptionType.insert_all!(option_types_attributes)

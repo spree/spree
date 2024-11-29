@@ -13,10 +13,10 @@ properties = {
   collection: 'Collection'
 }
 
-properties.each do |name, presentation|
-  unless Spree::Property.where(name: name, presentation: presentation).exists?
-    Spree::Property.create!(name: name, presentation: presentation)
-  end
+properties_data = properties.map do |name, presentation|
+  { name: name, presentation: presentation }
 end
+
+Spree::Property.insert_all(properties_data)
 
 Spree::Property.where(name: %w[brand manufacturer]).update(filterable: true)

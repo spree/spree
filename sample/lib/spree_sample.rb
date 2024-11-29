@@ -21,7 +21,6 @@ module SpreeSample
         Spree::Sample.load_sample('option_types')
         Spree::Sample.load_sample('option_values')
         Spree::Sample.load_sample('product_properties')
-        Spree::Sample.load_sample('prototypes')
         Spree::Sample.load_sample('variants')
         Spree::Sample.load_sample('stock')
 
@@ -32,13 +31,6 @@ module SpreeSample
         Spree::Sample.load_sample('return_authorization_reasons')
         Spree::Sample.load_sample('stores')
         Spree::Sample.load_sample('data_feeds')
-
-        Spree::Sample.load_sample('cms_standard_pages')
-        Spree::Sample.load_sample('cms_feature_pages')
-        Spree::Sample.load_sample('cms_homepages')
-        Spree::Sample.load_sample('cms_sections')
-        Spree::Sample.load_sample('menus')
-        Spree::Sample.load_sample('menu_items')
       end
     end
   end

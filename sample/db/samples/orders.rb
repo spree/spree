@@ -1,11 +1,13 @@
 Spree::Sample.load_sample('addresses')
 Spree::Sample.load_sample('products')
 
+store = Spree::Store.default
 product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
 product_2 = Spree::Product.find_by!(name: 'Checked Shirt')
 
 orders = []
-orders << Spree::Order.where(
+orders << store.orders.where(
+  store: store,
   number: 'R123456789',
   email: 'spree@example.com',
   currency: 'USD'
@@ -15,7 +17,7 @@ orders << Spree::Order.where(
   order.total = product_1.master.amount_in(order.currency) * 2
 end
 
-orders << Spree::Order.where(
+orders << store.orders.where(
   number: 'R987654321',
   email: 'spree@example.com',
   currency: 'USD'
@@ -45,11 +47,4 @@ end
 
 orders.each(&:create_proposed_shipments)
 
-store = Spree::Store.default
-
-orders.each do |order|
-  order.state = 'complete'
-  order.store = store
-  order.completed_at = Time.current - 1.day
-  order.save!
-end
+Spree::Order.where(id: orders.map(&:id)).update_all(state: :complete, completed_at: Time.current - 1.day)

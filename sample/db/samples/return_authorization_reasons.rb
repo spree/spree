@@ -1,4 +1,4 @@
-[
+reasons = [
   'Better price available',
   'Missed estimated delivery date',
   'Missing parts or accessories',
@@ -8,6 +8,8 @@
   'No longer needed/wanted',
   'Accidental order',
   'Unauthorized purchase',
-].each do |name|
-  Spree::ReturnAuthorizationReason.find_or_create_by!(name: name)
+].map do |name|
+  {name: name}
 end
+
+Spree::ReturnAuthorizationReason.insert_all(reasons, unique_by: :name)

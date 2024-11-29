@@ -30,26 +30,35 @@ lengths = { mini: 'Mini', midi: 'Midi', maxi: 'Maxi' }
 
 sizes = { xs: 'XS', s: 'S', m: 'M', l: 'L', xl: 'XL' }
 
-colors.each_with_index do |color, index|
-  color_option_type.option_values.find_or_create_by!(
-    name: color.first,
-    presentation: color.last,
-    position: index + 1
-  )
-end
+color_option_type.option_values.insert_all!(
+  colors.each_with_index.map do |color, index|
+    {
+      name: color.first,
+      presentation: color.last,
+      position: index + 1,
+      option_type_id: color_option_type.id
+    }
+  end
+)
 
-lengths.each_with_index do |length, index|
-  length_option_type.option_values.find_or_create_by!(
-    name: length.first,
-    presentation: length.last,
-    position: index + 1
-  )
-end
+length_option_type.option_values.insert_all!(
+  lengths.each_with_index.map do |length, index|
+    {
+      name: length.first,
+      presentation: length.last,
+      position: index + 1,
+      option_type_id: length_option_type.id
+    }
+  end
+)
 
-sizes.each_with_index do |size, index|
-  size_option_type.option_values.find_or_create_by!(
-    name: size.first,
-    presentation: size.last,
-    position: index + 1
-  )
-end
+size_option_type.option_values.insert_all!(
+  sizes.each_with_index.map do |size, index|
+    {
+      name: size.first,
+      presentation: size.last,
+      position: index + 1,
+      option_type_id: size_option_type.id
+    }
+  end
+)
