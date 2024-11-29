@@ -480,6 +480,16 @@ module Spree
       shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
+    def auto_match_taxons
+      return if deleted?
+      return if archived?
+
+      store = stores.find_by(default: true) || stores.first
+      return if store.nil? || store.taxons.automatic.none?
+
+      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
+    end
+
     def to_csv(store = nil)
       store ||= stores.default || stores.first
       properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
@@ -662,16 +672,6 @@ module Spree
 
     def requires_shipping_category?
       true
-    end
-
-    def auto_match_taxons
-      return if deleted?
-      return if archived?
-
-      store = stores.find_by(default: true) || stores.first
-      return if store.nil? || store.taxons.automatic.none?
-
-      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
     end
 
     def eligible_for_taxon_matching?
