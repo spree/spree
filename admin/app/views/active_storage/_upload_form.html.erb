@@ -1,0 +1,65 @@
+<% width ||= 300 %>
+<% height ||= 300 %>
+<% crop ||= false unless defined?(crop) %>
+<% auto_submit ||= false %>
+<% can_delete ||= true %>
+<% css ||= '' %>
+
+<% if field_name && form %>
+  <div data-controller="active-storage-upload"
+      data-active-storage-upload-thumb-width-value="<%= width %>"
+      data-active-storage-upload-thumb-height-value="<%= height %>"
+      data-active-storage-upload-crop-value="<%= crop.presence || false %>"
+      data-active-storage-upload-auto-submit-value="<%= auto_submit %>"
+      data-active-storage-upload-field-name-value="<%= form.object_name %>[<%= field_name %>]"
+      data-active-storage-upload-allowed-file-types-value="<%= Rails.application.config.active_storage.web_image_content_types %>"
+      class="d-flex flex-column w-100 position-relative">
+    <div class="mb-3 rounded-lg overflow-hidden thumb-preview cursor-pointer"
+         data-action="click->active-storage-upload#open"
+    >
+      <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>
+        <%= image_tag(
+          main_app.cdn_image_url(
+            form.object.send(field_name).variant(
+              spree_image_variant_options(
+                resize_to_fill: [width, (crop ? height : nil)]
+              )
+            )
+          ),
+          class: 'img-fluid rounded-lg',
+          data: { active_storage_upload_target: 'thumb' },
+          loading: :lazy
+        ) %>
+      <% else %>
+        <img data-active-storage-upload-target="thumb" class="img-fluid rounded-lg" style="display: none" />
+      <% end %>
+
+      <div class="d-flex justify-content-center align-items-center h-100 p-5 text-muted border border-dashed bg-gray-25 rounded-lg <%= css %>" data-active-storage-upload-target="placeholder" <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
+        <%= icon('camera', class: 'mr-2') %>
+        <%= Spree.t(:upload_image) %>
+
+        <% if crop %>
+          <span class="text-muted ml-2">
+            (Recommended size: <%= width %>x<%= height %>)
+          </span>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center" data-active-storage-upload-target="toolbar" <% unless form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
+      <button type="button" class="btn btn-light" data-action="active-storage-upload#open">
+        <%= icon('camera') %>
+        Select file
+      </button>
+
+      <% if can_delete %>
+        <button type="button" class="btn btn-danger ml-auto" data-action="active-storage-upload#remove" data-turbo-confirm="<%= Spree.t(:are_you_sure) %>">
+          <%= icon('trash') %>
+
+          <%= Spree.t('actions.destroy') %>
+        </button>
+        <input type="hidden" name="remove_<%= field_name %>" data-active-storage-upload-target="remove" />
+      <% end %>
+    </div>
+  </div>
+<% end %>
