@@ -1,0 +1,31 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_taxonomies_path %>
+  <%= @taxonomy.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_taxon), spree.new_admin_taxonomy_taxon_path(@taxonomy), icon: 'plus', class: 'no-wrap btn btn-primary align-self-center' %>
+<% end %>
+
+<% content_for :page_actions_dropdown do %>
+  <%= link_to_edit(@taxonomy.root, url: spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id), class: 'text-left dropdown-item') %>
+<% end if can?(:edit, @taxonomy) %>
+
+<div id="sortableTreeArea">
+  <% if @taxonomy.root.present? %>
+    <div data-controller="sortable-tree" data-sortable-tree-handle-value=".move-handle">
+      <div data-sortable-tree-parent-id-value="<%= @taxonomy.root.id %>">
+        <% if @taxonomy.root.children.present? %>
+          <% @taxonomy.root.children.includes({ image_attachment: :blob, square_image_attachment: :blob }).each do |root_children| %>
+            <%= build_sortable_tree(@taxonomy, root_children) %>
+          <% end %>
+        <% else %>
+          <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxon)) %>
+            <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_taxonomy_taxon_path(@taxonomy), class: 'btn btn-link' if can?(:create, Spree::Taxon) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

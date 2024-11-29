@@ -80,16 +80,14 @@ module Spree
       end
 
       def load_form_data
-        @rule_types = Rails.application.config.spree.taxon_rules.map do |taxon_rule|
+        @taxon_rules = Rails.application.config.spree.taxon_rules
+        @rule_types = @taxon_rules.map do |taxon_rule|
           [Spree.t("admin.taxon_rules.#{taxon_rule.to_s.demodulize.underscore}"), taxon_rule.to_s]
         end
 
         @rule_match_policies = Spree::TaxonRule::MATCH_POLICIES.map do |policy|
           [Spree.t("admin.taxon_rules.match_policies.#{policy}"), policy]
         end
-
-        @tags = tags_scope.distinct.pluck(:name, :name)
-        @vendors = Spree::Vendor.approved.pluck(:name, :id)
       end
     end
   end
