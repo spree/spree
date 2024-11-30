@@ -39,18 +39,27 @@ module Spree
       def redirect_unauthorized_access
         if try_spree_current_user
           flash[:error] = Spree.t(:authorization_failure)
-          redirect_to spree.admin_forbidden_path
+          redirect_to spree.admin_forbidden_path, allow_other_host: true
         else
           store_location
-          if defined?(spree.admin_login_path)
-            redirect_to spree.admin_login_path
+          if defined?(spree_admin_login_path)
+            redirect_to spree_admin_login_path, allow_other_host: true
           elsif respond_to?(:spree_login_path)
-            redirect_to spree_login_path
+            redirect_to spree_login_path, allow_other_host: true
           elsif spree.respond_to?(:root_path)
-            redirect_to spree.root_path
+            redirect_to spree.root_path, allow_other_host: true
           else
             redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
           end
+        end
+      end
+
+      def try_spree_current_user
+        if Spree.admin_user_class
+          send("current_#{Spree.admin_user_class.model_name.singular_route_key}")
+        else
+          # use Spree::Core::ControllerHelpers::Auth#try_spree_current_user
+          super
         end
       end
 
