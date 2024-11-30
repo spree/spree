@@ -85,42 +85,4 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       expect(controller.try_spree_current_user).to eq nil
     end
   end
-
-  describe '#redirect_unauthorized_access' do
-    controller(FakesController) do
-      def index
-        redirect_unauthorized_access
-      end
-    end
-
-    context 'when logged in' do
-      before do
-        allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil, selected_locale: nil))
-      end
-
-      it 'redirects forbidden path' do
-        allow(controller).to receive_message_chain(:spree, :forbidden_path).and_return('/forbidden')
-        get :index
-        expect(response).to redirect_to('/forbidden')
-      end
-    end
-
-    context 'when guest user' do
-      before do
-        allow(controller).to receive_messages(try_spree_current_user: nil)
-      end
-
-      it 'redirects login path' do
-        allow(controller).to receive_messages(spree_login_path: '/login')
-        get :index
-        expect(response).to redirect_to('/login')
-      end
-
-      it 'redirects root path' do
-        allow(controller).to receive_message_chain(:spree, :root_path).and_return('/root_path')
-        get :index
-        expect(response).to redirect_to('/root_path')
-      end
-    end
-  end
 end

@@ -42,5 +42,8 @@ Spree::Core::Engine.add_routes do
     # developer tools
     resources :oauth_applications
     resources :webhooks_subscribers
+
+    # errors
+    get '/forbidden', to: 'errors#forbidden', as: :forbidden
   end
 end

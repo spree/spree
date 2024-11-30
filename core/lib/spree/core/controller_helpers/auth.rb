@@ -70,31 +70,6 @@ module Spree
             current_spree_user
           end
         end
-
-        # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
-        # Override this method in your controllers if you want to have special behavior in case the user is not authorized
-        # to access the requested action.  For example, a popup window might simply close itself.
-        def redirect_unauthorized_access
-          Spree::Deprecation.warn(<<-DEPRECATION, caller)
-            Core::ControllerHelpers#redirect_unauthorized_access is deprecated and will be removed in Spree 5.0.
-            This method is implemented differently for Storefront and Admin
-          DEPRECATION
-          if try_spree_current_user
-            flash[:error] = Spree.t(:authorization_failure)
-            redirect_to spree.forbidden_path
-          else
-            store_location
-            if Spree.respond_to?(:admin_path) && request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
-              redirect_to spree.admin_login_path
-            elsif respond_to?(:spree_login_path)
-              redirect_to spree_login_path
-            elsif spree.respond_to?(:root_path)
-              redirect_to spree.root_path
-            else
-              redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
-            end
-          end
-        end
       end
     end
   end
