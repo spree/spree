@@ -43,6 +43,9 @@ Spree::Core::Engine.add_routes do
     resources :oauth_applications
     resources :webhooks_subscribers
 
+    # products
+    resources :products
+
     # taxonomies and taxons
     resources :taxonomies do
       resources :taxons do
