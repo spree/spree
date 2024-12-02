@@ -1,10 +1,10 @@
 <%= content_for :title do %>
-  <%= Spree.t('admin.oauth_applications.new') %>
+  <%= Spree.t(:new_oauth_application) %>
 <% end %>
 
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_oauth_applications_url %>
-  <%= Spree.t('admin.oauth_applications.new') %>
+  <%= Spree.t(:new_oauth_application) %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>

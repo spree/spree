@@ -2,7 +2,7 @@
   <%= Spree.t(:stock_locations) %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t("admin.stock_locations.new"), new_object_url, class: "btn-primary", icon: 'plus' %>
+  <%= button_link_to Spree.t(:new_stock_location), new_object_url, class: "btn-primary", icon: 'plus' %>
 <% end if can? :create, Spree::StockLocation %>
 <% if @stock_locations.any? %>
   <div class="table-responsive card-lg p-0">
