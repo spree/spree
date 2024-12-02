@@ -1,5 +1,5 @@
 module Spree
-  class CmsPage < Base
+  class CmsPage < Spree.base_class
     include Spree::SingleStoreResource
     include Spree::DisplayLink
 

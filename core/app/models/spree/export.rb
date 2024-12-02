@@ -1,7 +1,7 @@
 require 'csv'
 
 module Spree
-  class Export < Base
+  class Export < Spree.base_class
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
 
     include Spree::SingleStoreResource

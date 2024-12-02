@@ -1,5 +1,5 @@
 module Spree
-  class DataFeed < Base
+  class DataFeed < Spree.base_class
     belongs_to :store, class_name: 'Spree::Store', foreign_key: 'store_id'
 
     scope :for_store, ->(store) { where(store: store) }

@@ -1,5 +1,5 @@
 module Spree
-  class CmsSection < Base
+  class CmsSection < Spree.base_class
     include Spree::DisplayLink
 
     acts_as_list scope: :cms_page
