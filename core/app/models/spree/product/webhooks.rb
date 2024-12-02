@@ -1,5 +1,5 @@
 module Spree
-  class Product < Spree::Base
+  class Product < Spree.base_class
     module Webhooks
       def send_product_activated_webhook
         # Implement your logic here

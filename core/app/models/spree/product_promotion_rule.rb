@@ -1,5 +1,5 @@
 module Spree
-  class ProductPromotionRule < Spree::Base
+  class ProductPromotionRule < Spree.base_class
     belongs_to :product, class_name: 'Spree::Product'
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
 

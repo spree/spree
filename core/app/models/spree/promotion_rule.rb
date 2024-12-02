@@ -1,6 +1,6 @@
 # Base class for all promotion rules
 module Spree
-  class PromotionRule < Spree::Base
+  class PromotionRule < Spree.base_class
     belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules
 
     delegate :stores, to: :promotion

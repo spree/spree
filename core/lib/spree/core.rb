@@ -34,9 +34,18 @@ require 'wannabe_bool'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
-                 :public_storage_service_name, :cdn_host, :searcher_class,
-                 :queues
+  mattr_accessor :base_class, :user_class, :admin_user_class,
+                 :private_storage_service_name, :public_storage_service_name,
+                 :cdn_host, :searcher_class, :queues
+
+  def self.base_class(constantize: true)
+    @@base_class ||= 'Spree::Base'
+    if @@base_class.is_a?(Class)
+      raise 'Spree.base_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@base_class.is_a?(String) || @@base_class.is_a?(Symbol)
+      constantize ? @@base_class.to_s.constantize : @@base_class.to_s
+    end
+  end
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)

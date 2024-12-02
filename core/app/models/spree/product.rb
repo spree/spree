@@ -19,7 +19,7 @@
 #
 
 module Spree
-  class Product < Spree::Base
+  class Product < Spree.base_class
     extend FriendlyId
     include Spree::ProductScopes
     include Spree::MultiStoreResource

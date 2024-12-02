@@ -1,5 +1,5 @@
 module Spree
-  class Store < Spree::Base
+  class Store < Spree.base_class
     include Spree::TranslatableResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

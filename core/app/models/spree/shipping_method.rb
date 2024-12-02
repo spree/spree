@@ -1,5 +1,5 @@
 module Spree
-  class ShippingMethod < Spree::Base
+  class ShippingMethod < Spree.base_class
     acts_as_paranoid
     include Spree::CalculatedAdjustments
     include Spree::Metadata

@@ -1,5 +1,5 @@
 module Spree
-  class Taxonomy < Spree::Base
+  class Taxonomy < Spree.base_class
     include Spree::TranslatableResource
     include Spree::Metadata
     include Spree::SingleStoreResource

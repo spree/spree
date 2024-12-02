@@ -1,5 +1,5 @@
 module Spree
-  class PaymentCaptureEvent < Spree::Base
+  class PaymentCaptureEvent < Spree.base_class
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

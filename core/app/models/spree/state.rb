@@ -1,5 +1,5 @@
 module Spree
-  class State < Spree::Base
+  class State < Spree.base_class
     belongs_to :country, class_name: 'Spree::Country'
     has_many :addresses, dependent: :restrict_with_error
 

@@ -1,5 +1,5 @@
 module Spree
-  class Digital < Spree::Base
+  class Digital < Spree.base_class
     belongs_to :variant
     has_many :digital_links, dependent: :destroy
 

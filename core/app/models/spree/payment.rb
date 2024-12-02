@@ -1,7 +1,7 @@
 require_dependency 'spree/payment/processing'
 
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::NumberIdentifier
     include Spree::NumberAsParam

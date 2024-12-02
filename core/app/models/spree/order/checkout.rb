@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module Checkout
       def self.included(klass)
         klass.class_eval do

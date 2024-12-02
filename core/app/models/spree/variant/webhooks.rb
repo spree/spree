@@ -1,5 +1,5 @@
 module Spree
-  class Variant < Spree::Base
+  class Variant < Spree.base_class
     module Webhooks
     end
   end

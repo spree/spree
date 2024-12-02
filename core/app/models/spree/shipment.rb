@@ -1,7 +1,7 @@
 require 'ostruct'
 
 module Spree
-  class Shipment < Spree::Base
+  class Shipment < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include Spree::NumberIdentifier
     include Spree::NumberAsParam

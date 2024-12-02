@@ -1,5 +1,5 @@
 module Spree
-  class StockItem < Spree::Base
+  class StockItem < Spree.base_class
     acts_as_paranoid
 
     include Spree::Metadata

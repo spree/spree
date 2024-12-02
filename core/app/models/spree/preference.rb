@@ -1,4 +1,4 @@
-class Spree::Preference < Spree::Base
+class Spree::Preference < Spree.base_class
   if Rails::VERSION::STRING >= '7.1.0'
     serialize :value, coder: YAML
   else

@@ -1,5 +1,5 @@
 module Spree
-  class PromotionRuleUser < Spree::Base
+  class PromotionRuleUser < Spree.base_class
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
     belongs_to :user, class_name: "::#{Spree.user_class}"
 

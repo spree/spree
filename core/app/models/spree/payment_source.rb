@@ -1,5 +1,5 @@
 module Spree
-  class PaymentSource < Spree::Base
+  class PaymentSource < Spree.base_class
     include Spree::Metadata
 
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'

@@ -1,5 +1,5 @@
 module Spree
-  class ProductProperty < Spree::Base
+  class ProductProperty < Spree.base_class
     include Spree::FilterParam
     include Spree::TranslatableResource
 

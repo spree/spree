@@ -1,5 +1,5 @@
 module Spree
-  class StorePaymentMethod < Spree::Base
+  class StorePaymentMethod < Spree.base_class
     self.table_name = 'spree_payment_methods_stores'
 
     belongs_to :store, class_name: 'Spree::Store', touch: true

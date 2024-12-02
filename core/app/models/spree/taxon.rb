@@ -2,7 +2,7 @@
 require 'stringex'
 
 module Spree
-  class Taxon < Spree::Base
+  class Taxon < Spree.base_class
     RULES_MATCH_POLICIES = %w[all any].freeze
     SORT_ORDERS = %w[
       manual

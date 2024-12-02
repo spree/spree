@@ -1,5 +1,5 @@
 module Spree
-  class Wishlist < Spree::Base
+  class Wishlist < Spree.base_class
     include Spree::SingleStoreResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

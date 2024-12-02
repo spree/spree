@@ -1,5 +1,5 @@
 module Spree
-  class CustomerReturn < Spree::Base
+  class CustomerReturn < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     include Spree::NumberIdentifier
     include Spree::Metadata

@@ -1,5 +1,5 @@
 module Spree
-  class ShippingRate < Spree::Base
+  class ShippingRate < Spree.base_class
     belongs_to :shipment, class_name: 'Spree::Shipment'
     belongs_to :tax_rate, -> { with_deleted }, class_name: 'Spree::TaxRate'
     belongs_to :shipping_method, -> { with_deleted }, class_name: 'Spree::ShippingMethod', inverse_of: :shipping_rates
