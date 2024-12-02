@@ -82,6 +82,7 @@ module Spree
         ON spree_order_promotions.promotion_id = #{table_name}.id
       SQL
     }
+    scope :creating_line_items, -> { joins(:promotion_actions).where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::CreateLineItems' }) }
 
     #
     # Ransack
