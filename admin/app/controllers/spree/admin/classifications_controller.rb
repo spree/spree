@@ -5,7 +5,7 @@ module Spree
 
       layout 'turbo_rails/frame'
 
-      before_action :load_sorted_classifications, only: :index
+      before_action :load_sorted_classifications, only: %i[create index]
 
       # create classifications in bulk
       def create

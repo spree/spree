@@ -75,11 +75,6 @@ module Spree
         options.map { |status| [Spree.t(status), status] }
       end
 
-      def product_attribute_overriden?(attribute, product = nil)
-        product ||= @product
-        product.locked_data.key?(attribute.to_s)
-      end
-
       def map_categories(product)
         category_tree = ['n/a', 'n/a']
 
