@@ -87,6 +87,24 @@ en:
         submenu: Submenu
         add_new_taxon: Add a new Taxon
         no_taxons: '<b>%{taxonomy}</b> has no Taxons. Click the <b>Add a new Taxon</b> button, to begin adding Taxons.'
+      taxon_type: Taxon type
+      taxon_types:
+        manual: Manual
+        manual_info: Curate products manually. You can add or remove them in bulk.
+        automatic: Automatic
+        automatic_info: Automatically match products to this taxon based on the conditions you set.
+      taxon_rules:
+        products_must_match: "Products must match:"
+        all_conditions: all conditions
+        any_condition: any condition
+        tag: Product tag
+        available_on: Available on
+        on_sale: On sale
+        match_policies:
+          is_equal_to: is equal to
+          is_not_equal_to: is not equal to
+          contains: contains
+          does_not_contain: does not contain
       order:
         changing_store_warning: If you change the store this order belongs to, the order will be reset.
         once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'

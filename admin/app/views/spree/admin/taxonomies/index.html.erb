@@ -1,0 +1,53 @@
+<% content_for(:page_title) do %>
+  <%= Spree.t(:taxonomies) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:new_taxonomy), new_object_url, { class: "btn-primary", icon: 'plus', } %>
+<% end if can?(:create, Spree::Taxonomy) %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_property_sidebar">
+    <%= search_form_for [:admin, @search] do |f| %>
+
+      <%- locals = {f: f} %>
+
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div data-hook="admin_property_index_search" class="form-group">
+            <%= f.label :name, Spree.t(:name) %>
+            <%= f.text_field :name, class: "form-control js-quick-search-target js-filterable" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+
+    <% end %>
+    </div>
+<% end if Spree::Taxonomy.any? %>
+
+<% if @taxonomies.present? %>
+  <div class="table-responsive">
+    <table class="table" id='listing_taxonomies'>
+      <thead class="text-muted">
+      <tr data-hook="listing_taxonomies_header">
+        <th class="no-border handel-head"></th>
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:taxons) %></th>
+        <th class="actions"></th>
+      </tr>
+      </thead>
+      <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="taxonomy">
+        <%= render partial: 'spree/admin/taxonomies/taxonomy', collection: @collection, cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-center w-100 text-muted m-5">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxonomy)) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-link' if can?(:create, Spree::Taxonomy) %>
+  </div>
+<% end %>

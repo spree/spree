@@ -1,0 +1,7 @@
+<%= turbo_close_modal %>
+
+<%= turbo_stream.update :product_count, @taxon.products.count %>
+
+<%= turbo_stream.replace :classifications do %>
+  <%= render template: 'spree/admin/classifications/index' %>
+<% end %>

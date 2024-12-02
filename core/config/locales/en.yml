@@ -1711,6 +1711,7 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
+    true_label: "TRUE"
     automatic_taxon_names:
       on_sale: On sale
       new_arrivals: New arrivals

@@ -13,7 +13,8 @@ module Spree
                                :promotions,
                                :line_item_comparison_hooks,
                                :data_feed_types,
-                               :export_types)
+                               :export_types,
+                               :taxon_rules)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -135,6 +136,12 @@ module Spree
         Rails.application.config.spree.export_types = [
           Spree::Exports::Products,
           Spree::Exports::Orders
+        ]
+
+        Rails.application.config.spree.taxon_rules = [
+          Spree::TaxonRules::Tag,
+          Spree::TaxonRules::AvailableOn,
+          Spree::TaxonRules::Sale,
         ]
       end
 

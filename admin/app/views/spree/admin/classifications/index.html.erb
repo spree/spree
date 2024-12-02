@@ -1,0 +1,20 @@
+<%= turbo_frame_tag :classifications do %>
+  <% if @classifications.any? %>
+    <div data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="classification"
+          data-sortable-response-kind-value="turbo-stream">
+      <%= render partial: 'spree/admin/classifications/classification',
+                  collection: @sorted_classifications,
+                  cached: can?(:delete, Spree::Classification) ? spree_base_cache_scope : false %>
+    </div>
+  <% else %>
+    <p class="text-center text-muted px-5 pt-5 pb-2">
+      <%= Spree.t(:no_products_added) %>
+    </p>
+    <p class="text-center" data-toggle="modal" data-target="#modal">
+      <% if can?(:create, Spree::Classification) && @taxon.manual? %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-link', data: { turbo_frame: 'dialog_modal' } %>
+      <% end %>
+  <% end %>
+<% end %>
