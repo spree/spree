@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module Emails
       def deliver_order_confirmation_email
         OrderMailer.confirm_email(id).deliver_later
