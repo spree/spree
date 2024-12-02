@@ -1,5 +1,5 @@
 module Spree
-  class Address < Spree::Base
+  class Address < Spree.base_class
     require 'validates_zipcode'
 
     include Spree::Metadata

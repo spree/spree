@@ -1,5 +1,5 @@
 module Spree
-  class ReturnAuthorization < Spree::Base
+  class ReturnAuthorization < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include Spree::NumberIdentifier
     if defined?(Spree::Webhooks::HasWebhooks)

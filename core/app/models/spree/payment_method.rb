@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod < Spree::Base
+  class PaymentMethod < Spree.base_class
     acts_as_paranoid
     acts_as_list
 

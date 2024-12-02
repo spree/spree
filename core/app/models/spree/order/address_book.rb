@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module AddressBook
       def clone_shipping_address
         self.bill_address_id = ship_address_id if ship_address_id

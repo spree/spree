@@ -1,5 +1,5 @@
 module Spree
-  class LineItem < Spree::Base
+  class LineItem < Spree.base_class
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

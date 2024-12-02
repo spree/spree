@@ -1,7 +1,7 @@
 require_dependency 'spree/payment/gateway_options'
 
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     module Processing
       extend ActiveSupport::Concern
       included do

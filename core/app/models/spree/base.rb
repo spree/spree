@@ -56,7 +56,7 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.json_api_columns
-    column_names.reject { |c| c.match(/_id$|id|preferences|(.*)password|(.*)token|(.*)api_key/) }
+    column_names.reject { |c| c.match(/_id$|id|preferences|(.*)password|(.*)token|(.*)api_key|^original_(.*)/) }
   end
 
   def self.json_api_permitted_attributes
@@ -71,5 +71,14 @@ class Spree::Base < ApplicationRecord
 
   def self.json_api_type
     to_s.demodulize.underscore
+  end
+
+  def self.to_tom_select_json
+    pluck(:name, :id).map do |name, id|
+      {
+        id: id,
+        name: name
+      }
+    end.as_json
   end
 end

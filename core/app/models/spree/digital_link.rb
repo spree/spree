@@ -1,5 +1,5 @@
 module Spree
-  class DigitalLink < Spree::Base
+  class DigitalLink < Spree.base_class
     if Rails::VERSION::STRING >= '7.1.0'
       has_secure_token on: :save
     else

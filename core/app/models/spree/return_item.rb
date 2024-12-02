@@ -1,5 +1,5 @@
 module Spree
-  class ReturnItem < Spree::Base
+  class ReturnItem < Spree.base_class
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
     if defined?(Spree::Webhooks::HasWebhooks)

@@ -1,5 +1,5 @@
 module Spree
-  class Variant < Spree::Base
+  class Variant < Spree.base_class
     acts_as_paranoid
     acts_as_list scope: :product
 

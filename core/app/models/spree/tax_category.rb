@@ -1,5 +1,5 @@
 module Spree
-  class TaxCategory < Spree::Base
+  class TaxCategory < Spree.base_class
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end

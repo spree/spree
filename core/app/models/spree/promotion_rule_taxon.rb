@@ -1,5 +1,5 @@
 module Spree
-  class PromotionRuleTaxon < Spree::Base
+  class PromotionRuleTaxon < Spree.base_class
     belongs_to :promotion_rule, class_name: 'Spree::PromotionRule'
     belongs_to :taxon, class_name: 'Spree::Taxon'
 

@@ -1,5 +1,5 @@
 module Spree
-  class OauthApplication < Base
+  class OauthApplication < Spree.base_class
     include ::Doorkeeper::Orm::ActiveRecord::Mixins::Application
 
     self.table_name = 'spree_oauth_applications'

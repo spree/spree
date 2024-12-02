@@ -1,5 +1,5 @@
 module Spree
-  class StateChange < Spree::Base
+  class StateChange < Spree.base_class
     belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
     belongs_to :stateful, polymorphic: true
 

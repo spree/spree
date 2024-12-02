@@ -1,5 +1,5 @@
 module Spree
-  class StoreCreditEvent < Spree::Base
+  class StoreCreditEvent < Spree.base_class
     acts_as_paranoid
 
     belongs_to :store_credit

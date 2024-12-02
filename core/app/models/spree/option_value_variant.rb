@@ -1,5 +1,5 @@
 module Spree
-  class OptionValueVariant < Spree::Base
+  class OptionValueVariant < Spree.base_class
     belongs_to :option_value, class_name: 'Spree::OptionValue'
     belongs_to :variant, touch: true, class_name: 'Spree::Variant'
 

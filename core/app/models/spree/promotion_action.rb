@@ -1,7 +1,7 @@
 ## Base class for all types of promotion action.
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
-  class PromotionAction < Spree::Base
+  class PromotionAction < Spree.base_class
     acts_as_paranoid
 
     belongs_to :promotion, class_name: 'Spree::Promotion'

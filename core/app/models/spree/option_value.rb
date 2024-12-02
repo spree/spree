@@ -1,5 +1,5 @@
 module Spree
-  class OptionValue < Spree::Base
+  class OptionValue < Spree.base_class
     include Spree::ParameterizableName
     include Spree::Metadata
     include Spree::TranslatableResource

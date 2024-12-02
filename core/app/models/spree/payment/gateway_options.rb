@@ -1,5 +1,5 @@
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     class GatewayOptions
       def initialize(payment)
         @payment = payment

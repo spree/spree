@@ -1,5 +1,5 @@
 module Spree
-  class Classification < Spree::Base
+  class Classification < Spree.base_class
     self.table_name = 'spree_products_taxons'
     acts_as_list scope: :taxon
 

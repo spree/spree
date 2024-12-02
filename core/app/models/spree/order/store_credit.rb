@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module StoreCredit
       def add_store_credit_payments(amount = nil)
         Spree::Dependencies.checkout_add_store_credit_service.constantize.call(order: self, amount: amount)

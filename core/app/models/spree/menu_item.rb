@@ -1,5 +1,5 @@
 module Spree
-  class MenuItem < Spree::Base
+  class MenuItem < Spree.base_class
     include Spree::DisplayLink
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

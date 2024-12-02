@@ -6,7 +6,7 @@ require_dependency 'spree/order/store_credit'
 require_dependency 'spree/order/emails'
 
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
@@ -87,20 +87,10 @@ module Spree
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
 
-    if Spree.user_class
-      belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
-    else
-      belongs_to :user, optional: true
-    end
-    if Spree.admin_user_class
-      belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
-      belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
-      belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
-    else
-      belongs_to :created_by, optional: true
-      belongs_to :approver, optional: true
-      belongs_to :canceler, optional: true
-    end
+    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
+    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
+    belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
+    belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
 
     belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
                               optional: true, dependent: :destroy

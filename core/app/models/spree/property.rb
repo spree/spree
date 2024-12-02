@@ -1,5 +1,5 @@
 module Spree
-  class Property < Spree::Base
+  class Property < Spree.base_class
     include Spree::FilterParam
     include Spree::Metadata
     include Spree::ParameterizableName
