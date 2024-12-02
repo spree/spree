@@ -2,7 +2,7 @@ module Spree
   module Admin
     module CurrenciesHelper
       def preferred_currencies
-        @preferred_currencies ||= ([current_store.default_currency] + current_store.supported_currencies_list).uniq
+        @preferred_currencies ||= current_store.supported_currencies_list
       end
 
       def currency_money(currency = current_currency)
