@@ -22,7 +22,6 @@ class Spree::Base < ApplicationRecord
   end
 
   self.abstract_class = true
-  self.table_name_prefix = 'spree_'
 
   def self.belongs_to_required_by_default
     false
