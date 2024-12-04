@@ -77,9 +77,7 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[number amount state response_code avs_response cvv_response_code cvv_response_message]
 
     # transaction_id is much easier to understand
-    def transaction_id
-      response_code
-    end
+    alias_attribute :transaction_id, :response_code
 
     delegate :currency, to: :order
 
@@ -192,6 +190,10 @@ module Spree
       return false if cvv_response_message.present?
 
       true
+    end
+
+    def gateway_dashboard_payment_url
+      payment_method.try(:gateway_dashboard_payment_url, self)
     end
 
     def captured_amount
