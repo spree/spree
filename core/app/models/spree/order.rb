@@ -642,7 +642,7 @@ module Spree
     end
 
     def collect_backend_payment_methods
-      PaymentMethod.available_on_back_end.select { |pm| pm.available_for_order?(self) }
+      PaymentMethod.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
     end
 
     # determines whether the inventory is fully discounted
