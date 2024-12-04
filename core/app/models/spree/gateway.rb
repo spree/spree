@@ -10,6 +10,13 @@ module Spree
       CreditCard
     end
 
+    # Override in the gateway to provide a payment url
+    # eg. for Stripe, this would be the payment intent url
+    # https://dashboard.stripe.com/payments/#{payment.transaction_id}
+    def gateway_dashboard_payment_url(_payment)
+      nil
+    end
+
     def provider
       gateway_options = options
       gateway_options.delete :login if gateway_options.key?(:login) && gateway_options[:login].nil?
