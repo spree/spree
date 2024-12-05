@@ -196,15 +196,16 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def find_resource
-    if parent_data.present?
-      parent.send(controller_name).find(params[:id])
+    base_scope = if parent_data.present?
+                   parent.send(controller_name)
+                 else
+                   model_class.try(:for_store, current_store) || model_class
+                end
+
+    if model_class.try(:friendly)
+      base_scope.friendly.find(params[:id])
     else
-      base_scope = model_class.try(:for_store, current_store) || model_class
-      if model_class.try(:friendly)
-        base_scope.friendly.find(params[:id])
-      else
-        base_scope.find(params[:id])
-      end
+      base_scope.find(params[:id])
     end
   end
 
