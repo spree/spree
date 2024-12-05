@@ -10,6 +10,8 @@ module Spree
       include Spree::Security::Payments
     end
 
+    extend Spree::DisplayMoney
+
     include Spree::Payment::Processing
     include Spree::Payment::Webhooks
 
@@ -81,6 +83,9 @@ module Spree
 
     delegate :currency, to: :order
 
+    money_methods :amount, :credit_allowed
+    alias money display_amount # for compatibility with older versions of Spree
+
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
       # With card payments, happens before purchase or authorization happens
@@ -128,11 +133,6 @@ module Spree
 
       payment_method.payment_source_class.unscoped { super }
     end
-
-    def money
-      Spree::Money.new(amount, currency: currency)
-    end
-    alias display_amount money
 
     def amount=(amount)
       self[:amount] =
