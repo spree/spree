@@ -791,9 +791,11 @@
     {
       "group": "Products",
       "pages": [
-        "user/products/listing-products",
-        "user/products/creating-a-product",
-        "user/products/editing-a-product"
+        "user/products/creating-products",
+        "user/products/deleting-products"
+        "user/products/editing-products" 
+        "user/products/editing-multi-variant-products"   
+        "user/products/cloning-products" 
       ]
     }
   ],
