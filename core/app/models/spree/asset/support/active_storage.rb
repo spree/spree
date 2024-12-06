@@ -8,7 +8,10 @@ module Spree
           def url(style)
             return placeholder(style) unless attachment.attached?
 
-            attachment.variant(resize_to_limit: dimensions_for_style(style))
+            attachment.variant(
+              resize_to_limit: dimensions_for_style(style),
+              loader: { page: nil }
+            )
           end
 
           def placeholder(style)
