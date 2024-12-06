@@ -791,11 +791,28 @@
     {
       "group": "Products",
       "pages": [
-        "user/products/creating-products",
-        "user/products/deleting-products",
-        "user/products/editing-products",
-        "user/products/editing-multi-variant-products",   
-        "user/products/cloning-products" 
+          "Product Editor",
+                      {
+                          "group": "Product Editor",
+                          "pages": [
+                                 "user/products/creating-products",
+                                 "user/products/deleting-products",
+                                 "user/products/editing-products",
+                                 "user/products/editing-multi-variant-products",   
+                                 "user/products/cloning-products"                    
+                          ]
+                      }, 
+          "Product Management",
+                      {
+                          "group": "Product Management",
+                          "pages": [
+                                 "user/products/creating-products",
+                                 "user/products/deleting-products",
+                                 "user/products/editing-products",
+                                 "user/products/editing-multi-variant-products",   
+                                 "user/products/cloning-products"                    
+                          ]
+                      }
       ]
     }
   ],
