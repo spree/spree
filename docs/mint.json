@@ -792,9 +792,9 @@
       "group": "Products",
       "pages": [
         "user/products/creating-products",
-        "user/products/deleting-products"
-        "user/products/editing-products" 
-        "user/products/editing-multi-variant-products"   
+        "user/products/deleting-products",
+        "user/products/editing-products",
+        "user/products/editing-multi-variant-products",   
         "user/products/cloning-products" 
       ]
     }
