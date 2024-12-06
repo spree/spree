@@ -11,7 +11,7 @@
     <div class="form-group mb-0">
       <div id="<%= "#{address_id}country-selection" %>">
         <%= address_form.label(Spree.t(:country), Spree.t(:country), class: 'block text-xs text-neutral-600 mb-1') %>
-        <%= address_form.select :country_id, options_for_select(available_countries.map { |c| [c.name, c.id, data: { iso: c.iso }] }, address.country_id || current_store.default_country_id),
+        <%= address_form.select :country_id, options_for_select(available_countries.map { |c| [c.name, c.id, data: { iso: c.iso }] }, address_form.object.country_id || current_store.default_country_id),
                                             {  },
                                             { class: 'w-full select-input mb-4',
                                               data: {
