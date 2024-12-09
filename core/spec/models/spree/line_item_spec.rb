@@ -441,4 +441,29 @@ describe Spree::LineItem, type: :model do
       end
     end
   end
+
+  describe '#from_promotion' do
+    subject { line_item.from_promotion }
+
+    let(:line_item) { create(:line_item, variant: variant) }
+    let(:variant) { create(:variant) }
+
+    let(:free_item_promotion) { create(:free_item_promotion, variant: promotion_variant) }
+
+    before do
+      line_item.order.promotions << free_item_promotion
+    end
+
+    context 'when item was added through the promotion' do
+      let(:promotion_variant) { variant }
+
+      it { is_expected.to eq(free_item_promotion) }
+    end
+
+    context 'when item was added manually' do
+      let(:promotion_variant) { create(:variant) }
+
+      it { is_expected.to be_nil }
+    end
+  end
 end
