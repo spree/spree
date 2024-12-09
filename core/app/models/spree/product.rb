@@ -36,6 +36,12 @@ module Spree
                           default_variant_id tax_category default_variant
                           purchasable? in_stock? backorderable? has_variants?]
 
+    STATUS_TO_WEBHOOK_EVENT = {
+      'active' => 'activated',
+      'draft' => 'drafted',
+      'archived' => 'archived'
+    }.freeze
+
     TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
