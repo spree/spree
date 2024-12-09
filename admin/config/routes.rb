@@ -44,7 +44,25 @@ Spree::Core::Engine.add_routes do
     resources :webhooks_subscribers
 
     # products
-    resources :products
+    resources :products do
+      collection do
+        get :select_options, defaults: { format: :json }
+        post :search
+        get :bulk_modal
+        put :bulk_status_update
+        put :bulk_add_to_taxons
+        put :bulk_remove_from_taxons
+        put :bulk_add_tags
+        put :bulk_remove_tags
+      end
+
+      member do
+        post :clone
+      end
+
+      resources :variants, only: [:edit, :update, :destroy]
+      resources :digitals, only: [:index, :create, :destroy]
+    end
 
     # taxonomies and taxons
     resources :taxonomies do

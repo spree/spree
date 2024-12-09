@@ -299,3 +299,27 @@ en:
       payment_methods:
         edit:
           payment_method_configuration: "Payment Method Configuration"
+      bulk_ops:
+        products:
+          title:
+            set_status: Set as %{status}
+            add_to_taxons: Add to taxons
+            remove_from_taxons: Remove from taxons
+            add_tags: Add tags
+            remove_tags: Remove tags
+            add_to_brand: Add to brand
+            remove_from_brand: Remove from brand
+            set_size_chart: Set Size Chart
+            set_return_rule: Set Return Rule
+          body:
+            set_status:
+              draft: Setting products to draft will hide them from storefront.
+              ready_for_review: We will notify your partners that these products are ready for review. Your partners will be able to review and publish these products.
+              active: Setting products to active will make those products available on the storefront.
+              archived: Setting products to archived will hide them from storefront.
+            remove_from_taxons: 'Select which taxons to remove the products from:'
+            add_to_taxons: 'Select which taxons to add the products to:'
+            add_to_brand: 'Select which brand to add the products to:'
+            add_tags: 'Select tags to add to the products:'
+            remove_tags: 'Select tags to remove from the products:'
+            set_return_rule: Select return rule for products
