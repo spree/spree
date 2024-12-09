@@ -34,7 +34,7 @@ module Spree
       include Spree::VendorConcern
     end
 
-    MEMOIZED_METHODS = %w(tax_zone)
+    MEMOIZED_METHODS = %w(tax_zone coupon_code)
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
