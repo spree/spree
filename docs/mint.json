@@ -810,7 +810,7 @@
                                  "user/products/bulk-product-operations",
                                  "user/products/import-products",
                                  "user/products/export-products",   
-                                 "user/products/stock-levels"   
+                                 "user/products/stock-levels",   
                                  "user/products/stock-transfers"  
                           ]
                       }
