@@ -793,7 +793,7 @@
       "pages": [
           "Product Editor",
                       {
-                          "group": "Product Editor",
+                          "group": "Create & Edit Products",
                           "pages": [
                                  "user/products/creating-products",
                                  "user/products/deleting-products",
@@ -804,13 +804,14 @@
                       }, 
           "Product Management",
                       {
-                          "group": "Product Management",
+                          "group": "Manage Products",
                           "pages": [
-                                 "user/products/creating-products",
-                                 "user/products/deleting-products",
-                                 "user/products/editing-products",
-                                 "user/products/editing-multi-variant-products",   
-                                 "user/products/cloning-products"                    
+                                 "user/products/search-products",
+                                 "user/products/bulk-product-operations",
+                                 "user/products/import-products",
+                                 "user/products/export-products",   
+                                 "user/products/stock-levels"   
+                                 "user/products/stock-transfers"  
                           ]
                       }
       ]
