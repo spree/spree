@@ -105,7 +105,7 @@ module Spree
       end
 
       it 'is partial' do
-        allow(order).to receive_message_chain(:shipments, :states).and_return(['pending', 'ready'])
+        allow(order).to receive_message_chain(:shipments, :states).and_return(['pending', 'shipped'])
         updater.update_shipment_state
         expect(order.shipment_state).to eq('partial')
       end
