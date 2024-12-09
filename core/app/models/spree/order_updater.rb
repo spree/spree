@@ -133,10 +133,16 @@ module Spree
         order.shipment_state = 'backorder'
       else
         # get all the shipment states for this order
-        shipment_states = shipments.states
+        shipment_states = shipments.states.uniq
+
         order.shipment_state = if shipment_states.size > 1
-                                 # multiple shipment states means it's most likely partially shipped
-                                 'partial'
+                                 if shipment_states.include?('shipped')
+                                   'partial'
+                                 elsif shipment_states.include?('pending')
+                                   'pending'
+                                 else
+                                   'ready'
+                                 end
                                else
                                  # will return nil if no shipments are found
                                  shipment_states.first
