@@ -111,6 +111,34 @@ module Spree
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
     }
 
+    if defined?(PgSearch)
+      include PgSearch::Model
+
+      pg_search_scope :search_by_sku, against: :sku, using: { tsearch: { prefix: true } }
+
+      pg_search_scope :search_by_sku_or_options,
+                      against: :sku,
+                      using: { tsearch: { prefix: true } },
+                      associated_against: { option_values: %i[presentation] }
+
+      pg_search_scope :search_by_name_sku_or_options, against: :sku, associated_against: {
+        product: %i[name],
+        option_values: %i[presentation]
+      }, using: { tsearch: { prefix: true } }
+
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        search_by_name_sku_or_options(query)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        product_name_or_sku_cont(query)
+      }
+    end
+
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 

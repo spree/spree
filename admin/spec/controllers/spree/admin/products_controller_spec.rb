@@ -77,6 +77,67 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe 'POST #search' do
+    let!(:product1) { create(:product, name: 'Product 1') }
+    let!(:product2) { create(:product, name: 'Product 2') }
+    let!(:product3) { create(:product, name: 'Product 3') }
+
+    context 'when query is blank' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: '' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns an empty response body' do
+        get :search, params: { q: '' }, format: :turbo_stream
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is less than 3 characters' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: 'ab' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns an empty response body' do
+        get :search, params: { q: 'ab' }, format: :turbo_stream
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is valid' do
+      it 'returns a 200 status code' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'renders the search_results partial' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(response).to render_template(partial: 'spree/admin/products/_search_results')
+      end
+
+      it 'assigns the products matching the query to @products' do
+        get :search, params: { q: 'Product' }, format: :turbo_stream
+        expect(assigns(:products)).to match_array([product1, product2, product3])
+      end
+
+      context 'when omit_ids parameter is present' do
+        it 'excludes the products with the given ids' do
+          get :search, params: { q: 'Product', omit_ids: "#{product1.id},#{product2.id}" }, format: :turbo_stream
+          expect(assigns(:products)).to match_array([product3])
+        end
+      end
+
+      context 'when limit parameter is present' do
+        it 'limits the number of products returned' do
+          get :search, params: { q: 'Product', limit: 2 }, format: :turbo_stream
+          expect(assigns(:products).size).to eq(2)
+        end
+      end
+    end
+  end
+
   describe 'POST #create' do
     subject { post :create, params: { product: product_params } }
     let(:stock_location) { create(:stock_location) }

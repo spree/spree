@@ -27,6 +27,29 @@ module Spree
       update.before :remove_empty_params
       helper_method :clone_object_url
 
+      # https://blog.corsego.com/hotwire-turbo-streams-autocomplete-search
+      def search
+        query = params[:q]&.strip
+
+        head :ok and return if query.blank? || query.length < 3
+
+        scope = current_store.products.not_archived.accessible_by(current_ability, :index)
+        scope = scope.where.not(id: params[:omit_ids].split(',')) if params[:omit_ids].present?
+        @products = scope.includes(master: :images, variants: :images).multi_search(query).limit(params[:limit] || 10)
+
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(
+                'products_search_results',
+                partial: 'spree/admin/products/search_results',
+                locals: { products: @products }
+              )
+            ]
+          end
+        end
+      end
+
       def show
         redirect_to action: :edit
       end

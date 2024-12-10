@@ -46,6 +46,13 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
+      if defined?(PgSearch)
+        include PgSearch::Model
+
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' },
+                                         using: { tsearch: { prefix: true, any_word: true } }
+      end
+
       before_save :set_slug
       acts_as_paranoid
       # deleted translation values also need to be accessible for index views listing deleted resources
@@ -177,15 +184,45 @@ module Spree
                         where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
                     }
 
+    if defined?(PgSearch)
+      scope :multi_search, lambda { |query, include_options = false|
+        return none if query.blank?
+        return none if query.length < 3
+
+        product_ids = if Spree.use_translations?
+                        Spree::Product::Translation.search_by_name(query).pluck(:spree_product_id)
+                      else
+                        Spree::Product.search_by_name(query).ids
+                      end
+
+        variant_product_ids = if include_options.present?
+                                Spree::Variant.search_by_sku_or_options(query).pluck(:product_id)
+                              else
+                                Spree::Variant.search_by_sku(query).pluck(:product_id)
+                              end
+
+        where(id: (product_ids + variant_product_ids).uniq.compact)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank?
+        return none if query.length < 3
+
+        Spree::Variant.search_by_product_name_or_sku(query)
+      }
+    end
+
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
+                                                   shipping_category classifications option_types properties]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
+                                             multi_search in_stock_items out_of_stock_items]
 
     [
       :sku, :barcode, :price, :currency, :weight, :height, :width, :depth, :is_master,
@@ -217,6 +254,23 @@ module Spree
         transition to: :draft
       end
       after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
+    end
+
+    def self.bulk_auto_match_taxons(store, product_ids)
+      return if store.taxons.automatic.none?
+
+      products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
+
+      # for ActiveJob 7.1+
+      if ActiveJob.respond_to?(:perform_all_later)
+        auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
+          Spree::Products::AutoMatchTaxonsJob.new(product_id)
+        end
+
+        ActiveJob.perform_all_later(auto_match_taxons_jobs)
+      else
+        products_to_auto_match_ids.each { |product_id| Spree::Products::AutoMatchTaxonsJob.perform_later(product_id) }
+      end
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
