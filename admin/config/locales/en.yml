@@ -323,3 +323,37 @@ en:
             add_tags: 'Select tags to add to the products:'
             remove_tags: 'Select tags to remove from the products:'
             set_return_rule: Select return rule for products
+      products:
+        active: Active
+        draft: Draft
+        archived: Archived
+        all_statuses: All statuses
+        by_status: By status
+        all_products: All Products
+        paused: Paused
+        in_stock: In Stock
+        out_of_stock: Out of Stock
+        any_stock: Any stock
+        by_stock: By stock
+        selected: products selected
+        help_bubble: Draft & Ready for Review statuses mean that the product isn't available for purchase. Active means that the product is live. Vendors can move product from draft to ready for review, but only marketplace operators can move product from ready for review to active
+        search_results:
+          no_products: We couldn't find any products matching your search :(
+        inventory:
+          sku: SKU (Stock Keeping Unit)
+          barcode: Barcode (ISBN, UPC, GTIN, etc.)
+        properties:
+          link: To manage properties, go to <a href="%{link}">Properties</a>.
+        status_form:
+          status: Draft - initial status. Ready For Review - inform store owner that product can be checked before activation
+          make_active_at: Marks when the product should be automatically promoted to "active" state
+          available_on: Marks when the product will be released, put a future date to indicate that this is a pre-order
+          discontinue_on: Marks when the product should be automatically taken off from your site
+        stores:
+          choose_stores: Choose which stores this product should be available in
+        seo:
+          placeholder: Add a title and description to see how this product might appear in a search engine listing
+        variants:
+          option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      variants:
+        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>

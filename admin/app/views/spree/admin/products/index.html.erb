@@ -1,0 +1,13 @@
+<%= render 'index_header' %>
+
+<div class="card-lg p-0">
+  <% if params[:frame_name].present? %>
+    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
+      <%= render 'filters' %>
+      <%= render 'list' %>
+    <% end %>
+  <% else %>
+    <%= render 'filters' %>
+    <%= render 'list' %>
+  <% end %>
+</div>
