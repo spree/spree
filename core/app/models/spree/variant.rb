@@ -148,6 +148,24 @@ module Spree
       end
     end
 
+    accepts_nested_attributes_for(
+      :stock_items,
+      reject_if: ->(attributes) { attributes['stock_location_id'].blank? || attributes['count_on_hand'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :prices,
+      reject_if: ->(attributes) { attributes['currency'].blank? || attributes['amount'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :option_value_variants,
+      reject_if: ->(attributes) { attributes['option_value_id'].blank? },
+      allow_destroy: false
+    )
+
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
@@ -170,6 +188,14 @@ module Spree
 
     def self.search_by_product_name_or_sku(query)
       product_name_or_sku_cont(query)
+    end
+
+    def human_name
+      @human_name ||= option_values.
+                      joins(option_type: :product_option_types).
+                      merge(product.product_option_types).
+                      reorder('spree_product_option_types.position').
+                      pluck(:presentation).join('/')
     end
 
     def available?

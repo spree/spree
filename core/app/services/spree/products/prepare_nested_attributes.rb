@@ -125,7 +125,7 @@ module Spree
 
           existing_option_value_variant = existing_variant&.option_value_variants&.find { |ovv| ovv.option_value_id == option_value.id }
 
-          option_value_variant_params[index] = { id: existing_option_value_variant&.id, option_value_id: option_value.id }.compact_blank
+          option_value_variant_params[index.to_s] = { id: existing_option_value_variant&.id, option_value_id: option_value.id }.compact_blank
 
           next if product_option_types_params.find { |_i, v| v[:option_type_id] == option_type.id }
 

@@ -23,6 +23,10 @@ class Spree::Base < ApplicationRecord
 
   self.abstract_class = true
 
+  scope :for_ordering_with_translations, lambda { |klass, fields = nil|
+    select("#{klass.table_name}.*").select(*(fields || klass::TRANSLATABLE_FIELDS))
+  }
+
   def self.belongs_to_required_by_default
     false
   end

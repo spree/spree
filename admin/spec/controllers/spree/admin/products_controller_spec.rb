@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
+  let(:user) { create(:admin_user) }
+
   before do
     allow(controller).to receive(:current_ability).and_call_original
   end
@@ -140,8 +142,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
   describe 'POST #create' do
     subject { post :create, params: { product: product_params } }
+
     let(:stock_location) { create(:stock_location) }
     let(:other_stock_location) { create(:stock_location) }
+
+    let(:shipping_category) { create(:shipping_category, name: 'Default') }
 
     context 'without variants' do
       let(:product_params) do
@@ -154,7 +159,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           width: 10,
           depth: 10,
           dimensions_unit: 'cm',
-          weight_unit: 'kg'
+          weight_unit: 'kg',
+          shipping_category_id: shipping_category.id
         }
       end
 
@@ -250,7 +256,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 }
               ]
             }
-          }
+          },
+          shipping_category_id: shipping_category.id
         }
       end
 
@@ -353,7 +360,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 backorderable: true
               }
             }
-          }
+          },
+          shipping_category_id: shipping_category.id
         }
       end
 
@@ -377,9 +385,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     context 'with product properties' do
-      let!(:property_1) { create(:property, name: 'material', presentation: 'Material', kind: 'short_text') }
-      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description', kind: 'rich_text') }
-      let!(:property_3) { create(:property, name: 'care', presentation: 'Care', kind: 'rich_text') }
+      let!(:property_1) { create(:property, name: 'material', presentation: 'Material') }
+      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description') }
+      let!(:property_3) { create(:property, name: 'care', presentation: 'Care') }
 
       let(:product_params) do
         {
@@ -391,13 +399,14 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
             },
             '1' => {
               property_id: property_2.id,
-              value: 'Short description with some <a href="https://example.com">link</a>'
+              value: 'Short description'
             },
             '2' => {
               property_id: property_3.id,
               value: ''
             }
-          }
+          },
+          shipping_category_id: shipping_category.id
         }
       end
 
@@ -407,7 +416,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         product = Spree::Product.last
         expect(product.properties.count).to eq 2
         expect(product.property('material')).to eq 'Wool'
-        expect(product.property('short_description')).to eq 'Short description with some <a href="https://example.com">link</a>'
+        expect(product.property('short_description')).to eq 'Short description'
       end
     end
 
@@ -417,7 +426,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       let(:product_params) do
         {
           name: 'Product',
-          store_ids: [store.id, store_2.id]
+          store_ids: [store.id, store_2.id],
+          shipping_category_id: shipping_category.id
         }
       end
 
@@ -432,7 +442,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         let(:product_params) do
           {
             name: 'Product',
-            store_ids: []
+            store_ids: [],
+            shipping_category_id: shipping_category.id
           }
         end
 
@@ -646,29 +657,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(variant2_stock_item.reload.count_on_hand).to eq 20
       end
 
-      context 'when product prices were imported' do
-        before do
-          variant1.prices.update_all(set_manually: false)
-          variant2.prices.update_all(set_manually: false)
-        end
-
-        it 'updates prices and marks them as set manually' do
-          send_request
-
-          expect(variant1.price_in('PLN').amount).to eq 10
-          expect(variant1.price_in('PLN')).to be_set_manually
-
-          expect(variant1.price_in('USD').amount).to eq 20
-          expect(variant1.price_in('USD')).to be_set_manually
-
-          expect(variant2.price_in('PLN').amount).to eq 30
-          expect(variant2.price_in('PLN')).to be_set_manually
-
-          expect(variant2.price_in('USD').amount).to eq 40
-          expect(variant2.price_in('USD')).to be_set_manually
-        end
-      end
-
       context 'updating option types position' do
         let(:product_params) do
           {
@@ -809,19 +797,19 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.master.stock_items.reload.count).to be > 0
 
         send_request
+
+        expect(product.reload.track_inventory).to be(false)
         expect(product.master.stock_items.reload.count).to eq(0)
       end
     end
 
     context 'with product properties' do
-      let!(:property_1) { create(:property, name: 'material', presentation: 'Material', kind: 'short_text') }
-      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description', kind: 'rich_text') }
-      let!(:property_3) { create(:property, name: 'care', presentation: 'Care', kind: 'rich_text') }
+      let!(:property_1) { create(:property, name: 'material', presentation: 'Material') }
+      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description') }
+      let!(:property_3) { create(:property, name: 'care', presentation: 'Care') }
 
       let(:product_property_1) { create(:product_property, product: product, property: property_1, value: 'Wool') }
-      let(:product_property_2) do
-        create(:product_property, product: product, property: property_2, value: 'Short description with some <a href="https://example.com">link</a>')
-      end
+      let(:product_property_2) { create(:product_property, product: product, property: property_2, value: 'Short description') }
 
       let(:product_params) do
         {

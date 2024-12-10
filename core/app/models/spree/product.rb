@@ -208,13 +208,45 @@ module Spree
         return none if query.blank?
         return none if query.length < 3
 
-        Spree::Variant.search_by_product_name_or_sku(query)
+        product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
+        where(id: product_ids.uniq.compact)
       }
     end
 
+    scope :archivable, -> { where(status: %w[active draft]) }
+    scope :by_source, ->(source) { send(source) }
+    scope :paused, -> { where(status: 'paused') }
+    scope :published, -> { where(status: 'active') }
+    scope :in_stock_items, -> { joins(:variants).merge(Spree::Variant.in_stock_or_backorderable) }
+    scope :out_of_stock_items, lambda {
+      joins(variants_including_master: :stock_items).
+        where(spree_variants: { track_inventory: true }).
+        where.not(id: Spree::Variant.where(track_inventory: false).pluck(:product_id).uniq).
+        where(spree_stock_items: { backorderable: false }).
+        group(:id).
+        having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
+    }
+    scope :out_of_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
+    scope :single_variant, lambda {
+      where(variants_count: 0)
+    }
+
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_id].blank? || (pp[:id].blank? && pp[:value].blank?) }
+    accepts_nested_attributes_for(
+      :variants,
+      allow_destroy: true,
+      reject_if: lambda do |v|
+        v[:option_value_variants_attributes].blank? && v[:stock_items_attributes].blank? && v[:prices_attributes].blank?
+      end
+    )
+    accepts_nested_attributes_for :master, reject_if: :all_blank
+    accepts_nested_attributes_for(
+      :product_option_types,
+      allow_destroy: true,
+      reject_if: ->(pot) { pot[:option_type_id].blank? || pot[:position].blank? }
+    )
 
     alias options product_option_types
 
