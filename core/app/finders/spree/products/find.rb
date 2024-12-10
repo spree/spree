@@ -184,6 +184,14 @@ module Spree
         properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
           next if property_filter_param.blank? || product_properties_values.empty?
 
+          if product_properties_values =~ /^\(.*\)$/
+            from, to = product_properties_values.tr('()', '').split(',')
+            ids = scope.unscope(:order, :includes).with_property_range(property_filter_param, from&.to_f, to&.to_f).ids
+            product_ids = index == 0 ? ids : product_ids & ids
+            index += 1
+            next
+          end
+
           values = product_properties_values.split(',').reject(&:empty?).uniq.map(&:parameterize)
 
           next if values.empty?
@@ -192,7 +200,6 @@ module Spree
           product_ids = index == 0 ? ids : product_ids & ids
           index += 1
         end
-
         products.where(id: product_ids)
       end
 
