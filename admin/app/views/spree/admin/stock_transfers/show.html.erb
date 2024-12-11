@@ -1,0 +1,58 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_stock_transfers_path %>
+  <%= @stock_transfer.number %>
+<% end %>
+<% content_for :title do %>
+  <%= @stock_transfer.number %>
+<% end %>
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title">
+          <%= Spree.t(:products) %>
+        </h5>
+      </div>
+      <div class="card-body p-0" style="min-height: 300px">
+        <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+          <div class="table-responsive rounded bg-white">
+            <table class="table sortable">
+              <thead>
+                <tr>
+                  <th><%= Spree.t(:variant) %></th>
+                  <th><%= Spree.t(:quantity) %></th>
+                  <th><%= Spree.t(:count_on_hand) %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render collection: @stock_transfer.destination_movements.includes(stock_item: :variant), partial: 'spree/admin/stock_transfers/stock_movement', cached: spree_base_cache_scope %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title">
+          <%= Spree.t(:details) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <%= Spree.t(:origin) %> <span><%= @stock_transfer.source_location&.display_name.presence || Spree.t(:none) %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <%= Spree.t(:destination) %> <span><%= @stock_transfer.destination_location.display_name %></span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <%= Spree.t(:reference) %> <span><%= @stock_transfer.reference %></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

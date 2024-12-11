@@ -1,0 +1,33 @@
+<div >
+  <%= search_form_for [:admin, @search] do |f| %>
+    <div  class="row">
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :number_cont, Spree.t(:number) %>
+          <%= f.text_field :number_cont, include_blank: true, size: 15, class: 'form-control js-quick-search-target js-filterable' %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :reference_cont, Spree.t(:reference) %>
+          <%= f.text_field :reference_cont, include_blank: true, size: 15, class: 'form-control js-filterable' %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :source_location_id_eq, Spree.t(:source) %>
+          <%= f.select :source_location_id_eq, available_stock_locations_list, { include_blank: true }, class: 'custom-select js-filterable' %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :destination_location_id_eq, Spree.t(:destination) %>
+          <%= f.select :destination_location_id_eq, available_stock_locations_list, { include_blank: true }, class: 'custom-select js-filterable' %>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <%= button Spree.t(:search), 'search' %>
+    </div>
+  <% end %>
+</div>

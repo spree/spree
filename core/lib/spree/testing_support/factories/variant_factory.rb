@@ -15,14 +15,22 @@ FactoryBot.define do
     product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
     option_values { [create(:option_value)] }
 
+    transient do
+      create_stock { true }
+    end
+
     # ensure stock item will be created for this variant
-    before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
+    before(:create) do |variant, evaluator|
+      create(:stock_location) if evaluator.create_stock && !Spree::StockLocation.any?
+    end
 
-    after(:create) do |variant|
-      Spree::StockLocation.all.each do |stock_location|
-        next if stock_location.stock_item(variant).present?
+    after(:create) do |variant, evaluator|
+      if evaluator.create_stock
+        Spree::StockLocation.all.each do |stock_location|
+          next if stock_location.stock_item(variant).present?
 
-        stock_location.propagate_variant(variant)
+          stock_location.propagate_variant(variant)
+        end
       end
     end
 
