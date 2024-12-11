@@ -1,0 +1,42 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:stock_transfers) %>
+<% end %>
+<% content_for :page_tabs do %>
+  <%= render 'spree/admin/shared/stock_nav' %>
+<% end %>
+<% if false %>
+  <% content_for :table_filter do %>
+    <%= render 'filters' %>
+  <% end %>
+<% end %>
+<% content_for :page_actions do %>
+  <%= link_to Spree.t(:new_stock_transfer), spree.new_admin_stock_transfer_path, class: "btn btn-primary" if can?(:create, Spree::StockTransfer.new) %>
+<% end %>
+<% content_for :table_filter do %>
+  <%= render 'filters' %>
+<% end %>
+<% if @stock_transfers.any? %>
+  <div class="table-responsive">
+    <table class="table" id="listing_products">
+      <thead class="text-muted">
+        <tr>
+          <th scope="col"><%= Spree.t(:number) %></th>
+          <th scope="col"><%= Spree.t(:reference) %></th>
+          <th scope="col"><%= Spree.t(:source) %></th>
+          <th scope="col"><%= Spree.t(:destination) %></th>
+          <th scope="col"><%= Spree.t(:variants_count) %></th>
+          <th scope="col"><%= Spree.t(:created_at) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'stock_transfer', collection: @stock_transfers %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+    <%= Spree.t(:no_resource_found, resource: Spree.t(:stock_transfers)) %>
+  </div>
+<% end %>
+<%= render 'spree/admin/shared/index_table_options', collection: @stock_transfers, simple: true if @stock_transfers.any? %>

@@ -1,0 +1,30 @@
+<div class="modal fade" id="stock_transfer_modal" tabindex="-1" aria-labelledby="stock_transfer_modal_label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" data-controller="search-picker">
+      <div class="modal-header">
+        <h5 class="modal-title" id="stock_transfer_modal_label"><%= Spree.t(:add_variant) %></h5>
+        <button type="button" class="btn-close" data-action="search-picker#closeAndClear" data-dismiss="modal" aria-label="Close" />
+      </div>
+      <div class="modal-body border-bottom pb-3">
+        <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
+          <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+          <%= form.hidden_field :param_name, value: 'stock_transfer' %>
+          <%= form.hidden_field :all, value: true %>
+          <%= form.hidden_field :eligible, value: true %>
+          <%= form.hidden_field :omit_ids, value: params[:variants]&.keys&.join(','), data: { stock_transfer_target: :newVariantOmitIds } %>
+          <%= form.hidden_field :stock_location_id, value: params.dig(:stock_transfer, :source_location_id), data: {stock_transfer_target: :newVariantStockLocationId} %>
+        <% end %>
+      </div>
+      <div class="modal-body p-0" style="min-height: 200px">
+        <div id="variants_search_results" data-search-picker-target="results" class="overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+          <p class="text-muted text-center pb-3 pt-5">
+            <%= Spree.t(:start_typing_to_search_for_variants) %>
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer border-top d-flex justify-content-between">
+        <%= button_tag Spree.t(:add_selected_variant), class: "btn btn-primary text-center", disabled: true, data: { search_picker_target: :submit, action: 'stock-transfer#add search-picker#closeAndClear', dismiss: 'modal' } %>
+      </div>
+    </div>
+  </div>
+</div>

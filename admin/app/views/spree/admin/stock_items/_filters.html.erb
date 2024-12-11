@@ -1,0 +1,27 @@
+<div data-hook="admin_stock_items">
+  <%= search_form_for [:admin, @search] do |f| %>
+    <div data-hook="admin_stock_items_index_search" class="row">
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :variant_product_name_cont, Spree.t(:product_name) %>
+          <%= f.text_field :variant_product_name_cont, include_blank: true, size: 15, class: 'form-control js-quick-search-target js-filterable' %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :variant_sku_cont, Spree.t(:sku) %>
+          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control js-filterable" %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :stock_location_id_eq, Spree.t(:stock_location) %>
+          <%= f.select :stock_location_id_eq, available_stock_locations_list, { include_blank: true }, class: 'custom-select js-filterable' %>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <%= button Spree.t(:search), 'search' %>
+    </div>
+  <% end %>
+</div>

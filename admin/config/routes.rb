@@ -64,6 +64,10 @@ Spree::Core::Engine.add_routes do
       resources :digitals, only: [:index, :create, :destroy]
     end
 
+    # stock
+    resources :stock_items, only: [:index, :update, :destroy]
+    resources :stock_transfers, except: [:edit, :update]
+
     # taxonomies and taxons
     resources :taxonomies do
       resources :taxons do
