@@ -67,6 +67,8 @@ module Spree
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
+    after_update_commit :handle_track_inventory_change
+
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
@@ -528,6 +530,13 @@ module Spree
 
     def clear_line_items_cache
       line_items.update_all(updated_at: Time.current)
+    end
+
+    def handle_track_inventory_change
+      return unless track_inventory_previously_changed?
+      return if track_inventory
+
+      stock_items.delete_all
     end
   end
 end

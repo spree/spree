@@ -64,7 +64,7 @@ module Spree
       end
 
       def variants_to_remove
-        @variants_to_remove ||= product.variant_ids
+        @variants_to_remove ||= product.variant_ids.map(&:to_s)
       end
 
       def can_update_prices?

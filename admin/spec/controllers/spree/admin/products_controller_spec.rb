@@ -582,6 +582,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       let(:variant1) { create(:variant, product: product, option_values: [red_option_value, small_option_value], price: 100) }
       let(:variant2) { create(:variant, product: product, option_values: [blue_option_value, large_option_value], price: 100) }
 
+      let!(:variant1_price_pln) { create(:price, variant: variant1, currency: 'PLN', amount: 100) }
+      let!(:variant2_price_pln) { create(:price, variant: variant2, currency: 'PLN', amount: 200) }
+
       let(:variant1_stock_item) { variant1.stock_items.first }
       let(:variant2_stock_item) { variant2.stock_items.first }
 
@@ -786,7 +789,21 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     context 'setting track_inventory to false' do
-      let(:product_params) { { track_inventory: false } }
+      let(:product_params) do
+        {
+          track_inventory: '0',
+          master_attributes: {
+            id: product.master.id,
+            stock_items_attributes: {
+              '0' => {
+                id: product.master.stock_items.first.id,
+                stock_location_id: product.master.stock_items.first.stock_location_id,
+                count_on_hand: 100
+              }
+            }
+          }
+        }
+      end
 
       before do
         product.update(track_inventory: true)
