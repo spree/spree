@@ -46,7 +46,7 @@ module Spree
       with_uniq_values_cache_key(product_properties_scope) do
         properties = product_properties
         properties = properties.where(id: product_properties_scope) if product_properties_scope.present?
-        properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
+        properties.where.not(value: [nil, '']).reorder(nil).distinct.pluck(:filter_param, :value).sort_by(&:last)
       end
     end
 
