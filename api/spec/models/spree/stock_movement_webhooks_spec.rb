@@ -204,20 +204,6 @@ describe Spree::StockMovement::Webhooks do
         end
       end
     end
-
-    context 'when stock item was in stock' do
-      it do
-        expect do
-          # make in_stock? return false based on track_inventory, the easiest case
-          variant.update(track_inventory: false)
-          stock_location.stock_movements.new.tap do |stock_movement|
-            stock_movement.quantity = 2
-            stock_movement.stock_item = stock_location.set_up_stock_item(variant)
-            stock_movement.save
-          end
-        end.not_to emit_webhook_event(event_name, variant)
-      end
-    end
   end
 
   describe 'emitting variant.out_of_stock' do

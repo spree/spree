@@ -103,8 +103,8 @@ describe Spree::Product, type: :model do
         end
 
         it 'saves the master' do
-          expect(product.master).to receive(:save!)
           product.save
+          expect(product.master.reload.sku).to eq('Something changed')
         end
       end
 
@@ -933,7 +933,7 @@ describe Spree::Product, type: :model do
         context 'when all non-master variant stock items have track_inventory = false' do
           before { variant.update(track_inventory: false) }
 
-          it { expect(subject).to eq(true) }
+          it { expect(subject).to be(true) }
         end
 
         context 'when all non-master variant stock items have track_inventory = true' do
