@@ -65,6 +65,8 @@ module Spree
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :store_credit_events, through: :store_credits, class_name: 'Spree::StoreCreditEvent'
 
+    has_many :channels, class_name: 'Spree::StoreChannel'
+
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
     has_many :taxons, through: :taxonomies, class_name: 'Spree::Taxon'
 
