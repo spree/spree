@@ -1,0 +1,7 @@
+<%= render 'spree/admin/shared/close_bulk_modal' %>
+
+<% @bulk_collection.each do |product| %>
+  <%= turbo_stream.replace dom_id(product, :status) do %>
+    <%= render 'spree/admin/products/product_status', product: product %>
+  <% end %>
+<% end %>

@@ -1,0 +1,10 @@
+<div class="d-flex cursor-pointer mb-2 hover-light p-2 px-3 align-items-center search-picker__option" data-action="click->search-picker#toggle">
+  <div class="custom-control custom-checkbox ml-1 mr-3">
+    <%= check_box_tag "product_ids[]", product.id, false, class: "custom-control-input", id: "ids_#{product.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" } %>
+    <label class="custom-control-label" for="ids_<%= product.id %>"><span></span></label>
+  </div>
+  <%= render 'spree/admin/shared/product_image', object: product %>
+  <div class="ml-3">
+    <%= highlight(product.name, params.dig(:q)) %>
+  </div>
+</div>

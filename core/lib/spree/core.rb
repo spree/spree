@@ -92,7 +92,8 @@ module Spree
       variants: :default,
       taxons: :default,
       stock_location_stock_items: :default,
-      coupon_codes: :default
+      coupon_codes: :default,
+      webhooks: :default
     )
   end
 

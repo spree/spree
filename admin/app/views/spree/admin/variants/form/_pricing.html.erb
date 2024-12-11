@@ -1,0 +1,47 @@
+<div class="card mb-4" data-product-form-target="pricesForm">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <%= Spree.t(:pricing) %>
+    </h5>
+  </div>
+  <div class="card-body p-0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:currency) %></th>
+          <th>
+            <%= Spree.t(:amount) %>
+          </th>
+          <th>
+            <%= Spree.t(:compare_at_amount) %>
+            <%= help_bubble(Spree.t(:compare_at_price_description)) %>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :prices do |price_form| %>
+          <%= price_form.hidden_field :id if price_form.object.persisted? %>
+          <%= price_form.hidden_field :currency %>
+          <tr>
+            <td><%= price_form.object.currency %></td>
+            <td>
+              <div class="form-control align-items-center py-0 focus-shadow-blue focus-border-blue mr-2 price-input-container d-flex">
+                <%= price_form.text_field :amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object) %>
+                <span><%= currency_symbol(price_form.object.currency) %></span>
+              </div>
+            </td>
+            <td>
+              <div class="form-control align-items-center py-0 focus-shadow-blue focus-border-blue mr-2 price-input-container d-flex">
+                <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object) %>
+                <span><%= currency_symbol(price_form.object.currency) %></span>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <div class="card-footer text-center bg-gray-25 text-muted">
+      <%= Spree.t('admin.variants.currencies_link', link: spree.edit_admin_store_path(current_store)).html_safe %>
+    </div>
+  </div>
+</div>

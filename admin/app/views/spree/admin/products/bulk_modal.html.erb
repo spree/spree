@@ -1,0 +1,23 @@
+<%= turbo_frame_tag :bulk_modal do %>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">
+        <%= @title %>
+      </h5>
+      <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+    </div>
+    <div class="modal-body">
+      <p><%= @body %></p>
+
+      <% if params[:kind] == 'add_to_taxons' || params[:kind] == 'remove_from_taxons' %>
+        <%= tom_select_tag 'taxon_ids', multiple: true, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json), required: true %>
+      <% elsif params[:kind] == 'add_tags' || params[:kind] == 'remove_tags' %>
+        <%= tom_select_tag 'tags', multiple: true, class: 'w-100', options: tags_json_array, required: true, value_field: :name, create: params[:kind] == 'add_tags' %>
+      <% end %>
+    </div>
+    <div class="modal-footer d-flex justify-content-between">
+      <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+      <%= turbo_save_button_tag %>
+    </div>
+  </div>
+<% end %>

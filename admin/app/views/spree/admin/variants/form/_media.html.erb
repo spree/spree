@@ -1,0 +1,29 @@
+<%= turbo_frame_tag 'media-form', class: 'card mb-4', data: { controller: 'media-form', media_form_delete_url_value: spree.bulk_destroy_admin_assets_path(viewable_id: viewable&.id) } do %>
+  <div class="card-header">
+    <h5 class="card-title mr-2" style="line-height: 28px"><%= Spree.t(:media) %></h5>
+    <button type="button" data-media-form-target="deleteButton" class="btn btn-sm btn-danger btn-outline d-none ml-auto" data-action="media-form#deleteSelected">
+      <%= icon('trash') %>
+      <%= Spree.t(:delete_selected) %>
+    </button>
+  </div>
+  <div class="card-body">
+    <div class="media-form" id="media-assets-list"
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="asset"
+          data-sortable-response-kind-value="json">
+      <%= render partial: 'spree/admin/variants/form/media_asset', collection: media_form_assets(viewable), as: :asset, cached: spree_base_cache_scope %>
+      <%= button_tag class: 'text-muted border border-dashed bg-gray-25 rounded-lg media-form__add-button font-size-lg', data: {
+          controller: 'asset-uploader',
+          asset_uploader_multiple_value: true,
+          asset_uploader_viewable_id_value: viewable&.id,
+          asset_uploader_viewable_type_value: 'Spree::Variant',
+          asset_uploader_allowed_file_types_value: Rails.application.config.active_storage.web_image_content_types,
+          action: 'asset-uploader#open',
+          media_form_target: 'addButton'
+        }  do %>
+        <%= icon('circle-plus') %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

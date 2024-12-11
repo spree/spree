@@ -67,10 +67,12 @@ module Spree
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
+    after_update_commit :handle_track_inventory_change
+
     after_touch :clear_in_stock_cache
 
-    scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
-    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
+    scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
@@ -111,6 +113,34 @@ module Spree
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
     }
 
+    if defined?(PgSearch)
+      include PgSearch::Model
+
+      pg_search_scope :search_by_sku, against: :sku, using: { tsearch: { prefix: true } }
+
+      pg_search_scope :search_by_sku_or_options,
+                      against: :sku,
+                      using: { tsearch: { prefix: true } },
+                      associated_against: { option_values: %i[presentation] }
+
+      pg_search_scope :search_by_name_sku_or_options, against: :sku, associated_against: {
+        product: %i[name],
+        option_values: %i[presentation]
+      }, using: { tsearch: { prefix: true } }
+
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        search_by_name_sku_or_options(query)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        product_name_or_sku_cont(query)
+      }
+    end
+
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -119,6 +149,24 @@ module Spree
         self[m] = Spree::LocalizedNumber.parse(argument) if argument.present?
       end
     end
+
+    accepts_nested_attributes_for(
+      :stock_items,
+      reject_if: ->(attributes) { attributes['stock_location_id'].blank? || attributes['count_on_hand'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :prices,
+      reject_if: ->(attributes) { attributes['currency'].blank? || attributes['amount'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :option_value_variants,
+      reject_if: ->(attributes) { attributes['option_value_id'].blank? },
+      allow_destroy: false
+    )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
@@ -142,6 +190,14 @@ module Spree
 
     def self.search_by_product_name_or_sku(query)
       product_name_or_sku_cont(query)
+    end
+
+    def human_name
+      @human_name ||= option_values.
+                      joins(option_type: :product_option_types).
+                      merge(product.product_option_types).
+                      reorder('spree_product_option_types.position').
+                      pluck(:presentation).join('/')
     end
 
     def available?
@@ -474,6 +530,13 @@ module Spree
 
     def clear_line_items_cache
       line_items.update_all(updated_at: Time.current)
+    end
+
+    def handle_track_inventory_change
+      return unless track_inventory_previously_changed?
+      return if track_inventory
+
+      stock_items.delete_all
     end
   end
 end

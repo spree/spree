@@ -1,0 +1,9 @@
+<div id="products_search_results" class="overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+  <% if products.any? %>
+    <%= render collection: products, partial: 'spree/admin/products/search_result', as: :product, cached: spree_base_cache_scope %>
+  <% else %>
+    <p class="text-muted text-center pb-3 pt-5">
+      <%= Spree.t('admin.products.search_results.no_products') %>
+    </p>
+  <% end %>
+</div>

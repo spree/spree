@@ -1,0 +1,33 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:categorization) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
+
+      <% if can? :modify, Spree::Classification %>
+        <%= tom_select_tag 'product[taxon_ids]',
+          multiple: true,
+          active_option: @product.taxon_ids,
+          url: spree.admin_taxons_select_options_path(format: :json),
+          class: 'w-100' %>
+      <% elsif @product.taxons.any? %>
+        <ul class="text_list">
+          <% @product.taxons.manual.pluck(:name).each do |taxon_name| %>
+            <li><%= taxon_name %></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :taxons) %></div>
+      <% end %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :tag_list, Spree.t(:tags) %>
+      <%= tom_select_tag 'product[tag_list]', multiple: true, class: 'w-100', options: tags_json_array, active_option: @product.tag_list, value_field: :name, create: true %>
+    </div>
+  </div>
+</div>

@@ -8,8 +8,6 @@ module Spree
       module ClassMethods
         attr_accessor :callbacks
 
-        protected
-
         def new_action
           custom_callback(:new_action)
         end

@@ -108,6 +108,32 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe 'after_update_commit :handle_track_inventory_change' do
+    let!(:product) { create(:product, stores: [store]) }
+
+    context 'when not tracking inventory' do
+      subject { variant.update!(track_inventory: false) }
+
+      let!(:variant) { create(:variant, product: product, track_inventory: true) }
+      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+
+      it 'deletes stock items' do
+        expect { subject }.to change(variant.stock_items, :count).from(2).to(0)
+      end
+    end
+
+    context 'when tracking inventory' do
+      subject { variant.update!(track_inventory: true) }
+
+      let!(:variant) { create(:variant, product: product, track_inventory: false) }
+      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+
+      it 'keeps stock items' do
+        expect { subject }.to_not change(variant.stock_items, :count)
+      end
+    end
+  end
+
   describe 'scope' do
     describe '.eligible' do
       context 'when only master variants' do
