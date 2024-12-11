@@ -388,6 +388,10 @@ module Spree
       @tax_category ||= super || TaxCategory.default
     end
 
+    def tax_category_id
+      super || tax_category.try(:id)
+    end
+
     # Adding properties and option types on creation based on a chosen prototype
     attr_accessor :prototype_id
 
