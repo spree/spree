@@ -806,12 +806,15 @@
                       {
                           "group": "Manage Products",
                           "pages": [
-                                 "user/products/search-products",
-                                 "user/products/bulk-product-operations",
-                                 "user/products/import-products",
-                                 "user/products/export-products",   
-                                 "user/products/stock-levels",   
-                                 "user/products/stock-transfers"  
+                                 "user/manage-products/search-products",
+                                 "user/manage-products/bulk-product-operations",
+                                 "user/manage-products/import-products",
+                                 "user/manage-products/export-products",   
+                                 "user/manage-products/stock-levels",   
+                                 "user/manage-products/stock-transfers", 
+                                 "user/manage-products/product-taxonomies",   
+                                 "user/manage-products/product-options",   
+                                 "user/manage-products/product-properties"  
                           ]
                       }
       ]
