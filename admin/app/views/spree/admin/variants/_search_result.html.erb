@@ -1,0 +1,35 @@
+<div class="d-flex mb-2 hover-light p-2 px-3 align-items-center search-picker__option <% if variant.purchasable? || params[:all] %>cursor-pointer<% else %>opacity-50 disabled<% end %>" data-action="click->search-picker#toggle">
+  <div class="custom-control custom-radio ml-1 mr-3">
+    <%= radio_button_tag "#{params[:param_name]}[variant_id]", variant.id, false, class: "custom-control-input", id: "ids_#{variant.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" }, disabled: !params[:all] && !variant.purchasable? %>
+    <label class="custom-control-label" for="ids_<%= variant.id %>"><span></span></label>
+  </div>
+  <div class="variant-image">
+    <%= render 'spree/admin/shared/product_image', object: variant %>
+  </div>
+  <div class="ml-3 d-flex gap-2 align-items-center w-100" style="pointer-events: none">
+    <div class="flex-grow-1 variant-info">
+      <span class="variant-name">
+        <%= highlight(variant.product.name, params.dig(:q)) %>
+      </span>
+      <% if variant.sku.present? %>
+        <div class="text-muted"><strong><%= Spree.t(:sku) %>: </strong><%= variant.sku %></div>
+      <% end %>
+      <% unless variant.is_master? %>
+        <div class="text-muted">(<%= variant.options_text %>)</div>
+      <% end %>
+    </div>
+    <% if params[:stock_location_id].present? %>
+      <% stock_item = variant.stock_items.find { |si| si.stock_location_id == params[:stock_location_id] } %>
+      <div class="flex-shrink-0 d-flex flex-col" style="flex-basis: 30%">
+        <span><%= stock_item&.count_on_hand || 0 %> at location</span>
+        <% if stock_item&.backorderable? %> <span class="text-muted"><%= Spree.t(:backorderable) %></span><% end %>
+      </div>
+    <% else %>
+      <div class="flex-shrink-0 d-flex flex-col" style="flex-basis: 30%">
+        <span><%= variant.total_on_hand %> in stock</span>
+        <% if variant.backorderable? %> <span class="text-muted"><%= Spree.t(:backorderable) %></span><% end %>
+      </div>
+    <% end %>
+    <span class="flex-shrink-0" style="flex-basis: 15%"><%= variant.price_in('USD')&.display_amount %></span>
+  </div>
+</div>

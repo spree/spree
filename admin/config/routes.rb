@@ -20,6 +20,12 @@ Spree::Core::Engine.add_routes do
     resource :profile, controller: 'profile', only: %i[edit update]
 
     # store settings
+    resource :store, only: [:edit, :update], controller: 'stores' do
+      member do
+        get :edit_emails
+      end
+    end
+
     resources :payment_methods, except: :show
     resources :shipping_methods, except: :show
     resources :shipping_categories, except: :show
@@ -82,6 +88,10 @@ Spree::Core::Engine.add_routes do
     end
 
     get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
+
+    # variants
+    post 'variants/search'
+    get 'variants/search', defaults: { format: :json }
 
     # errors
     get '/forbidden', to: 'errors#forbidden', as: :forbidden

@@ -357,3 +357,6 @@ en:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
       variants:
         currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        search_results:
+          no_variants: We couldn't find any variants matching your search :(
