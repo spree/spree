@@ -240,6 +240,10 @@ module Spree
       self.class.where.not(id: id).any?
     end
 
+    def metric_unit_system?
+      unit_system == 'metric'
+    end
+
     private
 
     def countries_available_for_checkout_cache_key

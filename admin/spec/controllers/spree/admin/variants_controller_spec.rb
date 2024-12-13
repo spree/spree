@@ -2,11 +2,93 @@ require 'spec_helper'
 
 RSpec.describe Spree::Admin::VariantsController, type: :controller do
   stub_authorization!
+  render_views
 
   let(:store) { Spree::Store.default }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product, name: 'Shoes', stores: [store]) }
   let!(:variant) { create(:variant, product: product) }
   let(:tax_category) { create(:tax_category) }
+
+  describe 'POST #search' do
+    subject(:search) { get :search, params: params, format: :turbo_stream }
+
+    let(:params) { { q: q } }
+
+    context 'when query is blank' do
+      let(:q) { '' }
+
+      it 'returns an empty response' do
+        search
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is less than 3 characters' do
+      let(:q) { 'sh' }
+
+      it 'returns an empty response' do
+        search
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to be_blank
+      end
+    end
+
+    context 'when query is valid' do
+      let(:q) { 'shoe' }
+
+      let!(:variant_2) { create(:variant, product: product) }
+      let!(:variant_3) { create(:variant, product: product) }
+
+      let!(:product_2) { create(:product, name: 'Shirt', stores: [store]) }
+      let!(:variant_4) { create(:variant, product: product_2) }
+
+      it 'responds with searched variants' do
+        search
+
+        expect(response).to have_http_status(:ok)
+        expect(response).to render_template(partial: 'spree/admin/variants/_search_results')
+        expect(assigns(:variants)).to match_array([variant, variant_2, variant_3])
+      end
+
+      context 'when omit_ids parameter is present' do
+        let(:params) { { q: q, omit_ids: "#{variant.id},#{variant_2.id}" } }
+
+        it 'excludes the variants with the given ids' do
+          search
+
+          expect(response).to have_http_status(:ok)
+          expect(response).to render_template(partial: 'spree/admin/variants/_search_results')
+          expect(assigns(:variants)).to match_array([variant_3])
+        end
+      end
+
+      context 'when limit parameter is present' do
+        let(:params) { { q: q, limit: 2 } }
+
+        it 'limits the number of variants returned' do
+          search
+
+          expect(response).to have_http_status(:ok)
+          expect(response).to render_template(partial: 'spree/admin/variants/_search_results')
+
+          expect(assigns(:variants).size).to eq(2)
+          expect(assigns(:variants)).to eq([variant, variant_2])
+        end
+      end
+    end
+  end
+
+  describe 'GET #edit' do
+    subject(:edit) { get :edit, params: { id: variant.id, product_id: product.slug } }
+
+    it 'renders the variant edit page' do
+      edit
+      expect(response).to render_template(:edit)
+    end
+  end
 
   describe 'PUT #update' do
     let(:variant_params) do

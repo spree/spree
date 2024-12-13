@@ -1,0 +1,15 @@
+<div class="d-flex align-items-center justify-content-start">
+  <%= link_to spree.edit_admin_product_path(variant.product), data: { turbo_frame: :_top } do %>
+    <%= render 'spree/admin/shared/product_image', object: variant %>
+  <% end %>
+  <div class="ml-3">
+    <%= link_to variant.product.name, spree.edit_admin_product_path(variant.product), data: { turbo_frame: :_top } , class: 'text-dark' %>
+    <br>
+    <span class="text-muted">
+      <%= "(#{variant.options_text})" if variant.options_text.present? %>
+    </span>
+    <% if variant.sku.present? %>
+      <span class="text-muted"><strong><%= Spree.t(:sku) %>:</strong> <%= variant.sku %></span>
+    <% end %>
+  </div>
+</div>
