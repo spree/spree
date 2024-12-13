@@ -40,7 +40,7 @@
                   </div>
                   <div data-slot="optionValuesContainer">
                     <% @product.option_values.where(option_type: option_type).pluck(:presentation).uniq.each do |option_value| %>
-                      <span class="badge badge-light" data-slot="optionValueName"><%= option_value %></span>
+                      <span class="badge badge-light" data-slot="optionValueName" data-name="<%= option_value %>"><%= option_value %></span>
                     <% end %>
                   </div>
                 </div>
