@@ -44,6 +44,18 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double Spree::Address, active_merchant_hash: { ship: :address }
   end
 
+  describe '#order' do
+    subject { options.order }
+
+    it { is_expected.to eq order }
+  end
+
+  describe '#payment' do
+    subject { options.payment }
+
+    it { is_expected.to eq payment }
+  end
+
   describe '#email' do
     subject { options.email }
 
