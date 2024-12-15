@@ -30,6 +30,10 @@ module Spree
         "#{order.number}-#{payment.number}"
       end
 
+      def payment_id
+        payment.number
+      end
+
       def shipping
         order.ship_total * exchange_multiplier
       end
@@ -61,6 +65,7 @@ module Spree
           :customer_id,
           :ip,
           :order_id,
+          :payment_id,
           :shipping,
           :tax,
           :subtotal,
