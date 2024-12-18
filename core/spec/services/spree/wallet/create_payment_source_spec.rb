@@ -12,6 +12,7 @@ module Spree
     let(:params) do
       {
         gateway_payment_profile_id: '12345',
+        gateway_customer_profile_id: '67890',
         cc_type: 'visa',
         last_digits: '1111',
         name: 'John',
