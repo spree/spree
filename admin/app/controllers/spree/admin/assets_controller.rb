@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class AssetsController < ResourceController
+      include Spree::Admin::SessionAssetsHelper
+
       ALLOWED_ASSET_TYPES = ['Spree::Asset', 'Spree::Image'].freeze
 
       def create
@@ -17,12 +19,7 @@ module Spree
           @product = @asset.product || current_store.products.new
 
           # we need to store the asset ids in the session to be able to display them in the product page
-          if @product.new_record?
-            uploaded_asssets_id = session[:uploaded_asset_ids]&.split(',') || []
-            uploaded_asssets_id << @asset.id
-
-            session[:uploaded_asset_ids] = uploaded_asssets_id.join(',')
-          end
+          store_uploaded_asset_in_session(@asset) if @product.new_record?
         else
           flash.now[:error] = @asset.errors.full_messages.to_sentence
           render :create, status: :unprocessable_entity

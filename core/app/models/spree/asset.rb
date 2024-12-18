@@ -19,6 +19,9 @@ module Spree
 
     default_scope { includes(attachment_attachment: :blob) }
 
+    store_accessor :private_metadata, :session_uploaded_assets_uuid
+    scope :with_session_uploaded_assets_uuid, ->(uuid) { where("#{table_name}.private_metadata @> ?", { session_uploaded_assets_uuid: uuid }.to_json) }
+
     def product
       @product ||= viewable_type == 'Spree::Variant' ? viewable&.product : nil
     end

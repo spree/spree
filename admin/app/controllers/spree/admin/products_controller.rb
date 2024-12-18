@@ -3,6 +3,7 @@ module Spree
     class ProductsController < ResourceController
       include Spree::Admin::StockLocationsHelper
       include Spree::Admin::BulkOperationsConcern
+      include Spree::Admin::SessionAssetsHelper
 
       helper 'spree/admin/products'
       helper 'spree/admin/taxons'
@@ -12,8 +13,8 @@ module Spree
       before_action :set_product_defaults, only: :new
 
       before_action :prepare_product_params, only: [:create, :update]
-
       before_action :strip_stock_items_param, only: [:create, :update]
+      before_action :ensure_session_uploaded_assets_uuid, only: :new
 
       new_action.before :build_master_prices
       new_action.before :build_master_stock_items
@@ -346,11 +347,10 @@ module Spree
       def assign_master_images
         return unless @product.master.persisted?
 
-        assets_ids = session[:uploaded_asset_ids]&.split(',')
-        return if assets_ids.blank?
+        return if session_uploaded_assets.empty?
 
-        Spree::Asset.where(id: assets_ids, viewable_id: nil).update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
-        session.delete(:uploaded_asset_ids)
+        session_uploaded_assets.update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
+        clear_session_for_uploaded_assets
       end
 
       def product_includes
