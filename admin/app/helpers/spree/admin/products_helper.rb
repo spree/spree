@@ -32,8 +32,8 @@ module Spree
       def media_form_assets(variant)
         if variant&.persisted?
           variant.images
-        elsif session[:uploaded_asset_ids].present?
-          Spree::Image.accessible_by(current_ability, :manage).where(id: session[:uploaded_asset_ids].split(','))
+        elsif session_uploaded_assets.any?
+          Spree::Image.accessible_by(current_ability, :manage).where(id: session_uploaded_assets)
         end
       end
 
