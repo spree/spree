@@ -981,12 +981,12 @@ describe Spree::Payment, type: :model do
   context 'state changes' do
     it 'are logged to the database' do
       expect(payment.state_changes).to be_empty
-      expect(payment.process!).to be true
+      expect(payment.process!).to be_a(Spree::PaymentCaptureEvent)
       expect(payment.state_changes.count).to eq(2)
       changes = payment.state_changes.map { |change| { change.previous_state => change.next_state } }
       expect(changes).to match_array([
                                        { 'checkout' => 'processing' },
-                                       { 'processing' => 'pending' }
+                                       { 'processing' => 'completed' }
                                      ])
     end
   end
