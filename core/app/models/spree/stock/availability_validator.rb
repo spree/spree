@@ -28,7 +28,8 @@ module Spree
       private
 
       def item_available?(line_item, quantity)
-        Spree::Stock::Quantifier.new(line_item.variant).can_supply?(quantity)
+        quantifier = Spree::Stock::Quantifier.new(line_item.variant)
+        line_item.validate_only_quantity? ? quantifier.required_amount_sufficient?(quantity) : quantifier.can_supply?(quantity)
       end
     end
   end
