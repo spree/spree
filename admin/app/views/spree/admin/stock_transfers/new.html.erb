@@ -2,9 +2,13 @@
   <%= page_header_back_button spree.admin_stock_transfers_path %>
   <%= Spree.t(:new_stock_transfer) %>
 <% end %>
+
 <% content_for :title do %>
   <%= Spree.t(:new_stock_transfer) %>
 <% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @stock_transfer, only_for: %i[base source_location destination_location] } %>
+
 <div data-controller="stock-transfer">
   <%= render 'spree/admin/stock_transfers/new_variant_modal' %>
   <%= form_with model: [:admin, @stock_transfer] do |f| %>
@@ -15,11 +19,25 @@
         <div class="row">
           <div class="form-group col-12 col-lg-6">
             <%= f.label :source_location_id, Spree.t(:origin), class: 'form-label' %>
-            <%= tom_select_tag "stock_transfer[source_location_id]", empty_option: Spree.t(:none), options: stock_locations, active_option: @stock_transfer.source_location_id, select_data: {action: 'stock-transfer#updateSourceLocation'} %>
+            <%= tom_select_tag "stock_transfer[source_location_id]",
+              empty_option: Spree.t(:none),
+              options: stock_locations,
+              active_option: @stock_transfer.source_location_id,
+              select_data: {
+                stock_transfer_target: :sourceLocationId,
+                action: 'stock-transfer#updateSourceLocation'
+              } %>
           </div>
           <div class="form-group col-12 col-lg-6">
             <%= f.label :destination_location_id, Spree.t(:destination), class: 'form-label' %>
-            <%= tom_select_tag "stock_transfer[destination_location_id]", options: stock_locations, required: true, active_option: @stock_transfer.destination_location_id, select_data: {action: 'stock-transfer#updateDestinationLocation'} %>
+            <%= tom_select_tag "stock_transfer[destination_location_id]",
+              options: stock_locations,
+              required: true,
+              active_option: @stock_transfer.destination_location_id,
+              select_data: {
+                stock_transfer_target: :destinationLocationId,
+                action: 'stock-transfer#updateDestinationLocation'
+              } %>
           </div>
         </div>
         <div class="form-group">
@@ -34,9 +52,11 @@
           <%= Spree.t(:products) %>
         </h5>
         <span data-toggle="modal" data-target="#stock_transfer_modal">
-          <%= button_tag type: 'button', class: 'btn btn-light btn-sm' do %>
-            <%= icon("plus", class: "icon icon-plus") %>
-            <%= Spree.t(:add_products) %>
+          <%= button_tag type: 'button', class: 'btn btn-light btn-sm', disabled: @stock_transfer.destination_location_id.blank?, data: { stock_transfer_target: :newVariantAddButton } do %>
+            <%= content_tag(:span, class: 'with-tip', title: Spree.t('admin.stock_transfers.add_products_tip'), data: { toggle: 'tooltip', placement: 'top' }) do %>
+              <%= icon('plus', class: 'icon icon-plus') %>
+              <%= Spree.t(:add_products) %>
+            <% end %>
           <% end %>
         </span>
       </div>
@@ -51,9 +71,9 @@
               </div>
             <% end %>
             <% if smf.object.quantity < 0 %>
-              <%= render 'spree/admin/stock_transfers/source_movement_form', f: smf %>
+              <%= render 'spree/admin/stock_transfers/source_movement_form', f: smf, location_id: f.object.source_location_id %>
             <% else %>
-              <%= render 'spree/admin/stock_transfers/destination_movement_form', f: smf %>
+              <%= render 'spree/admin/stock_transfers/destination_movement_form', f: smf, location_id: f.object.destination_location_id %>
             <% end %>
           <% end %>
           <div data-stock-transfer-target="target"></div>
