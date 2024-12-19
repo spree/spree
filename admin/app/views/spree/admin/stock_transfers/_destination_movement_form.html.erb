@@ -1,8 +1,10 @@
 <% variant_id = f.object.variant&.id || 'VARIANT_ID' %>
+<% location_id ||= 'DESTINATION_ID' %>
+
 <div class="d-flex align-items-center justify-content-between nested-form-wrapper" data-new-record="true">
   <%= f.hidden_field :variant_id, value: variant_id %>
   <%= f.hidden_field :stock_item_id %>
-  <%= f.hidden_field :originator_id, data: { stock_transfer_target: "destinationInput" }, value: f.object.originator_id || 'DESTINATION_ID' %>
+  <%= f.hidden_field :location_id, data: { stock_transfer_target: "destinationInput" }, value: location_id %>
   <div class="d-flex align-items-center gap-2">
     <% if f.object.variant.present? %>
       <%= render 'spree/admin/shared/product_image', object: f.object.variant %>
@@ -12,12 +14,13 @@
     <div class="d-flex flex-column align-items-start justify-content-center">
       <% if f.object.variant.present? %>
         <%= f.object.variant.name %>
-        <span class="text-muted">
-          <%= "(#{f.object.variant.options_text})" if f.object.variant.options_text.present? %>
-        </span>
         <% if f.object.variant.sku.present? %>
           <span class="text-muted"><strong><%= Spree.t(:sku) %>:</strong> <%= f.object.variant.sku %></span>
         <% end %>
+
+        <span class="text-muted">
+          <%= "(#{f.object.variant.options_text})" if f.object.variant.options_text.present? %>
+        </span>
       <% else %>
         VARIANT_INFO
       <% end %>
