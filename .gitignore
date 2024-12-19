@@ -56,3 +56,5 @@ vendor/bundle
 */vendor/bundle
 .ignore
 TODO
+node_modules
+package-lock.json
