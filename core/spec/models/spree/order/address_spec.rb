@@ -82,5 +82,32 @@ describe Spree::Order, type: :model do
         expect(@order.bill_address_id).to eq @order.ship_address_id
       end
     end
+
+    describe '#clone_shipping_address' do
+      subject { order.clone_shipping_address }
+
+      let(:address) { create(:address, user: user) }
+      let(:user) { create(:user) }
+
+      before do
+        order.ship_address = address
+      end
+
+      context 'with a user' do
+        before do
+          order.user = user
+        end
+
+        it 'sets the billing address the same as shipping address' do
+          subject
+          expect(order.bill_address_id).to eq(order.ship_address_id)
+        end
+
+        it 'sets the cloned shipping address as user default' do
+          subject
+          expect(user.bill_address_id).to eq(order.bill_address_id)
+        end
+      end
+    end
   end
 end
