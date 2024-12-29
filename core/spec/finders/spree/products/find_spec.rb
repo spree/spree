@@ -479,6 +479,16 @@ module Spree
           it 'returns products ordered by associated taxon position' do
             expect(products).to eq [product_2, product_3, product]
           end
+
+          context 'when sort_by has SQL injection' do
+            let(:params) do
+              { store: store, sort_by: "'nvOpzp", " AND 1"=>"1 OR (<'\">iKO)),", filter: { taxons: taxonomy.root.id } }
+            end
+
+            it 'returns products ordered by associated taxon position' do
+              expect(products).to eq [product_2, product_3, product]
+            end
+          end
         end
       end
 
