@@ -79,6 +79,7 @@ module Spree
       completed_at email number state payment_state shipment_state
       total item_total considered_risky channel
     ]
+    self.whitelisted_ransackable_scopes = %w[refunded partially_refunded]
 
     attr_reader :coupon_code
     attr_accessor :temporary_address, :temporary_credit_card
@@ -113,6 +114,7 @@ module Spree
       has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
     end
     has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
+    has_many :customer_returns, class_name: 'Spree::CustomerReturn', through: :return_authorizations
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
     has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
     has_many :return_items, through: :inventory_units, class_name: 'Spree::ReturnItem'
@@ -182,7 +184,18 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
-    scope :not_canceled, -> { where.not(state: 'canceled') }
+    scope :canceled, -> { where(state: %w[canceled partially_canceled]) }
+    scope :not_canceled, -> { where.not(state: %w[canceled partially_canceled]) }
+    scope :ready_to_ship, -> { where(shipment_state: %w[ready pending]) }
+    scope :partially_shipped, -> { where(shipment_state: %w[partial]) }
+    scope :not_shipped, -> { where(shipment_state: %w[ready pending partial]) }
+    scope :shipped, -> { where(shipment_state: %w[shipped]) }
+    scope :refunded, lambda {
+      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
+    }
+    scope :partially_refunded, lambda {
+                                joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
+                              }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
