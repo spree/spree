@@ -74,6 +74,12 @@ describe Spree::UserMethods do
       it { is_expected.to eq last_incomplete_order }
     end
 
+    context 'with incomplete canceled order' do
+      let(:canceled_order) { create(:order, user: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
+
+      it { is_expected.to be_nil }
+    end
+
     context 'without an incomplete order' do
       it { is_expected.to be_nil }
     end

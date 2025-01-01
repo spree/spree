@@ -57,7 +57,7 @@ module Spree
     end
 
     def last_incomplete_spree_order(store, options = {})
-      orders.where(store: store).incomplete.
+      orders.where(store: store).incomplete.not_canceled.
         includes(options[:includes]).
         order('created_at DESC').
         first
