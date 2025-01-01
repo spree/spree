@@ -584,12 +584,14 @@ module Spree
       !payments.risky.empty?
     end
 
-    def canceled_by(user)
+    def canceled_by(user, canceled_at = nil)
+      canceled_at ||= Time.current
+
       transaction do
         cancel!
         update_columns(
           canceler_id: user.id,
-          canceled_at: Time.current
+          canceled_at: canceled_at
         )
       end
     end

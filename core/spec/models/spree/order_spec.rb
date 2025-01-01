@@ -92,14 +92,27 @@ describe Spree::Order, type: :model do
       expect(order.reload.canceler_id).to eq(admin_user.id)
     end
 
-    it 'saves canceled_at' do
-      subject
-      expect(order.reload.canceled_at).not_to be_nil
-    end
-
     it 'has canceler' do
       subject
       expect(order.reload.canceler).to eq(admin_user)
+    end
+
+    context 'when canceled_at is not given' do
+      it 'saves canceled_at to Time.current' do
+        Timecop.freeze(Time.current) do
+          subject
+          expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
+        end
+      end
+    end
+
+    context 'when canceled_at is given' do
+      it 'saves canceled_at to given time' do
+        Timecop.freeze(Time.current) do
+          order.canceled_by(admin_user, Time.current - 1.day)
+          expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
+        end
+      end
     end
   end
 
