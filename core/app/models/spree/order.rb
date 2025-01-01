@@ -20,7 +20,6 @@ module Spree
     include Spree::Order::Emails
     include Spree::Order::Webhooks
     include Spree::Core::NumberGenerator.new(prefix: 'R')
-    include Spree::Core::TokenGenerator
 
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
@@ -33,6 +32,8 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
+
+    has_secure_token :token, length: 35
 
     MEMOIZED_METHODS = %w(tax_zone)
 
@@ -147,7 +148,6 @@ module Spree
     before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
-    before_create :create_token
     before_create :link_by_email
     before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
 
@@ -760,10 +760,6 @@ module Spree
 
     def ensure_currency_presence
       self.currency ||= store.default_currency
-    end
-
-    def create_token
-      self.token ||= generate_token
     end
 
     def collect_payment_methods(store = nil)

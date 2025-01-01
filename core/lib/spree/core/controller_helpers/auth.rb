@@ -6,7 +6,6 @@ module Spree
         include Spree::Core::TokenGenerator
 
         included do
-          before_action :set_token
           if defined?(helper_method)
             helper_method :try_spree_current_user
           end
