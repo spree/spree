@@ -280,7 +280,7 @@ module Spree
     def allow_cancel?
       return false if !completed? || canceled?
 
-      shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
+      shipment_state.nil? || %w{ready backorder pending canceled}.include?(shipment_state)
     end
 
     def all_inventory_units_returned?

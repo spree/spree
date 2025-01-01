@@ -49,7 +49,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#cancel' do
+  describe '#cancel' do
     let(:order) { build(:order) }
     let!(:variant) { create(:variant) }
     let!(:inventory_units) { create_list(:inventory_unit, 2, variant: variant) }

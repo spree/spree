@@ -70,7 +70,23 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#cancel' do
+  describe '#allow_cancel?' do
+    context 'when all shipments are canceled or ready' do
+      before do
+        order.update_columns(state: 'complete', completed_at: Time.current)
+        order.shipments.delete_all
+
+        create(:shipment, order: order, state: 'canceled')
+        create(:shipment, order: order, state: 'ready')
+      end
+
+      it 'should return true' do
+        expect(order.reload.allow_cancel?).to eq true
+      end
+    end
+  end
+
+  describe '#cancel' do
     let(:order) { create(:completed_order_with_totals, store: store) }
     let!(:payment) do
       create(
@@ -91,7 +107,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#canceled_by' do
+  describe '#canceled_by' do
     subject { order.canceled_by(admin_user) }
 
     let(:admin_user) { create :admin_user }
@@ -135,7 +151,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#create' do
+  describe '#create' do
     let(:order) { Spree::Order.create }
 
     it 'assigns an order number' do
@@ -162,7 +178,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#finalize!' do
+  describe '#finalize!' do
     let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
 
     before do
@@ -349,42 +365,42 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#display_outstanding_balance' do
+  describe '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)
       expect(order.display_outstanding_balance).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_item_total' do
+  describe '#display_item_total' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:item_total).and_return(10.55)
       expect(order.display_item_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_adjustment_total' do
+  describe '#display_adjustment_total' do
     it 'returns the value as a spree money' do
       order.adjustment_total = 10.55
       expect(order.display_adjustment_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_promo_total' do
+  describe '#display_promo_total' do
     it 'returns the value as a spree money' do
       order.promo_total = 10.55
       expect(order.display_promo_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_total' do
+  describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55
       expect(order.display_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#currency' do
+  describe '#currency' do
     context 'when object currency is ABC' do
       before { order.currency = 'ABC' }
 
@@ -394,7 +410,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#confirmation_required?' do
+  describe '#confirmation_required?' do
     # Regression test for #4117
     it "is required if the state is currently 'confirm'" do
       order = Spree::Order.new
@@ -490,7 +506,7 @@ describe Spree::Order, type: :model do
   end
 
   # Regression tests for #4072
-  context '#state_changed' do
+  describe '#state_changed' do
     let(:order) { create(:order) }
 
     it 'logs state changes' do
@@ -512,7 +528,7 @@ describe Spree::Order, type: :model do
   end
 
   # Regression test for #4199
-  context '#available_payment_methods' do
+  describe '#available_payment_methods' do
     let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
@@ -565,7 +581,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#apply_free_shipping_promotions' do
+  describe '#apply_free_shipping_promotions' do
     it 'calls out to the FreeShipping promotion handler' do
       shipment = double('Shipment')
       allow(order).to receive_messages shipments: [shipment]
@@ -581,7 +597,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#products' do
+  describe '#products' do
     let(:variant1) { create(:variant) }
     let(:variant2) { create(:variant) }
     let!(:variant3) { create(:variant) }
@@ -759,7 +775,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_ship?' do
+  describe '#can_ship?' do
     let(:order) { Spree::Order.create }
 
     it "is true for order in the 'complete' state" do
@@ -788,7 +804,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_be_destroyed?' do
+  describe '#can_be_destroyed?' do
     shared_examples 'cannot be destroyed' do
       it { expect(order.can_be_destroyed?).to be false }
     end
@@ -814,7 +830,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#uneditable?' do
+  describe '#uneditable?' do
     let(:order) { create(:order) }
 
     it 'returns true when order is completed' do
@@ -842,7 +858,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#completed?' do
+  describe '#completed?' do
     it 'indicates if order is completed' do
       order.completed_at = nil
       expect(order.completed?).to be false
@@ -852,7 +868,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#allow_checkout?' do
+  describe '#allow_checkout?' do
     it 'is true if there are line_items in the order' do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(true)
       expect(order.checkout_allowed?).to be true
@@ -863,7 +879,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#amount' do
+  describe '#amount' do
     before do
       @order = create(:order, user: user)
       @order.line_items = [create(:line_item, price: 1.0, quantity: 2),
@@ -875,7 +891,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let(:shipments) { create_list(:shipment, 2) }
 
     before do
@@ -889,7 +905,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_cancel?' do
+  describe '#can_cancel?' do
     it 'is false for completed order in the canceled state' do
       order.state = 'canceled'
       order.shipment_state = 'ready'
@@ -905,7 +921,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#tax_total' do
+  describe '#tax_total' do
     it 'adds included tax and additional tax' do
       allow(order).to receive_messages(additional_tax_total: 10, included_tax_total: 20)
 
