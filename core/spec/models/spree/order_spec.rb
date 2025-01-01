@@ -15,7 +15,7 @@ describe Spree::Order, type: :model do
 
   it_behaves_like 'metadata'
 
-  describe '.scopes' do
+  describe 'Scopes' do
     let!(:user) { create(:user) }
     let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
     let!(:incompleted_order) { create(:order, user: user, completed_at: nil) }
@@ -33,6 +33,25 @@ describe Spree::Order, type: :model do
 
     describe '.not_canceled' do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
+    end
+  end
+
+  describe 'Callbacks' do
+    let(:order) { build(:order, user: user, store: store, ship_address: ship_address) }
+    let(:ship_address) { create(:address, user: user) }
+
+    describe '#clone_shipping_address' do
+      it 'clones the shipping address when use_shipping is true' do
+        order.use_shipping = true
+        order.save!
+        expect(order.ship_address).to eq(order.bill_address)
+      end
+
+      it 'does not clone the shipping address when use_shipping is false' do
+        order.use_shipping = false
+        order.save!
+        expect(order.ship_address).not_to eq(order.bill_address)
+      end
     end
   end
 

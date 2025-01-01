@@ -48,7 +48,7 @@ module Spree
     ]
 
     @@checkout_attributes = [
-      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing,
+      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, :use_shipping,
       :user_id, :bill_address_id, :ship_address_id
     ]
 
