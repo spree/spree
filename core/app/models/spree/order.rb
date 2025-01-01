@@ -733,8 +733,9 @@ module Spree
     end
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)
+    # we need to add delivery to the list for quick checkouts
     def require_email
-      true unless new_record? || ['cart', 'address'].include?(state)
+      true unless new_record? || ['cart', 'address', 'delivery'].include?(state)
     end
 
     def ensure_line_items_present
