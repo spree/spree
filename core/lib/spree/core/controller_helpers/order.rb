@@ -57,7 +57,7 @@ module Spree
           return unless try_spree_current_user && current_order
 
           orders_scope = try_spree_current_user.orders.
-                         incomplete.
+                         incomplete.not_canceled.
                          where.not(id: current_order.id).
                          where(store_id: current_store.id)
 
@@ -86,7 +86,7 @@ module Spree
           includes = options[:includes] ? order_includes : {}
 
           # Find any incomplete orders for the token
-          incomplete_orders = current_store.orders.incomplete.includes(includes)
+          incomplete_orders = current_store.orders.incomplete.not_canceled.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments

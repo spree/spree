@@ -19,6 +19,7 @@ describe Spree::Order, type: :model do
     let!(:user) { create(:user) }
     let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
     let!(:incompleted_order) { create(:order, user: user, completed_at: nil) }
+    let!(:canceled_order) { create(:order, user: user, completed_at: nil, state: 'canceled') }
 
     describe '.complete' do
       it { expect(Spree::Order.complete).to include completed_order }
@@ -28,6 +29,10 @@ describe Spree::Order, type: :model do
     describe '.incomplete' do
       it { expect(Spree::Order.incomplete).to include incompleted_order }
       it { expect(Spree::Order.incomplete).not_to include completed_order }
+    end
+
+    describe '.not_canceled' do
+      it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
   end
 
