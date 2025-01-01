@@ -146,7 +146,8 @@ module Spree
     before_validation :ensure_currency_presence
 
     before_validation :clone_billing_address, if: :use_billing?
-    attr_accessor :use_billing
+    before_validation :clone_shipping_address, if: :use_shipping?
+    attr_accessor :use_billing, :use_shipping
 
     before_create :link_by_email
     before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
@@ -758,6 +759,10 @@ module Spree
 
     def use_billing?
       use_billing.in?([true, 'true', '1'])
+    end
+
+    def use_shipping?
+      use_shipping.in?([true, 'true', '1'])
     end
 
     def ensure_currency_presence
