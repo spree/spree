@@ -4,7 +4,7 @@ module Spree
   RSpec.describe OptionValues::FindAvailable do
     let(:finder) { described_class.new }
 
-    let!(:size) { create(:option_type, :size) }
+    let!(:size) { Spree::OptionType.find_by(name: 'size') || create(:option_type, :size) }
     let!(:s_size) { create(:option_value, option_type: size, name: 's') }
     let!(:m_size) { create(:option_value, option_type: size, name: 'm') }
     let!(:xl_size) { create(:option_value, option_type: size, name: 'xl') }

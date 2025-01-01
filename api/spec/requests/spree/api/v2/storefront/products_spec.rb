@@ -301,7 +301,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       let!(:green_color) { create(:option_value, option_type: color, name: 'green') }
       let!(:white_color) { create(:option_value, option_type: color, name: 'white') }
 
-      let!(:size) { create(:option_type, :size) }
+      let!(:size) { Spree::OptionType.find_by(name: 'size') || create(:option_type, :size) }
       let!(:s_size) { create(:option_value, option_type: size, name: 's') }
       let!(:m_size) { create(:option_value, option_type: size, name: 'm') }
 
