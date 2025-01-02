@@ -246,7 +246,7 @@ module Spree
 
       def self.not_discontinued(only_not_discontinued = true)
         if only_not_discontinued != '0' && only_not_discontinued
-          not_archived.where(discontinue_on: [nil, Time.current..])
+          where(discontinue_on: [nil, Time.current..])
         else
           all
         end
