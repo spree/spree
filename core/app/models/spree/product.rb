@@ -420,7 +420,7 @@ module Spree
     # deleted products and products with status different than active
     # are not available
     def available?
-      active? && !deleted?
+      active? && !deleted? && (available_on.nil? || available_on >= Time.current)
     end
 
     def discontinue!
