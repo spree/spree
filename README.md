@@ -30,6 +30,9 @@
   <a href="https://slack.spreecommerce.org">
     <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-6.5K-blue" />
   </a>
+  <a href="https://gurubase.io/g/spree-commerce">
+    <img alt="Gurubase" src="https://img.shields.io/badge/Gurubase-Ask%20Spree%20Commerce%20Guru-006BFF" />
+  </a>
 </p>
 
 ## Getting Started
