@@ -602,11 +602,11 @@ module Spree
       canceled_at ||= Time.current
 
       transaction do
-        cancel!
         update_columns(
           canceler_id: user.id,
           canceled_at: canceled_at
         )
+        cancel!
       end
     end
 
