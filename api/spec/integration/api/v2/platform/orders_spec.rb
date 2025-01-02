@@ -183,6 +183,11 @@ describe 'Orders API', swagger: true do
         run_test!
       end
       response '422', 'cannot be canceled' do
+        before do
+          persisted_order.update!(shipment_state: :shipped)
+          persisted_order.reload
+        end
+
         run_test!
       end
       it_behaves_like 'record not found'

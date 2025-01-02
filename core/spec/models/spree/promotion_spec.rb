@@ -243,6 +243,7 @@ describe Spree::Promotion, type: :model do
     before do
       allow(action1).to receive_messages perform: true
       allow(action2).to receive_messages perform: true
+      allow(promotion).to receive(:actions).and_return([action1, action2])
 
       promotion.created_at = 2.days.ago
     end
