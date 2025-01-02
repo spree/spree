@@ -197,6 +197,12 @@ describe Spree::Product, type: :model do
         product.destroy
         expect(product).not_to be_available
       end
+
+      it 'is not available when available_on is in the future' do
+        product.available_on = 1.day.from_now
+
+        expect(product).not_to be_available
+      end
     end
 
     describe '#can_supply?' do
@@ -1136,6 +1142,97 @@ describe Spree::Product, type: :model do
       it 'returns false' do
         expect(subject).to be false
       end
+    end
+  end
+
+  describe 'scopes' do
+    describe '.not_discontinued' do
+      let(:product) { create(:product, stores: [store]) }
+      let(:discontinued_product) { create(:product, stores: [store], discontinue_on: Time.current - 1.day) }
+
+      context 'when nothing is passed as an argument' do
+        it 'returns only not discontinued products' do
+          products = Spree::Product.not_discontinued
+          expect(products).to include(product)
+          expect(products).not_to include(discontinued_product)
+        end
+      end
+
+      context 'when false is passed as an argument' do
+        it 'returns all products' do
+          products = Spree::Product.not_discontinued(false)
+
+          expect(products).to include(product,discontinued_product)
+        end
+      end
+    end
+
+    describe '.available' do
+       let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago) }
+       let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active') }
+       let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active') }
+
+       context 'when available_on is specified' do
+         let(:current_time) { Time.current }
+
+         it 'returns products available before or on the specified date' do
+           available_products = described_class.available(current_time)
+
+           expect(available_products).to include(active_product)
+           expect(available_products).not_to include(future_product)
+           expect(available_products).not_to include(discontinued_product)
+         end
+       end
+
+       context 'when available_on is not specified' do
+         it 'returns active, not discontinued products' do
+           available_products = described_class.available
+
+           expect(available_products).to include(active_product)
+           expect(available_products).to include(future_product)
+           expect(available_products).not_to include(discontinued_product)
+         end
+       end
+
+       context 'when show_products_without_price is false' do
+         before do
+           Spree::Config.show_products_without_price = false
+         end
+
+         let!(:product_without_price) { create(:product, status: 'active') }
+         let!(:product_with_price) { create(:product, status: 'active') }
+
+         before do
+           product_without_price.master.prices.delete_all
+         end
+
+         it 'only returns products with prices in the specified currency' do
+           available_products = described_class.available(nil, 'USD')
+
+           expect(available_products).to include(product_with_price)
+           expect(available_products).not_to include(product_without_price)
+         end
+       end
+
+       context 'when show_products_without_price is true' do
+         before do
+           Spree::Config.show_products_without_price = true
+         end
+
+         let!(:product_without_price) { create(:product, status: 'active') }
+         let!(:product_with_price) { create(:product, status: 'active') }
+
+         before do
+           product_without_price.master.prices.delete_all
+         end
+
+         it 'returns products regardless of price' do
+           available_products = described_class.available(nil, 'USD')
+
+           expect(available_products).to include(product_with_price)
+           expect(available_products).to include(product_without_price)
+         end
+       end
     end
   end
 end
