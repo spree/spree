@@ -246,7 +246,7 @@ module Spree
 
       def self.not_discontinued(only_not_discontinued = true)
         if only_not_discontinued != '0' && only_not_discontinued
-          not_archived
+          not_archived.where(discontinue_on: [nil, Time.current..])
         else
           all
         end
@@ -263,11 +263,11 @@ module Spree
 
       # Can't use add_search_scope for this as it needs a default argument
       def self.available(available_on = nil, currency = nil)
-        if available_on
-          scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
-        else
-          scope = where(status: 'active')
-        end
+        scope = if available_on
+                  not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+                else
+                  not_discontinued.where(status: 'active')
+                end
 
         unless Spree::Config.show_products_without_price
           currency ||= Spree::Store.default.default_currency
