@@ -2,6 +2,7 @@ module Spree
   module Admin
     class PaymentMethodsController < ResourceController
       prepend_before_action :require_payment_type, only: [:new, :create]
+      before_action :clear_empty_password_preferences, only: :update
 
       private
 
@@ -25,6 +26,16 @@ module Spree
 
       def require_payment_type
         redirect_to spree.admin_payment_methods_path unless params.dig(:payment_method, :type).present?
+      end
+
+      def clear_empty_password_preferences
+        if params[:payment_method].present?
+          password_preferences = @object.preferences_of_type(:password)
+          password_preferences.each do |preference|
+            preference_key = "preferred_#{preference}"
+            params[:payment_method].delete(preference_key) if params.dig(:payment_method, preference_key).blank?
+          end
+        end
       end
     end
   end
