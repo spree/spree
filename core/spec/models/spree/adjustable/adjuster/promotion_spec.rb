@@ -157,8 +157,8 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       promo_sequences.each do |promo_sequence|
         it 'picks the best line-item-level promo according to current eligibility' do
           # apply both promos to the order, even though only promo1 is eligible
-          line_item_promos[promo_sequence[0]].activate order: order
-          line_item_promos[promo_sequence[1]].activate order: order
+          line_item_promos[promo_sequence[0]].reload.activate order: order
+          line_item_promos[promo_sequence[1]].reload.activate order: order
 
           order.reload
           msg = "Expected one adjustment (using sequence #{promo_sequence})"

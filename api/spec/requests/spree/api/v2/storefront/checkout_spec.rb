@@ -414,7 +414,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           end
 
           before do
-            order.update_column(:state, 'delivery')
+            order.update_column(:state, 'payment')
             execute
           end
 
