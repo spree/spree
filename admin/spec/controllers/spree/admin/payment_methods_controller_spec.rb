@@ -38,10 +38,34 @@ describe Spree::Admin::PaymentMethodsController, type: :controller do
   end
 
   describe '#update' do
+    subject { put :update, params: { id: payment_method.id, payment_method: payment_method_params } }
+
     let(:payment_method) { create(:credit_card_payment_method) }
+    let(:payment_method_params) do
+      {
+        preferred_dummy_key: 'NEW_VALUE',
+        preferred_dummy_secret_key: 'NEW_SECRET_VALUE'
+      }
+    end
 
     it 'updates the payment method' do
-      expect { put :update, params: { id: payment_method.id, payment_method: { preferred_dummy_key: 'NEW_VALUE' } } }.to change { payment_method.reload.preferred_dummy_key }.to('NEW_VALUE')
+      expect { subject }.to change { payment_method.reload.preferred_dummy_key }.to('NEW_VALUE').and(
+        change { payment_method.reload.preferred_dummy_secret_key }.to('NEW_SECRET_VALUE')
+      )
+    end
+
+    context 'for empty password type preference' do
+      let(:payment_method_params) do
+        {
+          preferred_dummy_key: 'NEW_VALUE',
+          preferred_dummy_secret_key: ''
+        }
+      end
+
+      it 'updates the payment method' do
+        expect { subject }.to change { payment_method.reload.preferred_dummy_key }.to('NEW_VALUE')
+        expect(payment_method.preferred_dummy_secret_key).to eq('SECRETKEY123')
+      end
     end
   end
 end

@@ -95,6 +95,10 @@ module Spree::Preferences::Preferable
     ]
   end
 
+  def preferences_of_type(type)
+    defined_preferences.find_all { |preference| preference_type(preference) == type.to_sym }
+  end
+
   def clear_preferences
     preferences.keys.each { |pref| preferences.delete pref }
   end
