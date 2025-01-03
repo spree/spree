@@ -93,9 +93,9 @@ module Spree
       if Spree.use_translations?
         joins(:taxonomy).
           join_translation_table(Taxonomy).
-          where(["LOWER(#{Taxonomy.translation_table_alias}.name) = ?", taxonomy_name.downcase.strip])
+          where(Taxonomy.translation_table_alias.arel_table[:name].lower.eq(taxonomy_name.downcase.strip))
       else
-        joins(:taxonomy).where(["LOWER(#{Spree::Taxonomy.table_name}.name) = ?", taxonomy_name.downcase.strip])
+        joins(:taxonomy).where(Spree::Taxonomy.arel_table[:name].lower.eq(taxonomy_name.downcase.strip))
       end
     }
 
