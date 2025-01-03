@@ -33,7 +33,10 @@ module Spree
           password_preferences = @object.preferences_of_type(:password)
           password_preferences.each do |preference|
             preference_key = "preferred_#{preference}"
-            params[:payment_method].delete(preference_key) if params.dig(:payment_method, preference_key).blank?
+
+            if params.dig(:payment_method, preference_key).blank? && @object.preferences[preference].present?
+              params[:payment_method].delete(preference_key)
+            end
           end
         end
       end
