@@ -50,8 +50,7 @@ describe 'Orders API', swagger: true do
   end
   let(:invalid_param_value) do
     {
-      email: 'not_valid_email',
-      user_id: nil
+      state: 'invalid'
     }
   end
 
