@@ -3,6 +3,8 @@ module Spree
     class StockTransfersController < ResourceController
       before_action :prepare_params, only: :create
 
+      create.fails :load_variant_omit_ids
+
       private
 
       def location_after_save
@@ -25,20 +27,21 @@ module Spree
       end
 
       def prepare_params
-        if params.dig(:stock_transfer, :stock_movements_attributes).blank?
-          flash[:error] = Spree.t('stock_transfer.errors.must_have_variant')
-          render :new, status: :unprocessable_entity
-          return
-        end
-
-        params.dig(:stock_transfer, :stock_movements_attributes).each do |_key, sm_params|
-          if sm_params[:stock_item_id].blank? && sm_params[:originator_id].present?
-            sm_params[:stock_item_id] =
-              Spree::StockLocation.accessible_by(current_ability).find(sm_params[:originator_id]).stock_item_or_create(sm_params[:variant_id]).id
+        stock_movements_attributes = params.dig(:stock_transfer, :stock_movements_attributes) || []
+        stock_movements_attributes.each do |_key, sm_params|
+          if sm_params[:stock_item_id].blank? && sm_params[:location_id].present?
+            sm_params[:stock_item_id] = Spree::StockLocation.
+                                        accessible_by(current_ability).
+                                        find(sm_params[:location_id]).
+                                        stock_item_or_create(sm_params[:variant_id]).id
           end
 
           sm_params.delete(:variant_id)
         end
+      end
+
+      def load_variant_omit_ids
+        @variant_omit_ids = @stock_transfer.stock_movements.map(&:variant_id)
       end
     end
   end

@@ -20,8 +20,8 @@ RSpec.describe Spree::Admin::StockTransfersController, type: :controller do
         post :create, params: { stock_transfer: { source_location_id: source_location.id, destination_location_id: destination_location.id } }
 
         expect(response).to render_template(:new)
-        expect(flash[:error]).to eq(Spree.t('stock_transfer.errors.must_have_variant'))
         expect(response.status).to eq(422)
+        expect(assigns(:object).errors).to contain_exactly(Spree.t('stock_transfer.errors.must_have_variant'))
       end
     end
 
@@ -32,8 +32,8 @@ RSpec.describe Spree::Admin::StockTransfersController, type: :controller do
             source_location_id: source_location.id,
             destination_location_id: destination_location.id,
             stock_movements_attributes: {
-              '0' => { variant_id: variant.id, quantity: -10, originator_id: source_location.id },
-              '1' => { variant_id: variant.id, quantity: 10, originator_id: destination_location.id }
+              '0' => { variant_id: variant.id, quantity: -10, location_id: source_location.id },
+              '1' => { variant_id: variant.id, quantity: 10, location_id: destination_location.id }
             }
           }
         }
@@ -46,14 +46,14 @@ RSpec.describe Spree::Admin::StockTransfersController, type: :controller do
       end
     end
 
-    context 'when originator_id is null' do
+    context 'when location_id is null' do
       it 'creates a stock transfer to destination and redirects to the stock transfer path' do
         post :create, params: {
           stock_transfer: {
             source_location_id: source_location.id,
             destination_location_id: destination_location.id,
             stock_movements_attributes: {
-              '0' => { variant_id: variant.id, quantity: 10, originator_id: destination_location.id }
+              '0' => { variant_id: variant.id, quantity: 10, location_id: destination_location.id }
             }
           }
         }
