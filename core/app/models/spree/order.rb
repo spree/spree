@@ -304,7 +304,9 @@ module Spree
     def associate_user!(user, override_email = true)
       self.user           = user
       self.email          = user.email if override_email
-      self.created_by   ||= user
+      # we need to check if user is of admin user class to avoid mismatch type error
+      # in a scenario where we have separate classes for admin and regular users
+      self.created_by   ||= user if user.is_a?(Spree.admin_user_class)
       self.bill_address ||= user.bill_address.try(:clone)
       self.ship_address ||= user.ship_address.try(:clone)
 
