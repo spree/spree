@@ -2,12 +2,14 @@ module Spree
   class Order < Spree.base_class
     module AddressBook
       def clone_shipping_address
-        self.bill_address_id = ship_address_id if ship_address_id
+        self.bill_address = ship_address if ship_address
+        user.bill_address = ship_address if should_assign_user_default_address?(ship_address)
         true
       end
 
       def clone_billing_address
-        self.ship_address_id = bill_address_id if bill_address_id
+        self.ship_address = bill_address if bill_address
+        user.ship_address = bill_address if should_assign_user_default_address?(bill_address)
         true
       end
 
@@ -23,12 +25,7 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-
-        if should_assign_user_default_address?(bill_address)
-          user_old_address = user&.bill_address
-          user_old_address&.delete unless user_old_address&.valid?
-          user&.update(bill_address: bill_address)
-        end
+        user.bill_address = bill_address if should_assign_user_default_address?(bill_address)
       end
 
       def ship_address_id=(id)
@@ -43,12 +40,7 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-
-        if should_assign_user_default_address?(ship_address)
-          user_old_address = user&.ship_address
-          user_old_address&.delete unless user_old_address&.valid?
-          user&.update(ship_address: ship_address)
-        end
+        user.ship_address = ship_address if should_assign_user_default_address?(ship_address)
       end
 
       private
@@ -87,7 +79,7 @@ module Spree
       end
 
       def should_assign_user_default_address?(address)
-        address.present? && address.valid?
+        user.present? && address.present? && address.valid? && address.user == user
       end
     end
   end

@@ -42,15 +42,14 @@ describe Spree::Order, type: :model do
 
     describe '#clone_shipping_address' do
       it 'clones the shipping address when use_shipping is true' do
-        order.use_shipping = true
-        order.save!
-        expect(order.ship_address).to eq(order.bill_address)
+        order.update!(use_shipping: true)
+        expect(order.reload.bill_address).to eq(ship_address)
+        expect(user.reload.bill_address).to eq(ship_address)
       end
 
       it 'does not clone the shipping address when use_shipping is false' do
-        order.use_shipping = false
-        order.save!
-        expect(order.ship_address).not_to eq(order.bill_address)
+        order.update!(use_shipping: false)
+        expect(order.reload.bill_address).not_to eq(order.ship_address)
       end
     end
   end
@@ -1567,28 +1566,6 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'when user\'s default address is invalid' do
-      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
-      let(:user) { create(:user, bill_address_id: invalid_address.id) }
-
-      before do
-        invalid_address.save(validate: false)
-        user
-        order.reload
-      end
-
-      it 'deletes it and assign new address' do
-        expect(user.bill_address_id).to eq invalid_address.id
-
-        subject
-
-        expect(user.reload.bill_address_id).to be_present
-        expect(user.bill_address_id).to_not eq(invalid_address.id)
-
-        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
-      end
-    end
-
     context 'when user has no default address' do
       let!(:user) { create(:user) }
 
@@ -1660,28 +1637,6 @@ describe Spree::Order, type: :model do
 
       it 'changes user default ship addresss' do
         expect { subject }.to(change { user.ship_address_id })
-      end
-    end
-
-    context 'when user\'s default address is invalid' do
-      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
-      let(:user) { create(:user, ship_address_id: invalid_address.id) }
-
-      before do
-        invalid_address.save(validate: false)
-        user
-        order.reload
-      end
-
-      it 'deletes it and assign new address' do
-        expect(user.ship_address_id).to eq invalid_address.id
-
-        subject
-
-        expect(user.reload.ship_address_id).to be_present
-        expect(user.ship_address_id).not_to eq(invalid_address.id)
-
-        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
 
