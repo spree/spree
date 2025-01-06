@@ -89,7 +89,7 @@ module Spree
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
+    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :canceler, class_name: "::#{Spree.admin_user_class}", optional: true
