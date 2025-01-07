@@ -77,7 +77,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[shipments user created_by approver canceler promotions bill_address ship_address line_items store]
     self.whitelisted_ransackable_attributes = %w[
       completed_at email number state payment_state shipment_state
-      total item_total considered_risky channel
+      total item_total item_count considered_risky channel
     ]
     self.whitelisted_ransackable_scopes = %w[refunded partially_refunded]
 
@@ -229,6 +229,19 @@ module Spree
 
     def completed?
       completed_at.present?
+    end
+
+    def order_refunded?
+      (payment_state == 'void' && refunds.sum(:amount).positive?) || refunds.sum(:amount) == total
+    end
+
+    def partially_refunded?
+      return false if refunds.empty?
+
+      # we must deduct not returned amount, otherwise it can look like order has not been fully refunded
+      amount_not_refunded = additional_tax_total.abs + total_applied_store_credit
+
+      refunds.sum(:amount) < total - amount_not_refunded
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.

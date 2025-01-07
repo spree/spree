@@ -1,0 +1,11 @@
+<ul class="list-group mt-3 mb-3 collapse" id="<%= id %>">
+  <% tax_lines.each do |tax_line| %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <%= tax_line.name %>
+
+      <span class="text-right">
+        <%= tax_line.display_amount %>
+      </span>
+    </li>
+  <% end %>
+</ul>

@@ -1,0 +1,21 @@
+<%= render 'header' %>
+<%= render 'header_custom' %>
+
+<div class="container px-0">
+  <div class="row">
+    <div class="col-lg-8">
+
+      <%= render 'line_items' %>
+      <%= render 'shipments' %>
+      <%= render 'customer_returns' %>
+      <%= render 'payments'%>
+
+      <%= render 'body_custom' %>
+      <%= render 'summary' %>
+    </div>
+    <div class="col-lg-4">
+      <!-- TODO: add notes -->
+      <%= render 'customer' %>
+    </div>
+  </div>
+</div>

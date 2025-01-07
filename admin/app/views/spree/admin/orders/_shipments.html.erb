@@ -1,0 +1,7 @@
+<% if @shipments.any? %>
+  <%= render partial: "shipment", collection: @shipments %>
+<% elsif !@order.state.in?(['address', 'cart']) %>
+  <p class="text-center text-muted p-3">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Shipment)) %>
+  </p>
+<% end %>

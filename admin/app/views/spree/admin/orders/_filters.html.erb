@@ -1,0 +1,113 @@
+<div id="table-filter">
+  <%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil do |f| %>
+    <div class="filter-wrap border-bottom">
+      <div class="d-flex flex-column flex-lg-row">
+        <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+          <div class="form-control d-flex align-items-center py-0  focus-shadow-blue focus-border-blue shadow-xs">
+            <%= icon 'search', class: 'mr-3 text-muted' %>
+            <%= text_field_tag 'q[multisearch]', params.dig(:q, :multisearch), class: "form-control-plaintext js-quick-search px-0", placeholder: 'Search orders' %>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="mr-2 h-100">
+            <% if controller_name == 'checkouts' %>
+              <%= render 'shared/calendar_range_picker',
+                  date_from_input_name: 'q[created_at_gt]',
+                  date_to_input_name: 'q[created_at_lt]',
+                  date_from_value: params.dig(:q, :created_at_gt),
+                  date_to_value: params.dig(:q, :created_at_lt),
+                  dropdown_direction: 'right'
+                  %>
+            <% else %>
+              <%= render 'shared/calendar_range_picker',
+                  date_from_input_name: 'q[completed_at_gt]',
+                  date_to_input_name: 'q[completed_at_lt]',
+                  date_from_value: params.dig(:q, :completed_at_gt),
+                  date_to_value: params.dig(:q, :completed_at_lt),
+                  dropdown_direction: 'right' %>
+            <% end %>
+          </div>
+
+          <%= render 'spree/admin/orders/table_filter_dropdown' %>
+
+          <button class="btn btn-light h-100" type="button" data-toggle="collapse" data-target="#more-filters" href="#more-filters" aria-expanded="false" aria-controls="more-filters">
+            <%= icon "adjustments", class: 'mr-1' %>
+            <%= Spree.t('admin.filters') %>
+          </button>
+        </div>
+      </div>
+      <div class="collapse mt-4" id="more-filters">
+        <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>
+        <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
+        <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
+        <%= f.hidden_field :partially_refunded, value: params.dig(:q, :partially_refunded) %>
+        <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
+        <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>
+
+        <% unless @user %>
+          <div class="row">
+            <div class="col-12 col-lg-4">
+              <div class="form-group">
+                <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
+                <%= f.text_field :bill_address_firstname_i_cont_any, class: 'form-control js-filterable' %>
+              </div>
+            </div>
+            <div class="col-12 col-lg-4">
+              <div class="form-group">
+                <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
+                <%= f.text_field :bill_address_lastname_eq, class: 'form-control js-filterable' %>
+              </div>
+            </div>
+            <div class="col-12 col-lg-4">
+              <div class="form-group">
+                <%= label_tag :q_email_eq, Spree.t(:email) %>
+                <%= f.email_field :email_eq, class: 'form-control js-filterable' %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="row">
+
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
+              <%= f.text_field :line_items_variant_sku_eq, class: 'form-control js-filterable' %>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+              <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), { include_blank: true }, class: 'js-filterable', data: { controller: 'autocomplete-select' } %>
+            </div>
+          </div>
+
+          <% if !current_vendor && !@vendor %>
+            <div class="col-12 col-lg-4">
+              <div class="form-group">
+                <%= f.label :vendor_orders_vendor_id_eq, Spree.t(:vendor) %>
+                <%= f.label :vendor_orders_vendor_id_eq, Spree.t(:vendor), class: 'hidden' %>
+                <%= tom_select_tag 'q[vendor_orders_vendor_id_eq]',
+                                  active_option: params.dig(:q, :vendor_orders_vendor_id_eq),
+                                  select_class: 'js-filterable',
+                                  options: vendor_options,
+                                  url: spree.select_options_admin_vendors_path(format: :json) %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="form-actions">
+          <%= turbo_save_button_tag Spree.t(:filter_results) do %>
+            <%= icon('search') %>
+            <%= Spree.t(:filter_results) %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="table-active-filters border-bottom js-filters"></div>

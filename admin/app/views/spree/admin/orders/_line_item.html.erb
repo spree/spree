@@ -1,0 +1,26 @@
+<%= turbo_frame_tag dom_id(line_item), class: "border-bottom px-3 order-line-items__form hover-light" do %>
+  <%= render 'spree/admin/variants/variant', variant: line_item.variant %>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.single_money.to_html %>
+  </span>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.quantity %>
+  </span>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.display_amount %>
+  </span>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.display_additional_tax_total || line_item.display_included_tax_total %>
+  </span>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.display_promo_total %>
+  </span>
+  <span class="d-flex align-items-center justify-content-center">
+    <%= line_item.display_total %>
+  </span>
+  <span class="d-flex align-items-center justify-content-end">
+    <% if can?(:edit, line_item) %>
+      <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_line_item_path(@order, line_item), class: 'with-tip btn btn-sm btn-light', no_text: true, data: {test_id: :edit_line_item} %>
+    <% end %>
+  </span>
+<% end %>
