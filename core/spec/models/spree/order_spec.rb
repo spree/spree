@@ -673,10 +673,10 @@ describe Spree::Order, type: :model do
       expect(order.created_by_id).to eql(created_by.id)
 
       expect(order.bill_address).to eql(bill_address)
-      expect(order.bill_address_id).to eql(bill_address.id)
+      expect(order.bill_address_id).to eql(bill_address&.id)
 
       expect(order.ship_address).to eql(ship_address)
-      expect(order.ship_address_id).to eql(ship_address.id)
+      expect(order.ship_address_id).to eql(ship_address&.id)
     end
 
     shared_examples_for '#associate_user!' do |persisted = false|
@@ -731,7 +731,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the user is not persisted' do
-      let(:user) { build(:user) }
+      let(:user) { build(:user_with_addreses) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
