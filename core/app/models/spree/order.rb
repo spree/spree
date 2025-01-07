@@ -307,8 +307,8 @@ module Spree
       # we need to check if user is of admin user class to avoid mismatch type error
       # in a scenario where we have separate classes for admin and regular users
       self.created_by   ||= user if user.is_a?(Spree.admin_user_class)
-      self.bill_address ||= user.bill_address.try(:clone)
-      self.ship_address ||= user.ship_address.try(:clone)
+      self.bill_address ||= user.bill_address
+      self.ship_address ||= user.ship_address
 
       changes = slice(:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id)
 
