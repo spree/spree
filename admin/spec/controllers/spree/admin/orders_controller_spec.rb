@@ -119,11 +119,23 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
   describe '#resend' do
     subject { put :resend, params: { id: order.number } }
-    let(:order) { create(:order_ready_to_ship) }
 
-    it 'resends an email' do
-      subject
-      expect(flash[:success]).to eq Spree.t(:order_email_resent)
+    context 'for a complete order' do
+      let(:order) { create(:order_ready_to_ship) }
+
+      it 'resends an email' do
+        subject
+        expect(flash[:success]).to eq Spree.t(:order_email_resent)
+      end
+    end
+
+    context 'for an incomplete order' do
+      let(:order) { create(:order) }
+
+      it "doesn't resend the email" do
+        subject
+        expect(flash[:error]).to eq Spree.t(:order_email_resent_error)
+      end
     end
   end
 end
