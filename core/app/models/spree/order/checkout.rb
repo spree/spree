@@ -275,14 +275,7 @@ module Spree
             return if user.present?
             return unless signup_for_an_account?
 
-            result = Spree::Orders::CreateUserAccount.call(order: self, accepts_email_marketing: accept_marketing?)
-
-            if result.success?
-              self.user = result.value
-              save
-
-              user.send_welcome_email if user.respond_to?(:send_welcome_email)
-            end
+            Spree::Orders::CreateUserAccount.call(order: self, accepts_email_marketing: accept_marketing?)
           end
 
           def persist_user_credit_card
