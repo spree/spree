@@ -24,18 +24,6 @@ module Spree
         load_orders
       end
 
-      def edit
-        @line_items = @order.all_line_items.includes(variant: [:product, :option_values])
-        @shipments = @order.all_shipments.includes(:inventory_units, :selected_shipping_rate, :vendor, order: :vendor,
-                                                                                                       shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
-
-        @payments = @order.payments.includes(:payment_method, :source).order(:created_at)
-        @refunds = @order.refunds
-
-        @suborders = @order.vendor_orders.includes(:vendor) if @order.splitted?
-        @customer_returns = @order.all_customer_returns
-      end
-
       def update
         if @order.update(params[:order]) && @order.line_items.present?
           @order.update_with_updater!

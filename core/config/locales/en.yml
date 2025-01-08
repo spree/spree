@@ -1181,6 +1181,7 @@ en:
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
+    order_email_resent_error: Order confirmation mail can only be sent for completed orders
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
