@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree_core', ">= #{s.version}"
   s.add_dependency 'spree_api', ">= #{s.version}"
-  s.add_dependency 'spree_emails', ">= #{s.version}"
 
   s.add_dependency 'active_link_to'
   s.add_dependency 'bootstrap', '~> 4.6', '>= 4.6.2.1'

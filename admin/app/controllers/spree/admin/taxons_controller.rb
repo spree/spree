@@ -51,10 +51,6 @@ module Spree
         @parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
       end
 
-      def taxon_params
-        params.require(:taxon).permit(permitted_taxon_attributes)
-      end
-
       def set_position
         new_position = params[:taxon][:position]
         @taxon.child_index = new_position.to_i if new_position
