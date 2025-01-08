@@ -484,6 +484,36 @@ describe Spree::Order, type: :model do
         order.next!
         expect(order.user.reload.default_credit_card).to be_nil
       end
+
+      context 'when user is not present' do
+        before do
+          order.user = nil
+          order.email = 'new@customer.com'
+          order.save!
+        end
+
+        context 'with signup_for_an_account set to true' do
+          before do
+            allow(order).to receive(:signup_for_an_account?).and_return(true)
+          end
+
+          it 'creates a new user' do
+            expect { order.next! }.to change { Spree.user_class.count }.by(1)
+            expect(order.user).to be_present
+            expect(order.user.email).to eq(order.email)
+          end
+        end
+
+        context 'with signup_for_an_account set to false' do
+          before do
+            allow(order).to receive(:signup_for_an_account?).and_return(false)
+          end
+
+          it 'does not create a new user' do
+            expect { order.next! }.not_to change { Spree.user_class.count }
+          end
+        end
+      end
     end
   end
 
