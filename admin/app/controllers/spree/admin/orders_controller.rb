@@ -5,7 +5,7 @@ module Spree
       include Spree::Admin::OrdersFiltersHelper
 
       before_action :initialize_order_events
-      before_action :load_order, only: %i[edit update cancel resume approve resend]
+      before_action :load_order, only: %i[edit cancel resend]
       before_action :load_order_items, only: :edit
       before_action :load_user, only: [:index]
 
@@ -24,35 +24,9 @@ module Spree
         load_orders
       end
 
-      def update
-        if @order.update(params[:order]) && @order.line_items.present?
-          @order.update_with_updater!
-          unless @order.completed?
-            # Jump to next step if order is not completed.
-            redirect_to spree.admin_order_customer_path(@order) and return
-          end
-        elsif @order.line_items.empty?
-          @order.errors.add(:line_items, Spree.t('errors.messages.blank'))
-        end
-
-        render action: :edit
-      end
-
       def cancel
         @order.canceled_by(try_spree_current_user)
         flash[:success] = Spree.t(:order_canceled)
-        redirect_back fallback_location: spree.edit_admin_order_url(@order)
-      end
-
-      def resume
-        @order.resume!
-        flash[:success] = Spree.t(:order_resumed)
-        redirect_back fallback_location: spree.edit_admin_order_url(@order)
-      end
-
-      def approve
-        @order.approved_by(try_spree_current_user)
-        flash[:success] = Spree.t(:order_approved)
         redirect_back fallback_location: spree.edit_admin_order_url(@order)
       end
 
@@ -91,8 +65,7 @@ module Spree
 
       def load_order_items
         @line_items = @order.line_items.includes(variant: [:product, :option_values])
-        @shipments = @order.shipments.includes(:inventory_units, :selected_shipping_rate, :vendor, order: :vendor,
-                                                                                                       shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
+        @shipments = @order.shipments.includes(:inventory_units, :selected_shipping_rate, shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
         @payments = @order.payments.includes(:payment_method, :source).order(:created_at)
         @refunds = @order.refunds
 
