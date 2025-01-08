@@ -630,6 +630,7 @@ en:
     canceled: Canceled
     canceler: Canceler
     canceled_at: Canceled at
+    cancel_order: Cancel order
     cannot_be_destroyed: Order cannot be destroyed.
     cannot_empty: Cannot empty order.
     cannot_empty_completed_order: Order has already been processed so it cannot be emptied
@@ -698,11 +699,13 @@ en:
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
+    contact_information: Contact information
     contact_phone: Contact phone
     contact_us: Contact us
     continue: Continue
     continue_as_guest: Continue as a guest
     continue_shopping: Continue shopping
+    copy_payment_link: Copy payment link
     cost_currency: Cost Currency
     cost_price: Cost Price
     could_not_create_customer_return: Could not create customer return
@@ -734,6 +737,7 @@ en:
     coupon_code_used: The coupon code you entered has already been used. Please try again.
     create: Create
     create_a_new_account: Create a new account
+    create_new: Create new
     create_new_order: Create new order
     create_reimbursement: Create reimbursement
     created_at: Created At
@@ -873,6 +877,7 @@ en:
         message: Good work, your export is ready! Please use the link below to download it.
     extension: Extension
     extensions_directory: Extensions Directory
+    existing_address: Existing address
     existing_shipments: Existing shipments
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
@@ -900,6 +905,9 @@ en:
     free_shipping: Free Shipping
     free_shipping_amount: "-"
     front_end: Front End
+    fulfilled_at: Fulfilled at
+    fulfilled_by: Fulfilled by
+    fulfilled_from: Fulfilled from
     gateway: Gateway
     gateway_error: Gateway Error
     general: General
@@ -1067,10 +1075,12 @@ en:
       mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
+    new_shipping_address: New Bhipping Address
     new_customer: Create new account
     new_customer_return: New Customer Return
     new_country: New Country
     new_image: New Image
+    new_line_item: Add line item
     new_option_type: New Option Type
     new_order: New Order
     new_order_completed: New Order Completed
@@ -1087,6 +1097,7 @@ en:
     new_rma_reason: New RMA Reason
     new_return_authorization: New Return Authorization
     new_role: New Role
+    new_shipping_address: New Shipping Address
     new_shipping_category: New Shipping Category
     new_shipping_method: New Shipping Method
     new_shipment_at_location: New shipment at location
@@ -1109,6 +1120,7 @@ en:
     no_address_given: No address given
     no_available_date_set: No available date set
     no_country: No country set
+    no_email_provided: No email provided
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
     no_pending_payments: No pending payments
@@ -1123,6 +1135,8 @@ en:
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
     no_tracking_present: No tracking details provided.
+    not_provided: Not provided
+    not_risky: Not risky
     user_not_found: User not found
     none: None
     none_selected: None Selected
@@ -1159,6 +1173,7 @@ en:
     options: Options
     or: or
     or_over_price: ! '%{price} or over'
+    or_select_other_address: or select other address
     order: Order
     order_adjustments: Order adjustments
     order_already_updated: The order has already been updated.
@@ -1166,6 +1181,7 @@ en:
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
+    order_email_resent_error: Order confirmation mail can only be sent for completed orders
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
@@ -1229,6 +1245,7 @@ en:
     path: Path
     pay: pay
     payment: Payment
+    payment_attempts: failed attempts
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
     payment_information: Payment Information
@@ -1450,6 +1467,7 @@ en:
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
+    same_as_shipping_address: Same as shipping address
     save_and_continue: Save and Continue
     save_my_address: Save my address
     saving: Saving
@@ -1478,9 +1496,11 @@ en:
     select_an_option: Select an option
     select_stock: Select stock
     select_stores: Select Store(s)
+    select_user: Select customer
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
+    send_payment_link: Send payment link
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
@@ -1538,6 +1558,7 @@ en:
     show: Show
     show_active: Show Active
     show_deleted: Show Deleted
+    show_details: Show details
     show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders

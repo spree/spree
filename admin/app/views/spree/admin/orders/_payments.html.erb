@@ -1,0 +1,69 @@
+<% if @payments.any? && can?(:read, Spree::Payment) %>
+  <div class="card mb-4">
+    <% if @order.payment_state.present? %>
+      <div class="card-header justify-content-between">
+        <%= order_payment_state(@order) %>
+        <%= local_time(@payments.first.updated_at, class: 'badge badge-light with-tip') %>
+      </div>
+    <% else %>
+      <div class="card-header justify-content-between">
+        <span class="badge badge-info"><%= icon('progress') %><%= Spree.t(:processing) %></span>
+        <%= local_time(@payments.first.updated_at, class: 'badge badge-light with-tipl') %>
+      </div>
+    <% end %>
+    <div class="card-body p-0">
+      <% @payments.each do |payment| %>
+        <div class="p-3 border-bottom">
+          <%= render 'spree/admin/shared/payment', payment: payment %>
+        </div>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <h6 class="d-flex justify-content-between align-items-center mb-0" id="risk-analysis-header">
+        <span>
+          <%= Spree.t(:risk_analysis) %>
+          &nbsp;
+          <% if @order.is_risky? %>
+            <span class="text-warning font-weight-normal"><%= icon('exclamation-circle') %> <%= Spree.t(:risky) %></span>
+          <% else %>
+            <span class="text-success font-weight-normal"><%= icon('check') %> <%= Spree.t(:not_risky) %></span>
+          <% end %>
+        </span>
+        <%= link_to '#risk-analysis', class: 'btn btn-light btn-sm text-muted', data: { toggle: 'collapse' } do %>
+          <%= Spree.t(:show_details) %>
+          <%= icon('selector', height: 12, class: 'mr-0 ml-1') %>
+        <% end %>
+      </h6>
+      <%= render 'spree/admin/orders/risk_analysis', latest_payment: @payments.first %>
+    </div>
+
+    <% if @refunds.any? %>
+      <div class="card-body border-top">
+        <h6><%= Spree.t(:refunds) %></h6>
+        <%= render partial: 'spree/admin/shared/refunds', locals: { refunds: @refunds, show_actions: can?(:edit, @refunds.first) } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @order.payment_required? && @order.bill_address.present? && @order.payment_total < @order.total_minus_store_credits && can?(:create, Spree::Payment.new(order: @order)) %>
+  <div class="card mb-4">
+    <div class="card-header justify-content-between">
+      <h5 class="card-title"><%= Spree.t(:payments) %></h5>
+    </div>
+    <div class="card-body">
+      <div class="d-flex mb-3 w-100 gap-3">
+        <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
+        <%= link_to_with_icon 'send', Spree.t(:send_payment_link), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-outline-primary with-tip', title: Spree.t(:send_payment_link_title) %>
+
+        <div data-controller="clipboard">
+          <input type="hidden" value="<%= spree.checkout_state_url(@order.token, :payment, host: current_store.url_or_custom_domain) %>" readonly data-clipboard-target="source">
+          <button class="btn btn-outline-primary" type="button" data-action="click->clipboard#copy">
+            <%= icon('copy') %>
+            <%= Spree.t(:copy_payment_link) %>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

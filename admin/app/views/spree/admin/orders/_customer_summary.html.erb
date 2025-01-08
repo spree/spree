@@ -1,0 +1,22 @@
+<% if order %>
+  <% if order.user %>
+    <span class="d-flex">
+      <%#= image_tag(avatar_url_for( order.user), width: 24, height: 24, class: 'mr-2 rounded') %>
+
+      <% if can?(:manage, order.user) %>
+        <%= link_to order.full_name, [:admin, order.user], class: 'text-dark', data: { 'turbo-frame': '_top' } %>
+      <% else %>
+        <%= order.full_name %>
+      <% end %>
+    </span>
+  <% elsif order.email.present? %>
+    <span class="text-muted">
+      <%= order.full_name %>
+    </span>
+    <%= help_bubble('This order was placed by a guest customer') %>
+  <% else %>
+    <span class="text-muted">
+      <%= Spree.t(:not_provided) %>
+    </span>
+  <% end %>
+<% end %>

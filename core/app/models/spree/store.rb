@@ -197,6 +197,11 @@ module Spree
                          end
     end
 
+    def url_or_custom_domain
+      # Overwrite this if you have a custom domain
+      url
+    end
+
     def countries_available_for_checkout
       @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
         checkout_zone.try(:country_list) || Spree::Country.all

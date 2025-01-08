@@ -1846,4 +1846,53 @@ describe Spree::Order, type: :model do
 
     it { expect(subject).to eq(40) }
   end
+
+  describe '#partially_refunded?' do
+    subject { order.partially_refunded? }
+
+    context 'when orders has refunds' do
+      let(:order) { create(:order_ready_to_ship) }
+      let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
+
+      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+      let!(:store_credits) { create(:store_credit_payment, amount: 15, order: order) }
+
+      before do
+        order.update_attribute(:total, 100)
+        order.update_attribute(:additional_tax_total, 10.00)
+      end
+
+      context 'when sum of refunds is less than max amount which could be refunded' do
+        let(:amount) { 50 }
+
+        it 'returns true' do
+          expect(subject).to be true
+        end
+      end
+
+      context 'when sum of refunds is equal to max amount which could be refunded' do
+        let(:amount) { 75 }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+
+      context 'when sum of refunds is greater than max amount which could be refunded' do
+        let(:amount) { 75 }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+    end
+
+    context 'when order does not have refunds' do
+      let(:order) { create(:order) }
+
+      it 'returns false' do
+        expect(subject).to be false
+      end
+    end
+  end
 end

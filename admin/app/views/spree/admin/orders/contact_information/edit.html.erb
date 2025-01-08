@@ -1,0 +1,20 @@
+<%= turbo_frame_tag :dialog_modal do %>
+  <%= form_for @order, url: spree.admin_order_contact_information_path(@order), method: :put, data: { turbo_frame: :_top } do |f| %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:update_contact_information) %></h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <%= f.label :email, Spree.t(:email) %>
+          <%= f.email_field :email, class: 'form-control', required: true %>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

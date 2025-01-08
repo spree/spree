@@ -49,6 +49,54 @@ Spree::Core::Engine.add_routes do
     resources :oauth_applications
     resources :webhooks_subscribers
 
+    # orders
+    resources :orders, only: [:index, :edit, :create] do
+      member do
+        post :resend
+        put :cancel
+      end
+
+      resource :shipping_address, except: [:index, :show], controller: 'orders/shipping_address'
+      resource :billing_address, except: [:index, :show], controller: 'orders/billing_address'
+      resource :contact_information, only: [:edit, :update], controller: 'orders/contact_information'
+      resource :user, except: [:edit, :show, :index], controller: 'orders/user'
+      resources :shipments, only: [:edit, :update, :create], controller: 'shipments' do
+        member do
+          post :ship
+          get :split
+          post :transfer
+        end
+      end
+      resources :line_items, except: :show
+
+      resources :customer_returns, only: [:index, :new, :edit, :create, :update] do
+        member do
+          put :refund
+        end
+      end
+
+      resources :return_authorizations do
+        member do
+          put :cancel
+        end
+      end
+      resources :payments, except: [:index, :show] do
+        member do
+          put :capture
+          put :void
+        end
+
+        resources :refunds, only: [:new, :create, :edit, :update]
+      end
+      resources :payment_links, only: [:create], controller: 'orders/payment_links'
+
+      resources :reimbursements, only: [:index, :create, :show, :edit, :update] do
+        member do
+          post :perform
+        end
+      end
+    end
+
     # products
     resources :products do
       collection do

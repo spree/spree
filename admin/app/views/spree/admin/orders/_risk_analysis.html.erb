@@ -1,0 +1,37 @@
+<ul class="list-group mt-3 mb-3 collapse" id="risk-analysis">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:failed_payment_attempts) %>
+    <span class="badge  badge-<%= @payments.failed.any? ? 'warning' : 'complete' %>">
+      <% if @payments.failed.any? %>
+        <%= icon('exclamation-circle') %>
+      <% else %>
+        <%= icon('check') %>
+      <% end %>
+      <%= Spree.t 'payments_count', count: @payments.failed.count, default: pluralize(@payments.failed.count, Spree.t(:payment_attempts)) %>
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:avs_response) %>
+    <span class="badge badge-<%= latest_payment.is_avs_risky? ? 'warning' : 'complete' %>">
+      <% if latest_payment.is_avs_risky? %>
+        <%= icon('exclamation-circle') %>
+        <%= "#{Spree.t(:error)}: #{avs_response_code[latest_payment.avs_response]}" %>
+      <% else %>
+        <%= icon('check') %>
+        <%= Spree.t(:success) %>
+      <% end %>
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:cvv_response) %>
+    <span class="badge  badge-<%= latest_payment.is_cvv_risky? ? 'warning' : 'complete' %>">
+      <% if latest_payment.is_cvv_risky? %>
+        <%= icon('exclamation-circle') %>
+        <%= "#{Spree.t(:error)}: #{cvv_response_code[latest_payment.cvv_response_code]}" %>
+      <% else %>
+        <%= icon('check') %>
+        <%= Spree.t(:success) %>
+      <% end %>
+    </span>
+  </li>
+</ul>
