@@ -7,6 +7,8 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
   let(:user_params) do
     {
       email: 'test@example.com',
+      first_name: 'Test',
+      last_name: 'User',
       tag_list: ['tag1', 'tag2']
     }
   end
@@ -21,6 +23,8 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
         expect(order.reload.user).to eq(existing_user)
         expect(order.email).to eq(existing_user.email)
 
+        expect(existing_user.reload.first_name).to eq(user_params[:first_name])
+        expect(existing_user.last_name).to eq(user_params[:last_name])
         expect(existing_user.email).to eq(user_params[:email])
         expect(existing_user.tag_list).to eq(user_params[:tag_list])
       end
@@ -35,6 +39,8 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
         expect(order.reload.user).to eq(new_user)
         expect(order.email).to eq(new_user.email)
 
+        expect(new_user.reload.first_name).to eq(user_params[:first_name])
+        expect(new_user.last_name).to eq(user_params[:last_name])
         expect(new_user.email).to eq(user_params[:email])
         expect(new_user.tag_list).to eq(user_params[:tag_list])
       end
