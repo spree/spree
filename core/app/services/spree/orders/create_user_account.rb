@@ -16,7 +16,12 @@ module Spree
         assign_bill_address(order, user)
 
         # assign newly created user to the order
+        # using update_columns to avoid running validations/callbacks
         order.update_columns(user_id: user.id, updated_at: Time.current)
+        order.user = user
+
+        # send welcome email
+        user.send_welcome_email if user.respond_to?(:send_welcome_email)
 
         success(user.reload)
       end
