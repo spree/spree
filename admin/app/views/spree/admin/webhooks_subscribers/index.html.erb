@@ -22,8 +22,5 @@
   </div>
   <%= render 'spree/admin/shared/index_table_options', collection: @webhooks_subscribers, simple: true %>
 <% else %>
-  <div class="text-center no-objects-found m-5">
-    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Webhooks::Subscriber)) %>
-    <%= link_to_with_icon('plus', Spree.t(:add_one), new_object_url) if can? :create, Spree::Webhooks::Subscriber %>!
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found' %>
 <% end %>

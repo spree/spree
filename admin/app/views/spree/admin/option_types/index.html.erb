@@ -49,8 +49,5 @@
     </table>
   </div>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::OptionType)) %>
-    <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-link' if can?(:create, Spree::OptionType) %>
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found' %>
 <% end %>
