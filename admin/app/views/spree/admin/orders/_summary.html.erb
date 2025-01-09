@@ -47,7 +47,7 @@
       </li>
     <% end %>
 
-    <% if @order.parent_order? && @order.included_tax_total != 0 %>
+    <% if @order.included_tax_total != 0 %>
       <li class="list-group-item d-flex justify-content-between align-items-center border-0">
         <span data-hook='admin_order_tab_included_tax_title'><%= Spree.t(:tax_included) %></span>
         <span id='included_tax_total'>
@@ -56,7 +56,7 @@
       </li>
     <% end %>
 
-    <% if @order.parent_order? && @order.additional_tax_total != 0 %>
+    <% if @order.additional_tax_total != 0 %>
       <% tax_lines = order_summary_tax_lines_additional(@order) %>
 
       <li class="list-group-item border-0">

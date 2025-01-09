@@ -227,11 +227,6 @@ module Spree
       shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end
 
-    def parent_order?
-      # Overwrite this if needed
-      true
-    end
-
     def completed?
       completed_at.present?
     end
