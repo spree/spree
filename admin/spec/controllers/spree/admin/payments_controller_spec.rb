@@ -105,9 +105,36 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
       it 'processes payment correctly' do
         subject
 
-        expect(order.payments.count).to eq(1)
+        expect(order.reload.payments.count).to eq(1)
         expect(response).to redirect_to(spree.edit_admin_order_path(order))
-        expect(order.reload.state).to eq('complete')
+        expect(order.state).to eq('complete')
+      end
+    end
+
+    context 'with existing card' do
+      let(:credit_card) { create(:credit_card, user: order.user, payment_method: payment_method, gateway_customer_profile_id: 'BGS-1234567890') }
+
+      let(:params) do
+        {
+          order_id: order.number,
+          payment: {
+            amount: order.total,
+            payment_method_id: payment_method.id.to_s,
+            source_attributes: {
+              id: credit_card.id
+            }
+          }
+        }
+      end
+
+      it 'processes payment correctly' do
+        subject
+
+        expect(response).to redirect_to(spree.edit_admin_order_path(order))
+        order.reload
+        expect(order.payments.count).to eq(1)
+        expect(order.payments.first.source).to eq(credit_card)
+        expect(order.state).to eq('complete')
       end
     end
 

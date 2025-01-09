@@ -161,7 +161,17 @@ module Spree
       return unless new_record?
 
       if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
-        self.source = payment_method.payment_source_class.new(source_attributes)
+        self.source = if source_attributes[:id].present? && source_attributes[:id] != :new
+                        payment_method.payment_source_class.find(source_attributes[:id])
+                      else
+                        payment_method.payment_source_class.new(source_attributes)
+                      end
+
+        if source.user_id.present? && source.user_id != order.user_id
+          self.source = nil
+          return
+        end
+
         source.payment_method_id = payment_method.id
         source.user_id = order.user_id if order
       end
