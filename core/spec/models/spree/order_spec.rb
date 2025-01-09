@@ -54,6 +54,39 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#full_name' do
+    subject { order.full_name }
+
+    let(:order) { build(:order, user: user, bill_address: bill_address, email: email) }
+
+    let(:bill_address) { nil }
+    let(:email) { 'john.doe@gmail.com' }
+
+    context 'for an order with user' do
+      let(:user) { build(:user, first_name: 'John', last_name: 'Doe') }
+
+      it { is_expected.to eq('John Doe') }
+
+      context 'without name' do
+        let(:user) { build(:user, first_name: nil, last_name: nil) }
+
+        it { is_expected.to eq('john.doe@gmail.com') }
+      end
+    end
+
+    context 'for a guest order' do
+      let(:user) { nil }
+
+      it { is_expected.to eq('john.doe@gmail.com') }
+
+      context 'with billing address' do
+        let(:bill_address) { build(:address, first_name: 'Jane', last_name: 'Dane') }
+
+        it { is_expected.to eq('Jane Dane') }
+      end
+    end
+  end
+
   describe '#update_with_updater!' do
     let(:updater) { Spree::OrderUpdater.new(order) }
 

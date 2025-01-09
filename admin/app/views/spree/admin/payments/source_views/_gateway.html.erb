@@ -1,0 +1,22 @@
+<div>
+  <div class="table-responsive border rounded bg-white mb-3">
+    <table class="table table-condensed">
+      <tr>
+        <th width="20%"><%= Spree.t(:name_on_card) %>:</th>
+        <td><%= payment.source.name %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_type) %>:</th>
+        <td><%= payment.source.display_brand %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_number) %>:</th>
+        <td><%= payment.source.display_number %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:expiration) %>:</th>
+        <td><%= payment.source.month %>/<%= payment.source.year %></td>
+      </tr>
+    </table>
+  </div>
+</div>

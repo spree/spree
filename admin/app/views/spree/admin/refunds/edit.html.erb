@@ -1,0 +1,20 @@
+<%= turbo_frame_tag :dialog_modal do %>
+  <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund], data: { turbo: false } do |f| %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">
+          <%= Spree.t(:edit_refund) %>
+        </h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+      </div>
+      <div class="modal-body">
+        <%= render 'spree/admin/shared/error_messages', target: @refund %>
+        <%= render 'spree/admin/refunds/form', f: f %>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+        <%= turbo_save_button_tag %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

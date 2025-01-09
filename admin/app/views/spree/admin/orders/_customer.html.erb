@@ -29,7 +29,7 @@
     <% end %>
   </div>
   <div class="card-body">
-    <% unless current_vendor %>
+    <% unless defined?(current_vendor) && current_vendor %>
       <% unless @order.user.present? %>
         <h6><%= Spree.t(:contact_information) %></h6>
       <% end %>
@@ -49,7 +49,7 @@
         <% end %>
       </div>
     <% end %>
-    <h6 class="<%= current_vendor ? "" : "mt-4" %> font-weight-bold"><%= Spree.t(:shipping_address) %></h6>
+    <h6 class="<%= defined?(current_vendor) && current_vendor ? "" : "mt-4" %> font-weight-bold"><%= Spree.t(:shipping_address) %></h6>
     <%= turbo_frame_tag :order_ship_address do %>
       <% if @order.ship_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.ship_address %>

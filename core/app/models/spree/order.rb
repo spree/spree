@@ -382,6 +382,14 @@ module Spree
       end
     end
 
+    def full_name
+      @full_name ||= if user.present? && user.name.present?
+                       user.name.full
+                     else
+                       billing_address&.full_name || email
+                     end
+    end
+
     def can_ship?
       complete? || resumed? || awaiting_return? || returned?
     end

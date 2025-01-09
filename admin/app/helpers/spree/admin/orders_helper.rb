@@ -93,11 +93,17 @@ module Spree
       end
 
       def ready_to_ship_orders_count
-        @ready_to_ship_orders_count ||= if defined?(current_vendor) && current_vendor.present?
-                                          current_vendor.orders.complete.ready_to_ship.count
-                                        else
-                                          current_store.orders.without_vendor.complete.ready_to_ship.count
-                                        end
+        @ready_to_ship_orders_count ||= begin
+          if defined?(current_vendor)
+            if current_vendor.present?
+              current_vendor.orders.complete.ready_to_ship.count
+            else
+              current_store.orders.without_vendor.complete.ready_to_ship.count
+            end
+          else
+            current_store.orders.complete.ready_to_ship.count
+          end
+        end
       end
 
       def avs_response_code

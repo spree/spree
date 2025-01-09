@@ -640,6 +640,7 @@ en:
     cannot_perform_operation: Cannot perform requested operation
     cannot_return_more_than_bought_quantity: Cannot return more than bought quantity.
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
+    cannot_ship: Shipment cannot be shipped
     capture: Capture
     capture_events: Capture events
     card_code: Card Verification Code (CVC)
@@ -1052,7 +1053,9 @@ en:
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
     month: Month
     more: More
+    move: Move
     move_stock_between_locations: Move Stock Between Locations
+    move_variant_to: Move variant to
     my_account: My Account
     my_orders: My Orders
     name: Name
@@ -1525,6 +1528,7 @@ en:
         thanks: Thank you for your business.
         track_information: ! 'Tracking Information: %{tracking}'
         track_link: "Tracking Link: %{url}"
+    shipment_successfully_shipped: Shipment successfully shipped
     shipment_state: Shipment State
     shipment_states:
       backorder: backorder
