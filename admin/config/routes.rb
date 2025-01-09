@@ -50,6 +50,8 @@ Spree::Core::Engine.add_routes do
     resources :webhooks_subscribers
 
     # orders
+    resources :checkouts, only: %i[index]
+
     resources :orders, only: [:index, :edit, :create] do
       member do
         post :resend
@@ -136,6 +138,9 @@ Spree::Core::Engine.add_routes do
     end
 
     get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
+
+    # users
+    resources :users
 
     # variants
     post 'variants/search'

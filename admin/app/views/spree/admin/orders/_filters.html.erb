@@ -12,7 +12,7 @@
         <div class="d-flex align-items-center justify-content-between">
           <div class="mr-2 h-100">
             <% if controller_name == 'checkouts' %>
-              <%= render 'shared/calendar_range_picker',
+              <%= render 'spree/admin/shared/calendar_range_picker',
                   date_from_input_name: 'q[created_at_gt]',
                   date_to_input_name: 'q[created_at_lt]',
                   date_from_value: params.dig(:q, :created_at_gt),
@@ -20,7 +20,7 @@
                   dropdown_direction: 'right'
                   %>
             <% else %>
-              <%= render 'shared/calendar_range_picker',
+              <%= render 'spree/admin/shared/calendar_range_picker',
                   date_from_input_name: 'q[completed_at_gt]',
                   date_to_input_name: 'q[completed_at_lt]',
                   date_from_value: params.dig(:q, :completed_at_gt),
@@ -84,7 +84,7 @@
             </div>
           </div>
 
-          <% if !current_vendor && !@vendor %>
+          <% if defined?(current_vendor) && !current_vendor && !@vendor %>
             <div class="col-12 col-lg-4">
               <div class="form-group">
                 <%= f.label :vendor_orders_vendor_id_eq, Spree.t(:vendor) %>

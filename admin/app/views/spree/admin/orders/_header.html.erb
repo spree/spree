@@ -11,7 +11,7 @@
 <% end %>
 
 <% content_for(:page_actions_dropdown) do %>
-  <% if @order.completed? %>
+  <% if @order.completed? && spree.respond_to?(:order_path) %>
     <%= link_to_with_icon 'eye',
                           Spree.t(:preview),
                           spree.order_path(@order, host: current_store.url, token: @order.token),

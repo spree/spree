@@ -227,6 +227,11 @@ module Spree
       shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end
 
+    def parent_order?
+      # Overwrite this if needed
+      true
+    end
+
     def completed?
       completed_at.present?
     end
@@ -380,6 +385,14 @@ module Spree
       if (address = bill_address || ship_address)
         address.full_name
       end
+    end
+
+    def full_name
+      @full_name ||= if user.present? && user.name.present?
+                       user.name.full
+                     else
+                       billing_address&.full_name || email
+                     end
     end
 
     def can_ship?

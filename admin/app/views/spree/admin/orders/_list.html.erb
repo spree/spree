@@ -18,7 +18,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= render collection: @orders, partial: 'spree/admin/orders/order', cached: !current_vendor ? spree_base_cache_scope : false %>
+        <%= render collection: @orders, partial: 'spree/admin/orders/order', cached: !(defined?(current_vendor) && current_vendor) ? spree_base_cache_scope : false %>
       </tbody>
     </table>
   </div>

@@ -1,0 +1,24 @@
+<%= link_to spree.admin_user_path(user), class: 'rounded hover-light p-2 d-flex justify-content-start align-items-center', data: {turbo_frame: :_top} do %>
+  <% if user.name.present? %>
+    <%= image_tag(avatar_url_for(user), width: 48, height: 48, class: 'mr-3 rounded-lg') %>
+  <% else %>
+    <div style="width: 48px; height: 48px" class="mr-3 rounded-lg bg-light"></div>
+  <% end %>
+  <div class="text-left">
+    <% if customer_full_name(user) %>
+      <span class="font-weight-bold text-dark"><%= customer_full_name(user) %></span>
+      <br />
+    <% end %>
+    <% unless defined?(current_vendor) && current_vendor %>
+      <span class="text-muted with-tip" title="<%= user.email %>">
+        <%= user.email %>
+      </span>
+      <span data-controller="clipboard">
+        <%= hidden_field_tag :user_email, user.email, data: { clipboard_target: 'source' } %>
+        <button data-action="clipboard#copy" class="btn btn-sm text-muted with-tip mx-1" title="Copy email">
+          <%= icon 'files', class: 'mr-0' %>
+        </button>
+      </span>
+    <% end %>
+  </div>
+<% end %>
