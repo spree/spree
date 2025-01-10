@@ -24,6 +24,10 @@ module Spree
           cart.display_total_applied_store_credit.abs.amount_in_cents
         end
 
+        attribute :promo_total_cents do |cart|
+          cart.display_promo_total.abs.amount_in_cents
+        end
+
         attribute :tax_total_cents do |cart|
           cart.display_tax_total.amount_in_cents
         end
