@@ -216,6 +216,10 @@ module Spree
                         end
     end
 
+    def tax_category_id
+      super || tax_category.try(:id)
+    end
+
     def options_text
       @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
