@@ -2126,12 +2126,30 @@ components:
             item_total:
               type: string
               example: '19.99'
+            subtotal_cents:
+              type: integer
+              example: 1999
+            store_credit_total_cents:
+              type: integer
+              example: 0
             total:
               type: string
               example: '29.99'
+            total_cents:
+              type: integer
+              example: 2999
+            total_minus_store_credits:
+              type: string
+              example: '29.99'
+            total_minus_store_credits_cents:
+              type: integer
+              example: 2999
             ship_total:
               type: string
-              example: '0.0'
+              example: '5.0'
+            ship_total_cents:
+              type: integer
+              example: 500
             adjustment_total:
               type: string
               example: '10.0'
@@ -2155,6 +2173,9 @@ components:
             tax_total:
               type: string
               example: '10.0'
+            tax_total_cents:
+              type: integer
+              example: 1000
             currency:
               type: string
               example: USD
@@ -2192,6 +2213,9 @@ components:
             promo_total:
               type: string
               example: '-10.0'
+            promo_total_cents:
+              type: integer
+              example: -1000
             display_promo_total:
               type: string
               example: '-$10.00'
@@ -2206,6 +2230,9 @@ components:
               description: Message added by the Customer
               nullable: true
             display_total:
+              type: string
+              example: $29.99
+            display_total_minus_store_credits:
               type: string
               example: $29.99
             pre_tax_item_amount:
@@ -4482,7 +4509,13 @@ components:
                     number: R233871560
                     item_total: '0.0'
                     total: '0.0'
+                    subtotal_cents: 0
+                    store_credit_total_cents: 0
+                    total_cents: 0
+                    total_minus_store_credits: '0.0'
+                    total_minus_store_credits_cents: 0
                     ship_total: '0.0'
+                    ship_total_cents: 0
                     adjustment_total: '0.0'
                     created_at: '2021-09-28T22:15:07.471Z'
                     updated_at: '2021-09-28T22:15:07.471Z'
@@ -4492,6 +4525,7 @@ components:
                     display_additional_tax_total: $0.00
                     display_included_tax_total: $0.00
                     tax_total: '0.0'
+                    tax_total_cents: 0
                     currency: USD
                     state: cart
                     token: zTEpsukRq_yEUcXVCSv0uw1632867307450
@@ -4502,9 +4536,11 @@ components:
                     display_tax_total: $0.00
                     promo_total: '0.0'
                     display_promo_total: $0.00
+                    promo_total_cents: 0
                     item_count: 0
                     special_instructions: null
                     display_total: $0.00
+                    display_total_minus_store_credits: $0.00
                     pre_tax_item_amount: '0.0'
                     display_pre_tax_item_amount: $0.00
                     pre_tax_total: '0.0'
@@ -4536,8 +4572,14 @@ components:
                   attributes:
                     number: R823511564
                     item_total: '287.97'
+                    subtotal_cents: 28797
                     total: '316.0'
+                    store_credit_total_cents: 0
+                    total_cents: 31600
+                    total_minus_store_credits: '316.0'
+                    total_minus_store_credits_cents: 31600
                     ship_total: '5.0'
+                    ship_total_cents: 500
                     adjustment_total: '23.03'
                     created_at: '2021-09-28T12:57:15.148Z'
                     updated_at: '2021-09-28T13:06:02.689Z'
@@ -4547,6 +4589,7 @@ components:
                     display_additional_tax_total: $51.83
                     display_included_tax_total: $26.18
                     tax_total: '78.01'
+                    tax_total_cents: 7801
                     currency: USD
                     state: payment
                     token: VDK_6q_NNdWFc81VZRpUfQ1632833835148
@@ -4557,9 +4600,11 @@ components:
                     display_tax_total: $78.01
                     promo_total: '-28.8'
                     display_promo_total: '-$28.80'
+                    promo_total_cents: -2880
                     item_count: 3
                     special_instructions: null
                     display_total: $316.00
+                    display_total_minus_store_credits: 31600
                     pre_tax_item_amount: '261.7909'
                     display_pre_tax_item_amount: $261.79
                     pre_tax_total: '266.7909'
@@ -4605,8 +4650,14 @@ components:
                   attributes:
                     number: R177608027
                     item_total: '474.95'
+                    subtotal_cents: 47495
                     total: '527.45'
+                    store_credit_total_cents: 0
+                    total_cents: 52745
+                    total_minus_store_credits: '527.45'
+                    total_minus_store_credits_cents: 52745
                     ship_total: '5.0'
+                    ship_total_cents: 500
                     adjustment_total: '47.5'
                     created_at: '2021-09-28T22:31:47.401Z'
                     updated_at: '2021-09-28T22:33:20.257Z'
@@ -4625,10 +4676,12 @@ components:
                     display_adjustment_total: $47.50
                     display_tax_total: $47.50
                     promo_total: '0.0'
+                    promo_total_cents: 0
                     display_promo_total: $0.00
                     item_count: 5
                     special_instructions: null
                     display_total: $527.45
+                    display_total_minus_store_credits: 52745
                     pre_tax_item_amount: '474.95'
                     display_pre_tax_item_amount: $474.95
                     pre_tax_total: '479.95'
@@ -4967,8 +5020,14 @@ components:
                     attributes:
                       number: R177608027
                       item_total: '474.95'
+                      subtotal_cents: 47495
                       total: '527.45'
+                      store_credit_total_cents: 0
+                      total_cents: 52745
+                      total_minus_store_credits: '527.45'
+                      total_minus_store_credits_cents: 52745
                       ship_total: '5.0'
+                      ship_total_cents: 500
                       adjustment_total: '47.5'
                       created_at: '2021-09-28T22:31:47.401Z'
                       updated_at: '2021-09-28T22:33:20.257Z'
@@ -4987,10 +5046,12 @@ components:
                       display_adjustment_total: $47.50
                       display_tax_total: $47.50
                       promo_total: '0.0'
+                      promo_total_cents: 0
                       display_promo_total: $0.00
                       item_count: 5
                       special_instructions: null
                       display_total: $527.45
+                      display_total_minus_store_credits: 52745
                       pre_tax_item_amount: '474.95'
                       display_pre_tax_item_amount: $474.95
                       pre_tax_total: '479.95'
@@ -5048,8 +5109,14 @@ components:
                     attributes:
                       number: R177608027
                       item_total: '474.95'
+                      subtotal_cents: 47495
                       total: '527.45'
+                      store_credit_total_cents: 0
+                      total_cents: 52745
+                      total_minus_store_credits: '527.45'
+                      total_minus_store_credits_cents: 52745
                       ship_total: '5.0'
+                      ship_total_cents: 500
                       adjustment_total: '47.5'
                       created_at: '2021-09-28T22:31:47.401Z'
                       updated_at: '2021-09-28T22:33:20.257Z'
@@ -5068,10 +5135,12 @@ components:
                       display_adjustment_total: $47.50
                       display_tax_total: $47.50
                       promo_total: '0.0'
+                      promo_total_cents: 0
                       display_promo_total: $0.00
                       item_count: 5
                       special_instructions: null
                       display_total: $527.45
+                      display_total_minus_store_credits: 52745
                       pre_tax_item_amount: '474.95'
                       display_pre_tax_item_amount: $474.95
                       pre_tax_total: '479.95'
