@@ -11,7 +11,7 @@
       <td <% if readonly %>style="width: 40%;"<% else %>style="width: 60%;"<% end %>>
         <% case field%>
         <% when :description %>
-          <div class="tinymce-container mb-0">
+          <div class="border rounded mb-0">
             <%= text_area_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), { rows: 10, class: "form-control spree-rte", readonly: readonly, contenteditable: !readonly } %>
           </div>
         <% else %>

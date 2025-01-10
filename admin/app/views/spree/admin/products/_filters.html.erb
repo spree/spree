@@ -1,7 +1,7 @@
 <div class="filter-wrap border-bottom">
   <div class="d-flex flex-column flex-lg-row">
     <%= form_tag request.fullpath, id: "quick-search", class: 'flex-grow-1 mr-lg-2 mb-3 mb-lg-0', method: :get do %>
-      <div class="form-control d-flex align-items-center py-0  focus-shadow-blue focus-border-blue shadow-xs">
+      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
         <%= icon 'search', class: 'mr-3 text-muted' %>
         <%= text_field_tag :quick_search, nil, class: "form-control-plaintext js-quick-search px-0", placeholder: Spree.t(:search_by) %>
       </div>
