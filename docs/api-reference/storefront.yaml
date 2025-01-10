@@ -1721,7 +1721,7 @@ paths:
         The Add Items to Wishlist endpoint adds variants to an existing wishlist by creating a new `wished_item` objects. A wished item in a wishlist is comparable to a line item in a cart.
 
         Each wished item references a single variant, holds the desired quantity and returns price information determined by the variant price in current currency, and desired quantity.
-      operationId: add-item-to-wishlist
+      operationId: add-items-to-wishlist
       parameters:
         - $ref: '#/components/parameters/Token'
       requestBody:
@@ -1837,7 +1837,7 @@ paths:
     delete:
       description: Removes wished items from a wishlist.
       summary: Delete Items from Wishlist
-      operationId: delete-wished-variant-from-wishlist
+      operationId: delete-wished-variants-from-wishlist
       parameters:
         - $ref: '#/components/parameters/Token'
       requestBody:
