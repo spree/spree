@@ -1,4 +1,4 @@
-<div class="row mx-0 hover-light" id="<%= spree_dom_id(classification) %>" data-sortable-update-url="<%= spree.admin_taxon_classification_path(classification.taxon_id, classification, format: :turbo_stream) %>">
+<div class="row mx-0 hover-light rounded" id="<%= spree_dom_id(classification) %>" data-sortable-update-url="<%= spree.admin_taxon_classification_path(classification.taxon_id, classification, format: :turbo_stream) %>">
   <% if classification.taxon.manual_sort_order? %>
     <div class="col-1 text-center align-self-center">
       <span class="rounded p-2 hover-gray with-tip move-handle cursor-grab">
@@ -8,7 +8,7 @@
   <% end %>
 
   <div class="<%= classification.taxon.manual_sort_order? ? 'col-6' : 'col-7' %>">
-    <%= link_to spree.edit_admin_product_path(classification.product), data: { 'turbo-frame': '_top' }, class: "d-flex align-items-center text-dark #{classification.taxon.manual_sort_order? ? 'py-3' : 'p-3'}" do  %>
+    <%= link_to spree.edit_admin_product_path(classification.product), data: { 'turbo-frame': '_top' }, class: "d-flex align-items-center text-dark hover-none #{classification.taxon.manual_sort_order? ? 'py-3' : 'p-3'}" do  %>
       <%= render 'spree/admin/shared/product_image', object: classification.product %>
       <span class="ml-3">
         <%= classification.product.name %>

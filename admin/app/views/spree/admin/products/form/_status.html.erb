@@ -8,11 +8,13 @@
         <div class="form-group">
           <%= f.label :status, Spree.t(:status) %>
           <%= help_bubble(Spree.t('admin.products.status_form.status')) if show_product_status_help_bubble? %>
-          <% select_html = { class: 'custom-select',
+          <% select_html = { 
                             data: {
-                            action: 'change->product-form#switchAvailabilityDatesFields',
-                            'product-form-target': 'status'
-                          } } %>
+                              controller: 'autocomplete-select',
+                              action: 'change->product-form#switchAvailabilityDatesFields',
+                              'product-form-target': 'status'
+                            } 
+          } %>
           <%= f.select(:status, available_status_options(@product), { selected: @product.status }, select_html) %>
           <%= f.error_message_on :status %>
         </div>
