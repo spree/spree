@@ -39,8 +39,7 @@ gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
 gem 'spree_admin', path: '../admin'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'
-gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'
+gem 'spree_storefront', path: '../storefront'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
@@ -72,6 +71,5 @@ bin/rails db:create
 bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
 bin/rails g spree:emails:install
 bin/rails g spree:admin:install
-bin/rails g spree:auth:install
-bin/rails g spree_gateway:install
+bin/rails g spree:storefront:install
 bin/rake acts_as_taggable_on_engine:install:migrations
