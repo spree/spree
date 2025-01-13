@@ -81,7 +81,7 @@ module Spree
       end
 
       def current_timezone
-        @current_timezone ||= current_store.timezone
+        @current_timezone ||= current_store.preferred_timezone
       end
 
       def current_currency
