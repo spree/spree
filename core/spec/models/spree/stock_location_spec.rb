@@ -169,13 +169,13 @@ module Spree
 
     it 'restocks a variant with a positive stock movement' do
       originator = double
-      expect(subject).to receive(:move).with(variant, 5, originator)
+      expect(subject).to receive(:move).with(variant, 5, originator, persist: true)
       subject.restock(variant, 5, originator)
     end
 
     it 'unstocks a variant with a negative stock movement' do
       originator = double
-      expect(subject).to receive(:move).with(variant, -5, originator)
+      expect(subject).to receive(:move).with(variant, -5, originator, persist: true)
       subject.unstock(variant, 5, originator)
     end
 

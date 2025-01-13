@@ -6,13 +6,13 @@ describe Spree::Api::V2::Platform::StockTransferSerializer do
   include_context 'API v2 serializers params'
 
   let(:destination_location) { create(:stock_location) }
-  let(:resource) { create(type, destination_location: destination_location, source_location: source_location) }
+  let(:resource) { create(type, destination_location: destination_location, source_location: source_location, stock_movements: [stock_movement]) }
   let(:source_location) { create(:stock_location) }
   let(:stock_item) { stock_location.stock_items.order(:id).first }
   let(:stock_location) { create(:stock_location_with_items) }
   let(:type) { :stock_transfer }
 
-  let!(:stock_movement) { create(:stock_movement, stock_item: stock_item, originator: resource) }
+  let(:stock_movement) { build(:stock_movement, stock_item: stock_item) }
 
   it do
     expect(subject).to eq(
