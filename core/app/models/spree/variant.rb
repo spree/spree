@@ -449,7 +449,7 @@ module Spree
     # Returns the weight unit for the variant
     # @return [String]
     def weight_unit
-      attributes['weight_unit'] || Spree::Store.default.weight_unit
+      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
     end
 
     def discontinue!

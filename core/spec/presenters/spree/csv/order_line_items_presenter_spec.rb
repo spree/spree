@@ -69,7 +69,7 @@ RSpec.describe Spree::CSV::OrderLineItemPresenter do
 
     it 'formats date according to store timezone' do
       expect(presenter.send(:format_date, date)).to eq(
-        date.in_time_zone(order.store.timezone).strftime('%Y-%m-%d %H:%M:%S')
+        date.in_time_zone(order.store.preferred_timezone).strftime('%Y-%m-%d %H:%M:%S')
       )
     end
 

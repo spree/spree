@@ -19,19 +19,18 @@ module Spree
       default_scope { unscope(where: :deleted_at) }
     end
 
-    typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
-      # Spree Digital Asset Configurations
-      s.boolean :limit_digital_download_count, default: true, null: false
-      s.boolean :limit_digital_download_days, default: true, null: false
-      s.integer :digital_asset_authorized_clicks, default: 5, null: false # number of times a customer can download a digital file.
-      s.integer :digital_asset_authorized_days, default: 7, null: false # number of days after initial purchase the customer can download a file.
-      s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
+    #
+    # Preferences
+    #
+    preference :limit_digital_download_count, :boolean, default: true
+    preference :limit_digital_download_days, :boolean, default: true
+    preference :digital_asset_authorized_clicks, :integer, default: 5
+    preference :digital_asset_authorized_days, :integer, default: 7
+    preference :digital_asset_link_expire_time, :integer, default: 300
 
-      # store configuration
-      s.string :timezone, default: Time.zone.name, null: false
-      s.string :weight_unit, default: 'kg', null: false
-      s.string :unit_system, default: 'metric', null: false
-    end
+    preference :timezone, :string, default: Time.zone.name
+    preference :weight_unit, :string, default: 'lb'
+    preference :unit_system, :string, default: 'imperial'
 
     attr_accessor :skip_validate_not_last
 
@@ -91,9 +90,8 @@ module Spree
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
     end
-
-    validates :digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
-    validates :digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
     validates :mail_from_address, email: { allow_blank: false }
 
@@ -247,7 +245,7 @@ module Spree
     end
 
     def metric_unit_system?
-      unit_system == 'metric'
+      preferred_unit_system == 'metric'
     end
 
     private
