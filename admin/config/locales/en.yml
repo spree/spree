@@ -223,6 +223,8 @@ en:
         you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
         this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
       settings: Settings
+      stock_transfers:
+        add_products_tip: You need to select a destination location first
       utilities:
         preview: Preview
       webhooks_subscribers:
