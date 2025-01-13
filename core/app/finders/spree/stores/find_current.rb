@@ -7,7 +7,9 @@ module Spree
       end
 
       def execute
-        by_url(scope) || scope.default
+        store = by_url(scope) || scope.default
+        Spree::Current.store = store
+        store
       end
 
       protected

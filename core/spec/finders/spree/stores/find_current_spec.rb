@@ -12,12 +12,14 @@ module Spree
 
     context 'no arguments' do
       it { expect(subject).to eq(store) }
+      it { expect(Spree::Current.store).to eq(store) }
     end
 
     context 'existing store' do
       let(:url) { 'another.com' }
 
       it { expect(subject).to eq(store_2) }
+      it { expect(Spree::Current.store).to eq(store_2) }
     end
 
     context 'non-existing store' do
