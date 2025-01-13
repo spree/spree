@@ -1,18 +1,23 @@
 module Spree
   class Store < Spree.base_class
+    include FriendlyId
     include Spree::TranslatableResource
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
-    if defined?(Spree::Security::Stores)
-      include Spree::Security::Stores
-    end
+    include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
+    include Spree::Security::Stores if defined?(Spree::Security::Stores)
 
+    #
+    # Magic methods
+    #
+    acts_as_paranoid
+    friendly_id :slug_candidates, use: [:slugged, :history], slug_column: :code, routes: :normal
+
+    #
+    # Translations
+    #
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
                              twitter instagram customer_support_email description
                              address contact_phone new_order_notifications_email].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
-
     self::Translation.class_eval do
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
@@ -32,8 +37,10 @@ module Spree
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
 
-    acts_as_paranoid
 
+    #
+    # Associations
+    #
     has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
@@ -133,10 +140,14 @@ module Spree
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
-
-    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
-
     after_commit :clear_cache
+    after_commit :handle_code_changes, on: :update, if: -> { code_previously_changed? }
+
+    #
+    # Scopes
+    #
+    default_scope { order(created_at: :asc) }
+    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
 
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
@@ -364,6 +375,20 @@ module Spree
 
         [on_sale_taxon, new_arrivals_taxon]
       end
+    end
+
+    # code is slug, so we don't want to generate new slug when code changes
+    # we use friendlyId only for history feature
+    def should_generate_new_friendly_id?
+      false
+    end
+
+    def slug_candidates
+      []
+    end
+
+    def handle_code_changes
+      # implement your custom logic here
     end
   end
 end
