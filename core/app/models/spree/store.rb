@@ -131,7 +131,7 @@ module Spree
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(url = nil)
-      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
+      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute || Spree::Current.store
     end
 
     # FIXME: we need to drop `or_initialize` in v5
