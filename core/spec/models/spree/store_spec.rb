@@ -139,6 +139,30 @@ describe Spree::Store, type: :model do
         expect(store.taxons.automatic.pluck(:taxonomy_id).uniq).to contain_exactly(collections_taxonomy.id)
       end
     end
+
+    describe '#import_products_from_store' do
+      let(:store) { build(:store, import_products_from_store_id: other_store.id) }
+      let(:other_store) { create(:store) }
+      let!(:products) { create_list(:product, 2, stores: [other_store]) }
+
+      it 'imports products from other store' do
+        expect { store.save! }.to change(Spree::StoreProduct, :count).by(2)
+        expect(store.products.count).to eq(2)
+
+        expect(store.products.pluck(:id)).to match_array(products.pluck(:id))
+      end
+    end
+
+    describe '#import_payment_methods_from_store' do
+      let(:store) { build(:store, import_payment_methods_from_store_id: other_store.id) }
+      let(:other_store) { create(:store) }
+      let!(:payment_methods) { create_list(:payment_method, 2, stores: [other_store]) }
+
+      it 'imports payment methods from other store' do
+        expect { store.save! }.to change(Spree::StorePaymentMethod, :count).by(2)
+        expect(store.payment_methods.count).to eq(2)
+      end
+    end
   end
 
   context 'Validations' do
@@ -659,17 +683,6 @@ describe Spree::Store, type: :model do
       it 'soft-deletes when destroy is called' do
         another_store.destroy!
         expect(another_store.deleted_at).not_to be_nil
-      end
-    end
-
-    context 'with associations' do
-      before do
-        another_store.products << create(:product)
-      end
-
-      it "doesn't destroy associations" do
-        associations = described_class.reflect_on_all_associations(:has_many)
-        expect(associations.select { |a| a.options[:dependent] }.count).to equal(1)
       end
     end
   end

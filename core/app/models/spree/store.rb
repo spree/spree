@@ -32,8 +32,6 @@ module Spree
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
 
-    attr_accessor :skip_validate_not_last
-
     acts_as_paranoid
 
     has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
@@ -87,6 +85,16 @@ module Spree
     has_rich_text :customer_returns_policy
     has_rich_text :customer_shipping_policy
 
+    #
+    # Virtual attributes
+    #
+    attribute :import_products_from_store_id, :string, default: nil
+    attribute :import_payment_methods_from_store_id, :string, default: nil
+    attr_accessor :skip_validate_not_last
+
+    #
+    # Validations
+    #
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
     end
@@ -114,11 +122,15 @@ module Spree
     has_one :favicon_image, class_name: 'Spree::StoreFaviconImage', dependent: :destroy, as: :viewable
     accepts_nested_attributes_for :favicon_image, reject_if: :all_blank
 
+    #
+    # Callbacks
     before_validation :ensure_default_country
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
+    after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
+    after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
 
@@ -246,6 +258,24 @@ module Spree
 
     def metric_unit_system?
       preferred_unit_system == 'metric'
+    end
+
+    def import_products_from_store
+      store = Store.find(import_products_from_store_id)
+      product_ids = store.products.pluck(:id)
+
+      return if product_ids.empty?
+
+      StoreProduct.insert_all(product_ids.map { |product_id| { store_id: id, product_id: product_id } })
+    end
+
+    def import_payment_methods_from_store
+      store = Store.find(import_payment_methods_from_store_id)
+      payment_method_ids = store.payment_method_ids
+
+      return if payment_method_ids.empty?
+
+      StorePaymentMethod.insert_all(payment_method_ids.map { |payment_method_id| { store_id: id, payment_method_id: payment_method_id } })
     end
 
     private
