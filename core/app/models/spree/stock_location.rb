@@ -89,8 +89,8 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
-    def restock(variant, quantity, originator = nil)
-      move(variant, quantity, originator)
+    def restock(variant, quantity, originator = nil, persist: true)
+      move(variant, quantity, originator, persist: persist)
     end
 
     def restock_backordered(variant, quantity, _originator = nil)
@@ -101,13 +101,18 @@ module Spree
       )
     end
 
-    def unstock(variant, quantity, originator = nil)
-      move(variant, -quantity, originator)
+    def unstock(variant, quantity, originator = nil, persist: true)
+      move(variant, -quantity, originator, persist: persist)
     end
 
-    def move(variant, quantity, originator = nil)
-      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
-                                                            originator: originator)
+    def move(variant, quantity, originator = nil, persist: true)
+      stock_item = stock_item_or_create(variant)
+
+      if persist
+        stock_item.stock_movements.create!(quantity: quantity, originator: originator)
+      else
+        originator.stock_movements << stock_item.stock_movements.build(quantity: quantity)
+      end
     end
 
     def fill_status(variant, quantity)

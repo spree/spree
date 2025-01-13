@@ -44,8 +44,8 @@ module Spree
 
       transaction do
         variants.each_pair do |variant, quantity|
-          source_location&.unstock(variant, quantity, self)
-          destination_location.restock(variant, quantity, self)
+          source_location&.unstock(variant, quantity, self, persist: false)
+          destination_location.restock(variant, quantity, self, persist: false)
 
           self.source_location = source_location
           self.destination_location = destination_location
