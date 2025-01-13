@@ -4,7 +4,7 @@ module Spree
       def apply(scope)
         # value here is no of weeks
         # eg. return products that become available in the last 2 weeks
-        timezone = taxon.store.timezone
+        timezone = taxon.store.preferred_timezone
         date = value.to_i.days.ago.beginning_of_day.in_time_zone(timezone)
 
         if match_policy == 'is_equal_to'

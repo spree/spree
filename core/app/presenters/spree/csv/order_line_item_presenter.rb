@@ -138,7 +138,7 @@ module Spree
       def format_date(date)
         return nil if date.blank?
 
-        date.in_time_zone(order.store.timezone).strftime('%Y-%m-%d %H:%M:%S')
+        date.in_time_zone(order.store.preferred_timezone).strftime('%Y-%m-%d %H:%M:%S')
       end
     end
   end

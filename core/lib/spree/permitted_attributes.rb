@@ -136,8 +136,10 @@ module Spree
                           :description, :address, :contact_phone, :supported_locales,
                           :default_locale, :default_country_id, :supported_currencies,
                           :new_order_notifications_email, :checkout_zone_id, :seo_robots,
-                          :digital_asset_authorized_clicks, :digital_asset_authorized_days,
-                          :limit_digital_download_count, :limit_digital_download_days, :digital_asset_link_expire_time,
+                          :preferred_timezone, :preferred_weight_unit, :preferred_unit_system,
+                          :preferred_digital_asset_authorized_clicks, :preferred_digital_asset_authorized_days,
+                          :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
+                          :preferred_digital_asset_link_expire_time,
                           { mailer_logo_attributes: {}, favicon_image_attributes: {}, logo_attributes: {} }]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
