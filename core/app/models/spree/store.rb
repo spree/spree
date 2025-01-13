@@ -271,6 +271,14 @@ module Spree
       preferred_unit_system == 'metric'
     end
 
+    def default_shipping_category
+      @default_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Default')
+    end
+
+    def digital_shipping_category
+      @digital_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Digital')
+    end
+
     def import_products_from_store
       store = Store.find(import_products_from_store_id)
       product_ids = store.products.pluck(:id)
