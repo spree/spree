@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :dialog_modal do %>
-  <%= form_for @address, url: spree.admin_order_shipping_address_path(@order), data: {controller: 'form', form_target: 'form', turbo_frame: :_top}, method: :put do |f| %>
+  <%= form_for @address, url: spree.admin_order_shipping_address_path(@order), data: {controller: 'auto-submit', form_target: 'form', turbo_frame: :_top}, method: :put do |f| %>
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:update_shipping_address) %></h5>
