@@ -2,6 +2,7 @@ module Spree
   class Store < Spree.base_class
     include FriendlyId
     include Spree::TranslatableResource
+    include Spree::Metadata
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
 
