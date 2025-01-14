@@ -176,9 +176,9 @@ module Spree
     end
 
     def supported_currencies_list
-      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+      @supported_currencies_list ||= ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
-      end.uniq.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
+      end.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
     end
 
     def homepage(requested_locale)
@@ -219,6 +219,10 @@ module Spree
     def url_or_custom_domain
       # Overwrite this if you have a custom domain
       url
+    end
+
+    def formatted_url_or_custom_domain
+      formatted_url
     end
 
     def countries_available_for_checkout
