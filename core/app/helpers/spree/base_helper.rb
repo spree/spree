@@ -54,27 +54,6 @@ module Spree
       end
     end
 
-    def logo(image_path = nil, options = {})
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#logo` is deprecated and will be removed in Spree 5.0.
-        Please use `FrontendHelper#logo` instead
-      DEPRECATION
-
-      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.cdn_image_url(current_store.logo.variant(resize_to_limit: [244, 104]))
-                     elsif current_store.logo.attached? && current_store.logo.image?
-                       main_app.cdn_image_url(current_store.logo)
-                     else
-                       'logo/spree_50.png'
-                     end
-
-      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
-
-      link_to path, 'aria-label': current_store.name, method: options[:method] do
-        image_tag image_path, alt: current_store.name, title: current_store.name
-      end
-    end
-
     def spree_favicon_path
       if current_store.favicon.present?
         main_app.cdn_image_url(current_store.favicon)
