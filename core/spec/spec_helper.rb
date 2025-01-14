@@ -48,6 +48,7 @@ require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
 require 'spree/testing_support/rspec_retry_config'
+require 'spree/testing_support/next_instance_of'
 
 RSpec.configure do |config|
   config.color = true
