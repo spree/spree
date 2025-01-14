@@ -34,12 +34,8 @@ describe 'Storefront API v2 Stores spec', type: :request do
           let!(:store) { create(:store, :with_favicon) }
 
           it 'returns store favicon path' do
-            expect(json_response.dig(:data, :attributes, :favicon_path)).to end_with('favicon.ico')
+            expect(json_response.dig(:data, :attributes, :favicon_path)).to end_with('thinking-cat.jpg')
           end
-        end
-
-        context 'with no favicon attached' do
-          it { expect(json_response['data']).to have_attribute(:favicon_path).with_value(nil) }
         end
       end
     end

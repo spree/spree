@@ -12,7 +12,7 @@ module Spree
     end
 
     def store_logo
-      @store_logo ||= current_store&.mailer_logo&.attachment || current_store&.logo&.attachment
+      @store_logo ||= current_store&.mailer_logo || current_store&.logo
     end
 
     def logo_path
