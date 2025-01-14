@@ -121,6 +121,7 @@ module Spree
     #
     # Attachments
     #
+    has_one_attached :logo, service: Spree.public_storage_service_name
     has_one_attached :favicon_image, service: Spree.public_storage_service_name
     has_one_attached :social_image, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
