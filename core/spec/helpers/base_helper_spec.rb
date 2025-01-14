@@ -397,7 +397,7 @@ describe Spree::BaseHelper, type: :helper do
       let(:current_store) { create(:store, :with_favicon) }
 
       it do
-        expect(spree_favicon_path).to end_with('favicon.ico')
+        expect(spree_favicon_path).to end_with('thinking-cat.jpg')
         expect(URI.parse(spree_favicon_path).host).to be_present
       end
     end

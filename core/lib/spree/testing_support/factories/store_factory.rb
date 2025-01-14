@@ -17,9 +17,9 @@ FactoryBot.define do
     trait :with_favicon do
       after(:build) do |store|
         store.favicon_image.attach(
-          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'favicon.ico')),
-          filename: 'favicon.ico',
-          content_type: 'image/x-icon'
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'thinking-cat.jpg',
+          content_type: 'image/jpeg'
         )
       end
     end

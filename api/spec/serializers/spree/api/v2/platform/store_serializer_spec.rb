@@ -6,8 +6,7 @@ describe Spree::Api::V2::Platform::StoreSerializer do
   let!(:store) { Spree::Store.default }
   let!(:menus) { [create(:menu, store: store), create(:menu, location: 'Footer', store: store)] }
   let!(:logo) do
-    store.build_logo
-    store.logo.attachment.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
+    store.logo.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
     store.save
     store.logo
   end

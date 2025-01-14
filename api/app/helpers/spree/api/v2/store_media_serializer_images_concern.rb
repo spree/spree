@@ -6,8 +6,8 @@ module Spree
 
         included do
           def self.store_image_url_for(store, attribute_name)
-            attachment = store.send(attribute_name)&.attachment
-            return unless attachment&.attached?
+            attachment = store.send(attribute_name)
+            return unless attachment.attached?
 
             url_helpers = Rails.application.routes.url_helpers
             if Spree.public_storage_service_name
