@@ -52,9 +52,9 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
+    # FIXME: remove old CMS code
     has_many :cms_pages, class_name: 'Spree::CmsPage'
     has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
-
     has_many :menus, class_name: 'Spree::Menu'
     has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
@@ -109,7 +109,6 @@ module Spree
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
     validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
     validates :mail_from_address, email: { allow_blank: false }
-
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&
@@ -117,17 +116,14 @@ module Spree
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
+    validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
 
-    default_scope { order(created_at: :asc) }
-
-    has_one :logo, class_name: 'Spree::StoreLogo', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :logo, reject_if: :all_blank
-
-    has_one :mailer_logo, class_name: 'Spree::StoreMailerLogo', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :mailer_logo, reject_if: :all_blank
-
-    has_one :favicon_image, class_name: 'Spree::StoreFaviconImage', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :favicon_image, reject_if: :all_blank
+    #
+    # Attachments
+    #
+    has_one_attached :favicon_image, service: Spree.public_storage_service_name
+    has_one_attached :social_image, service: Spree.public_storage_service_name
+    has_one_attached :mailer_logo, service: Spree.public_storage_service_name
 
     #
     # Callbacks
@@ -258,9 +254,9 @@ module Spree
     end
 
     def favicon
-      return unless favicon_image&.attachment&.attached?
+      return unless favicon_image.attached? && favicon_image.variable?
 
-      favicon_image.attachment.variant(resize_to_limit: [32, 32])
+      favicon_image.variant(resize_to_limit: [32, 32])
     end
 
     def can_be_deleted?
