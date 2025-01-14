@@ -39,6 +39,10 @@ module Spree::Preferences
       define_method preference_deprecated_getter_method(name) do
         deprecated
       end
+
+      define_method prefers_query_method(name) do
+        preferences.fetch(name).to_b
+      end
     end
 
     def preference_getter_method(name)
@@ -59,6 +63,10 @@ module Spree::Preferences
 
     def preference_type_getter_method(name)
       "preferred_#{name}_type".to_sym
+    end
+
+    def prefers_query_method(name)
+      "prefers_#{name}?".to_sym
     end
   end
 end
