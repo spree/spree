@@ -1166,6 +1166,12 @@ paths:
           example: '1,2,3,4,5,6,7,8,9,10,11'
           description: 'Filter Products based on taxons (IDs of categories, brands, etc)'
         - in: query
+          name: 'filter[vendor_ids]'
+          schema:
+            type: string
+          example: 'bb492c7d-c174-4e6b-ba0b-fe98d5c17307,51c35adb-7ab3-4880-8887-35bdc4f6c29f'
+          description: 'Fetch products from specified Vendors (Sellers) only'
+        - in: query
           name: 'filter[name]'
           schema:
             type: string
@@ -1353,6 +1359,12 @@ paths:
             type: boolean
           example: false
           description: Fetch only root Taxons (Taxonomies)
+        - in: query
+          name: 'filter[vendor_id]'
+          schema:
+            type: string
+          example: '1'
+          description: Fetch only Taxons that have products of a selected Vendor
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/TaxonIncludeParam'
@@ -1500,6 +1512,35 @@ paths:
         in: path
         required: true
         description: The ID of the `menu` you wish to retrieve.
+  /api/v2/storefront/vendors:
+    get:
+      description: 'Returns a list of Vendors.'
+      summary: List all Vendors available on this Store / Marketplace.
+      tags:
+        - Vendors
+      operationId: vendors-list
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/VendorList'
+  '/api/v2/storefront/vendors/{vendor_slug}':
+    get:
+      description: Returns the details of a specified Vendor.
+      summary: Retrieve a Vendor
+      tags:
+        - Vendors
+      operationId: show-vendor
+      parameters:
+        - $ref: '#/components/parameters/VendorSlug'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/Vendor'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /api/v2/storefront/wishlists:
     get:
       description: 'Returns all wishlists available to the current user, in the current store.'
@@ -4117,6 +4158,58 @@ components:
                 data:
                   $ref: '#/components/schemas/Relation'
       description: Digital links are accessible in the order includes line_items.digital_links
+    Vendor:
+      title: Vendor
+      description: 'Vendors are Sellers in the marketplace.'
+      type: object
+      x-internal: true
+      properties:
+        id:
+          type: string
+          example: '980a80d5-f51b-4065-b3a0-622fc5cb6bf6'
+        type:
+          type: string
+          default: vendor
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Shoes For Everyone'
+            email:
+              type: string
+              example: 'contact@example.com'
+            slug:
+              type: string
+              example: 'shoes-for-everyone'
+            about_us:
+              type: string
+              example: '<p>We are the #1 shoe store for you.</p>\n<p>Located in 20 countries.</p>'
+              description: Information about the Vendor stored as HTML
+            logo_url:
+              type: string
+              example: 'https://somewebsite.com/our-logo'
+              description: URL of the Logo
+            cover_photo_url:
+              type: string
+              example: 'https://somewebsite.com/our-cover-photo'
+              description: URL of the Cover Photo
+        relationships:
+          type: object
+          properties:
+            products:
+              type: object
+              description: List of active and available products from this vendor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
   parameters:
     Token:
       name: token
@@ -4233,11 +4326,11 @@ components:
         Specify what related resources (relationships) you would like to receive in the response body. Eg.
 
         ```
-        default_variant,variants,option_types,product_properties,taxons,images,primary_variant
+        default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
+      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor'
     StoreIncludeParam:
       name: include
       in: query
@@ -4435,6 +4528,13 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    SparseFieldsVendor:
+      name: 'fields[vendor]'
+      in: query
+      description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      schema:
+        type: string
+      example: 'name,slug,about_us,facebook'
     SparseFieldsWishlist:
       in: query
       name: 'fields[wishlist]'
@@ -4442,6 +4542,14 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    VendorSlug:
+      name: vendor_slug
+      in: path
+      required: true
+      description: Look for Vendor by ID or their slug
+      schema:
+        type: string
+      example: acme-co
   responses:
     404NotFound:
       description: 404 Not Found - Resource not found.
@@ -5379,7 +5487,7 @@ components:
                   total_count: 1
                   total_pages: 1
                 links:
-                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions,vendors'
                   next: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   prev: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
@@ -16823,6 +16931,71 @@ components:
                       name: Check
                       description: Pay by check.
                       preferences: {}
+    Vendor:
+      description: 200 Success - Returns the `vendor` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Vendor'
+            required:
+              - data
+          examples:
+            Single Vendor:
+              value:
+                data:
+                  id: 'e1171601-a4ce-47d2-a795-c96fbdf20029'
+                  type: vendor
+                  attributes:
+                    name: 'Best Shoes'
+                    email: 'contact@example.com'
+                    slug: 'best-shoes'
+                    about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                    logo_url: 'https://assets.com/images/logo_name'
+                    cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+    VendorList:
+      description: 200 Success - Returns an array of `vendor` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+              meta:
+                $ref: '#/components/schemas/ListMeta'
+              links:
+                $ref: '#/components/schemas/ListLinks'
+            required:
+              - data
+              - meta
+              - links
+          examples:
+            List of Vendors:
+              value:
+                data:
+                  - id: 'eb261155-1ddc-47e5-8178-8c3da6e607a8'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shoes'
+                      email: 'contact-1@example.com'
+                      slug: 'best-shoes'
+                      about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name'
+                      cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+                  - id: '4f46f04f-fa2c-42d0-b69c-ce2b2997f5fd'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shirts'
+                      email: 'contact-2@example.com'
+                      slug: 'best-shirts'
+                      about_us: "<p>We are your #1 shirts store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name34553'
+                      cover_photo_url: 'https://assets.com/images/coverfn5ig'
 tags:
   - name: Account
   - name: Account / Address
@@ -16846,5 +17019,6 @@ tags:
   - name: Variants
   - name: Stores
   - name: Taxons
+  - name: Vendors
   - name: Wishlists
   - name: Wishlists / Wished Items
