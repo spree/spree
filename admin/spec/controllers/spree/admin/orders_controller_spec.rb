@@ -70,19 +70,49 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     end
 
     context 'filtering by date' do
-      let(:order1) { create(:completed_order_with_totals) }
-      let(:order2) { create(:completed_order_with_totals) }
+      subject { get :index, params: { q: q } }
+
+      let(:q) do
+        {
+          completed_at_gt: 4.months.ago,
+          completed_at_lt: 1.month.from_now
+        }
+      end
+
+      let!(:order1) { create(:completed_order_with_totals) }
+      let!(:order2) { create(:completed_order_with_totals) }
 
       context 'for All Orders' do
         before do
-          order2
           order1.update(completed_at: 5.month.ago)
-          get :index, params: { q: { completed_at_gt: 4.months.ago, completed_at_lt: 1.month.from_now } }
         end
 
         it 'uses completed_at column' do
+          subject
+
           expect(assigns(:orders).to_a).to include(order2)
           expect(assigns(:orders).to_a).not_to include(order1)
+        end
+      end
+
+      context 'filtering by "yesterday"' do
+        let!(:order2) { create(:completed_order_with_totals, completed_at: Date.today) }
+
+        before do
+          order1.update(completed_at: Date.yesterday + 3.hours)
+          order2.update(completed_at: Date.yesterday + 16.hours)
+        end
+
+        let(:q) do
+          {
+            completed_at_gt: Date.yesterday,
+            completed_at_lt: Date.yesterday
+          }
+        end
+
+        it 'filters by orders completed yesterday' do
+          subject
+          expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
         end
       end
     end

@@ -36,9 +36,9 @@ module Spree
                                           end
         end
 
-        if search_params[:created_at_lt].present?
-          search_params[:created_at_lt] = begin
-                                            Time.zone.parse(search_params[:created_at_lt]).end_of_day
+        if search_params[:completed_at_lt].present?
+          search_params[:completed_at_lt] = begin
+                                            Time.zone.parse(search_params[:completed_at_lt]).end_of_day
                                           rescue StandardError
                                             ''
                                           end

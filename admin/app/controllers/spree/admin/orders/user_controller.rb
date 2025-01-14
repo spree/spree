@@ -70,7 +70,11 @@ module Spree
         end
 
         def destroy
-          @order.update(user_id: nil)
+          @order.assign_attributes(user_id: nil, ship_address: nil, bill_address: nil)
+          @order.email = nil unless @order.email_required?
+          @order.save
+
+          flash[:error] = @order.errors.full_messages.to_sentence if @order.invalid?
 
           redirect_to spree.edit_admin_order_path(@order)
         end
