@@ -12,8 +12,8 @@
     <% end %>
   <% end %>
   <%= form_with url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
-    <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
     <%= turbo_frame_tag :translations_table, class: "table-responsive border rounded bg-white my-3", refresh: "morph" do %>
+      <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
       <table class="table">
         <thead class="text-muted">
           <tr>
