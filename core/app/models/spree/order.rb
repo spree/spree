@@ -272,6 +272,10 @@ module Spree
         confirm?
     end
 
+    def email_required?
+      require_email
+    end
+
     def backordered?
       shipments.any?(&:backordered?)
     end

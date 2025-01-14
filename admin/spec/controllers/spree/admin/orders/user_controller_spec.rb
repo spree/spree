@@ -59,14 +59,32 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
   end
 
   describe '#destroy' do
+    subject { delete :destroy, params: { order_id: order.number }, as: :turbo_stream }
+
     let!(:existing_user) { create(:user, email: user_params[:email]) }
 
-    it 'removes user association from order' do
-      order.update(user: existing_user)
+    before { order.associate_user!(existing_user) }
 
-      delete :destroy, params: { order_id: order.number }, as: :turbo_stream
+    it 'removes user association from order' do
+      subject
 
       expect(order.reload.user).to be_nil
+      expect(order.email).to be_nil
+      expect(order.ship_address).to be_nil
+      expect(order.bill_address).to be_nil
+    end
+
+    context 'for an order in payment state' do
+      before { order.update(state: 'payment') }
+
+      it 'removes user association but leaves the email address' do
+        subject
+
+        expect(order.reload.user).to be_nil
+        expect(order.email).to eq(user_params[:email])
+        expect(order.ship_address).to be_nil
+        expect(order.bill_address).to be_nil
+      end
     end
   end
 end
