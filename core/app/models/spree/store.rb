@@ -28,16 +28,23 @@ module Spree
     #
     # Preferences
     #
+    # general preferences
+    preference :timezone, :string, default: Time.zone.name
+    preference :weight_unit, :string, default: 'lb'
+    preference :unit_system, :string, default: 'imperial'
+    # email preferences
+    preference :send_consumer_transactional_emails, :boolean, default: true
+    # SEO preferences
+    preference :index_in_search_engines, :boolean, default: false
+    preference :password_protected, :boolean, default: false
+    # Checkout preferences
+    preference :guest_checkout, :boolean, default: true
+    # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true
     preference :digital_asset_authorized_clicks, :integer, default: 5
     preference :digital_asset_authorized_days, :integer, default: 7
     preference :digital_asset_link_expire_time, :integer, default: 300
-
-    preference :timezone, :string, default: Time.zone.name
-    preference :weight_unit, :string, default: 'lb'
-    preference :unit_system, :string, default: 'imperial'
-
 
     #
     # Associations
@@ -99,6 +106,7 @@ module Spree
     attribute :import_products_from_store_id, :string, default: nil
     attribute :import_payment_methods_from_store_id, :string, default: nil
     attr_accessor :skip_validate_not_last
+    store_accessor :private_metadata, :storefront_password
 
     #
     # Validations
@@ -147,6 +155,9 @@ module Spree
     default_scope { order(created_at: :asc) }
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
 
+    #
+    # Delegations
+    #
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(url = nil)
