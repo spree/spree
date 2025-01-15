@@ -10,9 +10,15 @@ module Spree
         old_state = order.state
         order_updater_ran = false
 
+        # We need to check how many times we transitioned between checkout steps and return the error if no transition has been made
+        # We'll always return an error when passing the `state` arg and not reaching the targeted state
+        transitions_count = 0
+
         until cannot_make_transition?(order, state)
           next_result = Spree::Dependencies.checkout_next_service.constantize.call(order: order)
-          return failure(order, order.errors) if next_result.failure?
+          return failure(order, order.errors) if next_result.failure? && (transitions_count.zero? || state.present?)
+
+          transitions_count +=1
 
           # Quick Checkout with Google Pay not always sends events for shipping method selection
           # we have to check this after payment

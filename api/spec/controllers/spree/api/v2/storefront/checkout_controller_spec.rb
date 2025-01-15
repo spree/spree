@@ -29,31 +29,6 @@ RSpec.describe Spree::Api::V2::Storefront::CheckoutController do
     end
   end
 
-  describe '#advance' do
-    context 'on a quick checkout' do
-      subject(:advance) { patch :advance, params: { shipping_method_id: shipping_method_2.id } }
-
-      let!(:order) { create(:order_with_line_items, state: :address, payments: [create(:payment)]) }
-      let!(:shipping_rate_1) { create(:shipping_rate, shipment: shipment, selected: true, shipping_method: shipping_method_1, cost: 0) }
-      let!(:shipping_rate_2) { create(:shipping_rate, shipment: shipment, selected: false, shipping_method: shipping_method_2, cost: 20) }
-
-      let(:shipment) { order.shipments.first }
-      let(:shipping_method_1) { create(:shipping_method, name: 'Standard') }
-      let(:shipping_method_2) { create(:shipping_method, name: 'Express') }
-
-      before do
-        allow(controller).to receive(:check_if_quick_checkout).and_return(true)
-      end
-
-      it 'advances with a new shipping method' do
-        advance
-
-        expect(response.status).to eq(200)
-        expect(order.reload.shipping_method.id).to eq(shipping_method_2.id)
-      end
-    end
-  end
-
   describe '#validate_order_for_payment' do
     subject { post :validate_order_for_payment, params: params }
 

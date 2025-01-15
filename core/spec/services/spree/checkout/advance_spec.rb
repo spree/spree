@@ -12,11 +12,11 @@ RSpec.describe Spree::Checkout::Advance do
         order.update(payment_total: 19.99, completed_at: nil)
         order.reload
         Spree::StockItem.where(variant: order.variants).update_all(count_on_hand: 10, backorderable: false)
-
-        ensure_states_updated_only_once
       end
 
       it 'advances the order until it cannot proceed further' do
+        ensure_states_updated_only_once
+
         result = service.call(order: order)
 
         expect(result).to be_success
@@ -24,10 +24,26 @@ RSpec.describe Spree::Checkout::Advance do
       end
 
       it 'updates order states after advancement' do
+        ensure_states_updated_only_once
+
         service.call(order: order)
 
         expect(order.shipment_state).to eq('pending')
         expect(order.payment_state).to eq('paid')
+      end
+
+      context 'when no transition has been made' do
+        before do
+          order.payments.destroy_all
+          order.update_column(:state, 'payment')
+        end
+
+        it 'responds with an error' do
+          result = service.call(order: order)
+
+          expect(result).to be_failure
+          expect(result.error.value.full_messages).to contain_exactly(Spree.t(:no_payment_found))
+        end
       end
     end
 
@@ -54,6 +70,19 @@ RSpec.describe Spree::Checkout::Advance do
 
         expect(result).to be_success
         expect(order.state).to eq('delivery')
+      end
+
+      context 'when unable to reach the targeted state' do
+        before do
+          order.payments.destroy_all
+        end
+
+        it 'responds with an error' do
+          result = service.call(order: order, state: 'complete')
+
+          expect(result).to be_failure
+          expect(result.error.value.full_messages).to contain_exactly(Spree.t(:no_payment_found))
+        end
       end
     end
 

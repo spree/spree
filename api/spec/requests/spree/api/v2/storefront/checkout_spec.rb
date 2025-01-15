@@ -111,15 +111,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   end
 
   describe 'checkout#advance' do
-    let(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers }
+    subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers }
 
     shared_examples 'perform advance' do
-      before do
-        order.update_column(:state, 'payment')
-      end
-
       context 'with payment data' do
         before do
+          order.update_column(:state, 'payment')
           payment
           execute
         end
@@ -134,14 +131,73 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'without payment data' do
-        before { execute }
+        let(:order_state) { 'delivery' }
+
+        before do
+          order.update_column(:state, order_state)
+          execute
+        end
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
-        it 'doesnt advance pass payment state' do
+        it 'advances up to the payment state' do
           expect(order.reload.state).to eq('payment')
           expect(json_response['data']).to have_attribute(:state).with_value('payment')
+        end
+
+        context 'when targeting the complete state' do
+          subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers, params: { state: 'complete' } }
+
+          before { execute }
+
+          it_behaves_like 'returns 422 HTTP status'
+
+          it 'advances up to the payment state' do
+            expect(order.reload.state).to eq('payment')
+          end
+
+          it 'responds with an error' do
+            expect(json_response['error']).to eq(Spree.t(:no_payment_found))
+          end
+        end
+
+        context 'when on payment state' do
+          let(:order_state) { 'payment' }
+
+          it_behaves_like 'returns 422 HTTP status'
+
+          it 'advances up to the payment state' do
+            expect(order.reload.state).to eq('payment')
+          end
+
+          it 'responds with an error' do
+            expect(json_response['error']).to eq(Spree.t(:no_payment_found))
+          end
+        end
+      end
+
+      context 'on a quick checkout' do
+        subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers, params: { shipping_method_id: shipping_method_2.id } }
+
+        let!(:order) { create(:order_with_line_items, state: 'address', payments: [create(:payment)], user: user, store: store, currency: currency) }
+
+        let!(:shipping_rate_1) { create(:shipping_rate, shipment: shipment, selected: true, shipping_method: shipping_method_1, cost: 0) }
+        let!(:shipping_rate_2) { create(:shipping_rate, shipment: shipment, selected: false, shipping_method: shipping_method_2, cost: 20) }
+
+        let(:shipment) { order.shipments.first }
+        let(:shipping_method_1) { create(:shipping_method, name: 'Standard') }
+        let(:shipping_method_2) { create(:shipping_method, name: 'Express') }
+
+        before do
+          allow(controller).to receive(:check_if_quick_checkout).and_return(true)
+        end
+
+        it 'advances with a new shipping method' do
+          execute
+
+          expect(response.status).to eq(200)
+          expect(order.reload.shipping_method.id).to eq(shipping_method_2.id)
         end
       end
 
