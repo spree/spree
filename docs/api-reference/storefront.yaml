@@ -973,6 +973,33 @@ paths:
       summary: Selects shipping method for shipment(s)
       tags:
         - Checkout / Shipments
+  /api/v2/storefront/checkout/validate_order_for_payment:
+    post:
+      description: |-
+        Validate an order before placing it. It will respond with an error when:
+        - cart was changed
+        - any order item is out of stock
+        - any order item is discontinued
+      operationId: validate-order-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/Cart'
+        '422':
+          $ref: '#/components/responses/CartWithErrors'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: skip_state
+          description: Set to `true` if the check for cart changes should be skipped
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsCart'
+      summary: Validate order payment
+      tags:
+        - Checkout
   /api/v2/storefront/checkout/create_payment:
     post:
       description: |-
@@ -1166,6 +1193,12 @@ paths:
           example: '1,2,3,4,5,6,7,8,9,10,11'
           description: 'Filter Products based on taxons (IDs of categories, brands, etc)'
         - in: query
+          name: 'filter[vendor_ids]'
+          schema:
+            type: string
+          example: 'bb492c7d-c174-4e6b-ba0b-fe98d5c17307,51c35adb-7ab3-4880-8887-35bdc4f6c29f'
+          description: 'Fetch products from specified Vendors (Sellers) only'
+        - in: query
           name: 'filter[name]'
           schema:
             type: string
@@ -1353,6 +1386,12 @@ paths:
             type: boolean
           example: false
           description: Fetch only root Taxons (Taxonomies)
+        - in: query
+          name: 'filter[vendor_id]'
+          schema:
+            type: string
+          example: '1'
+          description: Fetch only Taxons that have products of a selected Vendor
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/TaxonIncludeParam'
@@ -1500,6 +1539,131 @@ paths:
         in: path
         required: true
         description: The ID of the `menu` you wish to retrieve.
+  /api/v2/storefront/stripe/payment_intents:
+    post:
+      summary: Create a Stripe Payment Intent
+      description: Create a Stripe Payment Intent using provided payment method. It creates a Stripe customer if not exists.
+      tags:
+        - Stripe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_intent:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                      description: The payment amount
+                    stripe_payment_method_id:
+                      type: string
+                      description: Stripe Payment Method ID
+                    off_session:
+                      type: boolean
+                      description: If the payment is off-session (eq. payment method from setup intent)
+              required:
+                - payment_intent
+      operationId: create-stripe-payment-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
+    get:
+      summary: Return a Stripe Payment Intent
+      description: 'Returns the Payment Intent information'
+      tags:
+        - Stripe
+      operationId: show-stripe-payment-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+    patch:
+      summary: Create a Stripe Payment Intent
+      description: Create a Stripe Payment Intent using provided payment method. It creates a Stripe customer if not exists.
+      tags:
+        - Stripe
+      operationId: update-stripe-payment-intent
+      security:
+        - orderToken: []
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                payment_intent:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                      description: A new payment amount
+                    stripe_payment_method_id:
+                      type: string
+                      description: A new Stripe Payment Method ID
+                    off_session:
+                      type: boolean
+                      description: If the payment is off-session (eq. payment method from setup intent)
+              required:
+                - payment_intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+  /api/v2/storefront/stripe/setup_intents:
+    post:
+      summary: Create a Stripe Setup Intent
+      description: "First, this endpoint creates a customer in Stripe (if it doesn't already exist), then it creates an Ephemeral Key for the customer, and finally, it creates a Setup Intent for the customer."
+      tags:
+        - Stripe
+      operationId: create-stripe-setup-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripeSetupIntent'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+  /api/v2/storefront/vendors:
+    get:
+      description: 'Returns a list of Vendors.'
+      summary: List all Vendors available on this Store / Marketplace.
+      tags:
+        - Vendors
+      operationId: vendors-list
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/VendorList'
+  '/api/v2/storefront/vendors/{vendor_slug}':
+    get:
+      description: Returns the details of a specified Vendor.
+      summary: Retrieve a Vendor
+      tags:
+        - Vendors
+      operationId: show-vendor
+      parameters:
+        - $ref: '#/components/parameters/VendorSlug'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/Vendor'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /api/v2/storefront/wishlists:
     get:
       description: 'Returns all wishlists available to the current user, in the current store.'
@@ -4117,6 +4281,58 @@ components:
                 data:
                   $ref: '#/components/schemas/Relation'
       description: Digital links are accessible in the order includes line_items.digital_links
+    Vendor:
+      title: Vendor
+      description: 'Vendors are Sellers in the marketplace.'
+      type: object
+      x-internal: true
+      properties:
+        id:
+          type: string
+          example: '980a80d5-f51b-4065-b3a0-622fc5cb6bf6'
+        type:
+          type: string
+          default: vendor
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Shoes For Everyone'
+            email:
+              type: string
+              example: 'contact@example.com'
+            slug:
+              type: string
+              example: 'shoes-for-everyone'
+            about_us:
+              type: string
+              example: '<p>We are the #1 shoe store for you.</p>\n<p>Located in 20 countries.</p>'
+              description: Information about the Vendor stored as HTML
+            logo_url:
+              type: string
+              example: 'https://somewebsite.com/our-logo'
+              description: URL of the Logo
+            cover_photo_url:
+              type: string
+              example: 'https://somewebsite.com/our-cover-photo'
+              description: URL of the Cover Photo
+        relationships:
+          type: object
+          properties:
+            products:
+              type: object
+              description: List of active and available products from this vendor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
   parameters:
     Token:
       name: token
@@ -4233,11 +4449,11 @@ components:
         Specify what related resources (relationships) you would like to receive in the response body. Eg.
 
         ```
-        default_variant,variants,option_types,product_properties,taxons,images,primary_variant
+        default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
+      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor'
     StoreIncludeParam:
       name: include
       in: query
@@ -4435,6 +4651,13 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    SparseFieldsVendor:
+      name: 'fields[vendor]'
+      in: query
+      description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      schema:
+        type: string
+      example: 'name,slug,about_us,facebook'
     SparseFieldsWishlist:
       in: query
       name: 'fields[wishlist]'
@@ -4442,6 +4665,14 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    VendorSlug:
+      name: vendor_slug
+      in: path
+      required: true
+      description: Look for Vendor by ID or their slug
+      schema:
+        type: string
+      example: acme-co
   responses:
     404NotFound:
       description: 404 Not Found - Resource not found.
@@ -4988,6 +5219,30 @@ components:
                         data:
                           id: '1'
                           type: stock_location
+    CartWithErrors:
+      description: 422 Unprocessable entity - Returns the `cart` object with errors.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Cart'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartIncludes'
+              meta:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                      example: Cart changed
+            required:
+              - data
+              - meta
     CartList:
       description: 200 Success - Returns an array of `cart` objects.
       content:
@@ -5379,7 +5634,7 @@ components:
                   total_count: 1
                   total_pages: 1
                 links:
-                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions,vendors'
                   next: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   prev: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
@@ -6625,6 +6880,89 @@ components:
                   prev: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=0'
                   first: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
+    StripeSetupIntent:
+      description: 200 Success - Returns the `customer_id` of the authenticated user, created ephemeral key's secret and client secret of the created setup intent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              customer_id:
+                type: string
+                description: |
+                  Stripe's customer ID of the authenticated user (or new one if unauthenticated).
+              ephemeral_key_secret:
+                type: string
+                description: |
+                  Secret of the created ephemeral key.
+              setup_intent_client_secret:
+                type: string
+                description: |
+                  Client secret of the created setup intent
+            required:
+              - customer_id
+              - ephemeral_key_secret
+              - setup_intent_client_secret
+          examples:
+            Stripe Setup Intent:
+              value:
+                customer_id: 'cus_Q9uqUz6gVQFku2'
+                ephemeral_key_secret: 'ek_test_YWNjdF8xTGtSb1lJaFIwZ0llZ0llyG1LbFhsVU9XWHY1SlNyMXRKVzNJb0hyQ2JZam1HY28_007lGgvGaA'
+                setup_intent_client_secret: 'seti_1PJb0hIhR0gIegIeZYQQuxpH_secret_Q9uqLuTAvIJQSK1SFS6OaxJMRpe9s7R'
+    StripePaymentIntent:
+      description: 200 Success - Returns the Stripe Payment Intent with the Stripe ID, client key, ephemeral_key, customer_id, amount and Stripe Payment Method ID.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 980a80d5-f51b-4065-b3a0-622fc5cb6bf6
+                  type:
+                    type: string
+                    default: payment_intent
+                  attributes:
+                    type: object
+                    properties:
+                      stripe_id:
+                        type: string
+                        description: The Stripe internal ID of the Payment Intent
+                      client_secret:
+                        type: string
+                        description: |
+                          The client secret can be used to complete a payment from your frontend. It should not be stored, logged, or exposed to anyone other than the customer. Make sure that you have TLS enabled on any page that includes the client secret.
+                      ephemeral_key_secret:
+                        type: string
+                        description: |
+                          Secret of the created ephemeral key.
+                      customer_id:
+                        type: string
+                        description: |
+                          Stripe's customer ID of the authenticated user (or new one if unauthenticated).
+                      amount:
+                        type: number
+                        description: The payment amount
+                      stripe_payment_method_id:
+                        type: string
+                        description: |
+                          This is the same stripe_payment_method_id that was sent in the parameters. It can be used to confirm Stripe intent that was not confirmed before
+          examples:
+            Stripe Payment Intent:
+              value:
+                data:
+                  id: '980a80d5-f51b-4065-b3a0-622fc5cb6bf6'
+                  type: payment_intent
+                  attributes:
+                    stripe_id: 'pi_3QhUuj2ESifGlJez0ADSS4tu'
+                    client_secret: 'pi_3KQRG2DcAgmy0ota09WCW6nf_secret_8XTxRbOyg7oEkvvIOvnP75dRw'
+                    ephemeral_key_secret: 'ek_test_YWNjdF8xTGtSb1lJaFIwZ0llZ0llyG1LbFhsVU9XWHY1SlNyMXRKVzNJb0hyQ2JZam1HY28_007lGgvGaA'
+                    customer_id: 'cus_Q9uqUz6gVQFku2'
+                    amount: '44.0'
+                    stripe_payment_method_id: 'pm_1Qedd42ESifGlJez0IOx5AZ3'
     Product:
       description: 200 Success - Returns the `product` object.
       content:
@@ -16823,6 +17161,71 @@ components:
                       name: Check
                       description: Pay by check.
                       preferences: {}
+    Vendor:
+      description: 200 Success - Returns the `vendor` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Vendor'
+            required:
+              - data
+          examples:
+            Single Vendor:
+              value:
+                data:
+                  id: 'e1171601-a4ce-47d2-a795-c96fbdf20029'
+                  type: vendor
+                  attributes:
+                    name: 'Best Shoes'
+                    email: 'contact@example.com'
+                    slug: 'best-shoes'
+                    about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                    logo_url: 'https://assets.com/images/logo_name'
+                    cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+    VendorList:
+      description: 200 Success - Returns an array of `vendor` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+              meta:
+                $ref: '#/components/schemas/ListMeta'
+              links:
+                $ref: '#/components/schemas/ListLinks'
+            required:
+              - data
+              - meta
+              - links
+          examples:
+            List of Vendors:
+              value:
+                data:
+                  - id: 'eb261155-1ddc-47e5-8178-8c3da6e607a8'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shoes'
+                      email: 'contact-1@example.com'
+                      slug: 'best-shoes'
+                      about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name'
+                      cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+                  - id: '4f46f04f-fa2c-42d0-b69c-ce2b2997f5fd'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shirts'
+                      email: 'contact-2@example.com'
+                      slug: 'best-shirts'
+                      about_us: "<p>We are your #1 shirts store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name34553'
+                      cover_photo_url: 'https://assets.com/images/coverfn5ig'
 tags:
   - name: Account
   - name: Account / Address
@@ -16837,6 +17240,7 @@ tags:
   - name: Checkout / Shipments
   - name: Checkout / Payments
   - name: Checkout / Store Credit
+  - name: Stripe
   - name: CMS Pages
   - name: Countries
   - name: Digital Downloads
@@ -16846,5 +17250,6 @@ tags:
   - name: Variants
   - name: Stores
   - name: Taxons
+  - name: Vendors
   - name: Wishlists
   - name: Wishlists / Wished Items

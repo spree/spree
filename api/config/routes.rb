@@ -31,6 +31,7 @@ Spree::Core::Engine.add_routes do
           get :payment_methods
           get :shipping_rates
           patch :select_shipping_method
+          post :validate_order_for_payment
         end
 
         resource :account, controller: :account, only: %i[show create update]

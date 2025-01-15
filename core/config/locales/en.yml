@@ -649,6 +649,9 @@ en:
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
+    cart_line_item:
+      discontinued: '%{li_name} was removed because it was discontinued'
+      out_of_stock: '%{li_name} was removed because it was sold out'
     cart_page:
       add_promo_code: ADD PROMO CODE
       change_quantity: Change quantity
@@ -662,6 +665,7 @@ en:
     cart_subtotal:
       one: 'Subtotal (1 item)'
       other: 'Subtotal (%{count} items)'
+    cart_state_changed: Cart changed
     categories: Categories
     category: Category
     category_nav_bar:

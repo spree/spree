@@ -42,6 +42,8 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             address: store.address,
             contact_phone: store.contact_phone,
             new_order_notifications_email: store.new_order_notifications_email,
+            public_metadata: {},
+            private_metadata: {},
             seo_robots: store.seo_robots,
             supported_locales: store.supported_locales,
             deleted_at: store.deleted_at,
