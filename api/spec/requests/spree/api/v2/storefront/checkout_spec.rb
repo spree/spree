@@ -1043,4 +1043,110 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       it_behaves_like 'transitions through checkout from start to finish'
     end
   end
+
+  describe 'checkout#validate_order_for_payment' do
+    let(:order_state) { 'payment' }
+
+    before do
+      order.update!(state: order_state)
+    end
+
+    shared_examples 'validating the order' do
+      before do
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+      it_behaves_like 'returns valid cart JSON'
+    end
+
+    shared_examples 'showing 404' do
+      before do
+        order.destroy!
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'when order has line items that were removed' do
+      include_context 'order with a physical line item'
+
+      let!(:product) { order.line_items.first.product }
+
+      before do
+        product.update!(status: 'draft')
+
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'should return an error' do
+        expect(json_response['meta']['messages']).to eq(["#{product.name} was removed because it was discontinued"])
+      end
+    end
+
+    context 'when order is not on the payment step' do
+      include_context 'order with a physical line item'
+
+      let(:order_state) { 'address' }
+
+      before do
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'should return an error' do
+        expect(json_response['meta']['messages']).to eq(['Cart changed'])
+      end
+    end
+
+    context 'without existing order' do
+      let!(:headers) { headers_bearer }
+
+      it_behaves_like 'showing 404'
+    end
+
+    context 'with existing user order with line item' do
+      include_context 'order with a physical line item'
+
+      it_behaves_like 'validating the order'
+    end
+
+    context 'with existing guest order' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'validating the order'
+    end
+
+    context 'with skip state validation' do
+      include_context 'order with a physical line item'
+
+      before do
+        order.update_column(:state, 'address')
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers, params: { skip_state: true }
+      end
+
+      it 'should return a valid cart' do
+        expect(json_response['data']).to have_id(order.id.to_s)
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context 'without skip state validation' do
+      include_context 'order with a physical line item'
+
+      before do
+        order.update_column(:state, 'address')
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it 'should return an error' do
+        expect(response.status).to eq(422)
+        expect(json_response['meta']['messages']).to eq(['Cart changed'])
+      end
+    end
+  end
 end
