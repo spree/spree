@@ -4,6 +4,7 @@ module Spree
       include Spree::Admin::OrdersFiltersHelper
 
       before_action :load_user, only: [:index]
+      before_action :assign_filter_badges, only: :index
 
       def index
         params[:q] ||= {}

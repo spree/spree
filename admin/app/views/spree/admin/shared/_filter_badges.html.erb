@@ -1,0 +1,10 @@
+<div class="table-active-filters border-bottom">
+  <% @filter_badges.each do |param, filter| %>
+    <span class="badge py-1 px-2 bg-light text-dark d-flex-inline align-items-center mb-0">
+      <%= filter[:label] %>:
+      <%= filter[:value] %>
+      <%= link_to url_for(q: params[:q].permit!.except(param)), class: "btn-close mb-0" do %>
+      <% end %>
+    </span>
+  <% end %>
+</div>

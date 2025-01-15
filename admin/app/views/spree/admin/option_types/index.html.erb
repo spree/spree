@@ -4,50 +4,61 @@
 
 <% content_for :page_actions do %>
   <span id="new_ot_link">
-    <%= button_link_to Spree.t(:new_option_type), new_object_url, { class: "btn-primary", icon: 'plus', id: 'new_option_type_link' } %>
+    <%= button_link_to Spree.t(:new_option_type),
+    new_object_url,
+    { class: "btn-primary", icon: "plus", id: "new_option_type_link" } %>
   </span>
 <% end if can?(:create, Spree::OptionType) %>
 
 <%= content_for(:page_alerts) do %>
   <div class="alert alert-info">
-    Options are used to group certain attributes. For example, you can create an option named "shirt size" and then create an option value named "small" and "medium" for this option.
+    Options are used to group certain attributes. For example, you can create an option named "shirt size" and then
+    create an option value named "small" and "medium" for this option.
   </div>
 <% end %>
 
 <div id="new_option_type"></div>
-  <% content_for :table_filter do %>
-    <%= render partial: 'spree/admin/option_types/filter' %>
-  <% end %>
 
-<% if @option_types.any? %>
-  <div class="table-responsive">
-    <table class="table" id="listing_option_types">
-      <thead class="text-muted">
-      <tr>
-        <th class="no-border handel-head"></th>
-        <th><%= Spree.t(:internal_name) %></th>
-        <th>
-          <%= Spree.t(:presentation) %>
-          <%= help_bubble('How this option is presented to customers') %>
-        </th>
-        <th>
-          <%= Spree.t(:filterable) %>
-          <%= help_bubble('Whether this option can be used in product filters') %>
-        </th>
-        <th>
-          <%= Spree.t(:option_values) %>
-        </th>
-        <th>
-          <%= Spree.t(:products) %>
-        </th>
-        <th class="actions"></th>
-      </tr>
-      </thead>
-      <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="option_type" data-sortable-response-kind-value="turbo-stream">
-        <%= render partial: 'spree/admin/option_types/option_type', collection: @option_types %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+<div class="card-lg p-0">
+
+  <%= render partial: "spree/admin/option_types/filter" %>
+  <%= render "spree/admin/shared/filter_badges" %>
+
+  <% if @option_types.any? %>
+    <div class="table-responsive">
+      <table class="table" id="listing_option_types">
+        <thead class="text-muted">
+          <tr>
+            <th class="no-border handel-head"></th>
+            <th><%= Spree.t(:internal_name) %></th>
+            <th>
+              <%= Spree.t(:presentation) %>
+              <%= help_bubble("How this option is presented to customers") %>
+            </th>
+            <th>
+              <%= Spree.t(:filterable) %>
+              <%= help_bubble("Whether this option can be used in product filters") %>
+            </th>
+            <th>
+              <%= Spree.t(:option_values) %>
+            </th>
+            <th>
+              <%= Spree.t(:products) %>
+            </th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="option_type"
+          data-sortable-response-kind-value="turbo-stream"
+        >
+          <%= render partial: "spree/admin/option_types/option_type", collection: @option_types %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "spree/admin/shared/no_resource_found" %>
+  <% end %>
+</div>

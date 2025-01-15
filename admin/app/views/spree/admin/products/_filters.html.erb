@@ -1,63 +1,70 @@
-<div class="filter-wrap">
+<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom" do |f| %>
   <div class="d-flex flex-column flex-lg-row">
-    <%= form_tag request.fullpath, id: "quick-search", class: 'flex-grow-1 mr-lg-2 mb-3 mb-lg-0', method: :get do %>
-      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-        <%= icon 'search', class: 'mr-3 text-muted' %>
-        <%= search_field_tag :quick_search, nil, class: "form-control-plaintext js-quick-search px-0", placeholder: Spree.t(:search_by) %>
+    <div class=" flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+      <div class=" form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue ">
+        <%= icon "search", class: "mr-3 text-muted" %>
+        <%= f.search_field :multi_search, class: "form-control-plaintext js-quick-search px-0", placeholder: Spree.t(:search_by) %>
       </div>
-    <% end %>
+    </div>
 
     <div class="d-flex align-items-center justify-content-between">
-      <%= render 'spree/admin/products/table_filter_dropdown' %>
+      <%= render "spree/admin/products/table_filter_dropdown" %>
 
-      <button class="btn btn-light h-100" type="button" data-toggle="collapse" data-target="#table-filter" href="#table-filter" aria-expanded="false" aria-controls="table-filter">
-        <%= icon "adjustments", class: 'mr-1' %>
-        <%= Spree.t('admin.filters') %>
+      <button
+        class="btn btn-light h-100"
+        type="button"
+        data-toggle="collapse"
+        data-target="#table-filter"
+        href="#table-filter"
+        aria-expanded="false"
+        aria-controls="table-filter"
+      >
+        <%= icon "adjustments", class: "mr-1" %>
+        <%= Spree.t("admin.filters") %>
       </button>
     </div>
   </div>
   <div id="table-filter" class="collapse mt-4">
-    <%= search_form_for(product_list_filters_search_form_path) do |f| %>
-      <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
-      <div class="row">
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= f.label :multi_search, Spree.t(:query) %>
-            <%= f.text_field :multi_search, class: "form-control js-quick-search-target js-filterable", placeholder: 'Name, SKU, brand, etc' %>
-          </div>
+    <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :taxons_id_in, Spree.t(:taxons) %>
+          <% @categories = Spree::Taxon.where(id: params.dig(:q, :taxons_id_in)).pluck(:pretty_name, :id) if params.dig(
+            :q,
+            :taxons_id_in,
+          ) %>
+          <%= tom_select_tag "q[taxons_id_in]",
+          multiple: true,
+          preloaded_options: @categories,
+          active_option: params.dig(:q, :taxons_id_in),
+          empty_option: Spree.t(:without_taxon),
+          url: spree.admin_taxons_select_options_path(format: :json),
+          select_class: "js-filterable" %>
         </div>
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= f.label :taxons_id_in, Spree.t(:taxons) %>
-            <% @categories = Spree::Taxon.where(id: params.dig(:q, :taxons_id_in)).pluck(:pretty_name, :id) if params.dig(:q, :taxons_id_in) %>
-            <%= tom_select_tag 'q[taxons_id_in]',
-                  multiple: true,
-                  preloaded_options: @categories,
-                  active_option: params.dig(:q, :taxons_id_in),
-                  empty_option: Spree.t(:without_taxon),
-                  url: spree.admin_taxons_select_options_path(format: :json),
-                  select_class: 'js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= f.label :tags_name_in, Spree.t(:tags) %>
-            <%= tom_select_tag 'q[tags_name_in]', active_option: params[:q][:tags_name_in], options: tags_json_array, multiple: true, value_field: :name, select_class: 'js-filterable w-100' %>
-          </div>
-        </div>
-
-        <%= render partial: 'spree/admin/products/form/extra_filters', locals: { f: f } %>
       </div>
 
-      <div class="form-actions">
-        <%= turbo_save_button_tag Spree.t(:filter_results) do %>
-          <%= icon('search') %>
-          <%= Spree.t(:filter_results) %>
-        <% end %>
+      <div class="col-12 col-lg-6">
+        <div class="form-group">
+          <%= f.label :tags_name_in, Spree.t(:tags) %>
+          <%= tom_select_tag "q[tags_name_in]",
+          active_option: params[:q][:tags_name_in],
+          options: tags_json_array,
+          multiple: true,
+          value_field: :name,
+          select_class: "js-filterable w-100" %>
+        </div>
       </div>
-    <% end %>
+      <%= render partial: "spree/admin/products/form/extra_filters", locals: { f: f } %>
+    </div>
+
+    <div class="form-actions">
+      <%= turbo_save_button_tag Spree.t(:filter_results) do %>
+        <%= icon("search") %>
+        <%= Spree.t(:filter_results) %>
+      <% end %>
+    </div>
   </div>
-</div>
+<% end %>
 
-<div class="table-active-filters border-bottom js-filters"></div>
+<%= render "spree/admin/shared/filter_badges" %>

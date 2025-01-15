@@ -1,9 +1,14 @@
-<%= search_form_for [:admin, @search] do |f| %>
-  <div class="form-group">
-    <%= f.label :name_cont, Spree.t(:name) %>
-    <%= f.text_field :name_cont, class: "form-control js-quick-search-target js-filterable" %>
-  </div>
-  <div class="form-actions">
-    <%= button Spree.t(:search), 'search' %>
-  </div>
-<% end %>
+<div id="table-filter">
+  <%= search_form_for [:admin, @search] do |f| %>
+    <div class="filter-wrap border-bottom">
+      <div class="d-flex flex-column flex-lg-row">
+        <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+          <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
+            <%= icon "search", class: "mr-3 text-muted" %>
+            <%= f.search_field :name_cont, class: "form-control-plaintext px-0", placeholder: "#{Spree.t(:search_by)} #{Spree.t(:name)}" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1389,6 +1389,7 @@ en:
     quantity_returned: Quantity Returned
     quantity_shipped: Quantity Shipped
     quick_search: Quick search..
+    query: Query
     rate: Rate
     reason: Reason
     receive: receive

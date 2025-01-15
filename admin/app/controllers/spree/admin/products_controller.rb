@@ -11,6 +11,7 @@ module Spree
       before_action :load_data, except: :index
       before_action :load_variants_data, only: %i[edit update]
       before_action :set_product_defaults, only: :new
+      before_action :assign_filter_badges, only: :index
 
       before_action :prepare_product_params, only: [:create, :update]
       before_action :strip_stock_items_param, only: [:create, :update]
@@ -363,6 +364,18 @@ module Spree
           variants: [:prices, :images, :stock_items, :stock_locations],
           variant_images: [],
         }
+      end
+
+      def assign_filter_badges
+        @filter_badges ||= begin
+          badges = {}
+          badges[:multi_search] = { label: Spree.t(:query), value: params[:q][:multi_search] } if params.dig(:q, :multi_search).present?
+          if params.dig(:q, :taxons_id_in).present?
+            badges[:taxons_id_in] = { label: Spree.t(:taxons), value: Spree::Taxon.where(id: params[:q][:taxons_id_in]).pluck(:name).join(', ') }
+          end
+          badges[:tags_name_id] = { label: Spree.t(:tags), value: params[:q][:tags_name_in].join(', ') } if params.dig(:q, :tags_name_in).present?
+          badges
+        end
       end
     end
   end

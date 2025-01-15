@@ -92,6 +92,44 @@ module Spree
       def load_user
         @user = Spree.user_class.find(params[:user_id]) if params[:user_id].present?
       end
+
+      def assign_filter_badges
+        @filter_badges ||= begin
+          badges = {}
+
+          if params.dig(:q, :bill_address_firstname_i_cont_any).present?
+            badges[:bill_address_firstname_i_cont_any] =
+              { label: Spree.t(:first_name), value: params[:q][:bill_address_firstname_i_cont_any] }
+          end
+
+          if params.dig(:q, :bill_address_lastname_eq).present?
+            badges[:bill_address_lastname_eq] =
+              { label: Spree.t(:last_name), value: params[:q][:bill_address_lastname_eq] }
+          end
+
+          badges[:email_eq] = { label: Spree.t(:email), value: params[:q][:email_eq] } if params.dig(:q, :email_eq).present?
+
+          if params.dig(:q, :line_items_variant_sku_eq).present?
+            badges[:line_items_variant_sku_eq] = { label: Spree.t(:sku), value: params[:q][:line_items_variant_sku_eq] }
+          end
+
+          if params.dig(:q, :promotions_id_in).present?
+            badges[:promotions_id_in] = {
+              label: Spree.t(:promotion),
+              value: Spree::Promotion.where(id: params[:q][:promotions_id_in]).pluck(:name).join(', ')
+            }
+          end
+
+          if params.dig(:q, :vendor_orders_vendor_id_eq).present?
+            badges[:vendor_orders_vendor_id_eq] = {
+              label: Spree.t(:vendor),
+              value: Spree::Vendor.where(id: params[:q][:vendor_orders_vendor_id_eq]).pluck(:name).join(', ')
+            }
+          end
+
+          badges
+        end
+      end
     end
   end
 end

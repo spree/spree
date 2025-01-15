@@ -8,6 +8,7 @@ module Spree
       before_action :load_order, only: %i[edit cancel resend]
       before_action :load_order_items, only: :edit
       before_action :load_user, only: [:index]
+      before_action :assign_filter_badges, only: :index
 
       helper_method :model_class
 

@@ -3,36 +3,36 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <%= render 'spree/admin/shared/stock_nav' %>
+  <%= render "spree/admin/shared/stock_nav" %>
 <% end %>
 
-<% content_for :table_filter do %>
-  <%= render 'filters' %>
-<% end %>
+<div class="card-lg p-0">
+  <%= render "filters" %>
 
-<% if @stock_items.any? %>
-  <div class="table-responsive">
-    <table class="table" id="listing_products">
-      <thead class="text-muted">
-      <tr>
-        <th scope="col"><%= Spree.t(:variant) %></th>
-        <th scope="col"><%= Spree.t(:stock_location) %></th>
-        <th scope="col" class="text-center">
-          <%= Spree.t(:backorderable) %>
-          <%= help_bubble(Spree.t(:continue_selling_when_out_of_stock)) %>
-        </th>
-        <th scope="col"><%= Spree.t(:count_on_hand) %></th>
-      </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'stock_item', collection: @stock_items %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: Spree.t('admin.stock_items.plural_resource_name')) %>
-  </div>
-<% end %>
+  <% if @stock_items.any? %>
+    <div class="table-responsive">
+      <table class="table" id="listing_products">
+        <thead class="text-muted">
+          <tr>
+            <th scope="col"><%= Spree.t(:variant) %></th>
+            <th scope="col"><%= Spree.t(:stock_location) %></th>
+            <th scope="col" class="text-center">
+              <%= Spree.t(:backorderable) %>
+              <%= help_bubble(Spree.t(:continue_selling_when_out_of_stock)) %>
+            </th>
+            <th scope="col"><%= Spree.t(:count_on_hand) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: "stock_item", collection: @stock_items %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+      <%= Spree.t(:no_resource_found, resource: Spree.t("admin.stock_items.plural_resource_name")) %>
+    </div>
+  <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @stock_items, simple: true if @stock_items.any? %>
+  <%= render "spree/admin/shared/index_table_options", collection: @stock_items, simple: true if @stock_items.any? %>
+</div>
