@@ -30,7 +30,7 @@ describe 'API v2 Errors spec', type: :request do
     end
 
     it 'calls error handler' do
-      expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
+      expect_next_instance_of(::Spree::ErrorHandler) do |instance|
         expect(instance).to receive(:call).with(
           exception: instance_of(CanCan::AccessDenied),
           opts: { user: user }

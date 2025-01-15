@@ -106,16 +106,27 @@ RSpec.describe Spree::Checkout::Advance do
         expect(order.reload.state).to eq('delivery')
       end
 
-      it 'handles shipping method update errors' do
-        allow_next_instance_of(Spree::Checkout::SelectShippingMethod) do |instance|
-          allow(instance).to receive(:call).and_raise(StandardError.new('Shipping method error'))
+      context 'on shipping method failure' do
+        before do
+          allow_next_instance_of(Spree::Checkout::SelectShippingMethod) do |instance|
+            allow(instance).to receive(:call).
+              and_return(
+                double(
+                  :failure,
+                  success?: false, failure?: true,
+                  value: order, error: 'Shipping method error'
+                )
+              )
+          end
         end
 
-        result = service.call(order: order, shipping_method_id: new_shipping_method.id)
+        it 'keeps the old shipping method' do
+          result = service.call(order: order, shipping_method_id: new_shipping_method.id, state: 'delivery')
 
-        expect(result).to be_failure
-        expect(order.shipping_method).to eq(order.shipments.first.shipping_method)
-        expect(order.state).to eq('delivery')
+          expect(result).to be_success
+          expect(order.reload.shipping_method).to eq(order.shipments.first.shipping_method)
+          expect(order.state).to eq('delivery')
+        end
       end
     end
 

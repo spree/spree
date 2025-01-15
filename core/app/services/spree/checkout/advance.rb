@@ -23,22 +23,15 @@ module Spree
           # Quick Checkout with Google Pay not always sends events for shipping method selection
           # we have to check this after payment
 
-          begin
-            if order.delivery? &&
-                shipping_method_id.present? &&
-                order.shipments.count == 1 &&
-                order.shipping_method.id != shipping_method_id
+          if order.delivery? &&
+              shipping_method_id.present? &&
+              order.shipments.count == 1 &&
+              order.shipping_method.id != shipping_method_id
 
-              result = Spree::Checkout::SelectShippingMethod.call(order: order, params: { shipping_method_id: shipping_method_id })
+            result = Spree::Checkout::SelectShippingMethod.call(order: order, params: { shipping_method_id: shipping_method_id })
 
-              # We're running the order update inside Spree::Checkout::SelectShippingMethod
-              order_updater_ran = result.success?
-            end
-          rescue StandardError => e
-            Rails.logger.warn "[CHECKOUT] Error advancing order #{order.number}: #{e.message}"
-            report_advance_error(e, order)
-
-            return failure(order, order.errors)
+            # We're running the order update inside Spree::Checkout::SelectShippingMethod
+            order_updater_ran = result.success?
           end
         end
 
