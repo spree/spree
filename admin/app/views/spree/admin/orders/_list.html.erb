@@ -2,7 +2,7 @@
   <div class="table-responsive">
     <table class="table position-relative" id="listing_orders">
       <thead class="text-muted">
-        <tr data-hook="admin_orders_index_headers">
+        <tr>
           <th><%= I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
           <% if controller_name == 'orders' %>
             <th><%= sort_link @search, :completed_at,   Spree.t(:date) %></th>

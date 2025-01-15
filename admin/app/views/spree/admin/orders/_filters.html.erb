@@ -1,6 +1,6 @@
 <div id="table-filter">
   <%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil do |f| %>
-    <div class="filter-wrap border-bottom">
+    <div class="filter-wrap">
       <div class="d-flex flex-column flex-lg-row">
         <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
           <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
