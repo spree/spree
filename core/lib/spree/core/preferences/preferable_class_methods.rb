@@ -12,7 +12,7 @@ module Spree::Preferences
       # cache_key will be nil for new objects, then if we check if there
       # is a pending preference before going to default
       define_method preference_getter_method(name) do
-        (preferences || {}).fetch(name) do
+        preferences.fetch(name) do
           default.call
         end
       end
