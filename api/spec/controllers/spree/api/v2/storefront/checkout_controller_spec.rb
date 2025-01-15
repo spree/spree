@@ -53,4 +53,62 @@ RSpec.describe Spree::Api::V2::Storefront::CheckoutController do
       end
     end
   end
+
+  describe '#validate_order_for_payment' do
+    subject { post :validate_order_for_payment, params: params }
+
+    let(:params) { {} }
+
+    context 'when state changed back from payment' do
+      let!(:order) { create(:order_with_line_items, state: :delivery, payments: [create(:payment)]) }
+
+      it 'responds with an error' do
+        subject
+
+        expect(response.status).to eq(422)
+        expect(json_response.dig(:meta, :messages)).to contain_exactly(Spree.t(:cart_state_changed))
+      end
+    end
+
+    context 'when order items went out of stock' do
+      let(:params) { { skip_state: true } }
+
+      let!(:order) { create(:order_with_line_items, state: :payment, payments: [create(:payment)], line_items_count: 2) }
+
+      let(:line_item_1) { order.line_items[0] }
+      let(:line_item_2) { order.line_items[1] }
+
+      before do
+        line_item_1.variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        line_item_2.variant.stock_items.update_all(count_on_hand: 10, backorderable: false)
+      end
+
+      it 'responds with an error' do
+        subject
+
+        expect(response.status).to eq(422)
+        expect(json_response.dig(:meta, :messages)).to contain_exactly(Spree.t('cart_line_item.out_of_stock', li_name: line_item_1.name))
+      end
+    end
+
+    context 'when order items were discontinued' do
+      let(:params) { { skip_state: true } }
+
+      let!(:order) { create(:order_with_line_items, state: :payment, payments: [create(:payment)], line_items_count: 2) }
+
+      let(:line_item_1) { order.line_items[0] }
+      let(:line_item_2) { order.line_items[1] }
+
+      before do
+        line_item_1.variant.update!(discontinue_on: 1.hour.ago)
+      end
+
+      it 'responds with an error' do
+        subject
+
+        expect(response.status).to eq(422)
+        expect(json_response.dig(:meta, :messages)).to contain_exactly(Spree.t('cart_line_item.discontinued', li_name: line_item_1.name))
+      end
+    end
+  end
 end

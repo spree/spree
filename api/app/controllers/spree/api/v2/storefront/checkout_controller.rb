@@ -99,7 +99,7 @@ module Spree
 
             if spree_current_order.present?
               validated_order, messages = Spree::Cart::RemoveOutOfStockItems.call(order: spree_current_order).value
-              messages << Spree.t('cart_state_changed') if !validated_order.payment? && params[:skip_state].blank?
+              messages << Spree.t(:cart_state_changed) if !validated_order.payment? && params[:skip_state].blank?
             end
 
             if messages.any?
