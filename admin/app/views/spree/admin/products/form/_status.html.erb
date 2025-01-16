@@ -3,8 +3,8 @@
     <h5 class="card-title"><%= Spree.t(:status) %></h5>
   </div>
   <div class="card-body">
-    <div class="row">
-      <div data-hook="new_product_status" class="col-6">
+    <div class="row mb-3">
+      <div class="col-6">
         <div class="form-group">
           <%= f.label :status, Spree.t(:status) %>
           <%= help_bubble(Spree.t('admin.products.status_form.status')) if show_product_status_help_bubble? %>

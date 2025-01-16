@@ -183,6 +183,30 @@ module Spree
       Spree::Store.all.map(&:supported_locales_list).flatten.uniq
     end
 
+    def default_country_iso=(iso)
+      return if iso.blank?
+
+      @default_country_iso = iso
+
+      country = Spree::Country.by_iso(iso)
+
+      if country.present?
+        self.default_country = country
+      elsif iso_country = ::Country[iso]
+        new_country = Spree::Country.create!(
+          iso_name: iso_country.local_name&.upcase,
+          iso: iso_country.alpha2,
+          iso3: iso_country.alpha3,
+          name: iso_country.local_name,
+          numcode: iso_country.number,
+          states_required: Spree::Address::STATES_REQUIRED.include?(iso),
+          zipcode_required: !Spree::Address::NO_ZIPCODE_ISO_CODES.include?(iso)
+        )
+
+        self.default_country = new_country
+      end
+    end
+
     def default_menu(location)
       menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
 
