@@ -1,9 +1,15 @@
-<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom" do |f| %>
+<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "ransack"} do |f| %>
   <div class="d-flex flex-column flex-lg-row">
     <div class=" flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
       <div class=" form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue ">
         <%= icon "search", class: "mr-3 text-muted" %>
-        <%= f.search_field :multi_search, class: "form-control-plaintext js-quick-search px-0", placeholder: Spree.t(:search_by) %>
+        <%= f.search_field :multi_search,
+                       class: "form-control-plaintext js-quick-search px-0",
+                       placeholder: "#{Spree.t(:search_by)} Name, SKU, brand, etc",
+                       data: {
+                         badge_name: Spree.t(:query),
+                         ransack_target: :input,
+                       } %>
       </div>
     </div>
 
@@ -40,7 +46,9 @@
           active_option: params.dig(:q, :taxons_id_in),
           empty_option: Spree.t(:without_taxon),
           url: spree.admin_taxons_select_options_path(format: :json),
-          select_class: "js-filterable" %>
+          select_data: {
+            ransack_target: "input",
+          } %>
         </div>
       </div>
 
@@ -52,7 +60,10 @@
           options: tags_json_array,
           multiple: true,
           value_field: :name,
-          select_class: "js-filterable w-100" %>
+          select_class: "w-100",
+          select_data: {
+            ransack_target: "input",
+          } %>
         </div>
       </div>
       <%= render partial: "spree/admin/products/form/extra_filters", locals: { f: f } %>
@@ -65,6 +76,8 @@
       <% end %>
     </div>
   </div>
-<% end %>
 
-<%= render "spree/admin/shared/filter_badges" %>
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>
