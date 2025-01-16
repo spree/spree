@@ -528,6 +528,30 @@ describe Spree::Store, type: :model do
     end
   end
 
+  describe '#default_country_iso=' do
+    let(:store) { build(:store) }
+
+    context 'when country is not found' do
+      it 'sets the default country' do
+        expect(Spree::Country.find_by(iso: 'GB')).to be_nil
+        expect { store.default_country_iso = 'GB' }.to change(Spree::Country, :count).by(1)
+        expect(store.default_country).to be_an_instance_of(Spree::Country)
+        expect(store.default_country.iso).to eq('GB')
+        expect(store.default_country.numcode.to_s).to eq(::Country['GB'].number)
+        expect(store.default_country_iso).to eq('GB')
+      end
+    end
+
+    context 'when country is found' do
+      let!(:country) { create(:country, iso: 'GB') }
+
+      it 'sets the default country' do
+        expect { store.default_country_iso = 'GB' }.not_to change(Spree::Country, :count)
+        expect(store.default_country.iso).to eq('GB')
+      end
+    end
+  end
+
   describe '#unique_name' do
     let!(:store) { build(:store) }
 
