@@ -13,7 +13,7 @@
           data-sortable-resource-name-value="asset"
           data-sortable-response-kind-value="json">
       <%= render partial: 'spree/admin/variants/form/media_asset', collection: media_form_assets(viewable), as: :asset, cached: spree_base_cache_scope %>
-      <%= button_tag class: 'text-muted border border-dashed bg-gray-25 rounded-lg media-form__add-button font-size-lg', data: {
+      <%= button_tag class: 'text-muted border border-dashed bg-gray-25 hover-gray-50 rounded-lg media-form__add-button h-100', data: {
           controller: 'asset-uploader',
           asset_uploader_multiple_value: true,
           asset_uploader_viewable_id_value: viewable&.id,
@@ -22,7 +22,7 @@
           action: 'asset-uploader#open',
           media_form_target: 'addButton'
         }  do %>
-        <%= icon('circle-plus') %>
+        <%= icon('upload', class: 'my-5', style: 'font-size: 2rem;') %>
       <% end %>
     </div>
   </div>

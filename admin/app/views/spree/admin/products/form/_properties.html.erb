@@ -1,9 +1,13 @@
 <div class="card mb-4">
-  <div class="card-header">
+  <div class="card-header d-flex align-items-center justify-content-between">
     <h5 class="card-title"><%= Spree.t(:properties) %></h5>
+
+    <% if can?(:manage, Spree::Property) %>
+      <%= link_to_with_icon 'adjustments', Spree.t(:manage_properties), spree.admin_properties_path, class: 'btn btn-sm btn-light' %>
+    <% end %>
   </div>
-  <div class="card-body p-0">
-    <table class="table">
+  <div class="card-body px-0 pb-0">
+    <table class="table border-top mb-1">
       <thead>
         <tr>
           <th><%= Spree.t(:property) %></th>
@@ -16,10 +20,10 @@
           <%= product_property_form.hidden_field :id %>
           <%= product_property_form.hidden_field :property_id %>
           <tr>
-            <td class="align-top pt-3">
-              <%= property.presentation %>
+            <td class="align-top pt-3 w-25">
+              <code><%= property.name %></code>
             </td>
-            <td>
+            <td class="w-75">
               <div class="form-group">
                 <% if property.long_text? %>
                   <%= product_property_form.text_area :value, { class: 'form-control', data: { controller: 'textarea-autogrow'} } %>
@@ -38,8 +42,5 @@
         <% end %>
       </tbody>
     </table>
-  </div>
-  <div class="card-footer text-center bg-gray-25 text-muted border-top">
-    <%= Spree.t('admin.products.properties.link', link: spree.admin_properties_path).html_safe %>
   </div>
 </div>

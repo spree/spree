@@ -14,7 +14,7 @@
       data-active-storage-upload-field-name-value="<%= form.object_name %>[<%= field_name %>]"
       data-active-storage-upload-allowed-file-types-value="<%= Rails.application.config.active_storage.web_image_content_types %>"
       class="d-flex flex-column justify-content-center w-100 position-relative">
-    <div class="mb-3 rounded-lg overflow-hidden thumb-preview cursor-pointer bg-light"
+    <div class="mb-3 rounded-lg overflow-hidden thumb-preview cursor-pointer border border-dashed bg-gray-25 hover-gray-50 p-2 d-flex align-items-center justify-content-center"
          data-action="click->active-storage-upload#open"
     >
       <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>
@@ -34,13 +34,13 @@
         <img data-active-storage-upload-target="thumb" class="img-fluid rounded-lg" style="display: none" />
       <% end %>
 
-      <div class="d-flex justify-content-center align-items-center h-100 p-5 text-muted border border-dashed bg-gray-25 rounded-lg <%= css %>" data-active-storage-upload-target="placeholder" <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
-        <%= icon('camera', class: 'mr-2') %>
+      <div class="d-flex flex-column justify-content-center align-items-center h-100 p-5 text-muted rounded-lg <%= css %>" data-active-storage-upload-target="placeholder" <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
+        <%= icon('upload', class: 'mr-0 mb-3', style: 'font-size: 2rem;') %>
         <%= Spree.t(:upload_image) %>
 
         <% if crop %>
-          <span class="text-muted ml-2">
-            (Recommended size: <%= width %>x<%= height %>)
+          <span class="text-muted ml-2 text-center small mt-2">
+            Recommended size: <%= width %>x<%= height %>px
           </span>
         <% end %>
       </div>
@@ -48,8 +48,8 @@
 
     <div class="d-flex align-items-center" data-active-storage-upload-target="toolbar" <% unless form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
       <button type="button" class="btn btn-light" data-action="active-storage-upload#open">
-        <%= icon('camera') %>
-        Select file
+        <%= icon('upload') %>
+        <%= Spree.t('actions.select_file') %>
       </button>
 
       <% if can_delete %>

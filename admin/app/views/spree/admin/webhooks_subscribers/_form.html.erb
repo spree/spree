@@ -6,7 +6,7 @@
           <%= Spree.t(:general_settings) %>
         </h5>
       </div>
-      <div class="card-body pb-0">
+      <div class="card-body">
         <div class="row">
           <div class="form-group col-12">
             <%= f.label :url, raw(Spree.t('admin.url') + required_span_tag) %>
@@ -30,7 +30,7 @@
           <%= Spree.t('admin.webhooks_subscribers.webhooks_events') %>
         </h5>
       </div>
-      <div class="card-body pb-0" data-controller="webhooks-subscriber-events">
+      <div class="card-body" data-controller="webhooks-subscriber-events">
         <div class="form-group">
           <div>
             <div class="radio my-2">

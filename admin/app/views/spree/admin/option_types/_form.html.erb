@@ -3,7 +3,7 @@
       <h5 class="mb-0"><%= Spree.t(:general_information) %></h5>
     </div>
     <div class="card-body" data-controller="slug-form">
-      <div class="row">
+      <div class="row mb-3">
         <div class="col-md-6">
           <div class="form-group">
             <%= f.label :presentation, raw(Spree.t(:presentation) + required_span_tag) %>
@@ -28,7 +28,7 @@
       </div>
       <div class="row">
         <div class="col-12 col-md-6">
-          <div class="form-group mb-0">
+          <div class="form-group">
             <div class="custom-control custom-checkbox mb-3">
               <%= f.check_box :filterable, class: "custom-control-input", id: "option_type_filterable" %>
               <%= f.label :filterable, Spree.t(:filterable), class: "custom-control-label", for: "option_type_filterable" %>
@@ -52,11 +52,11 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="mb-0"><%= Spree.t(:option_values) %></h5>
     </div>
-    <div class="card-body p-0">
+    <div class="card-body px-0 pb-0">
       <div class="table-responsive">
-        <table class="table table-condensed">
+        <table class="table border-top">
           <thead>
-            <tr>
+            <tr class="border-bottom">
               <th></th>
               <th><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
               <th><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>

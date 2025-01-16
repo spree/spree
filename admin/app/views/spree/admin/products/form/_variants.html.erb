@@ -4,7 +4,7 @@
       <h5 class="card-title"><%= Spree.t(:variants) %></h5>
     </div>
     <% option_types_for_select = @option_types.pluck(:presentation, :id) %>
-    <div class="card-body p-0">
+    <div class="card-body px-0 pb-0">
       <div
         data-controller="variants-form"
         class="variants-form"
@@ -62,7 +62,7 @@
                 <span class="label"><%= Spree.t(:option_values) %></span>
                 <div data-controller="multi-input" class="values-inputs" data-variants-form-target="newOptionValuesInput">
                   <div class="values-inputs__input" data-multi-input-target="input">
-                    <input class="form-control form-control-sm" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent">
+                    <input class="form-control" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent">
                   </div>
                 </div>
               </div>

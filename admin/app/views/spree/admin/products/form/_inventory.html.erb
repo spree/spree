@@ -1,6 +1,10 @@
 <div class="card mb-4">
-  <div class="card-header">
+  <div class="card-header d-flex align-items-center justify-content-between">
     <h5 class="card-title"><%= Spree.t(:inventory) %></h5>
+
+    <% if can?(:manage, Spree::StockLocation) %>
+      <%= link_to_with_icon 'adjustments', Spree.t(:manage_stock_locations), spree.admin_stock_locations_path, class: 'btn btn-sm btn-light' %>
+    <% end %>
   </div>
   <div class="card-body">
     <div class="custom-control custom-checkbox mb-4">

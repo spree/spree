@@ -1,11 +1,15 @@
 <div class="card mb-4" data-product-form-target="pricesForm">
-  <div class="card-header">
+  <div class="card-header d-flex align-items-center justify-content-between">
     <h5 class="mb-0">
       <%= Spree.t(:pricing) %>
     </h5>
+
+    <% if can?(:manage, Spree::Store) %>
+      <%= link_to_with_icon 'adjustments', Spree.t(:manage_currencies), spree.edit_admin_store_path, class: 'btn btn-sm btn-light' %>
+    <% end %>
   </div>
-  <div class="card-body p-0">
-    <table class="table">
+  <div class="card-body px-0 pb-0">
+    <table class="table border-top">
       <thead>
         <tr>
           <th><%= Spree.t(:currency) %></th>
@@ -40,8 +44,5 @@
         <% end %>
       </tbody>
     </table>
-    <div class="card-footer text-center bg-gray-25 text-muted border-top">
-      <%= Spree.t('admin.variants.currencies_link', link: spree.edit_admin_store_path(current_store)).html_safe %>
-    </div>
   </div>
 </div>
