@@ -55,6 +55,20 @@ en:
           digital_asset_link_expire_time:
             download_link_expire_time: Download Link Expire Time
             link_expire_time: Set the expire time of each download link. (seconds).
+      store_setup_tasks:
+        add_billing_address: Add billing address
+        setup_taxes_collection: Setup taxes collection
+        add_products: Add products
+        set_customer_support_email: Set customer support email
+        payment_methods:
+          title: Please setup Payment Methods for your store
+          done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
+          copy: In order to collect payments, please setup at least one online payment provider.
+          setup: Setup Payment Methods
+        taxes:
+          done: You're all set! You can always manage your taxes on the <a href="%{link}" data-turbo-frame="_top">settings</a> page.
+          copy: In order to collect taxes, please setup your tax rates.
+          setup: Setup Tax Rates
       product_kinds:
         physical: Physical
         digital: Digital

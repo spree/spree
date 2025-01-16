@@ -3,6 +3,8 @@ module Spree
     include FriendlyId
     include Spree::TranslatableResource
     include Spree::Metadata
+    include Spree::Stores::Setup
+    include Spree::Stores::Socials
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
 
