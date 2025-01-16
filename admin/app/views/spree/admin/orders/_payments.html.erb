@@ -11,7 +11,7 @@
         <%= local_time(@payments.first.updated_at, class: 'badge badge-light with-tipl') %>
       </div>
     <% end %>
-    <div class="card-body px-0 pb-0">
+    <div class="card-body p-0">
       <% @payments.each do |payment| %>
         <div class="p-3 border-bottom">
           <%= render 'spree/admin/shared/payment', payment: payment %>
