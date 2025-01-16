@@ -11,11 +11,14 @@ color_option_values = Spree::OptionType.find_by!(name: 'color').option_values
 length_option_values = Spree::OptionType.find_by!(name: 'length').option_values
 size_option_values = Spree::OptionType.find_by!(name: 'size').option_values
 
+taxons = Spree::Taxon.includes(:children).all
+products = Spree::Product.all
+
 VARIANTS.each do |(parent_name, taxon_name, product_name, color_name)|
-  parent = Spree::Taxon.find_by!(name: parent_name)
-  taxon = parent.children.find_by!(name: taxon_name)
-  product = Spree::Product.find_by!(name: product_name.titleize)
-  color = color_option_values.find_by!(name: color_name)
+  parent = taxons.find { |t| t.name == parent_name }
+  taxon = taxons.find { |t| t.parent_id == parent.id && t.name == taxon_name }
+  product = products.find { |p| p.name == product_name.titleize }
+  color = color_option_values.find { |c| c.name == color_name }
 
   size_option_values.each do |size|
     if parent_name == 'Women' and %w[Dresses Skirts].include?(taxon_name)

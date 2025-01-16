@@ -16,12 +16,14 @@ PRODUCTS = CSV.read(File.join(__dir__, 'variants.csv')).map do |(parent_name, ta
   [parent_name, taxon_name, product_name]
 end.uniq
 
-PRODUCTS.each do |(parent_name, taxon_name, product_name)|
-  parent = Spree::Taxon.find_by!(name: parent_name)
-  taxon = parent.children.find_by!(name: taxon_name)
-  next if Spree::Product.where(name: product_name.titleize).any?
+taxons = Spree::Taxon.includes(:children).all
+stores = Spree::Store.all
 
-  Spree::Product.create!(name: product_name.titleize) do |product|
+PRODUCTS.each do |(parent_name, taxon_name, product_name)|
+  parent = taxons.find { |taxon| taxon.name == parent_name }
+  taxon = parent.children.find { |child| child.name == taxon_name }
+
+  Spree::Product.create(name: product_name.titleize) do |product|
     product.price = rand(10...100) + 0.99
     product.description = FFaker::Lorem.paragraph
     product.available_on = Time.zone.now
@@ -38,12 +40,6 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
     product.sku = [taxon_name.delete(' '), product_name.delete(' '), product.price].join('_')
     product.taxons << parent unless product.taxons.include?(parent)
     product.taxons << taxon unless product.taxons.include?(taxon)
-    product.stores = Spree::Store.all
+    product.stores = stores
   end
-end
-
-Spree::Taxon.where(name: ['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale', "Summer #{Date.today.year}", '30% Off']).each do |taxon|
-  next if taxon.products.any?
-
-  taxon.products << Spree::Product.all.sample(30)
 end
