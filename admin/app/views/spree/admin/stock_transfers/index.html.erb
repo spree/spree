@@ -2,19 +2,15 @@
   <%= Spree.t(:stock) %>
 <% end %>
 <% content_for :page_tabs do %>
-  <%= render 'spree/admin/shared/stock_nav' %>
-<% end %>
-<% if false %>
-  <% content_for :table_filter do %>
-    <%= render 'filters' %>
-  <% end %>
+  <%= render "spree/admin/shared/stock_nav" %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= link_to Spree.t(:new_stock_transfer), spree.new_admin_stock_transfer_path, class: "btn btn-primary" if can?(:create, Spree::StockTransfer.new) %>
+  <%= if can?(:create, Spree::StockTransfer.new)
+    link_to Spree.t(:new_stock_transfer), spree.new_admin_stock_transfer_path, class: "btn btn-primary"
+  end %>
 <% end %>
-<% content_for :table_filter do %>
-  <%= render 'filters' %>
-<% end %>
+
+<%= render "filters" %>
 <% if @stock_transfers.any? %>
   <div class="table-responsive">
     <table class="table" id="listing_products">
