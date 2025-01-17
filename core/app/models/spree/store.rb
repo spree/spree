@@ -1,5 +1,9 @@
 module Spree
   class Store < Spree.base_class
+    RESERVED_CODES = %w(
+      admin default app api www cdn files assets checkout account auth login user
+    )
+
     include FriendlyId
     include Spree::TranslatableResource
     include Spree::Metadata
@@ -114,10 +118,11 @@ module Spree
     # Validations
     #
     with_options presence: true do
-      validates :name, :mail_from_address, :default_currency, :default_country
+      validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
     end
-    validates :url, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
-    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
+    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }, exclusion: RESERVED_CODES
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
@@ -127,8 +132,6 @@ module Spree
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
     validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
-    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
-    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
 
     #
     # Attachments
@@ -141,6 +144,7 @@ module Spree
     #
     # Callbacks
     before_validation :ensure_default_country
+    before_validation :set_code, on: :create
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
@@ -437,6 +441,21 @@ module Spree
 
     def handle_code_changes
       # implement your custom logic here
+    end
+
+    # This FriendlyId method is overwitten to keep our logic for generating code
+    # there is no option for own format
+    def set_code
+      self.code = if code.present?
+                    code.parameterize.strip
+                  elsif name.present?
+                    name.parameterize.strip
+                  end
+
+      return if self.code.blank?
+
+      # ensure code is unique
+      self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: code).where.not(id: id).exists?
     end
   end
 end
