@@ -1,0 +1,13 @@
+<% content_for :head do %>
+  <script type="text/javascript" src="https://cdn.goentri.com/entri.js"></script>
+<% end if entri_enabled? %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
+
+<%= form_for current_store, url: spree.admin_store_path(section: params[:section]), method: :patch do |f| %>
+  <%= render partial: 'spree/admin/stores/form/basic', locals: { f: f } if params[:section].blank? || params[:section] == 'general-settings' %>
+  <%= render partial: 'spree/admin/stores/form/emails', locals: { f: f } if params[:section] == 'emails' %>
+  <%= render partial: 'spree/admin/stores/form/checkout', locals: { f: f } if params[:section] == 'checkout' %>
+  <%= render partial: 'spree/admin/stores/form/policies', locals: { f: f } if params[:section] == 'policies' %>
+  <%= render 'spree/admin/stores/form/buttons' %>
+<% end %>

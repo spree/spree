@@ -114,10 +114,9 @@ module Spree
     # Validations
     #
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
+      validates :name, :mail_from_address, :default_currency, :default_country
     end
-    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
-    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :url, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
     validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
@@ -128,6 +127,8 @@ module Spree
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
     validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
+    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
 
     #
     # Attachments

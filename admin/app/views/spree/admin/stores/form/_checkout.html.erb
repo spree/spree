@@ -1,0 +1,28 @@
+<%= content_for(:page_title) do %>
+  Checkout settings
+<% end %>
+
+<%= content_for :page_alerts do %>
+  <div class="alert alert-info mb-3">
+    <p>
+      Checkout footer links are added automatically based on the <%= link_to 'Policies', spree.edit_admin_store_path + '?section=policies', class: 'alert-link' %> content.
+    </p>
+  </div>
+<% end %>
+
+<div class="card-lg">
+  <h5 class="mb-3"><%= Spree.t(:checkout_message) %></h5>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <p class="text-muted">
+        Visible to your customers on the checkout page in the right sidebar.
+      </p>
+    </div>
+    <div class="col-lg-7 offset-lg-1">
+      <div class="trix-container">
+        <%= f.rich_text_area :checkout_message, class: 'overflow-auto', style: 'height: 300px' %>
+      </div>
+    </div>
+  </div>
+</div>
