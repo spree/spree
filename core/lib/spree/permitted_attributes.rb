@@ -142,7 +142,7 @@ module Spree
                           :logo, :mailer_logo, :social_logo, :favicon_image,
                           :import_products_from_store_id, :import_payment_methods_from_store_id,
                           :checkout_message, :customer_terms_of_service, :customer_privacy_policy,
-                          :customer_returns_policy, :customer_shipping_policy]
+                          :customer_returns_policy, :customer_shipping_policy, :default_country_iso]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
