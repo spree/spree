@@ -102,21 +102,7 @@
         </div>
       </div>
 
-      <% if defined?(current_vendor) && !current_vendor && !@vendor %>
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= f.label :vendor_orders_vendor_id_eq, Spree.t(:vendor) %>
-            <%= f.label :vendor_orders_vendor_id_eq, Spree.t(:vendor), class: "hidden" %>
-            <%= tom_select_tag "q[vendor_orders_vendor_id_eq]",
-            active_option: params.dig(:q, :vendor_orders_vendor_id_eq),
-            options: vendor_options,
-            select_data: {
-              ransack_target: "input",
-            },
-            url: spree.select_options_admin_vendors_path(format: :json) %>
-          </div>
-        </div>
-      <% end %>
+      <%= render "spree/admin/orders/extra_filters", f: f %>
     </div>
 
     <div class="form-actions">
