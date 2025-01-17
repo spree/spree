@@ -1,55 +1,41 @@
-<%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil, class: "filter-wrap border-bottom", data: {controller: "ransack"}  do |f| %>
-  <div class="d-flex flex-column flex-lg-row">
-    <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
-      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-        <%= icon "search", class: "mr-3 text-muted" %>
-        <%= search_field_tag "q[multisearch]",
-        params.dig(:q, :multisearch),
-        class: "form-control-plaintext js-quick-search px-0",
-        placeholder: "Search orders",
-        data: {
-          ransack_target: :input,
-          badge_name: Spree.t(:query),
-        } %>
-      </div>
+<%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil do |f| %>
+  <% content_for :table_filter_main_search do %>
+    <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
+      <%= icon "search", class: "mr-3 text-muted" %>
+      <%= search_field_tag "q[multisearch]",
+      params.dig(:q, :multisearch),
+      class: "form-control-plaintext js-quick-search px-0",
+      placeholder: "Search orders",
+      data: {
+        ransack_target: :input,
+        badge_name: Spree.t(:query),
+      } %>
     </div>
+  <% end %>
 
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="mr-2 h-100">
-        <% if controller_name == 'checkouts' %>
-          <%= render "spree/admin/shared/calendar_range_picker",
-          date_from_input_name: "q[created_at_gt]",
-          date_to_input_name: "q[created_at_lt]",
-          date_from_value: params.dig(:q, :created_at_gt),
-          date_to_value: params.dig(:q, :created_at_lt),
-          dropdown_direction: "right" %>
-        <% else %>
-          <%= render "spree/admin/shared/calendar_range_picker",
-          date_from_input_name: "q[completed_at_gt]",
-          date_to_input_name: "q[completed_at_lt]",
-          date_from_value: params.dig(:q, :completed_at_gt),
-          date_to_value: params.dig(:q, :completed_at_lt),
-          dropdown_direction: "right" %>
-        <% end %>
-      </div>
+  <% content_for :table_filter_date_range do %>
+    <% if controller_name == 'checkouts' %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[created_at_gt]",
+      date_to_input_name: "q[created_at_lt]",
+      date_from_value: params.dig(:q, :created_at_gt),
+      date_to_value: params.dig(:q, :created_at_lt),
+      dropdown_direction: "right" %>
+    <% else %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[completed_at_gt]",
+      date_to_input_name: "q[completed_at_lt]",
+      date_from_value: params.dig(:q, :completed_at_gt),
+      date_to_value: params.dig(:q, :completed_at_lt),
+      dropdown_direction: "right" %>
+    <% end %>
+  <% end %>
 
-      <%= render "spree/admin/orders/table_filter_dropdown" %>
+  <% content_for :table_filter_dropdown do %>
+    <%= render "spree/admin/orders/table_filter_dropdown" %>
+  <% end %>
 
-      <button
-        class="btn btn-light h-100"
-        type="button"
-        data-toggle="collapse"
-        data-target="#more-filters"
-        href="#more-filters"
-        aria-expanded="false"
-        aria-controls="more-filters"
-      >
-        <%= icon "adjustments", class: "mr-1" %>
-        <%= Spree.t("admin.filters") %>
-      </button>
-    </div>
-  </div>
-  <div class="collapse mt-4" id="more-filters">
+  <% content_for :table_filter do %>
     <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
@@ -111,9 +97,5 @@
         <%= Spree.t(:filter_results) %>
       <% end %>
     </div>
-  </div>
-
-  <%= render "spree/admin/shared/filter_badge_template" %>
-
-  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
 <% end %>
