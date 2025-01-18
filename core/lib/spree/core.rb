@@ -37,7 +37,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :searcher_class, :queues
+                 :cdn_host, :root_domain, :searcher_class, :queues
 
   def self.base_class(constantize: true)
     @@base_class ||= 'Spree::Base'
@@ -84,6 +84,10 @@ module Spree
         raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
     end
+  end
+
+  def self.root_domain
+    @@root_domain ||= Rails.application.routes.default_url_options[:host] || 'lvh.me'
   end
 
   def self.queues
