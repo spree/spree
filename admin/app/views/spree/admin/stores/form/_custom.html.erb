@@ -1,0 +1,79 @@
+<div class="col-lg-6">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Vendor Commission rate</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">
+        This is the default commission rate, you can override this value for each Partner, Category x Vendor and Vendor product.
+      </p>
+      <div class="alert alert-info">
+        <p>
+          This change will only apply to newly invited
+          <%= link_to 'Partners', spree.admin_vendors_path, class: 'alert-link' %>.
+          It will not change the commission rate for existing Partners.
+        </p>
+        <p>
+          Changing this option will also change payout schedules for your existing Vendors with the
+          payout schedule set to <strong>Use marketplace default interval</strong>.
+        </p>
+        It will not change the commission rate for existing Partners.
+      </div>
+      <div class="form-group">
+        <%= f.label :preferred_platform_fee, 'Commission rate' %>
+        <div class="form-control d-flex align-items-center py-0 focus-shadow-blue">
+          <%= f.number_field :preferred_platform_fee, step: 0.1, min: 0, class: 'form-control-plaintext pl-0' %>
+          <span>%</span>
+        </div>
+        <%= f.error_message_on :preferred_platform_fee %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg-6">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">Vendor Payouts</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">
+        This controls how often your Vendors will be able to request a payout in Stripe dashboard.
+      </p>
+      <div class="alert alert-info">
+        <p>
+          Changing this option will also change payout schedules for your existing Vendors with the
+          payout schedule set to <strong>Use marketplace default interval</strong>.
+        </p>
+      </div>
+      <div class="form-group">
+        <%= f.label :preferred_vendor_payouts_schedule_interval, Spree.t(:preferred_vendor_payouts_schedule_interval) %>
+        <%= f.select :preferred_vendor_payouts_schedule_interval,
+          options_for_select(stripe_store_payouts_schedule_interval_options, @store.preferred_vendor_payouts_schedule_interval),
+          {},
+          { class: 'custom-select' } %>
+        <%= f.error_message_on :preferred_vendor_payouts_schedule_interval %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if Flipper.enabled?(:jwt_auth, current_store) %>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">JWT Authentication</h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :jwks_endpoint, Spree.t(:jwks_endpoint) %>
+          <%= f.text_field :jwks_endpoint, class: 'form-control', type: :url %>
+          <%= f.error_message_on :jwks_endpoint %>
+          <p class="form-text text-muted">
+            Make sure that your JWK keys have the <code>kid</code> property set and payload includes <code>email</code>, <code>iat</code>, <code>exp</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

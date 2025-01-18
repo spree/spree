@@ -112,6 +112,41 @@ describe Spree::Store, type: :model do
   end
 
   context 'Callbacks' do
+    describe '#set_code' do
+      let(:store) { build(:store, name: 'Store', code: nil) }
+
+      it 'sets the code' do
+        expect { store.valid? }.to change(store, :code).from(nil).to('store')
+      end
+
+      context 'when code is already set' do
+        let(:store) { build(:store, name: 'Store', code: 'store') }
+
+        it 'does not change the code' do
+          expect { store.valid? }.not_to change(store, :code)
+        end
+      end
+
+      context 'when name is not set' do
+        let(:store) { build(:store, name: nil, code: nil) }
+
+        it 'does not set the code' do
+          expect { store.valid? }.not_to change(store, :code)
+        end
+      end
+
+      context 'when code is already taken' do
+        let(:default_store) { Spree::Store.default }
+        let(:store) { build(:store, name: 'Store', code: default_store.code) }
+
+        it 'generates a new code' do
+          expect { store.valid? }.to change(store, :code)
+          expect(store.code).not_to eq(default_store.code)
+          expect(store.code).to match(/store-\d+/)
+        end
+      end
+    end
+
     describe '#ensure_default_taxonomies_are_created' do
       let(:store) { build(:store) }
 
@@ -166,20 +201,18 @@ describe Spree::Store, type: :model do
   end
 
   context 'Validations' do
-    describe 'code uniqueness' do
-      context 'selected code was already used in a deleted store' do
-        let(:store_code) { 'store_code' }
+    describe '#code' do
+      let(:default_store) { Spree::Store.default }
 
-        let!(:default_store) { create(:store) }
-        let!(:deleted_store) { create(:store, code: store_code).destroy! }
+      it 'cannot create 2 stores with the same code' do
+        new_store = create(:store, name: default_store.code)
+        expect(new_store.persisted?).to be(true)
+        expect(new_store.code).not_to eq(default_store.code) # code is generated
+      end
 
-        it 'does not cause error related to unique constrains in DB' do
-          expect { create(:store, code: store_code) }.not_to raise_error(ActiveRecord::RecordNotUnique)
-        end
-
-        it 'shows accurate validation error' do
-          expect { create(:store, code: store_code) }.to raise_error(ActiveRecord::RecordInvalid, 'Validation failed: Code has already been taken')
-        end
+      it 'cannot create a store with reserved code' do
+        new_store = build(:store, code: 'admin')
+        expect(new_store.valid?).to be(false)
       end
     end
   end
@@ -423,7 +456,7 @@ describe Spree::Store, type: :model do
   end
 
   describe '#checkout_zone_or_default' do
-    subject { described_class.new }
+    subject { build(:store) }
 
     context do
       include_context 'with checkout zone set'

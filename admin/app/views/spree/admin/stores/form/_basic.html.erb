@@ -1,0 +1,114 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:store_details) %>
+<% end %>
+
+<%= content_for(:page_actions) do %>
+  <%= link_to_edit_translations(@store, classes: 'btn btn-light') %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          This is the name of your store. It will be displayed in the header and in the footer.
+        </p>
+        <div class="form-group">
+          <%= f.label :name, Spree.t(:name) %>
+          <%= f.text_field :name, class: 'form-control', required: true %>
+          <%= f.error_message_on :name %>
+        </div>
+
+          <div class="form-group mb-0">
+            <%= f.label :logo do %>
+              <%= Spree.t(:logo) %>
+              <%= help_bubble("Used in the admin dashboard") %>
+            <% end %>
+            <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
+          </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          Set the timezone, unit system and weight unit for your store.
+        </p>
+        <div class="form-group mb-3">
+          <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
+          <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
+        </div>
+        <div data-controller="unit-system">
+          <div class="form-group mb-3">
+            <%= label_tag :preferred_unit_system, raw(Spree.t(:unit_system) + required_span_tag) %>
+            <%= select_tag 'store[preferred_unit_system]', options_for_select(unit_systems, @store.preferred_unit_system), {class: 'custom-select', data: {unit_system_target: "body", action: "change->unit-system#unitSystemHandler"}} %>
+          </div>
+          <div class="form-group">
+            <%= label_tag :preferred_weight_unit, raw(Spree.t(:weight_unit) + required_span_tag) %>
+            <%= select_tag 'store[preferred_weight_unit]', options_for_select(weight_units(@store), @store.preferred_weight_unit), {class: 'custom-select', data: {unit_system_target: "weightUnit"}} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:countries) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          This determines which vendors you can connect with and what customers see on your store.
+        </p>
+        <div class="form-group">
+          <%= f.label :default_currency, Spree.t(:currency) %>
+          <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
+          <%= f.error_message_on :default_currency %>
+        </div>
+        <div class="form-group">
+          <%= f.label :supported_currencies, Spree.t(:supported_currencies) %>
+          <%= f.select :supported_currencies,
+          currency_options(@store.supported_currencies&.split(',')),
+          { prompt: false },
+          { multiple: true, data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :supported_currencies %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :default_country_iso, Spree.t('i18n.country') %>
+          <%= f.country_select :default_country_iso, {}, { data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :default_country_iso %>
+        </div>
+        <div class="form-group">
+          <%= f.label :checkout_zone_id, Spree.t(:shipping_zone) %>
+          <%= f.select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { }, { data: { controller: 'autocomplete-select' } } %>
+          <small class="form-text text-muted mt-2">
+            Zone will limit to which Countries or States products are shipped.
+            <%= link_to Spree.t(:manage_zones), spree.admin_zones_path %>
+          </small>
+          <%= f.error_message_on :checkout_zone_id %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :default_locale %>
+          <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :default_locale %>
+        </div>
+        <div class="form-group">
+          <%= f.label :supported_locales, Spree.t(:supported_locales) %>
+          <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :supported_locales %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= render 'spree/admin/stores/form/custom', f: f %>
+</div>
