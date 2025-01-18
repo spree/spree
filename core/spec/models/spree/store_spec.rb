@@ -116,7 +116,34 @@ describe Spree::Store, type: :model do
       let(:store) { build(:store, name: 'Store', code: nil) }
 
       it 'sets the code' do
-        expect { store.save! }.to change(store, :code).from(nil).to('store')
+        expect { store.valid? }.to change(store, :code).from(nil).to('store')
+      end
+
+      context 'when code is already set' do
+        let(:store) { build(:store, name: 'Store', code: 'store') }
+
+        it 'does not change the code' do
+          expect { store.valid? }.not_to change(store, :code)
+        end
+      end
+
+      context 'when name is not set' do
+        let(:store) { build(:store, name: nil, code: nil) }
+
+        it 'does not set the code' do
+          expect { store.valid? }.not_to change(store, :code)
+        end
+      end
+
+      context 'when code is already taken' do
+        let(:default_store) { Spree::Store.default }
+        let(:store) { build(:store, name: 'Store', code: default_store.code) }
+
+        it 'generates a new code' do
+          expect { store.valid? }.to change(store, :code)
+          expect(store.code).not_to eq(default_store.code)
+          expect(store.code).to match(/store-\d+/)
+        end
       end
     end
 

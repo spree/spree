@@ -455,7 +455,7 @@ module Spree
       return if self.code.blank?
 
       # ensure code is unique
-      self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: code).where.not(id: id).exists?
+      self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: self.code).exists?
     end
   end
 end
