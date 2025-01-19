@@ -97,6 +97,9 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
+    has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
+
     #
     # ActionText
     #
@@ -145,6 +148,7 @@ module Spree
     # Callbacks
     before_validation :ensure_default_country
     before_validation :set_code, on: :create
+    before_validation :set_url
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
@@ -250,22 +254,21 @@ module Spree
     end
 
     def formatted_url
-      return if url.blank?
+      @formatted_url ||= Rails.env.development? || Rails.env.test? ? "#{Rails.application.routes.default_url_options[:protocol]}://#{url}:#{Rails.application.routes.default_url_options[:port]}" : "https://#{url}"
+    end
 
-      @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
-                           url
-                         else
-                           Rails.env.development? || Rails.env.test? ? "http://#{url}" : "https://#{url}"
-                         end
+    def formatted_custom_domain
+      return unless default_custom_domain
+
+      @formatted_custom_domain ||= Rails.env.development? || Rails.env.test? ? "#{Rails.application.routes.default_url_options[:protocol]}://#{default_custom_domain.url}:#{Rails.application.routes.default_url_options[:port]}" : "https://#{default_custom_domain.url}"
     end
 
     def url_or_custom_domain
-      # Overwrite this if you have a custom domain
-      url
+      default_custom_domain&.url || url
     end
 
     def formatted_url_or_custom_domain
-      formatted_url
+      formatted_custom_domain || formatted_url
     end
 
     def countries_available_for_checkout
@@ -456,6 +459,15 @@ module Spree
 
       # ensure code is unique
       self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: self.code).exists?
+    end
+
+    # auto-assign internal URL for stores
+    def set_url
+      return if url_changed?
+      return unless code_changed?
+      return unless Spree.root_domain.present?
+
+      self.url = [code, Spree.root_domain].join('.')
     end
   end
 end
