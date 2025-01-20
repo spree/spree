@@ -138,5 +138,10 @@ Spree::Core::Engine.add_routes do
 
     # errors
     get '/forbidden', to: 'errors#forbidden', as: :forbidden
+
+    # dashboard
+    resource :dashboard, controller: 'dashboard'
+
+    root to: 'dashboard#show'
   end
 end

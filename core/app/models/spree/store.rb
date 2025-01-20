@@ -1,3 +1,5 @@
+require 'uri'
+
 module Spree
   class Store < Spree.base_class
     RESERVED_CODES = %w(
@@ -246,7 +248,6 @@ module Spree
     end
 
     def supported_locales_list
-      # TODO: add support of multiple supported languages to a single Store
       @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
     end
 
@@ -255,13 +256,21 @@ module Spree
     end
 
     def formatted_url
-      @formatted_url ||= Rails.env.development? || Rails.env.test? ? "#{Rails.application.routes.default_url_options[:protocol]}://#{url}:#{Rails.application.routes.default_url_options[:port]}" : "https://#{url}"
+      @formatted_url ||= Rails.env.development? || Rails.env.test? ? URI::Generic.build(scheme: Rails.application.routes.default_url_options[:protocol] || 'http', host: url.sub(%r{^https?://}, ''), port: Rails.application.routes.default_url_options[:port]).to_s : URI::HTTPS.build(host: url.sub(%r{^https?://}, '')).to_s
     end
 
     def formatted_custom_domain
       return unless default_custom_domain
 
-      @formatted_custom_domain ||= Rails.env.development? || Rails.env.test? ? "#{Rails.application.routes.default_url_options[:protocol]}://#{default_custom_domain.url}:#{Rails.application.routes.default_url_options[:port]}" : "https://#{default_custom_domain.url}"
+      @formatted_custom_domain ||= if Rails.env.development? || Rails.env.test?
+        URI::Generic.build(
+          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
+          host: default_custom_domain.url,
+          port: Rails.application.routes.default_url_options[:port]
+        ).to_s
+      else
+        URI::HTTPS.build(host: default_custom_domain.url).to_s
+      end
     end
 
     def url_or_custom_domain

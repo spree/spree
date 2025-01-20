@@ -808,25 +808,22 @@ describe Spree::Store, type: :model do
   end
 
   describe '#formatted_url' do
-    before { store.code = 'my_store' }
+    let(:store) { create(:store, code: 'mystore', url: nil) }
 
-    it { expect(store.formatted_url).to eq('http://my_store.mydomain.dev:3000') }
+    it { expect(store.formatted_url).to eq('http://mystore.localhost:3000') }
   end
 
   describe '#formatted_url_or_custom_domain' do
+    let(:store) { create(:store, code: 'mystore', url: nil) }
+
+    context 'without custom domain' do
+      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.localhost:3000') }
+    end
+
     context 'with custom domain' do
       let!(:custom_domain) { create(:custom_domain, store: store, url: 'mystore.com') }
 
       it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.com:3000') }
-    end
-
-    context 'without custom domain' do
-      before do
-        store.code = 'mystore'
-        store.send :set_url
-      end
-
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000') }
     end
   end
 end
