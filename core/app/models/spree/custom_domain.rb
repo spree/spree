@@ -3,18 +3,27 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Metadata
 
+    auto_strip_attributes :url
+
+    #
+    # Associations
+    #
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :custom_domains
+
+    #
+    # Validations
+    #
     validates :url, presence: true, uniqueness: true, format: {
       with: %r{[a-z][a-z0-9-]*[a-z0-9]}i
     }, length: { in: 1..63 }
     validate :url_is_valid
 
+    #
+    # Callbacks
+    #
+    before_validation :sanitize_url
     after_save :ensure_has_one_default
     after_validation :ensure_default, on: :create
-
-    def can_be_deleted?
-      true
-    end
 
     def url_is_valid
       parts = url.split('.')
@@ -32,6 +41,13 @@ module Spree
 
     def active?
       true
+    end
+
+    private
+
+    # remove https:// and http:// from the url
+    def sanitize_url
+      self.url = url&.gsub(%r{https?://}, '')
     end
   end
 end
