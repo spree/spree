@@ -7,6 +7,7 @@ describe Spree::BaseHelper, type: :helper do
 
   before do
     allow(controller).to receive(:controller_name).and_return('test')
+    allow(Rails.application.routes).to receive(:default_url_options).and_return(protocol: 'http', port: nil)
   end
 
   context 'available_countries' do

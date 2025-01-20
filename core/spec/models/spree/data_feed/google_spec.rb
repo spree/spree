@@ -25,6 +25,10 @@ describe Spree::DataFeed::Google, type: :model do
     let(:data_feed) { create(:google_data_feed, store: store, slug: 'test-feed') }
     let(:expected_url) { 'http://store.test/api/v2/data_feeds/google/test-feed.rss' }
 
+    before do
+      allow(Rails.application.routes).to receive(:default_url_options).and_return(protocol: 'http', port: nil)
+    end
+
     it 'returns full url to the data feed' do
       expect(data_feed.formatted_url).to eq(expected_url)
     end
