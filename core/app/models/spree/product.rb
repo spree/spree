@@ -141,6 +141,8 @@ module Spree
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
 
+    has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
+
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
