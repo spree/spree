@@ -6,7 +6,7 @@
 </p>
 <% if spree.respond_to?(:admin_export_url) %>
   <p>
-    <%= link_to @export.attachment.filename, spree.admin_export_url(@export, host: @current_store.formatted_url_or_custom_domain) %>
+    <%= link_to @export.attachment.filename, spree.admin_export_url(@export, host: @current_store.formatted_url) %>
   </p>
 <% end %>
 <p>
