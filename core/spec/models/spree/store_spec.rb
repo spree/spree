@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
+  before do
+    allow(Spree).to receive(:root_domain).and_return('mydomain.dev')
+  end
+
   context 'Associations' do
     subject { create(:store) }
 
@@ -148,10 +152,6 @@ describe Spree::Store, type: :model do
     end
 
     describe '#set_url' do
-      before do
-        Spree.root_domain = 'mydomain.dev'
-      end
-
       let(:store) { build(:store, code: 'my_store', url: nil) }
 
       context 'on create' do
@@ -810,14 +810,14 @@ describe Spree::Store, type: :model do
   describe '#formatted_url' do
     let(:store) { create(:store, code: 'mystore', url: nil) }
 
-    it { expect(store.formatted_url).to eq('http://mystore.localhost:3000') }
+    it { expect(store.formatted_url).to eq('http://mystore.mydomain.dev:3000') }
   end
 
   describe '#formatted_url_or_custom_domain' do
     let(:store) { create(:store, code: 'mystore', url: nil) }
 
     context 'without custom domain' do
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.localhost:3000') }
+      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000') }
     end
 
     context 'with custom domain' do
