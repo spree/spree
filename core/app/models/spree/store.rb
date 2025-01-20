@@ -164,7 +164,8 @@ module Spree
     # Scopes
     #
     default_scope { order(created_at: :asc) }
-    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
+    scope :by_custom_domain, ->(url) { left_joins(:custom_domains).where("#{Spree::CustomDomain.table_name}.url" => url) }
+    scope :by_url, ->(url) { where("#{table_name}.url like ?", "%#{url}%") }
 
     #
     # Delegations

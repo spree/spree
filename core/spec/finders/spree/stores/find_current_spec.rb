@@ -38,5 +38,12 @@ module Spree
 
       it { expect(subject).to eq(store_2) }
     end
+
+    context 'with custom domain' do
+      let(:url) { 'shop.getvendo.com' }
+      let!(:custom_domain) { create(:custom_domain, url: url, store: store_2) }
+
+      it { expect(subject).to eq(store_2) }
+    end
   end
 end
