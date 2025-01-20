@@ -85,4 +85,23 @@ class Spree::Base < ApplicationRecord
       }
     end.as_json
   end
+
+  def uuid_for_friendly_id
+    SecureRandom.uuid
+  end
+
+  # Try building a slug based on the following fields in increasing order of specificity.
+  def slug_candidates
+    if defined?(:deleted_at) && deleted_at.present?
+      [
+        ['deleted', :name],
+        ['deleted', :name, :uuid_for_friendly_id]
+      ]
+    else
+      [
+        [:name],
+        [:name, :uuid_for_friendly_id]
+      ]
+    end
+  end
 end

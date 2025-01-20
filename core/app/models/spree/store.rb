@@ -103,6 +103,23 @@ module Spree
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
     #
+    # Page Builder associations
+    #
+    has_many :themes, -> { without_previews }, class_name: 'Spree::Theme', dependent: :destroy, inverse_of: :store
+    has_many :theme_previews,
+             -> { only_previews },
+             class_name: 'Spree::Theme',
+             through: :themes,
+             source: :previews,
+             inverse_of: :store,
+             dependent: :destroy
+    has_one :default_theme, -> { without_previews.where(default: true) }, class_name: 'Spree::Theme', inverse_of: :store
+    has_many :theme_pages, class_name: 'Spree::Page', through: :themes, source: :pages
+    has_many :theme_page_previews, class_name: 'Spree::Page', through: :theme_pages, source: :previews
+    has_many :pages, -> { without_previews.custom }, class_name: 'Spree::Pages::Custom', dependent: :destroy, as: :pageable
+    has_many :page_previews, class_name: 'Spree::Pages::Custom', through: :pages, as: :pageable, source: :previews
+
+    #
     # ActionText
     #
     has_rich_text :checkout_message
@@ -157,6 +174,7 @@ module Spree
     after_create :ensure_default_automatic_taxons
     after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
+    after_create :create_default_theme
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
     after_commit :clear_cache
@@ -478,6 +496,13 @@ module Spree
       return unless Spree.root_domain.present?
 
       self.url = [code, Spree.root_domain].join('.')
+    end
+
+    def create_default_theme
+      themes.find_or_initialize_by(default: true) do |theme|
+        theme.name = Spree.t(:default_theme_name)
+        theme.save!
+      end
     end
   end
 end
