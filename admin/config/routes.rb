@@ -128,6 +128,7 @@ Spree::Core::Engine.add_routes do
         put :mark_as_default
       end
     end
+    resources :custom_domains, except: :show
 
     # account management
     resources :roles, except: :show

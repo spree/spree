@@ -256,7 +256,17 @@ module Spree
     end
 
     def formatted_url
-      @formatted_url ||= Rails.env.development? || Rails.env.test? ? URI::Generic.build(scheme: Rails.application.routes.default_url_options[:protocol] || 'http', host: url.sub(%r{^https?://}, ''), port: Rails.application.routes.default_url_options[:port]).to_s : URI::HTTPS.build(host: url.sub(%r{^https?://}, '')).to_s
+      @formatted_url ||= if Rails.env.development? || Rails.env.test?
+        URI::HTTP.build(
+          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
+          host: url.to_s.sub(%r{^https?://}, ''),
+          port: Rails.application.routes.default_url_options[:port]
+        ).to_s
+      else
+        URI::HTTPS.build(
+          host: url.to_s.sub(%r{^https?://}, '')
+        ).to_s
+      end
     end
 
     def formatted_custom_domain

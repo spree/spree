@@ -1,0 +1,15 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button collection_url %>
+  Edit custom domain
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+
+<%= form_for @object, url: spree.admin_custom_domain_path(@object) do |f| %>
+  <div class="row">
+    <div class="col-lg-6">
+      <%= render partial: 'form', locals: { f: f } %>
+      <%= render partial: 'spree/admin/shared/edit_resource_links', locals: { f: f } %>
+    </div>
+  </div>
+<% end %>
