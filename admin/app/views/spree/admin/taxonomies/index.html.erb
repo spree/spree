@@ -3,48 +3,38 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_taxonomy), new_object_url, { class: "btn-primary", icon: 'plus', } %>
+  <%= button_link_to Spree.t(:new_taxonomy), new_object_url, { class: "btn-primary", icon: "plus" } %>
 <% end if can?(:create, Spree::Taxonomy) %>
 
-<% content_for :table_filter do %>
-  <div data-hook="admin_property_sidebar">
-    <%= search_form_for [:admin, @search] do |f| %>
+<div class="card-lg p-0">
+  <%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
 
-      <%- locals = {f: f} %>
+    <%= render "spree/admin/shared/filter_badge_template" %>
+    <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
 
-      <div class="row">
-        <div class="col-12 col-lg-6">
-          <div data-hook="admin_property_index_search" class="form-group">
-            <%= f.label :name, Spree.t(:name) %>
-            <%= f.text_field :name, class: "form-control js-quick-search-target js-filterable" %>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <%= button Spree.t(:search), 'search' %>
-      </div>
-
-    <% end %>
+  <% if @taxonomies.present? %>
+    <div class="table-responsive">
+      <table class="table" id='listing_taxonomies'>
+        <thead class="text-muted">
+          <tr data-hook="listing_taxonomies_header">
+            <th class="no-border handel-head"></th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:taxons) %></th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="taxonomy"
+        >
+          <%= render partial: "spree/admin/taxonomies/taxonomy", collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
     </div>
-<% end if Spree::Taxonomy.any? %>
-
-<% if @taxonomies.present? %>
-  <div class="table-responsive">
-    <table class="table" id='listing_taxonomies'>
-      <thead class="text-muted">
-      <tr data-hook="listing_taxonomies_header">
-        <th class="no-border handel-head"></th>
-        <th><%= Spree.t(:name) %></th>
-        <th><%= Spree.t(:taxons) %></th>
-        <th class="actions"></th>
-      </tr>
-      </thead>
-      <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="taxonomy">
-        <%= render partial: 'spree/admin/taxonomies/taxonomy', collection: @collection, cached: spree_base_cache_scope %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+  <% else %>
+    <%= render "spree/admin/shared/no_resource_found" %>
+  <% end %>
+</div>

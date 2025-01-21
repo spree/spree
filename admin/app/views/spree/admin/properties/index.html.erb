@@ -9,52 +9,45 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-primary", icon: 'plus', } %>
-<% end if can?(:create, Spree::Property) %>
+  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-primary", icon: "plus" } %>
+<% end if can?(:create, Spree::Property)  %>
 
-<% content_for :table_filter do %>
-  <div>
-    <%= search_form_for [:admin, @search] do |f| %>
+<div class="card-lg p-0">
 
-      <%- locals = {f: f} %>
+  <%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
 
-      <div class="row">
-        <div class="col-12 col-lg-6">
-          <div class="form-group">
-            <%= f.label :name_or_presentation_cont, Spree.t(:name) %>
-            <%= f.text_field :name_or_presentation_cont, class: "form-control js-quick-search-target js-filterable" %>
-          </div>
-        </div>
-      </div>
+    <%= render "spree/admin/shared/filter_badge_template" %>
 
-      <div class="form-actions">
-        <%= button Spree.t(:search), 'search' %>
-      </div>
+    <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
 
-    <% end %>
+  <% if @properties.present? %>
+    <div class="table-responsive">
+      <table class="table" id='listing_properties'>
+        <thead class="text-muted">
+          <tr>
+            <th class="no-border handel-head"></th>
+            <th><%= Spree.t(:internal_name) %></th>
+            <th><%= Spree.t(:presentation) %></th>
+            <th><%= Spree.t(:kind) %></th>
+            <th><%= Spree.t(:products) %></th>
+            <th><%= Spree.t(:visibility) %></th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="property"
+          data-sortable-response-kind-value="turbo-stream"
+        >
+          <%= render partial: "spree/admin/properties/property", collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection, simple: true %>
     </div>
-<% end if Spree::Property.any? %>
-
-<% if @properties.present? %>
-  <div class="table-responsive">
-    <table class="table" id='listing_properties'>
-      <thead class="text-muted">
-      <tr>
-        <th class="no-border handel-head"></th>
-        <th><%= Spree.t(:internal_name) %></th>
-        <th><%= Spree.t(:presentation) %></th>
-        <th><%= Spree.t(:kind) %></th>
-        <th><%= Spree.t(:products) %></th>
-        <th><%= Spree.t(:visibility) %></th>
-        <th class="actions"></th>
-      </tr>
-      </thead>
-      <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="property" data-sortable-response-kind-value="turbo-stream">
-        <%= render partial: 'spree/admin/properties/property', collection: @collection, cached: spree_base_cache_scope %>
-      </tbody>
-    </table>
-    <%= render 'spree/admin/shared/index_table_options', collection: @collection, simple: true %>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+  <% else %>
+    <%= render "spree/admin/shared/no_resource_found" %>
+  <% end %>
+</div>

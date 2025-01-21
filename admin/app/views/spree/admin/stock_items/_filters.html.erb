@@ -1,27 +1,39 @@
-<div data-hook="admin_stock_items">
-  <%= search_form_for [:admin, @search] do |f| %>
-    <div data-hook="admin_stock_items_index_search" class="row">
-      <div class="col-12 col-lg-6">
-        <div class="form-group">
-          <%= f.label :variant_product_name_cont, Spree.t(:product_name) %>
-          <%= f.text_field :variant_product_name_cont, include_blank: true, size: 15, class: 'form-control js-quick-search-target js-filterable' %>
-        </div>
-      </div>
+<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: { controller: "filters reveal", reveal_hidden_class: "d-none" } do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :variant_product_name_cont, label: Spree.t(:product_name) %>
+
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-reveal-target="item" class="d-none mt-4">
+    <div class="row">
       <div class="col-12 col-lg-6">
         <div class="form-group">
           <%= f.label :variant_sku_cont, Spree.t(:sku) %>
-          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control js-filterable" %>
+          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control", data: {filters_target: :input} %>
         </div>
       </div>
+
       <div class="col-12 col-lg-6">
         <div class="form-group">
           <%= f.label :stock_location_id_eq, Spree.t(:stock_location) %>
-          <%= f.select :stock_location_id_eq, available_stock_locations_list, { include_blank: true }, class: 'custom-select js-filterable' %>
+          <%= f.select :stock_location_id_eq,
+                   available_stock_locations_list,
+                   { include_blank: true },
+                   class: "custom-select", data: {filters_target: :input}  %>
         </div>
       </div>
+
     </div>
+
     <div class="form-actions">
-      <%= button Spree.t(:search), 'search' %>
+      <%= turbo_save_button_tag Spree.t(:filter_results) do %>
+        <%= icon("search") %>
+        <%= Spree.t(:filter_results) %>
+      <% end %>
     </div>
-  <% end %>
-</div>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

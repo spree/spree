@@ -1,38 +1,45 @@
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_rma_reason), new_object_url, { icon: 'plus', id: 'admin_new_named_type', class: "btn-primary" } %>
-<% end if can? :create, Spree::RefundReason %>
+  <%= button_link_to Spree.t(:new_rma_reason),
+  new_object_url,
+  { icon: "plus", id: "admin_new_named_type", class: "btn-primary" } %>
+  <% end if can? :create, Spree::RefundReason %>
 
-<%= render partial: 'spree/admin/shared/returns_and_refunds_nav' %>
+    <%= render partial: "spree/admin/shared/returns_and_refunds_nav" %>
 
-<% if @collection.any? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_named_types'>
-      <thead class="text-muted">
-      <tr>
-        <th><%= Spree.t(:name) %></th>
-        <th><%= Spree.t(:status) %></th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody id="<%= plural_resource_name(Spree::ReturnAuthorizationReason).to_s.parameterize.underscore %>">
-      <% @collection.each do |return_authorization_reason| %>
-        <tr id="<%= spree_dom_id return_authorization_reason %>" data-controller="row-link">
-          <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
-            <%= return_authorization_reason.name %>
-          </td>
-          <td class="w-20 align-center cursor-pointer" data-action="click->row-link#openLink">
-            <%= active_badge(return_authorization_reason.active, label: Spree.t(return_authorization_reason.active? ? :active : :inactive)) %>
-          </td>
-          <td class="actions w-10">
-            <% if return_authorization_reason.mutable? %>
-              <%= link_to_edit(return_authorization_reason, no_text: true, data: { row_link_target: :link }) if can? :edit, return_authorization_reason %>
+    <% if @collection.any? %>
+      <div class="table-responsive card-lg p-0">
+        <table class="table" id='listing_named_types'>
+          <thead class="text-muted">
+            <tr>
+              <th><%= Spree.t(:name) %></th>
+              <th><%= Spree.t(:status) %></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="<%= plural_resource_name(Spree::ReturnAuthorizationReason).to_s.parameterize.underscore %>">
+            <% @collection.each do |return_authorization_reason| %>
+              <tr id="<%= spree_dom_id return_authorization_reason %>" data-controller="row-link">
+                <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
+                  <%= return_authorization_reason.name %>
+                </td>
+                <td class="w-20 align-center cursor-pointer" data-action="click->row-link#openLink">
+                  <%= active_badge(
+                    return_authorization_reason.active,
+                    label: Spree.t(return_authorization_reason.active? ? :active : :inactive),
+                  ) %>
+                </td>
+                <td class="actions w-10">
+                  <% if return_authorization_reason.mutable? %>
+                    <%= if can? :edit, return_authorization_reason
+                      link_to_edit(return_authorization_reason, no_text: true, data: { row_link_target: :link })
+                    end %>
+                  <% end %>
+                </td>
+              </tr>
             <% end %>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <%= render "spree/admin/shared/no_resource_found" %>
+    <% end %>
