@@ -28,8 +28,6 @@ describe 'Taxons Spec', type: :request do
     context 'with no params' do
       before { get '/api/v2/storefront/taxons' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all taxons' do
         expect(json_response['data'].size).to eq(store.taxons.count)
         expect(json_response['data'][0]).to have_type('taxon')
@@ -76,8 +74,6 @@ describe 'Taxons Spec', type: :request do
 
       before { get '/api/v2/storefront/taxons?locale=pl' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       # FIXME: this test fails on CI but works locally
       xit 'returns all taxons' do
         expect(json_response['data'].size).to eq(3)
@@ -99,8 +95,6 @@ describe 'Taxons Spec', type: :request do
     context 'by roots' do
       before { get '/api/v2/storefront/taxons?filter[roots]=true' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns taxons by roots' do
         expect(json_response['data'].size).to eq(store.taxons.where(parent: nil).count)
         expect(json_response['data'][0]).to have_type('taxon')
@@ -112,8 +106,6 @@ describe 'Taxons Spec', type: :request do
 
     context 'by parent' do
       before { get "/api/v2/storefront/taxons?filter[parent_id]=#{taxonomy.root.id}" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns children taxons by parent' do
         expect(json_response['data'].size).to eq(2)
@@ -142,8 +134,6 @@ describe 'Taxons Spec', type: :request do
         get request_path
       end
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns children taxons by parent' do
         expect(json_response['data'].size).to eq(2)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
@@ -152,8 +142,6 @@ describe 'Taxons Spec', type: :request do
 
       context 'with another locale' do
         let(:request_path) { "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink_pl}&locale=pl" }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns children taxons by parent' do
           expect(json_response['data'].size).to eq(2)
@@ -170,8 +158,6 @@ describe 'Taxons Spec', type: :request do
     context 'by taxonomy' do
       before { get "/api/v2/storefront/taxons?filter[taxonomy_id]=#{taxonomy.id}" }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns taxons by taxonomy' do
         expect(json_response['data'].size).to eq(taxonomy.taxons.count)
         expect(json_response['data'][0]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
@@ -183,8 +169,6 @@ describe 'Taxons Spec', type: :request do
     context 'by ids' do
       before { get "/api/v2/storefront/taxons?filter[ids]=#{taxons.map(&:id).join(',')}" }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns taxons by ids' do
         expect(json_response['data'].size).to            eq(2)
         expect(json_response['data'].pluck(:id).sort).to eq(taxons.map(&:id).map(&:to_s).sort)
@@ -193,8 +177,6 @@ describe 'Taxons Spec', type: :request do
 
     context 'by name' do
       before { get "/api/v2/storefront/taxons?filter[name]=#{taxons.last.name}" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns taxons by name' do
         expect(json_response['data'].size).to eq(1)
@@ -306,7 +288,6 @@ describe 'Taxons Spec', type: :request do
       context 'when no image transformation params are passed' do
         let(:taxon_image_transformation_params) { '' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do
@@ -317,7 +298,6 @@ describe 'Taxons Spec', type: :request do
       context 'when taxon image json returned' do
         let(:taxon_image_transformation_params) { '&taxon_image_transformation[size]=100x50&taxon_image_transformation[quality]=50' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do

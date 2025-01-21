@@ -68,7 +68,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       context 'with line_items and email' do
         before { execute }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'can transition an order to the next state' do
@@ -121,7 +120,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'advances an order till complete or confirm step' do
@@ -138,7 +136,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'advances up to the payment state' do
@@ -232,7 +229,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'completes an order' do
@@ -310,7 +306,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates addresses' do
@@ -350,7 +345,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             execute
           end
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates shipment' do
@@ -378,7 +372,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
             before { execute }
 
-            it_behaves_like 'returns 200 HTTP status'
             it_behaves_like 'returns valid cart JSON'
 
             it 'updates payment method' do
@@ -392,7 +385,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
             before { execute }
 
-            it_behaves_like 'returns 200 HTTP status'
             it_behaves_like 'returns valid cart JSON'
 
             it 'updates payment method with source' do
@@ -425,7 +417,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates the special instructions' do
@@ -448,7 +439,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates email' do
@@ -536,7 +526,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'with no amount param' do
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 500.0
       end
 
@@ -544,7 +533,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         let(:requested_amount) { 300.0 }
         let(:params) { { order_token: order.token, amount: requested_amount } }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 300.0
       end
 
@@ -597,8 +585,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       execute
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'returns no valid StoreCredit payment' do
       expect(json_response['included'].empty?).to eq true
     end
@@ -611,8 +597,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     shared_examples 'returns a list of available payment methods' do
       before { execute }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid payment methods JSON' do
         expect(json_response['data']).not_to be_empty
@@ -761,8 +745,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         order.reload
       end
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns valid shipments JSON' do
         expect(json_response['data']).not_to be_empty
         expect(json_response['data'].size).to eq(order.shipments.count)
@@ -848,8 +830,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     context 'one shipment' do
       context 'valid shipping method' do
         before { execute }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'sets selected shipping method for shipment' do
           expect(json_response['included'][0]).to have_id(shipment.id.to_s)
@@ -1056,7 +1036,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
       end
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
     end
 

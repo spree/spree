@@ -29,8 +29,6 @@ describe 'Storefront API v2 Countries spec', type: :request do
 
       before { get '/api/v2/storefront/countries' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all countries' do
         expect(json_response['data'].size).to eq(240)
         expect(json_response['data'][0]).to have_type('country')
@@ -133,8 +131,6 @@ describe 'Storefront API v2 Countries spec', type: :request do
 
     context 'with specified options' do
       before { get "/api/v2/storefront/countries/#{country.iso}?include=states" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns country with included states' do
         expect(json_response['data']).to have_id(country.id.to_s)

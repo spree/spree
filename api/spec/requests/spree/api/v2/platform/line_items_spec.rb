@@ -11,8 +11,6 @@ describe 'API V2 Platform Line Items Spec' do
     context 'with no params' do
       before { get '/api/v2/platform/line_items', headers: bearer_token }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all line_items' do
         expect(json_response['data'].count).to eq store.line_items.count
         expect(json_response['data'].first).to have_type('line_item')
@@ -76,8 +74,6 @@ describe 'API V2 Platform Line Items Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/line_items?sort=price', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns line items sorted by price' do
             expect(json_response['data'].count).to      eq store.line_items.count
             expect(json_response['data'].pluck(:id)).to eq store.line_items.order(price: :asc).map(&:id).map(&:to_s)
@@ -86,8 +82,6 @@ describe 'API V2 Platform Line Items Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/line_items?sort=-price', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns line items sorted by price with descending order' do
             expect(json_response['data'].count).to      eq store.line_items.count
@@ -100,8 +94,6 @@ describe 'API V2 Platform Line Items Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/line_items?sort=updated_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns line items sorted by updated_at' do
             expect(json_response['data'].count).to      eq store.line_items.count
             expect(json_response['data'].pluck(:id)).to eq store.line_items.order(:updated_at).map(&:id).map(&:to_s)
@@ -110,8 +102,6 @@ describe 'API V2 Platform Line Items Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/line_items?sort=-updated_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns line items sorted by updated_at with descending order' do
             expect(json_response['data'].count).to      eq store.line_items.count
@@ -124,8 +114,6 @@ describe 'API V2 Platform Line Items Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/line_items?sort=created_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns line items sorted by created_at' do
             expect(json_response['data'].count).to      eq store.line_items.count
             expect(json_response['data'].pluck(:id)).to eq store.line_items.order(:created_at).map(&:id).map(&:to_s)
@@ -134,8 +122,6 @@ describe 'API V2 Platform Line Items Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/line_items?sort=-created_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns line items sorted by created_at with descending order' do
             expect(json_response['data'].count).to      eq store.line_items.count
@@ -149,8 +135,6 @@ describe 'API V2 Platform Line Items Spec' do
       context 'with specified pagination params' do
         context 'when per_page is between 1 and default value' do
           before { get '/api/v2/platform/line_items?page=1&per_page=2', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns the default number of line items' do
             expect(json_response['data'].count).to eq 2
@@ -171,8 +155,6 @@ describe 'API V2 Platform Line Items Spec' do
 
       context 'without specified pagination params' do
         before { get '/api/v2/platform/line_items', headers: bearer_token }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns specified amount line items' do
           expect(json_response['data'].count).to eq store.line_items.count

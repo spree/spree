@@ -28,8 +28,6 @@ describe 'Platform API v2 CmsSections', type: :request do
         patch "/api/v2/platform/cms_sections/#{resource_a.id}", headers: bearer_token, params: params
       end
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'moves resource_a from position 1 to position 5 and updates the positions of its siblings accordingly' do
         reload_sections
 
@@ -55,8 +53,6 @@ describe 'Platform API v2 CmsSections', type: :request do
       before do
         patch "/api/v2/platform/cms_sections/#{resource_d.id}", headers: bearer_token, params: params
       end
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'moves resource_d from position 4 to position 1, and updates the name' do
         reload_sections

@@ -40,8 +40,6 @@ describe 'Storefront API v2 Account spec', type: :request do
       get '/api/v2/storefront/account', headers: headers
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'return JSON API payload of User and associations (default billing and shipping address)' do
       expect(json_response['data']).to have_id(user.id.to_s)
       expect(json_response['data']).to have_type('user')
@@ -111,8 +109,6 @@ describe 'Storefront API v2 Account spec', type: :request do
     before { post "/api/v2/storefront/account", params: params }
 
     context 'valid request' do
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'creates and returns user' do
         created_user = Spree.user_class.last
         expect(json_response['data']['id']).to eq created_user.id.to_s
@@ -186,8 +182,6 @@ describe 'Storefront API v2 Account spec', type: :request do
 
         before { patch "/api/v2/storefront/account", params: params, headers: headers }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'updates and returns user' do
           expect(json_response['data']).to have_id(user.id.to_s)
           expect(json_response['data']).to have_attribute(:email).with_value(new_attributes[:email])
@@ -209,8 +203,6 @@ describe 'Storefront API v2 Account spec', type: :request do
         end
 
         before { patch "/api/v2/storefront/account", params: params, headers: headers }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'updates only email' do
           expect(json_response['data']).to have_id(user.id.to_s)

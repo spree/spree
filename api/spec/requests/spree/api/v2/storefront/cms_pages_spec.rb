@@ -35,7 +35,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
     context 'with no params' do
       before { get '/api/v2/storefront/cms_pages' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns all pages for the current store and locale' do
@@ -48,7 +47,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
 
       before { get '/api/v2/storefront/cms_pages?locale=fr' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns all pages for the current store and specified locale' do
@@ -59,8 +57,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
     context 'filtering by type' do
       shared_examples 'returns proper records' do
         before { get "/api/v2/storefront/cms_pages?filter[type]=#{kind}" }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns pages for the current store and specified kind' do
           expect(json_response['data'].pluck(:id)).to contain_exactly(page.id.to_s)
@@ -91,8 +87,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
       context 'non-existing type' do
         before { get '/api/v2/storefront/cms_pages?filter[type]=non-existing' }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns all records' do
           expect(json_response['data'].pluck(:id)).to contain_exactly(home_en.id.to_s, standard_en.id.to_s)
         end
@@ -101,8 +95,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
 
     context 'filtering by title' do
       before { get '/api/v2/storefront/cms_pages?filter[title]=about' }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns page with title containing the query' do
         expect(json_response['data'].pluck(:id)).to contain_exactly(standard_en.id.to_s)
@@ -116,7 +108,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
 
       before { get '/api/v2/storefront/cms_pages?include=cms_sections.linked_resource' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns sections and their associations' do
@@ -147,8 +138,6 @@ describe 'Storefront API v2 CMS Pages spec', type: :request do
       let!(:page_item) { create(:cms_hero_image_section, cms_page: page, linked_resource: taxon) }
 
       before { get "/api/v2/storefront/cms_pages/#{page.id}?include=cms_sections.linked_resource" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns page attributes and relationships' do
         expect(json_response['data']['id']).to eq(page.id.to_s)

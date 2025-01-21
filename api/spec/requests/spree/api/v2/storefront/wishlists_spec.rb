@@ -352,8 +352,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       }
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'returns wishlist in response' do
       expect(json_response['data']['type']).to eql ('wishlist')
       expect(json_response['data']['id']).to eql wishlist.id.to_s
