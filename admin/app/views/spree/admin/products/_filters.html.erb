@@ -1,4 +1,4 @@
-<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "filters"} do |f| %>
+<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
   <div class="d-flex flex-column flex-lg-row">
     <div class=" flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
       <div class=" form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue ">
@@ -15,22 +15,10 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <%= render "spree/admin/products/table_filter_dropdown" %>
-
-      <button
-        class="btn btn-light h-100"
-        type="button"
-        data-toggle="collapse"
-        data-target="#table-filter"
-        href="#table-filter"
-        aria-expanded="false"
-        aria-controls="table-filter"
-      >
-        <%= icon "adjustments", class: "mr-1" %>
-        <%= Spree.t("admin.filters") %>
-      </button>
+      <%= render 'spree/admin/shared/filters_button' %>
     </div>
   </div>
-  <div id="table-filter" class="collapse mt-4">
+  <div data-reveal-target="item" class="d-none mt-4">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
     <div class="row">
       <div class="col-12 col-lg-6">

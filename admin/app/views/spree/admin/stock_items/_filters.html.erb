@@ -1,4 +1,4 @@
-<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: { controller: "filters" } do |f| %>
+<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: { controller: "filters reveal", reveal_hidden_class: "d-none" } do |f| %>
   <div class="d-flex flex-column flex-lg-row">
     <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
       <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
@@ -13,22 +13,9 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center justify-content-between">
-      <button
-        class="btn btn-light h-100"
-        type="button"
-        data-toggle="collapse"
-        data-target="#more-filters"
-        href="#more-filters"
-        aria-expanded="false"
-        aria-controls="more-filters"
-      >
-        <%= icon "adjustments", class: "mr-1" %>
-        <%= Spree.t("admin.filters") %>
-      </button>
-    </div>
+    <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div class="collapse mt-4" id="more-filters">
+  <div data-reveal-target="item" class="d-none mt-4">
     <div class="row">
       <div class="col-12 col-lg-6">
         <div class="form-group">
