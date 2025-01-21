@@ -60,10 +60,10 @@ module Spree
     def self.available_themes
       @available_themes ||= begin
         # we need to load Page subclasses (not loaded in dev environment!)
-        Dir.open(Rails.root.join('app', 'models', 'spree', 'themes')).each do |file|
+        Dir.open(Spree::Core::Engine.root.join('app', 'models', 'spree', 'themes')).each do |file|
           next if ['.', '..'].include?(file)
 
-          require_dependency Rails.root.join('app', 'models', 'spree', 'themes', file).to_s
+          require_dependency Spree::Core::Engine.root.join('app', 'models', 'spree', 'themes', file).to_s
         end
 
         Spree::Theme.descendants.sort_by(&:display_name)

@@ -1284,7 +1284,7 @@ en:
       video:
         heading_1_default: Why I recommend it?
         heading_2_default: There's nothing like a soft hint of blush to add dimension and color to your look.
-    pages:
+    pages_defaults:
       homepage:
         featured_taxon_heading_on_sale: On sale
         featured_taxon_heading_new_arrivals: New arrivals

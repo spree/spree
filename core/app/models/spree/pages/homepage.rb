@@ -25,7 +25,7 @@ module Spree
 
           if on_sale_collection.present?
             sections << Spree::PageSections::FeaturedTaxon.new(
-              preferred_heading: Spree.t('pages.homepage.featured_taxon_heading_on_sale'),
+              preferred_heading: Spree.t('pages_defaults.homepage.featured_taxon_heading_on_sale'),
               preferred_use_description_from_admin: true,
               preferred_taxon_id: on_sale_collection.id
             )
@@ -33,7 +33,7 @@ module Spree
 
           if new_arrivals_collection.present?
             sections << Spree::PageSections::FeaturedTaxon.new(
-              preferred_heading: Spree.t('pages.homepage.featured_taxon_heading_new_arrivals'),
+              preferred_heading: Spree.t('pages_defaults.homepage.featured_taxon_heading_new_arrivals'),
               preferred_use_description_from_admin: true,
               preferred_taxon_id: new_arrivals_collection.id
             )
@@ -44,13 +44,13 @@ module Spree
           preferred_background_color: '#F0EFE9', # accent color,
           default_blocks: [
             Spree::PageBlocks::Heading.new(
-              text: Spree.t('pages.homepage.image_with_text_heading'),
+              text: Spree.t('pages_defaults.homepage.image_with_text_heading'),
               preferred_text_alignment: 'left',
               preferred_bottom_padding: 8,
               preferred_top_padding: 24
             ),
             Spree::PageBlocks::Text.new(
-              text: Spree.t('pages.homepage.image_with_text_text'),
+              text: Spree.t('pages_defaults.homepage.image_with_text_text'),
               preferred_text_alignment: 'left',
               preferred_bottom_padding: 16
             )

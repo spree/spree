@@ -28,14 +28,14 @@ module Spree
           Spree::PageSections::Newsletter.new(
             default_blocks: [
               Spree::PageBlocks::Heading.new(
-                text: Spree.t('pages.password.newsletter_heading'),
+                text: Spree.t('pages_defaults.password.newsletter_heading'),
                 preferred_width_desktop: 50, # in %
                 preferred_text_alignment: 'center',
                 preferred_container_alignment: 'center',
                 preferred_bottom_padding: 8
               ),
               Spree::PageBlocks::Text.new(
-                text: Spree.t('pages.password.newsletter_text'),
+                text: Spree.t('pages_defaults.password.newsletter_text'),
                 preferred_text_alignment: 'center',
                 preferred_bottom_padding: 32,
                 preferred_width_desktop: 50,
