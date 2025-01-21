@@ -5,8 +5,8 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'Platform API v2'
 
   let!(:store) { Spree::Store.default }
-  let!(:store_two) { create(:store) }
-  let!(:store_three) { create(:store) }
+  let(:store_two) { create(:store) }
+  let(:store_three) { create(:store) }
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
@@ -16,7 +16,6 @@ describe 'Platform API v2 Resources spec', type: :request do
   let(:user) { create(:user) }
   let(:resource) { create(:address, state: state, country: country, user: user) }
   let(:id) { resource.id }
-  let(:valid_http_status) { 200 }
 
   shared_examples 'returns auth token errors' do
     context 'with missing authorization token' do
