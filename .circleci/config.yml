@@ -4,13 +4,13 @@ defaults: &defaults
   parameters: &default_parameters
     restore_cache_key_1:
       type: string
-      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ .Environment.RAILS_VERSION }}'
     restore_cache_key_2:
       type: string
-      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}'
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Environment.RAILS_VERSION }}'
     save_cache_key:
       type: string
-      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}'
+      default: 'spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ .Environment.RAILS_VERSION }}'
     run_file_path:
       type: string
     rails_version:
