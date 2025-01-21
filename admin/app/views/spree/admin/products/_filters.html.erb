@@ -1,4 +1,4 @@
-<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "ransack"} do |f| %>
+<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "filters"} do |f| %>
   <div class="d-flex flex-column flex-lg-row">
     <div class=" flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
       <div class=" form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue ">
@@ -8,7 +8,7 @@
                        placeholder: "#{Spree.t(:search_by)} Name, SKU, brand, etc",
                        data: {
                          badge_name: Spree.t(:query),
-                         ransack_target: :input,
+                         filters_target: :input,
                        } %>
       </div>
     </div>
@@ -47,7 +47,7 @@
           empty_option: Spree.t(:without_taxon),
           url: spree.admin_taxons_select_options_path(format: :json),
           select_data: {
-            ransack_target: "input",
+            filters_target: "input",
           } %>
         </div>
       </div>
@@ -62,7 +62,7 @@
           value_field: :name,
           select_class: "w-100",
           select_data: {
-            ransack_target: "input",
+            filters_target: "input",
           } %>
         </div>
       </div>
@@ -79,5 +79,5 @@
 
   <%= render "spree/admin/shared/filter_badge_template" %>
 
-  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>

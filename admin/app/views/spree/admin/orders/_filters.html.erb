@@ -1,4 +1,4 @@
-<%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil, class: "filter-wrap border-bottom", data: {controller: "ransack"}  do |f| %>
+<%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil, class: "filter-wrap border-bottom", data: {controller: "filters"}  do |f| %>
   <div class="d-flex flex-column flex-lg-row">
     <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
       <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
@@ -8,7 +8,7 @@
         class: "form-control-plaintext js-quick-search px-0",
         placeholder: "Search orders",
         data: {
-          ransack_target: :input,
+          filters_target: :input,
           badge_name: Spree.t(:query),
         } %>
       </div>
@@ -62,19 +62,19 @@
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
-            <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { ransack_target: :input } %>
+            <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
           </div>
         </div>
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
-            <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { ransack_target: :input } %>
+            <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
           </div>
         </div>
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_email_eq, Spree.t(:email) %>
-            <%= f.email_field :email_eq, class: "form-control", data: { ransack_target: :input } %>
+            <%= f.email_field :email_eq, class: "form-control", data: { filters_target: :input } %>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
       <div class="col-12 col-lg-4">
         <div class="form-group">
           <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
-          <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { ransack_target: :input } %>
+          <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { filters_target: :input } %>
         </div>
       </div>
 
@@ -97,7 +97,7 @@
                    { include_blank: true },
                    data: {
                      controller: "autocomplete-select",
-                     ransack_target: :input,
+                     filters_target: :input,
                    } %>
         </div>
       </div>
@@ -115,5 +115,5 @@
 
   <%= render "spree/admin/shared/filter_badge_template" %>
 
-  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>
