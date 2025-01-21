@@ -1,4 +1,4 @@
-<% content_for :page_title do %>
+  <% content_for :page_title do %>
   <% if controller_name == 'checkouts' %>
     <%= Spree.t(:draft_orders) %>
   <% else %>
@@ -7,23 +7,17 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= if can?(:create, Spree::Order)
-    link_to_with_icon "plus",
-    Spree.t(:new_order),
-    spree.admin_orders_path,
-    class: "btn btn-primary ml-2",
-    data: {
-      turbo_method: :post,
-    }
-  end %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_order), spree.admin_orders_path, class: "btn btn-primary ml-2", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
 <% end %>
 
-<% if params[:frame_name].present? %>
-  <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-    <%= render "spree/admin/orders/filters" %>
-    <%= render "spree/admin/orders/list" %>
+<div class="card-lg p-0">
+  <% if params[:frame_name].present? %>
+    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+      <%= render 'spree/admin/orders/filters' %>
+      <%= render 'spree/admin/orders/list' %>
+    <% end %>
+  <% else %>
+    <%= render 'spree/admin/orders/filters' %>
+    <%= render 'spree/admin/orders/list' %>
   <% end %>
-<% else %>
-  <%= render "spree/admin/orders/filters" %>
-  <%= render "spree/admin/orders/list" %>
-<% end %>
+</div>

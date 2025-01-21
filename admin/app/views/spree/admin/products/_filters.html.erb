@@ -1,18 +1,36 @@
-<%= search_form_for product_list_filters_search_form_path do |f| %>
-  <% content_for :table_filter_main_search do %>
-    <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-      <%= icon "search", class: "mr-3 text-muted" %>
-      <%= f.search_field :multi_search,
-                     class: "form-control-plaintext js-quick-search px-0",
-                     placeholder: "#{Spree.t(:search_by)} Name, SKU, brand, etc",
-                     data: {
-                       badge_name: Spree.t(:query),
-                       ransack_target: :input,
-                     } %>
+<%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "ransack"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row">
+    <div class=" flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+      <div class=" form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue ">
+        <%= icon "search", class: "mr-3 text-muted" %>
+        <%= f.search_field :multi_search,
+                       class: "form-control-plaintext js-quick-search px-0",
+                       placeholder: "#{Spree.t(:search_by)} Name, SKU, brand, etc",
+                       data: {
+                         badge_name: Spree.t(:query),
+                         ransack_target: :input,
+                       } %>
+      </div>
     </div>
-  <% end %>
 
-  <% content_for :table_filter do %>
+    <div class="d-flex align-items-center justify-content-between">
+      <%= render "spree/admin/products/table_filter_dropdown" %>
+
+      <button
+        class="btn btn-light h-100"
+        type="button"
+        data-toggle="collapse"
+        data-target="#table-filter"
+        href="#table-filter"
+        aria-expanded="false"
+        aria-controls="table-filter"
+      >
+        <%= icon "adjustments", class: "mr-1" %>
+        <%= Spree.t("admin.filters") %>
+      </button>
+    </div>
+  </div>
+  <div id="table-filter" class="collapse mt-4">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
     <div class="row">
       <div class="col-12 col-lg-6">
@@ -57,9 +75,9 @@
         <%= Spree.t(:filter_results) %>
       <% end %>
     </div>
-  <% end %>
-<% end %>
+  </div>
 
-<% content_for :table_filter_dropdown do %>
-  <%= render "spree/admin/products/table_filter_dropdown" %>
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>
