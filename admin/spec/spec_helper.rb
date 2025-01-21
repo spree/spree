@@ -88,12 +88,6 @@ RSpec.configure do |config|
     end
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
-  end
-
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::Admin::TestingSupport::CapybaraUtils
