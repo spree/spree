@@ -12,17 +12,15 @@ module Spree
         theme = Spree::Theme.find(theme_id)
         duplicated_theme = Spree::Theme.find(duplicated_theme_id)
 
-        ActsAsTenant.with_tenant(duplicated_theme.project) do
-          ApplicationRecord.transaction do
-            duplicated_pages = duplicate_pages(theme, duplicated_theme)
+        ApplicationRecord.transaction do
+          duplicated_pages = duplicate_pages(theme, duplicated_theme)
 
-            # Duplicated links on pages and blocks have references to pages from the previous theme
-            # We need to look for a duplicated page and update the link with it
-            duplicate_layout_sections(theme, duplicated_theme)
-            adjust_page_links(theme, duplicated_theme, duplicated_pages)
+          # Duplicated links on pages and blocks have references to pages from the previous theme
+          # We need to look for a duplicated page and update the link with it
+          duplicate_layout_sections(theme, duplicated_theme)
+          adjust_page_links(theme, duplicated_theme, duplicated_pages)
 
-            duplicated_theme.update!(ready: true)
-          end
+          duplicated_theme.update!(ready: true)
         end
       end
 
