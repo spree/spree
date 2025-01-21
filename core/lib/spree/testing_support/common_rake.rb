@@ -14,16 +14,21 @@ namespace :common do
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
-    Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}"]
+    skip_javascript = ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
+
+    Spree::DummyGenerator.start [
+      "--lib_name=#{ENV['LIB_NAME']}",
+      "--skip_javascript=#{skip_javascript}"
+    ]
 
     # install frontend libraries
-    unless ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
+    unless skip_javascript
       system('bin/rails importmap:install')
       system('bin/rails turbo:install')
       system('bin/rails stimulus:install')
     end
 
-    system('bin/rake acts_as_taggable_on_engine:install:migrations')
+    system('bin/rake acts_as_taggable_on_engine:install:migrations > /dev/null 2>&1')
 
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
@@ -51,9 +56,7 @@ namespace :common do
       puts 'Skipping installation no generator to run...'
     end
 
-    unless ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
-      system('bundle exec rake assets:precompile > /dev/null 2>&1')
-    end
+    system('bundle exec rake assets:precompile > /dev/null 2>&1') if !skip_javascript || ENV['LIB_NAME'] == 'spree/emails'
   end
 
   task :seed do |_t|
