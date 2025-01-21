@@ -69,7 +69,7 @@ RSpec.configure do |config|
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.raise_errors_for_deprecations!
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.include JSONAPI::RSpec
   config.include FactoryBot::Syntax::Methods
