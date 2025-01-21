@@ -1,52 +1,72 @@
-<%= search_form_for [:admin, @search] do |f| %>
-  <%= content_for :table_filter_main_search do %>
-    <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-      <%= icon "search", class: "mr-3 text-muted" %>
-      <%= search_field_tag "q[number_cont]",
-      params.dig(:q, :number_cont),
-      class: "form-control-plaintext js-quick-search px-0",
-      placeholder: "#{Spree.t(:search_by)} #{Spree.t(:number)}",
-      data: {
-        ransack_target: :input,
-        badge_name: Spree.t(:number),
-      } %>
-    </div>
-  <% end %>
-  <%= content_for :table_filter do %>
-    <div class="row">
-      <div class="col-12 col-lg-6">
-        <div class="form-group">
-          <%= f.label :reference_cont, Spree.t(:reference) %>
-          <%= f.text_field :reference_cont, include_blank: true, size: 15, class: "form-control", data: { ransack_target: :input } %>
-        </div>
+<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "ransack"}  do |f| %>
+  <div class="d-flex flex-column flex-lg-row">
+    <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
+        <%= icon "search", class: "mr-3 text-muted" %>
+        <%= search_field_tag "q[number_cont]",
+          params.dig(:q, :number_cont),
+          class: "form-control-plaintext js-quick-search px-0",
+          placeholder: "#{Spree.t(:search_by)} #{Spree.t(:number)}",
+          data: {
+            ransack_target: :input,
+            badge_name: Spree.t(:number),
+        } %>
       </div>
-      <div class="col-12 col-lg-6">
-        <div class="form-group">
-          <%= f.label :source_location_id_eq, Spree.t(:source) %>
-          <%= f.select :source_location_id_eq,
+    </div>
+    <div class="d-flex align-items-center justify-content-between">
+      <button
+      class="btn btn-light h-100"
+      type="button"
+      data-toggle="collapse"
+      data-target="#table-filter"
+      href="#table-filter"
+      aria-expanded="false"
+      aria-controls="table-filter"
+    >
+        <%= icon "adjustments", class: "mr-1" %>
+        <%= Spree.t("admin.filters") %>
+      </button>
+    </div>
+  </div>
+    <div id="table-filter" class="collapse mt-4">
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= f.label :reference_cont, Spree.t(:reference) %>
+            <%= f.text_field :reference_cont, include_blank: true, size: 15, class: "form-control", data: { ransack_target: :input } %>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= f.label :source_location_id_eq, Spree.t(:source) %>
+            <%= f.select :source_location_id_eq,
                    available_stock_locations_list,
                    { include_blank: true },
                    class: "custom-select",
                    data: {
                      ransack_target: :input,
                    } %>
+          </div>
         </div>
-      </div>
-      <div class="col-12 col-lg-6">
-        <div class="form-group">
-          <%= f.label :destination_location_id_eq, Spree.t(:destination) %>
-          <%= f.select :destination_location_id_eq,
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= f.label :destination_location_id_eq, Spree.t(:destination) %>
+            <%= f.select :destination_location_id_eq,
                    available_stock_locations_list,
                    { include_blank: true },
                    class: "custom-select",
                    data: {
                      ransack_target: :input,
                    } %>
+          </div>
         </div>
       </div>
+      <div class="form-actions">
+        <%= button Spree.t(:search), "search" %>
+      </div>
     </div>
-    <div class="form-actions">
-      <%= button Spree.t(:search), "search" %>
-    </div>
-  <% end %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>

@@ -33,7 +33,7 @@
       <div class="col-12 col-lg-6">
         <div class="form-group">
           <%= f.label :variant_sku_cont, Spree.t(:sku) %>
-          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control js-filterable" %>
+          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control", data: {ransack_target: :input} %>
         </div>
       </div>
 
@@ -43,7 +43,7 @@
           <%= f.select :stock_location_id_eq,
                    available_stock_locations_list,
                    { include_blank: true },
-                   class: "custom-select js-filterable" %>
+                   class: "custom-select", data: {ransack_target: :input}  %>
         </div>
       </div>
 

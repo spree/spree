@@ -22,6 +22,9 @@
         </div>
       </div>
     </div>
+
+    <%= render "spree/admin/shared/filter_badge_template" %>
+    <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
   <% end %>
 
   <% if @taxonomies.present? %>
