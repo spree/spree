@@ -15,20 +15,7 @@
 <div class="card-lg p-0">
 
   <%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
-    <div class="d-flex flex-column flex-lg-row">
-      <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
-        <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-          <%= icon "search", class: "mr-3 text-muted" %>
-          <%= f.search_field :name_or_presentation_cont,
-                         class: "form-control-plaintext px-0",
-                         placeholder: "#{Spree.t(:search_by)} #{Spree.t(:name)}",
-                         data: {
-                           filters_target: :input,
-                           badge_name: Spree.t(:name),
-                         } %>
-        </div>
-      </div>
-    </div>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
 
     <%= render "spree/admin/shared/filter_badge_template" %>
 

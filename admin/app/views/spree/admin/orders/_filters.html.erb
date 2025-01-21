@@ -1,18 +1,6 @@
 <%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"}  do |f| %>
-  <div class="d-flex flex-column flex-lg-row">
-    <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
-      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-        <%= icon "search", class: "mr-3 text-muted" %>
-        <%= search_field_tag "q[multisearch]",
-        params.dig(:q, :multisearch),
-        class: "form-control-plaintext js-quick-search px-0",
-        placeholder: "Search orders",
-        data: {
-          filters_target: :input,
-          badge_name: Spree.t(:query),
-        } %>
-      </div>
-    </div>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multisearch, label: Spree.t(:number), badge_name: Spree.t(:query) %>
 
     <div class="d-flex align-items-center justify-content-between">
       <div class="mr-2 h-100">

@@ -1,18 +1,7 @@
 <%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
-  <div class="d-flex flex-column flex-lg-row">
-    <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
-      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-        <%= icon "search", class: "mr-3 text-muted" %>
-        <%= search_field_tag "q[number_cont]",
-          params.dig(:q, :number_cont),
-          class: "form-control-plaintext js-quick-search px-0",
-          placeholder: "#{Spree.t(:search_by)} #{Spree.t(:number)}",
-          data: {
-            filters_target: :input,
-            badge_name: Spree.t(:number),
-        } %>
-      </div>
-    </div>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :number_cont, label: Spree.t(:number) %>
+
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
     <div data-reveal-target="item" class="d-none mt-4">

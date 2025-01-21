@@ -1,0 +1,12 @@
+<% badge_name ||= label %>
+<div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue flex-grow-1 mb-3 mb-lg-0 w-auto">
+  <%= icon "search", class: "mr-3 text-muted" %>
+  <%= search_field_tag "q[#{param}]",
+  params.dig(:q, param),
+  class: "form-control-plaintext px-0",
+  placeholder: "#{Spree.t(:search_by)} #{label}",
+  data: {
+    filters_target: :input,
+    badge_name: badge_name,
+  } %>
+</div>
