@@ -1,23 +1,39 @@
-<%= search_form_for [:admin, @search] do |f| %>
-  <%= content_for :table_filter_main_search do %>
-    <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
-      <%= icon "search", class: "mr-3 text-muted" %>
-      <%= f.search_field :variant_product_name_cont,
-                     class: "form-control-plaintext px-0",
-                     placeholder: "#{Spree.t(:search_by)} #{Spree.t(:product_name)}",
-                     data: {
-                       ransack_target: :input,
-                       badge_name: Spree.t(:product_name),
-                     } %>
+<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: { controller: "ransack" } do |f| %>
+  <div class="d-flex flex-column flex-lg-row">
+    <div class="flex-grow-1 mr-lg-2 mb-3 mb-lg-0">
+      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
+        <%= icon "search", class: "mr-3 text-muted" %>
+        <%= f.search_field :variant_product_name_cont,
+                       class: "form-control-plaintext px-0",
+                       placeholder: "#{Spree.t(:search_by)} #{Spree.t(:product_name)}",
+                       data: {
+                         ransack_target: :input,
+                         badge_name: Spree.t(:product_name),
+                       } %>
+      </div>
     </div>
-  <% end %>
 
-  <% content_for :table_filter do %>
+    <div class="d-flex align-items-center justify-content-between">
+      <button
+        class="btn btn-light h-100"
+        type="button"
+        data-toggle="collapse"
+        data-target="#more-filters"
+        href="#more-filters"
+        aria-expanded="false"
+        aria-controls="more-filters"
+      >
+        <%= icon "adjustments", class: "mr-1" %>
+        <%= Spree.t("admin.filters") %>
+      </button>
+    </div>
+  </div>
+  <div class="collapse mt-4" id="more-filters">
     <div class="row">
       <div class="col-12 col-lg-6">
         <div class="form-group">
           <%= f.label :variant_sku_cont, Spree.t(:sku) %>
-          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control", data: { ransack_target: :input } %>
+          <%= f.text_field :variant_sku_cont, size: 15, class: "form-control js-filterable" %>
         </div>
       </div>
 
@@ -27,10 +43,7 @@
           <%= f.select :stock_location_id_eq,
                    available_stock_locations_list,
                    { include_blank: true },
-                   class: "custom-select",
-                   data: {
-                     ransack_target: :input,
-                   } %>
+                   class: "custom-select js-filterable" %>
         </div>
       </div>
 
@@ -42,5 +55,9 @@
         <%= Spree.t(:filter_results) %>
       <% end %>
     </div>
-  <% end %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-ransack-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>
