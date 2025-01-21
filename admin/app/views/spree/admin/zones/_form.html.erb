@@ -28,13 +28,13 @@
           <strong><%= Spree.t(:type) %></strong>
           <div class="radio my-2">
             <%= label_tag :country_based do %>
-              <%= zone_form.radio_button('kind', 'country', { id: 'country_based' }) %>
+              <%= zone_form.radio_button :kind, :country, id: 'country_based', data: { action: 'auto-submit#submit' }  %>
               <%= Spree.t(:country_based) %>
             <% end %>
           </div>
           <div class="radio my-2">
             <%= label_tag :state_based do %>
-              <%= zone_form.radio_button('kind', 'state', { id: 'state_based' }) %>
+              <%= zone_form.radio_button :kind, :state, id: 'state_based', data: { action: 'auto-submit#submit' } %>
               <%= Spree.t(:state_based) %>
             <% end %>
           </div>
@@ -43,7 +43,10 @@
     </div>
   </div>
   <div class="col-12 col-lg-6">
-    <%= render partial: 'state_members', locals: { zone_form: zone_form } %>
-    <%= render partial: 'country_members', locals: { zone_form: zone_form } %>
+    <% if @zone.country? %>
+      <%= render partial: 'country_members', locals: { zone_form: zone_form } %>
+    <% else %>
+      <%= render partial: 'state_members', locals: { zone_form: zone_form } %>
+    <% end %>
   </div>
 </div>

@@ -5,7 +5,7 @@
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @zone } %>
 
-<%= form_for [:admin, @zone] do |f| %>
+<%= form_for [:admin, @zone], data: {controller: 'auto-submit'} do |f| %>
   <%= render 'form', zone_form: f %>
 
   <%= render 'spree/admin/shared/edit_resource_links', f: f %>
