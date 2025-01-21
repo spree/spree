@@ -58,16 +58,7 @@ module Spree
     #
     # @return [Array<Spree::Theme>]
     def self.available_themes
-      @available_themes ||= begin
-        # we need to load Page subclasses (not loaded in dev environment!)
-        Dir.open(Spree::Core::Engine.root.join('app', 'models', 'spree', 'themes')).each do |file|
-          next if ['.', '..'].include?(file)
-
-          require_dependency Spree::Core::Engine.root.join('app', 'models', 'spree', 'themes', file).to_s
-        end
-
-        Spree::Theme.descendants.sort_by(&:display_name)
-      end
+      @available_themes ||= Rails.application.config.spree.themes.sort_by(&:display_name)
     end
 
     def self.metadata
@@ -109,14 +100,7 @@ module Spree
     end
 
     def create_default_pages
-      # we need to load Page subclasses (not loaded in dev environment!)
-      Dir.open(Spree::Core::Engine.root.join('app', 'models', 'spree', 'pages')).each do |file|
-        next if ['.', '..'].include?(file)
-
-        require_dependency Spree::Core::Engine.root.join('app', 'models', 'spree', 'pages', file).to_s
-      end
-
-      Spree::Page.descendants.each do |page_class|
+      Rails.application.config.spree.pages.each do |page_class|
         next if page_class == Spree::Pages::Custom
 
         page_class.where(pageable: self).first_or_create!
@@ -169,24 +153,13 @@ module Spree
     end
 
     def available_layout_sections
-      [
-        Spree::PageSections::AnnouncementBar,
-        Spree::PageSections::Header,
-        Spree::PageSections::Newsletter,
-        Spree::PageSections::Footer
-      ]
+      Rails.application.config.spree.theme_layout_sections
     end
 
     def available_page_sections
       return @available_page_sections if @available_page_sections
 
-      Dir.open(Rails.root.join('app', 'models', 'spree', 'page_sections')).each do |file|
-        next if ['.', '..'].include?(file)
-
-        require_dependency Rails.root.join('app', 'models', 'spree', 'page_sections', file).to_s
-      end
-
-      @available_page_sections ||= Spree::PageSection.descendants.find_all do |section_class|
+      @available_page_sections ||= Rails.application.config.spree.page_sections.find_all do |section_class|
         section_class.role == 'content'
       end.sort_by(&:name)
     end
