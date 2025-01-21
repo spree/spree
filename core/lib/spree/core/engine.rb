@@ -14,7 +14,12 @@ module Spree
                                :line_item_comparison_hooks,
                                :data_feed_types,
                                :export_types,
-                               :taxon_rules)
+                               :taxon_rules,
+                               :themes,
+                               :theme_layout_sections,
+                               :pages,
+                               :page_sections,
+                               :page_blocks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -142,6 +147,81 @@ module Spree
           Spree::TaxonRules::Tag,
           Spree::TaxonRules::AvailableOn,
           Spree::TaxonRules::Sale,
+        ]
+
+        Rails.application.config.spree.themes = [
+          Spree::Themes::Default
+        ]
+
+        Rails.application.config.spree.theme_layout_sections = [
+          Spree::PageSections::AnnouncementBar,
+          Spree::PageSections::Header,
+          Spree::PageSections::Newsletter,
+          Spree::PageSections::Footer
+        ]
+
+        Rails.application.config.spree.pages = [
+          Spree::Pages::Cart,
+          Spree::Pages::Post,
+          Spree::Pages::TaxonList,
+          Spree::Pages::Custom,
+          Spree::Pages::ProductDetails,
+          Spree::Pages::ShopAll,
+          Spree::Pages::Taxon,
+          Spree::Pages::Wishlist,
+          Spree::Pages::SearchResults,
+          Spree::Pages::Checkout,
+          Spree::Pages::Password,
+          Spree::Pages::Homepage,
+          Spree::Pages::Login,
+          Spree::Pages::PostList,
+          Spree::Pages::Account
+        ]
+
+        Rails.application.config.spree.page_sections = [
+          Spree::PageSections::FeaturedPosts,
+          Spree::PageSections::TaxonGrid,
+          Spree::PageSections::ImageWithText,
+          Spree::PageSections::FeaturedTaxon,
+          Spree::PageSections::CollectionBanner,
+          Spree::PageSections::ProductDetails,
+          Spree::PageSections::MainPasswordFooter,
+          Spree::PageSections::RelatedProducts,
+          Spree::PageSections::CustomCode,
+          Spree::PageSections::TaxonBanner,
+          Spree::PageSections::FeaturedProduct,
+          Spree::PageSections::ProductGrid,
+          Spree::PageSections::ImageBanner,
+          Spree::PageSections::PageTitle,
+          Spree::PageSections::MainPasswordHeader,
+          Spree::PageSections::PostDetails,
+          Spree::PageSections::PostGrid,
+          Spree::PageSections::FeaturedTaxons,
+          Spree::PageSections::RichText,
+          Spree::PageSections::Video,
+          Spree::PageSections::Footer,
+          Spree::PageSections::Newsletter,
+          Spree::PageSections::Header,
+          Spree::PageSections::AnnouncementBar
+        ]
+
+        Rails.application.config.spree.page_blocks = [
+          Spree::PageBlocks::Link,
+          Spree::PageBlocks::MegaNav,
+          Spree::PageBlocks::MegaNavWithSubcategories,
+          Spree::PageBlocks::Subheading,
+          Spree::PageBlocks::Heading,
+          Spree::PageBlocks::Nav,
+          Spree::PageBlocks::Buttons,
+          Spree::PageBlocks::Text,
+          Spree::PageBlocks::NewsletterForm,
+          Spree::PageBlocks::Image,
+          Spree::PageBlocks::Products::Title,
+          Spree::PageBlocks::Products::Share,
+          Spree::PageBlocks::Products::Price,
+          Spree::PageBlocks::Products::QuantitySelector,
+          Spree::PageBlocks::Products::VariantPicker,
+          Spree::PageBlocks::Products::BuyButtons
         ]
       end
 

@@ -59,4 +59,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'request_store', '~> 1.7'
   s.add_dependency 'wannabe_bool'
+  s.add_dependency 'geared_pagination'
 end

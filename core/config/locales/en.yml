@@ -621,6 +621,7 @@ en:
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
+    blog: Blog
     both: Both
     breadcrumbs: Breadcrumbs
     calculated_reimbursements: Calculated Reimbursements
@@ -1244,6 +1245,54 @@ en:
     package_from: package from
     page: Page
     page_not_found: Sorry! Page you are looking can’t be found.
+    page_blocks:
+      buttons:
+        display_name: Button
+      link:
+        display_name: Link
+      nav:
+        label_default: Menu
+      newsletter_form:
+        button_text_default: Submit
+        placeholder_default: Enter your email
+    page_sections:
+      announcement_bar:
+        default_text: Welcome to my Store!
+      featured_taxon:
+        heading_default: Beloved products
+        button_text_default: Explore category
+      featured_taxons:
+        heading_default: Shop by category
+      image_banner:
+        heading_default: Welcome to your website
+        text_default: This is the place to tell people about your business and what you do.
+      image_with_text:
+        heading_default: Welcome to my online store!
+        text_default: "Hi, I'm %{store_name}. I enjoy life and love to share our experiences and energy with you and the world! And here we can share some of our favorite things as well."
+      newsletter:
+        heading_default: Subscribe for more feel good content
+        text_default: Thank you for choosing us as your trusted online shopping destination.
+      page_title:
+        display_name: Page Title
+      related_products:
+        heading_default: You might also like
+      rich_text:
+        heading_default: This is a heading
+        text_default: This is a paragraph of text
+      taxon_grid:
+        heading_default: Brands we work with
+      video:
+        heading_1_default: Why I recommend it?
+        heading_2_default: There's nothing like a soft hint of blush to add dimension and color to your look.
+    pages_defaults:
+      homepage:
+        featured_taxon_heading_on_sale: On sale
+        featured_taxon_heading_new_arrivals: New arrivals
+        image_with_text_heading: About me
+        image_with_text_text: "I'm always looking for new and exciting projects to work on. Let's make something great together!"
+      password:
+        newsletter_heading: Opening soon
+        newsletter_text: Be the first one to know when we launch.
     pagination:
       next_page: next page &raquo;
       previous_page: ! '&laquo; previous page'

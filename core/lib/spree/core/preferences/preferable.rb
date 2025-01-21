@@ -103,6 +103,10 @@ module Spree::Preferences::Preferable
     preferences.keys.each { |pref| preferences.delete pref }
   end
 
+  def clear_preferences_for(preference_keys)
+    preference_keys.each { |pref| preferences.delete pref }
+  end
+
   private
 
   def convert_preference_value(value, type, nullable: false)
