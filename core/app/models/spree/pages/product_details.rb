@@ -14,7 +14,6 @@ module Spree
       def default_sections
         [
           Spree::PageSections::ProductDetails.new,
-          Spree::PageSections::BrandStory.new,
           Spree::PageSections::RelatedProducts.new
         ]
       end

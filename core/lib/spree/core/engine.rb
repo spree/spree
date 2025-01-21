@@ -150,8 +150,7 @@ module Spree
         ]
 
         Rails.application.config.spree.themes = [
-          Spree::Themes::Default,
-          Spree::Themes::B2B
+          Spree::Themes::Default
         ]
 
         Rails.application.config.spree.theme_layout_sections = [
@@ -187,7 +186,6 @@ module Spree
           Spree::PageSections::CollectionBanner,
           Spree::PageSections::ProductDetails,
           Spree::PageSections::MainPasswordFooter,
-          Spree::PageSections::BrandStory,
           Spree::PageSections::RelatedProducts,
           Spree::PageSections::CustomCode,
           Spree::PageSections::TaxonBanner,
