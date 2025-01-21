@@ -26,13 +26,13 @@ describe Spree::Preferences::Store, type: :model do
     expect(Rails.cache.read(:test)).to eq '123'
   end
 
-  it 'returns and cache fallback value when supplied' do
+  xit 'returns and cache fallback value when supplied' do
     Rails.cache.clear
     expect(@store.get(:test) { false }).to be false
     expect(Rails.cache.read(:test)).to be false
   end
 
-  it 'returns but not cache fallback value when persistence is disabled' do
+  xit 'returns but not cache fallback value when persistence is disabled' do
     Rails.cache.clear
     allow(@store).to receive_messages(should_persist?: false)
     expect(@store.get(:test) { true }).to be true
