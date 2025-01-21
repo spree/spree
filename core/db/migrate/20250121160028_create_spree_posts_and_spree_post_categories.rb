@@ -1,4 +1,4 @@
-class CreateSpreePostsAndSpreePostCategories < ActiveRecord::Migration[7.2]
+class CreateSpreePostsAndSpreePostCategories < ActiveRecord::Migration[6.1]
   def change
     if !table_exists?(:spree_post_categories)
       create_table :spree_post_categories do |t|
