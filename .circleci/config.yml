@@ -72,7 +72,7 @@ jobs:
 
   tests_postgres:
     <<: *run_test
-    parallelism: 12
+    parallelism: 8
     parameters:
       <<: *default_parameters
     environment:
