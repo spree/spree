@@ -1,0 +1,5 @@
+<% if @page_link.parent.is_a?(Spree::PageBlock) %>
+  <%= refresh_theme_preview(@page_link.parent.section, @page_link.parent) %>
+<% else %>
+  <%= refresh_theme_preview(@page_link.parent) %>
+<% end %>

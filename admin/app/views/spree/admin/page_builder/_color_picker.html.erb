@@ -1,0 +1,20 @@
+<div data-controller="color-picker" class="mb-4 form-group" data-color-picker-clear-value="<%= defined?(clear) ? clear : false %>">
+  <div class="d-flex align-items-center">
+    <%= f.hidden_field field, class: 'form-control mr-2', data: {
+      'color-picker-target': 'input',
+      'color-palette-target': field.to_s.camelize(:lower),
+      action: action,
+    }, value: value %>
+    <div>
+      <label class="mb-0"><%= label %></label>
+      <br />
+      <span data-color-picker-target="value" class="text-muted">
+        <%= value&.upcase || "Not set" %>
+      </span>
+    </div>
+    <div class="ml-auto d-flex align-items-center" style="width:40px">
+      <div data-color-picker-target="picker" class="border d-inline-block rounded-circle <% unless value.present? %>checkered-background<% end %>" style="height: 40px;width: 40px; background-color: <%= value %>;">
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<%= turbo_frame_tag :page_sidebar do %>
+  <h6 class="p-2 bg-light border-bottom sticky-top d-flex align-items-center mb-3">
+    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray mr-3 text-center back d-flex align-items-center shadow-none px-2' do %>
+      <%= icon 'chevron-left.svg', class: 'mr-0' %>
+    <% end %>
+    <%= @page_link.label %>
+  </h6>
+  <div class="px-3 pb-5 mb-5 edit-block">
+    <%= form_for @page_link, url: spree.admin_page_link_path(@page_link), data: { controller: 'auto-submit' } do |f| %>
+      <%= render 'spree/admin/page_links/form', f: f %>
+    <% end %>
+  </div>
+  <div class="position-fixed border-top bg-light bottom-bar" style="bottom: 0px; width:344px; z-index: 9999">
+    <div class="px-3 py-2" data-action="click->page-builder#hideSidebarMobile">
+      <%= link_to_delete(@page_link, url: spree.admin_page_link_path(@page_link)) %>
+    </div>
+  </div>
+<% end %>

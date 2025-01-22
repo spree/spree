@@ -1,0 +1,8 @@
+<tr id="<%= dom_id page %>" data-controller="row-link" class="cursor-pointer">
+  <td scope="row" data-action="click->row-link#openLink">
+    <%= link_to page.name, spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), data: { row_link_target: :link } %>
+  </td>
+  <td data-action="click->row-link#openLink">
+    <%= local_time_ago(page.updated_at, class: 'with-tip') %>
+  </td>
+</tr>

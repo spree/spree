@@ -1,0 +1,20 @@
+<div class="alert alert-info mb-3">
+  If you don't upload a logo we'll use the one from the header.
+</div>
+
+<%= render 'spree/admin/shared/page_section_logo', f: f %>
+
+<p class="text-muted small mt-2">
+  We recommend transparent images with a minimum size of 400x128 pixels.
+</p>
+
+<% content_for(:design_tab) do %>
+  <%= render 'spree/admin/page_builder/color_picker',
+      f: f, field: :preferred_copyright_text_color, value: @page_section.preferred_copyright_text_color,
+      label: 'Copyright Text color',
+      action: 'change->auto-submit#submit' %>
+  <%= render 'spree/admin/page_builder/color_picker',
+      f: f, field: :preferred_copyright_background_color, value: @page_section.preferred_copyright_background_color,
+      label: 'Copyright Background color',
+      action: 'change->auto-submit#submit' %>
+<% end %>

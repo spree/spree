@@ -1,0 +1,12 @@
+<div class="position-fixed border-top px-3 py-2 d-flex bg-light bottom-bar" style="bottom: 0px; left: 0px; width: 344px; z-index: 9999">
+  <div class="d-flex align-items-center justify-content-end w-100">
+    <% if tab == :design %>
+      <%= link_to_with_icon "restore", Spree.t(:restore_defaults), spree.restore_design_settings_to_defaults_admin_page_section_path(@page_section), {data: {turbo_confirm: Spree.t(:are_you_sure), turbo_method: :patch }, class: 'btn btn-light'} %>
+    <% end %>
+    <% if @page_section.can_be_deleted? %>
+      <div data-action="click->page-builder#hideSidebarMobile" class="ml-auto">
+        <%= link_to_delete(@page_section, url: spree.admin_page_section_path(@page_section)) %>
+      </div>
+    <% end %>
+  </div>
+</div>

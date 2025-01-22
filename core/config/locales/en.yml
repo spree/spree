@@ -674,6 +674,7 @@ en:
       jackets_and_coats: JACKET & COASTS
       new_collection: NEW COLLECTION
       special_offers: SPECIAL OFFERS
+    changes_published: Changes published!
     channel: Channel
     charged: Charged
     checkout: Checkout
@@ -1632,6 +1633,7 @@ en:
     slug: Slug
     source: Source
     social: Social
+    something_went_wrong: Something went wrong
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
@@ -1804,7 +1806,10 @@ en:
     test_mode: Test Mode
     this_menu_already_has_a_root_item: This Menu already has a root item
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
-    there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
+    theme_copied: Theme has been successfully copied.
+    theme_not_copied: "Theme could not be copied with errors: %{error}"
+    theme_duplicating: Theme is still duplicating
+    theme_is_now_live: Theme is now live
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
     thumbnail: Thumbnail

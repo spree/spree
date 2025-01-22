@@ -1,0 +1,9 @@
+<%= search_form_for [:admin, @search], url: spree.admin_pages_path do |f| %>
+  <div class="form-group">
+    <%= f.label :name_cont, Spree.t(:name) %>
+    <%= f.text_field :name_cont, class: 'form-control js-quick-search-target js-filterable' %>
+  </div>
+  <div class="form-actions">
+    <%= button Spree.t(:search), 'search' %>
+  </div>
+<% end %>

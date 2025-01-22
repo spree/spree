@@ -102,6 +102,9 @@ module Spree
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
+    has_many :posts
+    has_many :post_categories
+
     #
     # Page Builder associations
     #

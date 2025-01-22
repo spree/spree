@@ -1,0 +1,4 @@
+<%= turbo_stream.replace dom_id(@page_block.section) do %>
+  <%= render 'spree/admin/page_builder/sidebar_section', section: @page_block.section %>
+<% end %>
+<%= refresh_theme_preview %>

@@ -1,0 +1,26 @@
+<label>Layout (desktop)</label>
+
+<div class="flex mt-2 radio-buttons-header">
+  <label>
+    <%= f.radio_button :preferred_layout, 'nav-centered', class: 'hidden', data: { action: 'change->auto-submit#submit' } %>
+    <p class="btn-light"><%= Spree.t('admin.page_builder.nav_centered') %></p>
+  </label>
+  <label>
+    <%= f.radio_button :preferred_layout, 'logo-centered', class: 'hidden', data: { action: 'change->auto-submit#submit' } %>
+    <p class="btn-light"><%= Spree.t('admin.page_builder.logo_centered') %></p>
+  </label>
+  <label>
+    <%= f.radio_button :preferred_layout, 'left', class: 'hidden', data: { action: 'change->auto-submit#submit' } %>
+    <p class="btn-light"><%= Spree.t('admin.page_builder.left_aligned') %></p>
+  </label>
+</div>
+
+<div class="mt-2">
+  <%= render 'spree/admin/page_builder/range_input',
+    f: f,
+    field: :preferred_desktop_logo_height,
+    min: 0, max: 120, unit: 'px',
+    label: Spree.t('admin.page_builder.desktop_logo_height'),
+    label_for_min_value: "auto"
+  %>
+</div>
