@@ -11,9 +11,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   include_context 'API v2 tokens'
 
   shared_examples 'coupon code error' do
-    it_behaves_like 'returns 422 HTTP status'
-
     it 'returns an error' do
+      expect(response.status).to eq(422)
       expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
     end
   end
@@ -214,9 +213,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq("Quantity selected of \"#{variant.name} (#{variant.options_text})\" is not available.")
       end
     end
@@ -227,9 +225,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 404 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(404)
         expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
       end
     end
@@ -240,9 +237,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 404 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(404)
         expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
       end
     end
@@ -253,9 +249,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'return an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
       end
     end
@@ -426,9 +421,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:execute) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
 
     shared_examples 'wrong quantity parameter' do
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq('Quantity has to be greater than 0')
       end
     end
@@ -449,9 +443,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'returns an error' do
+          expect(response.status).to eq(422)
           expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
         end
       end
