@@ -174,3 +174,8 @@ workflows:
           requires:
             - build
             - tests_rails_postgres_core
+            - tests_rails_postgres_api
+            - tests_rails_postgres_admin
+            - tests_rails_postgres_storefront
+            - tests_rails_postgres_emails
+            - tests_rails_postgres_sample

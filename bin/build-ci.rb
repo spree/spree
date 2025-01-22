@@ -168,7 +168,7 @@ class Project
   #
   # @return [Array<Project>]
   def self.current_projects
-    ENV.fetch('PROJECTS', ALL).split(',').map(&method(:new))
+    ENV.fetch('PROJECTS', ALL.join(',')).split(',').map(&method(:new))
   end
   private_class_method :current_projects
 
