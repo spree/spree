@@ -57,6 +57,7 @@ postgres: &postgres
   host: <%= db_host %>
   <% end %>
   min_messages: warning
+  pool: <%= ENV["DB_POOL"] || 50 %>
 
 development:
   <<: *postgres
