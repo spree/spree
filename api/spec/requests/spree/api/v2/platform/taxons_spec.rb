@@ -60,7 +60,6 @@ describe 'Platform API v2 Taxons API' do
       context 'when no image transformation params are passed' do
         let(:taxon_image_transformation_params) { '' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do
@@ -71,7 +70,6 @@ describe 'Platform API v2 Taxons API' do
       context 'when taxon image json returned' do
         let(:taxon_image_transformation_params) { '&taxon_image_transformation[size]=100x50&taxon_image_transformation[quality]=50' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do

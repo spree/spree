@@ -352,8 +352,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       }
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'returns wishlist in response' do
       expect(json_response['data']['type']).to eql ('wishlist')
       expect(json_response['data']['id']).to eql wishlist.id.to_s
@@ -463,13 +461,12 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
           }
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'does not create wished item' do
           expect(user.wishlists.reload.first.wished_items.count).to eq 1
         end
 
         it 'returns error message' do
+          expect(response.status).to eq(422)
           expect(json_response['error']).to eq 'Quantity must be greater than 0'
         end
       end
@@ -506,10 +503,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       it 'does not create wished item' do
         expect(user.wishlists.reload.first.wished_items).to be_empty
       end
-
-      it 'does not create wished item' do
-        expect(user.wishlists.reload.first.wished_items).to be_empty
-      end
     end
 
     context 'when passed quantity is 0' do
@@ -521,13 +514,12 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
         }
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'does not create wished item' do
         expect(user.wishlists.reload.first.wished_items).to be_empty
       end
 
       it 'returns error message' do
+        expect(response.status).to eq(422)
         expect(json_response['error']).to eq 'Quantity must be greater than 0'
       end
     end

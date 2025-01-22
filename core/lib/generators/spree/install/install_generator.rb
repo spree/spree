@@ -70,7 +70,7 @@ module Spree
 
     def install_storefront
       if @install_storefront && Spree::Core::Engine.frontend_available?
-        generate 'spree:frontend:install'
+        generate 'spree:storefront:install'
       end
     end
 
@@ -82,7 +82,7 @@ module Spree
 
     def copy_storefront
       if @copy_storefront && Spree::Core::Engine.frontend_available?
-        generate 'spree:frontend:copy_storefront'
+        generate 'spree:storefront:copy_storefront'
       end
     end
 

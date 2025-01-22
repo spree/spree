@@ -62,7 +62,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.before(:suite) do
     # Clean out the database state before the tests run
@@ -87,11 +87,6 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
-
-  config.before(:suite) do
-    # Clean out the database state before the tests run
-    DatabaseCleaner.clean_with(:truncation)
-  end
 
   config.order = :random
   Kernel.srand config.seed

@@ -61,7 +61,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.before(:suite) do
     Capybara.match = :smart
@@ -80,16 +80,11 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    Spree::Webhooks.disabled = true
     begin
       Rails.cache.clear
       reset_spree_preferences
     rescue Errno::ENOTEMPTY
-    end
-  end
-
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
     end
   end
 

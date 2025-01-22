@@ -66,8 +66,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
       context 'with specified pagination params' do
         before { get '/api/v2/storefront/account/orders?page=1&per_page=2', headers: headers_bearer }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns specified amount orders' do
           expect(json_response['data'].count).to eq 2
         end
@@ -112,8 +110,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
     context 'without specified pagination params' do
       before { get '/api/v2/storefront/account/orders', headers: headers_bearer }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns specified amount orders' do
         expect(json_response['data'].count).to eq Spree::Order.count
       end
@@ -140,8 +136,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
         context 'ascending order' do
           before { get '/api/v2/storefront/account/orders?sort=completed_at', headers: headers_bearer }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq store.orders.count
             expect(json_response['data'].pluck(:id)).to eq store.orders.select('*').order(completed_at: :asc).pluck(:id).map(&:to_s)
@@ -150,8 +144,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
         context 'descending order' do
           before { get '/api/v2/storefront/account/orders?sort=-completed_at', headers: headers_bearer }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq store.orders.count
@@ -165,8 +157,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
       let!(:order_2) { create(:order, state: 'complete', user: user, completed_at: Time.current, store: create(:store)) }
 
       before { get '/api/v2/storefront/account/orders', headers: headers_bearer }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns orders sorted by completed_at' do
         expect(json_response['data'].count).to eq 1

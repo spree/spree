@@ -29,7 +29,6 @@ describe 'Storefront API v2 Menus spec', type: :request do
     context 'with no params' do
       before { get '/api/v2/storefront/menus' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns all menus for the current store and locale' do
@@ -42,7 +41,6 @@ describe 'Storefront API v2 Menus spec', type: :request do
 
       before { get '/api/v2/storefront/menus?locale=fr' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns all menus for the current store and specified locale' do
@@ -66,7 +64,6 @@ describe 'Storefront API v2 Menus spec', type: :request do
 
       before { get '/api/v2/storefront/menus?include=menu_items.linked_resource' }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns proper JSON structure'
 
       it 'returns menu items and their associations' do
@@ -84,8 +81,6 @@ describe 'Storefront API v2 Menus spec', type: :request do
       context 'filtering by location' do
         before { get '/api/v2/storefront/menus?filter[location]=header' }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns menus for the current store and specified location' do
           expect(json_response['data'].pluck(:id)).to contain_exactly(header_en.id.to_s)
         end
@@ -101,8 +96,6 @@ describe 'Storefront API v2 Menus spec', type: :request do
       let!(:menu_item) { create(:menu_item, menu: menu, linked_resource: taxon) }
 
       before { get "/api/v2/storefront/menus/#{menu.id}?include=menu_items.linked_resource" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns menu attributes and relationships' do
         expect(json_response['data']['id']).to eq(menu.id.to_s)

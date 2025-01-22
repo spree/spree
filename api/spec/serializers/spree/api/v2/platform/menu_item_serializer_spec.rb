@@ -12,8 +12,6 @@ describe Spree::Api::V2::Platform::MenuItemSerializer do
     ]
   end
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

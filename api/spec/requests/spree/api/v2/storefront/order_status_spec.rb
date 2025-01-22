@@ -35,7 +35,6 @@ describe 'Storefront API v2 OrderStatus spec', type: :request do
       context 'as a guest user with valid token' do
         before { get "/api/v2/storefront/order_status/#{order.number}", headers: headers_order_token }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
       end
     end

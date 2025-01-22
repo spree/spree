@@ -42,10 +42,6 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:suite) do
-    DatabaseCleaner.start
-  end
-
   config.append_after do
     DatabaseCleaner.clean
   end

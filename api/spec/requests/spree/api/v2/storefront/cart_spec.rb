@@ -11,9 +11,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   include_context 'API v2 tokens'
 
   shared_examples 'coupon code error' do
-    it_behaves_like 'returns 422 HTTP status'
-
     it 'returns an error' do
+      expect(response.status).to eq(422)
       expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
     end
   end
@@ -183,7 +182,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     shared_examples 'adds item' do
       before { execute }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
 
       it 'with success' do
@@ -215,9 +213,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq("Quantity selected of \"#{variant.name} (#{variant.options_text})\" is not available.")
       end
     end
@@ -228,9 +225,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 404 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(404)
         expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
       end
     end
@@ -241,9 +237,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 404 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(404)
         expect(json_response[:error]).to eq('The resource you were looking for could not be found.')
       end
     end
@@ -254,9 +249,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         execute
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'return an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq(I18n.t(:invalid_params, scope: 'spree.api.v2.metadata'))
       end
     end
@@ -322,7 +316,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'containing line item' do
         let!(:line_item) { create(:line_item, order: order) }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'removes line item from the cart' do
@@ -358,7 +351,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     shared_examples 'emptying the order' do
       before { execute }
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
 
       it 'empties the order' do
@@ -429,9 +421,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:execute) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
 
     shared_examples 'wrong quantity parameter' do
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'returns an error' do
+        expect(response.status).to eq(422)
         expect(json_response[:error]).to eq('Quantity has to be greater than 0')
       end
     end
@@ -452,9 +443,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'returns an error' do
+          expect(response.status).to eq(422)
           expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
         end
       end
@@ -462,7 +452,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'changes the quantity of line item' do
         before { execute }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'successfully changes the quantity' do
@@ -512,7 +501,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         get '/api/v2/storefront/cart', headers: headers, params: params
       end
 
-      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
     end
 
@@ -661,7 +649,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         let(:adjustment_value_in_money) { Spree::Money.new(adjustment_value, currency: order.currency) }
 
         context 'applies coupon code correctly' do
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'changes the adjustment total' do
@@ -735,7 +722,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         context 'removes coupon code correctly' do
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'changes the adjustment total to 0.0' do
@@ -816,7 +802,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'changes the adjustment total to 0.0' do
@@ -929,8 +914,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         order.create_proposed_shipments
         execute
       end
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid shipments JSON' do
         [{ shipping_method: shipping_method, shipping_rate: shipping_rate }, { shipping_method: shipping_method_2, shipping_rate: shipping_rate_2 }].each do |shipping|

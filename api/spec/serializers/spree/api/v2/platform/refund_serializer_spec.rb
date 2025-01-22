@@ -7,8 +7,6 @@ describe Spree::Api::V2::Platform::RefundSerializer do
 
   let(:resource) { create(:refund, amount: 5.0, refunder: create(:user)) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it_behaves_like 'an ActiveJob serializable hash'
 
   context 'with included relationships' do

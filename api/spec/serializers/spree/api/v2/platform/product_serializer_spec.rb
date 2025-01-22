@@ -5,6 +5,8 @@ describe Spree::Api::V2::Platform::ProductSerializer do
 
   subject { described_class.new(product, params: serializer_params).serializable_hash }
 
+  let(:store) { Spree::Store.default }
+  let(:taxonomy) { store.taxonomies.first }
   let!(:images) { create_list(:image, 2) }
   let(:product) do
     create(:product_in_stock,
@@ -14,8 +16,9 @@ describe Spree::Api::V2::Platform::ProductSerializer do
            variants_including_master: [create(:variant, images: images), create(:variant)],
            option_types: create_list(:option_type, 2),
            product_properties: create_list(:product_property, 2),
-           taxons: create_list(:taxon, 2),
-           tax_category: create(:tax_category))
+           taxons: create_list(:taxon, 2, taxonomy: taxonomy),
+           tax_category: create(:tax_category),
+           stores: [store])
   end
   let(:serializable_hash) do
     {
@@ -140,8 +143,6 @@ describe Spree::Api::V2::Platform::ProductSerializer do
       expect(subject).to eq(serializable_hash)
     end
   end
-
-  it { expect(subject).to be_kind_of(Hash) }
 
   it { expect(subject).to eq(serializable_hash) }
 

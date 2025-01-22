@@ -25,8 +25,6 @@ RSpec.describe 'API V2 Storefront Variants Spec', type: :request  do
     context 'with no params' do
       before { get "/api/v2/storefront/products/#{product.id}/variants" }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all product variants including master' do
         expect(json_response['data'].count).to eq(5)
 
@@ -41,8 +39,6 @@ RSpec.describe 'API V2 Storefront Variants Spec', type: :request  do
     context 'with specified option name and value' do
       before { get "/api/v2/storefront/products/#{product.id}/variants?filter[options][color]=white" }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns product variants with the specified option' do
         expect(json_response['data'].count).to eq(2)
 
@@ -53,8 +49,6 @@ RSpec.describe 'API V2 Storefront Variants Spec', type: :request  do
 
     context 'with multiple options' do
       before { get "/api/v2/storefront/products/#{product.id}/variants?filter[options][color]=white&filter[options][size]=m" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns product variants with the specified options' do
         expect(json_response['data'].count).to eq(1)

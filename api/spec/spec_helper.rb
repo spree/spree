@@ -76,6 +76,12 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
+  config.before(:suite) do
+    # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   config.before do
     Spree::Webhooks.disabled = true
 
@@ -85,6 +91,12 @@ RSpec.configure do |config|
     # Request specs to paths with ?locale=xx don't reset the locale afterwards
     # Some tests assume that the current locale is :en, so we ensure it here
     I18n.locale = :en
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.order = :random

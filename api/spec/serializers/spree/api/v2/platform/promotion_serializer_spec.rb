@@ -8,8 +8,6 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
   let(:promotion_rule) { create(:promotion_rule) }
   let(:resource) { create(:promotion_with_item_adjustment, promotion_category: promotion_category, promotion_rules: [promotion_rule]) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

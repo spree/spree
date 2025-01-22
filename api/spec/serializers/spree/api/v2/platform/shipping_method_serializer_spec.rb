@@ -10,8 +10,6 @@ describe Spree::Api::V2::Platform::ShippingMethodSerializer do
 
   let(:resource) { create(:shipping_method, shipping_categories: [shipping_category], tax_category: tax_category) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

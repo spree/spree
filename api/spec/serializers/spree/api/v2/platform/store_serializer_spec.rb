@@ -12,8 +12,6 @@ describe Spree::Api::V2::Platform::StoreSerializer do
   end
   let(:url_helpers) { Rails.application.routes.url_helpers }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it 'generates the correct serialization' do
     expect(subject).to eq(
       {

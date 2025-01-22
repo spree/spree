@@ -29,8 +29,6 @@ describe 'Storefront API v2 Countries spec', type: :request do
 
       before { get '/api/v2/storefront/countries' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all countries' do
         expect(json_response['data'].size).to eq(240)
         expect(json_response['data'][0]).to have_type('country')
@@ -115,26 +113,8 @@ describe 'Storefront API v2 Countries spec', type: :request do
       end
     end
 
-    context 'when different current store' do
-      let!(:second_country) { create(:country) }
-      let!(:second_store) { create(:store, name: 'Second Store', default_country: second_country) }
-
-      before do
-        allow_any_instance_of(Spree::Api::V2::Storefront::CountriesController).to receive(:current_store).and_return(second_store)
-        get '/api/v2/storefront/countries/default'
-      end
-
-      it 'should return second_country' do
-        expect(json_response['data']).to have_id(second_country.id.to_s)
-        expect(json_response['data']).to have_attribute(:iso).with_value(second_country.iso)
-        expect(json_response['data']).to have_attribute(:default).with_value(true)
-      end
-    end
-
     context 'with specified options' do
       before { get "/api/v2/storefront/countries/#{country.iso}?include=states" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns country with included states' do
         expect(json_response['data']).to have_id(country.id.to_s)

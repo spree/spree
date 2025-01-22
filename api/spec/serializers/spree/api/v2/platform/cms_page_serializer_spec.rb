@@ -5,8 +5,6 @@ describe Spree::Api::V2::Platform::CmsPageSerializer do
 
   let(:cms_page) { create(:cms_feature_page, cms_sections: create_list(:cms_hero_image_section, 2)) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {
