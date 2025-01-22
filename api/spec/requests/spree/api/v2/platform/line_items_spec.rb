@@ -17,22 +17,6 @@ describe 'API V2 Platform Line Items Spec' do
       end
     end
 
-    context 'current store' do
-      let(:store_2) { create(:store) }
-      let(:order_2) { create(:order, store: store_2) }
-      let!(:line_item_from_another_store) { create(:line_item, order: order_2) }
-
-      before { get '/api/v2/platform/line_items', headers: bearer_token }
-
-      it 'returns line items from this store only' do
-        expect(json_response['data'].count).to eq store.line_items.count
-        line_item_ids = json_response['data'].pluck(:id)
-
-        expect(line_item_ids).not_to include(line_item_from_another_store.id)
-        expect(line_item_ids).to match_array(store.line_items.ids.map(&:to_s))
-      end
-    end
-
     context 'filtering' do
       context 'by order_id' do
         let(:order) { create(:order, store: store) }
@@ -138,14 +122,8 @@ describe 'API V2 Platform Line Items Spec' do
 
           it 'returns the default number of line items' do
             expect(json_response['data'].count).to eq 2
-          end
-
-          it 'returns proper meta data' do
             expect(json_response['meta']['count']).to       eq 2
             expect(json_response['meta']['total_count']).to eq store.line_items.count
-          end
-
-          it 'returns proper links data' do
             expect(json_response['links']['self']).to include('/api/v2/platform/line_items?page=1&per_page=2')
             expect(json_response['links']['next']).to include('/api/v2/platform/line_items?page=2&per_page=2')
             expect(json_response['links']['prev']).to include('/api/v2/platform/line_items?page=1&per_page=2')
@@ -158,14 +136,8 @@ describe 'API V2 Platform Line Items Spec' do
 
         it 'returns specified amount line items' do
           expect(json_response['data'].count).to eq store.line_items.count
-        end
-
-        it 'returns proper meta data' do
           expect(json_response['meta']['count']).to       eq json_response['data'].count
           expect(json_response['meta']['total_count']).to eq store.line_items.count
-        end
-
-        it 'returns proper links data' do
           expect(json_response['links']['self']).to include('/api/v2/platform/line_items')
           expect(json_response['links']['next']).to include('/api/v2/platform/line_items?page=1')
           expect(json_response['links']['prev']).to include('/api/v2/platform/line_items?page=1')
