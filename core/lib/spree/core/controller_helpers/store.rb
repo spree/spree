@@ -8,16 +8,11 @@ module Spree
           if defined?(helper_method)
             helper_method :current_store
             helper_method :current_price_options
-            helper_method :available_menus
           end
         end
 
         def current_store
           @current_store ||= current_store_finder.new(url: request.env['SERVER_NAME']).execute
-        end
-
-        def available_menus
-          @available_menus ||= current_store.menus
         end
 
         def store_locale

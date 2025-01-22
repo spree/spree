@@ -4,7 +4,6 @@ describe Spree::Api::V2::Platform::StoreSerializer do
   subject { described_class.new(store).serializable_hash }
 
   let!(:store) { Spree::Store.default }
-  let!(:menus) { [create(:menu, store: store), create(:menu, location: 'Footer', store: store)] }
   let!(:logo) do
     store.logo.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
     store.save
@@ -56,18 +55,6 @@ describe Spree::Api::V2::Platform::StoreSerializer do
                 id: store.default_country.id.to_s,
                 type: :country
               }
-            },
-            menus: {
-              data: [
-                {
-                  id: store.menus.first.id.to_s,
-                  type: :menu
-                },
-                {
-                  id: store.menus.second.id.to_s,
-                  type: :menu
-                }
-              ]
             }
           },
         }

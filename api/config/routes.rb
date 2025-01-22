@@ -173,14 +173,6 @@ Spree::Core::Engine.add_routes do
 
         resources :roles
 
-        # Menu API
-        resources :menus
-        resources :menu_items do
-          member do
-            patch :reposition
-          end
-        end
-
         # CMS
         resources :cms_pages
         resources :cms_sections
