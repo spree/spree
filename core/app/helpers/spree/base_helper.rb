@@ -106,7 +106,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
+                              description: (current_store.seo_meta_description))
         end
       end
       meta
