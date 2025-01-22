@@ -80,7 +80,7 @@ jobs:
       - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
-    parallelism: 4
+    parallelism: 6
     environment:
       <<: *environment
       PROJECTS: core
