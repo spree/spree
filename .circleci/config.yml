@@ -111,6 +111,7 @@ jobs:
   tests_storefront:
     <<: *run_test
     docker:
+      - image: *ruby_image
       - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
