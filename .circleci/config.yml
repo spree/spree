@@ -33,9 +33,6 @@ defaults: &defaults
   working_directory: ~/spree
   docker:
     - image: &ruby_image cimg/ruby:3.3.0-browsers
-    - image: cimg/postgres:16.2
-      environment:
-        POSTGRES_USER: postgres
 
 jobs:
   run_test: &run_test
@@ -78,6 +75,11 @@ jobs:
 
   tests_core:
     <<: *run_test
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
     parallelism: 4
     environment:
       <<: *environment
@@ -86,33 +88,46 @@ jobs:
   tests_api:
     <<: *run_test
     parallelism: 4
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
     environment:
       <<: *environment
       PROJECTS: api
 
   tests_admin:
     <<: *run_test
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
     environment:
       <<: *environment
       PROJECTS: admin
 
   tests_storefront:
     <<: *run_test
+    docker:
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
     environment:
       <<: *environment
       PROJECTS: storefront
 
-  tests_emails:
+  tests_other:
     <<: *run_test
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
     environment:
       <<: *environment
-      PROJECTS: emails
-
-  tests_sample:
-    <<: *run_test
-    environment:
-      <<: *environment
-      PROJECTS: sample
+      PROJECTS: emails,sample
 
   # tests_mysql:
   #   <<: *run_test
@@ -156,14 +171,8 @@ workflows:
           run_file_path: ./bin/tests_database_ci.sh
           requires:
             - build
-      - tests_emails:
-          name: tests_rails_postgres_emails
-          store_artefacts: true
-          run_file_path: ./bin/tests_database_ci.sh
-          requires:
-            - build
-      - tests_sample:
-          name: tests_rails_postgres_sample
+      - tests_other:
+          name: tests_rails_postgres_other
           store_artefacts: true
           run_file_path: ./bin/tests_database_ci.sh
           requires:
@@ -180,5 +189,4 @@ workflows:
             - tests_rails_postgres_api
             - tests_rails_postgres_admin
             - tests_rails_postgres_storefront
-            - tests_rails_postgres_emails
-            - tests_rails_postgres_sample
+            - tests_rails_postgres_other
