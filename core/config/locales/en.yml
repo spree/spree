@@ -1245,6 +1245,7 @@ en:
     overview: Overview
     package_from: package from
     page: Page
+    pages: Pages
     page_not_found: Sorry! Page you are looking can’t be found.
     page_blocks:
       buttons:
@@ -1338,6 +1339,7 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
+    posts: Posts
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_amount: Pre-Tax Amount
@@ -1806,6 +1808,7 @@ en:
     test_mode: Test Mode
     this_menu_already_has_a_root_item: This Menu already has a root item
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
+    themes: Themes
     theme_copied: Theme has been successfully copied.
     theme_not_copied: "Theme could not be copied with errors: %{error}"
     theme_duplicating: Theme is still duplicating
