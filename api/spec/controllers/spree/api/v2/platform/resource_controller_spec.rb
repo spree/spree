@@ -41,10 +41,12 @@ describe Spree::Api::V2::Platform::ResourceController, type: :controller do
       allow(dummy_controller).to receive(:spree_current_user).and_return(nil)
     end
 
-    it { expect(collection.first).to be_instance_of(Spree::Product) }
-    it { expect(collection.count).to eq(store.products.count) }
-    it { expect(collection.map(&:id)).to include(product.id) }
-    it { expect(collection.map(&:id)).not_to include(product_from_another_store.id) }
+    it 'returns collection of records from the current store' do
+      expect(collection.first).to be_instance_of(Spree::Product)
+      expect(collection.count).to eq(store.products.count)
+      expect(collection.map(&:id)).to include(product.id)
+      expect(collection.map(&:id)).not_to include(product_from_another_store.id)
+    end
   end
 
   describe '#permitted_resource_params' do
