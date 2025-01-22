@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::CurrenciesHelper, type: :helper do
-  let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+  let(:store) { Spree::Store.default }
 
   before do
+    allow(store).to receive(:supported_currencies).and_return('USD,EUR,GBP')
     allow(helper).to receive(:current_store).and_return(store)
     allow(helper).to receive(:current_currency).and_return('USD')
   end
