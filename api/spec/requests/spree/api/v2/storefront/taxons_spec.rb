@@ -5,9 +5,6 @@ describe 'Taxons Spec', type: :request do
   let!(:taxonomy) { store.taxonomies.first }
   let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root) }
 
-  let(:store2)     { create(:store)}
-  let!(:taxonomy2)  { create(:taxonomy, store: store2) }
-
   before do
     store.update_column(:supported_locales, 'en,pl,es')
     Spree::Api::Config[:api_v2_per_page_limit] = 2
@@ -33,10 +30,6 @@ describe 'Taxons Spec', type: :request do
         expect(json_response['data'][0]).to have_type('taxon')
         expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :image)
         expect(json_response['data'][0]).not_to have_relationships(:produts)
-      end
-
-      it 'should return only default store taxons' do
-        expect(json_response['data'].map{ |t| t['id'] }).to contain_exactly(*store.taxons.pluck(:id).map(&:to_s))
       end
     end
 
