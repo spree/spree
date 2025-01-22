@@ -33,6 +33,9 @@ defaults: &defaults
   working_directory: ~/spree
   docker:
     - image: &ruby_image cimg/ruby:3.3.0-browsers
+    - image: cimg/postgres:16.2
+      environment:
+        POSTGRES_USER: postgres
 
 jobs:
   run_test: &run_test
