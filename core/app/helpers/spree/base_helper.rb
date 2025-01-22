@@ -178,8 +178,6 @@ module Spree
         "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
       elsif resource.instance_of?(Spree::Taxon)
         "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
-      elsif resource.instance_of?(Spree::Cms::Pages::FeaturePage) || resource.instance_of?(Spree::Cms::Pages::StandardPage)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_pages_path]}/#{resource.slug}"
       elsif localize.blank?
         current_store.formatted_url
       else
