@@ -5,8 +5,6 @@ describe Spree::Api::V2::Platform::DigitalLinkSerializer do
 
   let(:digital_link) { create(:digital_link) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

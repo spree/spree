@@ -5,8 +5,6 @@ describe Spree::Api::V2::Platform::DigitalSerializer do
 
   let(:digital) { create(:digital) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {
