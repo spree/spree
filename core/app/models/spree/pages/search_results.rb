@@ -6,9 +6,10 @@ module Spree
       end
 
       def url
-        query = 'test'
+        return unless url_exists?(:search_path)
+
         Spree::Core::Engine.routes.url_helpers.search_path(
-          q: query,
+          q: 'test',
           theme_id: theme.id,
           page_preview_id: page_preview&.id,
           theme_preview_id: theme_preview&.id,
@@ -17,8 +18,14 @@ module Spree
       end
 
       def preview_url(theme_preview = nil, page_preview = nil)
-        query = 'test'
-        Spree::Core::Engine.routes.url_helpers.search_path(q: query, theme_id: theme.id, page_preview_id: page_preview&.id, theme_preview_id: theme_preview&.id)
+        return unless url_exists?(:search_path)
+
+        Spree::Core::Engine.routes.url_helpers.search_path(
+          q: 'test',
+          theme_id: theme.id,
+          page_preview_id: page_preview&.id,
+          theme_preview_id: theme_preview&.id
+        )
       end
 
       def default_sections

@@ -6,10 +6,14 @@ module Spree
       end
 
       def url
+        return unless url_exists?(:products_path)
+
         Spree::Core::Engine.routes.url_helpers.products_path(locale: I18n.locale)
       end
 
       def preview_url(theme_preview = nil, page_preview = nil)
+        return unless url_exists?(:products_path)
+
         Spree::Core::Engine.routes.url_helpers.products_path(
           theme_id: theme.id,
           page_preview_id: page_preview&.id,

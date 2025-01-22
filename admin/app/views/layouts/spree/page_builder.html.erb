@@ -7,7 +7,7 @@
   <body class="admin bg-light theme_editor page-builder"
         id="page-builder"
         data-controller="spree page-builder"
-        data-page-builder-preview-url-value="<%= @page.preview_url(@theme_preview, @page_preview) + '&page_builder=true' %>"
+        data-page-builder-preview-url-value="<%= page_preview_url %>"
   >
     <%= render 'spree/admin/shared/alerts' %>
 

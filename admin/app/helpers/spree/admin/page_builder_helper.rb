@@ -118,6 +118,13 @@ module Spree
           end
         end
       end
+
+      def page_preview_url
+        preview_url = @page.preview_url(@theme_preview, @page_preview)
+        return if preview_url.blank?
+
+        "#{preview_url}&page_builder=true"
+      end
     end
   end
 end

@@ -4,6 +4,8 @@ module Spree
       DISPLAY_NAME = Spree.t(:blog).freeze
 
       def url
+        return unless url_exists?(:posts_path)
+
         Spree::Core::Engine.routes.url_helpers.posts_path(locale: I18n.locale)
       end
 
