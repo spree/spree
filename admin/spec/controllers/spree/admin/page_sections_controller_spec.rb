@@ -15,25 +15,41 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   end
 
   describe '#create' do
-    context 'with page' do
-      it 'creates a page section inside the page' do
-        create_req = lambda {
-          post :create, params: { page_section: { type: 'Spree::PageSections::FeaturedTaxon' }, page_id: page.id }, format: :turbo_stream
-        }
+    subject { post :create, params: params, format: :turbo_stream }
 
-        expect(&create_req).to change(page.page_sections, :count).by(1)
-        expect(page.page_sections.last.type).to eq 'Spree::PageSections::FeaturedTaxon'
+    context 'with page' do
+      let(:params) { { page_section: { type: page_section_type }, page_id: page.id } }
+      let(:page_section_type) { 'Spree::PageSections::FeaturedTaxon' }
+
+      it 'creates a page section inside the page' do
+        expect { subject }.to change(page.page_sections, :count).by(1)
+        expect(page.page_sections.last.type).to eq(page_section_type)
+      end
+
+      context 'when the type is not allowed' do
+        let(:page_section_type) { 'Spree::PageSections::Checkboxes' }
+
+        it 'does not create a page section' do
+          expect { subject }.not_to change(page.page_sections, :count)
+        end
       end
     end
 
     context 'with theme' do
-      it 'creates a page section inside the theme' do
-        create_req = lambda {
-          post :create, params: { page_section: { type: 'Spree::PageSections::FeaturedTaxon' }, theme_id: theme.id }, format: :turbo_stream
-        }
+      let(:params) { { page_section: { type: page_section_type }, theme_id: theme.id } }
+      let(:page_section_type) { 'Spree::PageSections::FeaturedTaxon' }
 
-        expect(&create_req).to change(theme.layout_sections, :count).by(1)
-        expect(theme.layout_sections.last.type).to eq 'Spree::PageSections::FeaturedTaxon'
+      it 'creates a page section inside the theme' do
+        expect { subject }.to change(theme.layout_sections, :count).by(1)
+        expect(theme.layout_sections.last.type).to eq(page_section_type)
+      end
+
+      context 'when the type is not allowed' do
+        let(:page_section_type) { 'Spree::PageSections::Checkboxes' }
+
+        it 'does not create a page section' do
+          expect { subject }.not_to change(theme.layout_sections, :count)
+        end
       end
     end
   end

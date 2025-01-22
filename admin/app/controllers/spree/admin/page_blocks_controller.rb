@@ -26,9 +26,14 @@ module Spree
       end
 
       def create
-        @page_block = params[:page_block][:type].constantize.new
-        @page_block.section = @page_section
-        @page_block.save!
+        allowed_types = Rails.application.config.spree.page_blocks.map(&:to_s)
+        page_block_type = params.dig(:page_block, :type)
+
+        if allowed_types.include?(page_block_type) && page_block_type.safe_constantize.present?
+          @page_block = page_block_type.constantize.new
+          @page_block.section = @page_section
+          @page_block.save!
+        end
       end
     end
   end

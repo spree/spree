@@ -1808,6 +1808,7 @@ en:
     test_mode: Test Mode
     this_menu_already_has_a_root_item: This Menu already has a root item
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
+    there_are_no_items_for_this_order: There are no items for this order
     themes: Themes
     theme_copied: Theme has been successfully copied.
     theme_not_copied: "Theme could not be copied with errors: %{error}"

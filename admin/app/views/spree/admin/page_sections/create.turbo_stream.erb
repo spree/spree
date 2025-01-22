@@ -1,5 +1,7 @@
-<%= turbo_stream.replace :page_sidebar do %>
-  <%= render template: 'spree/admin/page_sections/edit' %>
+<% if @page_section&.persisted? %>
+  <%= turbo_stream.replace :page_sidebar do %>
+    <%= render template: 'spree/admin/page_sections/edit' %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.replace 'page_sidebar_toolbar' do %>

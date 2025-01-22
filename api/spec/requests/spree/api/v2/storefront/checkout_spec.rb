@@ -60,7 +60,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
         it 'cannot transition to address without a line item' do
           expect(response.status).to eq(422)
-          expect(json_response['error']).to include(I18n.t('spree.there_are_no_items_for_this_order'))
+          expect(json_response['error']).to include(Spree.t(:there_are_no_items_for_this_order))
         end
       end
 

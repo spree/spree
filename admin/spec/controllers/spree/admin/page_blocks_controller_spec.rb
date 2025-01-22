@@ -50,16 +50,22 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
   end
 
   describe '#create' do
+    subject { post :create, params: { page_block: { type: page_block_type }, page_section_id: page_section.id }, format: :turbo_stream }
+
+    let(:page_block_type) { 'Spree::PageBlocks::Buttons' }
     let(:page_section) { create(:featured_taxon) }
 
     it 'creates page block of the given type' do
-      create_req = lambda {
-        post :create, params: { page_block: { type: 'Spree::PageBlocks::Buttons' }, page_section_id: page_section.id }, format: :turbo_stream
-      }
+      expect { subject }.to change(Spree::PageBlock, :count).by(1)
+      expect(page_section.page_blocks.last.type).to eq(page_block_type)
+    end
 
-      expect(&create_req).to change(Spree::PageBlock, :count).by(1)
+    context 'when the type is not allowed' do
+      let(:page_block_type) { 'Spree::PageBlocks::Checkboxes' }
 
-      expect(page_section.page_blocks.last.type).to eq 'Spree::PageBlocks::Buttons'
+      it 'does not create a page block' do
+        expect { subject }.not_to change(Spree::PageBlock, :count)
+      end
     end
   end
 end
