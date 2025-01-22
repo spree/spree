@@ -111,7 +111,7 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'on touch events from callbacks' do
       let!(:store2) { create(:store) }
-      let!(:taxonomy) { create(:taxonomy, store: store2, locale: 'en') }
+      let!(:taxonomy) { create(:taxonomy, store: store2) }
       let(:body) do
         Spree::Api::V2::Platform::StoreSerializer.new(
           store2,
