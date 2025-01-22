@@ -27,8 +27,8 @@ FactoryBot.define do
     login                 { email }
     password              { 'secret' }
     password_confirmation { password }
-    first_name { FFaker::Name.first_name } if Spree.admin_user_class.attribute_method?(:first_name)
-    last_name  { FFaker::Name.last_name } if Spree.admin_user_class.attribute_method?(:last_name)
+    first_name { FFaker::Name.first_name }
+    last_name  { FFaker::Name.last_name }
 
     spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
   end
