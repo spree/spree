@@ -88,8 +88,6 @@ module Spree
     has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
 
-    has_many :menu_items, as: :linked_resource
-
     has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
     has_many :taxonomies, through: :taxons

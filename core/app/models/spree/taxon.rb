@@ -38,9 +38,6 @@ module Spree
     has_many :products, through: :classifications
     has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage' # TODO: remove this as this is deprecated
 
-    has_many :menu_items, as: :linked_resource
-    has_many :cms_sections, as: :linked_resource
-
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon', dependent: :destroy
     has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
 

@@ -68,12 +68,6 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
 
-    # FIXME: remove old CMS code
-    has_many :cms_pages, class_name: 'Spree::CmsPage'
-    has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
-    has_many :menus, class_name: 'Spree::Menu'
-    has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
-
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :products, through: :store_products, class_name: 'Spree::Product'
     has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
@@ -237,22 +231,10 @@ module Spree
       end
     end
 
-    def default_menu(location)
-      menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
-
-      menu.root if menu.present?
-    end
-
     def supported_currencies_list
       @supported_currencies_list ||= ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
-    end
-
-    def homepage(requested_locale)
-      cms_pages.by_locale(requested_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
-        cms_pages.by_locale(default_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
-        cms_pages.find_by(type: 'Spree::Cms::Pages::Homepage')
     end
 
     def seo_meta_description

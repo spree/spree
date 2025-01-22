@@ -97,47 +97,6 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.index ["id", "type"], name: "index_spree_calculators_on_id_and_type"
     end
 
-    create_table "spree_cms_pages", force: :cascade do |t|
-      t.string "title", null: false
-      t.string "meta_title"
-      t.text "content"
-      t.text "meta_description"
-      t.boolean "visible", default: true
-      t.string "slug"
-      t.string "type"
-      t.string "locale"
-      t.datetime "deleted_at"
-      t.bigint "store_id"
-      t.datetime "created_at", null: false
-      t.datetime "updated_at", null: false
-      t.index ["deleted_at"], name: "index_spree_cms_pages_on_deleted_at"
-      t.index ["slug", "store_id", "deleted_at"], name: "index_spree_cms_pages_on_slug_and_store_id_and_deleted_at"
-      t.index ["slug", "store_id"], name: "index_spree_cms_pages_on_slug_and_store_id", unique: true
-      t.index ["store_id", "locale", "type"], name: "index_spree_cms_pages_on_store_id_and_locale_and_type"
-      t.index ["store_id"], name: "index_spree_cms_pages_on_store_id"
-      t.index ["title", "type", "store_id"], name: "index_spree_cms_pages_on_title_and_type_and_store_id"
-      t.index ["visible"], name: "index_spree_cms_pages_on_visible"
-    end
-
-    create_table "spree_cms_sections", force: :cascade do |t|
-      t.string "name", null: false
-      t.text "content"
-      t.text "settings"
-      t.string "fit"
-      t.string "destination"
-      t.string "type"
-      t.integer "position"
-      t.string "linked_resource_type"
-      t.bigint "linked_resource_id"
-      t.bigint "cms_page_id"
-      t.datetime "created_at", null: false
-      t.datetime "updated_at", null: false
-      t.index ["cms_page_id"], name: "index_spree_cms_sections_on_cms_page_id"
-      t.index ["linked_resource_type", "linked_resource_id"], name: "index_spree_cms_sections_on_linked_resource"
-      t.index ["position"], name: "index_spree_cms_sections_on_position"
-      t.index ["type"], name: "index_spree_cms_sections_on_type"
-    end
-
     create_table "spree_countries", force: :cascade do |t|
       t.string "iso_name"
       t.string "iso", null: false
@@ -248,44 +207,6 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.datetime "created_at", precision: 6, null: false
       t.datetime "updated_at", precision: 6, null: false
       t.index ["source_id", "source_type"], name: "index_spree_log_entries_on_source_id_and_source_type"
-    end
-
-    create_table "spree_menu_items", force: :cascade do |t|
-      t.string "name", null: false
-      t.string "subtitle"
-      t.string "destination"
-      t.boolean "new_window", default: false
-      t.string "item_type"
-      t.string "linked_resource_type", default: "URL"
-      t.bigint "linked_resource_id"
-      t.string "code"
-      t.bigint "parent_id"
-      t.bigint "lft", null: false
-      t.bigint "rgt", null: false
-      t.integer "depth", default: 0, null: false
-      t.bigint "menu_id"
-      t.datetime "created_at", null: false
-      t.datetime "updated_at", null: false
-      t.index ["code"], name: "index_spree_menu_items_on_code"
-      t.index ["depth"], name: "index_spree_menu_items_on_depth"
-      t.index ["item_type"], name: "index_spree_menu_items_on_item_type"
-      t.index ["lft"], name: "index_spree_menu_items_on_lft"
-      t.index ["linked_resource_type", "linked_resource_id"], name: "index_spree_menu_items_on_linked_resource"
-      t.index ["menu_id"], name: "index_spree_menu_items_on_menu_id"
-      t.index ["parent_id"], name: "index_spree_menu_items_on_parent_id"
-      t.index ["rgt"], name: "index_spree_menu_items_on_rgt"
-    end
-
-    create_table "spree_menus", force: :cascade do |t|
-      t.string "name"
-      t.string "location"
-      t.string "locale"
-      t.bigint "store_id"
-      t.datetime "created_at", null: false
-      t.datetime "updated_at", null: false
-      t.index ["locale"], name: "index_spree_menus_on_locale"
-      t.index ["store_id", "location", "locale"], name: "index_spree_menus_on_store_id_and_location_and_locale", unique: true
-      t.index ["store_id"], name: "index_spree_menus_on_store_id"
     end
 
     create_table "spree_option_type_prototypes", force: :cascade do |t|

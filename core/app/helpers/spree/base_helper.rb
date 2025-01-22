@@ -106,7 +106,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
+                              description: (current_store.seo_meta_description))
         end
       end
       meta
@@ -178,8 +178,6 @@ module Spree
         "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
       elsif resource.instance_of?(Spree::Taxon)
         "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
-      elsif resource.instance_of?(Spree::Cms::Pages::FeaturePage) || resource.instance_of?(Spree::Cms::Pages::StandardPage)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_pages_path]}/#{resource.slug}"
       elsif localize.blank?
         current_store.formatted_url
       else

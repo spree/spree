@@ -313,16 +313,16 @@ describe 'Platform API v2 Resources spec', type: :request do
 
     context '#ensure_current_store' do
       context 'single store resource' do
-        let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
-        let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
+        let(:execute) { post '/api/v2/platform/taxonomies', params: taxonomy_resource_params, headers: bearer_token }
+        let(:taxonomy_resource_params) { { taxonomy: build(:taxonomy, name: 'Ensure-TaxonomyTest', store: nil).attributes.symbolize_keys } }
 
         before { execute }
 
         it_behaves_like 'returns 201 HTTP status'
 
         it 'adds the current store to the newly created resource' do
-          new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
-          expect(new_menu.store).to eql(store)
+          new_taxonomy = Spree::Taxonomy.find_by(name: 'Ensure-TaxonomyTest')
+          expect(new_taxonomy.store).to eql(store)
         end
       end
 

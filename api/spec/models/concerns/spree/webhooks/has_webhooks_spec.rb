@@ -111,7 +111,7 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'on touch events from callbacks' do
       let!(:store2) { create(:store) }
-      let!(:cms_page) { create(:cms_homepage, store: store2, locale: 'en') }
+      let!(:taxonomy) { create(:taxonomy, store: store2) }
       let(:body) do
         Spree::Api::V2::Platform::StoreSerializer.new(
           store2,
@@ -122,7 +122,7 @@ describe Spree::Webhooks::HasWebhooks do
       before { store2.changes_applied }
 
       it 'does not emit the touched model\'s update event' do
-        expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+        expect { taxonomy.update(name: 'Updated Taxonomy') }.not_to emit_webhook_event('store.update')
       end
     end
 
