@@ -1,0 +1,9 @@
+<h5 class="font-weight-bold"><%= Spree.t(:category) %></h5>
+<div class="form-group">
+  <%= tom_select_tag 'page_block[preferred_taxon_id]', active_option: @page_block.preferred_taxon_id, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json), select_data: { action: 'auto-submit#submit' } %>
+</div>
+
+<h5 class="font-weight-bold"><%= Spree.t(:featured_taxon) %></h5>
+<div class="form-group">
+  <%= tom_select_tag 'page_block[preferred_featured_taxon_id]', active_option: @page_block.preferred_featured_taxon_id, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json), select_data: { action: 'auto-submit#submit' } %>
+</div>

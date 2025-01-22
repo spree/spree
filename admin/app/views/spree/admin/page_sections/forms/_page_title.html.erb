@@ -1,0 +1,4 @@
+<div class="form-group">
+  <%= f.label :preferred_title, Spree.t('admin.page_builder.title') %>
+  <%= f.text_field :preferred_title, data: { action: 'auto-submit#submit' }, class: "form-control" %>
+</div>

@@ -1,0 +1,21 @@
+<li class="nav-item">
+  <% storefront_active = %w[themes posts pages storefront].include?(controller_name) %>
+  <%= active_link_to_with_icon('building-store', Spree.t(:storefront), spree.admin_themes_path, class: 'nav-link', active: storefront_active) %>
+
+  <% if storefront_active %>
+    <ul class="ml-4 font-size-base pl-1 mb-3 nav-submenu flex-column mt-1">
+      <li class="nav-item">
+        <%= active_link_to Spree.t(:themes), spree.admin_themes_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to Spree.t(:pages), spree.admin_pages_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to Spree.t(:posts), spree.admin_posts_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= active_link_to Spree.t(:settings), spree.edit_admin_storefront_path, class: 'nav-link' %>
+      </li>
+    </ul>
+  <% end %>
+</li>

@@ -674,6 +674,7 @@ en:
       jackets_and_coats: JACKET & COASTS
       new_collection: NEW COLLECTION
       special_offers: SPECIAL OFFERS
+    changes_published: Changes published!
     channel: Channel
     charged: Charged
     checkout: Checkout
@@ -1244,6 +1245,7 @@ en:
     overview: Overview
     package_from: package from
     page: Page
+    pages: Pages
     page_not_found: Sorry! Page you are looking can’t be found.
     page_blocks:
       buttons:
@@ -1337,6 +1339,7 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
+    posts: Posts
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_amount: Pre-Tax Amount
@@ -1632,6 +1635,7 @@ en:
     slug: Slug
     source: Source
     social: Social
+    something_went_wrong: Something went wrong
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
@@ -1803,7 +1807,12 @@ en:
         subject: Test Mail
     test_mode: Test Mode
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
-    there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
+    there_are_no_items_for_this_order: There are no items for this order
+    themes: Themes
+    theme_copied: Theme has been successfully copied.
+    theme_not_copied: "Theme could not be copied with errors: %{error}"
+    theme_duplicating: Theme is still duplicating
+    theme_is_now_live: Theme is now live
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
     thumbnail: Thumbnail

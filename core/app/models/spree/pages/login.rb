@@ -6,6 +6,8 @@ module Spree
       end
 
       def url
+        return unless url_exists?(:login_path)
+
         Spree::Core::Engine.routes.url_helpers.login_path(locale: I18n.locale)
       end
     end

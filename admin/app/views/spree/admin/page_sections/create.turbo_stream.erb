@@ -1,0 +1,11 @@
+<% if @page_section&.persisted? %>
+  <%= turbo_stream.replace :page_sidebar do %>
+    <%= render template: 'spree/admin/page_sections/edit' %>
+  <% end %>
+<% end %>
+
+<%= turbo_stream.replace 'page_sidebar_toolbar' do %>
+  <%= render 'spree/admin/page_builder/sidebar_sections_toolbar' %>
+<% end %>
+
+<%= refresh_theme_preview(@page_section) %>

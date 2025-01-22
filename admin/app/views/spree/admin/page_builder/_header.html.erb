@@ -1,0 +1,101 @@
+<header id="page-builder-header" class="fixed-top p-0 bg-light border-bottom" style="z-index: 1031">
+  <nav class="navbar navbar-expand-lg w-100 p-0">
+    <%= link_to spree.admin_themes_path, class: 'btn hover-gray rounded-0 border-left-0 border-top-0 border-bottom-0 d-none d-lg-flex px-3 border-right', title: 'Go back to dashboard' do %>
+      <%= icon('x', class: 'mr-0 text-muted font-size-lg') %>
+    <% end %>
+    <div class="px-3">
+      <span class="text-muted mr-1">Theme:</span>
+      <strong class="mr-1"><%= @theme.name %></strong>
+      &nbsp;
+      <% if @theme.default? %>
+        <span class="badge badge-success">
+          <%= icon('check') %>
+          Live
+        </span>
+      <% else %>
+        <span class="badge badge-warning">Draft</span>
+      <% end %>
+    </div>
+    <%= render 'spree/admin/page_builder/pages_dropdown' %>
+
+    <ul class="nav nav-pills p-0 m-0" role="tablist">
+      <% if @page.custom? %>
+        <li class="nav-item h-100 border-right" role="presentation" data-toggle="modal" data-target="#modal">
+          <%= link_to_with_icon 'settings', Spree.t(:page_settings), spree.edit_admin_page_path(@page.id), class: 'h-100 btn hover-gray with-tip rounded-0 border-0 shadow-none px-3', data: { turbo_frame: 'dialog_modal' } %>
+        </li>
+      <% else %>
+        <li class="nav-item h-100 border-right" role="presentation">
+          <button class="h-100 btn hover-gray active with-tip rounded-0 border-0 shadow-none px-3"
+                        title="Page sections"
+                        data-toggle="tab"
+                        data-target="#sections"
+                        type="button"
+                        role="tab"
+                        aria-controls="sections"
+                        aria-selected="true"
+                        data-trigger="hover"
+                        id="sidebar-icon-page">
+            <%= icon 'section', class: 'mr-0' %>
+          </button>
+        </li>
+        <li class="nav-item h-100 border-right" role="presentation">
+          <button class="h-100 btn hover-gray with-tip rounded-0 border-0 shadow-none px-3"
+                  title="Theme"
+                  data-toggle="tab"
+                  data-target="#colors"
+                  type="button"
+                  role="tab"
+                  aria-controls="theme"
+                  aria-selected="false"
+                  data-trigger="hover"
+                  id="sidebar-icon-colors">
+            <%= icon 'palette', class: 'mr-0' %>
+          </button>
+        </li>
+        <li class="nav-item h-100 border-right" role="presentation">
+          <button class="h-100 btn hover-gray with-tip rounded-0 border-0 shadow-none px-3"
+                title="Fonts"
+                type="button"
+                data-toggle="tab"
+                data-target="#fonts"
+                type="button"
+                role="tab"
+                aria-controls="fonts"
+                aria-selected="false"
+                data-trigger="hover"
+                id="sidebar-icon-fonts">
+            <%= icon 'typography', class: 'mr-0' %>
+          </button>
+        </li>
+      <% end %>
+    </ul>
+    <button class="btn with-tip ml-auto border-left px-3 text-black" type="button"
+            title="Mobile"
+            data-trigger="hover"
+            data-action="click->page-builder#setResponsiveBreakpoint"
+            data-page-builder-target="mobileButton"
+            data-page-builder-breakpoint-param="mobile">
+      <%= icon 'device-mobile', class: 'mr-0' %>
+    </button>
+    <button class="btn active with-tip border-right px-3 text-black" type="button" title="Desktop"
+            data-action="click->page-builder#setResponsiveBreakpoint"
+            data-page-builder-breakpoint-param="desktop"
+            data-trigger="hover"
+            data-page-builder-target="desktopButton">
+      <%= icon 'device-laptop', class: 'mr-0' %>
+    </button>
+
+    <%= link_to_with_icon 'eye.svg', Spree.t(:preview), @page.preview_url(@theme_preview, @page_preview), class: 'btn hover-gray d-none d-lg-flex align-items-center border-left', target: '_blank' %>
+
+    <%= button_tag class: 'btn btn-primary px-3 d-flex justify-content-center shadow-none' do %>
+      <span class="show-when-enabled">
+        <%= @theme.default? ? Spree.t('actions.publish') : Spree.t('actions.save') %>
+      </span>
+      <span class="show-when-disabled">
+        <div class="spinner-border" role="status" style="width: 18px; height: 18px">
+          <span class="sr-only"><%= Spree.t(:loading) %>...</span>
+        </div>
+      </span>
+    <% end %>
+  </nav>
+</header>

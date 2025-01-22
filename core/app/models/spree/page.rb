@@ -108,6 +108,8 @@ module Spree
     end
 
     def preview_url(theme_preview = nil, page_preview = nil)
+      return if url.blank?
+
       "#{url}?#{url_query_params(theme_preview, page_preview).to_query}"
     end
 
@@ -173,6 +175,10 @@ module Spree
 
     def should_generate_new_friendly_id?
       name_changed? && custom?
+    end
+
+    def url_exists?(path)
+      Spree::Core::Engine.routes.url_helpers.respond_to?(path)
     end
   end
 end

@@ -6,9 +6,12 @@ module Spree
       end
 
       def url
-        category = Spree::Taxon.first
+        return unless url_exists?(:nested_taxons_path)
 
-        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(category, locale: I18n.locale)
+        taxon = Spree::Taxon.first
+        return if taxon.nil?
+
+        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(taxon, locale: I18n.locale)
       end
 
       def default_sections

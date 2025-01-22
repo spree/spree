@@ -1,0 +1,10 @@
+<% content_for(:design_tab) do %>
+  <div class="form-group">
+    <%= f.label :preferred_container_alignment %>
+    <%= f.select :preferred_container_alignment, options_for_select(['left', 'center', 'right'], @page_block.preferred_container_alignment), {}, { class: 'custom-select', data: {  action: 'auto-submit#submit' } } %>
+  </div>
+
+  <%= render 'spree/admin/page_builder/labeled_range_input',
+    f: f, field: :preferred_width_desktop, min: 1, max: 100, unit: '%', _label: 'Max text width on desktop'
+  %>
+<% end %>

@@ -1,0 +1,7 @@
+<div class="position-fixed border-top px-3 py-2 d-flex bg-light bottom-bar" style="bottom: 0px; left: 0px; width: 344px; z-index: 9999">
+  <% if @page_block.can_be_deleted? %>
+    <div data-action="click->page-builder#hideSidebarMobile">
+      <%= link_to_delete(@page_block, url: spree.admin_page_section_block_path(@page_block.section, @page_block)) %>
+    </div>
+  <% end %>
+</div>
