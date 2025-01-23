@@ -19,6 +19,7 @@ module Spree
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
+    has_many :shipments, through: :inventory_units, source: :shipment
     has_many :digital_links, dependent: :destroy
 
     before_validation :copy_price
@@ -135,6 +136,27 @@ module Spree
     def fully_shipped?
       inventory_units.all?(&:shipped?)
     end
+
+    # Returns the shipping cost for the line item
+    #
+    # @return [BigDecimal]
+    def shipping_cost
+      shipments.sum do |shipment|
+        # Skip cancelled shipments
+        next if shipment.canceled?
+
+        # Get all inventory units in this shipment for this line item
+        line_item_units = shipment.inventory_units.where(line_item_id: id).count
+
+        # Get total inventory units in this shipment
+        total_units = shipment.inventory_units.count
+
+        # Calculate proportional shipping cost
+        next BigDecimal('0') if total_units.zero?
+        shipment.cost * (line_item_units.to_d / total_units)
+      end
+    end
+
 
     def options=(options = {})
       return unless options.present?

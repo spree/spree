@@ -441,4 +441,24 @@ describe Spree::LineItem, type: :model do
       end
     end
   end
+
+  describe '#shipments' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit]) }
+
+    it 'returns the shipments for the line item' do
+      expect(line_item.shipments).to eq([shipment])
+    end
+  end
+
+  describe '#shipping_cost' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+
+    it 'returns the shipping cost for the line item' do
+      expect(line_item.shipping_cost).to eq(10)
+    end
+  end
 end
