@@ -1,6 +1,6 @@
 <%= search_form_for [:admin, @vendor || @user, @search], url: controller_name == 'checkouts' ? spree.admin_checkouts_url : nil, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"}  do |f| %>
   <div class="d-flex flex-column flex-lg-row gap-2">
-    <%= render 'spree/admin/shared/filters_search_bar', param: :multisearch, label: Spree.t(:number), badge_name: Spree.t(:query) %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multisearch %>
 
     <div class="d-flex align-items-center justify-content-between">
       <div class="mr-2 h-100">

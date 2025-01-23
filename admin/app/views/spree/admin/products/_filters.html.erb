@@ -1,6 +1,6 @@
 <%= search_form_for product_list_filters_search_form_path, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
   <div class="d-flex flex-column flex-lg-row gap-2">
-    <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, label: "Name, SKU, brand, etc", badge_name: Spree.t(:query) %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search %>
 
     <div class="d-flex align-items-center justify-content-between">
       <%= render "spree/admin/products/table_filter_dropdown" %>
