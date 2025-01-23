@@ -17,10 +17,10 @@ module Spree
         return unless store
 
         Rails.cache.fetch(["#{store.cache_key_with_version}/admin_icon", opts.to_param]) do
-          if store.favicon_image&.attached? && store.favicon_image&.variable?
+          if store.logo&.attached? && store.logo&.variable?
             image_tag(
               main_app.cdn_image_url(
-                store.favicon_image.variant(
+                store.logo.variant(
                   spree_image_variant_options(
                     resize_to_fill: [opts[:width] * 2, opts[:height] * 2]
                   )
@@ -30,10 +30,10 @@ module Spree
               width: opts[:width],
               height: opts[:height]
             )
-          elsif store.logo&.attached? && store.logo&.variable?
+          elsif store.favicon_image&.attached? && store.favicon_image&.variable?
             image_tag(
               main_app.cdn_image_url(
-                store.logo.variant(
+                store.favicon_image.variant(
                   spree_image_variant_options(
                     resize_to_fill: [opts[:width] * 2, opts[:height] * 2]
                   )

@@ -21,17 +21,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     invoke_callbacks(:update, :before)
     if @object.update(permitted_resource_params)
       set_current_store
-      %w[asset image square_image].each do |attachment_type|
-        remove_param = "remove_#{attachment_type}"
-        if params[remove_param] == '1'
-          object = attachment_type == 'asset' ? @page_section : @object
-          attachment = object.public_send(attachment_type)
-          if attachment.attached?
-            attachment.detach
-            attachment.purge_later
-          end
-        end
-      end
+      remove_assets(%w[asset image square_image])
 
       invoke_callbacks(:update, :after)
       respond_with(@object) do |format|

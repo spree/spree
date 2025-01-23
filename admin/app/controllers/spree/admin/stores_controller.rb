@@ -34,6 +34,7 @@ module Spree
         @store.assign_attributes(permitted_store_params)
 
         if @store.save
+          remove_assets(%w[logo mailer_logo], object: @store)
           flash[:success] = flash_message_for(@store, :successfully_updated)
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"

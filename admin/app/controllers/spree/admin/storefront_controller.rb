@@ -8,6 +8,7 @@ module Spree
       def update
         @store = current_store
         if @store.update(store_params)
+          remove_assets(%w[favicon_image social_image], object: @store)
           flash[:success] = flash_message_for(@store, :successfully_updated)
         else
           flash[:error] = @store.errors.full_messages.to_sentence

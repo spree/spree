@@ -47,7 +47,10 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             settings: store.settings,
             logo: url_helpers.rails_blob_path(logo.attachment),
             mailer_logo: nil,
-            favicon_path: nil
+            favicon_path: nil,
+            storefront_custom_code_body_end: nil,
+            storefront_custom_code_body_start: nil,
+            storefront_custom_code_head: nil
           },
           relationships: {
             default_country: {

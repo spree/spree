@@ -115,6 +115,20 @@ module Spree
           session.delete(k)
         end
       end
+
+      def remove_assets(attachment_types, object: nil)
+        attachment_types.each do |attachment_type|
+          remove_param = "remove_#{attachment_type}"
+          if params[remove_param] == '1'
+            object ||= attachment_type == 'asset' ? @page_section : @object
+            attachment = object.public_send(attachment_type)
+            if attachment.attached?
+              attachment.detach
+              attachment.purge_later
+            end
+          end
+        end
+      end
     end
   end
 end
