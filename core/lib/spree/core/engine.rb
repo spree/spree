@@ -19,7 +19,8 @@ module Spree
                                :theme_layout_sections,
                                :pages,
                                :page_sections,
-                               :page_blocks)
+                               :page_blocks,
+                               :reports)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -223,6 +224,8 @@ module Spree
           Spree::PageBlocks::Products::VariantPicker,
           Spree::PageBlocks::Products::BuyButtons
         ]
+
+        Rails.application.config.spree.reports = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
