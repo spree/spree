@@ -25,7 +25,7 @@ module Spree
     class Configuration < Preferences::RuntimeConfiguration
       # Alphabetized to more easily lookup particular preferences
       preference :address_requires_state, :boolean, default: true, deprecated: true # should state/state_name be required
-      preference :address_requires_phone, :boolean, default: true # Determines whether we require phone in address
+      preference :address_requires_phone, :boolean, default: false # Determines whether we require phone in address
       preference :allow_checkout_on_gateway_error, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
       preference :allow_guest_checkout, :boolean, default: true # this is only used in the rails frontend, and is not implemented in API

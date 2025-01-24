@@ -100,7 +100,8 @@ module Spree
       stock_location_stock_items: :default,
       coupon_codes: :default,
       webhooks: :default,
-      themes: :default
+      themes: :default,
+      addresses: :addresses
     )
   end
 
