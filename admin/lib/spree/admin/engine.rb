@@ -16,7 +16,7 @@ module Spree
 
       initializer 'spree.admin.assets' do |app|
         app.config.assets.paths << root.join('app/javascript')
-        app.config.assets.precompile += %w[ spree_admin_manifest ]
+        app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
       end
 
       initializer 'spree.admin.importmap', before: 'importmap' do |app|

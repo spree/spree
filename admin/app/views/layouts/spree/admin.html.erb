@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= javascript_importmap_tags 'application-spree-backend' %>
+    <!-- Trix does not work with importmaps in Rails 7 -->
+    <!-- https://github.com/basecamp/trix/issues/1182 -->
+    <%= javascript_include_tag 'trix' %>
+    <%= javascript_importmap_tags 'application-spree-admin' %>
   </head>
   <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>" data-controller="spree">
     <div class="container-fluid">
