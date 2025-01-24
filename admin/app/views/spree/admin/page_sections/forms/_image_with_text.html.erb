@@ -10,16 +10,10 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <%= lf.label :label, 'Label' %>
-      <%= lf.text_field :label, class: 'form-control', data: { action: 'blur->auto-submit#submit' }, placeholder: 'eg. About us', required: true %>
-    </div>
-
     <div class="custom-control custom-checkbox pb-2">
       <%= lf.check_box :open_in_new_tab, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
       <%= lf.label :open_in_new_tab, class: 'custom-control-label' %>
     </div>
-
   <% end %>
   <div class="alert alert-info">Clicking on the image will send the user to the selected page/URL</div>
 </div>

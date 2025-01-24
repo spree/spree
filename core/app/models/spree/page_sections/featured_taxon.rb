@@ -39,7 +39,7 @@ module Spree
       end
 
       def description_to_use
-        @description_to_use ||= preferred_use_description_from_admin ? taxon&.description : description
+        @description_to_use ||= preferred_use_description_from_admin && description.blank? ? taxon&.description : description
       end
 
       def display_name
