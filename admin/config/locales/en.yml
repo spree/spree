@@ -337,3 +337,38 @@ en:
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         search_results:
           no_variants: We couldn't find any variants matching your search :(
+      page_builder:
+        show_more_button: Show explore category button
+        heading: Heading
+        heading_size: Heading size
+        heading_alignment: Heading alignment
+        description_alignment: Description alignment
+        use_description_from_admin: Use description from admin
+        button_text: Button's text
+        show_taxon_image: Show taxon image
+        category: Category
+        maximum_products_to_show: Maximum products to show
+        button_style: Button style
+        posts_to_show: Posts to show
+        maximum_posts_to_show: Maximum posts to show
+        desktop_image_alignment: Image alignment for desktop
+        vertical_alignment: Vertical alignment
+        overlay_transparency: Overlay transparency
+        title: Title
+        separated: Separated
+        youtube_video_url: Youtube video URL
+        max_video_width_on_desktop: Max video width on desktop
+        border_color: Border color
+        border_top_width: Border top width
+        border_bottom_width: Border bottom width
+        bottom_padding: Bottom padding
+        button_background_color: Button background color
+        button_text_color: Button text color
+        desktop_logo_height: Logo height (desktop)
+        height: Height
+        nav_centered: Nav centered
+        logo_centered: Logo centered
+        left_aligned: Left aligned
+        text_color: Text color
+        top_padding: Top padding
+        button_alignment: Button alignment

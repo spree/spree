@@ -12,15 +12,15 @@ module Spree
         [
           Spree::PageBlocks::Heading.new(
             text: Spree.t('page_sections.image_banner.heading_default'),
-            text_alignment: 'center',
-            container_alignment: 'center',
-            width_desktop: 50
+            preferred_text_alignment: 'center',
+            preferred_container_alignment: 'center',
+            preferred_width_desktop: 50
           ),
           Spree::PageBlocks::Text.new(
             text: Spree.t('page_sections.image_banner.text_default'),
-            text_alignment: 'center',
-            container_alignment: 'center',
-            width_desktop: 50
+            preferred_text_alignment: 'center',
+            preferred_container_alignment: 'center',
+            preferred_width_desktop: 50
           ),
           Spree::PageBlocks::Buttons.new
         ]

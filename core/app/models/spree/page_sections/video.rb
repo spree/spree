@@ -3,8 +3,8 @@ module Spree
     class Video < Spree::PageSection
       alias video asset
 
-      after_create :create_video_embed, if: -> { youtube_video_url.present? }
-      after_update :update_video_embed, if: -> { saved_change_to_youtube_video_url? || video_embed.nil? }
+      after_create :create_video_embed, if: -> { preferred_youtube_video_url.present? }
+      after_update :update_video_embed, if: -> { video_url_changed? || video_embed.nil? }
       after_destroy :destroy_video_embed
 
       preference :youtube_video_url, :string
@@ -16,27 +16,27 @@ module Spree
         @default_blocks.presence || [
           Spree::PageBlocks::Heading.new(
             text: Spree.t('page_sections.video.heading_1_default'),
-            text_alignment: nil,
-            container_alignment: nil,
-            bottom_padding: 8,
-            top_padding: 24,
-            size: 'small'
+            preferred_text_alignment: nil,
+            preferred_container_alignment: nil,
+            preferred_bottom_padding: 8,
+            preferred_top_padding: 24,
+            preferred_size: 'small'
           ),
           Spree::PageBlocks::Heading.new(
             text: Spree.t('page_sections.video.heading_2_default'),
-            text_alignment: nil,
-            container_alignment: nil,
-            bottom_padding: 8,
-            top_padding: 24,
-            size: 'large'
+            preferred_text_alignment: nil,
+            preferred_container_alignment: nil,
+            preferred_bottom_padding: 8,
+            preferred_top_padding: 24,
+            preferred_size: 'large'
           ),
           Spree::PageBlocks::Heading.new(
             text: store.name,
-            text_alignment: nil,
-            container_alignment: nil,
-            bottom_padding: 8,
-            top_padding: 24,
-            size: 'small'
+            preferred_text_alignment: nil,
+            preferred_container_alignment: nil,
+            preferred_bottom_padding: 8,
+            preferred_top_padding: 24,
+            preferred_size: 'small'
           )
         ]
       end
@@ -54,6 +54,11 @@ module Spree
       end
 
       private
+
+      def video_url_changed?
+        saved_change_to_preferences? &&
+          saved_change_to_preferences[0][:youtube_video_url] != saved_change_to_preferences[1][:youtube_video_url]
+      end
 
       def create_video_embed
         oembed_response = oembed_cached_response(preferred_youtube_video_url)
