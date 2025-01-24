@@ -7,6 +7,10 @@ module Spree
         false
       end
 
+      def spree_update_available?
+        @spree_update_available ||= !Rails.env.test? && Spree::Admin::Updater.update_available?
+      end
+
       def available_countries_iso
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end
