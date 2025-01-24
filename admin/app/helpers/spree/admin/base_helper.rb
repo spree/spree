@@ -3,6 +3,10 @@ module Spree
     module BaseHelper
       include Spree::ImagesHelper
 
+      def enterprise_edition?
+        false
+      end
+
       def available_countries_iso
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end

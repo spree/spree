@@ -1,7 +1,7 @@
 
 <%= turbo_frame_tag dom_id(@order, :line_items), class: "card mb-4 overflow-hidden" do %>
   <% if @line_items.any? %>
-    <div class="card-header d-flex justify-content-between align-items-center pb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title d-flex align-items-center">
         <%= Spree.t(:line_items) %>
         <span class="badge badge-info ml-2"><%= @line_items.count %></span>

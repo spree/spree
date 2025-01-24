@@ -24,13 +24,11 @@
     <% end %>
 
     <!-- Inserted elements will be injected before that target. -->
-    <div data-nested-form-target="target" class="mb-3"></div>
+    <div data-nested-form-target="target" class="mb-2"></div>
 
-    <div class="text-center">
-      <button type="button" class="btn btn-link" data-action="nested-form#add">
-        <%= icon('plus', class: 'mr-2') %>
-        <%= Spree.t(:add_one)%>
-      </button>
-    </div>
+    <button type="button" class="btn btn-link w-100 py-3" data-action="nested-form#add">
+      <%= icon('plus', class: 'mr-2') %>
+      <%= Spree.t(:add_one)%>
+    </button>
   </div>
 </div>
