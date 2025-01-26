@@ -3,6 +3,7 @@ module Spree
     class TaxonList < Spree::Page
       DISPLAY_NAME = Spree.t(:taxonomy_brands_name).freeze
 
+
       def url
         return unless url_exists?(:taxonomy_path)
 
@@ -27,8 +28,9 @@ module Spree
         DISPLAY_NAME
       end
 
+      # FIXME: this should use preferences
       def taxonomy_id
-        settings['taxonomy_id'].presence || store.taxonomies.first&.id
+        store.taxonomies.first&.id
       end
 
       def taxonomy
