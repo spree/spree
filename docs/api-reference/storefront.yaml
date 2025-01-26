@@ -1197,7 +1197,7 @@ paths:
           schema:
             type: string
           example: 'bb492c7d-c174-4e6b-ba0b-fe98d5c17307,51c35adb-7ab3-4880-8887-35bdc4f6c29f'
-          description: 'Fetch products from specified Vendors (Sellers) only'
+          description: 'Fetch products from specified Vendors (Sellers) - only available in [Enterprise Edition](https://spreecommerce.org/pricing)'
         - in: query
           name: 'filter[name]'
           schema:
@@ -1637,8 +1637,8 @@ paths:
           $ref: '#/components/responses/422UnprocessableEntity'
   /api/v2/storefront/vendors:
     get:
-      description: 'Returns a list of Vendors.'
-      summary: List all Vendors available on this Store / Marketplace.
+      summary: List all Vendors
+      description: 'Returns a list of Vendors. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)'
       tags:
         - Vendors
       operationId: vendors-list
@@ -1651,7 +1651,7 @@ paths:
           $ref: '#/components/responses/VendorList'
   '/api/v2/storefront/vendors/{vendor_slug}':
     get:
-      description: Returns the details of a specified Vendor.
+      description: Returns the details of a specified Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       summary: Retrieve a Vendor
       tags:
         - Vendors
