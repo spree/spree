@@ -60,4 +60,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'request_store', '~> 1.7'
   s.add_dependency 'wannabe_bool'
   s.add_dependency 'geared_pagination'
+  s.add_dependency 'any_ascii', '~> 0.3.2'
+  s.add_dependency 'geocoder'
 end

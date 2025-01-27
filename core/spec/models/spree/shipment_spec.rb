@@ -793,7 +793,7 @@ describe Spree::Shipment, type: :model do
     let(:variant) { order.line_items.first.variant }
 
     before do
-      perform_enqueued_jobs
+      perform_enqueued_jobs(except: Spree::Addresses::GeocodeAddressJob)
       shipping_method = order.shipments.first.shipping_method
       shipping_method.calculator.preferences[:amount] = order.shipments.first.cost
       shipping_method.calculator.save!

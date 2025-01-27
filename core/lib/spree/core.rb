@@ -30,6 +30,7 @@ require 'activerecord-typedstore'
 require 'request_store'
 require 'wannabe_bool'
 require 'geared_pagination'
+require 'geocoder'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.
@@ -100,7 +101,8 @@ module Spree
       stock_location_stock_items: :default,
       coupon_codes: :default,
       webhooks: :default,
-      themes: :default
+      themes: :default,
+      addresses: :addresses
     )
   end
 

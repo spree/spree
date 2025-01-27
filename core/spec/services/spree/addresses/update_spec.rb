@@ -324,10 +324,7 @@ RSpec.describe Spree::Addresses::Update do
         expect(result).to be_failure
 
         messages = result.error.value.messages
-        expect(messages).to eq(
-          phone: ["can't be blank"],
-          zipcode: ["can't be blank"]
-        )
+        expect(messages).to eq( zipcode: ["can't be blank"])
       end
     end
   end
