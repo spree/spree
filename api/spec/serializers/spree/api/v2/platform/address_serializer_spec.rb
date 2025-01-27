@@ -27,6 +27,8 @@ describe Spree::Api::V2::Platform::AddressSerializer do
             deleted_at: address.deleted_at,
             label: address.label,
             quick_checkout: false,
+            latitude: address.latitude,
+            longitude: address.longitude,
             public_metadata: {},
             private_metadata: {}
           },

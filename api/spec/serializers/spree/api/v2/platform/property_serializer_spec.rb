@@ -20,6 +20,7 @@ describe Spree::Api::V2::Platform::PropertySerializer do
           updated_at: resource.updated_at,
           filterable: resource.filterable,
           filter_param: resource.filter_param,
+          kind: resource.kind,
           display_on: resource.display_on,
           position: resource.position,
           public_metadata: resource.public_metadata,

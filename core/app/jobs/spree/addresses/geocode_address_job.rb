@@ -19,7 +19,7 @@ module Spree
           # Unfortunately there is no way to get the error message from Geocoder,
           # but the request is fully displayed in the server logs
           Spree::ErrorHandler.call(
-            exception: GeocodeAddressError.new("Cannot geocode address #{address.id}"),
+            exception: GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
             opts: { report_context: { address_id: address_id } }
           )
         end

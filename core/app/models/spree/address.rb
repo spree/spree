@@ -217,7 +217,9 @@ module Spree
     private
 
     def should_geocode?
-      saved_changes.key?(:address1) || saved_changes.key?(:city) || saved_changes.key?(:state_id) || saved_changes.key?(:country_id)
+      Spree::Config[:geocode_addresses] && (
+        saved_changes.key?(:address1) || saved_changes.key?(:city) || saved_changes.key?(:state_id) || saved_changes.key?(:country_id)
+      )
     end
 
     def set_default_values

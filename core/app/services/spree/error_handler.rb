@@ -23,7 +23,7 @@ module Spree
     def log_error(exception:, message:, opts:)
       Rails.logger.error message
       Rails.logger.error "User ID: #{opts[:user]&.id}" if opts[:user]
-      Rails.logger.error exception.backtrace.join("\n")
+      Rails.logger.error exception.backtrace.join("\n") if exception.backtrace.present?
 
       success(exception: exception, message: message, opts: opts)
     end
