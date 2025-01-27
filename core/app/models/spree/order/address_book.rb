@@ -41,6 +41,7 @@ module Spree
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
         user.ship_address = ship_address if should_assign_user_default_address?(ship_address)
+        self.ship_address = nil if quick_checkout_address?(attributes[:quick_checkout]) && !ship_address.persisted?
       end
 
       private
@@ -78,8 +79,12 @@ module Spree
         scope.first
       end
 
+      def quick_checkout_address?(quick_checkout_param)
+        quick_checkout_param.present? ? quick_checkout_param.to_b : false
+      end
+
       def should_assign_user_default_address?(address)
-        user.present? && address.present? && address.valid? && address.user == user
+        user.present? && address.present? && address.valid? && address.user == user && !address.quick_checkout?
       end
     end
   end

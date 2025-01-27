@@ -280,6 +280,10 @@ module Spree
       shipments.any?(&:backordered?)
     end
 
+    def quick_checkout?
+      shipping_address.present? && shipping_address.quick_checkout?
+    end
+
     # Returns the relevant zone (if any) to be used for taxation purposes.
     # Uses default tax zone unless there is a specific match
     def tax_zone

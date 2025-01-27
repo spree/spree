@@ -3,6 +3,69 @@ require 'spec_helper'
 describe Spree::Address, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'before_validation :remove_emoji_and_normalize' do
+    let(:address) do
+      create(:address,
+        firstname: 'Jan 👋',
+        lastname: 'Масник',
+        phone: '1234567😃89',
+        alternative_phone: '😊 234567890',
+        company: 'общество',
+        address1: 'Default Street 123🌴',
+        address2: '🎂Apartment 6',
+        city: 'Варшава',
+        zipcode: '35005 👋 '
+      )
+    end
+
+    it 'normalizes the address and removes emojis' do
+      expect(address.firstname).to eq('Jan')
+      expect(address.lastname).to eq('Masnik')
+      expect(address.phone).to eq('123456789')
+      expect(address.alternative_phone).to eq('234567890')
+      expect(address.company).to eq('obshchestvo')
+      expect(address.address1).to eq('Default Street 123')
+      expect(address.address2).to eq('Apartment 6')
+      expect(address.city).to eq('Varshava')
+    end
+  end
+
+  describe 'after_commit :async_geocode' do
+    let(:address) { build(:address) }
+
+
+    it 'geocodes the address in the background' do
+      expect { address.save! }.
+        to have_enqueued_job(Spree::Addresses::GeocodeAddressJob).
+        on_queue(Spree.queues.addresses).
+        exactly(:once)
+
+      job = Spree::Addresses::GeocodeAddressJob.queue_adapter.enqueued_jobs.last
+      expect(job['arguments']).to contain_exactly(address.id)
+    end
+
+    context "when geocoding data didn't change" do
+      before { address.save! }
+
+      it 'skips geocoding' do
+        expect { address.update!(company: 'New Test Company') }.to_not have_enqueued_job(Spree::Addresses::GeocodeAddressJob)
+      end
+    end
+  end
+
+  context 'default values' do
+    context 'with user' do
+      let(:user) { create(:user, first_name: 'John', last_name: 'Snow') }
+      let(:address) { Spree::Address.new(user: user) }
+
+      it 'sets user_id and first/last name from user' do
+        expect(address.user_id).to eq(user.id)
+        expect(address.firstname).to eq('John')
+        expect(address.lastname).to eq('Snow')
+      end
+    end
+  end
+
   describe 'clone' do
     it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
       state = create(:state)
@@ -218,6 +281,13 @@ describe Spree::Address, type: :model do
       end
 
       context 'does not validate' do
+        it 'is for quick checkout' do
+          address.zipcode = 'abc'
+          address.quick_checkout = true
+          address.valid?
+          expect(address.errors['zipcode']).not_to include('is invalid')
+        end
+
         it 'does not have a country' do
           address.country = nil
           address.valid?
@@ -273,6 +343,18 @@ describe Spree::Address, type: :model do
         address.zipcode = ''
         address.valid?
         expect(address.errors[:zipcode].size).to eq 0
+      end
+    end
+  end
+
+  describe 'after create' do
+    context 'when user is assigned and it has default name' do
+      it 'should assign address name to the user' do
+        user = create(:user, first_name: nil, last_name: nil)
+        create(:address, user: user, firstname: 'John', lastname: 'Doe')
+
+        expect(user.reload.first_name).to eq 'John'
+        expect(user.reload.last_name).to eq 'Doe'
       end
     end
   end
@@ -511,6 +593,7 @@ describe Spree::Address, type: :model do
     describe '#assign_new_default_address_to_user' do
       shared_examples 'default address' do
         context 'when 2 addresses are available' do
+          let!(:address2_quick_checkout) { create(:address, user: user, quick_checkout: true) }
           let!(:address3) { create(:address, user: user) }
 
           it 'assigns last available address as default to bill and ship address' do
