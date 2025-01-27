@@ -98,6 +98,69 @@ pin "@easepick/base-plugin", to: "https://ga.jspm.io/npm:@easepick/base-plugin@1
 pin "@easepick/datetime", to: "https://ga.jspm.io/npm:@easepick/datetime@1.2.1/dist/index.esm.js", preload: false
 #
 
+# Flatfile
+pin "@flatfile/javascript", to: "https://ga.jspm.io/npm:@flatfile/javascript@1.5.4/dist/index.mjs", preload: false
+pin "#util.inspect.js", to: "https://ga.jspm.io/npm:@jspm/core@2.1.0/nodelibs/@empty.js", preload: false
+pin "@flatfile/api", to: "https://ga.jspm.io/npm:@flatfile/api@1.15.0/index.js", preload: false
+pin "@flatfile/cross-env-config", to: "https://ga.jspm.io/npm:@flatfile/cross-env-config@0.0.4/dist/index.mjs", preload: false
+pin "@flatfile/embedded-utils", to: "https://ga.jspm.io/npm:@flatfile/embedded-utils@1.3.5/dist/index.browser.mjs", preload: false
+pin "@flatfile/hooks", to: "https://ga.jspm.io/npm:@flatfile/hooks@1.6.0/dist/index.mjs", preload: false
+pin "@flatfile/listener", to: "https://ga.jspm.io/npm:@flatfile/listener@1.1.1/dist/index.browser.mjs", preload: false
+pin "@flatfile/plugin-record-hook", to: "https://ga.jspm.io/npm:@flatfile/plugin-record-hook@1.11.2/dist/index.browser.js", preload: false
+pin "@flatfile/util-common", to: "https://ga.jspm.io/npm:@flatfile/util-common@1.7.0/dist/index.browser.js", preload: false
+pin "buffer", to: "https://ga.jspm.io/npm:@jspm/core@2.1.0/nodelibs/browser/buffer.js", preload: false
+pin "call-bind", to: "https://ga.jspm.io/npm:call-bind@1.0.8/index.js", preload: false
+pin "call-bind-apply-helpers", to: "https://ga.jspm.io/npm:call-bind-apply-helpers@1.0.1/index.js", preload: false
+pin "call-bind-apply-helpers/applyBind", to: "https://ga.jspm.io/npm:call-bind-apply-helpers@1.0.1/applyBind.js", preload: false
+pin "call-bind-apply-helpers/functionApply", to: "https://ga.jspm.io/npm:call-bind-apply-helpers@1.0.1/functionApply.js", preload: false
+pin "call-bind-apply-helpers/functionCall", to: "https://ga.jspm.io/npm:call-bind-apply-helpers@1.0.1/functionCall.js", preload: false
+pin "call-bound", to: "https://ga.jspm.io/npm:call-bound@1.0.2/index.js", preload: false
+pin "cross-fetch", to: "https://ga.jspm.io/npm:cross-fetch@4.1.0/dist/browser-ponyfill.js", preload: false
+pin "define-data-property", to: "https://ga.jspm.io/npm:define-data-property@1.1.4/index.js", preload: false
+pin "dunder-proto/get", to: "https://ga.jspm.io/npm:dunder-proto@1.0.0/get.js", preload: false
+pin "es-define-property", to: "https://ga.jspm.io/npm:es-define-property@1.0.1/index.js", preload: false
+pin "es-errors", to: "https://ga.jspm.io/npm:es-errors@1.3.0/index.js", preload: false
+pin "es-errors/eval", to: "https://ga.jspm.io/npm:es-errors@1.3.0/eval.js", preload: false
+pin "es-errors/range", to: "https://ga.jspm.io/npm:es-errors@1.3.0/range.js", preload: false
+pin "es-errors/ref", to: "https://ga.jspm.io/npm:es-errors@1.3.0/ref.js", preload: false
+pin "es-errors/syntax", to: "https://ga.jspm.io/npm:es-errors@1.3.0/syntax.js", preload: false
+pin "es-errors/type", to: "https://ga.jspm.io/npm:es-errors@1.3.0/type.js", preload: false
+pin "es-errors/uri", to: "https://ga.jspm.io/npm:es-errors@1.3.0/uri.js", preload: false
+pin "es-object-atoms", to: "https://ga.jspm.io/npm:es-object-atoms@1.1.1/index.js", preload: false
+pin "flat", to: "https://ga.jspm.io/npm:flat@5.0.2/index.js", preload: false
+pin "form-data", to: "https://ga.jspm.io/npm:form-data@4.0.0/lib/browser.js", preload: false
+pin "function-bind", to: "https://ga.jspm.io/npm:function-bind@1.1.2/index.js", preload: false
+pin "get-intrinsic", to: "https://ga.jspm.io/npm:get-intrinsic@1.2.7/index.js", preload: false
+pin "get-proto", to: "https://ga.jspm.io/npm:get-proto@1.0.1/index.js", preload: false
+pin "get-proto/Object.getPrototypeOf", to: "https://ga.jspm.io/npm:get-proto@1.0.1/Object.getPrototypeOf.js", preload: false
+pin "get-proto/Reflect.getPrototypeOf", to: "https://ga.jspm.io/npm:get-proto@1.0.1/Reflect.getPrototypeOf.js", preload: false
+pin "gopd", to: "https://ga.jspm.io/npm:gopd@1.2.0/index.js", preload: false
+pin "has-property-descriptors", to: "https://ga.jspm.io/npm:has-property-descriptors@1.0.2/index.js", preload: false
+pin "has-symbols", to: "https://ga.jspm.io/npm:has-symbols@1.1.0/index.js", preload: false
+pin "hasown", to: "https://ga.jspm.io/npm:hasown@2.0.2/index.js", preload: false
+pin "i18next", to: "https://ga.jspm.io/npm:i18next@23.16.8/dist/esm/i18next.js", preload: false
+pin "i18next-browser-languagedetector", to: "https://ga.jspm.io/npm:i18next-browser-languagedetector@8.0.2/dist/esm/i18nextBrowserLanguageDetector.js", preload: false
+pin "js-base64", to: "https://ga.jspm.io/npm:js-base64@3.7.2/base64.js", preload: false
+pin "math-intrinsics/abs", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/abs.js", preload: false
+pin "math-intrinsics/floor", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/floor.js", preload: false
+pin "math-intrinsics/max", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/max.js", preload: false
+pin "math-intrinsics/min", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/min.js", preload: false
+pin "math-intrinsics/pow", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/pow.js", preload: false
+pin "math-intrinsics/round", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/round.js", preload: false
+pin "math-intrinsics/sign", to: "https://ga.jspm.io/npm:math-intrinsics@1.1.0/sign.js", preload: false
+pin "node-fetch", to: "https://ga.jspm.io/npm:node-fetch@2.7.0/browser.js", preload: false
+pin "object-inspect", to: "https://ga.jspm.io/npm:object-inspect@1.13.3/index.js", preload: false
+pin "pako", to: "https://ga.jspm.io/npm:pako@2.1.0/dist/pako.esm.mjs", preload: false
+pin "process", to: "https://ga.jspm.io/npm:@jspm/core@2.1.0/nodelibs/browser/process-production.js", preload: false
+pin "qs", to: "https://ga.jspm.io/npm:qs@6.11.2/lib/index.js", preload: false
+pin "set-function-length", to: "https://ga.jspm.io/npm:set-function-length@1.2.2/index.js", preload: false
+pin "side-channel", to: "https://ga.jspm.io/npm:side-channel@1.1.0/index.js", preload: false
+pin "side-channel-list", to: "https://ga.jspm.io/npm:side-channel-list@1.0.0/index.js", preload: false
+pin "side-channel-map", to: "https://ga.jspm.io/npm:side-channel-map@1.0.1/index.js", preload: false
+pin "side-channel-weakmap", to: "https://ga.jspm.io/npm:side-channel-weakmap@1.0.2/index.js", preload: false
+pin "url-join", to: "https://ga.jspm.io/npm:url-join@4.0.1/lib/url-join.js", preload: false
+pin "wildcard-match", to: "https://ga.jspm.io/npm:wildcard-match@5.1.3/build/index.es.mjs", preload: false
+#
 
 pin "@simonwep/pickr", to: "https://ga.jspm.io/npm:@simonwep/pickr@1.9.1/dist/pickr.min.js", preload: false
 

@@ -1,5 +1,5 @@
 import { Controller } from '@hotwired/stimulus'
-import countryCurrency from '../../helpers/country_currency'
+import countryCurrency from 'spree/admin/helpers/country_currency'
 export default class extends Controller {
   static targets = ['currency']
 

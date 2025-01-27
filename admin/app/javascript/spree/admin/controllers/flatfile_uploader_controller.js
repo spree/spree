@@ -1,10 +1,10 @@
 import { Controller } from '@hotwired/stimulus'
 import { initializeFlatfile } from '@flatfile/javascript'
 
-import createSubmitDataListener from '../flatfile/create_submit_data_listener'
-import { productsWorkbook } from '../flatfile/products_workbook'
-import { customersWorkbook } from '../flatfile/customers_workbook'
-import { postsWorkbook } from '../flatfile/posts_workbook'
+// import createSubmitDataListener from 'spree/admin/helpers/flatfile/create_submit_data_listener'
+import { productsWorkbook } from 'spree/admin/helpers/flatfile/products_workbook'
+import { customersWorkbook } from 'spree/admin/helpers/flatfile/customers_workbook'
+import { postsWorkbook } from 'spree/admin/helpers/flatfile/posts_workbook'
 
 export default class extends Controller {
   static values = {
