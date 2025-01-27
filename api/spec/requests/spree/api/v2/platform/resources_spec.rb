@@ -299,12 +299,11 @@ describe 'Platform API v2 Resources spec', type: :request do
       before { execute }
 
       it 'returns errors' do
-        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank, and Phone can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, and Zip Code can't be blank")
         expect(json_response['errors']).to eq(
           'city' => ["can't be blank"],
           'zipcode' => ["can't be blank"],
-          'country' => ["can't be blank"],
-          'phone' => ["can't be blank"]
+          'country' => ["can't be blank"]
         )
       end
     end

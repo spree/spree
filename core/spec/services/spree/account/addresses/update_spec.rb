@@ -37,22 +37,14 @@ module Spree
       end
 
       context 'with invalid params' do
-        let(:new_address_params) do
-          {
-            phone: '',
-            zipcode: ''
-          }
-        end
+        let(:new_address_params) { { zipcode: '' } }
 
         it 'returns errors' do
           expect { result }.not_to change(Address, :count)
           expect(result).to be_failure
 
           messages = result.error.value.messages
-          expect(messages).to eq(
-            phone: ["can't be blank"],
-            zipcode: ["can't be blank"]
-          )
+          expect(messages).to eq(zipcode: ["can't be blank"])
         end
       end
     end

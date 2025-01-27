@@ -161,10 +161,20 @@ describe Spree::Address, type: :model do
       expect(address).to be_valid
     end
 
-    it 'requires phone' do
+    it 'does not require phone' do
+      Spree::Config.set address_requires_state: false
       address.phone = ''
-      address.valid?
-      expect(address.errors['phone']).to eq(["can't be blank"])
+      expect(address).to be_valid
+    end
+
+    context 'when phone is required' do
+      before { Spree::Config.set address_requires_phone: true }
+
+      it 'validates presence of the phone' do
+        address.phone = ''
+        address.valid?
+        expect(address.errors['phone']).to eq(["can't be blank"])
+      end
     end
 
     it 'requires zipcode' do
@@ -322,7 +332,7 @@ describe Spree::Address, type: :model do
   context 'defines require_phone? helper method' do
     let(:address) { create(:address) }
 
-    specify { expect(address.instance_eval { require_phone? }).to be true }
+    specify { expect(address.instance_eval { require_phone? }).to be(false) }
   end
 
   context '#clear_state' do

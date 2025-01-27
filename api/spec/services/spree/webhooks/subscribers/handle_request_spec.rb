@@ -185,7 +185,7 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
         end
 
         it 'adds the event data to the body' do
-          perform_enqueued_jobs do
+          perform_enqueued_jobs(except: Spree::Addresses::GeocodeAddressJob) do
             with_webhooks_enabled do
               allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
               order.finalize!
