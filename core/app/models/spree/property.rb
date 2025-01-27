@@ -36,6 +36,13 @@ module Spree
     scope :sorted, -> { order(:name) }
     scope :filterable, -> { where(filterable: true) }
 
+    KIND_OPTIONS = { short_text: 0, long_text: 1, number: 2, rich_text: 3 }.freeze
+    if Rails.version >= '7.0'
+      enum :kind, KIND_OPTIONS
+    else
+      enum kind: KIND_OPTIONS
+    end
+
     after_touch :touch_all_products
     after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
     after_save :ensure_product_properties_have_filter_params

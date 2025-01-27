@@ -32,6 +32,9 @@ module Spree
 
     scope :filterable, -> { joins(:property).where(Property.table_name => { filterable: true }) }
     scope :for_products, ->(products) { joins(:product).merge(products) }
+    scope :sort_by_property_position, -> {
+      joins(:property).order("spree_properties.position ASC")
+    }
 
     self.whitelisted_ransackable_attributes = ['value', 'filter_param']
     self.whitelisted_ransackable_associations = ['property']
