@@ -225,7 +225,7 @@ module Spree
     def set_default_values
       self.firstname ||= user.first_name
       self.lastname ||= user.last_name
-      self.phone ||= user.phone if user.respond_to?(:phone)
+      self.phone ||= user.phone
     end
 
     def clear_state
@@ -260,6 +260,7 @@ module Spree
         user.first_name = firstname
         user.last_name = lastname
       end
+      user.phone = user.phone.presence || phone.presence
 
       user.save! if user.changed?
     end

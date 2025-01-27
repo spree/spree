@@ -46,7 +46,7 @@ namespace :common do
     system('bin/rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
     system('bundle exec rake db:drop db:create > /dev/null 2>&1')
     Spree::DummyModelGenerator.start
-    system('bundle exec rake db:migrate > /dev/null 2>&1')
+    system('bundle exec rake db:migrate')
 
     begin
       require "generators/#{ENV['LIB_NAME']}/install/install_generator"
