@@ -58,7 +58,7 @@ export default class extends NestedForm {
     const variantImage = selectedVariant.closest('.search-picker__option').querySelector('.variant-image')
     const variantInfo = selectedVariant.closest('.search-picker__option').querySelector('.variant-info')
     const variantName = variantInfo.querySelector('.variant-name')
-    variantName.innerHTML = variantName.innerText
+    variantName.innnerText = variantName.innerText
     this.newVariantOmitIdsTarget.value = [this.newVariantOmitIdsTarget.value, selectedVariantId]
       .filter((v) => v?.length)
       .join(',')
