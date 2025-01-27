@@ -32,7 +32,9 @@ export default class extends Controller {
   }
 
   loadPreview() {
-    this.iframeTarget.src = this.previewUrlValue
+    if (this.previewUrlValue) {
+      this.iframeTarget.src = this.previewUrlValue
+    }
   }
 
   initializeVisualEditor() {
