@@ -175,7 +175,7 @@ module Spree
           reorder('spree_product_option_types.position').
           uniq.group_by(&:option_type).each_with_index do |option, index|
           option_type, option_values = option
-          @product_options[option_type.id] = {
+          @product_options[option_type.id.to_s] = {
             name: option_type.presentation,
             position: index + 1,
             values: option_values.pluck(:presentation).uniq
@@ -185,10 +185,10 @@ module Spree
         @product_stock = {}
         @product.stock_items.includes(:variant).each do |stock_item|
           @product_stock[stock_item.variant.human_name] ||= {}
-          @product_stock[stock_item.variant.human_name][stock_item.stock_location_id] = {
+          @product_stock[stock_item.variant.human_name][stock_item.stock_location_id.to_s] = {
             count_on_hand: stock_item.count_on_hand,
             backorderable: stock_item.backorderable,
-            id: stock_item.id
+            id: stock_item.id.to_s
           }
         end
 
@@ -196,7 +196,7 @@ module Spree
         @product.prices.includes(:variant).each do |price|
           @product_prices[price.variant.human_name] ||= {}
           @product_prices[price.variant.human_name][price.currency.downcase] = {
-            id: price.id,
+            id: price.id.to_s,
             amount: price.amount
           }
         end
@@ -204,7 +204,7 @@ module Spree
         @product_variant_ids = {}
 
         @product.variants.includes(:option_values).each do |variant|
-          @product_variant_ids[variant.human_name] = variant.id
+          @product_variant_ids[variant.human_name] = variant.id.to_s
         end
       end
 
