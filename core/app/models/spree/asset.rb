@@ -11,11 +11,7 @@ module Spree
 
     delegate :key, :attached?, :variant, :variable?, :blob, :filename, to: :attachment
 
-    if Spree.public_storage_service_name
-      has_one_attached :attachment, service: Spree.public_storage_service_name
-    else
-      has_one_attached :attachment
-    end
+    has_one_attached :attachment, service: Spree.public_storage_service_name
 
     default_scope { includes(attachment_attachment: :blob) }
 
