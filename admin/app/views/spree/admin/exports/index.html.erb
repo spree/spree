@@ -23,7 +23,7 @@
   </div>
 <% else %>
   <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: Spree.t('admin.exports.plural_resource_name')) %>
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(model_class)) %>
   </div>
 <% end %>
 
