@@ -141,13 +141,19 @@ module Spree
 
     has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
 
+    after_initialize :ensure_master
+    after_initialize :assign_default_tax_category
+
+    before_validation :downcase_slug
+    before_validation :normalize_slug, on: :update
+    before_validation :validate_master
+    before_validation :ensure_default_shipping_category
+
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_destroy :punch_slug
     after_restore :update_slug_history
-
-    after_initialize :ensure_master
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
@@ -155,10 +161,6 @@ module Spree
     after_touch :touch_taxons
 
     after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
-
-    before_validation :downcase_slug
-    before_validation :normalize_slug, on: :update
-    before_validation :validate_master
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -257,15 +259,20 @@ module Spree
                                              multi_search in_stock_items out_of_stock_items]
 
     [
-      :sku, :barcode, :price, :currency, :weight, :height, :width, :depth, :is_master,
-      :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price, :compare_at_amount_in,
-      :dimensions_unit, :weight_unit, :track_inventory
+      :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
 
+    [
+      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
+      :currency, :cost_currency, :cost_price, :track_inventory
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :default_variant
+    end
+
     delegate :display_amount, :display_price, :has_default_price?,
-             :display_compare_at_price, :images, to: :find_or_build_master
+             :display_compare_at_price, :images, to: :default_variant
 
     delegate :name, to: :brand, prefix: true, allow_nil: true
 
@@ -390,6 +397,38 @@ module Spree
 
     # Adding properties and option types on creation based on a chosen prototype
     attr_accessor :prototype_id
+
+    def first_or_default_variant(currency)
+      @first_or_default_variant ||= if !has_variants?
+                                      default_variant
+                                    elsif first_available_variant(currency).present?
+                                      first_available_variant(currency)
+                                    else
+                                      variants.first
+                                    end
+    end
+
+    def first_available_variant(currency)
+      @first_available_variant ||= variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
+    end
+
+    def price_varies?(currency)
+      @price_varies ||= prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
+    end
+
+    def any_variant_available?(currency)
+      @any_variant_available ||= if has_variants?
+                                   first_available_variant(currency).present?
+                                 else
+                                   master.purchasable? && master.price_in(currency).amount.present?
+                                 end
+    end
+
+    # returns the lowest price for the product in the given currency
+    # prices_including_master are usually already loaded, so this should not trigger an extra query
+    def lowest_price(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.min_by(&:amount)
+    end
 
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
@@ -556,7 +595,7 @@ module Spree
     end
 
     def any_variant_in_stock_or_backorderable?
-      if variants.any?
+      if has_variants?
         variants_including_master.in_stock_or_backorderable.exists?
       else
         master.in_stock_or_backorderable?
@@ -653,6 +692,10 @@ module Spree
       self.master ||= build_master
     end
 
+    def assign_default_tax_category
+      self.tax_category = Spree::TaxCategory.default if new_record?
+    end
+
     def normalize_slug
       self.slug = normalize_friendly_id(slug)
     end
@@ -715,6 +758,15 @@ module Spree
 
           errors.add(err[:field], err[:message])
         end
+      end
+    end
+
+    def ensure_default_shipping_category
+      return if shipping_category.present?
+
+      if new_record?
+        name = I18n.t('spree.seed.shipping.categories.default')
+        self.shipping_category = Spree::ShippingCategory.find_or_create_by!(name: name)
       end
     end
 
