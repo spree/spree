@@ -74,7 +74,7 @@ To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spre
 <img alt="Spree Commerce - Cart   Checkout" src="https://github.com/spree/spree/assets/12614496/05399a8f-a57a-4907-a8ea-a4e58285a55d">
 <img alt="Spree Commerce - Payments   Refunds" src="https://github.com/spree/spree/assets/12614496/0911073c-a681-409e-810c-f7e8daa4daac">
 
-### [Global Commerce](https://spreecommerce.org/use-cases/international-sales-demo/](https://spreecommerce.org/multi-region-ecommerce/) ready
+### [Global Commerce](https://spreecommerce.org/multi-region-ecommerce/) ready
   * multi-currency
   * multi-language
   * full translation support for products, categories, and more
