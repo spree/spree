@@ -10,11 +10,7 @@ module Spree
             return unless attachment.attached?
 
             url_helpers = Rails.application.routes.url_helpers
-            if Spree.public_storage_service_name
-              url_helpers.cdn_image_url(attachment)
-            else
-              url_helpers.rails_blob_path(attachment)
-            end
+            url_helpers.cdn_image_url(attachment)
           end
 
           attribute :logo do |store|

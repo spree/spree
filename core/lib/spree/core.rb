@@ -72,9 +72,9 @@ module Spree
     if @@private_storage_service_name
       if @@private_storage_service_name.is_a?(String) || @@private_storage_service_name.is_a?(Symbol)
         @@private_storage_service_name.to_sym
-      else
-        raise 'Spree.private_storage_service_name MUST be a String or Symbol object.'
       end
+    else
+      Rails.application.config.active_storage.service
     end
   end
 
@@ -82,9 +82,9 @@ module Spree
     if @@public_storage_service_name
       if @@public_storage_service_name.is_a?(String) || @@public_storage_service_name.is_a?(Symbol)
         @@public_storage_service_name.to_sym
-      else
-        raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
+    else
+      Rails.application.config.active_storage.service
     end
   end
 

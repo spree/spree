@@ -7,11 +7,7 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.private_storage_service_name
-      has_one_attached :attachment, service: Spree.private_storage_service_name
-    else
-      has_one_attached :attachment
-    end
+    has_one_attached :attachment, service: Spree.private_storage_service_name
 
     validates :attachment, attached: true
     validates :variant, presence: true
