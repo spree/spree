@@ -69,6 +69,9 @@ module Spree
     after_commit :clear_line_items_cache, on: :update
     after_update_commit :handle_track_inventory_change
 
+    after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
+    after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
+
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
@@ -499,14 +502,18 @@ module Spree
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
-      if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
-        return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
+      return if (has_default_price? && default_price.valid?) || prices.any?
 
-        self.price = product.master.price
-      end
-      if price.present? && currency.nil?
-        self.currency = Spree::Store.default.default_currency
+      infer_price_from_default_variant_if_needed
+      self.currency = Spree::Store.default.default_currency if price.present? && currency.nil?
+    end
+
+    def infer_price_from_default_variant_if_needed
+      if price.nil?
+        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
+
+        # At this point, master can have or have no price, so let's use price from the default variant
+        self.price = product.default_variant.price
       end
     end
 
@@ -537,6 +544,14 @@ module Spree
       return if track_inventory
 
       stock_items.delete_all
+    end
+
+    def remove_prices_from_master_variant
+      product.master.prices.delete_all if prices.exists?
+    end
+
+    def remove_stock_items_from_master_variant
+      product.master.stock_items.delete_all
     end
   end
 end
