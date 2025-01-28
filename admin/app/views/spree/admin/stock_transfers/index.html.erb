@@ -32,9 +32,7 @@
       </table>
     </div>
   <% else %>
-    <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-      <%= Spree.t(:no_resource_found, resource: Spree.t(:stock_transfers)) %>
-    </div>
+    <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>
   <%= render 'spree/admin/shared/index_table_options', collection: @stock_transfers, simple: true if @stock_transfers.any? %>
 </div>
