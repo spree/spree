@@ -629,7 +629,7 @@ export default class extends CheckboxSelectAll {
       stockIdInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationIndex}][id]`
 
       stockInput.value = stockItem.count_on_hand
-      if (stockLocationId === this.currentStockLocationIdValue) {
+      if (String(stockLocationId) === String(this.currentStockLocationIdValue)) {
         stockInput.classList.remove('d-none')
         stockInput.classList.add('d-block')
       } else {
@@ -683,7 +683,7 @@ export default class extends CheckboxSelectAll {
     this.optionsValue = {
       ...this.optionsValue,
       ...newOptionsPositions,
-      [id.toLowerCase().replaceAll(' ', '-')]: {
+      [id]: {
         name,
         values: option_values,
         position: position
@@ -699,11 +699,11 @@ export default class extends CheckboxSelectAll {
 
   handleNewOption(event) {
     const newOptionName = this.newOptionNameInputTarget.options[this.newOptionNameInputTarget.selectedIndex].text
-    const newOptionId = this.newOptionNameInputTarget.value
+    const newOptionId = String(this.newOptionNameInputTarget.value)
     const newOptionValues = this.newOptionValuesInputTarget.values()
     if (
       !newOptionName.length ||
-      this.optionsValue[newOptionId.toLowerCase().replaceAll(' ', '-')] ||
+      this.optionsValue[newOptionId] ||
       newOptionValues.length === 0 ||
       Object.values(this.optionsValue)
         .filter(Boolean)
@@ -728,7 +728,9 @@ export default class extends CheckboxSelectAll {
   }
 
   editOption(event) {
-    const { optionId } = event.params
+    let { optionId } = event.params
+    optionId = String(optionId)
+
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
 
     const { name, values } = this.optionsValue[optionId]
@@ -739,19 +741,21 @@ export default class extends CheckboxSelectAll {
   }
 
   saveOption(event) {
-    const { optionId } = event.params
-    const option = this.optionsContainerTarget.querySelector(`#option-${optionId.toLowerCase().replaceAll(' ', '-')}`)
+    let { optionId } = event.params
+    optionId = String(optionId)
+
+    const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
     const optionForm = option.closest('[data-slot="optionForm"]')
     const optionNameSelect = option.querySelector('select[name="option_name"]')
     const optionName = optionNameSelect.options[optionNameSelect.selectedIndex].text
-    const newId = optionNameSelect.value
+    const newId = String(optionNameSelect.value)
 
-    if ((newId != optionId && this.optionsValue[newId.toLowerCase()]) || !optionName.length) {
+    if ((newId != optionId && this.optionsValue[newId]) || !optionName.length) {
       return
     }
 
     let color = false
-    let position = this.optionsValue[optionId.toLowerCase()].position
+    let position = this.optionsValue[optionId].position
     let newOptionsPositions = {}
 
     const optionValues = option.querySelector('[data-slot="optionValuesInput"]').values()
@@ -772,15 +776,15 @@ export default class extends CheckboxSelectAll {
     const newOptions = {
       ...this.optionsValue,
       ...newOptionsPositions,
-      [newId.toLowerCase()]: {
-        ...this.optionsValue[optionId.toLowerCase()],
+      [newId]: {
+        ...this.optionsValue[optionId],
         name: optionName,
         values: optionValues,
         position: position
       }
     }
     if (optionId != newId) {
-      delete newOptions[optionId.toLowerCase()]
+      delete newOptions[optionId]
     }
 
     this.optionsValue = newOptions
@@ -795,7 +799,7 @@ export default class extends CheckboxSelectAll {
   optionTemplate(name, values, id, color = false) {
     const template = this.optionTemplateTarget.content.cloneNode(true)
     template.querySelectorAll('[data-variants-form-option-id-param]').forEach((el) => {
-      el.dataset.variantsFormOptionIdParam = id.toLowerCase().replaceAll(' ', '-')
+      el.dataset.variantsFormOptionIdParam = id
     })
     const optionName = template.querySelector('[data-slot="optionName"]')
     const optionValuesTemplates = this.optionValueTemplate(values)
@@ -804,7 +808,7 @@ export default class extends CheckboxSelectAll {
       optionValuesContainer.appendChild(optionValueTemplate)
     })
     const mainContainer = template.querySelector('[data-variants-form-target="option"]')
-    mainContainer.id = 'option-' + id.toLowerCase().replaceAll(' ', '-')
+    mainContainer.id = `option-${id}`
 
     optionName.textContent = name
     if (color) {
@@ -815,11 +819,12 @@ export default class extends CheckboxSelectAll {
   }
 
   discardOption(event) {
-    const { optionId } = event.params
+    let { optionId } = event.params
+    optionId = String(optionId)
+
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
-    const optionName = this.optionsValue[optionId.toLowerCase()].name
     option.remove()
-    this.optionsValue = { ...this.optionsValue, [optionId.toLowerCase()]: null }
+    this.optionsValue = { ...this.optionsValue, [optionId]: null }
     this.refreshParentInputs()
   }
 
@@ -831,7 +836,7 @@ export default class extends CheckboxSelectAll {
     let optionExists = false
     // If options includes the optionName, set it as selected
     optionNameSelect.querySelectorAll('option').forEach((option) => {
-      if (option.value === id) {
+      if (String(option.value) === id) {
         option.selected = true
         optionExists = true
       }
@@ -853,7 +858,7 @@ export default class extends CheckboxSelectAll {
     })
 
     const mainContainer = template.querySelector('[data-slot="optionForm"]')
-    mainContainer.id = 'option-' + id.toLowerCase().replaceAll(' ', '-')
+    mainContainer.id = `option-${id}`
 
     return template
   }
@@ -923,7 +928,7 @@ export default class extends CheckboxSelectAll {
   }
 
   stockItemForVariant(variantName, stockLocationId) {
-    const existingStock = this.stockValue[variantName]?.[stockLocationId]
+    const existingStock = this.stockValue[variantName]?.[String(stockLocationId)]
     if (existingStock) return existingStock
 
     return { count_on_hand: 0, backorderable: false, id: null }
