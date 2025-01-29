@@ -30,7 +30,7 @@ describe Spree::StockMovement::Webhooks do
 
       context 'when all product variants are in stock' do
         before do
-          product.variants.each do |variant|
+          product.reload.variants.each do |variant|
             variant.stock_items.each do |stock_item|
               stock_item.set_count_on_hand(1)
             end
@@ -86,7 +86,7 @@ describe Spree::StockMovement::Webhooks do
           Rails.cache.clear
         end
 
-        before { product.variants[0].stock_items[0].set_count_on_hand(1) }
+        before { product.reload.variants[0].stock_items[0].set_count_on_hand(1) }
 
         it { expect { subject }.to emit_webhook_event(event_name, product) }
       end
@@ -103,7 +103,7 @@ describe Spree::StockMovement::Webhooks do
         end
 
         before do
-          product.variants.each do |variant|
+          product.reload.variants.each do |variant|
             variant.stock_items.each do |stock_item|
               stock_item.set_count_on_hand(0)
             end
