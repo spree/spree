@@ -54,7 +54,7 @@ Metrics/BlockLength:
     - '**/lib/**/testing_support/**/*'
 
 Metrics/AbcSize:
- Max: 45
+  Max: 45
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
@@ -189,10 +189,7 @@ RSpec/NamedSubject:
 RSpec/MultipleExpectations:
   Enabled: false
 
-RSpec/SpecFilePathFormat:
-  Enabled: false
-
-RSpec/SpecFilePathSuffix:
+RSpec/FilePath:
   Enabled: false
 
 RSpec/LetSetup:
