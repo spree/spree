@@ -1436,11 +1436,15 @@ describe Spree::Product, type: :model do
           Spree::Config.show_products_without_price = false
         end
 
-        let(:active_product_2) { create(:product, status: 'active', stores: [store]) }
-        let(:active_product_3) { create(:product, status: 'active', stores: [store]) }
-        let(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_2) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_3) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
 
         before do
+          active_product_2.prices_including_master.where(currency: 'USD').delete_all
+          active_product_3.prices_including_master.where(currency: 'USD').delete_all
+          active_product_4.prices_including_master.where(currency: 'USD').delete_all
+
           active_product_2.default_variant.prices.create(currency: 'USD', amount: 10)
           active_product_3.default_variant.prices.create(currency: 'PLN', amount: 10)
         end
