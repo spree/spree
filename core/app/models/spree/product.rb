@@ -643,6 +643,12 @@ module Spree
       csv_lines
     end
 
+    def page_builder_url
+      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:product_path)
+
+      Spree::Core::Engine.routes.url_helpers.product_path(self, locale: I18n.locale)
+    end
+
     private
 
     def add_associations_from_prototype

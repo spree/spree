@@ -3,8 +3,8 @@ module Spree
     class PostList < Spree::Page
       DISPLAY_NAME = Spree.t(:blog).freeze
 
-      def url
-        return unless url_exists?(:posts_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:posts_path)
 
         Spree::Core::Engine.routes.url_helpers.posts_path(locale: I18n.locale)
       end

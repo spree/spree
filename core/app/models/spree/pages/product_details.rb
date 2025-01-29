@@ -1,8 +1,8 @@
 module Spree
   module Pages
     class ProductDetails < Spree::Page
-      def url
-        return unless url_exists?(:product_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:product_path)
 
         product = store.products.active.first || store.products.first
         return if product.nil?

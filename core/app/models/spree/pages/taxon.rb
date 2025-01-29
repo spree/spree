@@ -5,8 +5,8 @@ module Spree
         'bookmark'
       end
 
-      def url
-        return unless url_exists?(:nested_taxons_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:nested_taxons_path)
 
         taxon = Spree::Taxon.first
         return if taxon.nil?

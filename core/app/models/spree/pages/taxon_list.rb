@@ -4,8 +4,8 @@ module Spree
       DISPLAY_NAME = Spree.t(:taxonomy_brands_name).freeze
 
 
-      def url
-        return unless url_exists?(:taxonomy_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:taxonomy_path)
 
         Spree::Core::Engine.routes.url_helpers.taxonomy_path(taxonomy.id, locale: I18n.locale)
       end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Products::Duplicator do
-  subject(:duplicate) { described_class.call(product: product) }
+  subject(:duplicate) { described_class.call(product: product.reload) }
 
   let(:store) { Spree::Store.default }
 

@@ -25,7 +25,7 @@ module Spree
     before_validation :set_label, on: [:create, :update]
 
     def linkable_url
-      @linkable_url ||= linkable&.url || formatted_url
+      @linkable_url ||= linkable&.page_builder_url || formatted_url
     end
 
     def formatted_url

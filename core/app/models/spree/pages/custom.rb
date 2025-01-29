@@ -5,8 +5,8 @@ module Spree
         true
       end
 
-      def url
-        return unless url_exists?(:page_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:page_path)
 
         Spree::Core::Engine.routes.url_helpers.page_path(self, locale: I18n.locale)
       end

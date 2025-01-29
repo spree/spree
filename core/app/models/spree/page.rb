@@ -108,9 +108,9 @@ module Spree
     end
 
     def preview_url(theme_preview = nil, page_preview = nil)
-      return if url.blank?
+      return if page_builder_url.blank?
 
-      "#{url}?#{url_query_params(theme_preview, page_preview).to_query}"
+      "#{page_builder_url}?#{url_query_params(theme_preview, page_preview).to_query}"
     end
 
     def display_name
@@ -177,7 +177,7 @@ module Spree
       name_changed? && custom?
     end
 
-    def url_exists?(path)
+    def page_builder_url_exists?(path)
       Spree::Core::Engine.routes.url_helpers.respond_to?(path)
     end
   end
