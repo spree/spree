@@ -869,7 +869,7 @@
       "pages": [
           "Themes",
                       {
-                          "group": "Themes",
+                          "group": "Storefront Themes",
                           "pages": [
                                  "user/storefront/theme-editor",
                                  "user/storefront/create-new-theme",
@@ -878,7 +878,7 @@
                       }, 
           "Pages",
                       {
-                          "group": "Pages",
+                          "group": "Storefront Pages",
                           "pages": [
                                  "user/storefront/create-page",
                                  "user/storefront/edit-page",
@@ -888,7 +888,7 @@
                         
           "Posts",
                       {
-                          "group": "Posts",
+                          "group": "Storefront Posts",
                           "pages": [
                                  "user/storefront/create-post",
                                  "user/storefront/edit-post",
