@@ -1,0 +1,28 @@
+<tr data-metadata-form-target="field">
+  <td class="w-30">
+    <%= text_field_tag "#{type}_metadata[#{i}][key]",
+    key,
+    class: "form-control",
+    autocomplete: :off,
+    autocorrect: :off,
+    spellcheck: false %>
+  </td>
+  <td class="w-60">
+    <%= text_area_tag "#{type}_metadata[#{i}][value]",
+    value,
+    class: "form-control",
+    rows: 1,
+    autocomplete: :off,
+    autocorrect: :off,
+    spellcheck: false %>
+  </td>
+  <td class="text-center">
+    <button
+      class="btn btn-danger"
+      type="button"
+      data-action="metadata-form#removeField"
+    >
+      <%= icon "trash", class: "icon icon-plus mr-0" %>
+    </button>
+  </td>
+</tr>

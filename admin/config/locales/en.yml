@@ -1,6 +1,7 @@
 en:
   spree:
     admin:
+      metadatas_for: Metadata for %{resource_name}
       add_tracking_details: Add tracking details
       url: URL
       active: Active
