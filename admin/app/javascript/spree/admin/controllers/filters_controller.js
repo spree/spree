@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import DOMPurify from "dompurify"
 
 export default class extends Controller {
   static targets = ["input", "badgesContainer", "badgeTemplate"];

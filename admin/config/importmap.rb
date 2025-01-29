@@ -15,6 +15,8 @@ pin "mapkick/bundle", to: "mapkick.bundle.js", preload: ["application-spree-admi
 pin 'jquery', to: 'jquery3.min.js', preload: ["application-spree-admin"]
 # Bootstrap 4 does not want to work with importmaps, after long debugging I found this comment which helped https://github.com/twbs/bootstrap-rubygem/issues/257#issuecomment-1707196465. Bootstrap has to be imported from jsdelivr.
 pin "bootstrap", to: 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js', preload: ["application-spree-admin"]
+pin "tinymce", to: 'tinymce/tinymce.js', preload: ["application-spree-admin"]
+pin "dompurify", to: 'https://ga.jspm.io/npm:dompurify@3.2.3/dist/purify.es.mjs', preload: ["application-spree-admin"]
 
 # Stimulus components
 pin "@stimulus-components/auto-submit", to: "https://ga.jspm.io/npm:@stimulus-components/auto-submit@6.0.0/dist/stimulus-auto-submit.mjs", preload: false
