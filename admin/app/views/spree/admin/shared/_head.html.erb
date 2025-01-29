@@ -61,5 +61,5 @@
 
 <!-- Trix does not work with importmaps in Rails 7 -->
 <!-- https://github.com/basecamp/trix/issues/1182 -->
-<%= javascript_include_tag 'trix' %>
+<%= javascript_include_tag 'trix', data: { turbo_track: "reload" } %>
 <%= javascript_importmap_tags 'application-spree-admin' %>

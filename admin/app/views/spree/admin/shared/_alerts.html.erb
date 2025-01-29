@@ -25,5 +25,5 @@
       </div>
     </div>
   <% end %>
-  <% flash.clear %>
+  <% flash.clear if request.xhr? %>
 <% end %>
