@@ -36,30 +36,14 @@
 <%= stylesheet_link_tag 'spree/admin/actiontext', media: :all, data: { turbo_track: "reload" } %>
 <%= action_cable_meta_tag %>
 
-
-<%= yield :head %>
-
-<% if Rails.env.test? %>
-  <style>
-    table tr td .btn {
-      visibility: visible !important;
-    }
-  </style>
-<% end %>
-
-<% if Rails.env.test? %>
-  <style>
-    .text-uppercase {
-      text-transform: none !important;
-    }
-  </style>
-<% end %>
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 
 <%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
 
+<%= tinymce_assets %>
 <!-- Trix does not work with importmaps in Rails 7 -->
 <!-- https://github.com/basecamp/trix/issues/1182 -->
 <%= javascript_include_tag 'trix', data: { turbo_track: "reload" } %>
 <%= javascript_importmap_tags 'application-spree-admin' %>
+
+<%= yield :head %>

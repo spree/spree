@@ -1,5 +1,3 @@
-import 'tinymce'
-
 document.addEventListener('turbo:before-render', initializeTinmce)
 document.addEventListener('turbo:load', initializeTinmce)
 document.addEventListener('turbo:frame-render', initializeTinmce)
