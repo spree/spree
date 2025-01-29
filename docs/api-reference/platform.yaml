@@ -16475,6 +16475,328 @@ paths:
                     error: The access token is invalid
               schema:
                 "$ref": "#/components/schemas/error"
+  "/api/v2/platform/vendors":
+    get:
+      summary: Return a list of Vendors
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Returns a list of Vendors. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: vendors-list
+      parameters:
+      - name: page
+        in: query
+        example: 1
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        example: 50
+        schema:
+          type: integer
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Records returned
+        '401':
+          description: Authentication Failed
+    post:
+      summary: Create a Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Creates a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: create-vendor
+      parameters:
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Record created
+        '422':
+          description: Invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/create_vendor_params"
+  "/api/v2/platform/vendors/{id}":
+    get:
+      summary: Return a Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Returns a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: show-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record found
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+    patch:
+      summary: Update a Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Updates a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: update-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '422':
+          description: Invalid request
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/update_vendor_params"
+    delete:
+      summary: Delete a Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Deletes a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: delete-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Record deleted
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/invite":
+    patch:
+      summary: Invites Vendor to the platform
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Also triggers an invitation email send out to the vendor's contact person. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: invite-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/start_onboarding":
+    patch:
+      summary: Start onboarding process
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Marks Vendor as onboarding in progress. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: start-onboarding-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/complete_onboarding":
+    patch:
+      summary: Completes onboarding process
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Marks Vendor as onboarding complete. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: complete-onboarding-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/approve":
+    patch:
+      summary: Approves Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Marks Vendor as approved, and triggers an approval email send out
+        to the vendor's contact person. Also activated Vendor products will become
+        available for purchase. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: approve-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/reject":
+    patch:
+      summary: Rejects Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Marks Vendor as rejected, and triggers an approval email send out
+        to the vendor's contact person. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: reject-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
+  "/api/v2/platform/vendors/{id}/suspend":
+    patch:
+      summary: Suspends Vendor
+      tags:
+      - Vendors
+      security:
+      - bearer_auth: []
+      description: Marks Vendor as suspended, and triggers an approval email send
+        out to the vendor's contact person. Also the vendor's products will become
+        unavailable for purchase and will be hidden from the storefront. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      operationId: suspend-vendor
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: include
+        in: query
+        description: 'Select which associated resources you would like to fetch, see:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>'
+        example: members
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Record updated
+        '404':
+          description: Record not found
+        '401':
+          description: Authentication Failed
   "/api/v2/platform/webhooks/events":
     get:
       summary: Return a list of Webhook Events
@@ -17990,6 +18312,7 @@ tags:
 - name: Taxonomies
 - name: Users
 - name: Variants
+- name: Vendors
 - name: Webhook Events
 - name: Webhook Subscribers
 - name: Wishlists
@@ -21839,6 +22162,38 @@ components:
       required:
       - wished_item
       x-internal: false
+    create_vendor_params:
+      type: object
+      properties:
+        name:
+          type: string
+        invitation_message:
+          type: string
+        public_metadata:
+          type: object
+        private_metadata:
+          type: object
+        platform_fee:
+          type: number
+          default: 5
+        state:
+          type: string
+          default: pending
+        contact_person_email:
+          type: string
+        contact_person_name:
+          type: string
+        contact_person_phone:
+          type: string
+      required:
+      - integration
+      - kind
+      - contact_person_email
+      - name
+      x-internal: true
+    update_vendor_params:
+      "$ref": "#/components/schemas/create_vendor_params"
+      x-internal: true
     create_zone_params:
       type: object
       properties:

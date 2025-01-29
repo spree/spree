@@ -760,6 +760,22 @@
           ]
         },
         {
+          "group": "Vendors",
+          "pages": [
+            "api-reference/platform/vendors/return-a-list-of-vendors",
+            "api-reference/platform/vendors/create-a-vendor",
+            "api-reference/platform/vendors/return-a-vendor",
+            "api-reference/platform/vendors/delete-a-vendor",
+            "api-reference/platform/vendors/update-a-vendor",
+            "api-reference/platform/vendors/invites-vendor-to-the-platform",
+            "api-reference/platform/vendors/start-onboarding-process",
+            "api-reference/platform/vendors/completes-onboarding-process",
+            "api-reference/platform/vendors/approves-vendor",
+            "api-reference/platform/vendors/rejects-vendor",
+            "api-reference/platform/vendors/suspends-vendor"
+          ]
+        },
+        {
           "group": "Webhook Events",
           "pages": [
             "api-reference/platform/webhook-events/return-a-list-of-webhook-events"
