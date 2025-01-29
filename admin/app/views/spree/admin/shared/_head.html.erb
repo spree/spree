@@ -1,0 +1,65 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<%= csrf_meta_tags %>
+
+<title>
+  <% if content_for? :title %>
+    <%= yield :title %>
+  <% else %>
+    <% if @object.present? %>
+      <%= @object.try(:name) || @object.try(:title) || Spree.t(controller_name.singularize, default: controller_name.singularize.titleize)%>
+    <% elsif @parent.present? %>
+      <%= @parent.try(:name) || @parent.try(:title) || Spree.t(controller_name.singularize, default: controller_name.singularize.titleize) %>
+    <% elsif @order.present? %>
+      <%= Spree.t('order') %> #<%= @order.number %>
+    <% elsif action_name == 'index' %>
+      <%= Spree.t(controller_name, default: controller_name.titleize) %>
+    <% else %>
+      <%= Spree.t(controller_name.singularize, default: controller_name.singularize.titleize) %>
+    <% end %>
+  <% end %>
+  -
+  <% if defined?(current_store) && current_store.present? %>
+    <%= current_store.name.capitalize %>
+  <% else %>
+    Spree
+  <% end %>
+</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+<%= stylesheet_link_tag 'spree/admin/application', media: :all, data: { turbo_track: "reload" } %>
+<%= stylesheet_link_tag 'spree/admin/actiontext', media: :all, data: { turbo_track: "reload" } %>
+<%= action_cable_meta_tag %>
+
+
+<%= yield :head %>
+
+<% if Rails.env.test? %>
+  <style>
+    table tr td .btn {
+      visibility: visible !important;
+    }
+  </style>
+<% end %>
+
+<% if Rails.env.test? %>
+  <style>
+    .text-uppercase {
+      text-transform: none !important;
+    }
+  </style>
+<% end %>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
+
+<!-- Trix does not work with importmaps in Rails 7 -->
+<!-- https://github.com/basecamp/trix/issues/1182 -->
+<%= javascript_include_tag 'trix', data: { turbo_track: "reload" } %>
+<%= javascript_importmap_tags 'application-spree-admin' %>
