@@ -134,6 +134,34 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe 'after_commit :remove_prices_from_master_variant' do
+    let(:variant) { build(:variant, product: product) }
+    let(:product) { create(:product, stores: [store]) }
+
+    let(:master) { product.master }
+
+    it 'removes prices from master when variant with price is created' do
+      expect { variant.save! }.to change(product.master.prices, :count).from(1).to(0)
+    end
+  end
+
+  describe 'after_commit :remove_stock_items_from_master_variant' do
+    let(:variant) { build(:variant, product: product) }
+    let(:product) { create(:product, stores: [store]) }
+
+    let(:master) { product.master }
+
+    before do
+      master.stock_items << create(:stock_item, variant: master)
+      expect(master.stock_items.reload.count).to be >= 1
+    end
+
+    it 'removes stock items from master when variant is created' do
+      variant.save!
+      expect(product.master.stock_items.reload.count).to eq(0)
+    end
+  end
+
   describe 'scope' do
     describe '.eligible' do
       context 'when only master variants' do
@@ -1062,97 +1090,84 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#check_price' do
-    let(:variant) { create(:variant) }
-    let(:variant2) { create(:variant) }
+  describe 'validate :check_price' do
+    subject { variant.save }
 
-    context 'require_master_price set false' do
-      before { Spree::Config.set(require_master_price: false) }
+    let(:currency) { Spree::Store.default.default_currency }
 
-      context 'price present and currency present' do
-        it { expect(variant.send(:check_price)).to be(nil) }
+    context 'when variant has a default price' do
+      let(:variant) { build(:variant, product: product, default_price: default_price) }
+
+      let(:product) { create(:product, master: master) }
+      let(:master) { create(:master_variant, price: 11.11, currency: currency) }
+
+      let(:default_price) { build(:price, amount: 12.34, currency: currency) }
+
+      it 'keeps the default price' do
+        expect(subject).to be(true)
+        expect(variant.price_in(currency).amount).to eq(12.34)
       end
 
-      context 'price present and currency nil' do
-        before { variant.currency = nil }
+      context 'when the default price is invalid' do
+        let(:default_price) { build(:price, amount: nil, currency: currency) }
 
-        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
-      end
-
-      context 'price nil and currency present' do
-        before { variant.price = nil }
-
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-
-      context 'price nil and currency nil' do
-        before { variant.price = nil }
-
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-    end
-
-    context 'require_master_price set true' do
-      before { Spree::Config.set(require_master_price: true) }
-
-      context 'price present and currency present' do
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-
-      context 'price present and currency nil' do
-        before { variant.currency = nil }
-
-        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
-      end
-
-      context 'product and master_variant present and equal' do
-        context 'price nil and currency present' do
-          before { variant.price = nil }
-
-          it { expect(variant.send(:check_price)).to be(nil) }
-
-          context 'check variant price' do
-            before { variant.send(:check_price) }
-
-            it { expect(variant.price).to eq(variant.product.master.price) }
-          end
+        it 'infers price from the default variant' do
+          expect(subject).to be(true)
+          expect(variant.price_in(currency).amount).to eq(11.11)
         end
 
-        context 'price nil and currency nil' do
-          before do
-            variant.price = nil
-            variant.send(:check_price)
-          end
+        context 'when there is no default variant' do
+          let(:product) { nil }
 
-          it { expect(variant.price).to eq(variant.product.master.price) }
-          it { expect(variant.currency).to eq(Spree::Config[:currency]) }
-        end
-      end
-
-      context 'product not present' do
-        context 'product not present' do
-          before { variant.product = nil }
-
-          context 'price nil and currency present' do
-            before { variant.price = nil }
-
-            it 'adds absence of master error' do
-              variant.send(:check_price)
-              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-            end
-          end
-
-          context 'price nil and currency nil' do
-            before { variant.price = nil }
-
-            it 'adds absence of master error' do
-              variant.send(:check_price)
-              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-            end
+          it 'adds an error' do
+            expect(subject).to be(false)
+            expect(variant.errors[:base]).to contain_exactly(
+              I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+            )
           end
         end
       end
     end
+
+    context 'when variant has no default price' do
+      let(:variant) { build(:variant, :with_no_price, product: product) }
+
+      let(:product) { create(:product, master: master) }
+      let(:master) { create(:master_variant, price: 11.11, currency: currency) }
+
+      it 'infers price from the default variant' do
+        expect(subject).to be(true)
+        expect(variant.price_in(currency).amount).to eq(11.11)
+      end
+
+      context 'when there is no default variant' do
+        let(:product) { nil }
+
+        it 'adds an error' do
+          expect(subject).to be(false)
+          expect(variant.errors[:base]).to contain_exactly(
+            I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+          )
+        end
+      end
+    end
+
+    context 'when variant has prices' do
+      let(:variant) { build(:variant, :with_no_price, prices: [price_1, price_2]) }
+
+      let(:price_1) { build(:price, amount: 10, currency: 'PLN') }
+      let(:price_2) { build(:price, amount: 11, currency: 'GBP') }
+
+      it 'keeps the prices' do
+        expect(subject).to be(true)
+
+        expect(variant.prices.count).to eq(2)
+        expect(variant.price_in('PLN').amount).to eq(10)
+        expect(variant.price_in('GBP').amount).to eq(11)
+      end
+    end
+
+    context 'when variant price '
   end
 
   describe '#created_at' do

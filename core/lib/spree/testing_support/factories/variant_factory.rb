@@ -41,6 +41,12 @@ FactoryBot.define do
       factory :with_image_variant do
         images { create_list(:image, 1) }
       end
+
+      trait :with_no_price do
+        price { nil }
+        cost_price { nil }
+        currency { nil }
+      end
     end
 
     factory :master_variant do

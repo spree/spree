@@ -1,8 +1,8 @@
 module Spree
   module Pages
     class Post < Spree::Page
-      def url
-        return unless url_exists?(:post_path)
+      def page_builder_url
+        return unless page_builder_url_exists?(:post_path)
 
         post = store.posts.published.last || store.posts.last
         return if post.nil?

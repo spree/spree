@@ -79,7 +79,7 @@ describe 'API V2 Platform Products Spec' do
 
           it 'returns products sorted by price' do
             expect(json_response['data'].count).to      eq store.products.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.joins(variants_including_master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
           end
         end
 
@@ -88,7 +88,7 @@ describe 'API V2 Platform Products Spec' do
 
           it 'returns products sorted by price with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.joins(variants_including_master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
           end
         end
       end

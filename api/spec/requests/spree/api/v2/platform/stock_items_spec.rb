@@ -12,13 +12,12 @@ describe 'Platform API v2 Stock Items API' do
 
   describe 'stock_items#index' do
     let!(:variants) { create_list(:variant, 2, product: product_1) }
-    let!(:variants) { create_list(:variant, 2, product: product_2) }
 
     context 'filtering by stock location id' do
       before { get "/api/v2/platform/stock_items?filter[stock_location_id_eq]=#{stock_location_1.id}", headers: bearer_token }
 
       it 'returns stock_items with matching stock location ids' do
-        expect(json_response['data'].count).to eq 3
+        expect(json_response['data'].count).to eq(2)
         expect(json_response['data'].first).to have_type('stock_item')
       end
     end
@@ -34,4 +33,3 @@ describe 'Platform API v2 Stock Items API' do
     end
   end
 end
-

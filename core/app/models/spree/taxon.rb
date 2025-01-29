@@ -378,6 +378,12 @@ module Spree
       move_to_child_with_index(parent, idx.to_i) unless new_record?
     end
 
+    def page_builder_url
+      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:nested_taxons_path)
+
+      Spree::Core::Engine.routes.url_helpers.nested_taxons_path(self, locale: I18n.locale)
+    end
+
     private
 
     def should_regenerate_pretty_name_and_permalink?

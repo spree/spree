@@ -20,7 +20,7 @@ module Spree
             total_stock_items = Spree::StockItem.count
             expect { result }.to change {
               stock_location.stock_items.count
-            }.from(total_stock_items).to(total_stock_items + 1)
+            }.from(total_stock_items).to(total_stock_items + 2)
           end
         end
 
