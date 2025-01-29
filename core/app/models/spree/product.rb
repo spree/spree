@@ -34,6 +34,7 @@ module Spree
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
+                          default_image secondary_image
                           purchasable? in_stock? backorderable? has_variants?]
 
     STATUS_TO_WEBHOOK_EVENT = {
@@ -399,29 +400,29 @@ module Spree
     attr_accessor :prototype_id
 
     def first_or_default_variant(currency)
-      @first_or_default_variant ||= if !has_variants?
-                                      default_variant
-                                    elsif first_available_variant(currency).present?
-                                      first_available_variant(currency)
-                                    else
-                                      variants.first
-                                    end
+      if !has_variants?
+        default_variant
+      elsif first_available_variant(currency).present?
+        first_available_variant(currency)
+      else
+        variants.first
+      end
     end
 
     def first_available_variant(currency)
-      @first_available_variant ||= variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
+      variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
     end
 
     def price_varies?(currency)
-      @price_varies ||= prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
+      prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
     end
 
     def any_variant_available?(currency)
-      @any_variant_available ||= if has_variants?
-                                   first_available_variant(currency).present?
-                                 else
-                                   master.purchasable? && master.price_in(currency).amount.present?
-                                 end
+      if has_variants?
+        first_available_variant(currency).present?
+      else
+        master.purchasable? && master.price_in(currency).amount.present?
+      end
     end
 
     # returns the lowest price for the product in the given currency
