@@ -16482,7 +16482,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Returns a list of Vendors
+      description: Returns a list of Vendors. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: vendors-list
       parameters:
       - name: page
@@ -16513,7 +16513,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Creates a Vendor
+      description: Creates a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: create-vendor
       parameters:
       - name: include
@@ -16540,7 +16540,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Returns a Vendor
+      description: Returns a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: show-vendor
       parameters:
       - name: id
@@ -16568,7 +16568,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Updates a Vendor
+      description: Updates a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: update-vendor
       parameters:
       - name: id
@@ -16603,7 +16603,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Deletes a Vendor
+      description: Deletes a Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: delete-vendor
       parameters:
       - name: id
@@ -16625,8 +16625,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Also triggers an invitation email send out to the vendor's contact
-        person
+      description: Also triggers an invitation email send out to the vendor's contact person. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: invite-vendor
       parameters:
       - name: id
@@ -16655,7 +16654,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Marks Vendor as onboarding in progress
+      description: Marks Vendor as onboarding in progress. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: start-onboarding-vendor
       parameters:
       - name: id
@@ -16684,7 +16683,7 @@ paths:
       - Vendors
       security:
       - bearer_auth: []
-      description: Marks Vendor as onboarding complete
+      description: Marks Vendor as onboarding complete. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: complete-onboarding-vendor
       parameters:
       - name: id
@@ -16715,7 +16714,7 @@ paths:
       - bearer_auth: []
       description: Marks Vendor as approved, and triggers an approval email send out
         to the vendor's contact person. Also activated Vendor products will become
-        available for purchase
+        available for purchase. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: approve-vendor
       parameters:
       - name: id
@@ -16745,7 +16744,7 @@ paths:
       security:
       - bearer_auth: []
       description: Marks Vendor as rejected, and triggers an approval email send out
-        to the vendor's contact person.
+        to the vendor's contact person. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: reject-vendor
       parameters:
       - name: id
@@ -16776,7 +16775,7 @@ paths:
       - bearer_auth: []
       description: Marks Vendor as suspended, and triggers an approval email send
         out to the vendor's contact person. Also the vendor's products will become
-        unavailable for purchase and will be hidden from the storefront
+        unavailable for purchase and will be hidden from the storefront. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
       operationId: suspend-vendor
       parameters:
       - name: id
