@@ -9,16 +9,16 @@ describe Spree::Api::V2::Platform::ProductSerializer do
   let(:taxonomy) { store.taxonomies.first }
   let!(:images) { create_list(:image, 2) }
   let(:product) do
-    create(:product_in_stock,
-           name: 'Test Product',
-           price: 10.00,
-           compare_at_price: 15.00,
-           variants_including_master: [create(:variant, images: images), create(:variant)],
-           option_types: create_list(:option_type, 2),
-           product_properties: create_list(:product_property, 2),
-           taxons: create_list(:taxon, 2, taxonomy: taxonomy),
-           tax_category: create(:tax_category),
-           stores: [store])
+    create(
+      :product_in_stock,
+      name: 'Test Product',
+      variants_including_master: [create(:variant, images: images), create(:variant)],
+      option_types: create_list(:option_type, 2),
+      product_properties: create_list(:product_property, 2),
+      taxons: create_list(:taxon, 2, taxonomy: taxonomy),
+      tax_category: create(:tax_category),
+      stores: [store]
+    )
   end
   let(:serializable_hash) do
     {
@@ -134,6 +134,10 @@ describe Spree::Api::V2::Platform::ProductSerializer do
         }
       }
     }
+  end
+
+  before do
+    product.reload.default_variant.prices[0].update(amount: 10, compare_at_amount: 15)
   end
 
   context 'without a store in the params' do

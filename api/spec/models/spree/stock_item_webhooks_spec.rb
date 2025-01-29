@@ -25,7 +25,10 @@ describe Spree::StockItem::Webhooks do
     let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
     let!(:variant2) { create(:variant, product: product) }
 
-    before { Spree::StockItem.update_all(backorderable: false) }
+    before do
+      Spree::StockItem.update_all(backorderable: false)
+      product.reload
+    end
 
     context 'when product was out of stock' do
       context 'when none of the product variants is backorderable' do
@@ -94,7 +97,10 @@ describe Spree::StockItem::Webhooks do
       end
 
       context 'when variant was not backorderable' do
-        before { variant.stock_items.update_all(backorderable: false) }
+        before do
+          variant.stock_items.update_all(backorderable: false)
+          variant.product.reload
+        end
 
         context 'when variant is not set as backorderable' do
           before { stock_item.backorderable = false }
