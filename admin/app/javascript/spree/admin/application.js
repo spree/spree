@@ -53,7 +53,6 @@ import Clipboard from 'spree/admin/controllers/clipboard_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
 import FiltersController from 'spree/admin/controllers/filters_controller'
-import FlatfileUploaderController from 'spree/admin/controllers/flatfile_uploader_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
@@ -100,7 +99,6 @@ application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
 application.register('enable-button', EnableButtonController)
 application.register('filters', FiltersController)
-application.register('flatfile-uploader', FlatfileUploaderController)
 application.register('font-picker', FontPickerController)
 application.register('media-form', MediaFormController)
 application.register('multi-input', MultiInputController)
