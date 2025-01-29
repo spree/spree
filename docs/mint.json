@@ -863,6 +863,43 @@
                           ]
                       }
       ]
+    },  
+    {
+      "group": "Storefront",
+      "pages": [
+          "Themes",
+                      {
+                          "group": "Themes",
+                          "pages": [
+                                 "user/storefront/theme-editor",
+                                 "user/storefront/create-new-theme",
+                                 "user/storefront/delete-theme"            
+                          ]
+                      }, 
+          "Pages",
+                      {
+                          "group": "Pages",
+                          "pages": [
+                                 "user/storefront/create-page",
+                                 "user/storefront/edit-page",
+                                 "user/storefront/delete-page"
+                          ]
+                      }, 
+                        
+          "Posts",
+                      {
+                          "group": "Posts",
+                          "pages": [
+                                 "user/storefront/create-post",
+                                 "user/storefront/edit-post",
+                                 "user/storefront/search-posts",
+                                 "user/storefront/delete-post",
+                                 "user/storefront/import-posts"
+                          ]
+                      },
+        "user/storefront/storefront-settings",
+        "user/storefront/create-new-store"
+      ]
     }
   ],
   "footerSocials": {
