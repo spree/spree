@@ -14,7 +14,6 @@ pin "local-time", preload: ["application-spree-admin"] # @3.0.2
 pin "mapkick/bundle", to: "mapkick.bundle.js", preload: ["application-spree-admin"]
 pin 'jquery', to: 'jquery3.min.js', preload: ["application-spree-admin"]
 pin "bootstrap", to: "bootstrap--dist--js--bootstrap.bundle.min.js.js", preload: ["application-spree-admin"] # @4.6.1
-pin "tinymce", to: 'tinymce/tinymce.js', preload: ["application-spree-admin"]
 pin "dompurify", preload: ["application-spree-admin"] # @3.2.3
 
 # Stimulus components
