@@ -33,7 +33,7 @@ pin "stimulus-clipboard", preload: ["application-spree-admin"] # @4.0.1
 #
 
 # Uppy
-# Uppy can't be downloaded, it has many relative imports in the code, and importmaps don't handle leaving us with a broken imports.
+# Uppy can't be downloaded, it has many relative imports in the code, and importmaps don't handle them, leaving us with broken imports.
 pin "@uppy/core", to: "https://ga.jspm.io/npm:@uppy/core@4.4.1/lib/index.js",preload: false
 pin "@uppy/dashboard", to: "https://ga.jspm.io/npm:@uppy/dashboard@4.3.1/lib/index.js",preload: false
 pin "@uppy/image-editor", to: "https://ga.jspm.io/npm:@uppy/image-editor@3.3.1/lib/index.js",preload: false
@@ -86,7 +86,7 @@ pin "@noble/hashes/sha3", to: "https://ga.jspm.io/npm:@noble/hashes@1.7.1/sha3.j
 #
 
 # Tom Select
-# Same as Uppy, Tom Select can't be downloaded, it has many relative imports in the code, and importmaps don't handle leaving us with a broken imports.
+# Same as Uppy, Tom Select can't be downloaded, it has many relative imports in the code, and importmaps don't handle them, leaving us with broken imports.
 pin "tom-select/dist/esm/tom-select.complete.js", to: "https://ga.jspm.io/npm:tom-select@2.4.1/dist/esm/tom-select.complete.js",preload: false
 pin "@orchidjs/sifter", to: "https://ga.jspm.io/npm:@orchidjs/sifter@1.1.0/dist/esm/sifter.js", preload: false
 pin "@orchidjs/unicode-variants", to: "https://ga.jspm.io/npm:@orchidjs/unicode-variants@1.1.2/dist/esm/index.js", preload: false
