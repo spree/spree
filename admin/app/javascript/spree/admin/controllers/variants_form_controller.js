@@ -191,6 +191,8 @@ export default class extends CheckboxSelectAll {
   }
 
   updateStockLocationId({ target: { value: newStockLocationId } }) {
+    newStockLocationId = String(newStockLocationId)
+
     this.currentStockLocationIdValue = newStockLocationId
     this.stockLocationsValue.forEach((stockLocationId) => {
       this.variantsContainerTarget
@@ -604,7 +606,7 @@ export default class extends CheckboxSelectAll {
   }
 
   prepareStockInputs(variantTarget, internalName, idx) {
-    this.stockLocationsValue.forEach((stockLocationId, stockLocationIndex) => {
+    this.stockLocationsValue.forEach((stockLocationId) => {
       const stockInput = variantTarget.querySelector(
         `input[data-slot="[stock_items_attributes][${stockLocationId}][count_on_hand]_input"]`
       )
@@ -624,9 +626,9 @@ export default class extends CheckboxSelectAll {
         this.updateStockItemForVariant(internalName, stockItem, stockLocationId)
       }
 
-      stockInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationIndex}][count_on_hand]`
-      stockLocationIdInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationIndex}][stock_location_id]`
-      stockIdInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationIndex}][id]`
+      stockInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationId}][count_on_hand]`
+      stockLocationIdInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationId}][stock_location_id]`
+      stockIdInput.name = `product[variants_attributes][${idx}][stock_items_attributes][${stockLocationId}][id]`
 
       stockInput.value = stockItem.count_on_hand
       if (String(stockLocationId) === String(this.currentStockLocationIdValue)) {
