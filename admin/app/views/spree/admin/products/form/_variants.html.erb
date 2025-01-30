@@ -13,7 +13,7 @@
         data-variants-form-current-currency-value="<%= current_currency %>"
         data-variants-form-currencies-value="<%= supported_currencies.map(&:to_s).to_json %>"
         data-variants-form-current-stock-location-id-value="<%= default_stock_location_for_product(@product).id %>"
-        data-variants-form-stock-locations-value="<%= available_stock_locations_for_product(@product).ids.to_json %>"
+        data-variants-form-stock-locations-value="<%= available_stock_locations_for_product(@product).ids.map(&:to_s).to_json %>"
         <% if @product_options.present? %> data-variants-form-options-value="<%= @product_options.to_json %>" <% end %>
         <% if @product_stock.present? %> data-variants-form-stock-value="<%= @product_stock.to_json %>" <% end %>
         <% if @product_prices.present? %> data-variants-form-prices-value="<%= @product_prices.to_json %>" <% end %>
