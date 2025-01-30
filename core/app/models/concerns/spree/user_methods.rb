@@ -20,24 +20,30 @@ module Spree
       auto_strip_attributes :email, :first_name, :last_name
       acts_as_taggable_on :tags
 
+      #
+      # Associations
+      #
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
-
       has_many :orders, foreign_key: :user_id, class_name: 'Spree::Order'
-      has_many :store_credits, foreign_key: :user_id, class_name: 'Spree::StoreCredit'
-
+      has_many :store_credits, class_name: 'Spree::StoreCredit', foreign_key: :user_id, dependent: :destroy
+      has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
+      has_many :wished_items, through: :wishlists, source: :wished_items
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
-
-      has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id
 
       #
       # Attachments
       #
       has_one_attached :avatar, service: Spree.public_storage_service_name
 
+      #
+      # Attributes
+      #
+      attr_accessor :confirm_email, :terms_of_service
+
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
-      self.whitelisted_ransackable_attributes = %w[id email]
+      self.whitelisted_ransackable_attributes = %w[id email first_name last_name accepts_email_marketing]
 
       def self.with_email(query)
         where("#{table_name}.email LIKE ?", "%#{query}%")
@@ -84,6 +90,10 @@ module Spree
       end
     end
 
+    def can_be_deleted?
+      orders.complete.none?
+    end
+
     private
 
     def check_completed_orders
@@ -91,6 +101,8 @@ module Spree
     end
 
     def nullify_approver_id_in_approved_orders
+      return unless Spree.admin_user_class != Spree.user_class
+
       Spree::Order.where(approver_id: id).update_all(approver_id: nil)
     end
 
