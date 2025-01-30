@@ -1,13 +1,7 @@
 module Spree
   module Pages
     class Post < Spree::Page
-      def page_builder_url
-        return unless page_builder_url_exists?(:post_path)
-
-        post = store.posts.published.last || store.posts.last
-        return if post.nil?
-        Spree::Core::Engine.routes.url_helpers.post_path(post, locale: I18n.locale)
-      end
+      page_builder_route_with :post_path, ->(post_page) { post_page.store.posts.published.last }
 
       def icon_name
         'article'

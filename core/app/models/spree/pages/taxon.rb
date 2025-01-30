@@ -1,17 +1,10 @@
 module Spree
   module Pages
     class Taxon < Spree::Page
+      page_builder_route_with :nested_taxons_path, ->(_) { Spree::Taxon.joins(:products).last || Spree::Taxon.first }
+
       def icon_name
         'bookmark'
-      end
-
-      def page_builder_url
-        return unless page_builder_url_exists?(:nested_taxons_path)
-
-        taxon = Spree::Taxon.first
-        return if taxon.nil?
-
-        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(taxon, locale: I18n.locale)
       end
 
       def default_sections

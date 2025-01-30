@@ -1,11 +1,7 @@
 module Spree
   module Pages
     class Homepage < Spree::Page
-      def page_builder_url
-        return unless page_builder_url_exists?(:root_path)
-
-        Spree::Core::Engine.routes.url_helpers.root_path(locale: I18n.locale)
-      end
+      page_builder_route_with :root_path
 
       def icon_name
         'home'

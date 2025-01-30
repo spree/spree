@@ -1,14 +1,10 @@
 module Spree
   module Pages
     class Login < Spree::Page
+      page_builder_route_with :login_path
+
       def icon_name
         'key'
-      end
-
-      def page_builder_url
-        return unless page_builder_url_exists?(:login_path)
-
-        Spree::Core::Engine.routes.url_helpers.login_path(locale: I18n.locale)
       end
     end
   end

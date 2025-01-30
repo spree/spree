@@ -1,12 +1,14 @@
 module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::PageBuilderUrl
     extend FriendlyId
 
     friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id deleted?]
     acts_as_paranoid
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
+    page_builder_route_with :post_path, ->(post) { post }
 
     if defined?(PgSearch)
       include PgSearch::Model
@@ -71,12 +73,6 @@ module Spree
 
     def published?
       published_at.present?
-    end
-
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:post_path)
-
-      Spree::Core::Engine.routes.url_helpers.post_path(self, locale: I18n.locale)
     end
 
     def publish(date = nil)

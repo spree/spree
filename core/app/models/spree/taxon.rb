@@ -18,6 +18,7 @@ module Spree
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
     include Spree::Metadata
+    include Spree::PageBuilderUrl
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -28,6 +29,7 @@ module Spree
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
     acts_as_nested_set dependent: :destroy
+    page_builder_route_with :nested_taxons_path, ->(taxon) { taxon }
 
     #
     # Associations
@@ -376,12 +378,6 @@ module Spree
     #  See #3390 for background.
     def child_index=(idx)
       move_to_child_with_index(parent, idx.to_i) unless new_record?
-    end
-
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:nested_taxons_path)
-
-      Spree::Core::Engine.routes.url_helpers.nested_taxons_path(self, locale: I18n.locale)
     end
 
     private

@@ -28,6 +28,7 @@ module Spree
     include Spree::MemoizedData
     include Spree::Metadata
     include Spree::Product::Webhooks
+    include Spree::PageBuilderUrl
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -79,6 +80,7 @@ module Spree
     acts_as_paranoid
     auto_strip_attributes :name
     acts_as_taggable_on :tags, :labels
+    page_builder_route_with :product_path, ->(product) { product }
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -642,12 +644,6 @@ module Spree
       end
 
       csv_lines
-    end
-
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:product_path)
-
-      Spree::Core::Engine.routes.url_helpers.product_path(self, locale: I18n.locale)
     end
 
     private

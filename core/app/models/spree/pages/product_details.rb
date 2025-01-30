@@ -1,14 +1,10 @@
 module Spree
   module Pages
     class ProductDetails < Spree::Page
-      def page_builder_url
-        return unless page_builder_url_exists?(:product_path)
-
-        product = store.products.active.first || store.products.first
-        return if product.nil?
-
-        Spree::Core::Engine.routes.url_helpers.product_path(product, locale: I18n.locale)
-      end
+      page_builder_route_with :product_path, ->(product_details) {
+        store = product_details.store
+        store.products.active.first || store.products.first
+      }
 
       def icon_name
         'tag'

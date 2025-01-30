@@ -3,12 +3,7 @@ module Spree
     class TaxonList < Spree::Page
       DISPLAY_NAME = Spree.t(:taxonomy_brands_name).freeze
 
-
-      def page_builder_url
-        return unless page_builder_url_exists?(:taxonomy_path)
-
-        Spree::Core::Engine.routes.url_helpers.taxonomy_path(taxonomy.id, locale: I18n.locale)
-      end
+      page_builder_route_with :taxonomy_path
 
       def icon_name
         'sort-a-z'

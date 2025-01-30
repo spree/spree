@@ -1,5 +1,6 @@
 module Spree
   class Page < Spree.base_class
+    include Spree::PageBuilderUrl
     include Spree::Previewable
 
     #
@@ -175,10 +176,6 @@ module Spree
 
     def should_generate_new_friendly_id?
       name_changed? && custom?
-    end
-
-    def page_builder_url_exists?(path)
-      Spree::Core::Engine.routes.url_helpers.respond_to?(path)
     end
   end
 end

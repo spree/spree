@@ -3,11 +3,7 @@ module Spree
     class PostList < Spree::Page
       DISPLAY_NAME = Spree.t(:blog).freeze
 
-      def page_builder_url
-        return unless page_builder_url_exists?(:posts_path)
-
-        Spree::Core::Engine.routes.url_helpers.posts_path(locale: I18n.locale)
-      end
+      page_builder_route_with :posts_path
 
       def icon_name
         'news'

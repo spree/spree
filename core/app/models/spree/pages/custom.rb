@@ -1,14 +1,10 @@
 module Spree
   module Pages
     class Custom < Spree::Page
+      page_builder_route_with :page_path, ->(page) { page }
+
       def customizable?
         true
-      end
-
-      def page_builder_url
-        return unless page_builder_url_exists?(:page_path)
-
-        Spree::Core::Engine.routes.url_helpers.page_path(self, locale: I18n.locale)
       end
 
       def default_sections
