@@ -381,7 +381,7 @@ module Spree
     def page_builder_url
       return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:nested_taxons_path)
 
-      Spree::Core::Engine.routes.url_helpers.nested_taxons_path(self, locale: I18n.locale)
+      Spree::Core::Engine.routes.url_helpers.nested_taxons_path(self)
     end
 
     private

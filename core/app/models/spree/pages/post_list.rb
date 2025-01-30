@@ -6,7 +6,7 @@ module Spree
       def page_builder_url
         return unless page_builder_url_exists?(:posts_path)
 
-        Spree::Core::Engine.routes.url_helpers.posts_path(locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.posts_path
       end
 
       def icon_name
