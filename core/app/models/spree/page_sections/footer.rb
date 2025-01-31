@@ -3,6 +3,7 @@ module Spree
     class Footer < Spree::PageSection
       alias logo asset
 
+      BACKGROUND_COLOR_DEFAULT = '#F5F5F4'
       TOP_PADDING_DEFAULT = 32
       BOTTOM_PADDING_DEFAULT = 32
       TOP_BORDER_WIDTH_DEFAULT = 0
