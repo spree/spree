@@ -3,7 +3,6 @@ module Spree
     class MainPasswordFooter < Spree::PageSection
       alias logo asset
 
-      BACKGROUND_COLOR_DEFAULT = '#F5F5F4'
       TOP_PADDING_DEFAULT = 32
       BOTTOM_PADDING_DEFAULT = 32
 

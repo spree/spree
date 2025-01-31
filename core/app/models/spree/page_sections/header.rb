@@ -3,8 +3,6 @@ module Spree
     class Header < Spree::PageSection
       alias logo asset
 
-      TEXT_COLOR_DEFAULT = '#000000'
-      BACKGROUND_COLOR_DEFAULT = '#FFFFFF'
       TOP_PADDING_DEFAULT = 15
       BOTTOM_PADDING_DEFAULT = 15
       TOP_BORDER_WIDTH_DEFAULT = 0
