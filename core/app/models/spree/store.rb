@@ -260,11 +260,18 @@ module Spree
 
     def formatted_url
       @formatted_url ||= if Rails.env.development? || Rails.env.test?
-        URI::HTTP.build(
-          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
-          host: url.to_s.sub(%r{^https?://}, ''),
-          port: Rails.application.routes.default_url_options[:port]
-        ).to_s
+        scheme = Rails.application.routes.default_url_options[:protocol] || 'http'
+        if scheme.to_sym == :https
+          URI::HTTPS.build(
+            host: url.to_s.sub(%r{^https?://}, ''),
+            port: Rails.application.routes.default_url_options[:port]
+          ).to_s
+        else
+          URI::HTTP.build(
+            host: url.to_s.sub(%r{^https?://}, ''),
+            port: Rails.application.routes.default_url_options[:port]
+          ).to_s
+        end
       else
         URI::HTTPS.build(
           host: url.to_s.sub(%r{^https?://}, '')
