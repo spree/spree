@@ -16,7 +16,7 @@ module Spree
       before_action :load_form_data, only: [:show, :new, :create, :edit, :update]
 
       def select_options
-        render json: taxons_options_json_array
+        render json: taxons_options_json_array(with_automatic: params[:with_automatic].to_b)
       end
 
       def reposition
