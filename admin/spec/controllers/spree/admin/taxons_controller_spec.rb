@@ -46,9 +46,9 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
   end
 
   describe 'GET #select_options' do
-  before do
-    Spree::Taxon.destroy_all
-  end
+    before do
+      Spree::Taxon.destroy_all
+    end
 
     context 'with automatic taxons param' do
       let!(:automatic_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Automatic Taxon', automatic: true) }
