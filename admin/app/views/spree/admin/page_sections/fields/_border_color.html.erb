@@ -1,5 +1,7 @@
 <%= render 'spree/admin/page_builder/color_picker',
-      f: f, field: :preferred_border_color, value: @page_section.preferred_border_color.presence || @theme_preview.preferred_border_color,
+      f: f,
+      field: :preferred_border_color,
+      value: f.object.preferred_border_color.presence,
       label: Spree.t('admin.page_builder.border_color'),
       action: 'change->auto-submit#submit' %>
 

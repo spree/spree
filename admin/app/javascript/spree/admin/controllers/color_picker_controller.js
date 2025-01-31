@@ -2,8 +2,8 @@ import { Controller } from "@hotwired/stimulus"
 import Pickr from '@simonwep/pickr'
 
 export default class extends Controller {
-  static targets = ["picker", "input", "value"]
-  static values = { clear: Boolean }
+  static targets = ["picker", "input", "display", "value"]
+  static values = { clear: Boolean, defaultColor: String }
 
   initialize() {
     this.initPicker();
@@ -13,7 +13,7 @@ export default class extends Controller {
     this.picker = Pickr.create({
       el: this.pickerTarget,
       theme: 'classic',
-      default: this.inputTarget.value,
+      default: this.inputTarget.value.length > 0 ? this.inputTargetValue : this.defaultColorValue,
       useAsButton: true,
 
       components: {

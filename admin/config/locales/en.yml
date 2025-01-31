@@ -372,3 +372,4 @@ en:
         text_color: Text color
         top_padding: Top padding
         button_alignment: Button alignment
+        not_set: Not set
