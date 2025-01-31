@@ -8,7 +8,7 @@ module Spree
       def page_builder_url
         return unless page_builder_url_exists?(:products_path)
 
-        Spree::Core::Engine.routes.url_helpers.products_path(locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.products_path
       end
 
       def preview_url(theme_preview = nil, page_preview = nil)

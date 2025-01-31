@@ -7,7 +7,7 @@ module Spree
         product = store.products.active.first || store.products.first
         return if product.nil?
 
-        Spree::Core::Engine.routes.url_helpers.product_path(product, locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.product_path(product)
       end
 
       def icon_name

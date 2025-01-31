@@ -2,7 +2,7 @@ module Spree
   module Pages
     class Password < Spree::Page
       def page_builder_url
-        Spree::Core::Engine.routes.url_helpers.password_path(locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.password_path
       end
 
       def preview_url(theme_preview = nil, page_preview = nil)

@@ -76,7 +76,7 @@ module Spree
     def page_builder_url
       return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:post_path)
 
-      Spree::Core::Engine.routes.url_helpers.post_path(self, locale: I18n.locale)
+      Spree::Core::Engine.routes.url_helpers.post_path(self)
     end
 
     def publish(date = nil)

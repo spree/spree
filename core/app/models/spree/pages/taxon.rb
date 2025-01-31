@@ -11,7 +11,7 @@ module Spree
         taxon = Spree::Taxon.first
         return if taxon.nil?
 
-        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(taxon, locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.nested_taxons_path(taxon)
       end
 
       def default_sections

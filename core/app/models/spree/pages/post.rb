@@ -6,7 +6,7 @@ module Spree
 
         post = store.posts.published.last || store.posts.last
         return if post.nil?
-        Spree::Core::Engine.routes.url_helpers.post_path(post, locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.post_path(post)
       end
 
       def icon_name

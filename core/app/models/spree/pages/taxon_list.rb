@@ -7,7 +7,7 @@ module Spree
       def page_builder_url
         return unless page_builder_url_exists?(:taxonomy_path)
 
-        Spree::Core::Engine.routes.url_helpers.taxonomy_path(taxonomy.id, locale: I18n.locale)
+        Spree::Core::Engine.routes.url_helpers.taxonomy_path(taxonomy.id)
       end
 
       def icon_name
