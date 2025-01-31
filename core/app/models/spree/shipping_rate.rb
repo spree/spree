@@ -7,7 +7,7 @@ module Spree
 
     money_methods :base_price, :final_price, :tax_amount
 
-    delegate :order, :currency, :free?, to: :shipment
+    delegate :order, :currency, :free?, :with_free_shipping_promotion?, to: :shipment
     delegate :name,             to: :shipping_method
     delegate :code,             to: :shipping_method, prefix: true
 
@@ -34,7 +34,7 @@ module Spree
     # returns base price - any available discounts for this Shipment
     # useful when you want to present a list of available shipping rates
     def final_price
-      if free? || cost < -discount_amount
+      if with_free_shipping_promotion? || cost < -discount_amount
         BigDecimal(0)
       else
         cost + discount_amount
