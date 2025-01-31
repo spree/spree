@@ -233,6 +233,23 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#with_free_shipping_promotion?' do
+    let!(:order) { create(:order) }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
+
+    it 'returns true when Free Shipping promotion is applied' do
+      order.coupon_code = free_shipping_promotion.code
+      Spree::PromotionHandler::Coupon.new(order).apply
+      expect(order.promotions).to include(free_shipping_promotion)
+      expect(shipment.with_free_shipping_promotion?).to eq(true)
+    end
+
+    it 'returns false otherwise' do
+      expect(shipment.with_free_shipping_promotion?).to eq(false)
+    end
+  end
+
   context '#store' do
     let(:store) { Spree::Store.default }
     let!(:order) { create(:order, store: store) }

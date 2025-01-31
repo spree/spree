@@ -172,5 +172,14 @@ describe Spree::ShippingRate, type: :model do
       allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -5.0)
       expect(shipping_rate.final_price).to eq(5.0)
     end
+
+    it 'does not return 0 when shipment is free because of selected shipping rate' do
+      shipment.shipping_rates.update_all(selected: false)
+      create(:shipping_rate, shipment: shipment, cost: 0, selected: true)
+      shipment.reload.update_amounts
+
+      expect(shipment.free?).to eq(true)
+      expect(shipping_rate.final_price).to eq(10.0)
+    end
   end
 end

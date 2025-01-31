@@ -195,6 +195,10 @@ module Spree
     def free?
       return true if final_price == BigDecimal(0)
 
+      return with_free_shipping_promotion?
+    end
+
+    def with_free_shipping_promotion?
       adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
     end
 
