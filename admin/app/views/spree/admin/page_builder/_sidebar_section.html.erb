@@ -26,10 +26,14 @@
     <% if section.blocks_available?  %>
       <div class="d-flex flex-column ml-1 mb-2">
         <%= turbo_frame_tag [:blocks, section.id].join('_'), class: 'list-group-flush collapse show' do %>
+          <% if section.can_sort_blocks? %>
           <div data-controller="sortable"
             data-sortable-handle-value=".handle-block"
             data-sortable-resource-name-value="page_block"
             data-sortable-response-kind-value="turbo-stream">
+          <% else %>
+          <div>
+          <% end %>
             <%= render partial: 'spree/admin/page_builder/sidebar_block', collection: section.blocks.includes(:rich_text_text), as: :block %>
           </div>
         <% end %>
