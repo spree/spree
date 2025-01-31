@@ -44,4 +44,33 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
       expect { delete :destroy, params: { taxonomy_id: taxonomy.id, id: taxon.id }, format: :turbo_stream }.to change(Spree::Taxon, :count).by(-1)
     end
   end
+
+  describe 'GET #select_options' do
+  before do
+    Spree::Taxon.destroy_all
+  end
+
+    context 'with automatic taxons param' do
+      let!(:automatic_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Automatic Taxon', automatic: true) }
+      let!(:manual_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Manual Taxon', automatic: false) }
+
+      it 'returns all taxons' do
+        get :select_options, params: { with_automatic: true }
+        expect(JSON.parse(response.body)).to contain_exactly(
+          { 'id' => automatic_taxon.id, 'name' => automatic_taxon.pretty_name },
+          { 'id' => manual_taxon.id, 'name' => manual_taxon.pretty_name }
+        )
+      end
+    end
+
+    context 'without automatic taxons param' do
+      let!(:automatic_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Automatic Taxon', automatic: true) }
+      let!(:manual_taxon) { create(:taxon, taxonomy: taxonomy, name: 'Manual Taxon', automatic: false) }
+
+      it 'returns only manual taxons' do
+        get :select_options
+        expect(JSON.parse(response.body)).to eq([{ 'id' => manual_taxon.id, 'name' => manual_taxon.pretty_name }])
+      end
+    end
+  end
 end
