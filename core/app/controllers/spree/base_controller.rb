@@ -9,6 +9,7 @@ class Spree::BaseController < ApplicationController
   include Spree::Core::ControllerHelpers::StrongParameters
   include Spree::Core::ControllerHelpers::Locale
   include Spree::Core::ControllerHelpers::Currency
+  include Spree::Core::ControllerHelpers::GemChecking
 
   respond_to :html
 end
