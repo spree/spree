@@ -184,7 +184,9 @@ module Spree
         properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
           next if property_filter_param.blank? || product_properties_values.empty?
 
-          values = product_properties_values.split(',').reject(&:empty?).uniq.map(&:parameterize)
+          values = product_properties_values
+          values = values.split(',') unless values.kind_of?(Array)
+          values = values.flatten.reject(&:empty?).uniq.map(&:parameterize)
 
           next if values.empty?
 
