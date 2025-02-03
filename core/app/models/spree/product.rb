@@ -622,7 +622,9 @@ module Spree
       Spree::Products::AutoMatchTaxonsJob.perform_later(id)
     end
 
-    def to_csv(store = nil)
+    def to_csv(store = nil, options = {})
+      taxons_count = options[:taxons_count] || 3
+
       store ||= stores.default || stores.first
       properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
         [
@@ -630,7 +632,9 @@ module Spree
           product_properties.find { |pp| pp.property_id == property.id }&.value
         ]
       end
-      taxons_for_csv ||= taxons.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(taxons_count).pluck(:pretty_name)
+      taxons_for_csv.fill(nil, taxons_for_csv.size...taxons_count)
+
       csv_lines = []
 
       if has_variants?

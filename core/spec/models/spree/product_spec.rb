@@ -1133,10 +1133,16 @@ describe Spree::Product, type: :model do
     let(:property) { create(:property, name: 'my-property', position: 1) }
     let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }
     let(:taxon) { create(:taxon, name: 'My Taxon') }
+    let(:second_taxon) { create(:taxon, name: 'Second Taxon') }
+    let(:third_taxon) { create(:taxon, name: 'Third Taxon') }
+    let(:fourth_taxon) { create(:taxon, name: 'Fourth Taxon') }
 
     before do
       product_property
       product.taxons << taxon
+      product.taxons << second_taxon
+      product.taxons << third_taxon
+      product.taxons << fourth_taxon
     end
 
     context 'when product has no variants' do
@@ -1150,6 +1156,9 @@ describe Spree::Product, type: :model do
         expect(csv_line).to include('my-property')
         expect(csv_line).to include('MyValue')
         expect(csv_line).to include(taxon.pretty_name)
+        expect(csv_line).to include(second_taxon.pretty_name)
+        expect(csv_line).to include(third_taxon.pretty_name)
+        expect(csv_line).not_to include(fourth_taxon.pretty_name)
       end
     end
 
@@ -1178,6 +1187,19 @@ describe Spree::Product, type: :model do
         allow(product.stores).to receive(:default).and_return(nil)
         allow(product.stores).to receive(:first).and_return(store)
         expect(product.to_csv).to be_present
+      end
+    end
+
+    context "when taxons count is provided in the options" do
+      it "returns only the specified number of taxons" do
+        csv_lines = product.to_csv(store, {taxons_count: 4})
+        expect(csv_lines.size).to eq(1)
+
+        csv_line = csv_lines.first
+        expect(csv_line).to include(taxon.pretty_name)
+        expect(csv_line).to include(second_taxon.pretty_name)
+        expect(csv_line).to include(third_taxon.pretty_name)
+        expect(csv_line).to include(fourth_taxon.pretty_name)
       end
     end
   end

@@ -24,7 +24,27 @@ module Spree
       end
 
       def csv_headers
-        @csv_headers ||= Spree::CSV::ProductVariantPresenter::CSV_HEADERS + properties_headers
+        @csv_headers ||= Spree::CSV::ProductVariantPresenter::CSV_HEADERS + taxons_headers + properties_headers
+      end
+
+      def csv_options
+        {
+          taxons_count: max_taxons_count,
+        }
+      end
+
+      def max_taxons_count
+        @max_taxons_count ||= Spree::Taxon.manual
+                          .joins(:classifications)
+                          .where(Spree::Classification.table_name => { product_id: scope.ids })
+                          .group("#{Spree::Classification.table_name}.product_id")
+                          .pluck('count(spree_taxons.id)')
+                          .push(3) # Always show at least 3 taxons
+                          .max
+      end
+
+      def taxons_headers
+        @taxons_headers ||= max_taxons_count.times.map { |n| "category#{n + 1}" }
       end
 
       def properties_headers

@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ExportsController < ResourceController
+      include ActiveStorage::SetCurrent # Needed for ActiveStorage to work on development env
+
       new_action.before :assign_params
       create.before :set_user
 
