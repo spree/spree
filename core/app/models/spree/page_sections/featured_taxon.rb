@@ -2,7 +2,7 @@ module Spree
   module PageSections
     class FeaturedTaxon < Spree::PageSection
       scope :by_taxon_id, lambda { |taxon_ids|
-        regexp = [*taxon_ids].map { |taxon_id| "taxon_id: #{taxon_id}" }.join('|')
+        regexp = [*taxon_ids].map { |taxon_id| "taxon_id: '#{taxon_id}'" }.join('|')
         where("#{Spree::PageSections::FeaturedTaxon.table_name}.preferences ~ ?", regexp)
       }
 
