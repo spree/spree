@@ -1,0 +1,68 @@
+<div class="card-lg p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="text-muted">
+        <tr>
+          <th><%= Spree.t(:product) %></th>
+          <th><%= Spree.t(:vendor) %></th>
+          <th><%= Spree.t(:brand) %></th>
+          <th><%= Spree.t(:category_lvl0) %></th>
+          <th><%= Spree.t(:category_lvl1) %></th>
+          <th><%= Spree.t(:category_lvl2) %></th>
+          <th><%= Spree.t(:price) %></th>
+          <th><%= Spree.t(:weeks_online) %></th>
+          <th><%= Spree.t(:gross_sales) %></th>
+          <th><%= Spree.t(:discount) %></th>
+          <th><%= Spree.t(:tax) %></th>
+          <th><%= Spree.t(:quantity) %></th>
+          <th><%= Spree.t(:total_sales) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @report.line_items.each do |line_item| %>
+          <tr>
+            <td>
+              <%= link_to line_item.name, spree.edit_admin_product_path(line_item.record) %>
+            </td>
+            <td>
+              <%= line_item.vendor %>
+            </td>
+            <td>
+              <%= line_item.brand %>
+            </td>
+            <td>
+              <%= line_item.category_lvl0 %>
+            </td>
+            <td>
+              <%= line_item.category_lvl1 %>
+            </td>
+            <td>
+              <%= line_item.category_lvl2 %>
+            </td>
+            <td>
+              <%= line_item.price %>
+            </td>
+            <td>
+              <%= line_item.weeks_online %>
+            </td>
+            <td>
+              <%= line_item.discount %>
+            </td>
+            <td>
+              <%= line_item.tax %>
+            </td>
+            <td>
+              <%= line_item.quantity %>
+            </td>
+            <td>
+              <%= line_item.total_sales %>
+            </td>
+            <td>
+              <%= line_item.total %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

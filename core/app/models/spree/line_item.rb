@@ -83,7 +83,7 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
                   :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
-                  :pre_tax_amount
+                  :pre_tax_amount, :shipping_cost
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -156,7 +156,6 @@ module Spree
         shipment.cost * (line_item_units.to_d / total_units)
       end
     end
-
 
     def options=(options = {})
       return unless options.present?
