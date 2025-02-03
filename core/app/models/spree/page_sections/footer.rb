@@ -35,9 +35,6 @@ module Spree
         shop_default_links = [
           Spree::PageLink.new(
             linkable: pages.find_by(type: 'Spree::Pages::ShopAll')
-          ),
-          Spree::PageLink.new(
-            linkable: pages.find_by(type: 'Spree::Pages::TaxonList')
           )
         ]
 

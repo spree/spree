@@ -36,7 +36,6 @@ module Spree
                         where(type: [
                                 'Spree::Pages::Homepage',
                                 'Spree::Pages::ShopAll',
-                                'Spree::Pages::TaxonList',
                                 'Spree::Pages::PostList',
                                 'Spree::Pages::Custom',
                                 'Spree::Pages::Account',
