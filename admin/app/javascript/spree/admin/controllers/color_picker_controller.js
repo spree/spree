@@ -13,7 +13,7 @@ export default class extends Controller {
     this.picker = Pickr.create({
       el: this.pickerTarget,
       theme: 'classic',
-      default: this.inputTarget.value.length > 0 ? this.inputTargetValue : this.defaultColorValue,
+      default: this.inputTarget.value.length > 0 ? this.inputTarget.value : this.defaultColorValue,
       useAsButton: true,
 
       components: {
