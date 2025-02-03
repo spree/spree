@@ -169,6 +169,7 @@ module Spree
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
+    after_create :ensure_default_post_categories_are_created
     after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     after_create :create_default_theme
@@ -460,6 +461,12 @@ module Spree
 
         [on_sale_taxon, new_arrivals_taxon]
       end
+    end
+
+    def ensure_default_post_categories_are_created
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.resources'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.articles'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.news'))
     end
 
     # code is slug, so we don't want to generate new slug when code changes

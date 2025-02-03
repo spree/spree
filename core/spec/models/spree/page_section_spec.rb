@@ -82,7 +82,7 @@ RSpec.describe Spree::PageSection, type: :model do
       let!(:section) { Spree::PageSections::Footer.create!(pageable: theme) }
 
       let(:page_blocks_count) { 4 }
-      let(:page_links_count) { 8 }
+      let(:page_links_count) { 7 }
 
       it_behaves_like 'deep clone'
     end
