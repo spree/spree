@@ -1,5 +1,6 @@
 <% content_for :page_actions_dropdown do %>
   <%= link_to_edit_translations(@product) %>
+  <%= link_to_edit_metadata(@product)%>
   <%= external_page_preview_link(@product) %>
 
   <% if can?(:clone, @product) %>

@@ -3,6 +3,10 @@
   <%= @option_type.name %>
 <% end %>
 
+<% content_for :page_actions_dropdown do %>
+  <%= link_to_edit_metadata(@option_type)%>
+<% end %>
+
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @option_type } %>
 
 <%= form_for [:admin, @option_type], data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' } do |f| %>

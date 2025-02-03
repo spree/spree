@@ -1,0 +1,12 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button @back_path %>
+  <span class="mr-3"><%= Spree.t("admin.metadatas_for", resource_name: @resource_name) %></span>
+<% end %>
+<%= form_with url: spree.admin_metadata_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
+  <%= render "spree/admin/metadatas/metadata_table", type: :private %>
+  <%= render "spree/admin/metadatas/metadata_table", type: :public %>
+  <div class="form-actions">
+    <%= turbo_save_button_tag Spree.t("actions.update") %>
+    <%= link_to Spree.t("actions.cancel"), @back_path, class: "btn btn-light ml-auto" %>
+  </div>
+<% end %>
