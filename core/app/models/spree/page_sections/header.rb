@@ -36,8 +36,7 @@ module Spree
 
       def default_links
         links = [
-          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::ShopAll')),
-          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::TaxonList'))
+          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::ShopAll'))
         ]
 
         collections_taxonomy = store.taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
