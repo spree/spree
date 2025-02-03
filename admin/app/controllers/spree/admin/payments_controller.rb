@@ -87,6 +87,11 @@ module Spree
 
       private
 
+      def build_resource
+        # This method is overridden because we don't want order to have invalid payment since we are doing `order.next` in the `new` action
+        model_class.new(order: parent)
+      end
+
       def model_class
         Spree::Payment
       end
