@@ -34,13 +34,13 @@ module Spree
       end
 
       def max_taxons_count
-        @max_taxons_count ||= Spree::Taxon.manual
-                          .joins(:classifications)
-                          .where(Spree::Classification.table_name => { product_id: scope.ids })
-                          .group("#{Spree::Classification.table_name}.product_id")
-                          .pluck('count(spree_taxons.id)')
-                          .push(3) # Always show at least 3 taxons
-                          .max
+        @max_taxons_count ||= store.taxons.except(:order).manual
+                                .joins(:classifications)
+                                .where(Spree::Classification.table_name => { product_id: scope.ids })
+                                .group("#{Spree::Classification.table_name}.product_id")
+                                .pluck('count(spree_taxons.id)')
+                                .push(3) # Always show at least 3 taxons
+                                .max
       end
 
       def taxons_headers
