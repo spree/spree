@@ -74,11 +74,11 @@ module Spree
         records_to_export.includes(scope_includes).find_in_batches do |batch|
           batch.each do |record|
             if multi_line_csv?
-              record.to_csv(store, csv_options).each do |line|
+              record.to_csv(store).each do |line|
                 csv << line
               end
             else
-              csv << record.to_csv(store, csv_options)
+              csv << record.to_csv(store)
             end
           end
         end
@@ -91,10 +91,6 @@ module Spree
 
     def csv_headers
       raise NotImplementedError, 'csv_headers must be implemented'
-    end
-
-    def csv_options
-      {}
     end
 
     def build_csv_line(_record)

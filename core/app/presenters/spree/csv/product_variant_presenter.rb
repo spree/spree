@@ -37,7 +37,10 @@ module Spree
         'option2_name',
         'option2_value',
         'option3_name',
-        'option3_value'
+        'option3_value',
+        'category1',
+        'category2',
+        'category3',
       ].freeze
 
       def initialize(product, variant, index = 0, properties = [], taxons = [], store = nil)
