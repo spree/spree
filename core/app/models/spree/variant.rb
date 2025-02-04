@@ -9,6 +9,9 @@ module Spree
 
     MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
 
+    DIMENSION_UNITS = %w[mm cm in ft]
+    WEIGHT_UNITS = %w[g kg lb oz]
+
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
@@ -63,6 +66,9 @@ module Spree
     end
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
+
+    validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
+    validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
