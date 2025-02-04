@@ -21,4 +21,13 @@ FactoryBot.define do
     date_from { 1.month.ago }
     date_to { Time.current }
   end
+
+  factory :products_performance_report, class: 'Spree::Reports::ProductsPerformance' do
+    store { create(:store) }
+    user { create(:admin_user) }
+    type { 'Spree::Reports::ProductsPerformance' }
+    currency { 'USD' }
+    date_from { 1.month.ago }
+    date_to { Time.current }
+  end
 end

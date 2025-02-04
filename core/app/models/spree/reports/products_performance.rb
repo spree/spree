@@ -1,20 +1,3 @@
-# == Schema Information
-#
-# Table name: spree_reports
-#
-#  id            :bigint           not null, primary key
-#  currency      :string
-#  date_from     :datetime
-#  date_to       :datetime
-#  search_params :jsonb
-#  type          :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  project_id    :bigint           not null
-#  store_id      :bigint           not null
-#  user_id       :bigint
-#  vendor_id     :bigint
-#
 module Spree
   module Reports
     class ProductsPerformance < Spree::Report
@@ -43,7 +26,7 @@ module Spree
         line_items_sql = line_items_scope.to_sql
 
         product_scope = store.products
-        product_scope = product_scope.where(vendor_id: vendor.id) if vendor.present?
+        product_scope = product_scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
 
         product_scope.includes(:taxons, :tax_category, variants: :prices, master: :prices).
                               joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{Spree::Product.table_name}.id = line_items.product_id").

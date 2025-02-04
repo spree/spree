@@ -5,8 +5,8 @@ module Spree
       attribute :order, :string
       attribute :product, :string
       attribute :pre_tax_amount, :decimal
-      attribute :discount, :decimal
-      attribute :shipping, :decimal
+      attribute :promo_total, :decimal
+      attribute :shipment_total, :decimal
       attribute :tax, :decimal
       attribute :total, :decimal
 
@@ -26,7 +26,7 @@ module Spree
         Spree::Money.new(record.final_amount + record.shipping_cost, currency: record.currency)
       end
 
-      def discount
+      def promo_total
         record.display_promo_total
       end
 
@@ -34,11 +34,11 @@ module Spree
         record.display_pre_tax_amount
       end
 
-      def shipping
+      def shipment_total
         record.display_shipping_cost
       end
 
-      def tax
+      def tax_total
         record.display_tax_total
       end
     end
