@@ -4,15 +4,9 @@ module Spree
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_data
+      new.before :proceed_order_state
 
       def new
-        # Move order to payment state in order to capture tax generated on shipments
-        if @order.can_go_to_state?('payment')
-          ActiveRecord::Base.connected_to(role: :writing) do
-            @order.next
-          end
-        end
-
         payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
 
         @payment = @order.payments.build(
@@ -90,6 +84,13 @@ module Spree
       end
 
       private
+
+      def proceed_order_state
+        # Move order to payment state in order to capture tax generated on shipments
+        if @order.can_go_to_state?('payment')
+          @order.next
+        end
+      end
 
       def build_resource
         # This method is overridden because we don't want order to have invalid payment since we are doing `order.next` in the `new` action
