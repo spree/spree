@@ -4,7 +4,7 @@ module Spree
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_data
-      new.before :proceed_order_state
+      before_action :proceed_order_state, only: :new
 
       def new
         payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
