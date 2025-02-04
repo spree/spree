@@ -7,7 +7,7 @@ module Spree
       attribute :pre_tax_amount, :decimal
       attribute :promo_total, :decimal
       attribute :shipment_total, :decimal
-      attribute :tax, :decimal
+      attribute :tax_total, :decimal
       attribute :total, :decimal
 
       def date
