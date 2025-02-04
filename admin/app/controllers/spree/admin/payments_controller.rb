@@ -7,7 +7,11 @@ module Spree
 
       def new
         # Move order to payment state in order to capture tax generated on shipments
-        @order.next if @order.can_go_to_state?('payment')
+        if @order.can_go_to_state?('payment')
+          ActiveRecord::Base.connected_to(role: :writing) do
+            @order.next
+          end
+        end
 
         payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
 
