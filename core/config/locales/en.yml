@@ -797,6 +797,11 @@ en:
     delete_from_taxon: Delete From Taxon
     digital:
       digital_delivery: Digital Delivery
+    dimension_units:
+      millimeter: Millimeter (mm)
+      centimeter: Centimeter (cm)
+      inch: Inch (in)
+      foot: Foot (ft)
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     delivery_information: Delivery Information
@@ -1856,6 +1861,11 @@ en:
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
+    unit_system: Unit system
+    unit_systems:
+      metric_system: Metric system
+      imperial_system: Imperial system
+      metric: metric
     unlock: Unlock
     unrecognized_card_type: Unrecognized card type
     unshippable_items: Unshippable Items
@@ -1894,6 +1904,11 @@ en:
     we_are_busy_updating_page: "We're busy updating this page."
     please_check_back_soon: Please check back soon.
     weight: Weight
+    weight_units:
+      kilogram: Kilogram (kg)
+      gram: Gram (g)
+      pound: Pound (lb)
+      ounce: Ounce (oz)
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?
     width: Width

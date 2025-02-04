@@ -5,6 +5,7 @@ module Spree
 
       def weight_units(store = nil)
         store ||= current_store
+
         if store.metric_unit_system?
           [
             [Spree.t('weight_units.kilogram'), 'kg'],
@@ -18,18 +19,18 @@ module Spree
         end
       end
 
-      def dimensions_units(store = nil)
+      def dimension_units(store = nil)
         store ||= current_store
 
         if store.metric_unit_system?
           [
-            [Spree.t('dimensions_units.centimeter'), 'cm'],
-            [Spree.t('dimensions_units.millimeter'), 'mm']
+            [Spree.t('dimension_units.centimeter'), 'cm'],
+            [Spree.t('dimension_units.millimeter'), 'mm']
           ]
         else
           [
-            [Spree.t('dimensions_units.inch'), 'in'],
-            [Spree.t('dimensions_units.foot'), 'ft']
+            [Spree.t('dimension_units.inch'), 'in'],
+            [Spree.t('dimension_units.foot'), 'ft']
           ]
         end
       end
