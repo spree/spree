@@ -55,6 +55,7 @@ import ColorPickerController from 'spree/admin/controllers/color_picker_controll
 import FiltersController from 'spree/admin/controllers/filters_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
+import MetadataFormController from 'spree/admin/controllers/metadata_form_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
 import OrderBillingAddressController from 'spree/admin/controllers/order_billing_address_controller'
 import PageBuilderController from 'spree/admin/controllers/page_builder_controller'
@@ -101,6 +102,7 @@ application.register('enable-button', EnableButtonController)
 application.register('filters', FiltersController)
 application.register('font-picker', FontPickerController)
 application.register('media-form', MediaFormController)
+application.register('metadata-form', MetadataFormController)
 application.register('multi-input', MultiInputController)
 application.register('nested-form', RailsNestedForm)
 application.register('notification', Notification)

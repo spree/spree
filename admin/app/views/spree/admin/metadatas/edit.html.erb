@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= page_header_back_button @back_path %>
+  <%= page_header_back_button :back %>
   <span class="mr-3"><%= Spree.t("admin.metadatas_for", resource_name: @resource_name) %></span>
 <% end %>
 <%= form_with url: spree.admin_metadata_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>

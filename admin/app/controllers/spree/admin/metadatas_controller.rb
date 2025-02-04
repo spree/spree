@@ -35,6 +35,12 @@ module Spree
       end
 
       def resource_class
+        valid_resource_types = Spree.base_class.descendants.map(&:to_s)
+
+        unless valid_resource_types.include?(params[:resource_type])
+          raise ActiveRecord::RecordNotFound
+        end
+
         @resource_class ||= params[:resource_type].constantize
       end
 
@@ -47,32 +53,11 @@ module Spree
       end
 
       def load_data
-        case @resource
-        when Spree::Product
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_product_path(@resource)
-        when Spree::User
-          @resource_name = @resource.name
-          @back_path = spree.admin_user_path(@resource)
-        when Spree::Vendor
-          @resource_name = @resource.name
-          @back_path = spree.admin_vendor_path(@resource)
-        when Spree::OptionType
-          @resource_name = @resource.presentation
-          @back_path = spree.edit_admin_option_type_path(@resource)
-        when Spree::Order
-          @resource_name = @resource.number
-          @back_path = spree.edit_admin_order_path(@resource)
-        when Spree::Taxon
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_taxonomy_taxon_path(@resource.taxonomy, @resource.id)
-        when Spree::Taxonomy
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_taxonomy_path(@resource)
-        when Spree::Store
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_store_path(@resource, section: 'general-settings')
-        end
+        @resource_name =
+          @resource.try(:presentation).presence ||
+          @resource.try(:number).presence ||
+          @resource.try(:name).presence ||
+          @resource.class.model_name.human
       end
     end
   end
