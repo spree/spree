@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::CSV::ProductVariantPresenter do
   let(:store) { Spree::Store.default }
-  let(:product) { create(:product, stores: [store]) }
+  let(:product) { create(:product, stores: [store], width: 10, height: 15, depth: 20, dimensions_unit: 'in', weight_unit: 'lb') }
   let(:variant) { product.master }
   let(:properties) { [] }
   let(:taxons) { [] }
@@ -32,16 +32,18 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[17]).to eq variant.width
       expect(subject[18]).to eq variant.height
       expect(subject[19]).to eq variant.depth
-      expect(subject[20]).to eq variant.weight
-      expect(subject[21]).to eq variant.available_on&.strftime('%Y-%m-%d %H:%M:%S')
-      expect(subject[22]).to eq variant.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S')
-      expect(subject[23]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
-      expect(subject[24]).to eq variant.backorderable?
-      expect(subject[25]).to eq variant.tax_category&.name
-      expect(subject[26]).to eq variant.digital?
-      expect(subject[27]).to eq variant.images[0]&.attachment&.url
-      expect(subject[28]).to eq variant.images[1]&.attachment&.url
-      expect(subject[29]).to eq variant.images[2]&.attachment&.url
+      expect(subject[20]).to eq 'in'
+      expect(subject[21]).to eq variant.weight
+      expect(subject[22]).to eq 'lb'
+      expect(subject[23]).to eq variant.available_on&.strftime('%Y-%m-%d %H:%M:%S')
+      expect(subject[24]).to eq variant.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S')
+      expect(subject[25]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
+      expect(subject[26]).to eq variant.backorderable?
+      expect(subject[27]).to eq variant.tax_category&.name
+      expect(subject[28]).to eq variant.digital?
+      expect(subject[29]).to eq variant.images[0]&.attachment&.url
+      expect(subject[30]).to eq variant.images[1]&.attachment&.url
+      expect(subject[31]).to eq variant.images[2]&.attachment&.url
     end
 
     context 'when index is not zero' do
