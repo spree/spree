@@ -25,6 +25,10 @@ module Spree
         Spree.t('admin.report_created')
       end
 
+      def location_after_save
+        spree.admin_reports_path
+      end
+
       def build_resource
         model_class.new(store: current_store, date_from: params[:date_from], date_to: params[:date_to], currency: params[:currency])
       end
