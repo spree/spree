@@ -93,6 +93,9 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    has_many :reports, class_name: 'Spree::Report'
+    has_many :exports, class_name: 'Spree::Export'
+
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 

@@ -1445,6 +1445,15 @@ en:
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
     purchased_quantity: Purchased Quantity
+    report_mailer:
+      greeting: Hi %{user_name},
+      thanks: Thank you,
+      report_done:
+        subject: 'Your report %{report_name} is ready'
+        message: Please use the link below to download it.
+    report_names:
+      products_performance: Products performance
+      sales_total: Sales total
     qty: Qty
     quantity: Quantity
     quantity_returned: Quantity Returned

@@ -225,7 +225,10 @@ module Spree
           Spree::PageBlocks::Products::BuyButtons
         ]
 
-        Rails.application.config.spree.reports = []
+        Rails.application.config.spree.reports = [
+          Spree::Reports::ProductsPerformance,
+          Spree::Reports::SalesTotal
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

@@ -72,6 +72,7 @@ en:
       product_kinds:
         physical: Physical
         digital: Digital
+      report_created: Your report is being generated. You will receive an email with a download link when it is ready!
       tab:
         configuration: Configuration
         content: Content

@@ -99,7 +99,10 @@ Spree::Core::Engine.add_routes do
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'
 
     # audit log
-    resources :exports, only: %i[new create show index]
+    resources :exports, only: [:index, :new, :create, :show]
+
+    # reporting
+    resources :reports, only: [:index, :new, :create, :show]
 
     # profile settings
     resource :profile, controller: 'profile', only: %i[edit update]
