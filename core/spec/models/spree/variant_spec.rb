@@ -72,6 +72,30 @@ describe Spree::Variant, type: :model do
         end
       end
     end
+
+    it 'validates the dimensions unit' do
+      expect(build(:variant, dimensions_unit: nil)).to be_valid
+
+      expect(build(:variant, dimensions_unit: 'mm')).to be_valid
+      expect(build(:variant, dimensions_unit: 'cm')).to be_valid
+      expect(build(:variant, dimensions_unit: 'in')).to be_valid
+      expect(build(:variant, dimensions_unit: 'ft')).to be_valid
+
+      expect(build(:variant, dimensions_unit: 'oz')).to be_invalid
+      expect(build(:variant, dimensions_unit: 'lb')).to be_invalid
+    end
+
+    it 'validates the weight unit' do
+      expect(build(:variant, weight_unit: nil)).to be_valid
+
+      expect(build(:variant, weight_unit: 'g')).to be_valid
+      expect(build(:variant, weight_unit: 'kg')).to be_valid
+      expect(build(:variant, weight_unit: 'lb')).to be_valid
+      expect(build(:variant, weight_unit: 'oz')).to be_valid
+
+      expect(build(:variant, weight_unit: 'mm')).to be_invalid
+      expect(build(:variant, weight_unit: 'ft')).to be_invalid
+    end
   end
 
   context 'after create' do
