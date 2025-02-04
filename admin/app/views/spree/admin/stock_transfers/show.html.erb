@@ -5,6 +5,9 @@
 <% content_for :title do %>
   <%= @stock_transfer.number %>
 <% end %>
+<% content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_metadata(@stock_transfer) %>
+<% end %>
 <div class="row">
   <div class="col-lg-8">
     <div class="card mb-4">

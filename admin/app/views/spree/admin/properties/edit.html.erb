@@ -3,6 +3,9 @@
   <%= @property.name %>
 <% end %>
 
+<% content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_metadata(@property) %>
+<% end %>
 
 <%= form_for [:admin, @property] do |f| %>
   <div class="card mb-4">

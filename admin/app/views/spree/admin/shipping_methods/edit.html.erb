@@ -3,6 +3,10 @@
   <%= @shipping_method.name %>
 <% end %>
 
+<% content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_metadata(@shipping_method) %>
+<% end %>
+
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_method } %>
 
 
