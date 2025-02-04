@@ -117,7 +117,9 @@ module Spree
     end
 
     def set_default_values
-      self.currency ||= store&.default_currency
+      return if store.blank?
+
+      self.currency ||= store.default_currency
       self.date_from ||= 1.month.ago.in_time_zone(store.preferred_timezone).beginning_of_day
       self.date_to ||= Time.current.in_time_zone(store.preferred_timezone).end_of_day
     end
