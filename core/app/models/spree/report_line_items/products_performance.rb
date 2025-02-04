@@ -1,11 +1,8 @@
 module Spree
   module ReportLineItems
     class ProductsPerformance < Spree::ReportLineItem
-      include Spree::BaseHelper
-
       attribute :sku, :string
       attribute :name, :string
-      attribute :url, :string
       attribute :vendor, :string
       attribute :brand, :string
       attribute :category_lvl0, :string
@@ -13,20 +10,13 @@ module Spree
       attribute :category_lvl2, :string
       attribute :price, :string
       attribute :weeks_online, :integer
-      attribute :discount, :string
-      attribute :tax, :string
+      attribute :pre_tax_amount, :string
+      attribute :tax_total, :string
       attribute :quantity, :integer
-      attribute :total_sales, :string
+      attribute :promo_total, :string
       attribute :total, :string
 
-      # needed to generate the url
-      alias current_store store
-
       delegate :sku, :name, to: :record
-
-      def url
-        spree_storefront_resource_url(record)
-      end
 
       def vendor
         record.vendor_name
@@ -52,24 +42,24 @@ module Spree
         record.price_in(currency).display_amount
       end
 
-      def total
-        Spree::Money.new(record.total, currency: currency)
+      def pre_tax_amount
+        Spree::Money.new(record.pre_tax_amount, currency: currency)
       end
 
-      def discount
-        Spree::Money.new(record.discount_total, currency: currency)
+      def promo_total
+        Spree::Money.new(record.promo_total, currency: currency)
       end
 
-      def tax
-        Spree::Money.new(record.tax, currency: currency)
+      def tax_total
+        Spree::Money.new(record.tax_total, currency: currency)
       end
 
       def quantity
-        record.sales_count
+        record.quantity
       end
 
-      def total_sales
-        Spree::Money.new(record.sales_total, currency: currency)
+      def total
+        Spree::Money.new(record.total, currency: currency)
       end
 
       def weeks_online

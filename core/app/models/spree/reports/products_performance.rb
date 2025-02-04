@@ -21,11 +21,11 @@ module Spree
       def line_items_scope
         line_items_scope = Spree::LineItem.
                            select("
-                             quantity,
-                             (quantity * price) + #{Spree::LineItem.table_name}.adjustment_total AS gross_sales,
-                             #{Spree::LineItem.table_name}.promo_total,
+                             #{Spree::LineItem.table_name}.quantity as quantity,
+                             #{Spree::LineItem.table_name}.pre_tax_amount as pre_tax_amount,
+                             #{Spree::LineItem.table_name}.promo_total as promo_total,
                              #{Spree::LineItem.table_name}.included_tax_total + #{Spree::LineItem.table_name}.additional_tax_total AS tax_total,
-                             quantity * price AS amount,
+                             #{Spree::LineItem.table_name}.pre_tax_amount + #{Spree::LineItem.table_name}.adjustment_total AS total,
                              #{Spree::Variant.table_name}.product_id AS product_id
                            ").
                            joins(:variant, :order).
@@ -49,16 +49,12 @@ module Spree
                               joins("LEFT JOIN (#{line_items_sql}) AS line_items ON #{Spree::Product.table_name}.id = line_items.product_id").
                               select("
                                 spree_products.*,
-                                COALESCE(SUM(line_items.quantity), 0) AS sales_count,
-                                COALESCE(SUM(line_items.amount), 0.0) AS sales_total,
-                                COALESCE(SUM(line_items.gross_sales), 0.0) AS total,
-                                COALESCE(SUM(line_items.promo_total), 0.0) AS discount_total,
-                                COALESCE(SUM(line_items.tax_total), 0.0) AS tax
+                                COALESCE(SUM(line_items.pre_tax_amount), 0.0) AS pre_tax_amount,
+                                COALESCE(SUM(line_items.quantity), 0) AS quantity,
+                                COALESCE(SUM(line_items.promo_total), 0.0) AS promo_total,
+                                COALESCE(SUM(line_items.tax_total), 0.0) AS tax_total,
+                                COALESCE(SUM(line_items.total), 0.0) AS total
                               ").group('spree_products.id')
-      end
-
-      def to_partial_path
-        'spree/admin/reports/products_performance'
       end
     end
   end

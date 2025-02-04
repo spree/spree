@@ -63,6 +63,10 @@ module Spree
       "spree/admin/reports/report"
     end
 
+    def human_name
+      [Spree.t("report_names.#{type.demodulize.underscore}"), store.name, date_from.strftime('%Y-%m-%d'), date_to.strftime('%Y-%m-%d')].join(' - ')
+    end
+
     def generate_async
       Spree::Reports::GenerateJob.perform_later(id)
     end
@@ -70,7 +74,7 @@ module Spree
     def generate
       generate_csv
       handle_attachment
-      send_report_ready_email
+      send_report_done_email
     end
 
     def generate_csv
@@ -90,10 +94,10 @@ module Spree
       ::File.delete(report_tmp_file_path) if ::File.exist?(report_tmp_file_path)
     end
 
-    def send_report_ready_email
+    def send_report_done_email
       return unless user.present?
 
-      Spree::ReportMailer.report_ready(self).deliver_later
+      Spree::ReportMailer.report_done(self).deliver_later
     end
 
     # eg. Spree::ReportLineItems::SalesTotal
