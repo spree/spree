@@ -3,7 +3,7 @@ module Spree
     class FeaturedTaxon < Spree::PageSection
       scope :by_taxon_id, lambda { |taxon_ids|
         regexp = [*taxon_ids].map { |taxon_id| "taxon_id: '#{taxon_id}'" }.join('|')
-        where("#{Spree::PageSections::FeaturedTaxon.table_name}.preferences ~ ?", regexp)
+        where("#{Spree::PageSections::FeaturedTaxon.table_name}.preferences LIKE ?", "%#{regexp}%")
       }
 
       has_rich_text :description
