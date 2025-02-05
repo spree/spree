@@ -19,23 +19,23 @@ module Spree
       delegate :sku, :name, to: :record
 
       def vendor
-        record.vendor_name
+        record.try(:vendor_name)
       end
 
       def brand
-        record.brand_name
+        record.try(:brand_name)
       end
 
       def category_lvl0
-        mapped_categories[0]
+        mapped_categories&.first
       end
 
       def category_lvl1
-        mapped_categories[1]
+        mapped_categories&.second
       end
 
       def category_lvl2
-        mapped_categories[2]
+        mapped_categories&.third
       end
 
       def price
@@ -63,7 +63,7 @@ module Spree
       end
 
       def weeks_online
-        (Time.current - record.activated_at.in_time_zone(store.preferred_timezone)).seconds.in_weeks.to_i
+        (Time.current - record.available_on.in_time_zone(store.preferred_timezone)).seconds.in_weeks.to_i
       end
 
       def mapped_categories
