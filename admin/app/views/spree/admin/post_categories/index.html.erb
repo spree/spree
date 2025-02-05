@@ -1,0 +1,27 @@
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_post_category), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::PostCategory) %>
+<% end %>
+
+<%= render 'spree/admin/shared/posts_tabs' %>
+
+<% if @post_categories.any? %>
+  <div class="card-lg p-0">
+    <div class="table-responsive rounded-lg">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th class="w-90"><%= Spree.t(:title) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/post_categories/post_category', collection: @post_categories, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% else %>
+  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+    <%= Spree.t(:no_resource_found, resource: Spree.t(:post_categories)) %>
+  </div>
+<% end %>
