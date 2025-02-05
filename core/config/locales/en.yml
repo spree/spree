@@ -1349,6 +1349,7 @@ en:
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
     posts: Posts
+    post_categories: Post categories
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_amount: Pre-Tax Amount
@@ -1813,6 +1814,7 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
+    title: Title
     true_label: "TRUE"
     automatic_taxon_names:
       on_sale: On sale
