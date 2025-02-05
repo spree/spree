@@ -338,6 +338,10 @@ module Spree
       end
     end
 
+    def admin_users
+      @admin_users ||= Spree.admin_user_class.joins(:spree_roles).where(spree_roles: { name: :admin })
+    end
+
     def favicon
       return unless favicon_image.attached? && favicon_image.variable?
 
