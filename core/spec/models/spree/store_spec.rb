@@ -803,4 +803,13 @@ describe Spree::Store, type: :model do
       it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.com:3000') }
     end
   end
+
+  describe '#admin_users' do
+    let(:store) { create(:store) }
+    let(:admin_user) { create(:admin_user) }
+
+    it 'returns the admin users' do
+      expect(store.admin_users).to eq([admin_user])
+    end
+  end
 end
