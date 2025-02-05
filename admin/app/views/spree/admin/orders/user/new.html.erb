@@ -4,7 +4,7 @@
     <h5 class="card-title">
       <%= Spree.t(:customer) %>
     </h5>
-    <%= link_to Spree.t(:discard), spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+    <%= link_to Spree.t('actions.discard'), spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
   </div>
   <div class="card-body">
     <% if show_form %>
@@ -12,8 +12,8 @@
         <%= render 'spree/admin/shared/error_messages', target: @user %>
         <%= render 'spree/admin/users/form', f: f %>
         <div class="d-flex justify-content-between">
-          <%= link_to Spree.t(:discard), spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
-          <%= turbo_save_button_tag Spree.t(:save), data: { turbo_frame: dom_id(@order, :edit) }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
+          <%= link_to Spree.t('actions.discard'), spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+          <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: dom_id(@order, :edit) }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
         </div>
       <% end %>
     <% else %>

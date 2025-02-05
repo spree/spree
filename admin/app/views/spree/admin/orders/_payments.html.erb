@@ -19,7 +19,7 @@
       <% end %>
     </div>
     <div class="card-body">
-      <h6 class="d-flex justify-content-between align-items-center mb-0" id="risk-analysis-header">
+      <p class="d-flex justify-content-between align-items-center mb-0" id="risk-analysis-header">
         <span>
           <%= Spree.t(:risk_analysis) %>
           &nbsp;
@@ -33,7 +33,7 @@
           <%= Spree.t(:show_details) %>
           <%= icon('selector', height: 12, class: 'mr-0 ml-1') %>
         <% end %>
-      </h6>
+      </p>
       <%= render 'spree/admin/orders/risk_analysis', latest_payment: @payments.first %>
     </div>
 
@@ -54,11 +54,11 @@
     <div class="card-body">
       <div class="d-flex mb-3 w-100 gap-3">
         <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
-        <%= link_to_with_icon 'send', Spree.t(:send_payment_link), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-outline-primary with-tip', title: Spree.t(:send_payment_link_title) %>
+        <%= link_to_with_icon 'send', Spree.t(:send_payment_link), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-light with-tip', title: Spree.t(:send_payment_link_title) %>
 
         <div data-controller="clipboard">
           <input type="hidden" value="<%= spree.checkout_state_url(@order.token, :payment, host: current_store.url_or_custom_domain) %>" readonly data-clipboard-target="source">
-          <button class="btn btn-outline-primary" type="button" data-action="click->clipboard#copy">
+          <button class="btn btn-light" type="button" data-action="click->clipboard#copy">
             <%= icon('copy') %>
             <%= Spree.t(:copy_payment_link) %>
           </button>
