@@ -1,7 +1,7 @@
 <% content_for :page_actions do %>
   <%= render 'extra_actions' %>
 
-  <%= link_to_with_icon 'plus', Spree.t(:new_post), new_object_url, class: 'btn btn-primary ml-2' if can?(:create, Spree::Post) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_post), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Post) %>
 <% end %>
 
 <%= render 'spree/admin/shared/posts_tabs' %>
