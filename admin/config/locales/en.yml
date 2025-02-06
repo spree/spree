@@ -180,6 +180,7 @@ en:
         addresses: Addresses
         items: Items
         items_purchased: Items Purchased
+        last_order_placed: Last order placed
         order_history: Order History
         order_num: "Order #"
         orders: Orders
@@ -188,6 +189,11 @@ en:
         store_credits: Store Credits
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
+        lifetime_stats:
+          amount_spent: Amount spent
+          avg_order_value: Avg. Order Value
+          member_since: Member since
+          visits: Visits
       settings: Settings
       stock_transfers:
         add_products_tip: You need to select a destination location first
@@ -374,3 +380,20 @@ en:
         top_padding: Top padding
         button_alignment: Button alignment
         not_set: Not set
+      view_all_orders: View all orders
+      bulk_ops:
+        set: Set
+        stock_items:
+          set_backorderable_to_false: Set Backorderable to false
+          set_backorderable_to_true: Set Backorderable to true
+          set_track_inventory_to_false: Disable Inventory Tracking
+          set_track_inventory_to_true: Enable Inventory Tracking
+          backorderable_explanation: Backorderable indicates if a stock item can be backordered when it runs out.
+          track_inventory_explanation: Enable/disable tracking the inventory for stock items.
+        users:
+          title:
+            add_tags: Add tags
+            remove_tags: Remove tags
+          body:
+            add_tags: 'Select tags to add to the customers:'
+            remove_tags: 'Select tags to remove from the customers:'

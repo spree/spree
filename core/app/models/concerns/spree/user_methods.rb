@@ -26,6 +26,7 @@ module Spree
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
       has_many :orders, foreign_key: :user_id, class_name: 'Spree::Order'
+      has_many :completed_orders, -> { complete }, foreign_key: :user_id, class_name: 'Spree::Order'
       has_many :store_credits, class_name: 'Spree::StoreCredit', foreign_key: :user_id, dependent: :destroy
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
       has_many :wished_items, through: :wishlists, source: :wished_items

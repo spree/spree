@@ -39,6 +39,10 @@ module Spree
       Money.new(amount_spent_in(currency), currency: currency).to_html
     end
 
+    def completed_orders_for_store(store)
+      orders.for_store(store).complete.order(currency: :desc)
+    end
+
     private
 
     def order_calculate(operation:, column:, store: nil, currency: nil)
@@ -46,10 +50,6 @@ module Spree
       currency ||= store.default_currency
 
       completed_orders_for_store(store).where(currency: currency).calculate(operation, column) || BigDecimal('0.00')
-    end
-
-    def completed_orders_for_store(store)
-      orders.for_store(store).complete.order(currency: :desc)
     end
   end
 end

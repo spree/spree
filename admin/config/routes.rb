@@ -93,7 +93,17 @@ Spree::Core::Engine.add_routes do
     end
 
     # customers
-    resources :users
+    resources :users do
+      resources :store_credits
+      resources :orders, only: [:index]
+      resources :checkouts, only: [:index]
+
+      collection do
+        get :bulk_modal
+        post :bulk_add_tags
+        post :bulk_remove_tags
+      end
+    end
 
     # translations
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'

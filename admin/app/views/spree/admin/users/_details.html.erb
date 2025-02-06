@@ -1,0 +1,44 @@
+<div class="card mb-4" id="user-details">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title">
+      Details
+    </h5>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_user_path(@user), class: 'btn btn-light btn-sm', data: { turbo_frame: :edit_user } %>
+  </div>
+  <div class="card-body">
+    <%= turbo_frame_tag :edit_user do %>
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Email
+          <span>
+            <%= @user.email %>
+          </span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Phone
+          <span>
+            <%= @user.phone.presence || 'N/A' %>
+          </span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Name
+          <span>
+            <%= customer_full_name(@user) %>
+          </span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Email marketing
+          <%= active_badge(@user.accepts_email_marketing?) %>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          Tags
+          <span>
+            <% @user.tag_list.each do |tag| %>
+              <span class="tag small"><%= tag %></span>
+            <% end %>
+          </span>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+</div>
