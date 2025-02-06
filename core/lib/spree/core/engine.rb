@@ -251,6 +251,18 @@ module Spree
         Migrations.new(config, engine_name).check
       end
 
+      initializer 'spree.core.assets' do |app|
+        app.config.assets.paths << root.join('app/javascript')
+        app.config.assets.paths << root.join('vendor/javascript')
+        app.config.assets.precompile += %w[spree_core_manifest]
+      end
+
+      initializer 'spree.core.importmap', before: 'importmap' do |app|
+        app.config.importmap.paths << root.join('config/importmap.rb')
+        # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test
+        app.config.importmap.cache_sweepers << root.join('app/javascript')
+      end
+
       config.to_prepare do
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(

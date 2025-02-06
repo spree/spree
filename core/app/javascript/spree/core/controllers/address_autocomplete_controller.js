@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus'
-import debounce from 'spree/admin/helpers/debounce'
-import GooglePlacesSuggestionsProvider from 'spree/admin/helpers/address_autocomplete/google_places_suggestions_provider'
+import debounce from 'spree/core/helpers/debounce'
+import GooglePlacesSuggestionsProvider from 'spree/core/helpers/address_autocomplete/google_places_suggestions_provider'
 
 export default class extends Controller {
   static targets = [
