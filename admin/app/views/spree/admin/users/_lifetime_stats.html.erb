@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-lg-4">
         <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
-          <span class="text-muted"><%= Spree.t('admin.user.lifetime_stats.amount_spent') %></span>
+          <span class="text-muted"><%= Spree.t('admin.amount_spent') %></span>
           <span class="font-size-lg text-dark font-weight-bold mt-1">
             <%= @user.display_lifetime_value %>
           </span>
@@ -21,7 +21,7 @@
 
       <div class="col-lg-4">
         <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
-          <span class="text-muted"><%= Spree.t('admin.user.lifetime_stats.avg_order_value') %></span>
+          <span class="text-muted"><%= Spree.t('admin.avg_order_value') %></span>
           <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
             <%= @user.display_average_order_value %>
           </span>
@@ -34,7 +34,7 @@
     <div class="row">
       <div class="col-lg-4">
         <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
-          <span class="text-muted"><%= Spree.t('admin.user.lifetime_stats.member_since') %></span>
+          <span class="text-muted"><%= Spree.t('admin.member_since') %></span>
           <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
             <%= local_time(@user.created_at) %>
           </span>

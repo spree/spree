@@ -189,11 +189,6 @@ en:
         store_credits: Store Credits
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
-        lifetime_stats:
-          amount_spent: Amount spent
-          avg_order_value: Avg. Order Value
-          member_since: Member since
-          visits: Visits
       settings: Settings
       stock_transfers:
         add_products_tip: You need to select a destination location first
@@ -397,3 +392,7 @@ en:
           body:
             add_tags: 'Select tags to add to the customers:'
             remove_tags: 'Select tags to remove from the customers:'
+      amount_spent: Amount spent
+      avg_order_value: Avg. Order Value
+      num_orders: No. of Orders
+      member_since: Member since
