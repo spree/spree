@@ -1,7 +1,7 @@
   <% if @collection.any? %>
     <div data-controller="bulk-operation" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
       <%= form_tag spree.admin_products_path, method: :put, data: { 'bulk-operation-target': 'form' } do %>
-        <%= render 'shared/bulk_modal' %>
+        <%= render 'spree/admin/shared/bulk_modal' %>
         <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
           <div class="bulk-panel-container animate__animated animate__bounceInUp animate__faster">
             <div data-toggle="modal" data-target="#bulk-modal">

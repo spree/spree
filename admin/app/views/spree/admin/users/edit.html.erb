@@ -1,0 +1,8 @@
+<%= turbo_frame_tag :edit_user do %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @user } %>
+
+  <%= form_for [:admin, @user], as: :user, url: spree.admin_user_path(@user), method: :put do |f| %>
+    <%= render 'form', f: f %>
+    <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+  <% end %>
+<% end %>

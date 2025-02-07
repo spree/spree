@@ -1,0 +1,21 @@
+<div class="modal fade" id="bulk-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <%= turbo_frame_tag :bulk_modal do %>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:loading) %>...</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+        </div>
+        <div class="modal-body text-center">
+          <div class="spinner-border text-muted" role="status">
+            <span class="sr-only"><%= Spree.t(:loading) %>...</span>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t(:close) %></button>
+          <button type="button" class="btn btn-primary" disabled="disabled"><%= Spree.t(:save_changes) %></button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
