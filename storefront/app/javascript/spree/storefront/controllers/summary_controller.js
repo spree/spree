@@ -10,8 +10,7 @@ export default class extends Controller {
   ]
 
   onCouponResize() {
-    this.line_itemsTarget.style.maxHeight =
-      window.innerHeight - this.coupon_areaTarget.offsetHeight - 20 + 'px'
+    this.line_itemsTarget.style.maxHeight = `${window.innerHeight - this.coupon_areaTarget.offsetHeight - 20}px`
   }
 
   connect() {

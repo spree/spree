@@ -90,7 +90,7 @@ export default class extends Controller {
         event.preventDefault()
         if (this.selectedIndex < this.suggestionsCount - 1) {
           this.selectOption(this.selectedIndex + 1)
-        } else {
+        } else if (this.suggestionsCount) {
           this.selectOption(0)
         }
         break
@@ -98,7 +98,7 @@ export default class extends Controller {
         event.preventDefault()
         if (this.selectedIndex > 0) {
           this.selectOption(this.selectedIndex - 1)
-        } else {
+        } else if (this.suggestionsCount) {
           this.selectOption(4)
         }
         break
