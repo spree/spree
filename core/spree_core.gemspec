@@ -62,4 +62,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'geared_pagination'
   s.add_dependency 'any_ascii', '~> 0.3.2'
   s.add_dependency 'geocoder'
+  s.add_dependency 'importmap-rails'
 end
