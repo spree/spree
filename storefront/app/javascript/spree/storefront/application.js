@@ -169,6 +169,3 @@ if (document.readyState === 'loading') {
 } else {
   replaceCsrfMetaTags()
 }
-
-
-console.log("Loaded storefront application.js")
