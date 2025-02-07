@@ -1,6 +1,4 @@
 # Shared dependencies between storefront and admin
-pin '@hotwired/turbo-rails', to: 'turbo.min.js', preload: ['application-spree-storefront', 'application-spree-admin']
-pin '@hotwired/stimulus', to: '@hotwired--stimulus.js', preload: ['application-spree-storefront', 'application-spree-admin'] # @3.2.2
 pin 'tailwindcss-stimulus-components', preload: ['application-spree-storefront', 'application-spree-admin'] # @3.0.4
 pin 'stimulus-reveal-controller', preload: ['application-spree-storefront', 'application-spree-admin'] # @4.1.0
 
