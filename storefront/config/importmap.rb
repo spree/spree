@@ -3,7 +3,6 @@ pin 'application-spree-storefront', to: 'spree/storefront/application.js', prelo
 pin 'stimulus-scroll-to', preload: ['application-spree-storefront'] # @4.1.0
 pin 'stimulus-read-more', preload: ['application-spree-storefront'] # @4.1.0
 pin '@kanety/stimulus-accordion', to: '@kanety--stimulus-accordion.js', preload: ['application-spree-storefront'] # @1.1.0
-pin '@stripe/stripe-js/pure', to: '@stripe--stripe-js--dist--pure.esm.js.js', preload: ['application-spree-storefront'] # @1.46.0
 pin 'headroom.js', preload: ['application-spree-storefront'] # @0.12.0
 pin 'photoswipe/lightbox', to: 'photoswipe--dist--photoswipe-lightbox.esm.js.js', preload: ['application-spree-storefront'] # @5.4.4
 pin 'nouislider', preload: ['application-spree-storefront'] # @15.8.1
