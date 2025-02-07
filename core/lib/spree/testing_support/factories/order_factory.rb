@@ -47,11 +47,17 @@ FactoryBot.define do
         without_line_items     { false }
         shipment_cost          { 100 }
         shipping_method_filter { Spree::ShippingMethod::DISPLAY_ON_FRONT_END }
+        variants               { [] }
       end
 
       after(:create) do |order, evaluator|
-        unless evaluator.without_line_items
+        if evaluator.variants.empty? && !evaluator.without_line_items
           create_list(:line_item, evaluator.line_items_count, order: order, price: evaluator.line_items_price)
+          order.line_items.reload
+        end
+
+        if evaluator.variants.any?
+          evaluator.variants.each { |variant| create(:line_item, order: order, product: variant.product, variant: variant, price: evaluator.line_items_price) }
           order.line_items.reload
         end
 

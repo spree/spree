@@ -7,9 +7,20 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
   let(:store) { Spree::Store.default }
 
   describe 'GET #index' do
-    let!(:user_1) { create(:user, completed_orders_count: 10, amount_spent: 1000) }
-    let!(:user_2) { create(:user, completed_orders_count: 1, amount_spent: 20, tag_list: ['some tag']) }
+    let!(:user_1) { create(:user) }
+    let!(:user_2) { create(:user, tag_list: ['some tag']) }
     let!(:user_3) { create(:user, accepts_email_marketing: true) }
+
+    let!(:user_1_orders) { create_list(:completed_order_with_totals, 3, user: user_1, completed_at: 1.day.ago) }
+    let!(:user_2_orders) { create_list(:completed_order_with_totals, 1, user: user_2, completed_at: 1.day.ago) }
+
+    before do
+      user_1_orders[0].update_column(:total, 300)
+      user_1_orders[1].update_column(:total, 200)
+      user_1_orders[2].update_column(:total, 500)
+
+      user_2_orders[0].update_column(:total, 20)
+    end
 
     it 'renders the list of users' do
       get :index
@@ -64,11 +75,9 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
             user_1.address&.country&.iso,
             user_1.address&.zipcode,
             user_1.phone,
-            user_1.accepts_sms_marketing ? 'Yes' : 'No',
             user_1.amount_spent_in('USD').to_s,
-            user_1.completed_orders_count.to_s,
+            user_1.completed_orders.count.to_s,
             "\"#{user_1.tag_list.join(', ')}\"",
-            user_1.tax_exempt ? 'Yes' : 'No'
           ].join(',')
         )
       end

@@ -13,11 +13,9 @@
   'Country Code',
   'Zip',
   'Phone',
-  'Accepts SMS Marketing',
   'Total Spent',
   'Total Orders',
-  'Tags',
-  'Tax Exempt'
+  'Tags'
   ]
 -%>
 <%= CSV.generate_line(headers).strip %>
@@ -37,11 +35,9 @@
   user.address&.country&.iso,
   user.address&.zipcode,
   user.phone,
-  user.accepts_sms_marketing ? 'Yes' : 'No',
   user.amount_spent_in(current_currency),
-  user.completed_orders_count,
-  user.tag_list,
-  user.tax_exempt ? 'Yes' : 'No'
+  user.completed_orders.count,
+  user.tag_list
   ]).strip.html_safe %>
 <%- end -%>
 
