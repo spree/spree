@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus'
-import debounce from 'spree/admin/helpers/debounce'
-import GooglePlacesSuggestionsProvider from 'spree/admin/helpers/address_autocomplete/google_places_suggestions_provider'
+import debounce from 'spree/core/helpers/debounce'
+import GooglePlacesSuggestionsProvider from 'spree/core/helpers/address_autocomplete/google_places_suggestions_provider'
 
 export default class extends Controller {
   static targets = [
@@ -90,7 +90,7 @@ export default class extends Controller {
         event.preventDefault()
         if (this.selectedIndex < this.suggestionsCount - 1) {
           this.selectOption(this.selectedIndex + 1)
-        } else {
+        } else if (this.suggestionsCount) {
           this.selectOption(0)
         }
         break
@@ -98,7 +98,7 @@ export default class extends Controller {
         event.preventDefault()
         if (this.selectedIndex > 0) {
           this.selectOption(this.selectedIndex - 1)
-        } else {
+        } else if (this.suggestionsCount) {
           this.selectOption(4)
         }
         break

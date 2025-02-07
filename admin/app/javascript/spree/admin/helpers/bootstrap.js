@@ -1,6 +1,6 @@
 import 'jquery'
 import 'bootstrap'
-import { lockScroll, unlockScroll } from 'spree/admin/helpers/scroll_lock'
+import { lockScroll, unlockScroll } from 'spree/core/helpers/scroll_lock'
 
 
 const initTooltips = () => {

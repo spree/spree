@@ -75,11 +75,9 @@ import StoreFormController from 'spree/admin/controllers/store_form_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
 import VariantsFormController from 'spree/admin/controllers/variants_form_controller'
 import WebhooksSubscriberEventsController from 'spree/admin/controllers/webhook_subscriber_events_controller'
-
-// These controllers are shared between storefront/admin
-import AddressAutocompleteController from 'spree/admin/controllers/address_autocomplete_controller'
-import AddressFormController from 'spree/admin/controllers/address_form_controller'
-import EnableButtonController from 'spree/admin/controllers/enable_button_controller'
+import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
+import AddressFormController from 'spree/core/controllers/address_form_controller'
+import EnableButtonController from 'spree/core/controllers/enable_button_controller'
 
 
 application.register('active-storage-upload', ActiveStorageUpload)
