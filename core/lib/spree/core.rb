@@ -30,7 +30,6 @@ require 'activerecord-typedstore'
 require 'request_store'
 require 'wannabe_bool'
 require 'geared_pagination'
-require 'importmap-rails'
 require 'geocoder'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
