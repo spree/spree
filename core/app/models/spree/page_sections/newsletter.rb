@@ -42,10 +42,6 @@ module Spree
       def icon_name
         'mail'
       end
-
-      def lazy?
-        true
-      end
     end
   end
 end
