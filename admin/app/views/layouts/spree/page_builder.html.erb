@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
-    <%= javascript_importmap_tags 'application-spree-backend' %>
+    <%= render 'spree/admin/shared/head' %>
+    <%= render "spree/admin/shared/custom_head" %>
   </head>
 
   <body class="admin bg-light theme_editor page-builder"
