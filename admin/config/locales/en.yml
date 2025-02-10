@@ -17,6 +17,12 @@ en:
       kind: Kind
       home: Home
       copy_to_clipboard: Copy to clipboard
+      dashboard:
+        hi: Hi
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+        getting_started:
+          title: Getting started
+          description: Everything you need to set up to start selling.
       data_feeds:
         data_feeds: Data Feeds
         type: Type

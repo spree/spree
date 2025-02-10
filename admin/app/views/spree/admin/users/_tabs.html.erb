@@ -33,7 +33,7 @@
   <div class="tab-pane fade <%= 'show active pt-3' unless spree.respond_to?(:admin_user_visits_path) %>" id="pills-orders2" role="tabpanel" aria-labelledby="pills-orders2">
     <div class="card-lg p-0" style="min-height: 200px">
       <%= turbo_frame_tag :orders_list, src: spree.admin_user_orders_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-        <%= render 'shared/spinner' %>
+        <%= render 'spree/admin/shared/spinner' %>
       <% end %>
     </div>
   </div>
@@ -41,7 +41,7 @@
   <div class="tab-pane fade" id="pills-checkouts" role="tabpanel" aria-labelledby="pills-checkouts">
     <div class="card-lg p-0" style="min-height: 200px">
       <%= turbo_frame_tag :orders_list, src: spree.admin_user_checkouts_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-        <%= render 'shared/spinner' %>
+        <%= render 'spree/admin/shared/spinner' %>
       <% end %>
     </div>
   </div>
@@ -50,7 +50,7 @@
     <div class="tab-pane fade" id="pills-gift-cards" role="tabpanel" aria-labelledby="pills-gift-cards">
       <div class="card-lg p-0" style="min-height: 200px">
         <%= turbo_frame_tag :gift_cards_list, src: spree.admin_user_gift_cards_path(@user, frame_name: :gift_cards_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-          <%= render 'shared/spinner' %>
+          <%= render 'spree/admin/shared/spinner' %>
         <% end %>
       </div>
     </div>
@@ -59,7 +59,7 @@
   <div class="tab-pane fade" id="pills-store-credits" role="tabpanel" aria-labelledby="pills-store-credits">
     <div class="card-lg p-0" style="min-height: 200px">
       <%= turbo_frame_tag :store_credits_list, src: spree.admin_user_store_credits_path(@user, frame_name: :store_credits_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-        <%= render 'shared/spinner' %>
+        <%= render 'spree/admin/shared/spinner' %>
       <% end %>
     </div>
   </div>

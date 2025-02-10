@@ -63,7 +63,7 @@
           <% end %>
 
           <%= turbo_frame_tag :edit_address_billing, src: spree.edit_admin_address_path(@user.billing_address, type: 'billing'), loading: :lazy do %>
-            <%= render 'shared/spinner', id: 'edit-address-billing-spinner' %>
+            <%= render 'spree/admin/shared/spinner', id: 'edit-address-billing-spinner' %>
           <% end %>
         <% end %>
       </div>

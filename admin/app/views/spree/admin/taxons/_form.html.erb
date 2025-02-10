@@ -87,7 +87,7 @@
         <div class="card-body p-2" style="min-height: 300px">
           <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
             <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id), loading: :lazy do %>
-              <%= render 'shared/spinner' %>
+              <%= render 'spree/admin/shared/spinner' %>
             <% end %>
           </div>
         </div>
