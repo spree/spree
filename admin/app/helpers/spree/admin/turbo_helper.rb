@@ -9,7 +9,7 @@ module Spree
             javascript_tag do
               raw <<~JS
                 if (document.querySelector('##{modal_id}')) {
-                  window.bootstrapJQuery("##{modal_id}").modal('hide');
+                  window.$("##{modal_id}").modal('hide');
                 }
               JS
             end
