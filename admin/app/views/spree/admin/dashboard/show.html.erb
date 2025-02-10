@@ -22,7 +22,7 @@
     <%= render 'analytics' %>
   </div>
   <div class="col-lg-4">
-    <% if current_vendor %>
+    <% if defined?(current_vendor) && current_vendor %>
       <%= render 'spree/admin/shared/vendor_faq' %>
     <% else %>
       <%= render 'store_preview' %>
