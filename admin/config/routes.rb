@@ -202,7 +202,11 @@ Spree::Core::Engine.add_routes do
 
     # dashboard
     resource :dashboard, controller: 'dashboard'
+    get '/dashboard/analytics', to: 'dashboard#analytics', as: :dashboard_analytics
+    get '/getting-started', to: 'dashboard#getting_started', as: :getting_started
 
     root to: 'dashboard#show'
   end
+
+  get Spree.admin_path, to: 'admin/dashboard#show', as: :admin
 end

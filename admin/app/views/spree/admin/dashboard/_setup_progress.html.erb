@@ -1,0 +1,13 @@
+<div class="mb-3 card rounded-lg" id="setup_progress">
+  <div class="card-body">
+    <div class="mb-3">
+      Your overall setup progress
+      <span class="float-right text-muted">
+        <%= current_store.setup_tasks_done %> of <%= current_store.setup_tasks_total %> steps done
+      </span>
+    </div>
+    <div class="progress">
+      <div class="progress-bar bg-success" style="width: <%= current_store.setup_percentage %>%" role="progressbar" aria-valuenow="<%= current_store.setup_percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+</div>

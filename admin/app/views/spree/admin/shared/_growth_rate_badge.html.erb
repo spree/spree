@@ -1,0 +1,17 @@
+<% growth_rate ||= 0 %>
+
+<div class="d-flex">
+  <% if growth_rate == 0 %>
+    <svg viewBox="0 0 11 16" height="16" width="11" role="img" class="_SVG_1ou8g_150" tabindex="-1"><title>No change</title><path d="M0.519531 1.79395H12.0039V0.249023H0.519531V1.79395Z" fill="var(--p-icon-subdued, #8c9196)" transform="translate(0, 7)"></path></svg>
+  <% elsif growth_rate > 0 %>
+    <span class="text-success">
+      <%= icon 'arrow-up', class: 'mr-1 font-size-base' %>
+      <%= number_to_percentage(growth_rate, strip_insignificant_zeros: true) %>
+    </span>
+  <% else %>
+    <span class="text-danger">
+      <%= icon 'arrow-down', class: 'mr-1 font-size-base' %>
+      <%= number_to_percentage(growth_rate.abs, strip_insignificant_zeros: true) %>
+    </span>
+  <% end %>
+</div>

@@ -20,6 +20,8 @@ module Spree
       before_action :authorize_admin
       after_action :set_return_to, only: [:index]
 
+      helper_method :current_vendor
+
       protected
 
       def action
