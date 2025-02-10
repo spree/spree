@@ -230,8 +230,14 @@ module Spree
         having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
     }
     scope :out_of_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
-    scope :single_variant, lambda {
-      where(variants_count: 0)
+
+    scope :by_best_selling, lambda { |order_direction = :desc|
+      left_joins(:orders).
+        select("#{Spree::Product.table_name}.*, COUNT(#{Spree::Order.table_name}.id) AS completed_orders_count, SUM(#{Spree::Order.table_name}.total) AS completed_orders_total").
+        where(Spree::Order.table_name => { id: nil }).
+        or(where.not(Spree::Order.table_name => { completed_at: nil })).
+        group("#{Spree::Product.table_name}.id").
+        order(completed_orders_count: order_direction, completed_orders_total: order_direction)
     }
 
     attr_accessor :option_values_hash

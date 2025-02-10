@@ -1,0 +1,6 @@
+<tr data-controller="row-link" id="<%= dom_id(post_category) %>">
+  <td><%= link_to post_category.title, spree.edit_admin_post_category_path(post_category), class: 'd-flex', data: { row_link_target: :link } %></td>
+  <td class="actions cursor-pointer" data-action="click->row-link#openLink">
+    <%= link_to_edit(post_category, class: 'btn btn-light btn-sm') if can? :edit, post_category %>
+  </td>
+</tr>

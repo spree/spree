@@ -6,7 +6,7 @@
     </div>
     <div class="d-flex h-100 align-items-center">
       <% if can? :update, @shipment %>
-        <%= turbo_save_button_tag Spree.t(:save), data: { turbo_frame: :_top }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
+        <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: :_top }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
         <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
       <% end %>
     </div>
@@ -20,7 +20,7 @@
     </div>
     <div class="d-flex h-100 align-items-center">
       <% if can? :update, @shipment %>
-        <%= turbo_save_button_tag Spree.t(:save), data: { turbo_frame: dom_id(@shipment) }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
+        <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: dom_id(@shipment) }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
         <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
       <% end %>
     </div>

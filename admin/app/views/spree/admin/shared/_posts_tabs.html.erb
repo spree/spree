@@ -1,0 +1,8 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:posts) %>
+<% end %>
+
+<% content_for(:page_tabs) do %>
+  <%= nav_pill_list_item(:posts) %>
+  <%= nav_pill_list_item(:post_categories, label: Spree.t(:categories)) %>
+<% end %>

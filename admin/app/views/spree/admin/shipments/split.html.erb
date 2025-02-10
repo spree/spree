@@ -10,7 +10,7 @@
       <% if can?(:split, @shipment) %>
         <%= turbo_save_button_tag Spree.t(:move), data: { turbo_frame: '_top' }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
       <% end %>
-      <%= link_to Spree.t(:discard),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+      <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
     </span>
   <% end %>
 <% end %>

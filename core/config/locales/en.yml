@@ -1056,7 +1056,6 @@ en:
       none: None
     max: 'Max'
     max_items: Max Items
-    member_since: Member Since
     memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
@@ -1349,6 +1348,7 @@ en:
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     populate_get_error: Something went wrong. Please try adding the item again.
     posts: Posts
+    post_categories: Post categories
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_amount: Pre-Tax Amount
@@ -1445,6 +1445,15 @@ en:
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
     purchased_quantity: Purchased Quantity
+    report_mailer:
+      greeting: Hi %{user_name},
+      thanks: Thank you,
+      report_done:
+        subject: 'Your report %{report_name} is ready'
+        message: Please use the link below to download it.
+    report_names:
+      products_performance: Products performance
+      sales_total: Sales total
     qty: Qty
     quantity: Quantity
     quantity_returned: Quantity Returned
@@ -1539,6 +1548,7 @@ en:
     sales_totals: Sales Totals
     same_as_shipping_address: Same as shipping address
     save_and_continue: Save and Continue
+    save_changes: Save changes
     save_my_address: Save my address
     saving: Saving
     say_no: 'No'
@@ -1804,6 +1814,7 @@ en:
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
+    title: Title
     true_label: "TRUE"
     automatic_taxon_names:
       on_sale: On sale

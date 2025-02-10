@@ -96,6 +96,7 @@ module Spree
     @@queues ||= OpenStruct.new(
       default: :default,
       exports: :default,
+      reports: :default,
       variants: :default,
       taxons: :default,
       stock_location_stock_items: :default,

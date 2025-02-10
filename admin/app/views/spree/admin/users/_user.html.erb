@@ -1,0 +1,20 @@
+<tr id="<%= spree_dom_id user %>">
+  <td class="pr-0 w-5">
+    <div class="custom-control custom-checkbox ml-1">
+      <%= check_box_tag "ids[]", user.id, false, class: "custom-control-input", id: "ids_#{user.id}", data: { bulk_operation_target: "checkbox" } %>
+      <label class="custom-control-label" for="ids_<%= user.id %>"><span></span></label>
+    </div>
+  </td>
+  <td class='user_name w-50 no-wrap py-0 pl-1 pr-0'>
+    <%= render 'spree/admin/shared/user', user: user %>
+  </td>
+  <td class="no-wrap">
+    <%= active_badge(user.accepts_email_marketing?) %>
+  </td>
+  <td class="w-25 no-wrap">
+    <%= customer_location_flag(user) %>
+    <%= customer_location(user) %>
+  </td>
+  <td class='user_num_orders w-10 no-wrap'><%= user.completed_orders_for_store(current_store).count %></td>
+  <td class='user_amount_spent w-10 no-wrap'><%= user.display_amount_spent_in(current_currency) %></td>
+</tr>

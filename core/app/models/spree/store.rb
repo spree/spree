@@ -93,6 +93,9 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    has_many :reports, class_name: 'Spree::Report'
+    has_many :exports, class_name: 'Spree::Export'
+
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
@@ -333,6 +336,10 @@ module Spree
         stock_location_scope = Spree::StockLocation.order_default
         stock_location_scope.first || stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
       end
+    end
+
+    def admin_users
+      @admin_users ||= Spree.admin_user_class.joins(:spree_roles).where(spree_roles: { name: :admin })
     end
 
     def favicon

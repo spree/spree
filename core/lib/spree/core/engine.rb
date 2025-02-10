@@ -225,7 +225,10 @@ module Spree
           Spree::PageBlocks::Products::BuyButtons
         ]
 
-        Rails.application.config.spree.reports = []
+        Rails.application.config.spree.reports = [
+          Spree::Reports::ProductsPerformance,
+          Spree::Reports::SalesTotal
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
@@ -246,6 +249,22 @@ module Spree
 
       initializer 'spree.core.checking_migrations' do
         Migrations.new(config, engine_name).check
+      end
+
+      initializer 'spree.core.assets' do |app|
+        if app.config.respond_to?(:assets)
+          app.config.assets.paths << root.join('app/javascript')
+          app.config.assets.paths << root.join('vendor/javascript')
+          app.config.assets.precompile += %w[spree_core_manifest]
+        end
+      end
+
+      initializer 'spree.core.importmap', before: 'importmap' do |app|
+        if app.config.respond_to?(:importmap)
+          app.config.importmap.paths << root.join('config/importmap.rb')
+          # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test
+          app.config.importmap.cache_sweepers << root.join('app/javascript')
+        end
       end
 
       config.to_prepare do
