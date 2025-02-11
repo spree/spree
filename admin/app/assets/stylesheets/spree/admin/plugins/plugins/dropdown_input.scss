@@ -1,0 +1,47 @@
+
+.plugin-dropdown_input{
+
+	&.focus.dropdown-active .#{$select-ns}-control{
+		box-shadow: none;
+		border: $select-border;
+		@if variable-exists(input-box-shadow) {
+			box-shadow: $input-box-shadow;
+		}
+	}
+
+	.dropdown-input {
+		border:			1px solid $select-color-border;
+		border-width:	0 0 1px 0;
+		display:		block;
+		padding:		$select-padding-y $select-padding-x;
+		box-shadow:		$select-shadow-input;
+		width:			100%;
+		background:		transparent;
+	}
+
+	&.focus .#{$select-ns}-dropdown .dropdown-input{
+		@if variable-exists(input-focus-border-color) {
+			border-color: $input-focus-border-color;
+
+			outline: 0;
+			@if $enable-shadows {
+				box-shadow: $input-box-shadow, $input-focus-box-shadow;
+			} @else {
+				box-shadow: $input-focus-box-shadow;
+			}
+
+		}
+
+	}
+
+	.items-placeholder{
+		border: 0 none !important;
+		box-shadow: none !important;
+		width: 100%;
+	}
+
+	&.has-items .items-placeholder,
+	&.dropdown-active .items-placeholder{
+		display: none !important;
+	}
+}

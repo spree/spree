@@ -1,0 +1,485 @@
+/*Avatar*/
+.hk-sec-wrapper {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: .25rem;
+  margin-bottom: 14px;
+}
+.hk-sec-wrapper .hk-sec-title {
+  display: block;
+  margin-bottom: 10px;
+}
+.mb-40 {
+  margin-bottom: 40px !important;
+}
+.mr-10 {
+  margin-right: 10px !important;
+}
+.avatar {
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  width: 3.875rem;
+  height: 3.875rem;
+}
+
+.avatar.avatar-xl {
+  font-size: 1.70833rem;
+  width: 5.125rem;
+  height: 5.125rem;
+}
+
+.avatar.avatar-lg {
+  font-size: 1.4rem;
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.avatar.avatar-md {
+  font-size: .95rem;
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.avatar.avatar-sm {
+  font-size: .9rem;
+  width: 2.625rem;
+  height: 2.625rem;
+}
+
+.avatar.avatar-xs {
+  font-size: .6rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.avatar .avatar-img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+
+.avatar .avatar-text {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  text-transform: uppercase;
+  overflow: hidden;
+  background: #fff;
+  font-weight: 600;
+  color: #00acf0;
+}
+
+.avatar .avatar-text .initial-wrap {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar .avatar-text .initial-wrap > span {
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.avatar .avatar-text:before {
+  content: "";
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(178, 230, 250, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-cyan,
+.avatar .avatar-text.avatar-text-info {
+  color: #1ebccd;
+}
+
+.avatar .avatar-text.avatar-text-cyan:before,
+.avatar .avatar-text.avatar-text-info:before {
+  background: rgba(187, 235, 240, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-light {
+  color: #6f7a7f;
+}
+
+.avatar .avatar-text.avatar-text-light:before {
+  background: rgba(173, 179, 182, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-dark {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-dark:before {
+  background: #324148 !important;
+}
+
+.avatar .avatar-text.avatar-text-sky,
+.avatar .avatar-text.avatar-text-primary {
+  color: #00acf0;
+}
+
+.avatar .avatar-text.avatar-text-sky:before,
+.avatar .avatar-text.avatar-text-primary:before {
+  background: rgba(178, 230, 250, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-green,
+.avatar .avatar-text.avatar-text-success {
+  color: #22af47;
+}
+
+.avatar .avatar-text.avatar-text-green:before,
+.avatar .avatar-text.avatar-text-success:before {
+  background: rgba(188, 231, 199, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-red,
+.avatar .avatar-text.avatar-text-danger {
+  color: #f83f37;
+}
+
+.avatar .avatar-text.avatar-text-red:before,
+.avatar .avatar-text.avatar-text-danger:before {
+  background: rgba(253, 197, 195, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-yellow,
+.avatar .avatar-text.avatar-text-warning {
+  color: #ffbf36;
+}
+
+.avatar .avatar-text.avatar-text-yellow:before,
+.avatar .avatar-text.avatar-text-warning:before {
+  background: rgba(255, 236, 194, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-pink {
+  color: #ed1b60;
+}
+
+.avatar .avatar-text.avatar-text-pink:before {
+  background: rgba(250, 186, 207, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-purple {
+  color: #ab26aa;
+}
+
+.avatar .avatar-text.avatar-text-purple:before {
+  background: rgba(230, 189, 229, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-violet {
+  color: #6640b2;
+}
+
+.avatar .avatar-text.avatar-text-violet:before {
+  background: rgba(209, 197, 232, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-indigo {
+  color: #3a55b1;
+}
+
+.avatar .avatar-text.avatar-text-indigo:before {
+  background: rgba(196, 204, 231, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-blue {
+  color: #0092ee;
+}
+
+.avatar .avatar-text.avatar-text-blue:before {
+  background: rgba(178, 222, 250, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-teal {
+  color: #009b84;
+}
+
+.avatar .avatar-text.avatar-text-teal:before {
+  background: rgba(178, 225, 218, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-neon {
+  color: #88c241;
+}
+
+.avatar .avatar-text.avatar-text-neon:before {
+  background: rgba(219, 237, 198, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-lime {
+  color: #d0d962;
+}
+
+.avatar .avatar-text.avatar-text-lime:before {
+  background: rgba(241, 244, 208, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-sun {
+  color: #fde335;
+}
+
+.avatar .avatar-text.avatar-text-sun:before {
+  background: rgba(254, 247, 194, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-orange {
+  color: #ff9528;
+}
+
+.avatar .avatar-text.avatar-text-orange:before {
+  background: rgba(255, 223, 190, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-pumpkin {
+  color: #ff6028;
+}
+
+.avatar .avatar-text.avatar-text-pumpkin:before {
+  background: rgba(255, 207, 190, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-brown {
+  color: #7a5449;
+}
+
+.avatar .avatar-text.avatar-text-brown:before {
+  background: rgba(215, 203, 200, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-gold {
+  color: #c1993f;
+}
+
+.avatar .avatar-text.avatar-text-gold:before {
+  background: rgba(236, 224, 197, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-grey,
+.avatar .avatar-text.avatar-text-secondary {
+  color: #9e9e9e;
+}
+
+.avatar .avatar-text.avatar-text-grey:before,
+.avatar .avatar-text.avatar-text-secondary:before {
+  background: rgba(226, 226, 226, 0.5);
+}
+
+.avatar .avatar-text.avatar-text-inv-cyan,
+.avatar .avatar-text.avatar-text-inv-info {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-cyan:before,
+.avatar .avatar-text.avatar-text-inv-info:before {
+  background-color: #1ebccd !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-sky,
+.avatar .avatar-text.avatar-text-inv-primary {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-sky:before,
+.avatar .avatar-text.avatar-text-inv-primary:before {
+  background-color: #00acf0 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-green,
+.avatar .avatar-text.avatar-text-inv-success {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-green:before,
+.avatar .avatar-text.avatar-text-inv-success:before {
+  background-color: #22af47 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-red,
+.avatar .avatar-text.avatar-text-inv-danger {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-red:before,
+.avatar .avatar-text.avatar-text-inv-danger:before {
+  background-color: #f83f37 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-yellow,
+.avatar .avatar-text.avatar-text-inv-warning {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-yellow:before,
+.avatar .avatar-text.avatar-text-inv-warning:before {
+  background-color: #ffbf36 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-pink {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-pink:before {
+  background-color: #ed1b60 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-purple {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-purple:before {
+  background-color: #ab26aa !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-violet {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-violet:before {
+  background-color: #6640b2 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-indigo {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-indigo:before {
+  background-color: #3a55b1 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-blue {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-blue:before {
+  background-color: #0092ee !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-teal {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-teal:before {
+  background-color: #009b84 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-neon {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-neon:before {
+  background-color: #88c241 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-lime {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-lime:before {
+  background-color: #d0d962 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-sun {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-sun:before {
+  background-color: #fde335 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-orange {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-orange:before {
+  background-color: #ff9528 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-pumpkin {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-pumpkin:before {
+  background-color: #ff6028 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-brown {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-brown:before {
+  background-color: #7a5449 !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-gold {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-gold:before {
+  background-color: #c1993f !important;
+}
+
+.avatar .avatar-text.avatar-text-inv-grey,
+.avatar .avatar-text.avatar-text-inv-secondary {
+  color: #fff;
+}
+
+.avatar .avatar-text.avatar-text-inv-grey:before,
+.avatar .avatar-text.avatar-text-inv-secondary:before {
+  background-color: #9e9e9e !important;
+}
+
+.avatar-group {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
+.avatar-group .avatar {
+  font-size: .9rem;
+  width: 2.625rem;
+  height: 2.625rem;
+}
+
+.avatar-group .avatar .avatar-img,
+.avatar-group .avatar .avatar-text {
+  border: 2px solid #fff;
+}
+
+.avatar-group.avatar-group-overlapped .avatar {
+  margin-right: -13px;
+}
+
+.avatar-group.avatar-group-overlapped .avatar:hover {
+  z-index: 1;
+}
+
+.avatar-group.avatar-group-lg .avatar {
+  font-size: .95rem;
+  width: 3.25rem;
+  height: 3.25rem;
+}
+
+.avatar-group.avatar-group-lg.avatar-group-overlapped .avatar {
+  margin-right: -15px;
+}
+
+.avatar-group.avatar-group-sm .avatar {
+  font-size: .6rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.avatar-group.avatar-group-sm.avatar-group-overlapped .avatar {
+  margin-right: -10px;
+}

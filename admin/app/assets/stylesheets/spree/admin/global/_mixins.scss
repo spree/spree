@@ -1,0 +1,19 @@
+// Mixin to prefix several properties at once
+
+// EXAMPLE
+// @include prefix((
+//   appearance: none,
+//   touch-callout: none,
+//   user-select: none
+// ), webkit moz ms khtml);
+
+@mixin prefix($declarations, $prefixes: ()) {
+  @each $property, $value in $declarations {
+    @each $prefix in $prefixes {
+      #{'-' + $prefix + '-' + $property}: $value;
+    }
+
+    // Output standard non-prefixed declaration
+    #{$property}: $value;
+  }
+}

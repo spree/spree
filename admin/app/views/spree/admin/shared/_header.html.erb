@@ -1,0 +1,28 @@
+<div id="scroll-header"></div>
+
+<%= render 'spree/admin/shared/offcanvas_nav' %>
+
+<header id="header" data-turbo-permanent>
+  <nav class="navbar navbar-expand-lg py-2 px-lg-5 d-lg-none">
+    <button type="button" class="btn d-flex align-items-center p-0 h-100 pull-bs-canvas-left d-lg-none text-white text-decoration-none">
+      <%= icon('menu-2', height: 32, class: 'm-0 h-100') %>
+    </button>
+
+    <div class="navbar-collapse d-none d-lg-flex">
+      <%= form_with url: spree.admin_search_admin_path, method: :post, class: 'd-none' do |form| %>
+        <div class="w-50 d-lg-flex align-items-center pr-2">
+          <%= icon('search', class: 'text-muted') %>
+          <%= text_field_tag :search, params[:search], class: 'px-3 py-2 bg-transparent w-100 outline-none border-0', placeholder: 'Search...', oninput: "this.form.requestSubmit()" %>
+        </div>
+      <% end if spree.respond_to?(:admin_search_admin_path) && defined?(current_store) && current_store %>
+    </div>
+
+    <%= link_to spree.admin_dashboard_path, class: 'navbar-brand d-flex d-lg-none h-100 align-items-center mx-0' do %>
+      <%= inline_svg_tag 'logo_white.svg', height: 32 %>
+    <% end %>
+
+    <div class="text-right d-flex justify-content-end p-0" id="header-user-account" data-turbo-permanent>
+      <%= render 'spree/admin/shared/user_dropdown' %>
+    </div>
+  </nav>
+</header>

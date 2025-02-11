@@ -18,7 +18,6 @@ module Spree
       helper 'spree/addresses'
 
       before_action :authorize_admin
-      after_action :set_return_to, only: [:index]
 
       protected
 

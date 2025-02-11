@@ -181,8 +181,8 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'd-flex align-items-center' do
-          content_tag(:span, inline_svg('icons/chevron-left.svg', height: '1rem'), class: 'btn hover-gray px-1 mr-2 d-flex align-items-center') +
+        link_to url, class: 'd-flex align-items-center text-decoration-none' do
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray px-2 mr-2 d-flex align-items-center') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end

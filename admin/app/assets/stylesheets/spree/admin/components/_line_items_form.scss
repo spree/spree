@@ -1,0 +1,31 @@
+.order-line-items {
+  &__row,
+  &__form {
+    display: grid;
+    grid-template-columns: [product_description] 1fr [price] 10% [quantity] 10% [subtotal] 10% [tax] 10% [discount] 10% [total] 10% [actions] 5%;
+    grid-auto-flow: row;
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  &__form {
+    grid-column: 1/-1;
+    row-gap: 0.5rem;
+  }
+}
+
+.shipment-line-items {
+  &__row,
+  &__form {
+    display: grid;
+    grid-template-columns: [product_description] 1fr [price] 10% [quantity] 15% [total] 10% [actions] 5%;
+    grid-auto-flow: row;
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  &__form {
+    grid-column: 1/-1;
+    row-gap: 0.5rem;
+  }
+}

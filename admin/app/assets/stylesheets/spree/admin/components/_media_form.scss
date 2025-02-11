@@ -1,0 +1,69 @@
+.media-form {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+
+  &__add-button {
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+
+    &:only-child {
+      grid-column: 1 / span 6;
+      grid-row: 1 / span 1;
+      aspect-ratio: 12/1;
+    }
+  }
+
+  &__image {
+    padding: 0.5rem;
+    border: none;
+    overflow: hidden;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 0.5rem;
+    position: relative;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    & img {
+      top: 0;
+      left: 0;
+    }
+
+    & .move-handle {
+      z-index: 2;
+      color: white;
+    }
+
+    .custom-checkbox:has(input:checked) {
+      display: inline !important;
+    }
+
+    &:hover {
+      .custom-checkbox {
+        display: inline !important;
+      }
+      .move-handle {
+        display: inline !important;
+      }
+
+      & img {
+        opacity: 0.5;
+      }
+    }
+
+    &:first-of-type {
+      grid-column: 1 / span 2;
+      grid-row: 1 / span 2;
+    }
+  }
+}

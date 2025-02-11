@@ -105,6 +105,22 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    # promotions
+    resources :promotions do
+      resources :promotion_rules
+      resources :promotion_actions
+      member do
+        post :clone
+      end
+      resources :coupon_codes
+    end
+    get 'promotion_rules/option_values_search', defaults: { format: :json }
+
+    # returns
+    get '/return_authorizations', to: 'return_index#return_authorizations', as: :return_authorizations
+    get '/customer_returns', to: 'return_index#customer_returns', as: :customer_returns
+    resources :return_items, only: [:update]
+
     # translations
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'
 
