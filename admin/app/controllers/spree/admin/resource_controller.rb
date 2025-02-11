@@ -299,7 +299,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def collection_actions
-    [:index, :bulk_modal, :bulk_status_update,
+    [:index, :select_options, :bulk_modal, :bulk_status_update,
      :bulk_add_to_taxons, :bulk_remove_from_taxons,
      :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
   end
