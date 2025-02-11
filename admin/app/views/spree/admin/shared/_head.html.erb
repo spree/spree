@@ -41,9 +41,8 @@
 <%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
 
 <%= tinymce_assets %>
-<!-- Trix does not work with importmaps in Rails 7 -->
-<!-- https://github.com/basecamp/trix/issues/1182 -->
-<%= javascript_include_tag 'trix', data: { turbo_track: "reload" } %>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.12/dist/trix.css">
+
 <%= javascript_importmap_tags 'application-spree-admin' %>
 
 <%= yield :head %>
