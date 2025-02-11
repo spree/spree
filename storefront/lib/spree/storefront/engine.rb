@@ -3,7 +3,13 @@ require_relative 'runtime_configuration'
 module Spree
   module Storefront
     class Engine < ::Rails::Engine
-      Environment = Struct.new(:head_partials)
+      Environment = Struct.new(
+        :head_partials,
+        :body_start_partials,
+        :body_end_partials,
+        :checkout_partials,
+        :checkout_complete_partials
+      )
 
       initializer 'spree.storefront.configuration', before: :load_config_initializers do |_app|
         Spree::Storefront::RuntimeConfig = Spree::Storefront::RuntimeConfiguration.new
@@ -24,6 +30,10 @@ module Spree
 
       config.after_initialize do
         Rails.application.config.spree_storefront.head_partials = []
+        Rails.application.config.spree_storefront.body_start_partials = []
+        Rails.application.config.spree_storefront.body_end_partials = []
+        Rails.application.config.spree_storefront.checkout_partials = []
+        Rails.application.config.spree_storefront.checkout_complete_partials = []
       end
     end
   end
