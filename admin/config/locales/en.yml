@@ -17,6 +17,11 @@ en:
       kind: Kind
       home: Home
       copy_to_clipboard: Copy to clipboard
+      dashboard:
+        hi: Hi
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+        getting_started:
+          description: Everything you need to set up to start selling.
       data_feeds:
         data_feeds: Data Feeds
         type: Type
@@ -37,6 +42,7 @@ en:
       edit_contact_information: Edit contact information
       edit_shipping_address: Edit shipping address
       edit_billing_address: Edit billing address
+      getting_started: Getting started
       linkable:
         search_for_a_page: Search for a page
         search_for_a_taxon: Search for a Taxon
@@ -255,26 +261,6 @@ en:
         deleted: Deleted
         draft: Draft
         pre_order: Pre-order
-      getting_started:
-        lets_get_you_started: Let's get you started
-        add_products: Add products
-        setup_shipping: Setup shipping
-        setup_payment_method: Setup payment methods
-        setup_taxes: Setup taxes
-        setup_taxes_calculation: Setup tax calculation
-        products_section:
-          message_with_products_html: You have added <strong> %{count} products</strong> so far - good job!</p>
-          message_without_products: You can add products manually or
-          import_message: import them via the API.
-        shipping_section:
-          message_with_shipping: You have setup shipping for
-          message_without_shipping: You can add multiple shipping methods, different for each country, continent or region.
-        payment_methods_section:
-          message_with_payment_method: You're ready to accept payments!
-          message_without_payment_method: You can setup multiple payment methods such as Stripe, PayPal, ApplePay, etc.
-        taxes_section:
-          message_with_taxes: You're tax calculation is setup!
-          message_without_taxes: You can use tax services such as TaxJar or setup tax calculation manually
       payment_methods:
         edit:
           payment_method_configuration: "Payment Method Configuration"
