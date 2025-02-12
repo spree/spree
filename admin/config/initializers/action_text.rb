@@ -2,7 +2,7 @@
 # We need to configure the whole set ourselves, see: https://stackoverflow.com/a/77369507
 # Default allowed tags and attributes are copied from the rails action text helper: https://github.com/rails/rails/blob/main/actiontext/app/helpers/action_text/content_helper.rb#L68
 
-sanitizer_class = Rails::HTML4::Sanitizer.safe_list_sanitizer
+sanitizer_class = Rails::HTML::Sanitizer.best_supported_vendor.safe_list_sanitizer
 
 ActionText::ContentHelper.allowed_tags = sanitizer_class.allowed_tags + [ActionText::Attachment.tag_name, 'figure', 'figcaption', 'iframe']
 ActionText::ContentHelper.allowed_attributes = sanitizer_class.allowed_attributes + ActionText::Attachment::ATTRIBUTES + ['style']
