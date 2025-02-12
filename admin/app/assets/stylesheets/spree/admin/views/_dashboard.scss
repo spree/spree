@@ -1,0 +1,21 @@
+.store-preview-link {
+  transition: background-color 0.2s ease-in-out;
+
+  .store-preview-actions {
+    display: none;
+
+    .btn-outline-primary {
+      background-color: $white;
+
+      &:hover {
+        background-color: $primary;
+      }
+    }
+  }
+
+  &:hover {
+    .store-preview-actions {
+      display: flex;
+    }
+  }
+}

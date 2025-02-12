@@ -1,0 +1,23 @@
+
+.#{$select-ns}-wrapper{
+	.dropdown-header {
+		position: relative;
+		padding: ($select-padding-dropdown-item-y * 2) $select-padding-dropdown-item-x;
+		border-bottom: 1px solid $select-color-border;
+		background: mix($select-color-dropdown, $select-color-border, 85%);
+		border-radius: $select-border-radius $select-border-radius 0 0;
+	}
+	.dropdown-header-close {
+		position: absolute;
+		right: $select-padding-dropdown-item-x;
+		top: 50%;
+		color: $select-color-text;
+		opacity: 0.4;
+		margin-top: -12px;
+		line-height: 20px;
+		font-size: 20px !important;
+	}
+	.dropdown-header-close:hover {
+		color: darken($select-color-text, 25%);
+	}
+}

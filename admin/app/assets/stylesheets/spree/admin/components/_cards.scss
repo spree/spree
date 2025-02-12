@@ -1,0 +1,77 @@
+.card {
+  > .table,
+  .table-responsive > .table {
+  	border-right: 0;
+  	border-left: 0;
+    margin-bottom: 0;
+
+    &:last-child, &:last-of-type {
+			border-bottom: 0;
+		}
+
+  	td:first-child,
+		th:first-child {
+			border-left: 0;
+		}
+
+  	td:last-child,
+		th:last-child {
+			border-right: 0;
+		}
+
+  	tr:first-child td,
+		tr:first-child th {
+			border-top: 0;
+		}
+
+  	tr:last-child td {
+			border-bottom: 0;
+		}
+	}
+
+  .card-header + .table,
+  .card-header + .table-responsive > .table {
+    border-top: 0;
+	}
+}
+
+.card-header, .card-footer {
+  background-color: transparent;
+}
+.card-header, .card-footer, .card-body {
+  border-top: 0 none;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  min-height: 50px;
+  border-bottom-color: $gray-50;
+
+  .card-title {
+    margin-bottom: 0;
+    font-size: $font-size-plus;
+    font-weight: $font-weight-bold;
+    font-family: $font-family-sans-serif;
+  }
+}
+
+.card-footer.border-top, .card-body.border-top, .card .border-top, .card .border-bottom, .card .list-group-item  {
+  border-color: $gray-50 !important;
+}
+
+.card-lg {
+  @extend .mb-3;
+  @extend .bg-white;
+
+  border-radius: $border-radius-lg;
+  border: 1px solid $card-border-color;
+  padding: 1rem;
+}
+
+.card-text {
+  overflow-wrap: anywhere;
+}
+
+.card-body .form-group:last-child {
+  margin-bottom: 0;
+}

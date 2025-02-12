@@ -1,0 +1,23 @@
+.#{$select-ns}-dropdown.plugin-optgroup_columns {
+
+	.ts-dropdown-content{
+		display:	flex;
+	}
+
+	.optgroup {
+		border-right: 1px solid #f2f2f2;
+		border-top: 0 none;
+	    flex-grow: 1;
+	    flex-basis: 0;
+		min-width: 0;
+	}
+	.optgroup:last-child {
+		border-right: 0 none;
+	}
+	.optgroup:before {
+		display: none;
+	}
+	.optgroup-header {
+		border-top: 0 none;
+	}
+}
