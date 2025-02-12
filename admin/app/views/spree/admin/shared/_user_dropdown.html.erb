@@ -34,7 +34,7 @@
       <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
         <%= icon('logout', class: "icon icon-logout")  %>
         <%= Spree.t(:logout) %>
-      <% end %>
+      <% end if defined?(spree_admin_logout_path) %>
     </div>
   </div>
 <% end %>
