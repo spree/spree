@@ -34,6 +34,10 @@ module Spree
 
       private
 
+      def parent_data
+        super unless action == :select_options
+      end
+
       def location_after_save
         spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy_id, @taxon.id)
       end
