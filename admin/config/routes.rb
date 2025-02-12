@@ -105,6 +105,8 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    resources :addresses, except: [:index, :show]
+
     # promotions
     resources :promotions do
       resources :promotion_rules
