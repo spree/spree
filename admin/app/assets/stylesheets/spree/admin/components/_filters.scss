@@ -1,0 +1,41 @@
+.collapsed .arrow {
+  transform: rotate(-90deg);
+  transition: .3s ease-in-out;
+}
+
+i.js-delete-filter {
+  margin-bottom: 0;
+}
+
+.sort_link {
+  color: $gray-600 !important;
+
+  &:hover {
+    color: $gray-700 !important;
+    text-decoration: none !important;
+  }
+
+  &.asc, &.desc {
+    svg {
+      color: $gray-900 !important;
+    }
+  }
+
+  .icon, svg {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  svg.default-filter-arrow {
+    opacity: 0.3;
+  }
+}
+
+.filter-badges-container:has(*) {
+  @extend .mt-3;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

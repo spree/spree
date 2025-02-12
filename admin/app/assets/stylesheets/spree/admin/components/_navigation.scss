@@ -1,0 +1,162 @@
+.nav-link.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.arrow {
+  width: 1rem;
+}
+
+.dropdown {
+  .arrow {
+    color: $gray-300;
+  }
+
+  &:hover {
+    .arrow {
+      color: $gray-500;
+    }
+  }
+}
+
+.dropdown.show {
+  .arrow {
+    transform: rotate(3.142rad);
+  }
+}
+
+.nav-link {
+  cursor: pointer;
+  @extend .position-relative;
+}
+
+#header {
+  nav {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .dropdown-menu {
+    min-width: 12rem;
+  }
+}
+
+.nav-pills {
+  .nav-item {
+    @extend .mr-1;
+
+    &:last-child {
+      @extend .mr-0;
+    }
+
+    .nav-link {
+      @extend .text-muted;
+      font-weight: 500;
+
+      &:hover {
+        color: theme-color('black') !important;
+        background-color: $gray-25;
+      }
+      &.active, &:focus, &:active {
+        background-color: $gray-25;
+        color: theme-color('black') !important;
+      }
+    }
+  }
+}
+
+#header-tabs {
+  .nav-item {
+    @extend .mr-4;
+
+    .nav-link {
+      @extend .px-0;
+    }
+  }
+}
+
+.nav-dark {
+  .nav-link {
+    @extend .rounded-sm;
+    padding: 6px 10px;
+    color: $gray-300;
+    display: flex;
+    align-items: center;
+    font-weight: 400;
+    
+    .ti {
+      color: $gray-600;
+    }
+    .ti:first-child {
+      @extend .mr-3;
+    }
+
+    &.active, &:focus, &:active {
+      color: $gray-100;
+      background-color: rgba($gray-800, 0.5);
+
+      i {
+        color: $gray-200 !important;
+      }
+      font-weight: 600 !important;
+    }
+
+    &:hover {
+      color: $gray-100 !important;
+      background-color: rgba($gray-800, 0.25) !important;
+
+      i {
+        color: $gray-100 !important;
+      }
+    }
+  }
+
+  .badge:not(.badge-warning):not(.badge-warning) {
+    background-color: $gray-800;
+    color: $gray-300;
+  }
+
+  &.font-size-lg {
+    .ti {
+      font-size: 20px;
+      line-height: 20px;
+    }
+  }
+}
+
+.nav-submenu {
+  @extend .nav;
+
+  padding-left: 12px !important;
+
+  .nav-link {
+    &:hover, &.active, &:active, &:focus {
+      background-color: transparent !important;
+      font-weight: 500;
+    }
+  }
+}
+
+#header-user-account .btn {
+  i {
+    color: $gray-600 !important;
+  }
+
+  &:hover, &:focus {
+    i {
+      color: $gray-700 !important;
+    }
+  }
+}
+
+#header-user-account .dropdown-item {
+  i {
+    color: $gray-500 !important;
+  }
+
+  &:hover, &:focus {
+    i {
+      color: $gray-700 !important;
+    }
+  }
+}

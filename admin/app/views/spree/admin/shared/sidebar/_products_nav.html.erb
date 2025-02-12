@@ -1,0 +1,39 @@
+<% products_active =  %w[products external_categories taxons taxonomies option_types option_values properties stock_items stock_transfers].include?(controller_name) || request.path.include?('products') %>
+<li class="nav-item">
+  <%= active_link_to spree.admin_products_path, class: 'nav-link', active: products_active do %>
+    <span class="position-relative">
+      <%= icon 'box-seam' %>
+    </span>
+    <%= Spree.t(:products) %>
+  <% end %>
+  <% if products_active %>
+    <ul class="ml-4 pl-1 mb-2 nav-submenu flex-column mt-1">
+      <% if can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) %>
+        <li class="nav-item">
+          <%= active_link_to Spree.t(:stock), spree.admin_stock_items_path, class: 'nav-link py-lg-1', active: %w[stock_items stock_transfers].include?(controller_name) %>
+        </li>
+      <% end %>
+      <% if can?(:manage, Spree::Taxonomy) %>
+        <li class="nav-item">
+          <%= active_link_to Spree.t(:taxonomies), spree.admin_taxonomies_path, class: 'nav-link py-lg-1' %>
+        </li>
+      <% end %>
+      <% if can?(:manage, Spree::OptionType) %>
+        <li class="nav-item">
+          <%= active_link_to Spree.t(:options), spree.admin_option_types_path, class: 'nav-link py-lg-1', active: %w[option_types option_values].include?(controller_name) %>
+        </li>
+      <% end %>
+      <% if can?(:manage, Spree::Property) %>
+        <li class="nav-item">
+          <%= active_link_to Spree.t(:properties), spree.admin_properties_path, class: 'nav-link py-lg-1' %>
+        </li>
+      <% end %>
+
+      <% if defined?(Spree::ExternalCategory) && can?(:manage, Spree::ExternalCategory) %>
+        <li class="nav-item">
+          <%= active_link_to 'Category mapper', spree.admin_external_categories_path, class: 'nav-link py-lg-1' %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</li>

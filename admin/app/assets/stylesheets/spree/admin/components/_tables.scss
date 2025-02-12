@@ -1,0 +1,161 @@
+.list-group, .table {
+  color: $gray-800;
+}
+
+.filter-wrap {
+  padding: 0.75rem;
+  border-bottom: 1px solid $gray-50;
+}
+
+table.table {
+  margin-bottom: 0;
+
+  th {
+    border-top: 0;
+    @extend .text-nowrap;
+    border-bottom: 0;
+
+    &.handel-head {
+      width: 50px;
+    }
+    a.sort_link {
+      white-space: nowrap;
+    }
+  }
+
+  td.move-handle {
+    width:45px;
+  }
+
+  td > a:not(.btn):not(.text-primary) {
+    @extend .text-dark;
+  }
+
+  thead {
+    th {
+      @extend .text-muted;
+      font-size: $font-size-sm;
+      vertical-align: middle;
+      font-weight: 400;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        vertical-align: middle;
+        .filterable {
+          margin-left: .2em;
+          cursor: pointer;
+          width: 0.9rem;
+          height:0.9rem;
+          opacity: 0.25;
+          &:hover {
+            opacity: 1;
+          }
+        }
+
+        a:hover {
+          text-decoration: none;
+        }
+      }
+    }
+
+    tr:hover {
+      background-color: $gray-25;
+
+      .btn {
+        visibility: visible !important;
+      }
+    }
+  }
+
+  tr > td:first-child, tr > th:first-child {
+    padding-left: 1rem;
+  }
+  tr > td:last-child, tr > th:last-child {
+    padding-right: 1rem;
+  }
+}
+
+.table-active-filters {
+  padding: 0.75rem;
+
+  &:not(:has(:first-child)) {
+    display: none;
+  }
+
+  .js-filter {
+    .icon {
+      cursor: pointer;
+    }
+  }
+
+  .badge-secondary {
+    .icon {
+      filter: invert(1);
+    }
+  }
+
+  .badge {
+    display: inline-block;
+    margin-right: .5em;
+    margin-bottom: .5em;
+
+    &:hover {
+      opacity: .8;
+    }
+  }
+}
+
+.table-responsive tr td, .table-responsive tr th {
+  white-space: nowrap;
+}
+
+.table-responsive.border {
+  border-color: $table-border-color !important;
+}
+
+.sortable-drag-v {
+  border: 1px solid theme-color('info');
+  border-radius: $border-radius;
+  width:100%;
+  text-align: right;
+  opacity: 0;
+  td {
+    border-top: none;
+    opacity:0;
+    &:first-child {
+    opacity: 1;
+    }
+  }
+}
+
+td.actions {
+  @extend .text-right;
+
+  .btn {
+    @extend .text-nowrap;
+  }
+
+  .btn:not(.btn-sm) {
+    @extend .py-2;
+  }
+  .btn-sm {
+    @extend .py-1;
+  }
+}
+
+.select2-container--open {
+  z-index: 1060;
+}
+
+.bulk-edit-panel {
+  top: 59px;
+
+  @media (min-width: 768px) {
+    top: 0px;
+  }
+}

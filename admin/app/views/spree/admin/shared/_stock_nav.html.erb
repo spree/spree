@@ -1,0 +1,4 @@
+<ul class="nav mb-0" id="pills-tab" role="tablist">
+  <%= nav_pill_list_item(:stock_items) if can?(:manage, Spree::StockItem) %>
+  <%= nav_pill_list_item(:stock_transfers) if can?(:manage, Spree::StockTransfer) %>
+</ul>
