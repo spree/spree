@@ -13,10 +13,7 @@
     &:not(:has(.options-creator__options_container .options-creator__option)) {
       margin: 0;
       border: none;
-
-      .new_option_button {
-        border: 0 none;
-      }
+      
       .options-creator__option--new {
         padding-left: 1rem;
       }

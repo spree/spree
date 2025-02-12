@@ -1,4 +1,6 @@
+<% resource_name = model_class.name.underscore.humanize %>
+
 <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-  <%= Spree.t(:no_resource_found, resource: plural_resource_name(model_class)) %>
-  <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-link ml-3' if can?(:create, model_class) %>
+  <%= Spree.t(:no_resource_found, resource: resource_name) %>
+  <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-light ml-3' if can?(:create, model_class) && defined?(new_object_url) %>
 </div>
