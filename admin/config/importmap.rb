@@ -2,7 +2,10 @@ pin 'application-spree-admin', to: 'spree/admin/application.js', preload: false
 
 pin '@rails/actioncable', to: 'actioncable.esm.js', preload: ['application-spree-admin']
 pin '@rails/activestorage', to: 'activestorage.esm.js', preload: ['application-spree-admin']
-pin '@rails/actiontext', to: '@rails--actiontext--app--assets--javascripts--actiontext.js.js', preload: ['application-spree-admin']
+
+rails_action_text_version = Rails.version >= '7.1' ? '7.1.501' : '7.0.4'
+pin '@rails/actiontext', to: "@rails--actiontext@#{rails_action_text_version}.js", preload: ['application-spree-admin']
+
 pin 'trix', to: 'trix@2.1.12.js', preload: ['application-spree-admin']
 
 pin '@rails/request.js', to: '@rails--request.js.js', preload: ['application-spree-admin'] # @0.0.8
