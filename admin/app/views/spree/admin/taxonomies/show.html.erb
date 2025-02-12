@@ -20,10 +20,7 @@
             <%= build_sortable_tree(@taxonomy, root_children) %>
           <% end %>
         <% else %>
-          <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxon)) %>
-            <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_taxonomy_taxon_path(@taxonomy), class: 'btn btn-link' if can?(:create, Spree::Taxon) %>
-          </div>
+          <%= render 'spree/admin/shared/no_resource_found', resource_name: Spree.t(:taxons), new_object_url: spree.new_admin_taxonomy_taxon_path(@taxonomy) %>
         <% end %>
       </div>
     </div>

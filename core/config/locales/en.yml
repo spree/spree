@@ -70,6 +70,7 @@ en:
         state: State
         total: Total
         considered_risky: Risky
+        item_count: Items
       spree/order/bill_address:
         address1: Billing address street
         city: Billing address city
@@ -1325,15 +1326,18 @@ en:
     payment_provider_settings: Payment Provider Settings
     payment_state: Payment State
     payment_states:
-      balance_due: balance due
-      checkout: checkout
-      completed: completed
-      credit_owed: credit owed
-      failed: failed
-      paid: paid
-      pending: pending
-      processing: processing
-      void: void
+      balance_due: Balance due
+      checkout: Checkout
+      credit_owed: Credit owed
+      failed: Failed
+      paid: Paid
+      void: Void
+      complete: Complete
+      completed: Completed
+      pending: Pending
+      processing: Processing
+      refunded: Refunded
+      partially_refunded: Partially Refunded
     payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
@@ -1608,12 +1612,12 @@ en:
     shipment_successfully_shipped: Shipment successfully shipped
     shipment_state: Shipment State
     shipment_states:
-      backorder: backorder
-      canceled: canceled
-      partial: partial
-      pending: pending
-      ready: ready
-      shipped: shipped
+      backorder: Backorder
+      canceled: Canceled
+      partial: Partial
+      pending: Unfulfilled
+      ready: Unfulfilled
+      shipped: Fulfilled
     shipment_transfer_success: 'Variants successfully transferred'
     shipment_transfer_error: 'There was an error transferring variants'
     shipments: Shipments
@@ -1856,6 +1860,7 @@ en:
     transfer_stock: Transfer Stock
     transfer_to_location: Transfer To
     translations: Translations
+    translations_for: "%{resource_name} translations"
     tree: Tree
     type: Type
     type_to_search: Type to search

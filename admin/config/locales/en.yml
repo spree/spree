@@ -156,10 +156,14 @@ en:
         payment_link_sent: Payment link was sent to the customer
         no_email_present: Please add an email address to send the payment link
       oauth_applications:
-        list: oAuth applications
-        new: New oAuth application
+        list: API keys
+        new: New API key
         uid: UID
         scopes: Scopes
+        last_used: Last used
+        never: Never
+        read_only: Read Only
+        read_and_write: Read & Write
         documentation_message: 'To learn how to authenticate requests to the Platform API, '
         documentation_cta: see the documentation
       reports:
@@ -336,10 +340,16 @@ en:
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
       variants:
-        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
-        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         search_results:
           no_variants: We couldn't find any variants matching your search :(
+      variants_form:
+        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        compare_at_price_description: This price is used to shown marked price on the product page.
+        add_option:
+          empty: Add options like size or color
+          not_empty: Add another option
+        total_inventory_html: "Total inventory at %{stock_location} location: %{count} available"
       page_builder:
         show_more_button: Show explore category button
         heading: Heading

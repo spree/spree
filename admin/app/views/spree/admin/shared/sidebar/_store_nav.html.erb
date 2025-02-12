@@ -56,9 +56,11 @@
     <li class="nav-item">
       <%= active_link_to_with_icon('map-pin', Spree.t(:stock_locations), spree.admin_stock_locations_path, class: 'nav-link')  %>
     </li>
-    <li class="nav-item">
-      <%= active_link_to_with_icon('history', Spree.t(:audit_trail), spree.admin_audits_path, class: 'nav-link w-auto', active: %w[audits exports imports].include?(controller_name)) %>
-    </li>
+    <% if spree.respond_to?(:admin_audits_path) %>
+      <li class="nav-item">
+        <%= active_link_to_with_icon('history', Spree.t(:audit_trail), spree.admin_audits_path, class: 'nav-link w-auto', active: %w[audits exports imports].include?(controller_name)) %>
+      </li>
+    <% end %>
     <li class="nav-item">
       <%= active_link_to_with_icon('terminal', Spree.t(:developers), spree.admin_oauth_applications_path, class: 'nav-link', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     </li>
@@ -153,9 +155,9 @@
 
     <% if can?(:manage, current_store) && !enterprise_edition? %>
       <div class="nav nav-dark flex-column mt-2" id="plan-nav" data-turbo-permanent>
-        <div class="bg-transparent border-top border-dark text-white font-size-sm py-2 px-1 d-flex align-items-center justify-content-between">
-          <span>Community Edition</span>
-          <%= link_to_with_icon 'external-link', 'Upgrade', 'https://spreecommerce.org/pricing/', class: 'btn btn-sm btn-outline-primary with-tip', target: '_blank', title: 'Upgrade to Enterprise Edition to access more features, such as multi-store management, B2B, multi-vendor marketplace, and more.' %>
+        <div class="bg-transparent border-top border-dark pt-2 pl-1 d-flex align-items-center justify-content-between">
+          <span class="font-weight-light font-size-sm text-white">Community Edition</span>
+          <%= link_to_with_icon 'bolt', 'Upgrade', 'https://spreecommerce.org/pricing/', class: 'btn btn-sm btn-dark with-tip', target: '_blank', title: 'Upgrade to Enterprise Edition to access more features, such as multi-store management, B2B, multi-vendor marketplace, and more.' %>
         </div>
       </div>
     <% end %>
