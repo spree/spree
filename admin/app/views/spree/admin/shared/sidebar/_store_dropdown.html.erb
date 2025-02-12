@@ -14,11 +14,11 @@
     <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
   </button>
   <div class="dropdown-menu w-100 shadow-sm border-gray-900 font-size-plus" style="min-width: 200px">
-    <%= link_to spree.root_url(host: current_store.url), class: 'dropdown-item', target: '_blank' do %>
+    <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
       <%= icon 'eye' %>
       <%= Spree.t(:view_store) %>
     <% end %>
-    <%= link_to spree.edit_admin_theme_url(current_store.default_theme, host: current_store.url), class: 'dropdown-item' do %>
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item' do %>
       <%= icon 'tools' %>
       <%= Spree.t(:edit_theme) %>
     <% end if current_store.default_theme %>
