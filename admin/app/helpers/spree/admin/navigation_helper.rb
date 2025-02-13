@@ -168,7 +168,7 @@ module Spree
 
         css_class = condition ? 'badge-active' : 'badge-inactive'
 
-        content_tag(:small, class: "badge  #{css_class}") do
+        content_tag(:span, class: "badge  #{css_class}") do
           label
         end
       end

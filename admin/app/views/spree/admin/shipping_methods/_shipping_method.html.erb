@@ -2,9 +2,9 @@
   <td data-action="click->row-link#openLink" class="w-15">
     <strong><%= shipping_method.name %></strong>
     <% if shipping_method.admin_name.present? %>
-      <small class="badge badge-light border ml-2">
+      <span class="badge badge-light border ml-2">
         <%= shipping_method.admin_name %>
-      </small>
+      </span>
     <% end %>
   </td>
   <td data-action="click->row-link#openLink" class="w-25 text-wrap">

@@ -90,13 +90,13 @@
 .badge-onboarding,
 .badge-light,
 .badge-invited {
-  @extend .bg-light;
+  @extend .bg-white;
   @extend .text-muted;
   @extend .border;
   font-weight: $font-weight-normal;
 
   &:hover {
-    @extend .bg-light;
+    @extend .bg-white;
     @extend .text-muted;
   }
 }
@@ -108,4 +108,10 @@
   border: 1px solid rgba($info, 0.05);
   background-color: #E0EFFE;
   color: #00527c;
+}
+
+.badge-dark {
+  background-color: transparent !important;
+  border: 1px solid $gray-800 !important;
+  color: $white;
 }
