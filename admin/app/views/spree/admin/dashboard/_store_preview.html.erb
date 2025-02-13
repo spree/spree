@@ -4,7 +4,7 @@
       <div class="position-absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
         <button class="btn btn-outline-primary">
           <%= icon('tools') %>
-          <%= Spree.t(:edit_theme) %>
+          <%= Spree.t('admin.edit_theme') %>
         </button>
       </div>
       <% if current_store.default_theme.screenshot.attached? && current_store.default_theme.screenshot.variable? %>
@@ -46,7 +46,7 @@
         <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-50' do %>
           <%= icon 'tools', class: 'mr-1' %>
           &nbsp;
-          <%= Spree.t(:edit_theme) %>
+          <%= Spree.t('admin.edit_theme') %>
         <% end %>
       </div>
     </div>

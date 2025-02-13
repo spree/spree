@@ -342,6 +342,10 @@ small,
   width: 20%;
 }
 
+.gap-1 {
+  gap: calc($spacer / 4);
+}
+
 .gap-2 {
   gap: calc($spacer / 2);
 }

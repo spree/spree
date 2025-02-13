@@ -8,7 +8,9 @@ module Spree
           user = Spree.admin_user_class.create!(
             email: 'spree@example.com',
             password: 'spree123',
-            password_confirmation: 'spree123'
+            password_confirmation: 'spree123',
+            first_name: 'Spree',
+            last_name: 'Admin'
           )
 
           user.spree_roles << Spree::Role.find_or_create_by(name: :admin)

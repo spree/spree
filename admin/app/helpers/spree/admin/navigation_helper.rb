@@ -197,13 +197,17 @@ module Spree
         end
       end
 
-      def external_link_to(label, url, opts = {})
+      def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
         opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
 
-        link_to url, opts do
-          (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+        if block_given?
+          link_to url, opts, &block
+        else
+          link_to url, opts do
+            (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+          end
         end
       end
 

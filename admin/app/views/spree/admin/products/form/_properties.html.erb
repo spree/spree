@@ -3,7 +3,7 @@
     <h5 class="card-title"><%= Spree.t(:properties) %></h5>
 
     <% if can?(:manage, Spree::Property) %>
-      <%= link_to_with_icon 'adjustments', Spree.t(:manage_properties), spree.admin_properties_path, class: 'btn btn-sm btn-light' %>
+      <%= link_to_with_icon 'adjustments', Spree.t('admin.manage_properties'), spree.admin_properties_path, class: 'btn btn-sm btn-light' %>
     <% end %>
   </div>
   <div class="card-body p-0">
