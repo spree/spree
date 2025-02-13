@@ -29,7 +29,7 @@ module Spree
 
       def display_on_options
         Spree::DisplayOn::DISPLAY.map do |display_on|
-          [Spree.t("display_on_options.#{display_on}"), display_on]
+          [Spree.t("admin.display_on_options.#{display_on}"), display_on]
         end
       end
 

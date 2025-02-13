@@ -37,6 +37,10 @@ en:
         no_digital_assets_added: No digital assets.
         delete_file_confirmation: "Are you sure you want to delete: %{filename}"
         upload: Upload
+      display_on_options:
+        back_end: Only on admin panel
+        front_end: Only on storefront
+        both: On both admin panel & storefront
       export_only_filtered_records: Export only filtered records, matching the search criteria
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
@@ -264,10 +268,6 @@ en:
         wished_items: Wished Items
         wishlists: Wishlists
         zones: Zones
-      display_on:
-        both: All
-        front_end: Storefront
-        back_end: Admin Panel
       product:
         all: All
         active: Active
