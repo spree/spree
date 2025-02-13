@@ -252,6 +252,8 @@ en:
         return_items: Return Items
         roles: Roles
         shipments: Shipments
+        shipment_transfer:
+          wrong_destination: Selected location is not a valid destination
         shipping_categories: Shipping Categories
         shipping_methods: Shipping Methods
         shipping_rates: Shipping Rates
