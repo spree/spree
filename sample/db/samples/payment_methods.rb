@@ -1,5 +1,3 @@
-Spree::Sample.load_sample('stores')
-
 cc_payment_method = Spree::Gateway::Bogus.where(
   name: 'Credit Card',
   description: 'Bogus payment gateway.',

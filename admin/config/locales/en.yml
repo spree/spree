@@ -2,6 +2,7 @@ en:
   spree:
     admin:
       add_tracking_details: Add tracking details
+      audit_log: Audit Log
       url: URL
       active: Active
       name: Name
@@ -42,6 +43,7 @@ en:
       edit_contact_information: Edit contact information
       edit_shipping_address: Edit shipping address
       edit_billing_address: Edit billing address
+      edit_theme: Edit theme
       getting_started: Getting started
       linkable:
         search_for_a_page: Search for a page
@@ -130,6 +132,14 @@ en:
           is_not_equal_to: is not equal to
           contains: contains
           does_not_contain: does not contain
+      manage_stock_locations: Manage Stock Locations
+      manage_properties: Manage Properties
+      manage_currencies: Manage Currencies
+      manage_zones: Manage Zones
+      manage_taxons: Manage Taxons
+      not_tracking_inventory: Not tracking inventory
+      send_payment_link: Send Payment Link
+      copy_payment_link: Copy Payment Link
       order:
         changing_store_warning: If you change the store this order belongs to, the order will be reset.
         once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'

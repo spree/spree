@@ -1,4 +1,3 @@
-Spree::Sample.load_sample('stores')
 Spree::Sample.load_sample('option_values')
 Spree::Sample.load_sample('products')
 

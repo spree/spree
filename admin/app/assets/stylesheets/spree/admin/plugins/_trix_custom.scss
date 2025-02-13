@@ -13,6 +13,7 @@ trix-toolbar {
   }
 
   .trix-button-group {
+    @extend .gap-1;
     margin-left: 0 !important;
   }
 

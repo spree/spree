@@ -4,7 +4,7 @@ module Spree
       include Spree::ImagesHelper
 
       def enterprise_edition?
-        false
+        defined?(Vendo)
       end
 
       def spree_update_available?

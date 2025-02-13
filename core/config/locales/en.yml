@@ -764,6 +764,7 @@ en:
     current: Current
     current_promotion_usage: ! 'current usage: %{count}'
     customer: Customer
+    customers: Customers
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
     customer_return: Customer Return
@@ -792,6 +793,7 @@ en:
     default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
+    default_theme_name: Default
     default_wishlist_name: Wishlist
     delete: Delete
     deleted: Deleted
@@ -981,6 +983,7 @@ en:
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     insufficient_stock_item_quantity: Insufficient stock quantity available
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
+    integrations: Integrations
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
@@ -1020,6 +1023,7 @@ en:
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
     limit_usage_to: Limit usage to
+    line_item: Line Item
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
@@ -1389,6 +1393,7 @@ en:
     promotionable: Promotable
     promotion_cloned: Promotion has been cloned
     promotion_not_cloned: "Promotion has not been cloned. Reason: %{error}"
+    promotion_already_used: "You can not destroy promotion that was already applied"
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
@@ -1431,7 +1436,7 @@ en:
         description: Order includes specified product(s)
         name: Product(s)
       user:
-        description: Available only to the specified users
+        description: Available only to the specified customers
         name: User
       user_logged_in:
         description: Available only to logged in users
@@ -1638,6 +1643,7 @@ en:
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
     shipping_total: Shipping total
+    shipping_zone: Shipping Zone
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart
     show: Show
@@ -1707,6 +1713,7 @@ en:
     status: Status
     stock: Stock
     default_stock_location_name: Shop location
+    default_country: Default Country
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
@@ -1889,7 +1896,7 @@ en:
     used: Used
     user: User
     user_rule:
-      choose_users: Choose users
+      choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
     users: Users
     validation:
       unpaid_amount_not_zero: "Amount was not fully reimbursed. Still due: %{amount}"

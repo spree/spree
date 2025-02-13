@@ -21,6 +21,7 @@ module Spree
           # store & stock location
           Stores.call
           StockLocations.call
+          AdminUser.call
 
           # add store resources
           PaymentMethods.call
