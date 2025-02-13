@@ -63,7 +63,9 @@ module Spree
       end
 
       def weeks_online
-        (Time.current - record.available_on.in_time_zone(store.preferred_timezone)).seconds.in_weeks.to_i
+        start_date = record.available_on.presence || record.created_at
+
+        (Time.current - start_date.in_time_zone(store.preferred_timezone)).seconds.in_weeks.to_i
       end
 
       def mapped_categories
