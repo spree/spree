@@ -287,6 +287,27 @@ describe 'API V2 Platform Products Spec' do
     end
   end
 
+  describe 'products#update' do
+    context 'with metadata' do
+      let(:public_metadata) { { 'foo' => 'bar' } }
+      let(:private_metadata) { { 'baz' => 'qux' } }
+
+      before { put "/api/v2/platform/products/#{product.id}", params: { product: { public_metadata: public_metadata, private_metadata: private_metadata } }, headers: bearer_token }
+
+      it 'returns product with metadata' do
+        expect(json_response['data']['attributes']['public_metadata']).to eq public_metadata
+        expect(json_response['data']['attributes']['private_metadata']).to eq private_metadata
+      end
+
+      it 'does not clear metadata when param is missing' do
+        put "/api/v2/platform/products/#{product.id}", params: { product: { name: 'New name' } }, headers: bearer_token
+
+        expect(json_response['data']['attributes']['public_metadata']).to eq public_metadata
+        expect(json_response['data']['attributes']['private_metadata']).to eq private_metadata
+      end
+    end
+  end
+
   describe 'products#show' do
     context 'with product image data' do
       shared_examples 'returns product image data' do
