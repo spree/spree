@@ -51,7 +51,7 @@ module Spree
           transfer = @shipment.transfer_to_shipment(@variant, quantity, destination)
         end
 
-        errors << Spree.t('shipment_transfer.wrong_destination') if transfer.nil?
+        errors << Spree.t('admin.shipment_transfer.wrong_destination') if transfer.nil?
 
         if errors.any?
           flash[:error] = errors.to_sentence

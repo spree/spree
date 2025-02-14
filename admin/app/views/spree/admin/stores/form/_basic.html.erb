@@ -12,7 +12,7 @@
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
       </div>
-      <div class="card-body">
+      <div class="card-body pb-0">
         <p class="text-muted">
           This is the name of your store. It will be displayed in the header and in the footer.
         </p>
@@ -68,7 +68,7 @@
           This determines which vendors you can connect with and what customers see on your store.
         </p>
         <div class="form-group">
-          <%= f.label :default_currency, Spree.t(:currency) %>
+          <%= f.label :default_currency %>
           <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
           <%= f.error_message_on :default_currency %>
         </div>
@@ -82,8 +82,8 @@
         </div>
 
         <div class="form-group">
-          <%= f.label :default_country_iso, Spree.t('i18n.country') %>
-          <%= f.country_select :default_country_iso, {}, { data: { controller: 'autocomplete-select' } } %>
+          <%= f.label :default_country_iso, Spree.t(:default_country) %>
+          <%= f.collection_select :default_country_iso, Spree::Country.pluck(:iso, :name), :first, :last, { include_blank: false }, { data: { controller: 'autocomplete-select' } } %>
           <%= f.error_message_on :default_country_iso %>
         </div>
         <div class="form-group">
@@ -91,7 +91,7 @@
           <%= f.select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { }, { data: { controller: 'autocomplete-select' } } %>
           <small class="form-text text-muted mt-2">
             Zone will limit to which Countries or States products are shipped.
-            <%= link_to Spree.t(:manage_zones), spree.admin_zones_path %>
+            <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path %>
           </small>
           <%= f.error_message_on :checkout_zone_id %>
         </div>

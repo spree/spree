@@ -2,6 +2,7 @@ en:
   spree:
     admin:
       add_tracking_details: Add tracking details
+      audit_log: Audit Log
       url: URL
       active: Active
       name: Name
@@ -36,12 +37,17 @@ en:
         no_digital_assets_added: No digital assets.
         delete_file_confirmation: "Are you sure you want to delete: %{filename}"
         upload: Upload
+      display_on_options:
+        back_end: Only on admin panel
+        front_end: Only on storefront
+        both: On both admin panel & storefront
       export_only_filtered_records: Export only filtered records, matching the search criteria
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
       edit_contact_information: Edit contact information
       edit_shipping_address: Edit shipping address
       edit_billing_address: Edit billing address
+      edit_theme: Edit theme
       getting_started: Getting started
       linkable:
         search_for_a_page: Search for a page
@@ -130,6 +136,14 @@ en:
           is_not_equal_to: is not equal to
           contains: contains
           does_not_contain: does not contain
+      manage_stock_locations: Manage Stock Locations
+      manage_properties: Manage Properties
+      manage_currencies: Manage Currencies
+      manage_zones: Manage Zones
+      manage_taxons: Manage Taxons
+      not_tracking_inventory: Not tracking inventory
+      send_payment_link: Send Payment Link
+      copy_payment_link: Copy Payment Link
       order:
         changing_store_warning: If you change the store this order belongs to, the order will be reset.
         once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
@@ -156,10 +170,14 @@ en:
         payment_link_sent: Payment link was sent to the customer
         no_email_present: Please add an email address to send the payment link
       oauth_applications:
-        list: oAuth applications
-        new: New oAuth application
+        list: API keys
+        new: New API key
         uid: UID
         scopes: Scopes
+        last_used: Last used
+        never: Never
+        read_only: Read Only
+        read_and_write: Read & Write
         documentation_message: 'To learn how to authenticate requests to the Platform API, '
         documentation_cta: see the documentation
       reports:
@@ -234,6 +252,8 @@ en:
         return_items: Return Items
         roles: Roles
         shipments: Shipments
+        shipment_transfer:
+          wrong_destination: Selected location is not a valid destination
         shipping_categories: Shipping Categories
         shipping_methods: Shipping Methods
         shipping_rates: Shipping Rates
@@ -250,10 +270,6 @@ en:
         wished_items: Wished Items
         wishlists: Wishlists
         zones: Zones
-      display_on:
-        both: All
-        front_end: Storefront
-        back_end: Admin Panel
       product:
         all: All
         active: Active
@@ -336,10 +352,16 @@ en:
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
       variants:
-        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
-        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         search_results:
           no_variants: We couldn't find any variants matching your search :(
+      variants_form:
+        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        compare_at_price_description: This price is used to shown marked price on the product page.
+        add_option:
+          empty: Add options like size or color
+          not_empty: Add another option
+        total_inventory_html: "Total inventory at %{stock_location} location: %{count} available"
       page_builder:
         show_more_button: Show explore category button
         heading: Heading

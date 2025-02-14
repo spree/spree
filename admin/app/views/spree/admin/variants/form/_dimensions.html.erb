@@ -19,7 +19,7 @@
 
     <div class="form-group mb-3">
       <%= f.label :dimensions_unit, Spree.t(:unit) %>
-      <%= f.select :dimensions_unit, options_for_select(dimension_units(current_store), f.object.dimensions_unit), { include_blank: false }, { class: 'form-control' } %>
+      <%= f.select :dimensions_unit, options_for_select(dimension_units(current_store), f.object.dimensions_unit), { include_blank: false }, { class: 'custom-select' } %>
     </div>
   </div>
 </div>

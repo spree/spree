@@ -109,6 +109,7 @@
 
 .btn-link {
   color: $primary !important;
+  border-color: $border-color;
 
   &:hover, &:focus {
     text-decoration: none !important;
@@ -183,7 +184,7 @@
   color: $gray-200;
 
   &:hover, &:focus {
-    background-color: $gray-600 !important;
+    background: linear-gradient($gray-900, $primary) !important;
     border-color: $gray-700 !important;
     color: $white !important;
   }

@@ -57,8 +57,10 @@
       </div>
     </div>
   <% elsif can?(:create, Spree::LineItem.new(order: @order)) %>
-    <div data-toggle="modal" data-target="#modal">
-      <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: :dialog_modal }, class: "btn btn-link w-100 py-3" %>
+    <div class="card-body">
+      <div data-toggle="modal" data-target="#modal">
+        <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: :dialog_modal }, class: "btn btn-link w-100 py-3" %>
+      </div>
     </div>
   <% end %>
 <% end %>

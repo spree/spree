@@ -1,12 +1,12 @@
 <% if try_spree_current_user.present? %>
   <div class="position-relative dropdown dropdown-dark rounded" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
     <button type="button"
-          class="btn border-dark rounded-lg border-0 d-flex align-items-center justify-content-between text-left text-gray-400 w-100 p-2"
+          class="btn btn-dark d-flex align-items-center justify-content-between text-left w-100 border-transparent"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">
       <div class="d-flex align-items-center">
         <%= image_tag(avatar_url_for(try_spree_current_user), width: 34, height: 34, class: 'rounded-circle mr-lg-2') %>
         <span class="d-none d-lg-inline text-white">
-          <%= try_spree_current_user.name&.full&.truncate(15) %><br />
+          <%= try_spree_current_user.name&.full&.truncate(15)&.presence || try_spree_current_user.email.truncate(15) %><br />
           <span class="text-muted small"><%= try_spree_current_user.email.truncate(22) %></span>
         </span>
       </div>

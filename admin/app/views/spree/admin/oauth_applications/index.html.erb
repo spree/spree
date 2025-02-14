@@ -1,9 +1,9 @@
 <%= render 'spree/admin/shared/developers_nav' %>
 
-<%= content_for(:title, 'API Keys') %>
+<%= content_for(:title, Spree.t('admin.oauth_applications.list')) %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to 'New API key', new_object_url, class: "btn-primary", icon: 'plus' %>
+  <%= button_link_to Spree.t('admin.oauth_applications.new'), new_object_url, class: "btn-primary", icon: 'plus' %>
 <% end if can? :create, Spree::OauthApplication %>
 
 <%= content_for :page_alerts do %>
@@ -16,7 +16,7 @@
 <% end %>
 
 <% if @oauth_applications.any? %>
-  <div class="table-responsive rounded border mt-4 bg-white shadow-xs">
+  <div class="table-responsive rounded border mt-4 bg-white">
     <table class="table">
       <thead class="text-muted">
         <tr>
@@ -30,7 +30,7 @@
       <tbody>
         <% @oauth_applications.each do |application| %>
           <tr id="<%= spree_dom_id application %>">
-            <td class="w-20"><%= application.name %></td>
+            <td class="w-20"><code><%= application.name %></code></td>
             <td class="w-40">
               <div class="input-group" data-controller="password-toggle">
                 <%= button_tag class: 'btn hover-gray px-1', data: { action: 'click->password-toggle#password' } do %>
@@ -43,18 +43,18 @@
               <% if application.scopes.include?('write') %>
                 <span class="badge badge-warning">
                   <%= icon('pencil', class: 'mr-1') %>
-                  Read & Write
+                  <%= Spree.t('admin.oauth_applications.read_and_write') %>
                 </span>
               <% else %>
                 <span class="badge badge-light">
                   <%= icon('eye', class: 'mr-1') %>
-                  Read Only
+                  <%= Spree.t('admin.oauth_applications.read_only') %>
                 </span>
               <% end %>
             </td>
             <td class="w-15">
               <% if application.last_used_at %>
-                <%= application.last_used_at.to_s %>
+                <%= local_time(application.last_used_at) %>
               <% else %>
                 <span class="text-muted"><%= Spree.t('admin.oauth_applications.never') %></span>
               <% end %>

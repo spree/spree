@@ -6,7 +6,7 @@
   <div class="card mb-4" 
        data-controller="tabs" 
        data-tabs-active-tab-class="active">
-    <div class="card-header d-block border-0 h-auto">
+    <div class="card-header d-block border-0 h-auto p-2">
       <div class="row">
         <div class="col-6 col-lg-4 pr-2">
           <div class="rounded cursor-pointer p-2 hover-light h-100 active" data-tabs-target="tab" data-action="click->tabs#change">
@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    <div class="card-body">
+    <div class="card-body p-2">
       <div class="tab-content">
         <div data-tabs-target="panel" data-index="1">
           <% if currency_money(current_currency).symbol_first? %>
