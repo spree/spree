@@ -2,7 +2,7 @@ module Spree
   class CouponCode < Spree.base_class
     include Spree::Security::CouponCodes if defined?(Spree::Security::CouponCodes)
 
-    enum state: %i(unused used)
+    enum :state, %i(unused used)
 
     acts_as_paranoid
 
