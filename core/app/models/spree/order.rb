@@ -29,9 +29,6 @@ module Spree
     if defined?(Spree::Security::Orders)
       include Spree::Security::Orders
     end
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     has_secure_token :token, length: 35
 
