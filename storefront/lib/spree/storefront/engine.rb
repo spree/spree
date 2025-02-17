@@ -7,6 +7,8 @@ module Spree
         :head_partials,
         :body_start_partials,
         :body_end_partials,
+        :add_to_cart_partials,
+        :remove_from_cart_partials,
         :checkout_partials,
         :checkout_complete_partials
       )
@@ -32,6 +34,8 @@ module Spree
         Rails.application.config.spree_storefront.head_partials = []
         Rails.application.config.spree_storefront.body_start_partials = []
         Rails.application.config.spree_storefront.body_end_partials = []
+        Rails.application.config.spree_storefront.add_to_cart_partials = []
+        Rails.application.config.spree_storefront.remove_from_cart_partials = []
         Rails.application.config.spree_storefront.checkout_partials = []
         Rails.application.config.spree_storefront.checkout_complete_partials = []
       end
