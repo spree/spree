@@ -1,0 +1,24 @@
+<th scope="col" class="pr-0 w-5">
+  <div class="custom-control custom-checkbox ml-1">
+    <input
+      type="checkbox"
+      class="custom-control-input"
+      id="checkAllMasterCheckbox"
+      data-bulk-operation-target="checkboxAll"
+    >
+    <label class="custom-control-label" for="checkAllMasterCheckbox"><span></span></label>
+  </div>
+</th>
+<th scope="col">
+  <%= sort_link @search,
+  :name,
+  Spree.t(:name),
+  { default_order: "desc" },
+  { title: "admin_products_listing_name_title" } %>
+</th>
+<th scope="col" class="text-center">
+  <%= Spree.t(:status) %>
+  <%= help_bubble(Spree.t("admin.products.help_bubble")) %>
+</th>
+<th scope="col"><%= Spree.t(:inventory) %></th>
+<th scope="col"><%= Spree.t(:price) %></th>

@@ -19,11 +19,6 @@
   <td class="text-muted w-20 cursor-pointer text-wrap" data-action="click->row-link#openLink">
     <%= display_inventory(product) %>
   </td>
-  <% if defined?(current_vendor) %>
-    <td class="d-vendor w-15 cursor-pointer" data-action="click->row-link#openLink">
-      <%= product.vendor&.name %>
-    </td>
-  <% end %>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
     <%= display_admin_price(product) %>
   </td>
