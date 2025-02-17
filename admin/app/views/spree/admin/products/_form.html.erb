@@ -9,11 +9,13 @@
     <%= render 'spree/admin/products/form/inventory', f: f unless @product.has_variants? %>
     <%= render 'spree/admin/products/form/shipping', f: f %>
     <%= render 'spree/admin/products/form/properties', f: f %>
+    <%= render 'spree/admin/products/form/extra_form', f: f %>
   </div>
   <div class="col-md-4">
     <%= render 'spree/admin/products/form/status', f: f %>
     <%= render 'spree/admin/products/form/categorization', f: f %>
     <%= render 'spree/admin/products/form/stores', f: f if Spree::Store.accessible_by(current_ability).count > 1 %>
+    <%= render 'spree/admin/products/form/extra_form_sidebar', f: f %>
 
     <%= render 'spree/admin/shared/seo',
           f: f,
