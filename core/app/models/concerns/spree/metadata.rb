@@ -5,13 +5,9 @@ module Spree
     included do
       attribute :public_metadata, default: {}
       attribute :private_metadata, default: {}
-      if Rails::VERSION::STRING >= '7.1.0'
-        serialize :public_metadata, coder: HashSerializer
-        serialize :private_metadata, coder: HashSerializer
-      else
-        serialize :public_metadata, HashSerializer
-        serialize :private_metadata, HashSerializer
-      end
+
+      serialize :public_metadata, coder: HashSerializer
+      serialize :private_metadata, coder: HashSerializer
     end
 
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails
