@@ -20,8 +20,8 @@ module Spree
           # for admins we need to counnt only the main orders (the ones that are splitted)
           @orders_scope = if @vendor.present?
                             @orders_scope.with_vendor(@vendor.id)
-                          else
-                            @orders_scope.without_vendor if @orders_scope.respond_to?(:without_vendor)
+                          elsif @orders_scope.respond_to?(:without_vendor)
+                            @orders_scope.without_vendor
                           end
         end
 
@@ -94,6 +94,8 @@ module Spree
       end
 
       def load_analytics_data
+        return if @vendor.present?
+
         @audience_scope = Spree.user_class.where(created_at: analytics_time_range)
         @audience_total = @audience_scope.count
         previous_audience_total = Spree.user_class.where(created_at: previous_analytics_time_range).count
