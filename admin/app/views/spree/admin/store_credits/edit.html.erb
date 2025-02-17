@@ -1,0 +1,36 @@
+<% content_for :title do %>
+  <%= Spree.t(:store_credit_name) %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_user_path(@user) %>
+  <%= Spree.t(:new_store_credit) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
+
+<%= form_for @store_credit, url: spree.admin_user_store_credit_path(@user, @store_credit) do |f| %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t(:store_credit_name) %>
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <%= render 'form', f: f %>
+    </div>
+  </div>
+
+  <% if can? :update, @store_credit %>
+    <div class="form-actions">
+      <%= turbo_save_button_tag Spree.t('actions.update') %>
+
+      <% if @store_credit.can_be_deleted? && can?(:delete, @store_credit) %>
+        <%= link_to Spree.t('actions.destroy'), spree.admin_user_store_credit_path(@user),
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) },
+          class: 'btn btn-danger ml-auto' %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

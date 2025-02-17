@@ -1,0 +1,35 @@
+<% if @store_credits.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="text-muted">
+        <th><%= Spree.t(:credited) %></th>
+        <th><%= Spree.t(:used) %></th>
+        <th><%= Spree.t(:created_by) %></th>
+        <th><%= Spree.t(:issued_on) %></th>
+        <th data-hook="admin_store_credits_index_header_actions" class="actions"></th>
+      <thead class="text-muted">
+      <tbody>
+        <% @store_credits.each do |store_credit| %>
+          <tr>
+            <td><%= store_credit.display_amount.to_html %></td>
+            <td><%= store_credit.display_amount_used.to_html %></td>
+            <td><%= store_credit.created_by_email %></td>
+            <td><%= local_date(store_credit.created_at) %></td>
+            <td class="actions">
+              <% if store_credit.editable? && can?(:edit, store_credit) %>
+                <%= link_to_edit_url spree.edit_admin_user_store_credit_path(@user, store_credit), no_text: true, data: { 'turbo-frame': '_top' } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-link', data: { 'turbo-frame': '_top' } if can?(:create, Spree::StoreCredit) %>
+  </div>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
