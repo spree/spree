@@ -27,6 +27,12 @@ module Spree
       gift_card_issued: 'Gift Card Issued'
     }.freeze
 
+    # Returns the client method
+    # @return [Symbol] eg. :ahoy
+    def self.client_method
+      raise NotImplementedError, 'Subclasses must implement the client_method method'
+    end
+
     # Initializes the event handler
     # @param client [Object] The client object
     # @param opts [Hash] The options
@@ -44,7 +50,7 @@ module Spree
     # @param event_name [String] eg. 'order_completed'
     # @param properties [Hash] eg. { product: Spree::Product, taxon: Spree::Taxon, query: String }
     # rubocop:disable Lint/UnusedMethodArgument
-    def handle(event_name, properties = {})
+    def handle_event(event_name, properties = {})
       raise NotImplementedError, 'Subclasses must implement the handle method'
     end
     # rubocop:enable Lint/UnusedMethodArgument
@@ -53,7 +59,7 @@ module Spree
     # @param event_name [String] eg. 'order_completed'
     # @return [String] eg. 'Order Completed'
     def event_label(event_name)
-      SUPPORTED_EVENTS[event_name]
+      SUPPORTED_EVENTS[event_name.to_sym]
     end
 
     protected
