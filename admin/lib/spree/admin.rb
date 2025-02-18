@@ -20,6 +20,7 @@ require 'payment_icons'
 require 'dartsass-rails'
 require 'responders'
 require 'tinymce-rails'
+require 'oembed'
 
 require 'spree/admin/action_callbacks'
 require 'spree/admin/callbacks'
