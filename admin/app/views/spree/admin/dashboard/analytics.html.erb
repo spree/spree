@@ -3,8 +3,8 @@
 <% end %>
 
 <%= turbo_frame_tag :analytics do %>
-  <div class="card mb-4" 
-       data-controller="tabs" 
+  <div class="card mb-4"
+       data-controller="tabs"
        data-tabs-active-tab-class="active">
     <div class="card-header d-block border-0 h-auto p-2">
       <div class="row">
@@ -59,17 +59,19 @@
           </div>
         <% end %>
 
-        <div class="col-6 col-lg-2 pl-0">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
-            <div class="d-flex justify-content-center flex-column">
-              <span class="font-size-sm text-muted">Sign-ups</span>
-              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>
-              <div>
-                <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @audience_growth_rate %>
+        <% if @audience_total && @audience_growth_rate %>
+          <div class="col-6 col-lg-2 pl-0">
+            <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
+              <div class="d-flex justify-content-center flex-column">
+                <span class="font-size-sm text-muted">Sign-ups</span>
+                <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>
+                <div>
+                  <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @audience_growth_rate %>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        <% end %>
       </div>
     </div>
     <div class="card-body p-2">
@@ -102,9 +104,11 @@
             <%= line_chart @visits.count %>
           </div>
         <% end %>
-        <div data-tabs-target="panel" data-index="5">
-          <%= line_chart @audience.count %>
-        </div>
+        <% if @audience %>
+          <div data-tabs-target="panel" data-index="5">
+            <%= line_chart @audience.count %>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
