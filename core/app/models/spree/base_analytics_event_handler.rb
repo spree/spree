@@ -1,50 +1,23 @@
 module Spree
   class BaseAnalyticsEventHandler
-    SUPPORTED_EVENTS = {
-      product_viewed: 'Product Viewed',
-      product_list_viewed: 'Product List Viewed',
-      product_searched: 'Product Searched',
-      product_added: 'Product Added',
-      product_removed: 'Product Removed',
-
-      payment_info_entered: 'Payment Info Entered',
-      coupon_entered: 'Coupon Entered',
-      coupon_removed: 'Coupon Removed',
-      coupon_applied: 'Coupon Applied',
-      coupon_denied: 'Coupon Denied',
-
-      checkout_started: 'Checkout Started',
-      checkout_email_entered: 'Checkout Email Entered',
-      checkout_step_viewed: 'Checkout Step Viewed',
-      checkout_step_completed: 'Checkout Step Completed',
-
-      order_completed: 'Order Completed',
-      order_cancelled: 'Order Cancelled',
-      order_refunded: 'Order Refunded',
-      package_shipped: 'Package Shipped',
-      order_fulfilled: 'Order Fulfilled',
-
-      gift_card_issued: 'Gift Card Issued'
-    }.freeze
-
-    # Returns the client method
-    # @return [Symbol] eg. :ahoy
-    def self.client_method
-      raise NotImplementedError, 'Subclasses must implement the client_method method'
-    end
-
     # Initializes the event handler
     # @param client [Object] The client object
     # @param opts [Hash] The options
     # @option opts [User] :user
     # @option opts [String] :session_id
-    def initialize(client, opts = {})
-      @client = client
+    def initialize(opts = {})
       @user = opts[:user]
-      @session_id = opts[:session_id]
+      @session = opts[:session]
+      @request = opts[:request]
     end
 
-    attr_reader :client, :user, :session_id
+    attr_reader :user, :session, :request
+
+    # Returns the client
+    # @return [Object] The client object
+    def client
+      raise NotImplementedError, 'Subclasses must implement the client method'
+    end
 
     # Handles the event
     # @param event_name [String] eg. 'order_completed'
@@ -55,11 +28,11 @@ module Spree
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
-    # Returns the label for the event
+    # Returns the human name for the event
     # @param event_name [String] eg. 'order_completed'
     # @return [String] eg. 'Order Completed'
-    def event_label(event_name)
-      SUPPORTED_EVENTS[event_name.to_sym]
+    def event_human_name(event_name)
+      Analytics.events[event_name.to_sym]
     end
 
     protected
@@ -69,7 +42,7 @@ module Spree
     def identity_hash
       {
         user_id: user&.id,
-        session_id: session_id
+        session_id: session&.id
       }
     end
   end

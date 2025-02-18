@@ -3,20 +3,21 @@ require 'spec_helper'
 RSpec.describe Spree::BaseAnalyticsEventHandler do
   let(:client) { double('client') }
   let(:user) { create(:user) }
-  let(:session_id) { 'test-session-123' }
-  let(:handler) { described_class.new(client, user: user, session_id: session_id) }
+  let(:session) { double('session', id: 'test-session-123') }
+  let(:request) { double('request', remote_ip: '127.0.0.1') }
+  let(:handler) { described_class.new(user: user, session: session, request: request) }
 
-  describe '.client_method' do
+  describe '#client' do
     it 'raises NotImplementedError' do
-      expect { described_class.client_method }.to raise_error(NotImplementedError)
+      expect { handler.client }.to raise_error(NotImplementedError)
     end
   end
 
   describe '#initialize' do
-    it 'sets client, user and session_id' do
-      expect(handler.client).to eq(client)
+    it 'sets user, session and request  ' do
       expect(handler.user).to eq(user)
-      expect(handler.session_id).to eq(session_id)
+      expect(handler.session).to eq(session)
+      expect(handler.request).to eq(request)
     end
   end
 
@@ -26,15 +27,15 @@ RSpec.describe Spree::BaseAnalyticsEventHandler do
     end
   end
 
-  describe '#event_label' do
+  describe '#event_human_name' do
     it 'returns the label for supported events' do
-      expect(handler.event_label('product_viewed')).to eq('Product Viewed')
-      expect(handler.event_label('order_completed')).to eq('Order Completed')
-      expect(handler.event_label('checkout_started')).to eq('Checkout Started')
+      expect(handler.event_human_name('product_viewed')).to eq('Product Viewed')
+      expect(handler.event_human_name('order_completed')).to eq('Order Completed')
+      expect(handler.event_human_name('checkout_started')).to eq('Checkout Started')
     end
 
     it 'returns nil for unsupported events' do
-      expect(handler.event_label('unsupported_event')).to be_nil
+      expect(handler.event_human_name('unsupported_event')).to be_nil
     end
   end
 
@@ -43,18 +44,18 @@ RSpec.describe Spree::BaseAnalyticsEventHandler do
       it 'returns hash with user_id and session_id' do
         expect(handler.send(:identity_hash)).to eq({
           user_id: user.id,
-          session_id: session_id
+          session_id: session.id
         })
       end
     end
 
     context 'when user is not present' do
-      let(:handler) { described_class.new(client, session_id: session_id) }
+      let(:handler) { described_class.new(session: session) }
 
       it 'returns hash with nil user_id and session_id' do
         expect(handler.send(:identity_hash)).to eq({
           user_id: nil,
-          session_id: session_id
+          session_id: session.id
         })
       end
     end
