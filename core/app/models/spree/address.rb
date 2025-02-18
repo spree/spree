@@ -78,8 +78,6 @@ module Spree
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 
-    alias_attribute :first_name, :firstname
-    alias_attribute :last_name, :lastname
     alias_attribute :postal_code, :zipcode
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
@@ -97,6 +95,22 @@ module Spree
 
     def user_default_shipping?
       user.present? && id == user.ship_address_id
+    end
+
+    def first_name
+      firstname
+    end
+
+    def first_name=(value)
+      self.firstname = value
+    end
+
+    def last_name
+      lastname
+    end
+
+    def last_name=(value)
+      self.lastname = value
     end
 
     def full_name

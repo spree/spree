@@ -6,15 +6,17 @@
   </div>
   <div class="card-body">
     <div class="form-group">
-      <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
+      <% if can? :modify, Spree::Taxon %>
+        <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
 
-      <% if can? :modify, Spree::Classification %>
         <%= tom_select_tag 'product[taxon_ids]',
           multiple: true,
           active_option: @product.taxon_ids,
           url: spree.admin_taxons_select_options_path(format: :json),
           class: 'w-100' %>
       <% elsif @product.taxons.any? %>
+        <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
+
         <ul class="text_list">
           <% @product.taxons.manual.pluck(:name).each do |taxon_name| %>
             <li><%= taxon_name %></li>

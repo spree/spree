@@ -9,7 +9,7 @@
         <%= meta_title.presence || title %>
       </div>
       <div class="seo__preview__link">
-        <%= current_store.formatted_url %>/<%= slug_path %>/<span data-seo-form-target="slugPreview"><%= slug %></span>
+        <%= current_store.formatted_url_or_custom_domain %>/<%= slug_path %>/<span data-seo-form-target="slugPreview"><%= slug %></span>
       </div>
       <div class="seo__preview__description text-break" data-seo-form-target="descriptionPreview"></div>
     </div>

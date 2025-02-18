@@ -17,10 +17,6 @@ module Spree
 
       private
 
-      def collection_actions
-        [:index, :bulk_modal, :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
-      end
-
       def handle_bulk_operation_response
         respond_to do |format|
           format.turbo_stream do

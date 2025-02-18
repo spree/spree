@@ -1,0 +1,40 @@
+<% if try_spree_current_user.present? %>
+  <div class="position-relative dropdown dropdown-dark rounded" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+    <button type="button"
+          class="btn btn-dark d-flex align-items-center justify-content-between text-left w-100 border-transparent"
+          data-toggle="dropdown" aria-expanded="false" id="accountNav">
+      <div class="d-flex align-items-center">
+        <%= image_tag(avatar_url_for(try_spree_current_user), width: 34, height: 34, class: 'rounded-circle mr-lg-2') %>
+        <span class="d-none d-lg-inline text-white">
+          <%= try_spree_current_user.name&.full&.truncate(15)&.presence || try_spree_current_user.email.truncate(15) %><br />
+          <span class="text-muted small"><%= try_spree_current_user.email.truncate(22) %></span>
+        </span>
+      </div>
+      <%= icon 'dots-vertical', class: 'mr-0 ml-2 mb-0 d-none d-lg-block' %>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right w-100 shadow-sm mb-1 mt-1 mt-lg-0">
+      <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
+
+      <% if enterprise_edition? && try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>
+        <div data-toggle="modal" data-target="#modal">
+          <%= link_to_with_icon 'switch-3', Spree.t(:switch_team), main_app.accounts_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal' } %>
+        </div>
+      <% end %>
+
+      <% if enterprise_edition? && defined?(app_domain) %>
+        <%= link_to_with_icon 'plus', Spree.t(:create_new_team), main_app.new_account_url(host: app_domain), class: 'dropdown-item', data: { turbo: false } %>
+      <% end %>
+
+      <div class="dropdown-divider"></div>
+
+      <%= link_to_with_icon 'book', 'Help center', 'https://spreecommerce.org/docs', class: 'dropdown-item', target: '_blank' %>
+      <%= link_to_with_icon 'message-circle', 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item', target: '_blank' %>
+      <div class="dropdown-divider"></div>
+
+      <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
+        <%= icon('logout', class: "icon icon-logout")  %>
+        <%= Spree.t(:logout) %>
+      <% end if defined?(spree_admin_logout_path) %>
+    </div>
+  </div>
+<% end %>

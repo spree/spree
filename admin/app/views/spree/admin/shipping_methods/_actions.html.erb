@@ -1,0 +1,5 @@
+<% content_for :page_actions do %>
+  <% if can?(:create, Spree::ShippingMethod) %>
+    <%= button_link_to Spree.t(:new_shipping_method), new_object_url, class: "btn-primary", icon: 'plus' %>
+  <% end %>
+<% end %>

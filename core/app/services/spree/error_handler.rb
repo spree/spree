@@ -2,6 +2,12 @@ module Spree
   class ErrorHandler
     prepend ::Spree::ServiceModule::Base
 
+    # Handles errors and logs them to the console.
+    #
+    # @param exception [Exception]
+    # @param opts [Hash]
+    # @option opts [Hash] :report_context
+    # @option opts [User] :user
     def call(exception:, opts: {})
       run :format_message
       run :log_error
@@ -32,7 +38,7 @@ module Spree
       # overwrite this method in your application to support different error handlers
       # eg. Sentry, Rollbar, etc
       if defined?(Sentry)
-        if opts[:sentry_context].present?
+        if opts[:report_context].present?
           Sentry.configure_scope do |scope|
             scope.set_context(:extra, opts[:report_context])
           end

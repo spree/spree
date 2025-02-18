@@ -55,12 +55,24 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
   end
 
   describe '#weeks_online' do
-    before do
-      product.update(available_on: 2.weeks.ago)
+    context 'with available on' do
+      before do
+        product.update(available_on: 2.weeks.ago)
+      end
+
+      it 'returns number of weeks since product activation' do
+        expect(subject.weeks_online).to eq(2)
+      end
     end
 
-    it 'returns number of weeks since product activation' do
-      expect(subject.weeks_online).to eq(2)
+    context 'without available on' do
+      before do
+        product.update(available_on: nil, created_at: 3.weeks.ago)
+      end
+
+      it 'returns number of weeks since product creation' do
+        expect(subject.weeks_online).to eq(3)
+      end
     end
   end
 

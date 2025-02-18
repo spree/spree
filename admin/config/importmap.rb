@@ -2,7 +2,8 @@ pin 'application-spree-admin', to: 'spree/admin/application.js', preload: false
 
 pin '@rails/actioncable', to: 'actioncable.esm.js', preload: ['application-spree-admin']
 pin '@rails/activestorage', to: 'activestorage.esm.js', preload: ['application-spree-admin']
-pin '@rails/actiontext', to: '@rails--actiontext--app--assets--javascripts--actiontext.js.js', preload: ['application-spree-admin']
+pin '@rails/actiontext', to: '@rails--actiontext@7.2.201.js', preload: ['application-spree-admin']
+pin 'trix', to: 'trix@2.1.12.js', preload: ['application-spree-admin']
 
 pin '@rails/request.js', to: '@rails--request.js.js', preload: ['application-spree-admin'] # @0.0.8
 pin 'sortablejs', preload: ['application-spree-admin'] # @1.15.6
@@ -10,7 +11,7 @@ pin 'chartkick', to: 'chartkick.js', preload: ['application-spree-admin']
 pin 'Chart.bundle', to: 'Chart.bundle.js', preload: ['application-spree-admin']
 pin 'local-time', preload: ['application-spree-admin'] # @3.0.2
 pin 'mapkick/bundle', to: 'mapkick.bundle.js', preload: ['application-spree-admin']
-pin 'jquery', to: 'jquery3.min.js', preload: ['application-spree-admin']
+pin "jquery", to: 'jquery.min.js', preload: ['application-spree-admin'] # @3.7.1
 pin 'bootstrap', to: 'bootstrap--dist--js--bootstrap.bundle.min.js.js', preload: ['application-spree-admin'] # @4.6.1
 pin 'dompurify', preload: ['application-spree-admin'] # @3.2.3
 

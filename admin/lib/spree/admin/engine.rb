@@ -14,6 +14,12 @@ module Spree
         app.config.assets.css_compressor = nil if app.config.assets.css_compressor == :sass
       end
 
+      # Rails 7.1 introduced a new feature that raises an error if a callback action is missing.
+      # We need to disable it as we use a lot of concerns that add callback actions.
+      initializer 'spree.admin.disable_raise_on_missing_callback_actions' do |app|
+        app.config.action_controller.raise_on_missing_callback_actions = false
+      end
+
       initializer 'spree.admin.assets' do |app|
         app.config.assets.paths << root.join('app/javascript')
         app.config.assets.paths << root.join('vendor/javascript')

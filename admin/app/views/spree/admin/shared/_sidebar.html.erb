@@ -1,0 +1,24 @@
+<div class="bg-gray-900 border-dark w-100 d-flex flex-column sticky-top mx-0 px-0 rounded-lg overflow-hidden mt-2 shadow-xs px-2" 
+     style="height: 98vh; top: 0.5rem"
+     id="main-sidebar">
+  
+  <div class="d-none d-lg-block border-bottom border-dark position-sticky z-index-1000 top-0 mb-2">
+    <% if defined?(current_vendor) && current_vendor.present? %>
+      <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>
+    <% else %>
+      <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+    <% end %>
+  </div>
+
+  <div class="overflow-y-auto d-flex flex-column h-100" style="overflow-y: auto; overflow-x: hidden">
+    <% if defined?(current_vendor) && current_vendor.present? %>
+      <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
+    <% else %>
+      <%= render 'spree/admin/shared/sidebar/store_nav' %>
+    <% end %>
+  </div>
+
+  <div class="position-sticky d-none d-lg-block w-100 z-index-1000 mt-auto py-2 bottom-0">
+    <%= render 'spree/admin/shared/user_dropdown' %>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
+  display: block !important;
+}
+
+.sort-handle {
+  cursor: grab;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.list-group-item {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.border-1 {
+  border-width: 1px !important;
+}
+
+.list-group-item {
+  background-color: transparent;
+}
+.list-group-item.active, .list-group-item:active {
+  background-color: $gray-50;
+  .badge {
+    @extend .badge-primary;
+  }
+}
+.list-group-sidebar {
+  .list-group-item {
+    @extend .border-0;
+    @extend .bg-transparent;
+    @extend .text-dark;
+    border-radius: 9999px !important;
+  }
+  .list-group-item.active, .list-group-item:focus {
+    @extend .font-weight-bold;
+  }
+}
+
+.page-header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+#main-sidebar {
+  .nav-item {
+    margin-bottom: 3px;
+  }
+}

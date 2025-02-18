@@ -1,0 +1,4 @@
+<%= content_for(:page_tabs) do %>
+  <%= nav_pill_list_item(:tax_rates, url: spree.admin_tax_rates_path) if can?(:manage, Spree::TaxRate) %>
+  <%= nav_pill_list_item(:tax_categories, url: spree.admin_tax_categories_path) if can?(:manage, Spree::TaxCategory) %>
+<% end %>

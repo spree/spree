@@ -1,0 +1,38 @@
+// Custom tooltip styles
+.tooltip {
+  font-family: $font-family-sans-serif;
+  
+  .tooltip-inner {
+    background: $white;
+    color: $gray-900;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    padding: 0.25rem 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 200px;
+    border: 1px solid $gray-100;
+    margin: 0.25rem 0;
+  }
+
+  // Arrow styles
+  &.bs-tooltip-top .arrow::before {
+    border-top-color: $white;
+  }
+
+  &.bs-tooltip-right .arrow::before {
+    border-right-color: $white;
+  }
+
+  &.bs-tooltip-bottom .arrow::before {
+    border-bottom-color: $white;
+  }
+
+  &.bs-tooltip-left .arrow::before {
+    border-left-color: $white;
+  }
+
+  // Remove arrows
+  .arrow {
+    display: none;
+  }
+}

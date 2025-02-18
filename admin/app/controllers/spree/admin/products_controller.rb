@@ -289,14 +289,6 @@ module Spree
 
       private
 
-      def collection_actions
-        [
-          :index, :bulk_modal, :bulk_status_update,
-          :bulk_add_to_taxons, :bulk_remove_from_taxons,
-          :bulk_add_tags, :bulk_remove_tags
-        ]
-      end
-
       def update_turbo_stream_enabled?
         true
       end

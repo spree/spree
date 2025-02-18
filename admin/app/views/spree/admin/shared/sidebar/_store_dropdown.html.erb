@@ -1,0 +1,44 @@
+<div class="position-relative dropdown dropdown-dark my-lg-2 rounded" id="store-menu" data-turbo-permanent>
+  <button type="button"
+          class="btn border-dark rounded border-0 text-white d-flex align-items-center justify-content-between text-left w-100 shadow-none p-2 font-size-plus"
+          data-toggle="dropdown" aria-expanded="false">
+    <span class="d-flex align-items-center font-weight-bold">
+      <%= store_admin_icon(current_store) %>
+      <span class="d-none d-lg-block">
+        <span>
+          <%= truncate(current_store.name, length: 15) %>
+        </span>
+        <br />
+      </span>
+    </span>
+    <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
+  </button>
+  <div class="dropdown-menu w-100 shadow-sm border-gray-900 font-size-plus" style="min-width: 200px">
+    <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
+      <%= icon 'eye' %>
+      <%= Spree.t(:view_store) %>
+    <% end %>
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item' do %>
+      <%= icon 'tools' %>
+      <%= Spree.t('admin.edit_theme') %>
+    <% end if current_store.default_theme %>
+
+    <div class="dropdown-divider"></div>
+
+    <% if available_stores.count > 1 %>
+      <div class="dropdown-header">
+        <%= Spree.t(:switch_store) %>
+      </div>
+      <% available_stores.each do |store| %>
+        <% next if store.id == current_store.id %>
+        <%= link_to store.name, spree.admin_dashboard_url(host: store.url), class: 'dropdown-item' %>
+      <% end %>
+
+      <div class="dropdown-divider"></div>
+    <% end %>
+
+    <span data-toggle="modal" data-target="#modal-lg">
+      <%= link_to_with_icon 'plus', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal_lg' } %>
+    </so>
+  </div>
+</div>

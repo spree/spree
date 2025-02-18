@@ -59,12 +59,28 @@ module Spree
         @error = Spree.t(code, locale_options)
       end
 
+      # Returns the promotion for the order
+      #
+      # @return [Spree::Promotion]
       def promotion
         @promotion ||= store.promotions.active.includes(
           :promotion_rules, :promotion_actions
         ).with_coupon_code(order.coupon_code)
       end
 
+      # Returns the amount of adjustments for the promotion
+      #
+      # @return [Numeric]
+      def adjustments_amount
+        @adjustments_amount ||=
+          @order.all_adjustments.promotion.eligible.
+          where(source: promotion&.actions).
+          sum(:amount)
+      end
+
+      # Returns true if the code was applied successfully
+      #
+      # @return [Boolean]
       def successful?
         success.present? && error.blank?
       end

@@ -3,6 +3,7 @@ en:
     admin:
       metadatas_for: Metadata for %{resource_name}
       add_tracking_details: Add tracking details
+      audit_log: Audit Log
       url: URL
       active: Active
       name: Name
@@ -18,6 +19,11 @@ en:
       kind: Kind
       home: Home
       copy_to_clipboard: Copy to clipboard
+      dashboard:
+        hi: Hi
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+        getting_started:
+          description: Everything you need to set up to start selling.
       data_feeds:
         data_feeds: Data Feeds
         type: Type
@@ -32,12 +38,18 @@ en:
         no_digital_assets_added: No digital assets.
         delete_file_confirmation: "Are you sure you want to delete: %{filename}"
         upload: Upload
+      display_on_options:
+        back_end: Only on admin panel
+        front_end: Only on storefront
+        both: On both admin panel & storefront
       export_only_filtered_records: Export only filtered records, matching the search criteria
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
       edit_contact_information: Edit contact information
       edit_shipping_address: Edit shipping address
       edit_billing_address: Edit billing address
+      edit_theme: Edit theme
+      getting_started: Getting started
       linkable:
         search_for_a_page: Search for a page
         search_for_a_taxon: Search for a Taxon
@@ -125,6 +137,14 @@ en:
           is_not_equal_to: is not equal to
           contains: contains
           does_not_contain: does not contain
+      manage_stock_locations: Manage Stock Locations
+      manage_properties: Manage Properties
+      manage_currencies: Manage Currencies
+      manage_zones: Manage Zones
+      manage_taxons: Manage Taxons
+      not_tracking_inventory: Not tracking inventory
+      send_payment_link: Send Payment Link
+      copy_payment_link: Copy Payment Link
       order:
         changing_store_warning: If you change the store this order belongs to, the order will be reset.
         once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
@@ -151,10 +171,14 @@ en:
         payment_link_sent: Payment link was sent to the customer
         no_email_present: Please add an email address to send the payment link
       oauth_applications:
-        list: oAuth applications
-        new: New oAuth application
+        list: API keys
+        new: New API key
         uid: UID
         scopes: Scopes
+        last_used: Last used
+        never: Never
+        read_only: Read Only
+        read_and_write: Read & Write
         documentation_message: 'To learn how to authenticate requests to the Platform API, '
         documentation_cta: see the documentation
       reports:
@@ -229,6 +253,8 @@ en:
         return_items: Return Items
         roles: Roles
         shipments: Shipments
+        shipment_transfer:
+          wrong_destination: Selected location is not a valid destination
         shipping_categories: Shipping Categories
         shipping_methods: Shipping Methods
         shipping_rates: Shipping Rates
@@ -245,10 +271,6 @@ en:
         wished_items: Wished Items
         wishlists: Wishlists
         zones: Zones
-      display_on:
-        both: All
-        front_end: Storefront
-        back_end: Admin Panel
       product:
         all: All
         active: Active
@@ -256,30 +278,25 @@ en:
         deleted: Deleted
         draft: Draft
         pre_order: Pre-order
-      getting_started:
-        lets_get_you_started: Let's get you started
-        add_products: Add products
-        setup_shipping: Setup shipping
-        setup_payment_method: Setup payment methods
-        setup_taxes: Setup taxes
-        setup_taxes_calculation: Setup tax calculation
-        products_section:
-          message_with_products_html: You have added <strong> %{count} products</strong> so far - good job!</p>
-          message_without_products: You can add products manually or
-          import_message: import them via the API.
-        shipping_section:
-          message_with_shipping: You have setup shipping for
-          message_without_shipping: You can add multiple shipping methods, different for each country, continent or region.
-        payment_methods_section:
-          message_with_payment_method: You're ready to accept payments!
-          message_without_payment_method: You can setup multiple payment methods such as Stripe, PayPal, ApplePay, etc.
-        taxes_section:
-          message_with_taxes: You're tax calculation is setup!
-          message_without_taxes: You can use tax services such as TaxJar or setup tax calculation manually
       payment_methods:
         edit:
           payment_method_configuration: "Payment Method Configuration"
       bulk_ops:
+        set: Set
+        stock_items:
+          set_backorderable_to_false: Set Backorderable to false
+          set_backorderable_to_true: Set Backorderable to true
+          set_track_inventory_to_false: Disable Inventory Tracking
+          set_track_inventory_to_true: Enable Inventory Tracking
+          backorderable_explanation: Backorderable indicates if a stock item can be backordered when it runs out.
+          track_inventory_explanation: Enable/disable tracking the inventory for stock items.
+        users:
+          title:
+            add_tags: Add tags
+            remove_tags: Remove tags
+          body:
+            add_tags: 'Select tags to add to the customers:'
+            remove_tags: 'Select tags to remove from the customers:'
         products:
           title:
             set_status: Set as %{status}
@@ -336,10 +353,16 @@ en:
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
       variants:
-        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
-        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         search_results:
           no_variants: We couldn't find any variants matching your search :(
+      variants_form:
+        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        compare_at_price_description: This price is used to shown marked price on the product page.
+        add_option:
+          empty: Add options like size or color
+          not_empty: Add another option
+        total_inventory_html: "Total inventory at %{stock_location} location: %{count} available"
       page_builder:
         show_more_button: Show explore category button
         heading: Heading
@@ -377,22 +400,6 @@ en:
         button_alignment: Button alignment
         not_set: Not set
       view_all_orders: View all orders
-      bulk_ops:
-        set: Set
-        stock_items:
-          set_backorderable_to_false: Set Backorderable to false
-          set_backorderable_to_true: Set Backorderable to true
-          set_track_inventory_to_false: Disable Inventory Tracking
-          set_track_inventory_to_true: Enable Inventory Tracking
-          backorderable_explanation: Backorderable indicates if a stock item can be backordered when it runs out.
-          track_inventory_explanation: Enable/disable tracking the inventory for stock items.
-        users:
-          title:
-            add_tags: Add tags
-            remove_tags: Remove tags
-          body:
-            add_tags: 'Select tags to add to the customers:'
-            remove_tags: 'Select tags to remove from the customers:'
       amount_spent: Amount spent
       avg_order_value: Avg. Order Value
       num_orders: No. of Orders

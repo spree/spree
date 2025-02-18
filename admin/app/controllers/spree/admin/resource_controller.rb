@@ -4,6 +4,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
+  after_action :set_return_to, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
@@ -299,7 +300,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def collection_actions
-    [:index]
+    [:index, :select_options, :bulk_modal, :bulk_status_update,
+     :bulk_add_to_taxons, :bulk_remove_from_taxons,
+     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
   end
 
   def member_action?
