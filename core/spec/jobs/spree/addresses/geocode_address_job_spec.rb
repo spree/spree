@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Addresses::GeocodeAddressJob, :vcr do
+RSpec.describe Spree::Addresses::GeocodeAddressJob do
   subject(:geocode_address) { described_class.new.perform(address.id) }
 
   let(:address) do
