@@ -18,6 +18,13 @@ module Spree
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
 
+    # Returns true if the promotion action is a free shipping action
+    #
+    # @return [Boolean]
+    def free_shipping?
+      type == 'Spree::Promotion::Actions::FreeShipping'
+    end
+
     protected
 
     def label

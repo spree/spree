@@ -1,0 +1,20 @@
+<% unless turbo_frame_request? %>
+  <% content_for :page_title do %>
+    <%= page_header_back_button spree.admin_user_path(@user) %>
+    <%= Spree.t(:store_credit_name) %>
+  <% end %>
+
+  <% content_for :page_actions do %>
+    <%= button_link_to Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: "btn-primary", icon: 'plus' if can?(:create, Spree::StoreCredit) %>
+  <% end %>
+<% end %>
+
+<div class="card-lg p-0">
+  <% if params[:frame_name].present? %>
+    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+      <%= render 'list' %>
+    <% end %>
+  <% else %>
+    <%= render 'list' %>
+  <% end %>
+</div>

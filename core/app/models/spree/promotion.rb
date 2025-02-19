@@ -22,11 +22,7 @@ module Spree
     #
     # Enums
     #
-    if Rails.version >= '7.0'
-      enum :kind, { coupon_code: 0, automatic: 1 }
-    else
-      enum kind: { coupon_code: 0, automatic: 1 }
-    end
+    enum :kind, { coupon_code: 0, automatic: 1 }
 
     #
     # Associations

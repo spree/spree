@@ -20,7 +20,9 @@ module Spree
                                :pages,
                                :page_sections,
                                :page_blocks,
-                               :reports)
+                               :reports,
+                               :analytics_events,
+                               :analytics_event_handlers)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -32,6 +34,7 @@ module Spree
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess])
         Spree::Config = app.config.spree.preferences
@@ -229,6 +232,34 @@ module Spree
           Spree::Reports::ProductsPerformance,
           Spree::Reports::SalesTotal
         ]
+
+        Rails.application.config.spree.analytics_events = {
+          product_viewed: 'Product Viewed',
+          product_list_viewed: 'Product List Viewed',
+          product_searched: 'Product Searched',
+          product_added: 'Product Added',
+          product_removed: 'Product Removed',
+
+          payment_info_entered: 'Payment Info Entered',
+          coupon_entered: 'Coupon Entered',
+          coupon_removed: 'Coupon Removed',
+          coupon_applied: 'Coupon Applied',
+          coupon_denied: 'Coupon Denied',
+
+          checkout_started: 'Checkout Started',
+          checkout_email_entered: 'Checkout Email Entered',
+          checkout_step_viewed: 'Checkout Step Viewed',
+          checkout_step_completed: 'Checkout Step Completed',
+
+          order_completed: 'Order Completed',
+          order_cancelled: 'Order Cancelled',
+          order_refunded: 'Order Refunded',
+          package_shipped: 'Package Shipped',
+          order_fulfilled: 'Order Fulfilled',
+
+          gift_card_issued: 'Gift Card Issued'
+        }
+        Rails.application.config.spree.analytics_event_handlers = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

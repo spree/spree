@@ -26,11 +26,7 @@ module Spree
     #
     # Enums
     #
-    if Rails.version >= '7.0'
-      enum :format, SUPPORTED_FILE_FORMATS.each_with_index.to_h
-    else
-      enum format: SUPPORTED_FILE_FORMATS.each_with_index.to_h
-    end
+    enum :format, SUPPORTED_FILE_FORMATS.each_with_index.to_h
 
     #
     # Ransack configuration

@@ -211,6 +211,11 @@ Spree::Core::Engine.add_routes do
     # account management
     resources :roles, except: :show
 
+    # Action Text
+    namespace :action_text do
+      resources :video_embeds, only: [:create, :destroy]
+    end
+
     # developer tools
     resources :oauth_applications
     resources :webhooks_subscribers
