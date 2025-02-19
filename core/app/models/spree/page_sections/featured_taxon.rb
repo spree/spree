@@ -59,9 +59,7 @@ module Spree
           }
 
           products_finder = Spree::Dependencies.products_finder.constantize
-          products = products_finder.new(scope: store.products, params: finder_params).execute
-
-          GearedPagination::Recordset.new(products, per_page: preferred_max_products_to_show).page(1).records
+          products_finder.new(scope: store.products, params: finder_params).execute.limit(preferred_max_products_to_show)
         end
       end
 

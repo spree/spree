@@ -5,6 +5,7 @@ require 'sprockets/railtie'
 
 require 'active_link_to'
 require 'canonical-rails'
+require 'geared_pagination'
 require 'heroicon'
 require 'importmap-rails'
 require 'inline_svg'
