@@ -1,0 +1,3 @@
+<%= turbo_frame_tag "section-#{@section.id}" do %>
+  <%= render_section(@section, section_variables, lazy_allowed: false) %>
+<% end %>
