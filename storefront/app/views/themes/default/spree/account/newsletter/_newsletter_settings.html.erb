@@ -1,0 +1,13 @@
+<%= turbo_frame_tag :newsletter_settings, class: 'flex flex-col gap-4' do %>
+  <div class="flex flex-col gap-1">
+    <h3 class="font-medium uppercase text-lg leading-8"><%= Spree.t(:newsletters) %></h3>
+    <p class="text-base text-neutral-600"><%= Spree.t('storefront.newsletter_subscription.status', status: @user.accepts_email_marketing ? Spree.t(:subscribed) : Spree.t(:not_subscribed)).html_safe %>
+    </p>
+  </div>
+  <%= form_for @user, url: spree.account_newsletter_path, method: :put do |f| %>
+    <%= f.hidden_field :accepts_email_marketing, value: !@user.accepts_email_marketing %>
+    <%= f.button type: :submit, class: 'btn-primary w-full', data: {turbo_submits_with: render('spree/shared/icons/spinner') } do %>
+      <%= @user.accepts_email_marketing? ? :unsubscribe : :subscribe %>
+    <% end %>
+  <% end %>
+<% end %>
