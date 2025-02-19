@@ -1,4 +1,13 @@
 en:
   spree:
     storefront:
+      add_to_wishlist: Add to wishlist
+      wished_items:
+        select_variant: Select variant to add to wishlist
+        remove_error: 'You already removed this item from your wishlist'
+        remove: Remove from wishlist
+        unavailable: Unavailable
+        no_wished_items:
+          title: You have no Saved Items
+          description: You have no saved items yet.
       
