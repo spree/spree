@@ -7,7 +7,7 @@ module Spree
     before_action :assign_order_with_lock, except: :create
     before_action :load_line_item, except: :create
 
-    skip_before_action :verify_authenticity_token
+    skip_before_action :verify_authenticity_token, only: :create
 
     helper 'spree/products'
 
