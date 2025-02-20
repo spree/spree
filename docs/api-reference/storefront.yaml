@@ -356,6 +356,100 @@ paths:
         - Account / Orders
     parameters:
       - $ref: '#/components/parameters/OrderParam'
+  '/api/v2/storefront/passwords':
+    post:
+      description: |-
+        Sends a password reset email to the user with the specified email address.
+
+        This endpoint requires `Spree.user_class` to respond to `send_reset_password_instructions(current_store)` method.
+      summary: Send Password Reset Instructions
+      operationId: send-password-reset
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: email@example.com
+      responses:
+        '200':
+          description: 200 Success - Password reset instructions have been sent to the specified email address.
+        '404':
+          description: 404 Not Found - The email address was not found in the system.
+      tags:
+        - Passwords
+  '/api/v2/storefront/passwords/{reset_password_token}':
+    patch:
+      description: |-
+        Updates the user's password with the new password.
+
+        This endpoint requires `Spree.user_class` to respond to `reset_password_by_token` method.
+      summary: Update Password
+      operationId: update-password
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    password:
+                      type: string
+                      example: new_password
+                    password_confirmation:
+                      type: string
+                      example: new_password
+      responses:
+        '200':
+          description: 200 Success - Password has been updated.
+        '404':
+          description: 404 Not Found - The reset password token is invalid.
+      tags:
+        - Passwords
+  '/api/v2/storefront/account_confirmations/{confirmation_token}':
+    get:
+      description: |-
+        Confirms the user's account with the confirmation token.
+
+        This endpoint requires `Spree.user_class` to respond to `confirm_by_token` method.
+      summary: Confirm Account
+      operationId: confirm-account
+      responses:
+        '200':
+          description: 200 Success - Account has been confirmed.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      state:
+                        type: string
+                        description: The state of the account after confirmation.
+                        example: 'confirmed'
+        '422':
+          description: 422 Unprocessable Entity - User cannot be confirmed.
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'User cannot be confirmed'
+      tags:
+        - Account Confirmation
   '/api/v2/storefront/order_status/{order_number}':
     get:
       description: |-
