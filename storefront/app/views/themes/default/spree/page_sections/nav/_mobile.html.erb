@@ -86,8 +86,10 @@
             <%= render 'spree/shared/icons/account' %>
           <% end %>
 
-          <%= link_to spree_logout_path, method: :delete, data: { turbo_method: :delete }, class: 'btn-secondary gap-2 flex justify-center items-center w-full mt-2' do %>
-            <%= Spree.t(:sign_out) %>
+          <% if defined?(spree_logout_path) %>
+            <%= link_to spree_logout_path, method: :delete, data: { turbo_method: :delete }, class: 'btn-secondary gap-2 flex justify-center items-center w-full mt-2' do %>
+              <%= Spree.t(:sign_out) %>
+            <% end %>
           <% end %>
         <% else %>
           <button

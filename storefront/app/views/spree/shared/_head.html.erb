@@ -17,7 +17,7 @@
 <%= javascript_importmap_tags 'application-spree-storefront' %>
 <%= javascript_tag "wishedVariantIds = #{(current_wishlist&.variant_ids&.map(&:to_s) || []).to_json.html_safe};" %>
 
-<%= stylesheet_link_tag "application.tailwind", defer: true, data: { turbo_track: 'reload' } %>
+<%= stylesheet_link_tag "tailwind", defer: true, data: { turbo_track: 'reload' } %>
 <%= stylesheet_link_tag "storefront_page_builder", defer: true, data: { turbo_track: 'reload' } if page_builder_enabled? %>  
 
 <%= yield :head %>

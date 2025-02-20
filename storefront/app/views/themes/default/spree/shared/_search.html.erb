@@ -1,0 +1,32 @@
+<div id="search-suggestions" role="dialog" aria-modal="true">
+  <div class='w-full flex flex-col border-b border-default' data-controller="search-suggestions" data-show-class="h-screen min-h-screen" data-search-suggestions-url-value="<%= spree.search_suggestions_path %>">
+    <div class='hidden lg:flex justify-center w-full mt-4 mb-3' id="header-logo">
+      <%= render 'spree/shared/logo', logo: logo, height: logo_height %>
+    </div>
+    <%= form_with url: spree.search_path, method: :get, local: true do %>
+      <div class='page-container bg-background flex w-full my-2 lg:mb-3 animate-fadeIn'>
+        <%= button_tag class: 'items-center justify-center pr-4', type: :button, data: { action: "click->search-suggestions#hide touch->search-suggestions#hide" } do %>
+          <span class='sr-only'><%= Spree.t(:close) %></span>
+          <%= render 'spree/shared/icons/close', color: 'black' %>
+        <% end %>
+
+        <div class='relative mx-auto w-full md:w-1/2' data-controller='clear-input'>
+          <%= button_tag type: 'submit', class: 'absolute left-2 top-2' do %>
+            <%= render 'spree/shared/icons/search' %>
+          <% end %>
+
+          <%= text_field_tag :q, params[:q], class: 'p-2 lg:text-sm !leading-6 pl-10 !h-auto bg-accent w-full uppercase pr-14 focus:outline-none text-input', placeholder: Spree.t(:search), data: { search_suggestions_target: 'input', clear_input_target: 'input' } %>
+          <%= button_tag class: 'hidden text-sm font-semibold absolute top-2 right-2 uppercase h-6 tracking-widest', data: { clear_input_target: 'button', action: 'click->clear-input#clear touch->clear-input#clear click->search-suggestions#clear touch->search-suggestions#clear' } do %>
+            <%= Spree.t(:clear) %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <div id="search-suggestions-content" class="flex-grow hidden" data-show-class="animate-fadeIn"></div>
+  </div>
+
+  <!-- rendering search flyover skeleton -->
+  <template id="loading">
+    <%= render 'spree/search/suggestions' %>
+  </template>
+</div>
