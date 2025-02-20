@@ -67,6 +67,7 @@ en:
           digital_asset_link_expire_time:
             download_link_expire_time: Download Link Expire Time
             link_expire_time: Set the expire time of each download link. (seconds).
+      storefront: Storefront
       store_setup_tasks:
         add_billing_address: Add billing address
         setup_taxes_collection: Setup taxes collection
