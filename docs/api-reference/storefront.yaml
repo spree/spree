@@ -449,7 +449,7 @@ paths:
                     type: string
                     example: 'User cannot be confirmed'
       tags:
-        - Account Confirmation
+        - Account / Confirmations
   '/api/v2/storefront/order_status/{order_number}':
     get:
       description: |-
