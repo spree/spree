@@ -414,7 +414,7 @@ paths:
         '404':
           description: 404 Not Found - The reset password token is invalid.
       tags:
-        - Passwords
+        - Account / Passwords
   '/api/v2/storefront/account_confirmations/{confirmation_token}':
     get:
       description: |-
