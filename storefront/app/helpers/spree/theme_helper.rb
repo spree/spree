@@ -136,7 +136,7 @@ module Spree
           editor_id: "block-#{block.id}",
           editor_name: block.display_name,
           editor_parent_id: "section-#{block.section_id}",
-          editor_link: spree.edit_admin_page_section_block_path(block.section, block)
+          editor_link: spree.respond_to?(:edit_admin_page_section_block_path) ? spree.edit_admin_page_section_block_path(block.section, block) : nil
         },
         style: block_styles(block, allowed_styles: allowed_styles),
         width_desktop: has_width_desktop
@@ -155,19 +155,23 @@ module Spree
                       return ''
                     end
 
-      attributes = {
-        data: {
-          editor_id: "link-#{link.id}",
-          editor_name: link.label,
-          editor_parent_id: "#{parent_type}-#{link.parent_id}",
-          editor_link: case parent_type
-                       when :section
-                         spree.edit_admin_page_link_path(link, page_section_id: link.parent_id)
-                       when :block
-                         spree.edit_admin_page_link_path(link, block_id: link.parent_id)
-                       end
-        }
-      }
+      attributes = if spree.respond_to?(:admin) && spree.respond_to?(:edit_admin_page_link_path) && spree.respond_to?(:edit_admin_page_section_block_path)
+                   {
+                      data: {
+                        editor_id: "link-#{link.id}",
+                        editor_name: link.label,
+                        editor_parent_id: "#{parent_type}-#{link.parent_id}",
+                        editor_link: case parent_type
+                                    when :section
+                                      spree.edit_admin_page_link_path(link, page_section_id: link.parent_id)
+                                    when :block
+                                      spree.edit_admin_page_link_path(link, block_id: link.parent_id)
+                                    end
+                      }
+                    }
+                  else
+                   {}
+                  end
 
       if as_html
         tag.attributes(attributes)
