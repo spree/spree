@@ -5,6 +5,7 @@ Spree::Core::Engine.add_routes do
     get '/cart', to: 'orders#edit', as: :cart
     patch '/cart', to: 'orders#update', as: :update_cart
 
+    resources :addresses, except: [:index]
     namespace :account do
       resource :wishlist, only: [:show], controller: '/spree/wishlists' do
         resources :wished_items, only: [:create, :destroy]
