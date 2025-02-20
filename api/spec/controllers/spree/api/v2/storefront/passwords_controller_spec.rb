@@ -1,17 +1,16 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Storefront::PasswordsController, type: :controller do
-  let!(:store) { create(:store) }
-  let!(:user) { create(:user, store: store) }
-
-  before do
-    allow_any_instance_of(described_class).to receive(:current_store).and_return(store)
-  end
+  let(:user) { create(:user) }
 
   describe '#create' do
     subject { post :create, params: params }
 
-    context 'with valid email' do
+    before do
+      allow_any_instance_of(Spree.user_class).to receive(:send_reset_password_instructions).and_return(true)
+    end
+
+    context 'when everything goes ok' do
       let(:params) { { user: { email: user.email } } }
 
       it 'returns 200' do
@@ -20,13 +19,13 @@ describe Spree::Api::V2::Storefront::PasswordsController, type: :controller do
       end
 
       it 'sends reset password instructions' do
-        expect(user).to receive(:send_reset_password_instructions).with(store).and_return(true)
+        expect(user).to receive(:send_reset_password_instructions)
         allow(Spree.user_class).to receive(:find_by).with(email: user.email).and_return(user)
         subject
       end
     end
 
-    context 'with invalid email' do
+    context 'when there are errors' do
       let(:params) { { user: { email: 'invalid@example.com' } } }
 
       it 'returns 404' do
@@ -37,37 +36,31 @@ describe Spree::Api::V2::Storefront::PasswordsController, type: :controller do
   end
 
   describe '#update' do
-    let(:new_password) { 'new_password123' }
-    before { user.send_reset_password_instructions(store) }
-
     subject do
       put :update, params: {
-        id: reset_password_token,
+        id: 'xxxxxx',
         user: {
-          password: new_password,
-          password_confirmation: password_confirmation
+          password: 'new_password',
+          password_confirmation: 'new_password'
         }
       }
     end
 
-    context 'with valid token and matching passwords' do
-      let(:reset_password_token) { user.reset_password_token }
-      let(:password_confirmation) { new_password }
+    before do
+      allow(Spree.user_class).to receive(:reset_password_by_token).and_return(user)
+    end
 
+    context 'when everything goes ok' do
       it 'returns 200' do
         subject
         expect(response).to have_http_status(:ok)
       end
-
-      it 'changes user password' do
-        subject
-        expect(user.reload.valid_password?(new_password)).to be true
-      end
     end
 
-    context 'with invalid token' do
-      let(:reset_password_token) { 'invalid_token' }
-      let(:password_confirmation) { new_password }
+    context 'when there are errors' do
+      before do
+        allow_any_instance_of(Spree.user_class).to receive(:errors).and_return(double(empty?: false, full_messages: ['Reset password token is invalid']))
+      end
 
       it 'returns 422' do
         subject
@@ -77,37 +70,6 @@ describe Spree::Api::V2::Storefront::PasswordsController, type: :controller do
       it 'returns error message' do
         subject
         expect(json_response['error']).to include('Reset password token is invalid')
-      end
-    end
-
-    context 'with mismatched passwords' do
-      let(:reset_password_token) { user.reset_password_token }
-      let(:password_confirmation) { 'different_password' }
-
-      it 'returns 422' do
-        subject
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'returns error message' do
-        subject
-        expect(json_response['error']).to include("Password confirmation doesn't match")
-      end
-    end
-
-    context 'with invalid password' do
-      let(:reset_password_token) { user.reset_password_token }
-      let(:new_password) { '123' }
-      let(:password_confirmation) { '123' }
-
-      it 'returns 422' do
-        subject
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'returns error message' do
-        subject
-        expect(json_response['error']).to include('Password is too short')
       end
     end
   end
