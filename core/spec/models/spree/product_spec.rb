@@ -1134,6 +1134,30 @@ describe Spree::Product, type: :model do
     let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }
     let(:taxon) { create(:taxon, name: 'My Taxon') }
 
+    let(:headers) do
+      [
+        *Spree::CSV::ProductVariantPresenter::CSV_HEADERS,
+        'image1_src',
+        'image2_src',
+        'image3_src',
+        'option1_name',
+        'option1_value',
+        'option2_name',
+        'option2_value',
+        'option3_name',
+        'option3_value',
+        'category1',
+        'category2',
+        'category3',
+        'property1_name',
+        'property1_value',
+        'property2_name',
+        'property2_value',
+        'property3_name',
+        'property3_value'
+      ]
+    end
+
     before do
       product_property
       product.taxons << taxon
@@ -1141,13 +1165,13 @@ describe Spree::Product, type: :model do
 
     context 'when product has no variants' do
       it 'returns an array with one line of CSV data' do
-        csv_lines = product.to_csv(store)
+        csv_lines = product.to_csv(headers, store)
         expect(csv_lines.size).to eq(1)
 
         csv_line = csv_lines.first
         expect(csv_line).to include(product.name)
         expect(csv_line).to include(product.master.sku)
-        expect(csv_line.last(5)).to eq([taxon.pretty_name, nil, nil, "my-property", "MyValue"])
+        expect(csv_line.last(5)).to eq([taxon.pretty_name, nil, nil, 'my-property', 'MyValue'])
       end
     end
 
@@ -1156,7 +1180,7 @@ describe Spree::Product, type: :model do
       let!(:variant2) { create(:variant, product: product) }
 
       it 'returns an array with CSV data for each variant' do
-        csv_lines = product.reload.to_csv(store)
+        csv_lines = product.reload.to_csv(headers, store)
         expect(csv_lines.size).to eq(2)
 
         expect(csv_lines.first).to include(product.name)
@@ -1169,13 +1193,13 @@ describe Spree::Product, type: :model do
     context 'when store is not provided' do
       it 'uses default store' do
         allow(product.stores).to receive(:default).and_return(store)
-        expect(product.to_csv).to be_present
+        expect(product.to_csv(headers)).to be_present
       end
 
       it 'falls back to first store if no default' do
         allow(product.stores).to receive(:default).and_return(nil)
         allow(product.stores).to receive(:first).and_return(store)
-        expect(product.to_csv).to be_present
+        expect(product.to_csv(headers)).to be_present
       end
     end
   end

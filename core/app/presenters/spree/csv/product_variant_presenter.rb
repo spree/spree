@@ -3,6 +3,8 @@ module Spree
     class ProductVariantPresenter
       CSV_HEADERS = [
         'product_id',
+        'sku',
+        'barcode',
         'name',
         'slug',
         'status',
@@ -14,8 +16,6 @@ module Spree
         'meta_keywords',
         'tags',
         'labels',
-        'variant_id',
-        'variant_sku',
         'price',
         'compare_at_price',
         'currency',
@@ -30,32 +30,22 @@ module Spree
         'inventory_count',
         'inventory_backorderable',
         'tax_category',
-        'digital',
-        'image1_src',
-        'image2_src',
-        'image3_src',
-        'option1_name',
-        'option1_value',
-        'option2_name',
-        'option2_value',
-        'option3_name',
-        'option3_value',
-        'category1',
-        'category2',
-        'category3',
+        'digital'
       ].freeze
 
-      def initialize(product, variant, index = 0, properties = [], taxons = [], store = nil)
+      def initialize(product, variant, index = 0, images_count = 3, options_count = 3, properties = [], taxons = [], store = nil)
         @product = product
         @variant = variant
         @index = index
+        @images_count = images_count
+        @options_count = options_count
         @properties = properties
         @taxons = taxons
         @store = store || product.stores.first
         @currency = @store.default_currency
       end
 
-      attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency
+      attr_reader :product, :variant, :index, :images_count, :options_count, :properties, :taxons, :store, :currency
 
       ##
       # Generates an array representing a CSV row of product variant data.
@@ -69,8 +59,13 @@ module Spree
       #
       # @return [Array] An array containing the combined product and variant CSV data.
       def call
+        images = variant.images.first(images_count)
+        images.fill(nil, images.size...images_count)
+
         csv = [
           product.id,
+          variant.sku,
+          variant.barcode,
           index.zero? ? product.name : nil,
           index.zero? ? product.slug : nil,
           index.zero? ? product.status : nil,
@@ -82,8 +77,6 @@ module Spree
           index.zero? ? product.meta_keywords : nil,
           index.zero? ? product.tag_list.to_s : nil,
           index.zero? ? product.label_list.to_s : nil,
-          variant.id,
-          variant.sku,
           variant.amount_in(currency).to_f,
           variant.compare_at_price&.to_f,
           currency,
@@ -99,16 +92,14 @@ module Spree
           variant.backorderable?,
           variant.tax_category&.name,
           variant.digital?,
-          variant.images[0]&.original_url,
-          variant.images[1]&.original_url,
-          variant.images[2]&.original_url,
-          option_type(0)&.name,
-          option_value(option_type(0)),
-          option_type(1)&.name,
-          option_value(option_type(1)),
-          option_type(2)&.name,
-          option_value(option_type(2))
-        ]
+          *images.map { |image| image&.original_url },
+          *options_count.times.map do |index|
+            [
+              option_type(index)&.name,
+              option_value(option_type(index))
+            ]
+          end
+        ].flatten
 
         if index.zero?
           csv += taxons
