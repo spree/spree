@@ -1,0 +1,26 @@
+<% shared_class = "label rounded-full px-3 py-1 text-sm uppercase z-10 left-2 product-label" %>
+<% mobile_pdp ||= false %>
+
+<% if mobile_pdp %>
+  <% shared_class += ' bottom-2' %>
+<% else %>
+  <% shared_class += ' top-2' %>
+<% end %>
+
+<% if !product.available? || (@variant_from_options.present? && !@variant_from_options.in_stock?) %>
+  <div class='<%= shared_class %> bg-neutral-400 text-background product-label--sold-out'>
+    <%= Spree.t(:sold_out) %>
+  </div>
+<% elsif product.on_sale?(current_currency) && !@all_options_selected %>
+  <div class='<%= shared_class %> bg-danger text-background product-label--sale'>
+    <%= Spree.t(:sale) %>
+  </div>
+<% elsif @variant_from_options&.on_sale?(current_currency) && @all_options_selected %>
+  <div class='<%= shared_class %> bg-danger text-background product-label--sale'>
+    <%= Spree.t(:sale) %>
+  </div>
+<% elsif product.taggings.find { |tagging| tagging.context == 'labels' } %>
+  <div class='<%= shared_class %> bg-background border border-primary product-label--custom' data-title="<%= product.labels.first.name.strip.downcase.truncate(20) %>">
+    <%= product.labels.first.name.truncate(20) %>
+  </div>
+<% end %>

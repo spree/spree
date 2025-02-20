@@ -2,7 +2,7 @@ module Spree
   class WishlistsController < StoreController
     def show
       if params[:id].present? && params[:token].present?
-        @wishlist = Spree::Wishlist.find_by!(id: params[:id], token: params[:token])
+        @wishlist = current_store.wishlists.find_by!(id: params[:id], token: params[:token])
       elsif try_spree_current_user
         # https://github.com/spree/spree/blob/9475c6633b762669ee0c8f1f8a4d73e1c221a94e/core/app/models/concerns/spree/user_methods.rb#L71
         @wishlist = try_spree_current_user.default_wishlist_for_store(current_store)

@@ -30,7 +30,6 @@ module Spree
 
     helper_method :turbo_frame_request?, :turbo_stream_request?
 
-    prepend_before_action :set_theme_view_paths
     before_action :redirect_to_default_locale
     before_action :render_404_if_store_not_exists
     rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_authenticity_token
@@ -91,13 +90,6 @@ module Spree
     end
 
     protected
-
-    def set_theme_view_paths
-      # add default Spree theme
-      prepend_view_path [Spree::Storefront::Engine.root, 'app/views/themes/default'].join('/')
-      # add current theme
-      prepend_view_path "app/views/themes/#{current_theme.class.name.demodulize.underscore}"
-    end
 
     def choose_layout
       if turbo_frame_request? && !current_theme_preview.present?

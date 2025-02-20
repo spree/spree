@@ -5,6 +5,8 @@ module Spree
     included do
       helper 'spree/theme'
       include Spree::ThemeHelper
+
+      prepend_before_action :set_theme_view_paths
     end
 
     def default_url_options
@@ -15,6 +17,13 @@ module Spree
       else
         super
       end
+    end
+
+    def set_theme_view_paths
+      # add default Spree theme
+      prepend_view_path [Spree::Storefront::Engine.root, 'app/views/themes/default'].join('/')
+      # add current theme
+      prepend_view_path "app/views/themes/#{current_theme.class.name.demodulize.underscore}"
     end
   end
 end

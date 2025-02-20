@@ -11,6 +11,9 @@ Spree::Core::Engine.add_routes do
       resource :wishlist, only: [:show], controller: '/spree/wishlists' do
         resources :wished_items, only: [:create, :destroy]
       end
+    # Wishlists
+    resources :wishlists, only: [:show] # for sharing with ID and Token
+
     end
 
     root to: 'home#index'
