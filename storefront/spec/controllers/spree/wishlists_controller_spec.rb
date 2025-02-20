@@ -12,6 +12,8 @@ describe Spree::WishlistsController, type: :controller do
     allow(controller).to receive(:spree_login_path).and_return('/login')
   end
 
+  render_views
+
   describe '#show' do
     context 'when wishlist id and token are provided' do
       subject { get :show, params: { id: wishlist.id, token: wishlist.token } }

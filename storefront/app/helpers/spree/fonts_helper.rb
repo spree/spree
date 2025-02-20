@@ -2,7 +2,6 @@ module Spree
   module FontsHelper
     def normal_font_family_styles
       return '' if current_theme_or_preview.preferred_font_family.blank?
-      return if all_fonts_options.exclude?(current_theme_or_preview.preferred_font_family)
 
       font_family = current_theme_or_preview.preferred_font_family
       text_font_size = (current_theme_or_preview.preferred_font_size_scale || 100) / 100.0
@@ -24,7 +23,6 @@ module Spree
 
     def header_font_family_styles
       return '' if current_theme_or_preview.preferred_header_font_family.blank?
-      return if all_fonts_options.exclude?(current_theme_or_preview.preferred_header_font_family)
 
       font_family = current_theme_or_preview.preferred_header_font_family
 
@@ -41,8 +39,6 @@ module Spree
       return if fonts.blank?
 
       imports = fonts.map do |font|
-        next if google_fonts_list.exclude?(font)
-
         "family=#{font.split(' ').join('+')}"
       end.compact.join('&')
 
