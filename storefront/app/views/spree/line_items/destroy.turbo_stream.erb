@@ -1,0 +1,11 @@
+<%= turbo_stream.replace_all '.cart-contents' do %>
+  <%= turbo_frame_tag :cart_contents, class: 'cart-contents' do %>
+    <% if @order.line_items.empty? %>
+      <%= render 'spree/orders/empty' %>
+    <% else %>
+      <%= render 'spree/orders/cart' %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= spree_turbo_update_cart(@order) %>
