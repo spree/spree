@@ -30,5 +30,13 @@ module Spree
 
       [label, currency]
     end
+
+    def preferred_currencies
+      @preferred_currencies ||= current_store.supported_currencies_list
+    end
+
+    def currency_money(currency = current_currency)
+      ::Money::Currency.find(currency)
+    end
   end
 end
