@@ -8,7 +8,7 @@ module Spree
           def create
             user = Spree.user_class.find_by(email: params[:user][:email])
 
-            if user&.send_reset_password_instructions(current_store)
+            if user&.send_reset_password_instructions
               head :ok
             else
               head :not_found

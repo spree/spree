@@ -361,7 +361,7 @@ paths:
       description: |-
         Sends a password reset email to the user with the specified email address.
 
-        This endpoint requires `Spree.user_class` to respond to `send_reset_password_instructions(current_store)` method.
+        This endpoint requires `Spree.user_class` to respond to `send_reset_password_instructions` method.
       summary: Send Password Reset Instructions
       operationId: send-password-reset
       requestBody:
