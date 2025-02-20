@@ -52,7 +52,7 @@
     <div class='page-container mt-10 mb-10 lg:mb-16'>
       <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
         <% @taxons_grouped_by_letter.each do |letter, taxons| %>
-          <div id='<%= letter %>' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-deafult py-6 lg:pr-6'>
+          <div id='<%= letter %>' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-default py-6 lg:pr-6'>
             <p class='font-medium text-2xl<%= ' pointer-events-none opacity-30' unless taxons.present? %>'>
               <%= letter %>
             </p>
@@ -68,7 +68,7 @@
           </div>
         <% end %>
 
-        <div id='0-9' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-deafult py-6'>
+        <div id='0-9' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-default py-6'>
           <p class='font-medium text-2xl uppercase<%= ' pointer-events-none opacity-30' unless @taxons_grouped_by_numbers.any? %>'>
             0-9
           </p>
@@ -83,7 +83,7 @@
           </ul>
         </div>
 
-        <div id='#' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-deafult py-6'>
+        <div id='#' class='grid gap-6 grid-cols-3 lg:grid-cols-2 border-b border-default py-6'>
           <p class='font-medium text-2xl uppercase<%= ' pointer-events-none opacity-30' unless @taxons_grouped_by_other.any? %>'>
             <%= Spree.t(:other) %>
           </p>
