@@ -28,6 +28,8 @@ module Spree
                   :storefront_products_scope, :storefront_products,
                   :default_products_sort, :default_products_finder_params
 
+    helper_method :turbo_frame_request?, :turbo_stream_request?
+
     prepend_before_action :set_theme_view_paths
     before_action :redirect_to_default_locale
     before_action :render_404_if_store_not_exists
@@ -82,6 +84,10 @@ module Spree
 
     def products_filters_params
       @products_filters_params ||= permitted_products_params[:filter]&.compact_blank || {}
+    end
+
+    def turbo_stream_request?
+      request.format.turbo_stream?
     end
 
     protected
@@ -222,10 +228,6 @@ module Spree
       location ||= request.fullpath
 
       store_location_for(Devise.mappings.keys.first, location)
-    end
-
-    def skip_ahoy
-      false
     end
 
     def redirect_to_cart
