@@ -127,16 +127,20 @@ RSpec.describe Spree::PageSection, type: :model do
       create(
         :page_section,
         :header,
-        preferences: { text_color: '#000000', background_color: '#FFFFFF', border_color: '#000000' }
+        preferences: { text_color: '#000000', background_color: '#FFFFFF', border_color: '#000000', top_padding: 100, bottom_padding: 100, top_border_width: 10, bottom_border_width: 10 }
       )
     end
 
     it 'restores design settings to defaults' do
       page_section.restore_design_settings_to_defaults
 
-      expect(page_section.preferred_text_color).to be_nil
-      expect(page_section.preferred_background_color).to be_nil
-      expect(page_section.preferred_border_color).to be_nil
+      expect(page_section.preferred_text_color).to eq Spree::PageSections::Header::TEXT_COLOR_DEFAULT
+      expect(page_section.preferred_background_color).to eq Spree::PageSections::Header::BACKGROUND_COLOR_DEFAULT
+      expect(page_section.preferred_border_color).to eq Spree::PageSections::Header::BORDER_COLOR_DEFAULT
+      expect(page_section.preferred_top_padding).to eq Spree::PageSections::Header::TOP_PADDING_DEFAULT
+      expect(page_section.preferred_bottom_padding).to eq Spree::PageSections::Header::BOTTOM_PADDING_DEFAULT
+      expect(page_section.preferred_top_border_width).to eq Spree::PageSections::Header::TOP_BORDER_WIDTH_DEFAULT
+      expect(page_section.preferred_bottom_border_width).to eq Spree::PageSections::Header::BOTTOM_BORDER_WIDTH_DEFAULT
     end
   end
 end

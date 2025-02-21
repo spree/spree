@@ -1,5 +1,10 @@
 FactoryBot.define do
   factory :page_section, class: Spree::PageSection do
+    initialize_with do
+      klass = type.constantize
+      klass.new(attributes)
+    end
+
     pageable { Spree::Page.find_by!(name: 'Homepage') }
     pageable_type { 'Spree::Page' }
 
