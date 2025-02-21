@@ -3,6 +3,10 @@ FactoryBot.define do
     pageable { Spree::Page.find_by!(name: 'Homepage') }
     pageable_type { 'Spree::Page' }
 
+    trait :without_links do
+      do_not_create_links { true }
+    end
+
     factory :featured_taxons_page_section, class: Spree::PageSections::FeaturedTaxons
 
     factory :featured_taxon_page_section, class: Spree::PageSections::FeaturedTaxon
