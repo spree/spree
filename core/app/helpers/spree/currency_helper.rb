@@ -35,6 +35,10 @@ module Spree
       @preferred_currencies ||= current_store.supported_currencies_list
     end
 
+    def preferred_currencies_select_options
+      preferred_currencies.map { |currency| ["#{currency.name} - #{currency.iso_code}", currency] }
+    end
+
     def currency_money(currency = current_currency)
       ::Money::Currency.find(currency)
     end
