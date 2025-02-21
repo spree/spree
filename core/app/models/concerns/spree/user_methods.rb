@@ -43,8 +43,30 @@ module Spree
       #
       attr_accessor :confirm_email, :terms_of_service
 
+      scope :multi_search, lambda { |query|
+        sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
+        return none if query.blank?
+
+        query_pattern = "%#{sanitized_query}%"
+
+        name_conditions = []
+
+        name_conditions << arel_table[:first_name].lower.matches(query_pattern)
+        name_conditions << arel_table[:last_name].lower.matches(query_pattern)
+
+        full_name = NameOfPerson::PersonName.full(sanitized_query)
+
+        if full_name.first.present? && full_name.last.present?
+          name_conditions << arel_table[:first_name].lower.matches("%#{full_name.first}%")
+          name_conditions << arel_table[:last_name].lower.matches("%#{full_name.last}%")
+        end
+
+        where(email: sanitized_query).or(where(name_conditions.reduce(:or)))
+      }
+
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name accepts_email_marketing]
+      self.whitelisted_ransackable_scopes = %w[multi_search]
 
       def self.with_email(query)
         where("#{table_name}.email LIKE ?", "%#{query}%")
