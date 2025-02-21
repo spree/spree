@@ -7,7 +7,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
   let(:store) { Spree::Store.default }
 
   describe 'GET #index' do
-    let!(:user_1) { create(:user) }
+    let!(:user_1) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com') }
     let!(:user_2) { create(:user, tag_list: ['some tag']) }
     let!(:user_3) { create(:user, accepts_email_marketing: true) }
 
@@ -39,6 +39,54 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     it 'returns customer based on tags' do
       get :index, params: { q: { tags_name_in: ['some tag'] } }
       expect(assigns(:collection).to_a).to eq([user_2])
+    end
+
+    describe 'multi_search' do
+      subject { get :index, params: { q: { multi_search: multi_search_param } } }
+
+      context 'when searching by email' do
+        let(:multi_search_param) { 'john.doe@example.com' }
+
+        it 'returns users based on an email' do
+          subject
+          expect(assigns(:collection).to_a).to eq([user_1])
+        end
+      end
+
+      context 'when searching by the first name' do
+        let(:multi_search_param) { 'john' }
+
+        it 'returns users based on the first name' do
+          subject
+          expect(assigns(:collection).to_a).to eq([user_1])
+        end
+      end
+
+      context 'when searching by the last name' do
+        let(:multi_search_param) { 'doe' }
+
+        it 'returns users based on the last name' do
+          subject
+          expect(assigns(:collection).to_a).to eq([user_1])
+        end
+      end
+
+      context 'when searching by the full name' do
+        let(:multi_search_param) { 'joh do' }
+
+        it 'returns users based on the full name' do
+          subject
+          expect(assigns(:collection).to_a).to eq([user_1])
+        end
+      end
+
+      context 'when the user is not found' do
+        let(:multisearch_param) { 'mary' }
+
+        it 'returns an empty list' do
+          expect(assigns(:collection).to_a).to eq([])
+        end
+      end
     end
 
     context 'csv' do
