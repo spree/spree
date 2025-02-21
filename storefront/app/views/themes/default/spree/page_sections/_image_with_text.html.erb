@@ -32,17 +32,17 @@
           <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
             <% case block.type %>
             <% when 'Spree::PageBlocks::Heading' %>
-              <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--heading", style: block_background_color_style(block)) do %>
-                <h2 class="<%= block.preferred_size == 'small' ? 'text-lg' : (block.preferred_size == 'medium' ? 'text-xl' : 'text-2xl lg:text-3xl') %> font-medium" <%= block_attributes(block) %>>
+              <h2 class="<%= block.preferred_size == 'small' ? 'text-lg' : (block.preferred_size == 'medium' ? 'text-xl' : 'text-2xl lg:text-3xl') %> font-medium" <%= block_attributes(block) %>>
+                <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--heading", style: block_background_color_style(block)) do %>
                   <%= block.text %>
-                </h2>
-              <% end %>
+                <% end %>
+              </h2>
             <% when 'Spree::PageBlocks::Text' %>
-              <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--text", style: block_background_color_style(block)) do %>
-                <div <%= block_attributes(block) %>>
+              <div <%= block_attributes(block) %>>
+                <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--text", style: block_background_color_style(block)) do %>
                   <%= block.text %>
-                </div>
-              <% end %>
+                <% end %>
+              </div>
             <% when 'Spree::PageBlocks::Buttons' %>
               <div class="w-full image-with-text--buttons" <%= block_attributes(block) %>>
                 <div class="inline-block">
