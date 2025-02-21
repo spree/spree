@@ -1,0 +1,40 @@
+<%= turbo_frame_tag "#{type}_metadata_table", class: "card mb-4", refresh: "morph", data: {controller: "metadata-form"} do %>
+  <template data-metadata-form-target="fieldTemplate">
+    <%= render "spree/admin/metadatas/field",
+    key: nil,
+    value: nil,
+    i: "INDEX",
+    type: type %>
+  </template>
+
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t("#{type}_metadata") %></h5>
+  </div>
+  <div class="card-body">
+    <table class="table">
+      <thead class="text-muted">
+        <tr>
+          <th scope="col" class="text-center w-30"><%= Spree.t(:field) %></th>
+          <th scope="col" class="text-center w-60"><%= Spree.t(:value) %></th>
+          <th scope="col" class="text-center"></th>
+        </tr>
+      </thead>
+      <tbody data-metadata-form-target="fieldsContainer">
+        <% @resource.send("#{type}_metadata").each_with_index do |field, i| %>
+          <% k, v = field %>
+          <%= render "spree/admin/metadatas/field", key: k, value: v, i: i, type: type %>
+        <% end %>
+      </tbody>
+      <tfooter>
+        <tr>
+          <td colspan="3" class="p-0">
+            <button class="btn btn-link py-3 w-100" data-action="metadata-form#addField">
+              <%= icon "plus", class: "icon icon-plus" %>
+              Add field
+            </button>
+          </td>
+        </tr>
+      </tfooter>
+    </table>
+  </div>
+<% end %>

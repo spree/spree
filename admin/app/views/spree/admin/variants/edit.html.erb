@@ -3,6 +3,10 @@
   <%= @variant.human_name %>
 <% end %>
 
+<% content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_metadata(@variant) %>
+<% end %>
+
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
