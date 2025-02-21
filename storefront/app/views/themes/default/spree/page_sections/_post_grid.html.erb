@@ -1,0 +1,11 @@
+<div style="<%= section_styles(section) %>">
+  <% if @posts.any? %>
+    <div class="page-container">
+      <%= turbo_frame_tag :posts, class: 'flex flex-col' do %>
+        <%= render partial: 'spree/posts/post', collection: @posts %>
+      <% end %>
+
+      <%= render 'spree/posts/pagination' %>
+    </div>
+  <% end %>
+</div>

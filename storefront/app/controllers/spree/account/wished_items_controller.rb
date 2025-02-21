@@ -1,0 +1,42 @@
+module Spree
+  module Account
+    class WishedItemsController < BaseController
+      skip_before_action :verify_authenticity_token
+
+      def create
+        variant = current_store.variants.find(wished_item_params[:variant_id])
+        @wished_item = current_wishlist.wished_items.build(variant: variant)
+
+        unless @wished_item.save
+          flash.now[:error] = @wished_item.errors.full_messages.to_sentence.strip
+        end
+
+        respond_to do |format|
+          format.html { redirect_to spree.account_wishlist_path }
+          format.turbo_stream
+        end
+      end
+
+      def destroy
+        @wished_item = current_wishlist.wished_items.find_by(variant_id: params[:id])
+
+        if @wished_item.present?
+          @wished_item.destroy
+        else
+          flash.now[:error] = Spree.t('storefront.wished_items.remove_error')
+        end
+
+        respond_to do |format|
+          format.html { redirect_to account_wishlist_path }
+          format.turbo_stream
+        end
+      end
+
+      private
+
+      def wished_item_params
+        params.require(:wished_item).permit(:variant_id)
+      end
+    end
+  end
+end

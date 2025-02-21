@@ -168,6 +168,13 @@ module Spree
       assign_attributes opts
     end
 
+    # Returns the maximum quantity that can be added to the line item
+    #
+    # @return [Integer]
+    def maximum_quantity
+      @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
+    end
+
     private
 
     def ensure_valid_quantity

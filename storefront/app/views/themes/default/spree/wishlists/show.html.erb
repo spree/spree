@@ -1,0 +1,17 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'wishlist' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5 mb-12 lg:mb-0" id="wishlist">
+    <h1 class="uppercase font-medium mb-4">
+      <%= Spree.t(:wishlist) %>
+    </h1>
+    <% if @wished_items.any? %>
+      <div class="grid lg:grid-cols-3 gap-x-6 gap-y-10 lg:mb-24">
+        <%= render collection: @wished_items, partial: 'spree/wishlists/wished_item', cached: ->(wished_item) { [*spree_base_cache_scope.call(wished_item), wished_item.variant, current_currency] } %>
+      </div>
+    <% else %>
+      <%= render 'no_wished_items' %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<% if !turbo_frame_request? && !turbo_stream_request? %>
+  <div class="page-container">
+    <%= render 'spree/shared/title' %>
+<% end %>
+
+  <%= render 'spree/shared/error_messages', target: @order %>
+
+  <%= turbo_frame_tag :cart_contents, class: 'cart-contents' do %>
+    <% if !@line_items || @line_items.empty? %>
+      <%= render 'spree/orders/empty' %>
+    <% else %>
+      <%= render 'spree/orders/cart' %>
+    <% end %>
+  <% end %>
+
+<% if !turbo_frame_request? && !turbo_stream_request? %>
+  </div>
+<% end %>

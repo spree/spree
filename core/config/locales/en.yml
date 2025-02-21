@@ -184,6 +184,8 @@ en:
       spree/zone:
         description: Description
         name: Name
+      spree/wished_item:
+        variant: ""
     models:
       spree/address:
         one: Address
@@ -400,6 +402,10 @@ en:
           attributes:
             base:
               cannot_destroy_if_used_in_store_credit: Cannot delete store credit categories once they are used in store credit.
+        spree/wished_item:
+          attributes:
+            variant:
+              taken: "You already added this item to your wishlist"
         spree/variant:
           attributes:
             base:

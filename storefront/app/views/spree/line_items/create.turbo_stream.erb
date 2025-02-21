@@ -1,0 +1,13 @@
+<% if flash[:error] %>
+  <%= spree_turbo_update_flashes %>
+<% else %>
+  <%= spree_turbo_update_cart(@order) %>
+
+  <%= turbo_stream.replace_all '.cart-contents' do %>
+    <%= turbo_frame_tag :cart_contents, class: 'cart-contents' do %>
+      <%= render 'spree/orders/cart' %>
+    <% end %>
+  <% end %>
+
+  <%= turbo_stream.slideover_open('slideover', 'cart-pane') %>
+<% end %>

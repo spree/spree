@@ -1,0 +1,18 @@
+<% line_item.variant.option_values.select { |ov| ov.option_type.color? }.each do |option| %>
+  <div>
+    <input class="hidden color-input" value="<%= option.name %>" >
+    <div class="label-container h-[30px] border border-default p-0.5 inline-flex items-center hover:border-dashed hover:border-primary">
+      <div class="color-preview w-[24px] h-[24px]"></div>
+      <div class="text-sm px-2">
+        <%= option.presentation %>
+      </div>
+    </div>
+  </div>
+<% end %>
+<% line_item.variant.option_values.reject { |ov| ov.option_type.color? }.each do |option| %>
+  <div>
+    <div class="h-[30px] border border-default px-2 inline-flex items-center hover:border-dashed hover:border-primary text-sm">
+      <%= option.presentation %>
+    </div>
+  </div>
+<% end %>
