@@ -1,6 +1,8 @@
 module Spree
   module Account
     class BaseController < Spree::StoreController
+      before_action :require_user
+
       protected
 
       def accurate_title

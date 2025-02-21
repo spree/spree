@@ -4,7 +4,7 @@ module Spree
       def edit; end
 
       def update
-        @user.update(newsletter_params)
+        try_spree_current_user.update(newsletter_params)
       end
 
       private

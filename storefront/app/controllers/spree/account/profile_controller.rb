@@ -4,7 +4,7 @@ module Spree
       def edit; end
 
       def update
-        if @user.update(user_params)
+        if try_spree_current_user.update(user_params)
           redirect_to spree.edit_account_profile_path, notice: Spree.t(:account_updated)
         else
           render :edit, status: :unprocessable_entity

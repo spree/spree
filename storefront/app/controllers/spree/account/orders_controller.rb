@@ -21,7 +21,7 @@ module Spree
       end
 
       def orders_scope
-        @user.completed_orders.for_store(current_store).order(completed_at: :desc)
+        try_spree_current_user.completed_orders.for_store(current_store).order(completed_at: :desc)
       end
     end
   end
