@@ -10,7 +10,7 @@ RSpec.describe Spree::PageSection, type: :model do
       expect(homepage.sections).to be_blank
       expect(homepage.sections.with_deleted).to be_present
 
-      create_list(:featured_taxon, 4, pageable: homepage)
+      create_list(:featured_taxon_page_section, 4, pageable: homepage)
       expect(homepage.reload.sections.pluck(:position)).to match_array([1, 2, 3, 4])
     end
   end
@@ -104,7 +104,7 @@ RSpec.describe Spree::PageSection, type: :model do
 
   describe 'validations' do
     describe 'asset' do
-      let(:page_section) { create(:page_section, :header) }
+      let(:page_section) { create(:header_page_section) }
 
       it 'validates content type' do
         page_section.asset.attach(
@@ -125,8 +125,7 @@ RSpec.describe Spree::PageSection, type: :model do
   describe '#restore_design_settings_to_defaults' do
     let(:page_section) do
       create(
-        :page_section,
-        :header,
+        :header_page_section,
         preferences: { text_color: '#000000', background_color: '#FFFFFF', border_color: '#000000', top_padding: 100, bottom_padding: 100, top_border_width: 10, bottom_border_width: 10 }
       )
     end

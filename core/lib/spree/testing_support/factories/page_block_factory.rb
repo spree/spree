@@ -7,7 +7,7 @@ FactoryBot.define do
     end
 
     trait :nav do
-      section { create(:page_section, :header) }
+      section { create(:header_page_section) }
 
       type { 'Spree::PageBlocks::Nav' }
     end

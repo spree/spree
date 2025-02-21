@@ -10,8 +10,7 @@ RSpec.describe Spree::Themes::DuplicateComponentsJob do
 
   let!(:theme_section_1) do
     create(
-      :page_section,
-      :announcement_bar,
+      :announcement_bar_page_section,
       pageable: theme,
       pageable_type: 'Spree::Theme',
       preferences: {
@@ -28,8 +27,7 @@ RSpec.describe Spree::Themes::DuplicateComponentsJob do
 
   let!(:theme_section_2) do
     create(
-      :page_section,
-      :header,
+      :header_page_section,
       pageable: theme,
       pageable_type: 'Spree::Theme',
       preferences: {
@@ -54,12 +52,12 @@ RSpec.describe Spree::Themes::DuplicateComponentsJob do
   end
 
   let!(:page_1) { create(:page, :homepage, pageable: theme) }
-  let!(:page_1_section) { create(:page_section, :rich_text, pageable: page_1) }
+  let!(:page_1_section) { create(:rich_text_page_section, pageable: page_1) }
   let!(:page_1_section_block) { create(:page_block, :heading, section: page_1_section) }
   let!(:page_1_section_block_link) { create(:page_link, parent: page_1_section_block, linkable: page_2) }
 
   let!(:page_2) { create(:page, :account, pageable: theme) }
-  let!(:page_2_section) { create(:page_section, :header, pageable: page_2) }
+  let!(:page_2_section) { create(:header_page_section, pageable: page_2) }
   let!(:page_2_section_links) do
     [
       create(:page_link, parent: page_2_section, linkable: page_1, label: 'Homepage'),
