@@ -14,7 +14,7 @@
                 }.join(', ')
               %>
             <% else %>
-              <div class="w-full h-full object-cover bg-gray-100"></div>
+              <%= content_tag(:div, '', class: 'w-full h-full object-cover bg-gray-100') %>
             <% end %>
           <% end %>
         </div>

@@ -55,7 +55,7 @@ module Spree
           block.present? ? block.call : options[:label]
         end
       else
-        block&.call
+        block&.call&.html_safe
       end
     end
   end
