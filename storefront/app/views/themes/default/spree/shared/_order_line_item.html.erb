@@ -1,0 +1,29 @@
+<div>
+  <div class="flex gap-4">
+    <div class="flex-shrink-0">
+      <% image = line_item.variant.default_image %>
+      <% if image.present? && image.attached? && image.variable? %>
+        <%= link_to spree_storefront_resource_url(line_item.product, relative: true) do %>
+          <%= image_tag main_app.cdn_image_url(image.variant(spree_image_variant_options(resize_to_fit: [256, 256]))), width: 128, loaging: :lazy %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="flex flex-col gap-2">
+      <div class="font-medium uppercase">
+        <%= link_to line_item.name, spree_storefront_resource_url(line_item.product, relative: true) %>
+      </div>
+      <div class="font-medium">
+        <%= line_item.display_price %>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <%= render 'spree/shared/line_item_options', line_item: line_item %>
+        <div class="h-[30px] border border-default px-2 inline-flex items-center hover:border-dashed hover:border-primary text-sm">
+          <%= Spree.t(:quantity) %>: <%= line_item.quantity %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-3">
+    <%= link_to Spree.t(:order_again), spree_storefront_resource_url(line_item.product, relative: true), class: 'link' %>
+  </div>
+</div>

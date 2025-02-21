@@ -7,7 +7,9 @@ Spree::Core::Engine.add_routes do
     patch '/cart', to: 'orders#update', as: :update_cart
 
     resources :addresses, except: [:index]
+    resource :account, to: redirect('/account/orders')
     namespace :account do
+      resources :orders, only: [:index, :show]
       resource :wishlist, only: [:show], controller: '/spree/wishlists' do
         resources :wished_items, only: [:create, :destroy]
       end

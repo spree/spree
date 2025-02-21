@@ -6,7 +6,8 @@ module Spree
       end
 
       def show
-        @order = orders_scope.includes(vendor_orders: [:shipments, :line_items]).find_by!(number: params[:id])
+        @order = orders_scope.find_by!(number: params[:id])
+        @shipments = @order.shipments
       end
 
       private
@@ -17,6 +18,10 @@ module Spree
         else
           Spree.t(:my_orders)
         end
+      end
+
+      def orders_scope
+        @user.completed_orders.for_store(current_store).order(completed_at: :desc)
       end
     end
   end

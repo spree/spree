@@ -16,10 +16,6 @@ module Spree
       def user_params
         params.require(:user).permit(:title, :first_name, :last_name, :phone)
       end
-
-      def accurate_title
-        Spree.t(:my_account)
-      end
     end
   end
 end
