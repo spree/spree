@@ -1,0 +1,7 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+    "ghcr.io/devcontainers/features/ruby:1": {},
+    "ghcr.io/swift-server-community/swift-devcontainer-features/sqlite:1": {}
+  }
+}
