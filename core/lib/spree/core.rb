@@ -188,6 +188,7 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'
 require 'spree/core/controller_helpers/currency'
+require 'spree/core/controller_helpers/turbo'
 
 require 'spree/core/preferences/store'
 require 'spree/core/preferences/scoped_store'

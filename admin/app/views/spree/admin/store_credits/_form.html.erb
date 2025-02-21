@@ -1,5 +1,5 @@
 <div data-hook='admin_store_credit_form_fields'>
-  <div class="row mb-2">
+  <div class="row mb-3">
     <div class="col-6">
       <div class="form-group">
         <%= f.label :amount, raw(Spree.t(:amount) + required_span_tag) %>
@@ -11,7 +11,7 @@
     <div class="col-6">
       <div class="form-group">
         <%= f.label :currency, raw(Spree.t(:currency) + required_span_tag), class: 'form-label' %>
-        <%= f.currency_select :currency, preferred_currencies, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
+        <%= f.select :currency, preferred_currencies_select_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
       </div>
     </div>
   </div>

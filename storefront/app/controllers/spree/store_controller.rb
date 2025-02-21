@@ -28,8 +28,6 @@ module Spree
                   :storefront_products_scope, :storefront_products,
                   :default_products_sort, :default_products_finder_params
 
-    helper_method :turbo_frame_request?, :turbo_stream_request?
-
     before_action :redirect_to_default_locale
     before_action :render_404_if_store_not_exists
     rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_authenticity_token
@@ -83,10 +81,6 @@ module Spree
 
     def products_filters_params
       @products_filters_params ||= permitted_products_params[:filter]&.compact_blank || {}
-    end
-
-    def turbo_stream_request?
-      request.format.turbo_stream?
     end
 
     protected
