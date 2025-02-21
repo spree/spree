@@ -4,6 +4,10 @@ import DOMPurify from "dompurify"
 export default class extends Controller {
   static targets = ["input", "badgesContainer", "badgeTemplate"];
 
+  static values = {
+    url: { type: String }
+  };
+
   connect() {
     this.inputTargets.forEach((input) => {
       this.createBadgeFor(input);
@@ -47,7 +51,7 @@ export default class extends Controller {
 
       label = DOMPurify.sanitize(`${label.trim()}: ${ransackValue.trim()}`);
 
-      const newUrl = new URL(window.location.href);
+      const newUrl = this.urlValue ? new URL(this.urlValue) : new URL(window.location.href);
       const newSearchParams = newUrl.searchParams;
       newSearchParams.delete(input.name);
       newUrl.search = newSearchParams.toString();
