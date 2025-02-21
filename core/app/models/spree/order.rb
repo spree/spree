@@ -749,7 +749,7 @@ module Spree
               spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
     end
 
-    def to_csv(_store = nil)
+    def to_csv(_store = nil, _headers = nil)
       csv_lines = []
       all_line_items.each_with_index do |line_item, index|
         csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index).call

@@ -628,7 +628,7 @@ module Spree
       Spree::Products::AutoMatchTaxonsJob.perform_later(id)
     end
 
-    def to_csv(store = nil)
+    def to_csv(headers, store = nil)
       store ||= stores.default || stores.first
       properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
         [
@@ -636,17 +636,24 @@ module Spree
           product_properties.find { |pp| pp.property_id == property.id }&.value
         ]
       end
-      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
-      taxons_for_csv.fill(nil, taxons_for_csv.size...3)
+
+      images_count = headers.count { |header| header.starts_with?('image') }
+      options_count = headers.count { |header| header.match?(/option(\d+)_name/) }
+
+      taxons_count = headers.count { |header| header.starts_with?('category') }
+      taxons_for_csv = taxons.manual.reorder(depth: :desc).first(taxons_count).pluck(:pretty_name)
+      taxons_for_csv.fill(nil, taxons_for_csv.size...taxons_count)
 
       csv_lines = []
 
+      common_params = [images_count, options_count, properties_for_csv, taxons_for_csv, store]
+
       if has_variants?
         variants.each_with_index do |variant, index|
-          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, *common_params).call
         end
       else
-        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store).call
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, *common_params).call
       end
 
       csv_lines
