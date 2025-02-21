@@ -38,7 +38,7 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
     context 'for featured taxons' do
       let(:taxonomy) { store.taxonomies.first }
       let!(:taxon) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:page_section) { create(:page_section, :featured_taxons) }
+      let!(:page_section) { create(:featured_taxons_page_section) }
 
       it 'creates a new page link' do
         expect { post_create }.to change { page_section.links.count }.by 1
@@ -49,7 +49,7 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
     context 'for featured taxons' do
       let(:taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories') }
       let!(:category) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:page_section) { create(:page_section, :featured_taxons) }
+      let!(:page_section) { create(:featured_taxons_page_section) }
 
       it 'creates a new page link' do
         expect { post_create }.to change { page_section.links.count }.by 1
@@ -67,12 +67,12 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
     end
 
     context 'for nav page block' do
-      let(:page_section) { create(:page_section, :header) }
-      let(:page_block) { create(:page_block, :nav, section: page_section) }
-
       subject :post_create do
         post :create, params: { page_section_id: page_section.id, block_id: page_block.id }, as: :turbo_stream
       end
+
+      let(:page_section) { create(:header_page_section) }
+      let(:page_block) { create(:page_block, :nav, section: page_section) }
 
       it 'creates a new page link' do
         expect { post_create }.to change { page_block.links.count }.by 1

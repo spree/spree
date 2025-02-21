@@ -3,22 +3,18 @@ FactoryBot.define do
     pageable { Spree::Page.find_by!(name: 'Homepage') }
     pageable_type { 'Spree::Page' }
 
-    trait :featured_taxons do
-      type { 'Spree::PageSections::FeaturedTaxons' }
+    trait :without_links do
+      do_not_create_links { true }
     end
 
-    factory :featured_taxon, class: Spree::PageSections::FeaturedTaxon
+    factory :featured_taxons_page_section, class: Spree::PageSections::FeaturedTaxons
 
-    trait :header do
-      type { 'Spree::PageSections::Header' }
-    end
+    factory :featured_taxon_page_section, class: Spree::PageSections::FeaturedTaxon
 
-    trait :announcement_bar do
-      type { 'Spree::PageSections::AnnouncementBar' }
-    end
+    factory :header_page_section, class: Spree::PageSections::Header
 
-    trait :rich_text do
-      type { 'Spree::PageSections::RichText' }
-    end
+    factory :announcement_bar_page_section, class: Spree::PageSections::AnnouncementBar
+
+    factory :rich_text_page_section, class: Spree::PageSections::RichText
   end
 end

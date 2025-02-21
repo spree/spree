@@ -15,7 +15,7 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
   end
 
   describe '#destroy' do
-    let(:page_section) { create(:featured_taxon, pageable: page) }
+    let(:page_section) { create(:featured_taxon_page_section, pageable: page) }
     let!(:page_block) { create(:page_block, :buttons, section: page_section) }
 
     it 'destroys the page block' do
@@ -26,7 +26,7 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
   end
 
   describe '#move_higher' do
-    let(:page_section) { create(:featured_taxon) }
+    let(:page_section) { create(:featured_taxon_page_section) }
     let!(:another_page_block) { create(:page_block, :buttons, section: page_section, position: 1) }
     let!(:page_block) { create(:page_block, :buttons, section: page_section, position: 2) }
 
@@ -38,7 +38,7 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
   end
 
   describe '#move_lower' do
-    let(:page_section) { create(:featured_taxon) }
+    let(:page_section) { create(:featured_taxon_page_section) }
     let!(:page_block) { create(:page_block, :buttons, section: page_section, position: 1) }
     let!(:another_page_block) { create(:page_block, :buttons, section: page_section, position: 2) }
 
@@ -53,7 +53,7 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
     subject { post :create, params: { page_block: { type: page_block_type }, page_section_id: page_section.id }, format: :turbo_stream }
 
     let(:page_block_type) { 'Spree::PageBlocks::Buttons' }
-    let(:page_section) { create(:featured_taxon) }
+    let(:page_section) { create(:featured_taxon_page_section) }
 
     it 'creates page block of the given type' do
       expect { subject }.to change(Spree::PageBlock, :count).by(1)
