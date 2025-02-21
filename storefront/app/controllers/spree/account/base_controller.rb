@@ -1,6 +1,6 @@
 module Spree
   module Account
-    class BaseController < Spree::UsersController
+    class BaseController < Spree::StoreController
       protected
 
       def accurate_title
