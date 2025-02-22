@@ -4,21 +4,6 @@ Spree::Core::Engine.add_routes do
     get '/password', to: 'password#show', as: :password
     post '/password', to: 'password#check', as: :check_password
 
-    # Authentication with Devise
-    if defined?(Devise)
-      devise_for(
-        Spree.user_class.model_name.singular_route_key,
-        class_name: Spree.user_class.to_s,
-        path: :user,
-        controllers: {
-          sessions: 'spree/user_sessions',
-          passwords: 'spree/user_passwords',
-          registrations: 'spree/user_registrations'
-        },
-        router_name: :spree
-      )
-    end
-
     # Product Catalog
     resources :products, only: [:index, :show], path: '/products' do
       member do

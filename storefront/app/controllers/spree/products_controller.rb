@@ -60,7 +60,7 @@ module Spree
                        {}
                      end
 
-      variant_finder = ::Storefront::VariantFinder.new(
+      variant_finder = Spree::Storefront::VariantFinder.new(
         product: @product,
         variant_id: params[:variant_id],
         current_currency: current_currency,
@@ -68,7 +68,7 @@ module Spree
       )
 
       @selected_variant, @variant_from_options =
-        Rails.cache.fetch([@product.cache_key_with_version, "variant-finder", current_currency, params[:variant_id], options_hash].compact) do
+        Rails.cache.fetch([@product.cache_key_with_version, 'variant-finder', current_currency, params[:variant_id], options_hash].compact) do
           variant_finder.find
         end
     end
