@@ -1,0 +1,23 @@
+<% filter_values = filter_values_for_filter(filter) %>
+
+<% if filter_values.any? %>
+  <div class="st-accordion" data-controller='accordion' data-accordion-close-others-value="false">
+    <%= link_to "#colors_filter", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if params.dig(:filter, :options, :color).present?}", data: { action: 'accordion#toggle:prevent' } do %>
+      <%= Spree.t(:colors) %>
+      <%= render 'spree/shared/icons/chevron_down' %>
+    <% end %>
+    <div class='st-accordion__content' data-accordion-id='colors_filter'>
+      <%= Spree::ColorsPreviewStylesPresenter.new(filter_values.map { |v| v.name }).to_s.html_safe %>
+      <ul class="flex items-center flex-wrap gap-2 px-4 lg:px-10">
+        <% filter_values.each do |value| %>
+          <li>
+            <label class="cursor-pointer">
+              <%= f.check_box 'filter[options][color][]', { class: 'sr-only peer color-input', id: nil, checked: params.dig(:filter, :options, :color)&.include?(value.name), value: value.name }, value.name, nil %>
+              <%= render 'spree/products/color_picker', color: value.presentation, with_name: true %>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>

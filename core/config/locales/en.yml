@@ -1651,6 +1651,7 @@ en:
     shipping_total: Shipping total
     shipping_zone: Shipping Zone
     shop_by_taxonomy: Shop by %{taxonomy}
+    shop_all: Shop All
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active

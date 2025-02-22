@@ -4,7 +4,6 @@ module.exports = {
   content: [
     'app/views/spree/**/*.erb',
     'app/views/devise/**/*.erb',
-    'engines/spree/storefront/app/views/**/*.erb'
   ],
   plugins: [
     require('@tailwindcss/typography'),
