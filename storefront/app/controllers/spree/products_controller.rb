@@ -34,7 +34,7 @@ module Spree
       load_product if action_name == 'show' # we need this for ahoy analytics
 
       if @product
-        @product.meta_title.blank? ? [@product.vendor&.display_name, @product.name].compact.join(' ') : @product.meta_title
+        @product.meta_title.blank? ? @product.name : @product.meta_title
       else
         params[:q].present? ? Spree.t(:search_results_for, query: params[:q]) : Spree.t(:shop_all)
       end

@@ -85,7 +85,7 @@
                   <%= render 'spree/products/add_to_wishlist', variant: current_variant, css_classes: 'btn-secondary ml-5 h-12 !py-0 !px-3 border-default', icon_size: 24 %>
                 </div>
               <% end %>
-              <%= render 'spree/products/add_to_waitlist', variant: current_variant %>
+              <%= render 'spree/products/add_to_waitlist', variant: current_variant if spree.respond_to?(:waitlist_path) && current_variant.present? %>
             </div>
 
             <%= render 'spree/products/details', product: product %>

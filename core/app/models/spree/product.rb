@@ -396,6 +396,12 @@ module Spree
                            end
     end
 
+    # Returns the short description for the product
+    # @return [String]
+    def storefront_description
+      property('short_description') || description
+    end
+
     # Returns tax category for Product
     # @return [Spree::TaxCategory]
     def tax_category

@@ -194,5 +194,11 @@ module Spree
 
       json_ld
     end
+
+    def option_type_colors_preview_styles(option_type)
+      return unless option_type.color?
+
+      Spree::ColorsPreviewStylesPresenter.new(option_type.option_values.map { |ov| { name: ov.name, filter_name: ov.name } }).to_s
+    end
   end
 end

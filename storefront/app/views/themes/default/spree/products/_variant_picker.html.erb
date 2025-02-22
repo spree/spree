@@ -4,7 +4,7 @@
     <% product.option_types.each_with_index do |option_type, index| %>
       <% selected_option = product_selected_option_for_option(option_type, product: product, selected_variant: selected_variant, options_param_name: options_param_name) %>
       <% if option_type.color? %>
-        <%= option_type.colors_preview_styles.html_safe %>
+        <%= option_type_colors_preview_styles(option_type).html_safe %>
         <fieldset data-option-id="<%= option_type.id %>" class="flex flex-col gap-y-2">
           <span class="text-sm leading-4 uppercase tracking-widest"><%= option_type.presentation %>: <%= selected_option.presentation %></span>
           <ul class="flex items-center flex-wrap gap-1">

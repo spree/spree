@@ -1599,6 +1599,7 @@ en:
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
+    search_results_for: "Search results for ${query}"
     server: Server
     server_error: The server returned an error
     settings: Settings

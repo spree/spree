@@ -124,7 +124,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <%= render('spree/products/add_to_waitlist', variant: current_variant) if current_variant.present? %>
+            <%= render('spree/products/add_to_waitlist', variant: current_variant) if spree.respond_to?(:waitlist_path) && current_variant.present? %>
           </div>
         </div>
       </div>
