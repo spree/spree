@@ -76,7 +76,7 @@
   </ul>
 <% else %>
   <ul class="nav nav-dark flex-column">
-    <% unless current_store.setup_completed? && !current_vendor %>
+    <% unless current_store.setup_completed? %>
       <li class="nav-item">
         <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
           <%= icon 'map' %>
