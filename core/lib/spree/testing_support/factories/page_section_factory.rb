@@ -7,7 +7,7 @@ FactoryBot.define do
       type { 'Spree::PageSections::FeaturedTaxons' }
     end
 
-    factory :featured_taxon, class: Spree::PageSections::FeaturedTaxon
+    factory :featured_taxon_section, class: Spree::PageSections::FeaturedTaxon
 
     trait :header do
       type { 'Spree::PageSections::Header' }
