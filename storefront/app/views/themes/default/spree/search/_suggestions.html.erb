@@ -1,6 +1,8 @@
 <% loaded ||= false %>
 <% taxons ||= [] %>
-<% has_more ||= false %>
+<% product_limit ||= 20 %>
+<% products ||= [] %>
+<% has_more ||= products.any? && products.count > product_limit %>
 
 <div class="bg-background w-full h-full flex flex-col">
   <div class="uppercase block py-4 lg:py-6 border-b border-default w-full font-semibold text-sm tracking-widest">
@@ -12,7 +14,7 @@
         <div class="flex flex-col md:pr-6 mb-4">
           <h3 class="text-sm uppercase px-4 py-6"><%= Spree.t(:categories) %></h3>
           <% if taxons.any? %>
-            <% taxons.each do |taxon| %>
+            <% taxons.limit(5).each do |taxon| %>
               <%= link_to spree.nested_taxons_path(taxon), class: "leading-snug flex justify-between w-full p-4 hover:bg-accent" do %>
                 <%= taxon.name %>
                 <%= render 'spree/shared/icons/chevron_right' %>
@@ -35,7 +37,7 @@
           <div>
             <%= render 'spree/products/swiper',
               section: theme_layout_sections['header'],
-              products: products,
+              products: products.limit(product_limit),
               desktop_slides: 3,
               heading: Spree.t(:products),
               pagination: 'top',
