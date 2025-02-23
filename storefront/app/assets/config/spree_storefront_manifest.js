@@ -3,5 +3,4 @@
 //= link_tree ../../javascript/spree/storefront/helpers .js
 //= link_tree ../../../vendor/javascript .js
 
-//= link application.tailwind.css
 //= link storefront_page_builder.css

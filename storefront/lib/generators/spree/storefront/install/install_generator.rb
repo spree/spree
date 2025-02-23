@@ -23,6 +23,12 @@ module Spree
           else
             append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')
           end
+
+          unless File.exist?('app/assets/config/manifest.js')
+            create_file 'app/assets/config/manifest.js', "//= link_tree ../builds\n"
+          else
+            append_to_file 'app/assets/config/manifest.js', "\n//= link_tree ../builds" unless File.read('app/assets/config/manifest.js').include?('//= link_tree ../builds')
+          end
         end
       end
     end
