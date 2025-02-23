@@ -1,4 +1,4 @@
-require_relative 'runtime_configuration'
+require_relative 'configuration'
 
 module Spree
   module Storefront
@@ -14,7 +14,7 @@ module Spree
       )
 
       initializer 'spree.storefront.configuration', before: :load_config_initializers do |_app|
-        Spree::Storefront::RuntimeConfig = Spree::Storefront::RuntimeConfiguration.new
+        Spree::Storefront::Config = Spree::Storefront::Configuration.new
       end
 
       initializer 'spree.storefront.assets' do |app|
