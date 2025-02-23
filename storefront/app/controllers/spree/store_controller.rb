@@ -152,10 +152,11 @@ module Spree
                    execute.
                    includes(storefront_products_includes)
 
-        default_per_page = ENV.fetch('STOREFRONT_PRODUCTS_PER_PAGE', '20,40').split(',').map(&:to_i)
+        default_per_page = Spree::Storefront::Config[:products_per_page]
         per_page = params[:per_page].present? ? params[:per_page].to_i : default_per_page
+        page = params[:page].present? ? params[:page].to_i : 1
 
-        GearedPagination::Recordset.new(products, per_page: per_page).page(params[:page] || 1)
+        products.page(page).per(per_page)
       end
     end
 
