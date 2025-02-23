@@ -207,7 +207,7 @@ describe Spree::CheckoutController, type: :controller do
   describe '#update' do
     context 'save successful' do
       before do
-        allow_any_instance_of(Spree::OrderDecorator).to receive(:ensure_available_shipping_rates).and_return(true)
+        allow_any_instance_of(Spree::Order).to receive(:ensure_available_shipping_rates).and_return(true)
       end
 
       def spree_post_address
