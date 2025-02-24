@@ -3,20 +3,15 @@
     <div class="max-h-screen w-full max-w-lg relative">
       <div class="m-1 bg-white rounded shadow">
         <div class="p-8">
-          <h2 class="text-xl mb-4"><%= Spree.t(:shipping_not_available) %></h2>
+          <h2 class="text-xl mb-4"><%= Spree.t('storefront.checkout.shipping_not_available') %></h2>
           <p class="mb-4">
-            <%= Spree.t('errors.messages.invalid_line_items', count: @order.invalid_line_items.size) %>
+            <%= Spree.t('checkout.errors.invalid_line_items', count: @order.invalid_line_items.size) %>
           </p>
 
           <div class="mb-5 overflow-y-auto pt-3 mx-3 lg:mx-8 lg:mt-4 lg:pt-6 line-items" data-checkout-summary-target="line_items">
             <% if @order.vendors.any? || @order.splitted? %>
-              <% @order.invalid_line_items.group_by(&:vendor).each do |vendor, line_items| %>
+              <% @order.invalid_line_items.each do |line_item| %>
                 <div class="mb-5">
-                  <% if vendor.present? %>
-                    <h5 class="py-3 font-normal text-sm mb-2">
-                      <%= Spree.t(:fulfilled_by) %> <span class="font-semibold"><%= vendor.name %></span>
-                    </h5>
-                  <% end %>
                   <%= render collection: line_items, partial: 'spree/checkout/line_item', cached: spree_base_cache_scope %>
                 </div>
               <% end %>
@@ -26,8 +21,8 @@
           </div>
 
           <div class="flex justify-end items-center flex-wrap mt-6">
-            <%= link_to 'return to cart', spree.cart_path, class: 'mx-4 py-4', target: :_top %>
-            <%= button_to 'Continue to checkout',
+            <%= link_to Spree.t('storefront.checkout.continue_to_cart'), spree.cart_path, class: 'mx-4 py-4', target: :_top %>
+            <%= button_to Spree.t('storefront.checkout.continue_to_checkout'),
                         spree.checkout_remove_missing_items_path(@order.token, line_item_ids: @order.invalid_line_items.map(&:id)),
                         class: 'btn-primary font-semibold checkout-content-save-continue-button my-5 ml-4 !py-4',
                         method: :delete,

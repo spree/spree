@@ -100,7 +100,7 @@ describe Spree::CheckoutController, type: :controller do
 
           it 'redirects to login page' do
             get :edit, params: { token: order.token }
-            expect(response).to redirect_to(spree.new_user_session_path)
+            expect(response).to redirect_to('/login')
           end
         end
 

@@ -1,22 +1,7 @@
 <%= turbo_frame_tag :checkout_line_items, id: 'line_items', target: '_top' do %>
   <% cache spree_base_cache_scope.call(order.line_items.cache_key_with_version) do %>
     <div class="overflow-y-auto line-items flex flex-col gap-5 pt-5 md:pt-0" data-checkout-summary-target="line_items">
-      <% if order.vendors.any? || order.splitted? %>
-        <% order.all_line_items.group_by(&:vendor).each do |vendor, line_items| %>
-          <div class="flex flex-col gap-4">
-            <% if vendor.present? %>
-              <p class="font-normal text-sm">
-                <%= Spree.t(:fulfilled_by) %> <span class="font-semibold"><%= vendor.name %></span>
-              </p>
-            <% end %>
-            <div class="flex flex-col gap-3">
-              <%= render collection: line_items, partial: 'spree/checkout/line_item', cached: spree_base_cache_scope %>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <%= render collection: order.line_items, partial: 'spree/checkout/line_item', cached: spree_base_cache_scope %>
-      <% end %>
+      <%= render collection: order.line_items, partial: 'spree/checkout/line_item', cached: spree_base_cache_scope %>
     </div>
   <% end %>
 <% end %>

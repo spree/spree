@@ -676,22 +676,10 @@ en:
     cart_state_changed: Cart changed
     categories: Categories
     category: Category
-    category_nav_bar:
-      get_up_to_30_percent_off: GET UP TO 30% OFF
-      jackets_and_coats: JACKET & COASTS
-      new_collection: NEW COLLECTION
-      special_offers: SPECIAL OFFERS
     changes_published: Changes published!
     channel: Channel
     charged: Charged
     checkout: Checkout
-    checkout_page:
-      main_navigation: Main navigation
-      checkout_navigation: Checkout navigation
-      back_to_cart: back to cart
-      delivery_method: delivery method
-      header: Checkout
-      product: Product
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
     choose_currency: Choose Currency

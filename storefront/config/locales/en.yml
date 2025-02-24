@@ -2,6 +2,16 @@ en:
   spree:
     storefront:
       add_to_wishlist: Add to wishlist
+      checkout:
+        back_to_cart: Back to cart
+        continue_to_cart: Continue to cart
+        continue_to_checkout: Continue to checkout
+        delivery_method: Delivery method
+        shipping_not_available: Shipping not available
+        errors:
+          invalid_line_items:
+            one: 'This item will be removed from your cart because there are no delivery methods available for your address.'
+            other: 'These %{count} items will be removed from your cart because there are no delivery methods available for your address.'
       wished_items:
         select_variant: Select variant to add to wishlist
         remove_error: 'You already removed this item from your wishlist'

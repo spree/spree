@@ -19,7 +19,7 @@
         <%= form.fields_for :shipments do |ship_form| %>
           <div class="shipment">
             <h5 class="checkout-content-header mb-3 font-body">
-              <%= Spree.t('checkout_page.delivery_method').capitalize %>
+              <%= Spree.t('storefront.checkout.delivery_method').capitalize %>
               <% if ship_form.object.stock_location.present? %>
                 <%= Spree.t(:from).downcase %>
                 <strong><%= ship_form.object.stock_location.name %></strong>
