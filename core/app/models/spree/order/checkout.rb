@@ -100,6 +100,7 @@ module Spree
                 before_transition from: :address, do: :update_line_item_prices!
                 before_transition from: :address, do: :create_tax_charge!
                 before_transition to: :address, do: :assign_default_addresses!
+                before_transition to: :address, do: :ensure_valid_totals
               end
 
               if states[:delivery]
@@ -109,6 +110,7 @@ module Spree
                 before_transition to: :delivery, do: :create_shipment_tax_charge!
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
                 before_transition to: :delivery, do: :apply_unassigned_promotions
+                before_transition to: :delivery, do: :ensure_valid_totals
               end
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_discontinued

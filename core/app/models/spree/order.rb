@@ -619,6 +619,17 @@ module Spree
       ::Spree::PromotionHandler::Cart.new(self).activate
     end
 
+    def ensure_valid_totals
+      return if quick_checkout?
+
+      destroyed_tax_adjustments = all_adjustments.tax.destroy_all
+
+      if destroyed_tax_adjustments.any?
+        updater.update_adjustment_total
+        persist_totals
+      end
+    end
+
     # Clean shipments and make order back to address state
     #
     # At some point the might need to force the order to transition from address

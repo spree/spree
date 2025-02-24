@@ -118,11 +118,9 @@ describe Spree::CheckoutController, type: :controller do
             let(:user) { create(:user) }
 
             it 'redirects to cart page' do
-              store.update(url: "http://#{store.code}.#{Spree.root_domain}")
-
               get :edit, params: { token: order.token }
               expect(flash[:error]).to eq('You cannot access this checkout')
-              expect(response).to redirect_to(spree.cart_url(host: store.url))
+              expect(response).to redirect_to(spree.cart_path)
             end
           end
         end
@@ -1094,6 +1092,57 @@ describe Spree::CheckoutController, type: :controller do
         it 'does not update order tracking attributes' do
           expect{ subject }.not_to change{ order.reload.updated_at }
         end
+      end
+    end
+  end
+
+  describe '#ensure_valid_totals' do
+    subject { get :edit, params: { state: checkout_state, token: order.token } }
+
+    let(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
+    let(:line_item) { order.line_items.first }
+
+    let!(:tax_adjustment) { create(:tax_adjustment, order: order, source: create(:tax_rate), adjustable: line_item) }
+
+    before { order.update_with_updater! }
+
+    context 'when going back to address step' do
+      let(:checkout_state) { 'address' }
+
+      it 'deletes the tax adjustment' do
+        expect { subject }.to change { order.reload.all_adjustments.tax.count }.by(-1)
+      end
+
+      it 'updates the order total' do
+        expect { subject }.to change { order.reload.total }.by(-tax_adjustment.amount).and(
+          change { order.reload.adjustment_total }.by(-tax_adjustment.amount)
+        )
+      end
+    end
+
+    context 'when going back to delivery step' do
+      let(:checkout_state) { 'delivery' }
+
+      it 'deletes the tax adjustment' do
+        expect { subject }.to change { order.reload.all_adjustments.tax.count }.by(-1)
+      end
+
+      it 'updates the order total' do
+        expect { subject }.to change { order.reload.total }.by(-tax_adjustment.amount).and(
+          change { order.reload.adjustment_total }.by(-tax_adjustment.amount)
+        )
+      end
+    end
+
+    context 'when staying on payment step' do
+      let(:checkout_state) { 'payment' }
+
+      it 'keeps the tax adjustment' do
+        expect { subject }.not_to change { order.reload.all_adjustments.tax.count }
+      end
+
+      it 'does not update the order total' do
+        expect { subject }.not_to change { order.reload.total }
       end
     end
   end

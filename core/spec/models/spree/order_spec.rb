@@ -2053,4 +2053,25 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#ensure_valid_totals' do
+    subject { order.ensure_valid_totals }
+
+    let(:order) { create(:order_with_line_items) }
+    let(:line_item) { order.line_items.first }
+
+    let!(:tax_adjustment) { create(:tax_adjustment, order: order, source: create(:tax_rate), adjustable: line_item) }
+
+    before { order.update_with_updater! }
+
+    it 'deletes the tax adjustment' do
+      expect { subject }.to change { order.reload.all_adjustments.tax.count }.by(-1)
+    end
+
+    it 'updates the order total' do
+      expect { subject }.to change { order.reload.total }.by(-tax_adjustment.amount).and(
+        change { order.reload.adjustment_total }.by(-tax_adjustment.amount)
+      )
+    end
+  end
 end
