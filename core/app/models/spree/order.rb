@@ -412,6 +412,15 @@ module Spree
       payments.valid.not_store_credits.first&.source
     end
 
+    # Returns the backordered variants for the order
+    #
+    # @return [Array<Spree::Variant>] the backordered variants for the order
+    def backordered_variants
+      variants.
+        joins(:stock_items, :product).
+        where(Spree::StockItem.table_name => { count_on_hand: ..0, backorderable: true })
+    end
+
     def can_ship?
       complete? || resumed? || awaiting_return? || returned?
     end

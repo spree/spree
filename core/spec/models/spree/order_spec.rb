@@ -1958,4 +1958,24 @@ describe Spree::Order, type: :model do
       expect(subject).to eq(payment_source)
     end
   end
+
+  describe '#backordered_variants' do
+    subject { order.backordered_variants }
+
+    let(:order) { create(:order) }
+    let(:variant) { create(:variant) }
+    let(:variant_2) { create(:variant) }
+
+    before do
+      create(:line_item, order: order, variant: variant, quantity: 1)
+      variant.stock_items.first.update(count_on_hand: 0, backorderable: true)
+
+      create(:line_item, order: order, variant: variant_2, quantity: 1)
+      variant_2.stock_items.first.update(count_on_hand: 1, backorderable: true)
+    end
+
+    it 'returns the backordered variants' do
+      expect(subject).to eq([variant])
+    end
+  end
 end
