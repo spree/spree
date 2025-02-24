@@ -1919,3 +1919,7 @@ en:
     zone: Zone
     zones: Zones
     no_limits_zone: No Limits
+    terms_of_service: Terms of Service
+    privacy_policy: Privacy Policy
+    returns_policy: Returns Policy
+    shipping_policy: Shipping Policy

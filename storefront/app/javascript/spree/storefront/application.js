@@ -16,6 +16,7 @@ import AccountNavController from 'spree/storefront/controllers/account_nav_contr
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import AutoSubmit from '@stimulus-components/auto-submit'
+import CardValidationController from 'spree/storefront/controllers/card_validation_controller'
 import CartController from 'spree/storefront/controllers/cart_controller'
 import CheckoutAddressBookController from 'spree/storefront/controllers/address_book_controller'
 import CheckoutDeliveryController from 'spree/storefront/controllers/delivery_controller'
@@ -50,6 +51,7 @@ application.register('account-nav', AccountNavController)
 application.register('address-autocomplete', AddressAutocompleteController)
 application.register('address-form', AddressFormController)
 application.register('auto-submit', AutoSubmit)
+application.register('card-validation', CardValidationController)
 application.register('cart', CartController)
 application.register('checkout-address-book', CheckoutAddressBookController)
 application.register('checkout-delivery', CheckoutDeliveryController)
