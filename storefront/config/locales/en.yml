@@ -3,11 +3,17 @@ en:
     storefront:
       add_to_wishlist: Add to wishlist
       checkout:
+        already_have_an_account: Already have an account?
+        all_transactions_are_secure_and_encrypted: All transactions are secure and encrypted
         back_to_cart: Back to cart
+        by_placing_this_order_you_agree_to: By placing this order you agree to
         continue_to_cart: Continue to cart
         continue_to_checkout: Continue to checkout
         delivery_method: Delivery method
+        gift_card_amount_applied: Gift card %{code} applied %{amount} to your order.
+        order_already_paid: You don't need to pay anything, just click Place now button to confirm the order.
         shipping_not_available: Shipping not available
+        store_credits_amount_applied: You applied a %{amount} store credit to your order.
         errors:
           invalid_line_items:
             one: 'This item will be removed from your cart because there are no delivery methods available for your address.'

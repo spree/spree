@@ -56,7 +56,7 @@
             <div class="px-5 flex flex-col gap-4">
               <% @order.shipments.each do |shipment| %>
                 <p class="word-break">
-                  <% if @order.shipments.count > 1 || shipment.shipping_method.vendor.present? %>
+                  <% if @order.shipments.count > 1 || shipment.shipping_method.respond_to?(:vendor) && shipment.shipping_method.vendor.present? %>
                     <%= shipment.stock_location&.name %> -
                   <% end %>
                   <%= shipment.shipping_method.name %>
