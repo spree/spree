@@ -1928,4 +1928,34 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#payment_method' do
+    subject { order.payment_method }
+
+    let(:order) { create(:order) }
+    let(:payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+
+    before do
+      create(:payment, order: order, payment_method: payment_method)
+    end
+
+    it 'returns the payment method' do
+      expect(subject).to eq(payment_method)
+    end
+  end
+
+  describe '#payment_source' do
+    subject { order.payment_source }
+
+    let(:order) { create(:order) }
+    let(:payment_source) { create(:credit_card) }
+
+    before do
+      create(:payment, order: order, source: payment_source)
+    end
+
+    it 'returns the payment source' do
+      expect(subject).to eq(payment_source)
+    end
+  end
 end

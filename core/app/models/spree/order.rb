@@ -398,6 +398,20 @@ module Spree
                      end
     end
 
+    # Returns the payment method for the order
+    #
+    # @return [Spree::PaymentMethod] the payment method for the order
+    def payment_method
+      payments.valid.not_store_credits.first&.payment_method
+    end
+
+    # Returns the payment source for the order
+    #
+    # @return [Spree::PaymentSource] the payment source for the order
+    def payment_source
+      payments.valid.not_store_credits.first&.source
+    end
+
     def can_ship?
       complete? || resumed? || awaiting_return? || returned?
     end
