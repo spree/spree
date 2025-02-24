@@ -127,7 +127,11 @@ describe Spree::Taxon, type: :model do
 
     describe 'after_destroy :remove_all_featured_sections' do
       let(:taxon) { create(:taxon) }
+<<<<<<< HEAD
       let!(:featured_section) { create(:featured_taxon_section, preferred_taxon_id: taxon.id) }
+=======
+      let!(:featured_section) { create(:featured_taxon_page_section, preferred_taxon_id: taxon.id) }
+>>>>>>> main
 
       it 'removes the associated featured section' do
         expect { taxon.destroy! }.to change(Spree::PageSections::FeaturedTaxon, :count).from(3).to(2)
@@ -768,7 +772,7 @@ describe Spree::Taxon, type: :model do
     subject { taxon.featured? }
 
     let(:taxon) { create(:taxon) }
-    let!(:featured_section) { create(:featured_taxon_section, preferred_taxon_id: featured_taxon.id) }
+    let!(:featured_section) { create(:featured_taxon_page_section, preferred_taxon_id: featured_taxon.id) }
 
     context 'with a featured section' do
       let(:featured_taxon) { taxon }
@@ -788,8 +792,8 @@ describe Spree::Taxon, type: :model do
 
     let(:taxon) { create(:taxon) }
 
-    let!(:featured_sections) { create_list(:featured_taxon_section, 2, preferred_taxon_id: featured_taxon.id) }
-    let!(:other_featured_sections) { create_list(:featured_taxon_section, 2, preferred_taxon_id: create(:taxon).id) }
+    let!(:featured_sections) { create_list(:featured_taxon_page_section, 2, preferred_taxon_id: featured_taxon.id) }
+    let!(:other_featured_sections) { create_list(:featured_taxon_page_section, 2, preferred_taxon_id: create(:taxon).id) }
 
     context 'with featured sections' do
       let(:featured_taxon) { taxon }

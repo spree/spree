@@ -10,7 +10,7 @@ RSpec.describe Spree::PageSection, type: :model do
       expect(homepage.sections).to be_blank
       expect(homepage.sections.with_deleted).to be_present
 
-      create_list(:featured_taxon_section, 4, pageable: homepage)
+      create_list(:featured_taxon_page_section, 4, pageable: homepage)
       expect(homepage.reload.sections.pluck(:position)).to match_array([1, 2, 3, 4])
     end
   end
@@ -104,7 +104,7 @@ RSpec.describe Spree::PageSection, type: :model do
 
   describe 'validations' do
     describe 'asset' do
-      let(:page_section) { create(:page_section, :header) }
+      let(:page_section) { create(:header_page_section) }
 
       it 'validates content type' do
         page_section.asset.attach(
@@ -125,18 +125,21 @@ RSpec.describe Spree::PageSection, type: :model do
   describe '#restore_design_settings_to_defaults' do
     let(:page_section) do
       create(
-        :page_section,
-        :header,
-        preferences: { text_color: '#000000', background_color: '#FFFFFF', border_color: '#000000' }
+        :header_page_section,
+        preferences: { text_color: '#000000', background_color: '#FFFFFF', border_color: '#000000', top_padding: 100, bottom_padding: 100, top_border_width: 10, bottom_border_width: 10 }
       )
     end
 
     it 'restores design settings to defaults' do
       page_section.restore_design_settings_to_defaults
 
-      expect(page_section.preferred_text_color).to be_nil
-      expect(page_section.preferred_background_color).to be_nil
-      expect(page_section.preferred_border_color).to be_nil
+      expect(page_section.preferred_text_color).to eq Spree::PageSections::Header::TEXT_COLOR_DEFAULT
+      expect(page_section.preferred_background_color).to eq Spree::PageSections::Header::BACKGROUND_COLOR_DEFAULT
+      expect(page_section.preferred_border_color).to eq Spree::PageSections::Header::BORDER_COLOR_DEFAULT
+      expect(page_section.preferred_top_padding).to eq Spree::PageSections::Header::TOP_PADDING_DEFAULT
+      expect(page_section.preferred_bottom_padding).to eq Spree::PageSections::Header::BOTTOM_PADDING_DEFAULT
+      expect(page_section.preferred_top_border_width).to eq Spree::PageSections::Header::TOP_BORDER_WIDTH_DEFAULT
+      expect(page_section.preferred_bottom_border_width).to eq Spree::PageSections::Header::BOTTOM_BORDER_WIDTH_DEFAULT
     end
   end
 end

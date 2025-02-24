@@ -56,7 +56,7 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
 
   describe '#destroy' do
     context 'when page section can be deleted' do
-      let!(:page_section) { create(:featured_taxon_section, pageable: page) }
+      let!(:page_section) { create(:featured_taxon_page_section, pageable: page) }
 
       it 'deletes the page section' do
         expect { delete :destroy, params: { id: page_section.id }, format: :turbo_stream }.to change(Spree::PageSection, :count).by(-1)
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     end
 
     context 'when page section cannot be deleted' do
-      let!(:page_section) { create(:page_section, :header) }
+      let!(:page_section) { create(:header_page_section) }
 
       it 'does not delete the page section' do
         expect { delete :destroy, params: { id: page_section.id }, format: :turbo_stream }.to change(Spree::PageSection, :count).by(0)
@@ -74,8 +74,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
 
   describe '#move_higher' do
     context 'within page' do
-      let!(:another_page_section) { create(:featured_taxon_section, pageable: page, position: 1) }
-      let!(:page_section) { create(:featured_taxon_section, pageable: page, position: 2) }
+      let!(:another_page_section) { create(:featured_taxon_page_section, pageable: page, position: 1) }
+      let!(:page_section) { create(:featured_taxon_page_section, pageable: page, position: 2) }
 
       it 'moves the page section higher' do
         put :move_higher, params: { id: page_section.id, page_id: page.id }, format: :turbo_stream
@@ -85,8 +85,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     end
 
     context 'within theme' do
-      let!(:another_page_section) { create(:featured_taxon_section, pageable: theme, pageable_type: "Spree::Theme", position: 1) }
-      let!(:page_section) { create(:featured_taxon_section, pageable: theme, pageable_type: "Spree::Theme", position: 2) }
+      let!(:another_page_section) { create(:featured_taxon_page_section, pageable: theme, pageable_type: 'Spree::Theme', position: 1) }
+      let!(:page_section) { create(:featured_taxon_page_section, pageable: theme, pageable_type: 'Spree::Theme', position: 2) }
 
       it 'moves the page section higher' do
         old_position = page_section.position
@@ -99,8 +99,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
 
   describe '#move_lower' do
     context 'within page' do
-      let!(:page_section) { create(:featured_taxon_section, pageable: page, position: 1) }
-      let!(:another_page_section) { create(:featured_taxon_section, pageable: page, position: 2) }
+      let!(:page_section) { create(:featured_taxon_page_section, pageable: page, position: 1) }
+      let!(:another_page_section) { create(:featured_taxon_page_section, pageable: page, position: 2) }
 
       it 'moves the page section lower' do
         put :move_lower, params: { id: page_section.id, page_id: page.id }, format: :turbo_stream
@@ -110,8 +110,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     end
 
     context 'within theme' do
-      let!(:page_section) { create(:featured_taxon_section, pageable: theme, pageable_type: "Spree::Theme", position: 1) }
-      let!(:another_page_section) { create(:featured_taxon_section, pageable: theme, pageable_type: "Spree::Theme", position: 2) }
+      let!(:page_section) { create(:featured_taxon_page_section, pageable: theme, pageable_type: 'Spree::Theme', position: 1) }
+      let!(:another_page_section) { create(:featured_taxon_page_section, pageable: theme, pageable_type: 'Spree::Theme', position: 2) }
 
       it 'moves the page section lower' do
         old_position = page_section.position
@@ -123,7 +123,7 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   end
 
   describe '#restore_design_settings_to_defaults' do
-    let(:page_section) { create(:featured_taxon_section, preferred_top_padding: 50) }
+    let(:page_section) { create(:featured_taxon_page_section, preferred_top_padding: 50) }
 
     it 'restores the design settings to defaults' do
       expect(page_section.preferred_top_padding).to eq 50

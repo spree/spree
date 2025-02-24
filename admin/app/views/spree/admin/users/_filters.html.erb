@@ -1,6 +1,6 @@
 <%= search_form_for [:admin, @search], url: spree.admin_users_url, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
   <div class="d-flex flex-column flex-lg-row gap-2">
-    <%= render 'spree/admin/shared/filters_search_bar', param: :email_eq, placeholder: [Spree.t(:search), Spree.t(:customers).downcase].join(' ') %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, placeholder: Spree.t('admin.users.filters.search_placeholder') %>
 
     <%= render 'spree/admin/shared/filters_button' %>
   </div>

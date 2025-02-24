@@ -404,3 +404,6 @@ en:
       avg_order_value: Avg. Order Value
       num_orders: No. of Orders
       member_since: Member since
+      users:
+        filters:
+          search_placeholder: Search customers by email or name
