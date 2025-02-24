@@ -1006,6 +1006,7 @@ en:
         lt: less than
         lte: less than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
+    products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed

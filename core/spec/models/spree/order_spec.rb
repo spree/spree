@@ -1979,11 +1979,78 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#remove_invalid_line_items' do
-    let(:order) { create(:order_with_line_items, store: store) }
+  describe '#line_items_without_shipping_rates' do
+    subject { order.line_items_without_shipping_rates }
 
-    it 'removes invalid line items' do
-      expect { order.remove_invalid_line_items(order.line_items.pluck(:id)) }.to change { order.line_items.count }.from(1).to(0)
+    let(:order) { create(:order_with_line_items) }
+    let(:shipment) { order.shipments.first }
+    let(:line_item) { order.line_items.first }
+
+    context 'when order has no shipments' do
+      it 'returns an empty array' do
+        expect(subject).to eq([])
+      end
+    end
+
+    context 'when order has shipments with no shipping rates' do
+      before do
+        shipment.shipping_rates.destroy_all
+      end
+
+      it 'returns the line items without shipping rates' do
+        expect(subject).to eq([line_item])
+      end
+    end
+
+    context 'when order has shipments with shipping rates' do
+      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+
+      it 'returns an empty array' do
+        expect(subject).to eq([])
+      end
+    end
+  end
+
+  describe '#ensure_available_shipping_rates' do
+    subject { order.send(:ensure_available_shipping_rates) }
+
+    let(:order) { create(:order_with_line_items) }
+    let(:line_item) { order.line_items.first }
+    let(:shipment) { order.shipments.first }
+
+    context 'when order has no shipments' do
+      before do
+        order.shipments.destroy_all
+      end
+
+      it 'returns false and adds an error to the order' do
+        expect(subject).to be false
+        expect(order.errors.full_messages).to include(Spree.t(:items_cannot_be_shipped))
+      end
+    end
+
+    context 'when order has shipments with no shipping rates' do
+      before do
+        shipment.shipping_rates.destroy_all
+      end
+
+      it 'returns false and adds an error to the order' do
+        expect(subject).to be false
+        expect(order.errors.full_messages).to include(Spree.t(:products_cannot_be_shipped, product_names: line_item.name))
+      end
+
+      it 'deletes all the shipments' do
+        expect { subject }.to change(order.shipments, :count).to(0)
+      end
+    end
+
+    context 'when order has shipments with shipping rates' do
+      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+
+      it 'returns nil and does not add an error to the order' do
+        expect(subject).to be_nil
+        expect(order.errors.full_messages).to be_empty
+      end
     end
   end
 end
