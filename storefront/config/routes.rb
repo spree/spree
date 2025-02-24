@@ -48,7 +48,7 @@ Spree::Core::Engine.add_routes do
     get '/checkout/:token/:state', to: 'checkout#edit', as: :checkout_state
     patch '/checkout/:token/update/:state', to: 'checkout#update', as: :update_checkout
     get '/checkout/:token', to: 'checkout#edit', as: :checkout
-    delete '/checkout/:token/remove_missing_items/:state', to: 'checkout#remove_missing_items', as: :checkout_remove_missing_items
+    delete '/checkout/:token/remove_missing_items', to: 'checkout#remove_missing_items', as: :checkout_remove_missing_items
 
     # Account
     resources :addresses, except: [:index]

@@ -1978,4 +1978,12 @@ describe Spree::Order, type: :model do
       expect(subject).to eq([variant])
     end
   end
+
+  describe '#remove_invalid_line_items' do
+    let(:order) { create(:order_with_line_items, store: store) }
+
+    it 'removes invalid line items' do
+      expect { order.remove_invalid_line_items(order.line_items.pluck(:id)) }.to change { order.line_items.count }.from(1).to(0)
+    end
+  end
 end

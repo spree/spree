@@ -17,6 +17,7 @@ describe Spree::CheckoutController, type: :controller do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive_messages try_spree_current_user: user
     allow(controller).to receive_messages spree_current_user: user
+    allow(controller).to receive(:spree_login_path).and_return('/login')
   end
 
   describe '#edit' do
@@ -1061,6 +1062,17 @@ describe Spree::CheckoutController, type: :controller do
         expect(order.gift_card_total).to eq(0)
         expect(order.total_applied_store_credit).to eq(0)
       end
+    end
+  end
+
+  describe '#remove_missing_items' do
+    let(:order) { create(:order_with_line_items, store: store, user: user, line_items_count: 3) }
+    let(:line_item) { order.line_items.first }
+    let(:line_item_2) { order.line_items.last }
+
+    it 'removes missing items' do
+      expect { delete :remove_missing_items, params: { token: order.token, line_item_ids: [line_item.id, line_item_2.id] } }.to change { order.line_items.count }.from(3).to(1)
+      expect(response).to redirect_to spree.checkout_path(order.token)
     end
   end
 

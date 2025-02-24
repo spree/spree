@@ -137,6 +137,8 @@ module Spree
     end
     has_many :shipment_adjustments, through: :shipments, source: :adjustments
 
+    attribute :invalid_line_items, array: true, default: []
+
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
     accepts_nested_attributes_for :ship_address

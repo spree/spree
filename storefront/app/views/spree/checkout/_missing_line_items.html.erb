@@ -28,7 +28,7 @@
           <div class="flex justify-end items-center flex-wrap mt-6">
             <%= link_to 'return to cart', spree.cart_path, class: 'mx-4 py-4', target: :_top %>
             <%= button_to 'Continue to checkout',
-                        spree.checkout_remove_missing_items_path(@order.token, @order.state, line_item_ids: @order.invalid_line_items.map(&:id)),
+                        spree.checkout_remove_missing_items_path(@order.token, line_item_ids: @order.invalid_line_items.map(&:id)),
                         class: 'btn-primary font-semibold checkout-content-save-continue-button my-5 ml-4 !py-4',
                         method: :delete,
                         data: { turbo: false, 'turbo-submits-with': (render 'spree/checkout/button_processing', is_hidden: false) }

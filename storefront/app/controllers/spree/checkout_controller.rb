@@ -77,9 +77,15 @@ module Spree
 
     # DELETE /checkout/<token>/remove_missing_items
     def remove_missing_items
-      @order.remove_invalid_line_items(params[:line_item_ids])
-      @order.next
-      redirect_to spree.checkout_state_path(@order.token, @order.state)
+      line_items_to_remove = @order.line_items.where(id: params[:line_item_ids])
+
+      ApplicationRecord.transaction do
+        line_items_to_remove.each do |line_item|
+          remove_line_item_service.call(order: @order, line_item: line_item)
+        end
+      end
+
+      redirect_to spree.checkout_path(@order.token)
     end
 
     # GET /checkout/<token>/complete
@@ -342,6 +348,10 @@ module Spree
 
     def remove_store_credit_service
       Spree::Dependencies.checkout_remove_store_credit_service.constantize
+    end
+
+    def remove_line_item_service
+      Spree::Dependencies.cart_remove_line_item_service.constantize
     end
 
     def coupon_handler
