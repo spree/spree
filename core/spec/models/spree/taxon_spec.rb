@@ -788,8 +788,8 @@ describe Spree::Taxon, type: :model do
 
     let(:taxon) { create(:taxon) }
 
-    let!(:featured_sections) { create_list(:featured_taxon, 2, preferred_taxon_id: featured_taxon.id) }
-    let!(:other_featured_sections) { create_list(:featured_taxon, 2, preferred_taxon_id: create(:taxon).id) }
+    let!(:featured_sections) { create_list(:featured_taxon_section, 2, preferred_taxon_id: featured_taxon.id) }
+    let!(:other_featured_sections) { create_list(:featured_taxon_section, 2, preferred_taxon_id: create(:taxon).id) }
 
     context 'with featured sections' do
       let(:featured_taxon) { taxon }

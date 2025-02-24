@@ -10,7 +10,7 @@ RSpec.describe Spree::PageSection, type: :model do
       expect(homepage.sections).to be_blank
       expect(homepage.sections.with_deleted).to be_present
 
-      create_list(:featured_taxon, 4, pageable: homepage)
+      create_list(:featured_taxon_section, 4, pageable: homepage)
       expect(homepage.reload.sections.pluck(:position)).to match_array([1, 2, 3, 4])
     end
   end
