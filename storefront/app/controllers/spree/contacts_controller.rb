@@ -1,7 +1,6 @@
 module Spree
   class ContactsController < StoreController
     before_action :load_store
-    before_action :validate_captcha, only: :create
     before_action :ensure_customer_support_email
 
     def new
@@ -45,22 +44,6 @@ module Spree
 
       flash[:error] = Spree.t(:customer_support_email_not_configured)
       redirect_back_or_default root_path
-    end
-
-    def validate_captcha
-      return unless store_integration('recaptcha')
-
-      hostname = request.host || @store.url_or_custom_domain
-      return if verify_recaptcha(
-        action: 'contacts/create',
-        hostname: hostname,
-        secret_key: store_integration('recaptcha').secret_key,
-        site_key: store_integration('recaptcha').site_key,
-        minimum_score: 0.5
-      )
-
-      flash[:error] = 'Captcha verification failed, please try again.'
-      redirect_to action: :new
     end
   end
 end

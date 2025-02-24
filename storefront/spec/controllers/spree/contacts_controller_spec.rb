@@ -1,10 +1,14 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Spree::ContactsController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:contact_params) { { name: "John Doe", email: "john@example.com", message: "Test message" } }
 
   context 'when customer support email is not configured' do
+    before do
+      store.update(customer_support_email: nil)
+    end
+
     it 'redirects to root path' do
       get :new
       expect(response).to redirect_to(root_path)
@@ -46,33 +50,6 @@ RSpec.describe Spree::ContactsController, type: :controller do
         it "redirects to new action" do
           post :create, params: { contact: contact_params }
           expect(response).to redirect_to(action: :new)
-        end
-      end
-    end
-
-    describe "#validate_captcha" do
-      context "when recaptcha integration is present" do
-        let!(:recaptcha_integration) { create(:recaptcha_integration) }
-
-        it "verifies recaptcha" do
-          expect(controller).to receive(:verify_recaptcha).and_return(true)
-          post :create, params: { contact: contact_params }
-        end
-
-        context "when recaptcha verification fails" do
-          before do
-            allow(controller).to receive(:verify_recaptcha).and_return(false)
-          end
-
-          it "sets an error flash message" do
-            post :create, params: { contact: contact_params }
-            expect(flash[:error]).to eq('Captcha verification failed, please try again.')
-          end
-
-          it "redirects to new action" do
-            post :create, params: { contact: contact_params }
-            expect(response).to redirect_to(action: :new)
-          end
         end
       end
     end
