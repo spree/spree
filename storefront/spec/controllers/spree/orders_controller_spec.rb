@@ -96,4 +96,30 @@ describe Spree::OrdersController, type: :controller do
       expect(order.reload.line_items.count).to eq 0
     end
   end
+
+  describe '#show' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    before do
+      allow(controller).to receive(:current_store).and_return(store)
+    end
+
+    it 'renders the show template' do
+      get :show, params: { id: order.number, token: order.token }
+      expect(response).to render_template(:show)
+    end
+
+    it 'assigns @order' do
+      get :show, params: { id: order.number, token: order.token }
+      expect(assigns(:order)).to eq(order)
+    end
+
+    context 'when order is not found' do
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect {
+          get :show, params: { id: 'invalid', token: order.token }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
 end

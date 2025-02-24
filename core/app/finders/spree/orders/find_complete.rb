@@ -3,13 +3,14 @@ module Spree
     class FindComplete
       include Spree::Orders::FinderHelper
 
-      attr_reader :user, :number, :token, :store
+      attr_reader :user, :number, :token, :store, :email
 
-      def initialize(user: nil, number: nil, token: nil, store: nil)
+      def initialize(user: nil, number: nil, token: nil, store: nil, email: nil)
         @user = user
         @number = number
         @token = token
         @store = store
+        @email = email
       end
 
       def execute
@@ -17,6 +18,7 @@ module Spree
         orders = by_number(orders)
         orders = by_token(orders)
         orders = by_store(orders)
+        orders = by_email(orders)
 
         orders
       end
@@ -43,6 +45,10 @@ module Spree
         store.present?
       end
 
+      def email?
+        email.present?
+      end
+
       def by_user(orders)
         return orders unless user?
 
@@ -65,6 +71,12 @@ module Spree
         return orders unless store?
 
         orders.where(store: store)
+      end
+
+      def by_email(orders)
+        return orders unless email?
+
+        orders.where(email: email.strip.downcase)
       end
     end
   end

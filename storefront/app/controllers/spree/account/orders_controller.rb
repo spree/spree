@@ -14,14 +14,18 @@ module Spree
 
       def accurate_title
         if action_name == 'show'
-          Spree.t(:order_details_with_number, number: @order.number)
+          "#{Spree.t(:order)} ##{@order.number}"
         else
           Spree.t(:my_orders)
         end
       end
 
       def orders_scope
-        try_spree_current_user.completed_orders.for_store(current_store).order(completed_at: :desc)
+        order_finder.new(user: try_spree_current_user, store: current_store).execute
+      end
+
+      def order_finder
+        Spree::Dependencies.completed_order_finder.constantize
       end
     end
   end

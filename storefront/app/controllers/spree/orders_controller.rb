@@ -10,9 +10,13 @@ module Spree
 
     before_action :assign_order_with_lock, only: :update
 
-    # GET /orders/:id/:token
+    # GET /orders/:id
     def show
-      @order = complete_order_scope.find_by!(number: params[:id], token: params[:token])
+      @order = complete_order_finder.new(number: params[:id], token: params[:token], store: current_store).execute.first
+
+      raise ActiveRecord::RecordNotFound if @order.blank?
+
+      @shipments = @order.shipments
     end
 
     # PUT /cart
@@ -78,8 +82,8 @@ module Spree
       Spree::Dependencies.cart_update_service.constantize
     end
 
-    def complete_order_scope
-      current_store.orders.complete
+    def complete_order_finder
+      Spree::Dependencies.completed_order_finder.constantize
     end
 
     def remove_out_of_stock_items

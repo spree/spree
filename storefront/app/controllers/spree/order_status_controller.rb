@@ -7,13 +7,15 @@ module Spree
     # validate email/order number and redirect to order page
     # POST /order_status
     def create
-      @order = current_store.orders.complete.without_vendor.find_by(number: params[:number], email: params[:email])
+      raise ActiveRecord::RecordNotFound if params[:number].blank?
+
+      @order = order_finder.new(number: params[:number], email: params[:email], store: current_store).execute.first
 
       if @order
-        redirect_to spree.order_path(@order, token: @order.token)
+        redirect_to spree.order_path(@order, token: @order.token), status: :see_other
       else
         flash[:error] = Spree.t(:order_not_found)
-        render :new
+        render :new, status: :unprocessable_entity
       end
     end
 
@@ -21,6 +23,10 @@ module Spree
 
     def accurate_title
       Spree.t(:order_status)
+    end
+
+    def order_finder
+      Spree::Dependencies.completed_order_finder.constantize
     end
   end
 end
