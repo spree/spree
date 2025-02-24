@@ -1,7 +1,7 @@
 <div id="existing_cards" data-controller="checkout-credit-card-book">
   <div class="form-group">
     <ul class="list-group mb-5 border mt-3 rounded-md">
-      <% checkout_stripe_payment_sources.each_with_index do |card, i| %>
+      <% checkout_payment_sources.each_with_index do |card, i| %>
         <%= render partial: 'credit_card', locals: { card: card, index: i } %>
       <% end %>
       <li>
@@ -12,9 +12,8 @@
               <span class="cursor-pointer">
                 <%= Spree.t(:add_new_credit_card) %>
               </span>
-              <!-- Display a payment form -->
-              <div data-checkout-stripe-target="paymentElement" class="w-full hidden" data-checkout-credit-card-book-target="newCreditCardForm">
-                <!--Stripe.js injects the Payment Element-->
+              <div class="w-full hidden" data-checkout-credit-card-book-target="newCreditCardForm">
+                
               </div>
             </div>
           </label>
