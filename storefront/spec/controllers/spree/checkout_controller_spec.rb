@@ -118,11 +118,9 @@ describe Spree::CheckoutController, type: :controller do
             let(:user) { create(:user) }
 
             it 'redirects to cart page' do
-              store.update(url: "http://#{store.code}.#{Spree.root_domain}")
-
               get :edit, params: { token: order.token }
               expect(flash[:error]).to eq('You cannot access this checkout')
-              expect(response).to redirect_to(spree.cart_url(host: store.url))
+              expect(response).to redirect_to(spree.cart_path)
             end
           end
         end

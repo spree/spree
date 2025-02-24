@@ -13,7 +13,6 @@ module Spree
 
     before_action :ensure_order_not_completed, only: [:edit, :update]
     before_action :ensure_checkout_allowed
-    before_action :ensure_valid_totals, only: [:edit]
     before_action :ensure_valid_state, only: [:edit, :update]
 
     before_action :restart_checkout, only: :edit, if: :should_restart_checkout?
@@ -234,10 +233,6 @@ module Spree
       @order.update_column(:state, state)
       # GL is GA4 parameter needed to persist user's session between custom storefront and checkout
       redirect_to spree.checkout_state_path(@order.token, @order.state, _gl: params[:_gl].presence)
-    end
-
-    def ensure_valid_totals
-      @order.ensure_valid_totals if correct_state.in?(%w(address delivery))
     end
 
     def should_restart_checkout?
