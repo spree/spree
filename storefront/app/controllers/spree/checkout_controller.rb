@@ -57,7 +57,7 @@ module Spree
         unless params[:do_not_advance]
           @order.temporary_address = !params[:save_user_address]
           unless @order.next
-            return if @order.address? && @order.invalid_line_items.any? && turbo_stream_request? # render update trubo_stream
+            return if @order.address? && @order.line_items_without_shipping_rates.any? && turbo_stream_request? # render update trubo_stream
 
             flash[:error] = @order.errors.messages.values.flatten.join("\n")
             redirect_to(spree.checkout_state_path(@order.token, @order.state)) && return

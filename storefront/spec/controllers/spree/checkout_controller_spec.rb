@@ -728,7 +728,7 @@ describe Spree::CheckoutController, type: :controller do
           order.shipments.first.shipping_rates.delete_all
 
           put :update, params: { state: order.state, order: {}, token: order.token }
-          expect(flash[:error]).to eq(Spree.t(:items_cannot_be_shipped, product_names: order.products.pluck(:name).to_sentence))
+          expect(flash[:error]).to eq(Spree.t(:products_cannot_be_shipped, product_names: order.products.pluck(:name).to_sentence))
           expect(response).to redirect_to(spree.checkout_state_path(order.token, 'address'))
         end
       end
