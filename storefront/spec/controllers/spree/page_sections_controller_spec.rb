@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::PageSectionsController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:theme) { create(:theme, store: store) }
-  let(:section) { create(:featured_taxon_section) }
+  let(:section) { create(:featured_taxon_page_section) }
 
   before do
     allow(controller).to receive(:current_store).and_return(store)

@@ -127,11 +127,7 @@ describe Spree::Taxon, type: :model do
 
     describe 'after_destroy :remove_all_featured_sections' do
       let(:taxon) { create(:taxon) }
-<<<<<<< HEAD
-      let!(:featured_section) { create(:featured_taxon_section, preferred_taxon_id: taxon.id) }
-=======
       let!(:featured_section) { create(:featured_taxon_page_section, preferred_taxon_id: taxon.id) }
->>>>>>> main
 
       it 'removes the associated featured section' do
         expect { taxon.destroy! }.to change(Spree::PageSections::FeaturedTaxon, :count).from(3).to(2)
