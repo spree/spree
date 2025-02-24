@@ -41,6 +41,24 @@ module Spree
       end
     end
 
+    # Returns the delivery range for the shipping method
+    #
+    # @return [String]
+    def delivery_range
+      return unless shipping_method.delivery_range
+
+      shipping_method.delivery_range
+    end
+
+    # Returns the display delivery range for the shipping method
+    #
+    # @return [String]
+    def display_delivery_range
+      return unless delivery_range
+
+      Spree.t(:display_delivery_range, delivery_range: delivery_range)
+    end
+
     private
 
     def discount_amount

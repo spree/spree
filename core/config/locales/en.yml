@@ -812,6 +812,7 @@ en:
     discontinued: Discontinued
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
+    display_delivery_range: "Delivery in %{delivery_range} business days"
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
     draft_mode: Draft Mode

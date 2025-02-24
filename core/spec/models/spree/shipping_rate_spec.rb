@@ -182,4 +182,20 @@ describe Spree::ShippingRate, type: :model do
       expect(shipping_rate.final_price).to eq(10.0)
     end
   end
+
+  describe '#delivery_range' do
+    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+    it 'returns the delivery range for the shipping method' do
+      expect(shipping_rate.delivery_range).to eq('1-2')
+    end
+  end
+
+  describe '#display_delivery_range' do
+    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+    it 'returns the display delivery range for the shipping method' do
+      expect(shipping_rate.display_delivery_range).to eq('Delivery in 1-2 business days')
+    end
+  end
 end
