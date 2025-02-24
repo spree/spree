@@ -1,6 +1,7 @@
 module Spree
   module StorefrontHelper
     include BaseHelper
+    include Heroicon::Engine.helpers
 
     def render_storefront_partials(section)
       Rails.application.config.spree_storefront.send(section).map do |partial|

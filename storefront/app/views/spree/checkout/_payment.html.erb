@@ -1,9 +1,11 @@
 <%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
   <%= form.hidden_field :state_lock_version %>
   
-  <%= turbo_frame_tag :gift_card_code_field do %>
-    <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
-    <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+  <% if @order.respond_to?(:gift_card) %>
+    <%= turbo_frame_tag :gift_card_code_field do %>
+      <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
+      <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+    <% end %>
   <% end %>
   
   <% use_shipping = @order.shipping_eq_billing_address? || @order.bill_address.nil? || @order.bill_address.new_record? %>

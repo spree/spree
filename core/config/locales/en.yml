@@ -1077,21 +1077,6 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
-    nav_bar:
-      admin_panel: Admin Panel
-      change_country: Change country
-      close_menu: Close menu
-      go_to_previous_menu: Go to previous menu
-      log_in: LOG IN
-      log_out: LOG OUT
-      my_account: My Account
-      my_orders: My Orders
-      show_menu: Show menu
-      show_search: Show search
-      show_user_menu: Show user menu
-      sign_up: SIGN UP
-      desktop: Desktop navigation
-      mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
     new_shipping_address: New Bhipping Address

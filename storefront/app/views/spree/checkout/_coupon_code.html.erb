@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :checkout_coupon_code, class: "shopping-cart-coupon-code #{local_assigns[:classes]} flex flex-col gap-3" do %>
-  <% if promotion.nil? && !@order.gift_card %>
+  <% if promotion.nil? %>
     <%= form_tag spree.checkout_apply_coupon_code_path(@order.token), method: :patch, data: {controller: "checkout-promotions"} do %>
       <div class="flex" data-controller="enable-button">
         <%= hidden_field_tag :promotion_email, @order.email, data: {checkout_promotions_target: 'promotionEmailField'} %>
@@ -26,7 +26,7 @@
         </div>
       </div>
     <% end %>
-  <% elsif @order.gift_card %>
+  <% elsif @order.respond_to?(:gift_card) && @order.gift_card %>
     <%= form_tag spree.checkout_remove_coupon_code_path(@order.token), method: :delete do %>
       <%= hidden_field_tag :gift_card, @order.gift_card.code %>
       <div class="m-0">

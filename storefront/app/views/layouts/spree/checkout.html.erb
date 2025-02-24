@@ -1,5 +1,4 @@
 <% content_for(:head) do %>
-  <%= render 'spree/shared/google_places_api_loader' %>
   <meta name="robots" content="noindex, nofollow">
 <% end %>
 
@@ -7,6 +6,7 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <%= render 'spree/shared/head' %>
+    <%= render 'spree/shared/custom_head' %>
   </head>
   <body id="checkout-page" class="w-full bg-background text-text">
     <%= render_storefront_partials(:body_start_partials) %>

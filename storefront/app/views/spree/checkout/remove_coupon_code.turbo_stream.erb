@@ -19,12 +19,15 @@
   <%= render 'coupon_code', promotion: @order.valid_coupon_promotions.first,
                             result: @result, classes: @result.error.present? ? 'error' : '' %>
 <% end %>
-<%= turbo_stream.replace :gift_card_code_field do %>
-  <%= turbo_frame_tag :gift_card_code_field do %>
-    <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
-    <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+
+<% if @order.respond_to?(:gift_card) %>
+  <%= turbo_stream.replace :gift_card_code_field do %>
+    <%= turbo_frame_tag :gift_card_code_field do %>
+      <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
+      <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+    <% end %>
   <% end %>
-<% end %>
+<% end%>
 
 <%= turbo_stream.replace :checkout_store_credit do %>
   <%= render 'store_credit' %>

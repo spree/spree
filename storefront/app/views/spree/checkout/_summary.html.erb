@@ -83,7 +83,7 @@
             <% end %>
           <% end %>
 
-          <% if order.gift_card.present? %>
+          <% if order.respond_to?(:gift_card) && order.gift_card.present? %>
             <div class="flex justify-between items-center mb-2">
               <span><%= Spree.t(:gift_card) %>:</span>
               <span>-<%= order.display_gift_card_total %></span>
