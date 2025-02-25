@@ -1872,6 +1872,7 @@ en:
     usage_limit: Usage Limit
     use_app_default: Use App Default
     use_billing_address: Use Billing Address
+    use_shipping_address: Use Shipping Address
     use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
     use_new_cc_or_payment_method: Use a new card / payment method
