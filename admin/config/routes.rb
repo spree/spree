@@ -126,6 +126,9 @@ Spree::Core::Engine.add_routes do
     # translations
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'
 
+    # metadata
+    resources :metadatas, only: [:edit, :update], path: '/metadatas/:resource_type'
+
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 
