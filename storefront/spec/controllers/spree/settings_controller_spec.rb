@@ -5,6 +5,11 @@ describe Spree::SettingsController, type: :controller do
   let(:user) { create(:user) }
 
   before do
+    class_double('SpreeI18n').
+      as_stubbed_const(transfer_nested_constants: true)
+    class_double('SpreeI18n::Locale', all: [:en, :fr, :es]).as_stubbed_const(transfer_nested_constants: true)
+    Rails.application.reload_routes!
+
     store.update(supported_locales: 'en,fr,es')
   end
 
