@@ -1,0 +1,11 @@
+<div class="flex flex-col justify-between h-full">
+  <div class="h-full flex flex-col items-center place-content-center py-10">
+    <%= render 'spree/shared/icons/cart_48' %>
+    <p class="mb-8 mt-4 uppercase text-sm">
+      <%= Spree.t('cart_page.empty_info').html_safe %>
+    </p>
+    <div class="mx-10">
+      <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn-primary !no-underline', data: { 'turbo-frame': '_top' } %>
+    </div>
+  </div>
+</div>

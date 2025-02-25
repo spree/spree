@@ -70,6 +70,32 @@ describe Spree::BaseHelper, type: :helper do
 
         it { expect(helper.spree_storefront_resource_url(product)).to eq("http://www.example.com/fr/products/#{product.slug}") }
       end
+
+      context 'when preview_id is not present' do
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product)).to eq("http://#{current_store.url}/products/#{product.slug}")
+        end
+      end
+
+      context 'when preview_id is present' do
+        it 'returns the product preview url' do
+          expect(spree_storefront_resource_url(product, preview_id: product.id)).to eq("http://#{current_store.url}/products/#{product.slug}?preview_id=#{product.id}")
+        end
+      end
+
+      context 'for product with custom domain' do
+        let!(:custom_domain) { create :custom_domain, store: current_store }
+
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product)).to eq("http://#{custom_domain.url}/products/#{product.slug}")
+        end
+      end
+
+      context 'for product with relative option' do
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product, relative: true)).to eq("/products/#{product.slug}")
+        end
+      end
     end
 
     context 'for Taxon URL' do
@@ -94,10 +120,23 @@ describe Spree::BaseHelper, type: :helper do
     let(:product) { build(:product) }
 
     before do
-      Spree::Image.class_eval do
-        styles[:very_strange] = '1x1'
-        styles.merge!(foobar: '2x2')
+      module ImageDecorator
+        module ClassMethods
+          def styles
+            super.merge(
+              very_strange: '1x1',
+              foobar: '2x2'
+            )
+          end
+        end
+
+        def self.prepended(base)
+          base.singleton_class.prepend ClassMethods
+        end
       end
+
+      Spree::Image.prepend(ImageDecorator)
+
       allow_any_instance_of(described_class).to receive(:inline_svg_tag).and_return('<svg></svg>')
     end
 

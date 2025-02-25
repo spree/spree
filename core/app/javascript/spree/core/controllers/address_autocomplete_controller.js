@@ -17,8 +17,8 @@ export default class extends Controller {
     'addressWarning'
   ]
   connect() {
-    if (typeof google?.maps === 'undefined') {
-      console.error('Google Maps API is not loaded')
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+      console.warn('Google Maps API is not loaded. Please see https://developers.google.com/maps/documentation/javascript/get-api-key for more information.')
       return
     }
     this.googlePlacesSuggestionsProvider = new GooglePlacesSuggestionsProvider()

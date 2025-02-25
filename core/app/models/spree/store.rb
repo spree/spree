@@ -273,7 +273,7 @@ module Spree
           ).to_s
         else
           URI::HTTP.build(
-            host: url.to_s.sub(%r{^https?://}, ''),
+            host: url.to_s.sub(%r{^https?://}, '').split(':').first,
             port: port
           ).to_s
         end

@@ -1,21 +1,14 @@
 module Spree
   module Products
     class Find
-      def initialize(scope:, params:, current_currency: nil)
-        @scope = scope
-
-        if current_currency.present?
-          Spree::Deprecation.warn(<<-DEPRECATION, caller)
-            `current_currency` param is deprecated and will be removed in Spree 5.
-            Please pass `:currency` in `params` hash instead.
-          DEPRECATION
-        end
-
+      def initialize(scope:, params:)
+        @scope            = scope
+        @query            = params[:q].presence&.strip
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
         @store            = params[:store] || Spree::Store.default
         @price            = map_prices(String(params.dig(:filter, :price)).split(','))
-        @currency         = current_currency || params.dig(:filter, :currency) || params[:currency]
+        @currency         = params.dig(:filter, :currency) || params[:currency] || Spree::Store.default.default_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
@@ -28,12 +21,21 @@ module Spree
         @in_stock         = params.dig(:filter, :in_stock)
         @backorderable    = params.dig(:filter, :backorderable)
         @purchasable      = params.dig(:filter, :purchasable)
+        @out_of_stock     = params.dig(:filter, :out_of_stock).to_b
         @tags             = params.dig(:filter, :tags).to_s.split(',').compact_blank
+        @vendor_ids       = params.dig(:filter, :vendor_ids)&.split(',')&.compact_blank || []
+
+        if @purchasable.present? && @out_of_stock.present?
+          @purchasable = false
+          @out_of_stock = false
+        end
       end
 
       def execute
         products = by_ids(scope)
         products = by_skus(products)
+        products = by_query(products)
+        products = include_discontinued(products)
         products = by_price(products)
         products = by_currency(products)
         products = by_taxons(products)
@@ -44,11 +46,12 @@ module Spree
         products = by_properties(products)
         products = by_tags(products)
         products = include_deleted(products)
-        products = include_discontinued(products)
         products = show_only_stock(products)
         products = show_only_backorderable(products)
         products = show_only_purchasable(products)
+        products = show_only_out_of_stock(products)
         products = ordered(products)
+        products = by_vendor_ids(products)
 
         products.distinct
       end
@@ -56,7 +59,12 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
-                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags
+                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags,
+                  :query, :vendor_ids, :out_of_stock
+
+      def query?
+        query.present?
+      end
 
       def ids?
         ids.present?
@@ -100,6 +108,16 @@ module Spree
 
       def properties?
         properties.present? && properties.values.reject(&:empty?).present?
+      end
+
+      def vendor_ids?
+        vendor_ids.present?
+      end
+
+      def by_query(products)
+        return products unless query?
+
+        products.multi_search(query)
       end
 
       def by_ids(products)
@@ -157,7 +175,9 @@ module Spree
       def by_options(products)
         return products unless options?
 
-        products_ids = options.map { |key, value| products.with_option_value(key, value)&.ids }.compact.uniq
+        products_for_options = query? ? products.unscope(:order) : products
+
+        products_ids = options.map { |key, value| products_for_options.with_option_value(key, value)&.ids }.compact.uniq
         products.where(id: products_ids.reduce(&:intersection))
       end
 
@@ -202,6 +222,10 @@ module Spree
         products.tagged_with(tags, any: true)
       end
 
+      def by_vendor_ids(products)
+        products
+      end
+
       def option_types_count(option_value_ids)
         Spree::OptionValue.
           where(id: option_value_ids).
@@ -213,7 +237,7 @@ module Spree
         return products unless sort_by?
 
         case sort_by
-        when 'default'
+        when 'default', 'manual'
           if taxons?
             products.ascend_by_taxons_min_position(taxons)
           else
@@ -222,17 +246,23 @@ module Spree
         when 'name-a-z'
           # workaround for Mobility issue #596 - explicitly select fields to avoid error when selecting distinct
           products.i18n.
-            select("#{Product.table_name}.*").select(:name).order(name: :asc)
+            select("#{Spree::Product.table_name}.*").select(:name).order(name: :asc)
         when 'name-z-a'
           # workaround for Mobility issue #596
           products.i18n.
-            select("#{Product.table_name}.*").select(:name).order(name: :desc)
+            select("#{Spree::Product.table_name}.*").select(:name).order(name: :desc)
         when 'newest-first'
           products.order(available_on: :desc)
+        when 'oldest-first'
+          products.order(available_on: :asc)
         when 'price-high-to-low'
-          order_by_price(products, :descend_by_master_price)
+          order_by_price(products, :desc)
         when 'price-low-to-high'
-          order_by_price(products, :ascend_by_master_price)
+          order_by_price(products, :asc)
+        when 'best-selling'
+          order_by_best_selling(products)
+        else
+          products
         end
       end
 
@@ -262,6 +292,12 @@ module Spree
         products.in_stock_or_backorderable
       end
 
+      def show_only_out_of_stock(products)
+        return products unless out_of_stock.present?
+
+        products.out_of_stock
+      end
+
       def map_prices(prices)
         prices.map do |price|
           price == 'Infinity' ? BigDecimal::INFINITY : price.to_f
@@ -275,11 +311,18 @@ module Spree
         taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
 
-      def order_by_price(scope, order_type)
+      def order_by_price(scope, sort_order)
         scope.
-          select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
-          reorder('').
-          send(order_type)
+          joins(variants_including_master: :prices).
+          select("#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)").
+          where(Spree::Price.table_name => { currency: currency }).
+          where.not(Spree::Price.table_name => { amount: nil }).
+          order("min(#{Spree::Price.table_name}.amount) #{sort_order}").
+          group("#{Spree::Product.table_name}.id")
+      end
+
+      def order_by_best_selling(scope)
+        scope.by_best_selling(:desc)
       end
     end
   end

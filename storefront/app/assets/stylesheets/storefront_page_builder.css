@@ -1,0 +1,51 @@
+.editor-overlay {
+  z-index: 1089;
+  width: 100%;
+}
+
+.editor-overlay-toolbar {
+  position: absolute;
+  top: -26px;
+  left: -1px;
+  background-color: #0081f1;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  display: none;
+}
+.editor-overlay-toolbar {
+  right: 2px;
+  top: 2px;
+  left: auto;
+  cursor: auto;
+  z-index: 1091;
+  padding: 2px 2px;
+  border-radius: 4px;
+}
+.editor-overlay-toolbar button {
+  padding: 8px;
+  border-radius: 4px;
+}
+.editor-overlay-toolbar button:hover,
+.editor-overlay-toolbar button:focus {
+  background-color: #0d53b5;
+}
+.editor-overlay:hover,
+.editor-overlay:focus,
+.editor-overlay-active,
+.editor-overlay-hover {
+  border: 1px solid #2c6ecb;
+}
+.editor-overlay:focus,
+.editor-overlay-active {
+  border-width: 3px !important;
+}
+.editor-overlay:hover .editor-overlay-toolbar,
+.editor-overlay:focus .editor-overlay-toolbar,
+.editor-overlay-active .editor-overlay-toolbar,
+.editor-overlay-hover .editor-overlay-toolbar {
+  display: block;
+}

@@ -75,7 +75,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
           expect(response).to render_template(partial: 'spree/admin/variants/_search_results')
 
           expect(assigns(:variants).size).to eq(2)
-          expect(assigns(:variants)).to eq([variant, variant_2])
+          expect(assigns(:variants)).to match_array([variant, variant_2])
         end
       end
     end

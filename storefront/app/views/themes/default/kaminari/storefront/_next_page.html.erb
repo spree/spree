@@ -1,0 +1,13 @@
+<%# Link to the "Next" page
+  - available local variables
+    url:           url to the next page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote
+-%>
+<% css = "inline-flex justify-center items-center gap-x-1.5 px-4#{' pagination-link--disabled' if current_page.last?}" %>
+
+<%= link_to(url, disabled: current_page.last?, class: css) do %>
+  <%= render 'spree/shared/icons/chevron_right', size: 20, color: current_page.last? ? theme_setting(:neutral_color) : theme_setting(:text_color) %>
+<% end %>

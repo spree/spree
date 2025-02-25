@@ -21,6 +21,7 @@ module Spree
         cart_destroy_service: 'Spree::Cart::Destroy',
         cart_associate_service: 'Spree::Cart::Associate',
         cart_change_currency_service: 'Spree::Cart::ChangeCurrency',
+        cart_remove_out_of_stock_items_service: 'Spree::Cart::RemoveOutOfStockItems',
 
         # checkout
         checkout_next_service: 'Spree::Checkout::Next',

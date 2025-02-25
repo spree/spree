@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'active_job/railtie'
@@ -29,7 +30,6 @@ require 'active_storage_validations'
 require 'activerecord-typedstore'
 require 'request_store'
 require 'wannabe_bool'
-require 'geared_pagination'
 require 'geocoder'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
@@ -189,6 +189,7 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'
 require 'spree/core/controller_helpers/currency'
+require 'spree/core/controller_helpers/turbo'
 
 require 'spree/core/preferences/store'
 require 'spree/core/preferences/scoped_store'

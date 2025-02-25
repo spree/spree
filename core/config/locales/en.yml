@@ -184,6 +184,8 @@ en:
       spree/zone:
         description: Description
         name: Name
+      spree/wished_item:
+        variant: ""
     models:
       spree/address:
         one: Address
@@ -400,6 +402,10 @@ en:
           attributes:
             base:
               cannot_destroy_if_used_in_store_credit: Cannot delete store credit categories once they are used in store credit.
+        spree/wished_item:
+          attributes:
+            variant:
+              taken: "You already added this item to your wishlist"
         spree/variant:
           attributes:
             base:
@@ -670,22 +676,10 @@ en:
     cart_state_changed: Cart changed
     categories: Categories
     category: Category
-    category_nav_bar:
-      get_up_to_30_percent_off: GET UP TO 30% OFF
-      jackets_and_coats: JACKET & COASTS
-      new_collection: NEW COLLECTION
-      special_offers: SPECIAL OFFERS
     changes_published: Changes published!
     channel: Channel
     charged: Charged
     checkout: Checkout
-    checkout_page:
-      main_navigation: Main navigation
-      checkout_navigation: Checkout navigation
-      back_to_cart: back to cart
-      delivery_method: delivery method
-      header: Checkout
-      product: Product
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
     choose_currency: Choose Currency
@@ -818,6 +812,7 @@ en:
     discontinued: Discontinued
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
+    display_delivery_range: "Delivery in %{delivery_range} business days"
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
     draft_mode: Draft Mode
@@ -1012,6 +1007,7 @@ en:
         lt: less than
         lte: less than or equal to
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
+    products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
@@ -1081,21 +1077,6 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
-    nav_bar:
-      admin_panel: Admin Panel
-      change_country: Change country
-      close_menu: Close menu
-      go_to_previous_menu: Go to previous menu
-      log_in: LOG IN
-      log_out: LOG OUT
-      my_account: My Account
-      my_orders: My Orders
-      show_menu: Show menu
-      show_search: Show search
-      show_user_menu: Show user menu
-      sign_up: SIGN UP
-      desktop: Desktop navigation
-      mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
     new_shipping_address: New Bhipping Address
@@ -1593,6 +1574,7 @@ en:
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
+    search_results_for: "Search results for ${query}"
     server: Server
     server_error: The server returned an error
     settings: Settings
@@ -1645,6 +1627,7 @@ en:
     shipping_total: Shipping total
     shipping_zone: Shipping Zone
     shop_by_taxonomy: Shop by %{taxonomy}
+    shop_all: Shop All
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
@@ -1889,6 +1872,7 @@ en:
     usage_limit: Usage Limit
     use_app_default: Use App Default
     use_billing_address: Use Billing Address
+    use_shipping_address: Use Shipping Address
     use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
     use_new_cc_or_payment_method: Use a new card / payment method
@@ -1936,3 +1920,7 @@ en:
     zone: Zone
     zones: Zones
     no_limits_zone: No Limits
+    terms_of_service: Terms of Service
+    privacy_policy: Privacy Policy
+    returns_policy: Returns Policy
+    shipping_policy: Shipping Policy

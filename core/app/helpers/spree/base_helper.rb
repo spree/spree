@@ -106,7 +106,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.seo_meta_description))
+                              description: current_store.seo_meta_description)
         end
       end
       meta
@@ -164,9 +164,17 @@ module Spree
     end
 
     def spree_storefront_resource_url(resource, options = {})
-      if defined?(locale_param) && locale_param.present?
-        options.merge!(locale: locale_param)
-      end
+      options.merge!(locale: locale_param) if defined?(locale_param) && locale_param.present?
+
+      store = options[:store] || current_store
+
+      base_url = if options[:relative]
+                   ''
+                 elsif store.formatted_custom_domain.blank?
+                   store.formatted_url
+                 else
+                   store.formatted_custom_domain
+                 end
 
       localize = if options[:locale].present?
                    "/#{options[:locale]}"
@@ -175,13 +183,27 @@ module Spree
                  end
 
       if resource.instance_of?(Spree::Product)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
-      elsif resource.instance_of?(Spree::Taxon)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
+        preview_id = ("preview_id=#{options[:preview_id]}" if options[:preview_id].present?)
+
+        variant_id = ("variant_id=#{options[:variant_id]}" if options[:variant_id].present?)
+
+        params = [preview_id, variant_id].compact_blank.join('&')
+        params = "?#{params}" if params.present?
+
+        "#{base_url + localize}/products/#{resource.slug}#{params}"
+      elsif resource.is_a?(Post)
+        preview_id = options[:preview_id].present? ? "?preview_id=#{options[:preview_id]}" : ''
+        "#{base_url + localize}/posts/#{resource.slug}#{preview_id}"
+      elsif resource.is_a?(Spree::Taxon)
+        "#{base_url + localize}/t/#{resource.permalink}"
+      elsif resource.is_a?(Spree::Page) || resource.is_a?(ActionText::RichText)
+        "#{base_url + localize}#{resource.page_builder_url}"
+      elsif resource.is_a?(Spree::PageLink)
+        resource.linkable_url
       elsif localize.blank?
-        current_store.formatted_url
+        base_url
       else
-        current_store.formatted_url + localize
+        base_url + localize
       end
     end
 
@@ -251,8 +273,9 @@ module Spree
 
     # Returns style of image or nil
     def image_style_from_method_name(method_name)
-      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
-        style if style.in? Spree::Image.styles.with_indifferent_access
+      style = method_name.to_s.sub(/_image$/, '')
+      if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
+        style
       end
     end
 
@@ -261,6 +284,15 @@ module Spree
       return if current_store.seo_robots.blank?
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
+    end
+
+    def legal_policy(policy)
+      current_store.send("customer_#{policy}")&.body&.html_safe
+    end
+
+    I18N_PLURAL_MANY_COUNT = 2.1
+    def plural_resource_name(resource_class)
+      resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
     end
   end
 end

@@ -200,11 +200,6 @@ module Spree
         dom_id(record, 'spree')
       end
 
-      I18N_PLURAL_MANY_COUNT = 2.1
-      def plural_resource_name(resource_class)
-        resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
-      end
-
       def required_span_tag
         content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end

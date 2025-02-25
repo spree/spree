@@ -1,0 +1,70 @@
+<%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), data: { controller: 'checkout-delivery' } do |form| %>
+  <div class="mb-5">
+    <%= turbo_frame_tag :checkout_lock_version do %>
+      <%= hidden_field_tag 'order[state_lock_version]', @order.state_lock_version %>
+    <% end %>
+    <div id="shipping-method">
+      <% if @order.backordered_variants.any? %>
+        <div class="alert rounded border border-default text-sm p-5 mb-6">
+          Some products in your cart will be dispatched a bit later than the rest of your order:
+          <ul class="list-disc list-inside flex-col flex space-y-1 mt-2">
+            <% @order.backordered_variants.each do |variant| %>
+              <li><%= variant.name %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div id="methods">
+        <%= form.fields_for :shipments do |ship_form| %>
+          <div class="shipment">
+            <h5 class="checkout-content-header mb-3 font-body">
+              <%= Spree.t('storefront.checkout.delivery_method').capitalize %>
+              <% if ship_form.object.stock_location.present? %>
+                <%= Spree.t(:from).downcase %>
+                <strong><%= ship_form.object.stock_location.name %></strong>
+              <% end %>
+            </h5>
+            <ul class="rounded-md list-group mb-4 border border-default border-b-0 text-sm border-default" data-checkout-delivery-target="shippingList">
+              <% ship_form.object.shipping_rates.includes(:shipping_method, :tax_rate).each do |rate| %>
+                <li class="list-group-item p-0 m-0 border-b delivery-list-item border-default" data-checkout-delivery-target="shippingRate">
+                  <div class="custom-control custom-radio flex items-center px-5 py-4">
+                    <%= ship_form.radio_button :selected_shipping_rate_id,
+                      rate.id,
+                      class: 'custom-control-input radio-input',
+                      id: "shipping-rate-#{rate.id}",
+                      data: {
+                        action: 'click->checkout-delivery#update',
+                        cost: rate.display_cost,
+                        tax: rate.display_tax_amount
+                      } %>
+                    <label class="select-none cursor-pointer px-2 word-break w-full" for="<%= "shipping-rate-#{rate.id}" %>">
+                      <%= rate.name %>
+                      <% if rate.delivery_range %>
+                        <span class="text-gray-600 text-xs ml-3"><%= rate.display_delivery_range %></span>
+                      <% end %>
+                    </label>
+                    <span class="text-right">
+                      <%= rate.cost <= 0 ? Spree.t(:free) : rate.display_cost %>
+                    </span>
+                  </div>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end w-full mt-5">
+    <div class="flex justify-end w-full">
+      <%= button_tag Spree.t(:save_and_continue),
+                      class: 'btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4',
+                      data: { action: 'click->checkout-delivery#disableShippingRates',
+                              'checkout-delivery-target': 'submit',
+                              'turbo-submits-with': (render 'button_processing', is_hidden: false)
+                      } %>
+    </div>
+  </div>
+<% end %>
+
