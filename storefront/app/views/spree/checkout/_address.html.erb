@@ -32,7 +32,7 @@
               <div class="custom-control custom-radio px-5 py-4 flex items-center">
                 <%= radio_button_tag "order_#{address_name}_id", 0, false, class: 'custom-control-input radio-input mr-5', data: { action: 'checkout-address-book#select' } %>
                 <label class="custom-control-label d-block select-none cursor-pointer w-full max-w-[calc(100%-58px)]" for="<%= "order_#{address_name}_id_0" %>">
-                  <%= Spree.t(:new_address, scope: :address_book) %>
+                  <%= Spree.t(:new_address) %>
                   <div class="mt-4 hidden" data-checkout-address-book-target="newAddressForm">
                     <%= turbo_frame_tag :new_address do %>
                       <%= form_for try_spree_current_user.addresses.build(country: current_store.default_country), html: { id: 'checkout_form_address' } do |f| %>
@@ -44,7 +44,7 @@
                         <%= hidden_field_tag :order_token, @order.token %>
                         <%= hidden_field_tag "default_shipping", true %>
                         <%= hidden_field_tag "default_billing", true %>
-                        <%= f.submit t(:save, scope: :address_book), class: 'btn btn-primary btn-block spree-btn mb-5' %>
+                        <%= f.submit Spree.t('actions.save'), class: 'btn btn-primary btn-block spree-btn mb-5' %>
                       <% end %>
                     <% end %>
                   </div>
@@ -85,7 +85,7 @@
           <% if !already_have_an_account? && defined?(spree_login_path) %>
             <div class="lg:text-right">
               <span class="text-gray-600 text-sm">
-                <%= Spree.t(:already_have_an_account) %> <span class="text-primary"><%= link_to Spree.t(:login), spree_login_path, data: { turbo_frame: '_top' } %></span>
+                <%= Spree.t('storefront.checkout.already_have_an_account') %> <span class="text-primary"><%= link_to Spree.t(:login), spree_login_path, data: { turbo_frame: '_top' } %></span>
               </span>
             </div>
           <% end %>
@@ -99,7 +99,7 @@
         <div class="flex items-center gap-2">
           <%= form.check_box :accept_marketing, class: 'checkbox-input' %>
           <%= form.label :accept_marketing, class: 'cursor-pointer text-sm select-none' do %>
-            <%= Spree.t('newsletter_subscription.join') %>
+            <%= Spree.t('storefront.newsletter_subscription.join') %>
           <% end %>
         </div>
 
@@ -107,7 +107,7 @@
           <div class="flex items-center gap-2 mt-2">
             <%= form.check_box :signup_for_an_account, class: 'checkbox-input' %>
             <%= form.label :signup_for_an_account, class: 'cursor-pointer text-sm select-none' do %>
-              <%= Spree.t(:signup_for_an_account) %>
+              <%= Spree.t('storefront.checkout.signup_for_an_account') %>
             <% end %>
           </div>
         <% end %>

@@ -24,7 +24,7 @@
                   <% if selected_option %>
                     <%= option_type.presentation %>: <span class="option-value-text"><%= selected_option.presentation %></span>
                   <% else %>
-                    <%= Spree.t('variant_picker.please_choose', option_type: option_type.presentation) %>
+                    <%= Spree.t('storefront.variant_picker.please_choose', option_type: option_type.presentation) %>
                   <% end %>
                 </legend>
                 <% render 'spree/shared/icons/chevron_down' %>

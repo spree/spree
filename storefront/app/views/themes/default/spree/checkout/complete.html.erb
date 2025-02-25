@@ -3,15 +3,15 @@
     <%= Spree.t(:order) %> <strong><%= @order.number %></strong>
   </p>
   <h4 class="mb-4 text-green-600 font-semibold text-lg font-body">
-    <%= Spree.t(:thanks_for_your_order, name: @order.bill_address_firstname) %>
+    <%= Spree.t('storefront.checkout.thanks_for_your_order', name: @order.bill_address_firstname) %>
   </h4>
 
   <div class="border p-3 rounded-md">
     <h5 class="mb-3 font-semibold pb-3 border-b font-body">
-      <%= Spree.t(:order_success) %>
+      <%= Spree.t('storefront.checkout.order_success') %>
     </h6>
     <p class="mb-0">
-      <%= Spree.t(:order_success_message) %>
+      <%= Spree.t('storefront.checkout.order_success_message') %>
     </p>
   </div>
 
@@ -31,7 +31,7 @@
       </div>
 
       <% unless @order.payment_state.present? %>
-        <p class="mb-0 mt-3 text-sm"><%= Spree.t(:payment_processing_message) %></p>
+        <p class="mb-0 mt-3 text-sm"><%= Spree.t('storefront.checkout.payment_processing_message') %></p>
       <% end %>
     </div>
   <% end %>

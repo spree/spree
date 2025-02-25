@@ -469,7 +469,7 @@ en:
   errors:
     messages:
       already_confirmed: was already confirmed
-      not_a_number: not a number
+      not_a_number: is not a number
       not_found: not found
       not_locked: was not locked
       not_saved:
@@ -527,6 +527,7 @@ en:
     active: Active
     add: Add
     add_action_of_type: Add action of type
+    add_address: Add address
     add_country: Add Country
     add_coupon_code: Add Coupon Code
     add_new_address: Add new address
@@ -549,6 +550,8 @@ en:
     add_store: New Store
     add_store_credit: Add Store Credit
     add_to_cart: Add To Cart
+    add_to_waitlist: Add to waitlist
+    add_to_waitlist_description: Add to waitlist description
     add_variant: Add Variant
     added_to_cart: Added to cart successfully!
     additional_item: Additional Item
@@ -560,17 +563,17 @@ en:
       delete_text: Do you really want <br /> to delete this address?
       delete_title: Are you sure?
     address_book:
+      add_house_number: Add a house number if you have one
       add_new_shipping_address: Add new address
       address_name_label: Address Name
       address_name_placeholder: Give this address a unique name (Work, Home, etc.)
       addresses: Addresses
-      edit_address: Edit Address
       label: Address Name
-      new_address: New Address
       no_shipping_addresses_on_file: No addresses on file
       other_address: Other address
       remove_address: Remove Address
-      save: Save
+      set_as_default_billing_address: Set as default billing address
+      set_as_default_delivery_address: Set as default delivery address
       successfully_created: Address has been successfully created.
       successfully_removed: Address has been successfully removed.
       successfully_saved: Saved successfully
@@ -599,6 +602,8 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
+    all_posts: All posts
+    all_posts_with_tag: All posts with tag
     all_products: All products
     all_rights_reserved: All rights reserved
     all_time: All time
@@ -609,6 +614,7 @@ en:
     analytics: Analytics
     and: and
     api_keys: API keys
+    apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
     approve: approve
     approved_at: Approved at
@@ -643,6 +649,7 @@ en:
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     backordered_info: Backordered
     backorders_allowed: backorders allowed
+    balance: Balance
     balance_due: Balance Due
     barcode: Barcode
     base_amount: Base Amount
@@ -703,6 +710,8 @@ en:
     categories: Categories
     categorization: Categorization
     category: Category
+    change: Change
+    change_password: Change password
     changes_published: Changes published!
     channel: Channel
     charged: Charged
@@ -714,6 +723,8 @@ en:
     choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
+    clear: Clear
+    clear_all: Clear all
     clear_cache: Clear Cache
     clear_cache_ok: Cache was flushed
     clear_cache_warning: Clearing cache will temporarily reduce the performance of your store.
@@ -721,17 +732,21 @@ en:
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
+    close_sidebar: Close sidebar
     code: Code
+    colors: Colors
     company: Company
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
+    completed_at: Completed at
     conditions: Conditions
     configuration: Configuration
     configurations: Configurations
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
+    contact: Contact
     contact_information: Contact information
     contact_phone: Contact phone
     contact_us: Contact us
@@ -742,6 +757,7 @@ en:
     continue_selling_when_out_of_stock: Continue selling when out of stock
     continue_shopping: Continue shopping
     copy_id: Copy
+    copy_link: Copy link
     copy_payment_link: Copy payment link
     copy_to_clipboard: Copy to clipboard
     cost_currency: Cost Currency
@@ -775,6 +791,7 @@ en:
     coupon_code_used: The coupon code you entered has already been used. Please try again.
     create: Create
     create_a_new_account: Create a new account
+    create_account: Create account
     create_customer: Create customer
     create_new: Create new
     create_new_order: Create new order
@@ -794,6 +811,7 @@ en:
     currency: Currency
     currency_settings: Currency Settings
     current: Current
+    current_password: Current password
     current_promotion_usage: 'current usage: %{count}'
     custom_code: Custom code
     custom_font_code: Custom font code
@@ -816,6 +834,7 @@ en:
     date_range: Date Range
     days_ago: Days ago
     default: Default
+    default_billing_address: Default billing address
     default_country: Default Country
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_currency: Default currency
@@ -824,16 +843,19 @@ en:
       news: News
       resources: Resources
     default_refund_amount: Default Refund Amount
+    default_shipping_address: Default shipping address
     default_stock_location_name: Shop location
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     default_theme_name: Default
     default_wishlist_name: Wishlist
     delete: Delete
+    delete_address: Delete address
     delete_from_taxon: Delete From Taxon
     delete_selected: Delete selected
     deleted: Deleted
     delivery: Delivery
+    delivery_address: Delivery address
     delivery_information: Delivery Information
     depth: Depth
     description: Description
@@ -872,6 +894,7 @@ en:
     duplicate: Duplicate
     duplicating: Duplicating
     edit: Edit
+    edit_address: Edit address
     edit_refund: Edit refund
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
@@ -902,6 +925,8 @@ en:
     ending_at: Ending at
     ending_in: Ending in
     ends_at: Ends at
+    enter: Enter
+    enter_using_password: Enter using password
     error: error
     error_user_destroy_with_orders: User associated with orders cannot be destroyed
     error_user_does_not_have_any_store_credits: User does not have any Store Credits available
@@ -946,6 +971,7 @@ en:
     expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
     expiration: Expiration
     expiration_date: Expiration Date
+    explore_taxon: Explore taxon
     export: Export
     export_mailer:
       export_done:
@@ -971,6 +997,7 @@ en:
     finalize: Finalize
     finalized: Finalized
     find_a_taxon: Find a Taxon
+    find_your_order: Find your order
     first_item: First Item
     first_name: First Name
     first_name_begins_with: First Name Begins With
@@ -987,6 +1014,7 @@ en:
     free: Free
     free_shipping: Free Shipping
     free_shipping_amount: "-"
+    from: From
     front_end: Front End
     fulfilled_at: Fulfilled at
     fulfilled_by: Fulfilled by
@@ -998,6 +1026,7 @@ en:
     general_settings: General Settings
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
+    gift_card: Gift card
     gift_cards: Gift cards
     go_to_category: Go to category
     go_to_facebook: Go to facebook
@@ -1013,9 +1042,11 @@ en:
     header_font_size_scale: Header font size scale
     height: Height
     help_center: Help Center
+    hide: Hide
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     home_page: homepage
+    homepage: Homepage
     i18n:
       available_locales: Available Locales
       country: Country
@@ -1099,6 +1130,7 @@ en:
     line_item: Line Item
     line_item_adjustments: Line item adjustments
     line_items: Line items
+    link: Link
     list: List
     live: Live
     loading: Loading
@@ -1158,13 +1190,16 @@ en:
     must_have_one_store: The resource must belong to a store.
     mutable: Mutable
     my_account: My Account
+    my_addresses: My addresses
     my_orders: My Orders
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     navigation: Navigation
     new: New
+    new_address: New address
     new_adjustment: New Adjustment
+    new_balance: New balance
     new_billing_address: New billing address
     new_country: New Country
     new_customer: Create new account
@@ -1179,6 +1214,7 @@ en:
     new_order_completed: New Order Completed
     new_order_notifications_email: New Order Notifications Email
     new_page: New Page
+    new_password: New password
     new_payment: New Payment
     new_payment_method: New Payment Method
     new_post: New Post
@@ -1213,6 +1249,7 @@ en:
     new_user: New User
     new_variant: New Variant
     new_zone: New Zone
+    newsletters: Newsletters
     next: Next
     no_actions_added: No actions added
     no_address_given: No address given
@@ -1248,6 +1285,7 @@ en:
     not_found: "%{resource} is not found"
     not_provided: Not provided
     not_risky: Not risky
+    not_subscribed: Not subscribed
     note: Note
     notice_messages:
       icon_removed: Image has been successfully removed
@@ -1259,11 +1297,13 @@ en:
       translations_saved: Translations successfully saved
       variant_deleted: Variant has been deleted
       variant_not_deleted: 'Variant could not be deleted. Reason: %{error}'
+    notify_me_when_available: Notify me when available
     num_orders: "# Orders"
     number: Number
     ok: OK
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
+    only_left: Only %{count} left
     open: Open
     open_all_adjustments: Open All Adjustments
     option_name: Option name
@@ -1280,6 +1320,7 @@ en:
     or_select_other_address: or select other address
     order: Order
     order_adjustments: Order adjustments
+    order_again: Order again
     order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
@@ -1326,6 +1367,7 @@ en:
       payment: payment
       resumed: resumed
       returned: returned
+    order_status: Order status
     order_success: Order placed successfully
     order_success_explain: Your order information will be sent to your email
     order_summary: Order Summary
@@ -1334,6 +1376,7 @@ en:
     order_updated: Order Updated
     orders: Orders
     origin: Origin
+    other: Other
     out_of_stock: Out of Stock
     overview: Overview
     package_from: package from
@@ -1435,11 +1478,15 @@ en:
     percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
+    personal_details: Personal details
     phone: Phone
+    place_now: Place now
     place_order: Place Order
     please_check_back_soon: Please check back soon.
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
+    please_select: Please select
+    please_select_all_options: Please select all options
     policies: Policies
     populate_get_error: Something went wrong. Please try adding the item again.
     post_categories: Post categories
@@ -1479,8 +1526,19 @@ en:
       product_source:
         group: From product group
         manual: Manually choose
+    product_sold_out: This item is sold out
     products: Products
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
+    products_sort_options:
+      best_selling: Best Selling
+      manual: Manual
+      name_a_z: Alphabetically, A-Z
+      name_z_a: Alphabetically, Z-A
+      newest_first: Newest
+      oldest_first: Oldest
+      price_high_to_low: Price (high-low)
+      price_low_to_high: Price (low-high)
+      relevance: Relevance
     promotion: Promotion
     promotion_action: Promotion Action
     promotion_action_types:
@@ -1555,6 +1613,8 @@ en:
     query: Query
     quick_search: Quick search..
     rate: Rate
+    read_less: Read less
+    read_more: Read more
     reason: Reason
     receive: receive
     receive_stock: Receive Stock
@@ -1569,6 +1629,7 @@ en:
     refunds: Refunds
     register: Register
     registration: Registration
+    regular_price: Regular price
     reimburse: Reimburse
     reimbursed: Reimbursed
     reimbursement: Reimbursement
@@ -1649,6 +1710,8 @@ en:
     roles: Roles
     rules: Rules
     safe: Safe
+    sale: Sale
+    sale_price: Sale price
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
@@ -1662,6 +1725,7 @@ en:
     scope: Scope
     scopes: Scopes
     search: Search
+    search_all: Search all
     search_by: 'Search by:'
     search_engine_listing: Search engine listing
     search_order_number: Order Number
@@ -1691,8 +1755,10 @@ en:
     selected_quantity_not_available: selected of %{item} is not available.
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
+    send_message: Send message
     send_payment_link: Send payment link
     send_payment_link_title: Send payment link title
+    send_us_a_message: Send us a message
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
@@ -1717,6 +1783,7 @@ en:
         thanks: Thank you for your business.
         track_information: 'Tracking Information: %{tracking}'
         track_link: 'Tracking Link: %{url}'
+    shipment_refunded_message: You will receive a refund in the next few days.
     shipment_state: Shipment State
     shipment_states:
       backorder: Backorder
@@ -1730,6 +1797,7 @@ en:
     shipment_transfer_success: Variants successfully transferred
     shipments: Shipments
     shipped: Shipped
+    shipped_from: Shipped from
     shipping: Shipping
     shipping_address: Shipping Address
     shipping_categories: Shipping Categories
@@ -1740,6 +1808,7 @@ en:
     shipping_instructions: Shipping Instructions
     shipping_method: Shipping Method
     shipping_methods: Shipping Methods
+    shipping_not_available: Shipping not available
     shipping_policy: Shipping Policy
     shipping_price_sack: Price sack
     shipping_rates:
@@ -1753,9 +1822,11 @@ en:
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
+    show_all: Show all
     show_deleted: Show Deleted
     show_details: Show details
     show_discontinued: Show Discontinued
+    show_less: Show less
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
@@ -1764,6 +1835,7 @@ en:
     show_store_selector:
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
       short: Show Store selector
+    sign_out: Sign out
     sign_up: Sign Up
     site_name: Site name
     size: Size
@@ -1772,7 +1844,9 @@ en:
     slug: Slug
     social: Social
     social_media: Social media
+    sold_out: Sold out
     something_went_wrong: Something went wrong
+    sort_by: Sort by
     source: Source
     special_instructions: Special Instructions
     split: Split
@@ -1895,10 +1969,10 @@ en:
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     store_set_default_button: Set as default
-    storefront: Storefront
     stores: Stores
     street_address: Street Address
     street_address_2: Street Address (cont'd)
+    subscribed: Subscribed
     subtotal: Subtotal
     subtract: Subtract
     success: Success
@@ -1981,12 +2055,15 @@ en:
     title: Title
     title_link: Title link
     to_add_variants_you_must_first_define: To add variants, you must first define
+    toggle_menu: Toggle menu
+    top_suggestions: Top suggestions
     total: Total
     total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price
     total_sales: Total Sales
     track_inventory: Track Inventory
+    track_items: Track items
     track_quantity: Track quantity
     tracking: Tracking
     tracking_number: Tracking Number
@@ -2056,6 +2133,8 @@ en:
     vendors: Vendors
     version: Version
     view: View
+    view_all: View all
+    view_full_details: View full details
     view_store: View store
     view_your_store: View your store
     visibility: Visibility
@@ -2075,6 +2154,7 @@ en:
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?
     width: Width
+    wishlist: Wishlist
     without_taxon: Without taxon
     year: Year
     you_have_no_orders_yet: You have no orders yet

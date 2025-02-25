@@ -11,14 +11,14 @@
         <%= hidden_field_tag :order_token, params[:order_token] %>
         <%= hidden_field_tag "default_shipping", true %>
         <%= hidden_field_tag "default_billing", true %>
-        <%= f.submit t(:save, scope: :address_book), class: 'btn-primary w-48 text-center', id: 'save-btn' %>
+        <%= f.submit Spree.t('actions.save'), class: 'btn-primary w-48 text-center', id: 'save-btn' %>
       <% end %>
     </div>
   <% end %>
 <% else %>
   <% if params[:checkout].present? %>
     <div class="card-dialog mx-auto lg:w-1/3">
-      <h3 class="mb-5 font-semibold"><%= Spree.t(:new_address, scope: :address_book) %></h3>
+      <h3 class="mb-5 font-semibold"><%= Spree.t(:new_address) %></h3>
       <%= render 'spree/shared/error_messages', target: @address %>
       <%= form_for @address, html: { id: 'checkout_form_address' } do |f| %>
         <%= render 'spree/addresses/form',
@@ -27,7 +27,7 @@
               address_type: 'shipping',
               address: @address %>
         <div class="flex justify-between items-center">
-          <%= f.submit t(:save, scope: :address_book), class: 'btn-primary w-48 text-center', id: 'save-btn' %>
+          <%= f.submit Spree.t('actions.save'), class: 'btn-primary w-48 text-center', id: 'save-btn' %>
           <%= link_to Spree.t('actions.discard'), :back, class: 'btn btn-light w-25 !py-2' %>
         </div>
       <% end %>
@@ -39,7 +39,7 @@
       </div>
       <div class="lg:col-span-6 lg:col-start-4">
         <div class="pb-4 border-b border-default -mx-4 lg:mx-0 px-4 lg:px-8">
-          <h3 class="text-xl uppercase font-medium lg:font-semibold"><%= Spree.t(:add_address, scope: :address_book) %></h3>
+          <h3 class="text-xl uppercase font-medium lg:font-semibold"><%= Spree.t(:add_address) %></h3>
         </div>
         <%= render 'spree/shared/error_messages', target: @address %>
         <%= form_for @address, html: { id: 'checkout_form_address' } do |f| %>
@@ -53,11 +53,11 @@
           <div class="lg:px-8 pb-4">
             <%= label_tag "default_shipping", class: 'flex items-center gap-2 text-sm mb-4' do %>
               <%= check_box_tag "default_shipping", "true", true, class: 'input-checkbox' %>
-              <%= Spree.t(:set_as_default_delivery_address, scope: :address_book) %>
+              <%= Spree.t('address_book.set_as_default_delivery_address') %>
             <% end %>
             <%= label_tag "default_billing", class: 'flex items-center gap-2 text-sm mb-4' do %>
               <%= check_box_tag "default_billing", "true", true, class: 'input-checkbox' %>
-              <%= Spree.t(:set_as_default_billing_address, scope: :address_book) %>
+              <%= Spree.t('address_book.set_as_default_billing_address') %>
             <% end %>
           </div>
           <div class="border-t border-default -mx-4 lg:mx-0 px-4 flex justify-end items-center gap-4 py-6 lg:px-8">

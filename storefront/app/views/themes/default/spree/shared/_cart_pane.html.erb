@@ -27,7 +27,7 @@
         <span class='cart-counter w-full text-[8px] font-extrabold absolute top-[10px] text-center'>
           <%= current_order.item_count if current_order.present? && current_order.item_count.to_i > 0 %>
         </span>
-        <span class='sr-only'><%= Spree.t(:items_in_cart) %>, <%= Spree.t(:view_bag) %></span>
+        <span class='sr-only'><%= Spree.t('storefront.cart.items_in_cart') %>, <%= Spree.t('storefront.cart.view_bag') %></span>
       </span>
     </div>
     <div class='flex-1 h-0 overflow-y-auto'>
