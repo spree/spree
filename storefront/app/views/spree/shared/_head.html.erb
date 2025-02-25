@@ -23,3 +23,12 @@
 <%= yield :head %>
 
 <%= render_storefront_partials(:head_partials) unless page_builder_enabled? %>
+
+<% if Rails.env.test? %>
+  <% # for test environment we need to skip uppercase so we won't get false failures with different text transforms %>
+  <style>
+    .uppercase {
+      text-transform: none !important;
+    }
+  </style>
+<% end %>
