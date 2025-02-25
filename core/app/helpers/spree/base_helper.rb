@@ -273,7 +273,8 @@ module Spree
 
     # Returns style of image or nil
     def image_style_from_method_name(method_name)
-      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '') && (style.in? Spree::Image.styles.with_indifferent_access)
+      style = method_name.to_s.sub(/_image$/, '')
+      if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
         style
       end
     end

@@ -120,10 +120,23 @@ describe Spree::BaseHelper, type: :helper do
     let(:product) { build(:product) }
 
     before do
-      Spree::Image.class_eval do
-        styles[:very_strange] = '1x1'
-        styles.merge!(foobar: '2x2')
+      module ImageDecorator
+        module ClassMethods
+          def styles
+            super.merge(
+              very_strange: '1x1',
+              foobar: '2x2'
+            )
+          end
+        end
+
+        def self.prepended(base)
+          base.singleton_class.prepend ClassMethods
+        end
       end
+
+      Spree::Image.prepend(ImageDecorator)
+
       allow_any_instance_of(described_class).to receive(:inline_svg_tag).and_return('<svg></svg>')
     end
 
