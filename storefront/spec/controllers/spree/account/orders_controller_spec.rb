@@ -5,6 +5,8 @@ describe Spree::Account::OrdersController, type: :controller do
   let(:user) { create(:user) }
   let(:order) { create(:completed_order_with_totals, user: user, store: store) }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:spree_login_path).and_return('/login')

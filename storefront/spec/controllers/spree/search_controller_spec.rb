@@ -6,6 +6,8 @@ RSpec.describe Spree::SearchController, type: :controller do
   let!(:search_page) { create(:page, type: 'Spree::Pages::SearchResults') }
   let(:query) { 'test query' }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:current_theme).and_return(theme)

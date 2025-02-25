@@ -4,6 +4,8 @@ RSpec.describe Spree::OrderStatusController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:order) { create(:completed_order_with_totals, store: store) }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
   end

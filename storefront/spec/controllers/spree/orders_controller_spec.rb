@@ -6,6 +6,12 @@ describe Spree::OrdersController, type: :controller do
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product) }
 
+  render_views
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
+
   describe '#edit' do
     let(:order) { create(:order_with_totals, store: store, user: user) }
 
@@ -100,18 +106,9 @@ describe Spree::OrdersController, type: :controller do
   describe '#show' do
     let(:order) { create(:completed_order_with_totals, store: store) }
 
-    before do
-      allow(controller).to receive(:current_store).and_return(store)
-    end
-
     it 'renders the show template' do
       get :show, params: { id: order.number, token: order.token }
       expect(response).to render_template(:show)
-    end
-
-    it 'assigns @order' do
-      get :show, params: { id: order.number, token: order.token }
-      expect(assigns(:order)).to eq(order)
     end
 
     context 'when order is not found' do

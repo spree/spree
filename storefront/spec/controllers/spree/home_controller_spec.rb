@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe Spree::HomeController, type: :controller do
+  render_views
+
+  let(:store) { Spree::Store.default }
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
+
   describe 'GET #index' do
     before { get :index }
 

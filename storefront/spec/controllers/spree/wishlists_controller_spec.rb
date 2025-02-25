@@ -7,6 +7,8 @@ describe Spree::WishlistsController, type: :controller do
   let(:variant) { create(:variant) }
   let!(:wished_item) { create(:wished_item, variant: variant, wishlist: wishlist) }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:spree_login_path).and_return('/login')

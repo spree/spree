@@ -9,6 +9,8 @@ describe Spree::AddressesController, type: :controller do
   let(:default_billing) { 'true' }
   let(:default_shipping) { 'true' }
 
+  render_views
+
   before do
     allow(controller).to receive_messages try_spree_current_user: user
     allow(controller).to receive_messages spree_current_user: user

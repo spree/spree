@@ -4,6 +4,12 @@ RSpec.describe Spree::ContactsController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:contact_params) { { name: "John Doe", email: "john@example.com", message: "Test message" } }
 
+  render_views
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
+
   context 'when customer support email is not configured' do
     before do
       store.update(customer_support_email: nil)

@@ -7,6 +7,8 @@ describe Spree::Account::WishedItemsController, type: :controller do
   let(:user) { create(:user) }
   let(:wishlist) { create(:wishlist, user: user, store: store, is_default: true) }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:spree_login_path).and_return('/login')

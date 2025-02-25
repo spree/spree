@@ -5,6 +5,8 @@ RSpec.describe Spree::PagesController, type: :controller do
     let(:store) { Spree::Store.default }
     let(:page) { create(:custom_page, pageable: store) }
 
+    render_views
+
     before do
       allow(controller).to receive(:current_store).and_return(store)
       get :show, params: { id: page.slug }
