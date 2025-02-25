@@ -30,6 +30,11 @@ module Spree
         app.config.importmap.cache_sweepers << root.join('app/javascript')
       end
 
+      # we need to set the path to the storefront so that tailwind can find the views
+      initializer 'spree.storefront.tailwind_views_path' do
+        ENV['SPREE_STOREFRONT_PATH'] = root.to_s
+      end
+
       config.after_initialize do
         Rails.application.config.spree_storefront.head_partials = []
         Rails.application.config.spree_storefront.body_start_partials = []
