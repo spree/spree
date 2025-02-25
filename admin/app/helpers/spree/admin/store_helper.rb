@@ -41,13 +41,6 @@ module Spree
           [Spree.t('unit_systems.imperial_system'), 'imperial']
         ]
       end
-
-      def legal_policy(store = nil, policy: 'privacy_policy')
-        store ||= current_store if defined?(current_store)
-        return unless store
-
-        store.send("customer_#{policy}")&.body&.html_safe
-      end
     end
   end
 end

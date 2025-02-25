@@ -284,5 +284,9 @@ module Spree
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
     end
+
+    def legal_policy(policy)
+      current_store.send("customer_#{policy}")&.body&.html_safe
+    end
   end
 end
