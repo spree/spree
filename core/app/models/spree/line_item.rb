@@ -143,7 +143,7 @@ module Spree
     def shipping_cost
       shipments.sum do |shipment|
         # Skip cancelled shipments
-        next if shipment.canceled?
+        return BigDecimal('0') if shipment.canceled?
 
         # Get all inventory units in this shipment for this line item
         line_item_units = shipment.inventory_units.where(line_item_id: id).count
@@ -152,7 +152,8 @@ module Spree
         total_units = shipment.inventory_units.count
 
         # Calculate proportional shipping cost
-        next BigDecimal('0') if total_units.zero?
+        return BigDecimal('0') if total_units.zero? || line_item_units.zero? || shipment.cost.zero?
+
         shipment.cost * (line_item_units.to_d / total_units)
       end
     end
