@@ -24,7 +24,6 @@ import CheckoutPromotionsController from 'spree/storefront/controllers/promotion
 import CheckoutSummaryController from 'spree/storefront/controllers/summary_controller'
 import ClearInputController from 'spree/storefront/controllers/clear_input_controller'
 import CopyInputController from 'spree/storefront/controllers/copy_input_controller'
-import DeliveryDatesController from 'spree/storefront/controllers/delivery_dates_controller'
 import DropdownController from 'spree/storefront/controllers/dropdown_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
 import HeaderController from 'spree/storefront/controllers/header_controller'
@@ -58,7 +57,6 @@ application.register('checkout-delivery', CheckoutDeliveryController)
 application.register('checkout-promotions', CheckoutPromotionsController)
 application.register('clear-input', ClearInputController)
 application.register('copy-input', CopyInputController)
-application.register('delivery-dates', DeliveryDatesController)
 application.register('dropdown', DropdownController)
 application.register('enable-button', EnableButtonController)
 application.register('header', HeaderController)
