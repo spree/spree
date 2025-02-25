@@ -8,6 +8,6 @@
     <span class='cart-counter w-full text-[8px] font-extrabold absolute top-[10px] text-center'>
       <%= current_order.item_count if current_order&.item_count&.positive? %>
     </span>
-    <span class='sr-only'><%= Spree.t(:items_in_cart) %>, <%= Spree.t(:view_bag) %></span>
+    <span class='sr-only'><%= Spree.t('storefront.cart.items_in_cart') %>, <%= Spree.t('storefront.cart.view_bag') %></span>
   <% end %>
 <% end %>

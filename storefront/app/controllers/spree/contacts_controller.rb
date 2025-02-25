@@ -13,7 +13,7 @@ module Spree
       @contact.request = request
 
       if @contact.deliver
-        flash[:success] = 'Message sent!'
+        flash[:success] = Spree.t('storefront.contacts.message_sent')
       else
         message_not_sent
       end
@@ -36,13 +36,13 @@ module Spree
         }
       )
 
-      flash[:error] = "Unfortunately we weren't able to send the email at this time. Please try again later"
+      flash[:error] = Spree.t('storefront.contacts.message_not_sent')
     end
 
     def ensure_customer_support_email
       return if current_store.customer_support_email.present?
 
-      flash[:error] = Spree.t(:customer_support_email_not_configured)
+      flash[:error] = Spree.t('storefront.contacts.customer_support_email_not_configured')
       redirect_back_or_default root_path
     end
   end

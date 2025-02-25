@@ -24,7 +24,7 @@ module Spree
             end
           end
         else
-          redirect_to spree.account_addresses_path, notice: Spree.t(:successfully_created, scope: :address_book)
+          redirect_to spree.account_addresses_path, notice: Spree.t('address_book.successfully_created')
         end
       else
         render action: 'new', status: :unprocessable_entity
@@ -57,7 +57,7 @@ module Spree
       @address = result.value
 
       if result.success?
-        flash[:notice] = Spree.t(:successfully_updated, scope: :address_book) unless turbo_frame_request?
+        flash[:notice] = Spree.t('address_book.successfully_updated') unless turbo_frame_request?
 
         if params[:checkout].present?
           respond_to do |format|
@@ -77,7 +77,7 @@ module Spree
     def destroy
       @address.destroy
 
-      redirect_to(spree.account_addresses_path, status: :see_other, notice: Spree.t(:successfully_removed, scope: :address_book))
+      redirect_to(spree.account_addresses_path, status: :see_other, notice: Spree.t('address_book.successfully_removed'))
     end
 
     private

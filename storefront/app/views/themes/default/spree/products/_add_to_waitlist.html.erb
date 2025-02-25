@@ -27,7 +27,7 @@
       <div class="flex flex-col gap-2">
         <label class="flex items-center gap-2 cursor-pointer group text-sm">
           <%= f.check_box :subscribe_to_newsletter, class: 'input-checkbox group-focus-within:outline' %>
-          <%= Spree.t('newsletter_subscription.join') %>
+          <%= Spree.t('storefront.newsletter_subscription.join') %>
         </label>
         <%= f.button Spree.t(:add_to_waitlist), type: 'submit', class: 'btn-primary w-full btn-icon h-12', disabled: true, data: { enable_button_target: 'button' } %>
       </div>

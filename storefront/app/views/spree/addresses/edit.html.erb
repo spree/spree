@@ -22,7 +22,7 @@
     </div>
     <div class="lg:col-span-6 lg:col-start-4">
       <div class="pb-4 border-b border-default -mx-4 lg:mx-0 px-4 lg:px-8">
-        <h3 class="text-xl uppercase font-medium lg:font-semibold"><%= Spree.t(:edit_address, scope: :address_book) %></h3>
+        <h3 class="text-xl uppercase font-medium lg:font-semibold"><%= Spree.t(:edit_address) %></h3>
       </div>
       <%= render 'spree/shared/error_messages', target: @address %>
       <%= form_for @address, html: { id: 'checkout_form_address' }, method: :put do |f| %>

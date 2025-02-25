@@ -49,7 +49,7 @@ describe Spree::AddressesController, type: :controller do
       it 'sets flash message' do
         post_create
 
-        expect(flash[:notice]).to eq Spree.t(:successfully_created, scope: :address_book)
+        expect(flash[:notice]).to eq Spree.t('address_book.successfully_created')
       end
 
       context 'default address' do
@@ -127,7 +127,7 @@ describe Spree::AddressesController, type: :controller do
         it 'sets flash message' do
           put_update
 
-          expect(flash[:notice]).to eq Spree.t(:successfully_updated, scope: :address_book)
+          expect(flash[:notice]).to eq Spree.t('address_book.successfully_updated')
         end
 
         it 'returns 302 status code' do
@@ -180,7 +180,7 @@ describe Spree::AddressesController, type: :controller do
         it 'sets flash message' do
           put_update
 
-          expect(flash[:notice]).to eq Spree.t(:successfully_updated, scope: :address_book)
+          expect(flash[:notice]).to eq Spree.t('address_book.successfully_updated')
         end
 
         it 'returns 302 status code' do

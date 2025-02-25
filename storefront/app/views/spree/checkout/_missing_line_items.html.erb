@@ -5,7 +5,7 @@
         <div class="p-8">
           <h2 class="text-xl mb-4"><%= Spree.t('storefront.checkout.shipping_not_available') %></h2>
           <p class="mb-4">
-            <%= Spree.t('checkout.errors.invalid_line_items', count: @order.line_items_without_shipping_rates.size) %>
+            <%= Spree.t('storefront.checkout.errors.invalid_line_items', count: @order.line_items_without_shipping_rates.size) %>
           </p>
 
           <div class="mb-5 overflow-y-auto pt-3 mx-3 lg:mx-8 lg:mt-4 lg:pt-6 line-items" data-checkout-summary-target="line_items">
