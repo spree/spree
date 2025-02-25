@@ -13,7 +13,7 @@ module Spree
       private
 
       def set_user
-        @user = spree_current_user
+        @user = try_spree_current_user
       end
     end
   end
