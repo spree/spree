@@ -38,7 +38,7 @@ module Spree
     end
 
     def already_have_an_account?
-      @already_have_an_account ||= @order.email.present? && Spree.user_class.confirmed.exists?(email: @order.email.downcase)
+      @already_have_an_account ||= @order.email.present? && Spree.user_class.exists?(email: @order.email.downcase)
     end
 
     def checkout_payment_sources(payment_method = nil)

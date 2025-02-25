@@ -82,7 +82,7 @@
           <h5 class="font-body">
             <%= Spree.t(:contact_information) %>
           </h5>
-          <% unless already_have_an_account? %>
+          <% if !already_have_an_account? && defined?(spree_login_path) %>
             <div class="lg:text-right">
               <span class="text-gray-600 text-sm">
                 <%= Spree.t(:already_have_an_account) %> <span class="text-primary"><%= link_to Spree.t(:login), spree_login_path, data: { turbo_frame: '_top' } %></span>

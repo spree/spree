@@ -7,6 +7,8 @@ describe Spree::CheckoutController, type: :controller do
   let(:user) { nil }
   let(:order) { create(:order_with_totals, store: store, user: user, email: 'example@email.com') }
 
+  render_views
+
   let(:address_params) do
     address = build(:address, country: country, state: state)
     address.attributes.except('created_at', 'updated_at')
