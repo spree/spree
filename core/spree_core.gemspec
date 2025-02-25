@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   s.files        = Dir["{app,config,db,lib}/**/*", "LICENSE.md", "Rakefile"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
+  s.add_development_dependency 'i18n-tasks'
+
   s.add_dependency 'rails', '>= 7.2', '< 8.0'
 
   s.add_dependency 'activemerchant', '~> 1.67'
