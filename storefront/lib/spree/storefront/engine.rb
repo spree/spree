@@ -10,7 +10,8 @@ module Spree
         :add_to_cart_partials,
         :remove_from_cart_partials,
         :checkout_partials,
-        :checkout_complete_partials
+        :checkout_complete_partials,
+        :quick_checkout_partials
       )
 
       initializer 'spree.storefront.configuration', before: :load_config_initializers do |_app|
@@ -43,6 +44,7 @@ module Spree
         Rails.application.config.spree_storefront.remove_from_cart_partials = []
         Rails.application.config.spree_storefront.checkout_partials = []
         Rails.application.config.spree_storefront.checkout_complete_partials = []
+        Rails.application.config.spree_storefront.quick_checkout_partials = []
       end
     end
   end
