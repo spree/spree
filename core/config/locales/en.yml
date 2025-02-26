@@ -855,7 +855,7 @@ en:
     delete_selected: Delete selected
     deleted: Deleted
     delivery: Delivery
-    delivery_address: Delivery address
+    delivery_address: Delivery Address
     delivery_information: Delivery Information
     depth: Depth
     description: Description
@@ -1200,7 +1200,7 @@ en:
     new_address: New address
     new_adjustment: New Adjustment
     new_balance: New balance
-    new_billing_address: New billing address
+    new_billing_address: New Billing Address
     new_country: New Country
     new_customer: Create new account
     new_customer_return: New Customer Return
