@@ -19,6 +19,7 @@ module Spree
     class_option :admin_password, type: :string
     class_option :lib_name, type: :string, default: 'spree'
     class_option :enforce_available_locales, type: :boolean, default: nil
+    class_option :authentication, type: :string, default: 'devise'
 
     def self.source_paths
       paths = superclass.source_paths
@@ -35,6 +36,7 @@ module Spree
       @install_storefront = options[:install_storefront]
       @install_admin = options[:install_admin]
       @copy_storefront = options[:copy_storefront]
+      @authentication = options[:authentication]
 
       unless @run_migrations
         @load_seed_data = false
@@ -83,6 +85,13 @@ module Spree
     def copy_storefront
       if @copy_storefront && Spree::Core::Engine.frontend_available?
         generate 'spree:storefront:copy_storefront'
+      end
+    end
+
+    # Currently we only support devise, in the future we will also add support for default Rails authentication
+    def install_authentication
+      if @authentication == 'devise'
+        generate 'spree:authentication:devise'
       end
     end
 
