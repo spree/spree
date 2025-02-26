@@ -1,5 +1,5 @@
 <%= turbo_stream.replace "next_page" do %>
-  <%= render 'spree/products/show_more_button' %>
+  <%= render 'spree/products/show_more_button' if storefront_products.any? %>
 <% end %>
 
 <%= turbo_stream.append "products" do %>
