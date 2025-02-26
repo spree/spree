@@ -68,7 +68,7 @@ module Spree
           # update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
-          respond_with(@product) do |format|
+          respond_to do |format|
             format.html { render :edit, status: :unprocessable_entity }
             format.turbo_stream
           end
