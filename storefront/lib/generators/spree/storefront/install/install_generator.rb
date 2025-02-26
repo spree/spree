@@ -18,14 +18,23 @@ module Spree
           template 'application.tailwind.css', 'app/assets/stylesheets/application.tailwind.css'
           template 'tailwind.config.js', 'config/tailwind.config.js'
 
-          unless File.exist?('Procfile.dev')
+          unless Rails.root.join("Procfile.dev").exist?
             create_file 'Procfile.dev', "storefront_css: bin/rails tailwindcss:watch\n"
           else
             append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')
           end
 
-          unless File.exist?('app/assets/config/manifest.js')
+          say "Add bin/dev to start foreman"
+          copy_file "dev", "bin/dev", force: true
+          chmod "bin/dev", 0755, verbose: false
+
+          empty_directory Rails.root.join('app/assets/builds')
+
+          unless Rails.root.join('app/assets/config/manifest.js').exist?
             create_file 'app/assets/config/manifest.js', "//= link_tree ../builds\n"
+
+            say "Ensure foreman is installed"
+            run "gem install foreman"
           else
             append_to_file 'app/assets/config/manifest.js', "\n//= link_tree ../builds" unless File.read('app/assets/config/manifest.js').include?('//= link_tree ../builds')
           end
