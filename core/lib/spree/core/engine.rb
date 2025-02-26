@@ -244,6 +244,7 @@ module Spree
           product_removed_from_wishlist: 'Product Removed from Wishlist',
 
           subscribed_to_newsletter: 'Subscribed to Newsletter',
+          unsubscribed_from_newsletter: 'Unsubscribed from Newsletter',
 
           payment_info_entered: 'Payment Info Entered',
           coupon_entered: 'Coupon Entered',

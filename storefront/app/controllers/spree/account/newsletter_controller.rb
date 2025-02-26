@@ -5,6 +5,17 @@ module Spree
 
       def update
         try_spree_current_user.update(newsletter_params)
+
+        event_properties = {
+          user: try_spree_current_user,
+          email: try_spree_current_user.email
+        }
+
+        if try_spree_current_user.accepts_email_marketing?
+          track_event('subscribed_to_newsletter', event_properties)
+        else
+          track_event('unsubscribed_from_newsletter', event_properties)
+        end
       end
 
       private
