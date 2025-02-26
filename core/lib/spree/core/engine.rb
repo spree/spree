@@ -243,6 +243,8 @@ module Spree
           product_added_to_wishlist: 'Product Added to Wishlist',
           product_removed_from_wishlist: 'Product Removed from Wishlist',
 
+          subscribed_to_newsletter: 'Subscribed to Newsletter',
+
           payment_info_entered: 'Payment Info Entered',
           coupon_entered: 'Coupon Entered',
           coupon_removed: 'Coupon Removed',

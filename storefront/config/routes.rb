@@ -74,11 +74,7 @@ Spree::Core::Engine.add_routes do
     resource :settings, only: [:update, :show]
 
     # Newsletter
-    resources :subscribers, only: [:create] do
-      member do
-        get :confirm
-      end
-    end
+    resources :newsletter_subscribers, only: [:create]
 
     # Contact form
     resources :contacts, only: [:new, :create]

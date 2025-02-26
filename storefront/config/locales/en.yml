@@ -47,6 +47,8 @@ en:
         description: Take control of your settings and tailor your experience according to your preferences. Customize your notifications to suit your needs.
         join: Email me about new products, sales, and more. You can unsubscribe at any time.
         status: You are currently %{status} to the newsletters.
+      newsletter_subscribers:
+        success: Thank you for subscribing to our newsletter!
       variant_picker:
         please_choose: Please choose %{option_type}
       wished_items:
