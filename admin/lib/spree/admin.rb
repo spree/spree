@@ -18,7 +18,6 @@ require 'inline_svg'
 require 'local_time'
 require 'payment_icons'
 require 'dartsass-rails'
-require 'responders'
 require 'tinymce-rails'
 require 'oembed'
 

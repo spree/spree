@@ -3,8 +3,6 @@ module Spree
     class ReportsController < ResourceController
       include ActiveStorage::SetCurrent
 
-      respond_to :html, :csv
-
       before_action :set_user, only: [:new, :create]
 
       def show
