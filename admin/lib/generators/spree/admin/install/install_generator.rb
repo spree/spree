@@ -1,3 +1,5 @@
+require 'rails/generators'
+
 module Spree
   module Admin
     module Generators
@@ -13,7 +15,6 @@ module Spree
         end
 
         def install
-          template 'app/assets/stylesheets/spree/admin/applications.scss'
         end
       end
     end
