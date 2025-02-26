@@ -35,6 +35,7 @@ fi
 cd ./sandbox
 
 cat <<RUBY >> Gemfile
+gem 'devise'
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
@@ -68,8 +69,13 @@ bin/rails stimulus:install
 
 bin/rails db:drop || true
 bin/rails db:create
-bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-bin/rails g spree:emails:install
-bin/rails g spree:admin:install
-bin/rails g spree:storefront:install
+
+# setup devise
+bin/rails g devise:install
+bin/rails g devise Spree::User
+
+# setup spree
+bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true
+
+# we also need to install the acts_as_taggable_on migrations
 bin/rake acts_as_taggable_on_engine:install:migrations
