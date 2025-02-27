@@ -398,6 +398,29 @@ module Spree
                      end
     end
 
+    # Returns the payment method for the order
+    #
+    # @return [Spree::PaymentMethod] the payment method for the order
+    def payment_method
+      payments.valid.not_store_credits.first&.payment_method
+    end
+
+    # Returns the payment source for the order
+    #
+    # @return [Spree::PaymentSource] the payment source for the order
+    def payment_source
+      payments.valid.not_store_credits.first&.source
+    end
+
+    # Returns the backordered variants for the order
+    #
+    # @return [Array<Spree::Variant>] the backordered variants for the order
+    def backordered_variants
+      variants.
+        joins(:stock_items, :product).
+        where(Spree::StockItem.table_name => { count_on_hand: ..0, backorderable: true })
+    end
+
     def can_ship?
       complete? || resumed? || awaiting_return? || returned?
     end
@@ -566,6 +589,22 @@ module Spree
     # @return [BigDecimal] the total weight of the inventory units in the order
     def total_weight
       @total_weight ||= line_items.joins(:variant).includes(:variant).map { |li| li.variant.weight * li.quantity }.sum
+    end
+
+    # Returns line items that have no shipping rates
+    #
+    # @return [Array<Spree::LineItem>]
+    def line_items_without_shipping_rates
+      @line_items_without_shipping_rates ||= shipments.map do |shipment|
+        shipment.manifest.map(&:line_item) if shipment.shipping_rates.blank?
+      end.flatten.compact
+    end
+
+    # Checks if all line items cannot be shipped
+    #
+    # @returns Boolean
+    def all_line_items_invalid?
+      line_items_without_shipping_rates.size == line_items.count
     end
 
     def apply_free_shipping_promotions
@@ -776,11 +815,18 @@ module Spree
     end
 
     def ensure_available_shipping_rates
-      if shipments.empty? || shipments.any? { |shipment| shipment.shipping_rates.blank? }
+      if shipments.empty? || line_items_without_shipping_rates.present?
         # After this point, order redirects back to 'address' state and asks user to pick a proper address
         # Therefore, shipments are not necessary at this point.
         shipments.destroy_all
-        errors.add(:base, Spree.t(:items_cannot_be_shipped)) && (return false)
+
+        if line_items_without_shipping_rates.present?
+          errors.add(:base, Spree.t(:products_cannot_be_shipped, product_names: line_items_without_shipping_rates.map(&:name).to_sentence))
+        else
+          errors.add(:base, Spree.t(:items_cannot_be_shipped))
+        end
+
+        return false
       end
     end
 

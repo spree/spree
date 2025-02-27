@@ -143,7 +143,7 @@ module Spree
     def shipping_cost
       shipments.sum do |shipment|
         # Skip cancelled shipments
-        next if shipment.canceled?
+        return BigDecimal('0') if shipment.canceled?
 
         # Get all inventory units in this shipment for this line item
         line_item_units = shipment.inventory_units.where(line_item_id: id).count
@@ -152,7 +152,8 @@ module Spree
         total_units = shipment.inventory_units.count
 
         # Calculate proportional shipping cost
-        next BigDecimal('0') if total_units.zero?
+        return BigDecimal('0') if total_units.zero? || line_item_units.zero? || shipment.cost.zero?
+
         shipment.cost * (line_item_units.to_d / total_units)
       end
     end
@@ -166,6 +167,13 @@ module Spree
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
+    end
+
+    # Returns the maximum quantity that can be added to the line item
+    #
+    # @return [Integer]
+    def maximum_quantity
+      @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
     end
 
     private

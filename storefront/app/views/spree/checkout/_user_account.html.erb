@@ -1,0 +1,9 @@
+<div class="flex items-center">
+  <div class="min-w-[60px] max-w-[60px]">
+    <%= Spree.t(:account) %>
+  </div>
+  <div class="px-5">
+    <p class="font-bold"><%= @order.user.name&.full %></p>
+    <p><%= @order.user.email %></p>
+  </div>
+</div>

@@ -16,6 +16,7 @@ import AccountNavController from 'spree/storefront/controllers/account_nav_contr
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import AutoSubmit from '@stimulus-components/auto-submit'
+import CardValidationController from 'spree/storefront/controllers/card_validation_controller'
 import CartController from 'spree/storefront/controllers/cart_controller'
 import CheckoutAddressBookController from 'spree/storefront/controllers/address_book_controller'
 import CheckoutDeliveryController from 'spree/storefront/controllers/delivery_controller'
@@ -23,7 +24,6 @@ import CheckoutPromotionsController from 'spree/storefront/controllers/promotion
 import CheckoutSummaryController from 'spree/storefront/controllers/summary_controller'
 import ClearInputController from 'spree/storefront/controllers/clear_input_controller'
 import CopyInputController from 'spree/storefront/controllers/copy_input_controller'
-import DeliveryDatesController from 'spree/storefront/controllers/delivery_dates_controller'
 import DropdownController from 'spree/storefront/controllers/dropdown_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
 import HeaderController from 'spree/storefront/controllers/header_controller'
@@ -50,13 +50,13 @@ application.register('account-nav', AccountNavController)
 application.register('address-autocomplete', AddressAutocompleteController)
 application.register('address-form', AddressFormController)
 application.register('auto-submit', AutoSubmit)
+application.register('card-validation', CardValidationController)
 application.register('cart', CartController)
 application.register('checkout-address-book', CheckoutAddressBookController)
 application.register('checkout-delivery', CheckoutDeliveryController)
 application.register('checkout-promotions', CheckoutPromotionsController)
 application.register('clear-input', ClearInputController)
 application.register('copy-input', CopyInputController)
-application.register('delivery-dates', DeliveryDatesController)
 application.register('dropdown', DropdownController)
 application.register('enable-button', EnableButtonController)
 application.register('header', HeaderController)

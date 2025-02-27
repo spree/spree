@@ -16,5 +16,7 @@ FactoryBot.define do
     factory :announcement_bar_page_section, class: Spree::PageSections::AnnouncementBar
 
     factory :rich_text_page_section, class: Spree::PageSections::RichText
+
+    factory :newsletter_page_section, class: Spree::PageSections::Newsletter
   end
 end

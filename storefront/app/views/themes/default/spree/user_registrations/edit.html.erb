@@ -1,0 +1,24 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'account' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5 pb-6">
+    <h5 class="uppercase font-medium mb-4"><%= Spree.t(:change_password)  %></h5>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, class: "flex flex-col gap-4" }, data: { turbo: false}) do |f| %>
+      <%= render "spree/shared/error_messages", target: resource %>
+      <div class="field">
+        <p><%= f.label :current_password, Spree.t(:current_password), class: 'text-xs text-neutral-600 block mb-2' %></p>
+        <p><%= f.password_field :current_password, class: 'text-input w-full', autocomplete: "current-password", minlength: @minimum_password_length, required: true %></p>
+      </div>
+      <div class="field">
+        <p><%= f.label :password, Spree.t(:new_password), class: 'text-xs text-neutral-600 block mb-2' %></p>
+        <p><%= f.password_field :password, class: 'text-input w-full', autocomplete: "new-password", minlength: @minimum_password_length, required: true %></p>
+      </div>
+      <div class="field">
+        <p><%= f.label :password_confirmation, Spree.t(:confirm_password), class: 'text-xs text-neutral-600 block mb-2' %></p>
+        <p><%= f.password_field :password_confirmation, class: 'text-input w-full', autocomplete: "new-password", minlength: @minimum_password_length, required: true %></p>
+      </div>
+      <%= f.submit Spree.t(:update), class: 'btn-primary w-full mb-6' %>
+    <% end %>
+  </div>
+</div>

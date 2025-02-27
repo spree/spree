@@ -8,8 +8,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
-  respond_to :html
-
   def new
     invoke_callbacks(:new_action, :before)
   end
@@ -25,7 +23,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       remove_assets(%w[asset image square_image])
 
       invoke_callbacks(:update, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_update
@@ -38,7 +36,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:update, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')
@@ -54,7 +52,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     @object.attributes = permitted_resource_params
     if @object.save
       invoke_callbacks(:create, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_create
@@ -67,7 +65,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:create, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')

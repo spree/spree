@@ -13,16 +13,16 @@
     <li class="nav-item">
       <%= active_link_to_with_icon('building-store', Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
     </li>
-    
+
     <% if defined?(current_account) && current_account.present? %>
       <li class="nav-item">
-        <%= active_link_to_with_icon 'receipt', I18n.t(:account), main_app.edit_account_path(current_account), class: 'nav-link' %>
+        <%= active_link_to_with_icon 'receipt', Spree.t(:account), main_app.edit_account_path(current_account), class: 'nav-link' %>
       </li>
       <li class="nav-item">
-        <%= active_link_to_with_icon 'users', I18n.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link rounded-lg ' %>
+        <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link rounded-lg ' %>
       </li>
     <% end %>
-    
+
     <li class="nav-item">
       <%= active_link_to_with_icon('send', Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), class: 'nav-link', active: params[:section] == 'emails') %>
     </li>
@@ -76,7 +76,7 @@
   </ul>
 <% else %>
   <ul class="nav nav-dark flex-column">
-    <% unless current_store.setup_completed? && !current_vendor %>
+    <% unless current_store.setup_completed? %>
       <li class="nav-item">
         <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
           <%= icon 'map' %>
@@ -171,7 +171,7 @@
     <div class="text-uppercase small ml-2 mb-1 text-muted"><%= Spree.t(:settings) %></div>
     <% if defined?(current_account) && current_account.present? %>
       <li class="nav-item">
-        <%= active_link_to_with_icon 'users', I18n.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link' %>
+        <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link' %>
       </li>
     <% end %>
     <li class="nav-item">

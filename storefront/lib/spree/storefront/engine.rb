@@ -1,4 +1,4 @@
-require_relative 'runtime_configuration'
+require_relative 'configuration'
 
 module Spree
   module Storefront
@@ -10,11 +10,12 @@ module Spree
         :add_to_cart_partials,
         :remove_from_cart_partials,
         :checkout_partials,
-        :checkout_complete_partials
+        :checkout_complete_partials,
+        :quick_checkout_partials
       )
 
       initializer 'spree.storefront.configuration', before: :load_config_initializers do |_app|
-        Spree::Storefront::RuntimeConfig = Spree::Storefront::RuntimeConfiguration.new
+        Spree::Storefront::Config = Spree::Storefront::Configuration.new
       end
 
       initializer 'spree.storefront.assets' do |app|
@@ -30,6 +31,11 @@ module Spree
         app.config.importmap.cache_sweepers << root.join('app/javascript')
       end
 
+      # we need to set the path to the storefront so that tailwind can find the views
+      initializer 'spree.storefront.tailwind_views_path' do
+        ENV['SPREE_STOREFRONT_PATH'] = root.to_s
+      end
+
       config.after_initialize do
         Rails.application.config.spree_storefront.head_partials = []
         Rails.application.config.spree_storefront.body_start_partials = []
@@ -38,6 +44,7 @@ module Spree
         Rails.application.config.spree_storefront.remove_from_cart_partials = []
         Rails.application.config.spree_storefront.checkout_partials = []
         Rails.application.config.spree_storefront.checkout_complete_partials = []
+        Rails.application.config.spree_storefront.quick_checkout_partials = []
       end
     end
   end

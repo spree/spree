@@ -1,0 +1,28 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'address' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5">
+    <div class="mb-12 lg:mb-24">
+      <div class="font-medium mb-4">
+        <%= Spree.t(:addresses) %>
+      </div>
+      <% if @addresses.any? %>
+        <ul>
+          <%= render partial: 'spree/account/addresses/address', collection: @addresses, cached: ->a {[*spree_base_cache_scope.call(a), try_spree_current_user.ship_address_id, try_spree_current_user.bill_address_id]}, as: :address %>
+        </ul>
+        <div class="flex">
+          <%= link_to Spree.t(:add_address), spree.new_address_path, class: 'btn-primary block w-full lg:w-auto' %>
+        </div>
+      <% else %>
+        <div class="text-center py-6">
+          <p class="mb-2 font-medium uppercase"><%= Spree.t('storefront.account.no_addresses_title') %></p>
+          <p><%= Spree.t('storefront.account.no_addresses_description') %></p>
+          <div class="flex mt-8 justify-center">
+            <%= link_to Spree.t(:add), spree.new_address_path, class: 'btn-primary block' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
