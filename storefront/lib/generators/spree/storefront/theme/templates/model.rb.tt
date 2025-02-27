@@ -1,0 +1,12 @@
+module Spree
+  module Themes
+    class <%= class_name %> < Default
+      def self.metadata
+        {
+          authors: ['Your Name'],
+          license: 'MIT',
+        }
+      end
+    end
+  end
+end
