@@ -48,6 +48,7 @@ module Spree
           %Q{
             if defined?(Devise) && Devise.respond_to?(:parent_controller)
               Devise.parent_controller = "Spree::StoreController"
+              Devise.parent_mailer = "Spree::BaseMailer"
             end\n}
         end
       end
