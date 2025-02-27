@@ -1,0 +1,5 @@
+<li class="nav-item">
+  <%= link_to Spree.t(status),
+    params.merge(q: { state_eq: status }).permit!,
+    class: "nav-link #{'active' if params.dig(:q, :state_eq) == status.to_s}" %>
+</li>

@@ -1,0 +1,86 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:returns) %>
+<% end %>
+
+<% content_for :page_tabs do %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:all),
+      spree.admin_return_authorizations_path,
+      class: "nav-link #{'active' if params.dig(:q, :state_eq).blank?}" %>
+  </li>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :pending } %>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :approved } %>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :rejected } %>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :shipped } %>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :returned } %>
+  <%= render partial: 'spree/admin/return_index/filter_by_status_tab', locals: { status: :resolved } %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_return_authorisations_index_filters">
+    <%= search_form_for [:admin, @search], url: spree.admin_return_authorizations_path do |f| %>
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <div class="form-group">
+            <%= f.label :number_cont, Spree.t(:return_number) %>
+            <%= f.text_field :number_cont, class: "form-control js-quick-search-target js-filterable" %>
+          </div>
+        </div>
+      </div>
+      <div data-hook="admin_return_authorisations_index_filters_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @collection.any? %>
+<div class="table-responsive">
+  <table class="table">
+    <thead class="text-muted">
+      <tr data-hook="rate_header">
+        <th><%= Spree.t(:number) %></th>
+        <th><%= Spree.t(:created_at) %></th>
+        <th><%= Spree.t(:customer) %></th>
+        <th class="text-center w-10"><%= Spree.t(:status) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @collection.each do |return_authorization| %>
+        <% return_url = can?(:edit, return_authorization) ?
+                spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) :
+                spree.admin_order_return_authorization_path(return_authorization.order, return_authorization) %>
+
+        <tr id="<%= spree_dom_id return_authorization %>" data-hook="return_authorization_row">
+          <td>
+            <%= link_to return_authorization.number, return_url, class: 'font-weight-bold' %>
+          </td>
+          <td>
+            <%= link_to local_time_ago(return_authorization.created_at, class: 'with-tip'), return_url, class: 'text-dark' %>
+          </td>
+          <td>
+            <%= render 'spree/admin/orders/customer_summary', order: return_authorization.order %>
+          </td>
+          <td class="text-center w-10">
+            <span class="badge  badge-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
+          </td>
+          <td class="actions w-10">
+            <% if can?(:edit, return_authorization) %>
+              <%= link_to_edit return_authorization,
+                url: spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization),
+                no_text: true %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  </div>
+<% else %>
+  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ReturnAuthorization)) %>.
+  </div>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :return_authorizations } %>

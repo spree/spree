@@ -1,0 +1,57 @@
+<% content_for :title do %>
+  <%= Spree.t(:returns) %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= Spree.t(:returns) %>
+<% end %>
+<div class="card-lg p-0">
+
+  <%= search_form_for [:admin, @search], url: spree.admin_customer_returns_path, class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
+    <%= render "spree/admin/shared/filters_search_bar",
+    param: :number_cont,
+    label: Spree.t(:number) %>
+
+    <%= render "spree/admin/shared/filter_badge_template" %>
+
+    <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
+
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr data-hook="rate_header">
+            <th><%= Spree.t(:number) %></th>
+            <th><%= Spree.t(:created_at) %></th>
+            <th><%= Spree.t(:customer) %></th>
+            <th><%= Spree.t(:order) %></th>
+            <th><%= Spree.t(:reimbursement_status) %></th>
+            <th><%= Spree.t(:pre_tax_total) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render collection: @collection,
+          partial: "spree/admin/customer_returns/customer_return" %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div
+      class="
+        text-muted p-5 d-flex align-items-center w-100 justify-content-center
+      "
+    >
+      <%= Spree.t(
+        :no_resource_found,
+        resource: plural_resource_name(Spree::CustomerReturn),
+      ) %>.
+    </div>
+  <% end %>
+
+  <%= render partial: "spree/admin/shared/index_table_options",
+  locals: {
+    collection: @collection,
+    per_page_action: :customer_returns,
+  } %>
+</div>
