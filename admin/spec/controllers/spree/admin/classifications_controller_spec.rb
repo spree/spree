@@ -7,14 +7,18 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
 
   render_views
 
-  let(:taxon) { create(:taxon) }
+  let(:taxon) { create(:taxon, sort_order: sort_order) }
+  let(:sort_order) { 'manual' }
+
   let(:product1) { create(:product) }
   let(:product2) { create(:product) }
 
   describe 'GET #index' do
     let!(:classifications) do
-      [create(:classification, taxon: taxon, product: product1),
-       create(:classification, taxon: taxon, product: product2)]
+      [
+        create(:classification, taxon: taxon, product: product1),
+        create(:classification, taxon: taxon, product: product2)
+      ]
     end
 
     subject { get :index, params: { taxon_id: taxon.id } }
@@ -27,6 +31,18 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     it 'assigns @classifications' do
       subject
       expect(assigns(:classifications)).to contain_exactly(*classifications)
+    end
+
+    context 'when sort_order is best_selling' do
+      let(:sort_order) { 'best-selling' }
+
+      let!(:completed_order_1) { create(:completed_order_with_totals, variants: [product1.master, product2.master]) }
+      let!(:completed_order_2) { create(:completed_order_with_totals, variants: [product2.master]) }
+
+      it 'assigns @classifications' do
+        subject
+        expect(assigns(:classifications)).to eq([classifications[1], classifications[0]])
+      end
     end
   end
 

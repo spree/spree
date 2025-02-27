@@ -1,0 +1,16 @@
+.#{$select-ns}-wrapper.plugin-drag_drop {
+	&.multi > .#{$select-ns}-control > div.ui-sortable-placeholder {
+		visibility: visible !important;
+		background: #f2f2f2 !important;
+		background: rgba(0,0,0,0.06) !important;
+		border: 0 none !important;
+		box-shadow: inset 0 0 12px 4px #fff;
+	}
+	.ui-sortable-placeholder::after {
+		content: '!';
+		visibility: hidden;
+	}
+	.ui-sortable-helper {
+		box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	}
+}

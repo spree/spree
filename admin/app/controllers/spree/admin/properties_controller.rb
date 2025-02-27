@@ -1,10 +1,6 @@
 module Spree
   module Admin
     class PropertiesController < ResourceController
-      def index
-        respond_with(@collection)
-      end
-
       protected
 
       def update_turbo_stream_enabled?

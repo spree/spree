@@ -1,14 +1,6 @@
 module Spree
   module Admin
-    class BaseController < ApplicationController
-      include Spree::Core::ControllerHelpers::Auth
-      include Spree::Core::ControllerHelpers::Store
-      include Spree::Core::ControllerHelpers::StrongParameters
-      include Spree::Core::ControllerHelpers::Locale
-      include Spree::Core::ControllerHelpers::Currency
-
-      respond_to :html
-
+    class BaseController < Spree::BaseController
       layout 'spree/admin'
 
       helper 'spree/base'
@@ -18,7 +10,6 @@ module Spree
       helper 'spree/addresses'
 
       before_action :authorize_admin
-      after_action :set_return_to, only: [:index]
 
       protected
 

@@ -1,0 +1,26 @@
+<div class="flex justify-between items-center">
+  <div class="flex items-center">
+    <div class="mr-5 w-[64px] h-[64px] relative rounded bg-accent-100">
+      <span class="rounded-full text-xs text-center font-bold pl-[0.5px] py-1 w-6 text-sidebar-text bg-background absolute -right-2 -top-3">
+        <%= line_item.quantity %>
+      </span>
+      <% image = line_item.variant.default_image %>
+      <% if image.present? && image.attached? && image.variable? %>
+        <%= image_tag main_app.cdn_image_url(image.variant(spree_image_variant_options(resize_to_fill: [128, 128]))), class: 'rounded border border-default bg-transparent object-cover object-center', loading: :lazy, width: 64, height: 64 %>
+      <% end %>
+    </div>
+    <div class="col-6 col-md-8 pr-3 text-sm">
+      <p class="font-bold word-break"><%= line_item.name %></p>
+      <p class="text-xs"><%= line_item.options_text %></p>
+    </div>
+  </div>
+  <div class="font-semibold text-sm text-right">
+    <% if should_display_compare_at_price?(line_item.variant) %>
+      <span class="line-through text-red-500">
+        <%= Spree::Money.new(line_item.variant.compare_at_amount_in(line_item.currency) * line_item.quantity, currency: line_item.currency) %>
+      </span>
+      <br />
+    <% end %>
+    <%= line_item.display_pre_tax_amount %>
+  </div>
+</div>

@@ -4,10 +4,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
+  after_action :set_return_to, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
-
-  respond_to :html
 
   def new
     invoke_callbacks(:new_action, :before)
@@ -24,7 +23,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       remove_assets(%w[asset image square_image])
 
       invoke_callbacks(:update, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_update
@@ -37,7 +36,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:update, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')
@@ -53,7 +52,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     @object.attributes = permitted_resource_params
     if @object.save
       invoke_callbacks(:create, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_create
@@ -66,7 +65,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:create, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')
@@ -299,7 +298,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def collection_actions
-    [:index]
+    [:index, :select_options, :bulk_modal, :bulk_status_update,
+     :bulk_add_to_taxons, :bulk_remove_from_taxons,
+     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
   end
 
   def member_action?

@@ -1,0 +1,32 @@
+<%= turbo_frame_tag :dialog_modal do %>
+  <div class="modal-content" data-controller="search-picker">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:add_variant) %></h5>
+      <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+    </div>
+    <div class="modal-body border-bottom pb-3">
+      <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
+        <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
+        <%= form.hidden_field :param_name, value: 'line_item' %>
+        <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+        <%= form.hidden_field :currency, value: @order.currency %>
+      <% end %>
+    </div>
+    <%= form_with model: @line_item, url: spree.admin_order_line_items_path(@order), data: {turbo_frame: '_top'} do |form| %>
+      <div class="modal-body p-0" style="min-height: 200px">
+        <div id="variants_search_results" class="overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+          <p class="text-muted text-center pb-3 pt-5">
+            <%= Spree.t(:start_typing_to_search_for_variants) %>
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer border-top d-flex justify-content-between">
+        <div class="d-flex gap-2 m-0 align-items-center">
+          <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
+          <%= form.number_field :quantity, class: "form-control" %>
+        </div>
+        <%= turbo_save_button_tag Spree.t(:add_selected_variant), disabled: true, data: { search_picker_target: :submit } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

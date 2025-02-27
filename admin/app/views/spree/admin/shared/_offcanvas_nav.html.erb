@@ -1,0 +1,25 @@
+<!-- Left off-canvas sidebar -->
+<div class="bs-canvas bs-canvas-left position-fixed bg-black h-100">
+  <div class="bs-canvas-content px-2">
+    <div class="d-flex align-items-center font-weight-bold py-3 bg-black text-white border-bottom border-black sticky-top justify-content-between">
+      <div class="d-flex align-items-center">
+        <% if defined?(current_store) && current_store&.present? %>
+          <%= store_admin_icon(current_store, width: 36, height: 36) %>
+          <span class="ml-3 font-size-lg">
+            <%= truncate(current_store.name, length: 15) %>
+          </span>
+        <% end %>
+      </div>
+      <button class="btn py-0 bs-canvas-close text-white">
+        <%= icon('x', height: 18, class: 'mr-0') %>
+      </button>
+    </div>
+    <% if try_spree_current_user.present? %>
+      <% if defined?(current_vendor) && current_vendor.present? %>
+        <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
+      <% elsif defined?(current_store) && current_store&.present? %>
+        <%= render 'spree/admin/shared/sidebar/store_nav' %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

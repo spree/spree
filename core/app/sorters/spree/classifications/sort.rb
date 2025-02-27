@@ -27,9 +27,7 @@ module Spree
       def by_best_selling(scope)
         return scope unless (value = sort_by?('best_selling'))
 
-        scope.
-          select("#{Spree::Classification.table_name}.*, #{Spree::Product.table_name}.orders_count, #{Spree::Product.table_name}.orders_total").
-          order("#{Spree::Product.table_name}.orders_count #{value[1]}, #{Spree::Product.table_name}.orders_total #{value[1]}")
+        scope.by_best_selling(value[1])
       end
 
       def by_param_attributes(scope)

@@ -172,5 +172,30 @@ describe Spree::ShippingRate, type: :model do
       allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -5.0)
       expect(shipping_rate.final_price).to eq(5.0)
     end
+
+    it 'does not return 0 when shipment is free because of selected shipping rate' do
+      shipment.shipping_rates.update_all(selected: false)
+      create(:shipping_rate, shipment: shipment, cost: 0, selected: true)
+      shipment.reload.update_amounts
+
+      expect(shipment.free?).to eq(true)
+      expect(shipping_rate.final_price).to eq(10.0)
+    end
+  end
+
+  describe '#delivery_range' do
+    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+    it 'returns the delivery range for the shipping method' do
+      expect(shipping_rate.delivery_range).to eq('1-2')
+    end
+  end
+
+  describe '#display_delivery_range' do
+    let(:shipping_method) { create(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+    it 'returns the display delivery range for the shipping method' do
+      expect(shipping_rate.display_delivery_range).to eq('Delivery in 1-2 business days')
+    end
   end
 end

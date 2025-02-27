@@ -1,12 +1,17 @@
 module Spree
   module Admin
     module TaxonsHelper
-      def taxons_scope
-        @taxons_scope ||= current_store.taxons.where(automatic: false).where.not(parent_id: nil)
+      def taxons_scope(with_automatic: false)
+        @memoized_taxons_scope ||= {}
+        @memoized_taxons_scope[with_automatic] ||= begin
+          scope = current_store.taxons.where.not(parent_id: nil)
+          scope = scope.where(automatic: false) unless with_automatic
+          scope
+        end
       end
 
-      def taxons_options_json_array
-        taxons_scope.pluck(:id, :pretty_name).map { |id, pretty_name| { id: id, name: pretty_name } }.as_json
+      def taxons_options_json_array(with_automatic: false)
+        taxons_scope(with_automatic: with_automatic).pluck(:id, :pretty_name).map { |id, pretty_name| { id: id, name: pretty_name } }.as_json
       end
 
       def taxon_sort_options_for_select

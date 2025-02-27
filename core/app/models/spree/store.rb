@@ -93,6 +93,9 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    has_many :reports, class_name: 'Spree::Report'
+    has_many :exports, class_name: 'Spree::Export'
+
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
@@ -169,6 +172,7 @@ module Spree
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
+    after_create :ensure_default_post_categories_are_created
     after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     after_create :create_default_theme
@@ -261,15 +265,16 @@ module Spree
     def formatted_url
       @formatted_url ||= if Rails.env.development? || Rails.env.test?
         scheme = Rails.application.routes.default_url_options[:protocol] || :http
+        port = Rails.application.routes.default_url_options[:port].presence || (Rails.env.development? ? 3000 : nil)
         if scheme.to_sym == :https
           URI::HTTPS.build(
             host: url.to_s.sub(%r{^https?://}, ''),
-            port: Rails.application.routes.default_url_options[:port]
+            port: port
           ).to_s
         else
           URI::HTTP.build(
-            host: url.to_s.sub(%r{^https?://}, ''),
-            port: Rails.application.routes.default_url_options[:port]
+            host: url.to_s.sub(%r{^https?://}, '').split(':').first,
+            port: port
           ).to_s
         end
       else
@@ -332,6 +337,10 @@ module Spree
         stock_location_scope = Spree::StockLocation.order_default
         stock_location_scope.first || stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
       end
+    end
+
+    def admin_users
+      @admin_users ||= Spree.admin_user_class.joins(:spree_roles).where(spree_roles: { name: :admin })
     end
 
     def favicon
@@ -460,6 +469,12 @@ module Spree
 
         [on_sale_taxon, new_arrivals_taxon]
       end
+    end
+
+    def ensure_default_post_categories_are_created
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.resources'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.articles'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.news'))
     end
 
     # code is slug, so we don't want to generate new slug when code changes

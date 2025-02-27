@@ -80,14 +80,14 @@
         <div class="card-body border-bottom">
           <div class="d-flex align-items-center">
             <%= f.label :sort_order, class: 'text-nowrap mr-2 mb-0' %>
-            <%= f.select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto',  data: { action: 'change->auto-submit#submitForm' } } %>
+            <%= f.select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto',  data: { action: 'change->auto-submit#submit' } } %>
           </div>
         </div>
 
         <div class="card-body p-2" style="min-height: 300px">
           <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
             <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id), loading: :lazy do %>
-              <%= render 'shared/spinner' %>
+              <%= render 'spree/admin/shared/spinner' %>
             <% end %>
           </div>
         </div>

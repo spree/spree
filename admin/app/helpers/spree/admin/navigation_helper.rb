@@ -168,7 +168,7 @@ module Spree
 
         css_class = condition ? 'badge-active' : 'badge-inactive'
 
-        content_tag(:small, class: "badge  #{css_class}") do
+        content_tag(:span, class: "badge  #{css_class}") do
           label
         end
       end
@@ -181,8 +181,8 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'd-flex align-items-center' do
-          content_tag(:span, inline_svg('icons/chevron-left.svg', height: '1rem'), class: 'btn hover-gray px-1 mr-2 d-flex align-items-center') +
+        link_to url, class: 'd-flex align-items-center text-decoration-none' do
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray px-2 mr-2 d-flex align-items-center') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end
@@ -197,13 +197,17 @@ module Spree
         end
       end
 
-      def external_link_to(label, url, opts = {})
+      def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
         opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
 
-        link_to url, opts do
-          (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+        if block_given?
+          link_to url, opts, &block
+        else
+          link_to url, opts do
+            (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+          end
         end
       end
 

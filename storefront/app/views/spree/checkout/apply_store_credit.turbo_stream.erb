@@ -1,0 +1,19 @@
+<%= turbo_stream.replace :checkout_summary do %>
+  <%= render 'summary', order: @order %>
+<% end %>
+
+<%= turbo_stream.replace :quick_checkout do %>
+  <%= render 'quick_checkout', order: @order %>
+<% end %>
+
+<%= turbo_stream.replace :checkout_payment_methods do %>
+  <%= render 'payment_methods', order: @order %>
+<% end %>
+
+<%= turbo_stream.replace :checkout_store_credit do %>
+  <%= render 'store_credit' %>
+<% end %>
+
+<%= turbo_stream.replace :checkout_coupon_code do %>
+  <%= render 'coupon_code', promotion: @order.valid_coupon_promotions.first %>
+<% end %>

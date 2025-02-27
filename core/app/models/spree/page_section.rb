@@ -187,7 +187,7 @@ module Spree
     end
 
     def restore_design_settings_to_defaults
-      clear_preferences_for(design_settings_to_restore)
+      restore_preferences_for(design_settings_to_restore)
       save
     end
 

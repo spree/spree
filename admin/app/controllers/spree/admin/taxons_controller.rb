@@ -16,7 +16,7 @@ module Spree
       before_action :load_form_data, only: [:show, :new, :create, :edit, :update]
 
       def select_options
-        render json: taxons_options_json_array
+        render json: taxons_options_json_array(with_automatic: params[:with_automatic].to_b)
       end
 
       def reposition
@@ -33,6 +33,10 @@ module Spree
       end
 
       private
+
+      def parent_data
+        super unless action == :select_options
+      end
 
       def location_after_save
         spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy_id, @taxon.id)

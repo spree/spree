@@ -4,12 +4,10 @@ module Spree
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_data
+      before_action :proceed_order_state, only: :new
 
       def new
-        # Move order to payment state in order to capture tax generated on shipments
-        @order.next if @order.can_go_to_state?('payment')
-
-        payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id == params[:payment_method_id] } : @payment_methods.first
+        payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
 
         @payment = @order.payments.build(
           amount: @order.total_minus_store_credits - @order.payment_total,
@@ -86,6 +84,18 @@ module Spree
       end
 
       private
+
+      def proceed_order_state
+        # Move order to payment state in order to capture tax generated on shipments
+        if @order.can_go_to_state?('payment')
+          @order.next
+        end
+      end
+
+      def build_resource
+        # This method is overridden because we don't want order to have invalid payment since we are doing `order.next` in the `new` action
+        model_class.new(order: parent)
+      end
 
       def model_class
         Spree::Payment

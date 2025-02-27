@@ -4,7 +4,7 @@ module Spree
       include Spree::ImagesHelper
 
       def enterprise_edition?
-        false
+        defined?(Vendo)
       end
 
       def spree_update_available?
@@ -29,7 +29,7 @@ module Spree
 
       def display_on_options
         Spree::DisplayOn::DISPLAY.map do |display_on|
-          [Spree.t("display_on_options.#{display_on}"), display_on]
+          [Spree.t("admin.display_on_options.#{display_on}"), display_on]
         end
       end
 
@@ -198,11 +198,6 @@ module Spree
 
       def spree_dom_id(record)
         dom_id(record, 'spree')
-      end
-
-      I18N_PLURAL_MANY_COUNT = 2.1
-      def plural_resource_name(resource_class)
-        resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
       end
 
       def required_span_tag

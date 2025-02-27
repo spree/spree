@@ -23,10 +23,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.0'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib}/**/*", "LICENSE.md", "Rakefile"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  s.add_dependency 'rails', '>= 6.1', '< 8.0'
+  s.add_development_dependency 'i18n-tasks'
+
+  s.add_dependency 'rails', '>= 7.2', '< 8.0'
 
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '>= 0.8'
@@ -59,7 +61,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'request_store', '~> 1.7'
   s.add_dependency 'wannabe_bool'
-  s.add_dependency 'geared_pagination'
   s.add_dependency 'any_ascii', '~> 0.3.2'
   s.add_dependency 'geocoder'
 end

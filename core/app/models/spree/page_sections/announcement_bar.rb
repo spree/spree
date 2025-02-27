@@ -5,7 +5,6 @@ module Spree
 
       before_validation :set_default_text, on: :create
 
-      TEXT_COLOR_DEFAULT = '#000000'
       BACKGROUND_COLOR_DEFAULT = '#F5F5F4'
       TOP_PADDING_DEFAULT = 8
       BOTTOM_PADDING_DEFAULT = 8

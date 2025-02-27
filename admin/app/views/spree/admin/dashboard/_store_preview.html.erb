@@ -1,0 +1,59 @@
+<% if current_store.default_theme %>
+  <div class="card mb-4">
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block card-img-top border-bottom overflow-auto bg-light position-relative store-preview-link', style: "height: 220px" do %>
+      <div class="position-absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
+        <button class="btn btn-outline-primary">
+          <%= icon('tools') %>
+          <%= Spree.t('admin.edit_theme') %>
+        </button>
+      </div>
+      <% if current_store.default_theme.screenshot.attached? && current_store.default_theme.screenshot.variable? %>
+        <%= image_tag(
+              main_app.cdn_image_url(
+                current_store.default_theme.screenshot.variant(
+                  spree_image_variant_options(resize_to_fill: [400, 250])
+                )
+              ),
+              class: 'w-100 h-100 bg-light',
+              loading: :lazy,
+              style: 'height: 220px'
+            ) %>
+      <% else %>
+        <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center bg-light text-muted">
+          <%= icon('camera-off', class: 'text-muted', height: 24) %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="card-body pt-2">
+      <div class="flex my-2 p-1 w-100 rounded bg-light" data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+        <% if current_store.default_custom_domain&.active? %>
+          <%= text_field_tag :custom_domain, current_store.default_custom_domain.url, readonly: true, class: 'form-control-plaintext py-0 text-muted', data: { clipboard_target: 'source' } %>
+        <% else %>
+          <%= text_field_tag :domain, current_store.url, readonly: true, class: 'form-control-plaintext py-0 text-muted', data: { clipboard_target: 'source' } %>
+        <% end %>
+        <button data-action="clipboard#copy" data-clipboard-target="button" class="btn btn-sm py-1 hover-gray">
+          Copy
+        </button>
+      </div>
+
+      <div class="d-flex">
+        <%= link_to current_store.formatted_url_or_custom_domain, class: 'btn btn-light w-50 mr-3', target: '_blank' do %>
+          <%= icon 'eye', class: 'mr-1' %>
+          &nbsp;
+          <%= Spree.t(:view_store) %>
+        <% end %>
+        <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-50' do %>
+          <%= icon 'tools', class: 'mr-1' %>
+          &nbsp;
+          <%= Spree.t('admin.edit_theme') %>
+        <% end %>
+      </div>
+    </div>
+    <% unless current_store.default_custom_domain&.active? %>
+      <div class="card-footer border-top">
+        <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-link w-100 py-2' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

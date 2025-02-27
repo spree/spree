@@ -48,7 +48,7 @@ module Spree
           elsif shipment_state == 'partial'
             icon('progress-check') + Spree.t('shipment_states.partial')
           elsif shipment_state == 'canceled'
-            icon('cancel') + Spree.t('shipment_states.cancelled')
+            icon('cancel') + Spree.t('shipment_states.canceled')
           else
             icon('progress') + Spree.t("shipment_states.#{shipment_state}")
           end
@@ -154,7 +154,7 @@ module Spree
         elsif params[:q][:shipment_state_eq] == 'shipped'
           Spree.t('admin.orders.fulfilled')
         elsif params[:q][:state_in] == ['canceled','partially_canceled']
-          Spree.t('admin.orders.cancelled')
+          Spree.t('admin.orders.canceled')
         elsif params.dig(:q, :refunded) && params[:q][:refunded].present?
           Spree.t('admin.orders.refunded')
         elsif params.dig(:q, :partially_refunded) && params[:q][:partially_refunded].present?

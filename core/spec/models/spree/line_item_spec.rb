@@ -455,10 +455,31 @@ describe Spree::LineItem, type: :model do
   describe '#shipping_cost' do
     let(:line_item) { create(:line_item) }
     let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
-    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+    let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
 
     it 'returns the shipping cost for the line item' do
+      shipment
       expect(line_item.shipping_cost).to eq(10)
+    end
+
+    context 'when the shipment is canceled' do
+      it 'returns 0' do
+        shipment.cancel!
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment is not present' do
+      it 'returns 0' do
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment cost is 0' do
+      it 'returns 0' do
+        shipment.update(cost: 0)
+        expect(line_item.shipping_cost).to eq(0)
+      end
     end
   end
 end

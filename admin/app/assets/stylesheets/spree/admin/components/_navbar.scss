@@ -1,0 +1,10 @@
+@media (max-width: 768px) {
+  header#header {
+    background-color: $gray-900 !important;
+    color: #fff !important;
+    border-bottom: 0 none !important;
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+  }
+}

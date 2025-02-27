@@ -21,7 +21,7 @@ module Spree
       end
 
       def customizable?
-        true
+        false
       end
 
       def display_name

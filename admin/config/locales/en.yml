@@ -1,208 +1,242 @@
+---
 en:
   spree:
     admin:
-      add_tracking_details: Add tracking details
-      url: URL
       active: Active
-      name: Name
-      successful: Successful
-      created_at: Created At
-      response_code: Response Code
-      execution_time: Execution Time
-      request_errors: Request Errors
-      edit_profile: Edit Profile
-      personal_details: Personal Details
-      notifications: Notifications
-      filters: Filters
-      kind: Kind
-      home: Home
+      add_tracking_details: Add tracking details
+      amount_spent: Amount spent
+      audit_log: Audit Log
+      avg_order_value: Avg. Order Value
+      bulk_ops:
+        products:
+          body:
+            add_tags: 'Select tags to add to the products:'
+            add_to_brand: 'Select which brand to add the products to:'
+            add_to_taxons: 'Select which taxons to add the products to:'
+            remove_from_taxons: 'Select which taxons to remove the products from:'
+            remove_tags: 'Select tags to remove from the products:'
+            set_return_rule: Select return rule for products
+            set_status:
+              active: Setting products to active will make those products available on the storefront.
+              archived: Setting products to archived will hide them from storefront.
+              draft: Setting products to draft will hide them from storefront.
+              ready_for_review: We will notify your partners that these products are ready for review. Your partners will be able to review and publish these products.
+          status_updated: Status updated
+          title:
+            add_tags: Add tags
+            add_to_brand: Add to brand
+            add_to_taxons: Add to taxons
+            remove_from_brand: Remove from brand
+            remove_from_taxons: Remove from taxons
+            remove_tags: Remove tags
+            set_return_rule: Set Return Rule
+            set_size_chart: Set Size Chart
+            set_status: Set as %{status}
+        users:
+          body:
+            add_tags: 'Select tags to add to the customers:'
+            remove_tags: 'Select tags to remove from the customers:'
+          title:
+            add_tags: Add tags
+            remove_tags: Remove tags
+      copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
-      data_feeds:
-        data_feeds: Data Feeds
-        type: Type
-        slug_label: Slug (leave blank to generate)
-        new_data_feed: New Data Feed
-      digitals:
-        digital: Digital
-        add_new_file: Add a new digital asset.
-        digital_assets: Digital Assets
-        reset_download_links: Reset Digital Download Links
-        downloads_reset: Digital Download Links Reset
-        no_digital_assets_added: No digital assets.
-        delete_file_confirmation: "Are you sure you want to delete: %{filename}"
-        upload: Upload
-      export_only_filtered_records: Export only filtered records, matching the search criteria
+      created_at: Created At
+      dashboard:
+        getting_started:
+          description: Everything you need to set up to start selling.
+        hi: Hi
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+      display_on_options:
+        back_end: Only on admin panel
+        both: On both admin panel & storefront
+        front_end: Only on storefront
+      edit_billing_address: Edit billing address
+      edit_contact_information: Edit contact information
+      edit_profile: Edit Profile
+      edit_shipping_address: Edit shipping address
+      edit_theme: Edit theme
+      errors: Errors
+      execution_time: Execution Time
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
-      edit_contact_information: Edit contact information
-      edit_shipping_address: Edit shipping address
-      edit_billing_address: Edit billing address
-      linkable:
-        search_for_a_page: Search for a page
-        search_for_a_taxon: Search for a Taxon
-        search_for_a_product: Search for a Product
-      store:
-        digital_settings:
-          digital_asset_settings: Digital Asset Settings
-          limit_digital_download_count: Limit Download Count
-          limit_digital_download_days: Limit Download Days
-          digital_asset_authorized_clicks:
-            authorized_clicks: Authorized Download Count
-            info: Number of times a download link can be clicked.
-          digital_asset_authorized_days:
-            authorized_days: Authorized Download Days
-            info: The number of days a purchase can be downloaded after purchase.
-          digital_asset_link_expire_time:
-            download_link_expire_time: Download Link Expire Time
-            link_expire_time: Set the expire time of each download link. (seconds).
-      store_setup_tasks:
-        add_billing_address: Add billing address
-        setup_taxes_collection: Setup taxes collection
-        add_products: Add products
-        set_customer_support_email: Set customer support email
-        payment_methods:
-          title: Please setup Payment Methods for your store
-          done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
-          copy: In order to collect payments, please setup at least one online payment provider.
-          setup: Setup Payment Methods
-        taxes:
-          done: You're all set! You can always manage your taxes on the <a href="%{link}" data-turbo-frame="_top">settings</a> page.
-          copy: In order to collect taxes, please setup your tax rates.
-          setup: Setup Tax Rates
-      product_kinds:
-        physical: Physical
-        digital: Digital
-      tab:
-        configuration: Configuration
-        content: Content
-        option_types: Option Types
-        orders: Orders
-        overview: Overview
-        pages: Pages
-        products: Products
-        promotions: Promotions
-        promotion_categories: Promotion Categories
-        properties: Properties
-        prototypes: Prototypes
-        reports: Reports
-        navigation: Navigation
-        taxonomies: Taxonomies
-        taxons: Taxons
-        users: Users
-        return_authorizations: Return Authorizations
-        stock: Stock
-        customer_returns: Customer Returns
-        apps: Apps
-        applications: Applications
-        integrations: Integrations
-        webhook_subscribers: Webhook Subscribers
-      taxon:
-        nested_under_info: Nest this Taxon within the Taxonomy tree.
-      taxonomies:
-        edit_root_taxonomy: Edit %{name} Taxonomy
-        taxonomies: Taxonomies
-        taxons_belonging_to: "Taxons Belonging To %{taxonomy_name}"
-        submenu: Submenu
-        add_new_taxon: Add a new Taxon
-        no_taxons: '<b>%{taxonomy}</b> has no Taxons. Click the <b>Add a new Taxon</b> button, to begin adding Taxons.'
-      taxon_type: Taxon type
-      taxon_types:
-        manual: Manual
-        manual_info: Curate products manually. You can add or remove them in bulk.
-        automatic: Automatic
-        automatic_info: Automatically match products to this taxon based on the conditions you set.
-      taxon_rules:
-        products_must_match: "Products must match:"
-        all_conditions: all conditions
-        any_condition: any condition
-        tag: Product tag
-        available_on: Available on
-        on_sale: On sale
-        match_policies:
-          is_equal_to: is equal to
-          is_not_equal_to: is not equal to
-          contains: contains
-          does_not_contain: does not contain
+      export_only_filtered_records: Export only filtered records, matching the search criteria
+      filters: Filters
+      getting_started: Getting started
+      manage_currencies: Manage Currencies
+      manage_properties: Manage Properties
+      manage_stock_locations: Manage Stock Locations
+      manage_taxons: Manage Taxons
+      manage_zones: Manage Zones
+      member_since: Member since
+      name: Name
+      navigation:
+        nested_under: Nested under
+      not_tracking_inventory: Not tracking inventory
+      notifications: Notifications
+      num_orders: No. of Orders
+      oauth_applications:
+        last_used: Last used
+        list: API keys
+        never: Never
+        new: New API key
+        read_and_write: Read & Write
+        read_only: Read Only
+        scopes: Scopes
       order:
-        changing_store_warning: If you change the store this order belongs to, the order will be reset.
-        once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
         events:
           approve: Approve
           cancel: Cancel
-          resume: Resume
           resend: Resend
+          resume: Resume
       orders:
-        all: All
-        unpaid: Unpaid
-        fulfilled: Fulfilled
-        unfulfilled: Unfulfilled
-        cancelled: Cancelled
-        refunded: Refunded
-        partially_refunded: Partially Refunded
-        cart: Cart
-        all_orders: All Orders
-        draft_orders: Draft Orders
-        abandoned_checkouts: Abandoned Checkouts
-        orders_to_fulfill: Orders to fulfill
-        remove_user_from_this_order: Remove customer from this order
         add_user_to_this_order: Add customer to this order
-        payment_link_sent: Payment link was sent to the customer
+        all_orders: All Orders
+        canceled: Canceled
+        fulfilled: Fulfilled
         no_email_present: Please add an email address to send the payment link
-      oauth_applications:
-        list: oAuth applications
-        new: New oAuth application
-        uid: UID
-        scopes: Scopes
-        documentation_message: 'To learn how to authenticate requests to the Platform API, '
-        documentation_cta: see the documentation
-      reports:
-        for: For %{store_name}
-      return_authorization:
-        product: Product
-      store_form:
-        look_and_feel: Look and feel
-        code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
-        checkout_zone_help: "Selecting zone will limit to which Countries or States products are shipped.
-          For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
-        currencies_help: "You can accept payments in multiple currencies. Each product and product variant can have different price in different currency"
-        locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n' target='_blank' class='alert-link'>Spree I18n extension</a> to add more locales"
-        default_locale_notice: "Warning: Before changing the default locale, ensure that all products, taxons and stores have translations in the new locale"
-        social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
-        default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
-        footer_help: "This content is visible in the footer section of your Store"
-        mail_from_address_help: "This is the email which will be the sender of all your Store emails (Order Confirmation, Shipment notification etc)"
-        customer_support_email_help: "This email is visible to your Store visitors in the Footer section"
-        new_order_notifications_email_help: "If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to"
-        seo_robots: "Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>"
-      user:
-        account: Account
-        addresses: Addresses
-        items: Items
-        items_purchased: Items Purchased
-        order_history: Order History
-        order_num: "Order #"
-        orders: Orders
-        user_information: User Information
-        stores: Stores
-        store_credits: Store Credits
-        no_store_credit: User has no Store Credit available.
-        available_store_credit: User has %{amount} in Store Credit available.
-      settings: Settings
+        orders_to_fulfill: Orders to fulfill
+        partially_refunded: Partially Refunded
+        payment_link_sent: Payment link was sent to the customer
+        refunded: Refunded
+        remove_user_from_this_order: Remove customer from this order
+        unfulfilled: Unfulfilled
+      page_builder:
+        background_color: Background color
+        border_bottom_width: Border bottom width
+        border_color: Border color
+        border_top_width: Border top width
+        bottom_padding: Bottom padding
+        button_alignment: Button alignment
+        button_background_color: Button background color
+        button_style: Button style
+        button_text: Button's text
+        button_text_color: Button text color
+        category: Category
+        description: Description
+        description_alignment: Description alignment
+        desktop_image_alignment: Image alignment for desktop
+        desktop_logo_height: Logo height (desktop)
+        heading: Heading
+        heading_alignment: Heading alignment
+        heading_size: Heading size
+        height: Height
+        left_aligned: Left aligned
+        logo_centered: Logo centered
+        max_video_width_on_desktop: Max video width on desktop
+        maximum_posts_to_show: Maximum posts to show
+        maximum_products_to_show: Maximum products to show
+        nav_centered: Nav centered
+        not_set: Not set
+        posts_to_show: Posts to show
+        separated: Separated
+        show_more_button: Show explore category button
+        show_taxon_image: Show taxon image
+        text_color: Text color
+        title: Title
+        top_padding: Top padding
+        use_description_from_admin: Use description from admin
+        vertical_alignment: Vertical alignment
+        youtube_video_url: Youtube video URL
+      personal_details: Personal Details
+      products:
+        active: Active
+        all_statuses: All statuses
+        any_stock: Any stock
+        archived: Archived
+        by_status: By status
+        by_stock: By stock
+        deleted: Deleted
+        draft: Draft
+        help_bubble: Draft & Ready for Review statuses mean that the product isn't available for purchase. Active means that the product is live. Vendors can move product from draft to ready for review, but only marketplace operators can move product from ready for review to active
+        in_stock: In Stock
+        inventory:
+          barcode: Barcode (ISBN, UPC, GTIN, etc.)
+          sku: SKU (Stock Keeping Unit)
+        out_of_stock: Out of Stock
+        paused: Paused
+        search_results:
+          no_products: We couldn't find any products matching your search :(
+        selected: products selected
+        seo:
+          placeholder: Add a title and description to see how this product might appear in a search engine listing
+        status_form:
+          available_on: Marks when the product will be released, put a future date to indicate that this is a pre-order
+          discontinue_on: Marks when the product should be automatically taken off from your site
+          make_active_at: Marks when the product should be automatically promoted to "active" state
+          status: Draft - initial status. Ready For Review - inform store owner that product can be checked before activation
+        stores:
+          choose_stores: Choose which stores this product should be available in
+        variants:
+          option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      report_created: Your report is being generated. You will receive an email with a download link when it is ready!
+      response_code: Response Code
+      send_payment_link: Send Payment Link
+      shipment_transfer:
+        wrong_destination: Wrong destination
       stock_transfers:
         add_products_tip: You need to select a destination location first
+      store_form:
+        customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
+      store_setup_tasks:
+        add_billing_address: Add billing address
+        add_products: Add products
+        payment_methods:
+          copy: In order to collect payments, please setup at least one online payment provider.
+          done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
+          setup: Setup Payment Methods
+          title: Please setup Payment Methods for your store
+        set_customer_support_email: Set customer support email
+        setup_taxes_collection: Setup taxes collection
+        taxes:
+          copy: In order to collect taxes, please setup your tax rates.
+          done: You're all set! You can always manage your taxes on the <a href="%{link}" data-turbo-frame="_top">settings</a> page.
+          setup: Setup Tax Rates
+      storefront: Storefront
+      successful: Successful
+      taxon_rules:
+        all_conditions: all conditions
+        any_condition: any condition
+        available_on: Available on
+        match_policies:
+          contains: contains
+          does_not_contain: does not contain
+          is_equal_to: is equal to
+          is_not_equal_to: is not equal to
+        on_sale: On sale
+        products_must_match: 'Products must match:'
+        tag: Product tag
+      taxon_type: Taxon type
+      taxon_types:
+        automatic: Automatic
+        automatic_info: Automatically match products to this taxon based on the conditions you set.
+        manual: Manual
+        manual_info: Curate products manually. You can add or remove them in bulk.
+      url: URL
+      user:
+        available_store_credit: User has %{amount} in Store Credit available.
+        last_order_placed: Last order placed
+        no_store_credit: User has no Store Credit available.
+      users:
+        filters:
+          search_placeholder: Search customers by email or name
       utilities:
         preview: Preview
+      variants:
+        search_results:
+          no_variants: We couldn't find any variants matching your search :(
+      variants_form:
+        add_option:
+          empty: Add options like size or color
+          not_empty: Add another option
+        compare_at_price_description: This price is used to shown marked price on the product page.
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
+      view_all_orders: View all orders
       webhooks_subscribers:
-        webhooks_subscribers: Webhooks Subscribers
-        new_webhooks_subscriber: New Webhooks Subscriber
-        webhooks_events: Webhooks Events
-        subscriptions: Subscriptions
-        time_of_last_event: Time of Last Event
-        all_events: All Events
-        no_events: No Events
-        subscribe_to_all_events: Subscribe to all events
-        select_events: Select events
         addresses: Addresses
+        all_events: All Events
         assets: Assets
         credit_cards: Credit Cards
         customer_returns: Customer Returns
@@ -210,11 +244,13 @@ en:
         digitals: Digitals
         inventory_units: Inventory Units
         line_items: Line Items
+        new_webhooks_subscriber: New Webhooks Subscriber
+        no_events: No Events
         option_types: Option Types
         option_values: Option Values
         orders: Orders
-        payments: Payments
         payment_capture_events: Payment Capture Events
+        payments: Payments
         prices: Prices
         products: Products
         promotions: Promotions
@@ -225,6 +261,9 @@ en:
         return_authorizations: Return Authorizations
         return_items: Return Items
         roles: Roles
+        select_events: Select events
+        shipment_transfer:
+          wrong_destination: Selected location is not a valid destination
         shipments: Shipments
         shipping_categories: Shipping Categories
         shipping_methods: Shipping Methods
@@ -235,140 +274,15 @@ en:
         stock_transfers: Stock Transfers
         store_credits: Store Credits
         stores: Stores
+        subscribe_to_all_events: Subscribe to all events
+        subscriptions: Subscriptions
         tax_rates: Tax Rates
         taxonomies: Taxonomies
         taxons: Taxons
+        time_of_last_event: Time of Last Event
         variants: Variants
+        webhooks_events: Webhooks Events
+        webhooks_subscribers: Webhooks Subscribers
         wished_items: Wished Items
         wishlists: Wishlists
         zones: Zones
-      display_on:
-        both: All
-        front_end: Storefront
-        back_end: Admin Panel
-      product:
-        all: All
-        active: Active
-        archived: Archived
-        deleted: Deleted
-        draft: Draft
-        pre_order: Pre-order
-      getting_started:
-        lets_get_you_started: Let's get you started
-        add_products: Add products
-        setup_shipping: Setup shipping
-        setup_payment_method: Setup payment methods
-        setup_taxes: Setup taxes
-        setup_taxes_calculation: Setup tax calculation
-        products_section:
-          message_with_products_html: You have added <strong> %{count} products</strong> so far - good job!</p>
-          message_without_products: You can add products manually or
-          import_message: import them via the API.
-        shipping_section:
-          message_with_shipping: You have setup shipping for
-          message_without_shipping: You can add multiple shipping methods, different for each country, continent or region.
-        payment_methods_section:
-          message_with_payment_method: You're ready to accept payments!
-          message_without_payment_method: You can setup multiple payment methods such as Stripe, PayPal, ApplePay, etc.
-        taxes_section:
-          message_with_taxes: You're tax calculation is setup!
-          message_without_taxes: You can use tax services such as TaxJar or setup tax calculation manually
-      payment_methods:
-        edit:
-          payment_method_configuration: "Payment Method Configuration"
-      bulk_ops:
-        products:
-          title:
-            set_status: Set as %{status}
-            add_to_taxons: Add to taxons
-            remove_from_taxons: Remove from taxons
-            add_tags: Add tags
-            remove_tags: Remove tags
-            add_to_brand: Add to brand
-            remove_from_brand: Remove from brand
-            set_size_chart: Set Size Chart
-            set_return_rule: Set Return Rule
-          body:
-            set_status:
-              draft: Setting products to draft will hide them from storefront.
-              ready_for_review: We will notify your partners that these products are ready for review. Your partners will be able to review and publish these products.
-              active: Setting products to active will make those products available on the storefront.
-              archived: Setting products to archived will hide them from storefront.
-            remove_from_taxons: 'Select which taxons to remove the products from:'
-            add_to_taxons: 'Select which taxons to add the products to:'
-            add_to_brand: 'Select which brand to add the products to:'
-            add_tags: 'Select tags to add to the products:'
-            remove_tags: 'Select tags to remove from the products:'
-            set_return_rule: Select return rule for products
-      products:
-        active: Active
-        draft: Draft
-        archived: Archived
-        all_statuses: All statuses
-        by_status: By status
-        all_products: All Products
-        paused: Paused
-        in_stock: In Stock
-        out_of_stock: Out of Stock
-        any_stock: Any stock
-        by_stock: By stock
-        selected: products selected
-        help_bubble: Draft & Ready for Review statuses mean that the product isn't available for purchase. Active means that the product is live. Vendors can move product from draft to ready for review, but only marketplace operators can move product from ready for review to active
-        search_results:
-          no_products: We couldn't find any products matching your search :(
-        inventory:
-          sku: SKU (Stock Keeping Unit)
-          barcode: Barcode (ISBN, UPC, GTIN, etc.)
-        properties:
-          link: To manage properties, go to <a href="%{link}">Properties</a>.
-        status_form:
-          status: Draft - initial status. Ready For Review - inform store owner that product can be checked before activation
-          make_active_at: Marks when the product should be automatically promoted to "active" state
-          available_on: Marks when the product will be released, put a future date to indicate that this is a pre-order
-          discontinue_on: Marks when the product should be automatically taken off from your site
-        stores:
-          choose_stores: Choose which stores this product should be available in
-        seo:
-          placeholder: Add a title and description to see how this product might appear in a search engine listing
-        variants:
-          option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
-      variants:
-        currencies_link: To add more currencies, go to <a href="%{link}">Store Settings</a>
-        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
-        search_results:
-          no_variants: We couldn't find any variants matching your search :(
-      page_builder:
-        show_more_button: Show explore category button
-        heading: Heading
-        heading_size: Heading size
-        heading_alignment: Heading alignment
-        description_alignment: Description alignment
-        use_description_from_admin: Use description from admin
-        button_text: Button's text
-        show_taxon_image: Show taxon image
-        category: Category
-        maximum_products_to_show: Maximum products to show
-        button_style: Button style
-        posts_to_show: Posts to show
-        maximum_posts_to_show: Maximum posts to show
-        desktop_image_alignment: Image alignment for desktop
-        vertical_alignment: Vertical alignment
-        overlay_transparency: Overlay transparency
-        title: Title
-        separated: Separated
-        youtube_video_url: Youtube video URL
-        max_video_width_on_desktop: Max video width on desktop
-        border_color: Border color
-        border_top_width: Border top width
-        border_bottom_width: Border bottom width
-        bottom_padding: Bottom padding
-        button_background_color: Button background color
-        button_text_color: Button text color
-        desktop_logo_height: Logo height (desktop)
-        height: Height
-        nav_centered: Nav centered
-        logo_centered: Logo centered
-        left_aligned: Left aligned
-        text_color: Text color
-        top_padding: Top padding
-        button_alignment: Button alignment

@@ -2,8 +2,11 @@ module Spree
   module PageSections
     class FeaturedTaxon < Spree::PageSection
       scope :by_taxon_id, lambda { |taxon_ids|
-        regexp = [*taxon_ids].map { |taxon_id| "taxon_id: #{taxon_id}" }.join('|')
-        where("#{Spree::PageSections::FeaturedTaxon.table_name}.preferences ~ ?", regexp)
+        queries = [*taxon_ids].map do |taxon_id|
+          where("#{Spree::PageSections::FeaturedTaxon.table_name}.preferences LIKE ?", "%taxon_id: '#{taxon_id}'%")
+        end
+
+        queries.reduce(:or)
       }
 
       has_rich_text :description
@@ -56,9 +59,7 @@ module Spree
           }
 
           products_finder = Spree::Dependencies.products_finder.constantize
-          products = products_finder.new(scope: store.products, params: finder_params).execute
-
-          GearedPagination::Recordset.new(products, per_page: preferred_max_products_to_show).page(1).records
+          products_finder.new(scope: store.products, params: finder_params).execute.limit(preferred_max_products_to_show)
         end
       end
 

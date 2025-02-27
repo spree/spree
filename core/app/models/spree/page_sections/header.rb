@@ -3,8 +3,6 @@ module Spree
     class Header < Spree::PageSection
       alias logo asset
 
-      TEXT_COLOR_DEFAULT = '#000000'
-      BACKGROUND_COLOR_DEFAULT = '#FFFFFF'
       TOP_PADDING_DEFAULT = 15
       BOTTOM_PADDING_DEFAULT = 15
       TOP_BORDER_WIDTH_DEFAULT = 0
@@ -38,8 +36,7 @@ module Spree
 
       def default_links
         links = [
-          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::ShopAll')),
-          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::TaxonList'))
+          Spree::PageLink.new(linkable: pages.find_by(type: 'Spree::Pages::ShopAll'))
         ]
 
         collections_taxonomy = store.taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))

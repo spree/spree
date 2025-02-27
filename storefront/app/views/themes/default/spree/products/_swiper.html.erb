@@ -1,0 +1,85 @@
+<% desktop_slides ||= 4 %>
+<% slides_per_view ||= desktop_slides %>
+<% arrows_on_top ||= false %>
+<% pagination ||= 'bottom' %>
+<% layout ||= 'swiper' %>
+<% heading ||= nil %>
+
+<% heading_size = case section.try(:preferred_heading_size)
+  when 'small'
+    'text-base font-medium'
+  when 'medium'
+    'text-lg lg:text-xl font-medium'
+  when 'large'
+    'text-xl lg:text-2xl font-medium'
+  else
+    heading_class || ''
+  end %>
+
+<% heading_alignment = case section.try(:preferred_heading_alignment)
+  when 'left'
+    'text-left'
+  when 'center'
+    'text-center'
+  when 'right'
+    'text-right'
+  else
+    ''
+  end %>
+
+<% if heading.present? %>
+  <h3 class='<%= "#{heading_size} font-medium uppercase #{heading_alignment}" %> pb-8'>
+    <%= heading %>
+  </h3>
+<% end %>
+
+<div class='flex h-full relative'>
+  <div
+    class='swiper-container overflow-hidden flex-1 pr-8 lg:pr-0 -mx-4 lg:mx-0 flex flex-col <%= pagination == 'bottom' ? 'lg:flex-col lg:justify-between lg:h-full' : 'lg:flex-col-reverse' %>'
+    data-controller='carousel'
+    data-carousel-options-value='{
+      "slidesPerView": 2,
+      "centeredSlides": false,
+      "spaceBetween": 16,
+      "grabCursor": true,
+      "breakpoints": {
+        "768": {
+          "slidesPerView": <%= slides_per_view %>,
+          "spaceBetween": 24
+        }
+      },
+      "navigation": {
+        "nextEl": ".swiper-custom-button-next-<%= section.id %>",
+        "prevEl": ".swiper-custom-button-prev-<%= section.id %>"
+      }
+    }'>
+    <div class='swiper-wrapper px-4 lg:px-0 h-auto'>
+      <%= render 'spree/shared/products', products: products %>
+    </div>
+    <div class='-mr-8 lg:mr-0 flex <%= arrows_on_top ? 'hidden' : '' %> <%= pagination == 'bottom' ? 'justify-end lg:mt-6' : 'justify-between lg:mb-8 items-end' %> <%= section.try(:heading_alignment) == 'right' && pagination != 'bottom' ? 'lg:flex-row-reverse' : '' %>'>
+      <div class="mt-8 mx-4 lg:m-0 lg:shrink-0 gap-2 w-full flex <%= arrows_on_top ? 'md:hidden' : '' %> items-center <%= section.try(:layout) == 'swiper' && section.try(:show_more_button) ? 'justify-between' : 'lg:w-auto justify-end' %>">
+        <% if section.try(:preferred_layout) == 'swiper' && section.try(:preferred_show_more_button) %>
+          <%= link_to section.try(:preferred_show_all_button_link), class: "#{section.try(:preferred_button_style) == 'primary' ? 'btn-primary' : 'btn-secondary'} w-full lg:w-72 block text-center", data: { turbo_frame: '_top' } do %>
+            <%= section.button_text %>
+          <% end %>
+        <% end %>
+        <% unless arrows_on_top %>
+          <div class='justify-center items-center gap-4 md:flex hidden'>
+            <%= button_tag class: "swiper-custom-button-prev-#{section.id} disabled:opacity-50" do %>
+              <%= render 'spree/shared/icons/chevron' %>
+            <% end %>
+            <%= button_tag class: "swiper-custom-button-next-#{section.id} disabled:opacity-50" do %>
+              <%= render 'spree/shared/icons/chevron_right' %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-[--top] lg:top-[--desktop-top]", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(-50%, -50%);" do %>
+      <%= render 'spree/shared/icons/chevron' %>
+    <% end %>
+    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-[--top] lg:top-[--desktop-top]", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(50%, -50%);" do %>
+      <%= render 'spree/shared/icons/chevron_right' %>
+    <% end %>
+  </div>
+</div>

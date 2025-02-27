@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <% cache current_store.taxons do %>
+    <% current_store.taxons.each do |taxon| %>
+      <url>
+        <loc><%= spree_storefront_resource_url(taxon) %></loc>
+        <lastmod><%= taxon.updated_at.strftime('%Y-%m-%d') %></lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.5</priority>
+      </url>
+    <% end %>
+  <% end %>
+
+  <% cache [current_store.products, current_currency] do %>
+    <% current_store.products.active(current_currency).find_each do |product| %>
+      <url>
+        <loc><%= spree_storefront_resource_url(product) %></loc>
+        <lastmod><%= product.updated_at.strftime('%Y-%m-%d') %></lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+      </url>
+    <% end %>
+  <% end %>
+</urlset>

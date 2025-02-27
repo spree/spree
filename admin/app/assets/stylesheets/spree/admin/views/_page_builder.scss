@@ -1,0 +1,216 @@
+.page-builder {
+  #main-part {
+    padding-bottom: 0;
+    .embed-responsive {
+      min-height: 100vh;
+    }
+  }
+}
+#page-builder-header {
+  nav {
+    > * {
+      display: flex;
+      align-items: center;
+      height: 42px !important;
+      vertical-align: middle !important;
+      border-radius: 0 !important;
+
+      &.active {
+        background-color: $gray-100 !important;
+      }
+    }
+  }
+
+  .nav-pills {
+    .nav-item {
+      @extend .h-100;
+      @extend .m-0;
+      .nav-link {
+        @extend .text-black;
+        @extend .h-100;
+        @extend .m-0;
+        @extend .border-right;
+
+        &.active, &:hover, &:focus {
+          background-color: $gray-200 !important;
+        }
+
+        &:focus {
+          outline: none !important;
+        }
+      }
+    }
+  }
+
+  .btn:focus {
+    outline: none !important;
+  }
+}
+#page-builder-sidebar {
+  width: 345px;
+  top: 43px;
+  left: 0px;
+}
+
+.sidebar-section-title,
+.sidebar-block-title {
+  &:hover,
+  &:focus {
+    color: theme-color('black') !important;
+    background-color: $gray-100 !important;
+    a {
+      text-decoration: none !important;
+    }
+    .btn-light {
+      visibility: visible;
+    }
+  }
+  .btn-light {
+    visibility: hidden;
+    background: transparent !important;
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: $gray-200 !important;
+    }
+  }
+}
+
+.sidebar-page-block {
+  margin-left: 25px;
+}
+
+.edit-block {
+  .trix-button--icon-heading-1,
+  .trix-button--icon-quote,
+  .trix-button--icon-decrease-nesting-level,
+  .trix-button--icon-increase-nesting-level,
+  .trix-button--icon-strike,
+  .trix-button-group--history-tools {
+    display: none !important;
+  }
+}
+
+.mobileLiveView {
+  #pageLivePreview {
+    width: 100%;
+    height: 100vh;
+    inset: 0 50%;
+    transform: translate(-50%, 0);
+    max-width: 375px;
+    min-width: 375px;
+    overflow: auto;
+  }
+}
+
+main#content {
+  padding-top: 0 !important;
+}
+
+.editor-add-section {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999999;
+  opacity: 0;
+  padding: 0.6rem 1.3rem;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  #pageLivePreview {
+    border: 0px none !important;
+  }
+
+  .page-builder {
+    .sidebar {
+      opacity: 0;
+      pointer-events: none;
+      .right-sidebar,
+      .bottom-bar {
+        width: calc(100vw) !important;
+      }
+    }
+  }
+
+  .mobile_sidebar_open.page-builder .sidebar,
+  .editor-add-section {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile_sidebar_open .editor-add-section {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #main-part {
+    padding-top: 0 !important;
+    .embed-responsive {
+      position: static;
+    }
+    .col {
+      padding: 0;
+    }
+    .embed-responsive-item {
+      min-width: 100%;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  #main-part {
+    margin-left: 339px;
+  }
+
+  .mobileLiveView {
+    #pageLivePreview {
+      width: 392px; // 375px + 17px scrollbar
+      max-width: 429px; // 412px + 17px scrollbar
+      height: calc(100vh - 100px);
+      max-height: 800px;
+    }
+  }
+}
+
+.page-builder .radio-buttons-header input ~ p {
+  font-size: 0.75rem;
+  border-radius: 0.22rem;
+  padding: 0.22rem 0.5rem;
+}
+
+.page-builder .radio-buttons-header {
+  justify-content: space-around;
+}
+
+.page-builder .radio-buttons-header input:checked ~ p {
+  color: theme-color('black') !important;
+  background-color: theme-color('active') !important;
+  border: 1px solid theme-color('primary') !important;
+}
+
+.checkered-background {
+  background-image: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1)
+    ),
+    linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1)
+    );
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}

@@ -63,6 +63,68 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
     end
   end
 
+  describe 'GET #new' do
+    subject { get :new, params: params }
+    let(:params) { { order_id: order.number } }
+
+    context 'when order can transition to payment state' do
+      let(:order) { create(:order_ready_to_ship, state: 'delivery') }
+
+      it 'transitions order to payment state' do
+        expect(order.state).to eq('delivery')
+        subject
+        expect(order.reload.state).to eq('payment')
+      end
+    end
+
+    context 'when specific payment method is requested' do
+      let(:specific_payment_method) { create(:credit_card_payment_method, display_on: 'back_end') }
+      let(:params) { { order_id: order.number, payment_method_id: specific_payment_method.id } }
+
+      before do
+        create(:credit_card_payment_method, display_on: 'back_end')
+      end
+
+      it 'assigns the requested payment method' do
+        subject
+        expect(assigns(:payment).payment_method).to eq(specific_payment_method)
+      end
+    end
+
+    context 'when no specific payment method is requested' do
+      let!(:first_payment_method) { create(:credit_card_payment_method, display_on: 'back_end') }
+
+      before do
+        create(:credit_card_payment_method, display_on: 'back_end')
+      end
+
+      it 'assigns the first available payment method' do
+        subject
+        expect(assigns(:payment).payment_method).to eq(first_payment_method)
+      end
+    end
+
+    context 'when payment method requires source' do
+      let(:payment_method) { create(:credit_card_payment_method, display_on: 'back_end') }
+      let(:params) { { order_id: order.number, payment_method_id: payment_method.id } }
+
+      it 'builds a new source' do
+        subject
+        expect(assigns(:payment).source).to be_a_new(Spree::CreditCard)
+      end
+    end
+
+    context 'when payment method does not require source' do
+      let(:payment_method) { create(:check_payment_method, display_on: 'back_end') }
+      let(:params) { { order_id: order.number, payment_method_id: payment_method.id } }
+
+      it 'does not build a source' do
+        subject
+        expect(assigns(:payment).source).to be_nil
+      end
+    end
+  end
+
   describe 'POST #create' do
     subject { post :create, params: params }
 

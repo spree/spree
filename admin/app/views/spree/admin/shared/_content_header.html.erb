@@ -1,0 +1,73 @@
+<% record = @customer_return || @order || @product || @vendor || @user || @taxon || @category || @parent || @object || @marketplace %>
+<% record = nil if @user&.is_a?(Spree.admin_user_class) %>
+
+<% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
+<% content_for(:page_subtitle) do %>
+  <%= local_time record.updated_at, class: 'badge badge-light with-tip', title: 'Last update' %>
+<% end if show_record_subtitle && !content_for(:page_subtitle) %>
+
+<% if content_for?(:page_title) %>
+  <div class="pt-3 pb-4 d-flex align-items-center">
+    <h3 class="page-header-title mb-0 d-flex align-items-center">
+      <%= yield :page_title %>
+    </h3>
+    <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
+      <% if action_name == 'index' && defined?(model_class) && model_class && Spree::Export.available_models.include?(model_class)  %>
+        <span data-toggle="modal" data-target="#modal">
+          <%= link_to spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: Spree::Export.type_for_model(model_class) }), class: 'btn btn-light bg-transparent', data: { turbo_frame: :dialog_modal } do %>
+            <%= icon 'table-export', class: 'mr-0 mr-lg-2' %>
+            <span class="d-none d-lg-inline"><%= Spree.t(:export) %></span>
+          <% end %>
+        </span>
+      <% end %>
+
+      <%= yield :page_actions if content_for?(:page_actions) %>
+      <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
+        <div class="dropdown ml-2 h-100" id="page_actions_dropdown">
+          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 dropdown-toggle', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
+            <span class="d-none d-lg-inline mr-2">
+              <%= Spree.t(:more_actions) %>
+            </span>
+          <% end %>
+          <div class="dropdown-menu dropdown-menu-right">
+            <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
+            <% if record %>
+              <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) %>
+                <a href="<%= spree.admin_audits_path(q: { auditable_id_eq: record.id, auditable_type_eq: record.class.to_s }) %>" target="_blank" class="dropdown-item">
+                  <%= icon 'history' %>
+                  <%= Spree.t(:audit_log) %>
+                </a>
+              <% end %>
+              <% if record.respond_to?(:number) %>
+                <div data-controller="clipboard">
+                  <%= hidden_field_tag :record_number, record.number, data: { clipboard_target: 'source' } %>
+                  <button data-action="clipboard#copy" class="text-left dropdown-item">
+                    <%= icon 'files' %>
+                    <%= 'Copy number' %>
+                  </button>
+                </div>
+              <% end %>
+              <div data-controller="clipboard">
+                <%= hidden_field_tag :record_id, record.id, data: { clipboard_target: 'source' } %>
+                <button data-action="clipboard#copy" class="text-left dropdown-item">
+                  <%= icon 'files.svg' %>
+                  <%= Spree.t(:copy_id) %>
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<% if content_for?(:page_tabs) %>
+  <ul id="header-tabs" class="nav nav-pills flex-nowrap overflow-auto w-100 mb-3">
+    <%= yield :page_tabs %>
+  </ul>
+<% end %>
+<% if content_for(:page_alerts) %>
+  <div class="page-alerts">
+    <%= yield(:page_alerts) %>
+  </div>
+<% end %>

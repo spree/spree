@@ -1147,9 +1147,7 @@ describe Spree::Product, type: :model do
         csv_line = csv_lines.first
         expect(csv_line).to include(product.name)
         expect(csv_line).to include(product.master.sku)
-        expect(csv_line).to include('my-property')
-        expect(csv_line).to include('MyValue')
-        expect(csv_line).to include(taxon.pretty_name)
+        expect(csv_line.last(5)).to eq([taxon.pretty_name, nil, nil, "my-property", "MyValue"])
       end
     end
 

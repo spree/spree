@@ -1,0 +1,87 @@
+
+
+$select-color-item:					#1da7ee;
+$select-color-item-text:				#fff;
+$select-color-item-active-text:		#fff;
+$select-color-item-border:			#0073bb;
+$select-color-item-active:			#92c836;
+$select-color-item-active-border:	#00578d;
+$select-width-item-border:			1px;
+
+$select-shadow-input:				inset 0 1px 1px rgba(0,0,0,0.1) !default;
+$select-shadow-input-focus:			inset 0 1px 2px rgba(0,0,0,0.15) !default;
+
+
+@import "tom-select";
+@include ts-caret();
+
+.#{$select-ns}-wrapper {
+	display:flex;
+	min-height:$select-line-height + ($select-padding-y*2) + ($select-border-width *2);
+
+	&.multi {
+
+		&.has-items .#{$select-ns}-control {
+			$padding-x: $select-padding-x - 3px;
+			padding-left: $padding-x;
+			padding-right: $padding-x;
+		}
+
+		.#{$select-ns}-control {
+			[data-value] {
+				text-shadow: 0 1px 0 rgba(0,51,83,0.3);
+				border-radius: 3px;
+				@include selectize-vertical-gradient(#1da7ee, #178ee9);
+				box-shadow: 0 1px 0 rgba(0,0,0,0.2),inset 0 1px rgba(255,255,255,0.03);
+				&.active {
+					@include selectize-vertical-gradient(#008fd8, #0075cf);
+				}
+			}
+		}
+
+		&.disabled .#{$select-ns}-control [data-value] {
+			color: #999;
+			text-shadow: none;
+			background: none;
+			box-shadow: none;
+
+			&, .remove {
+				border-color: #e6e6e6;
+			}
+			.remove {
+				background: none;
+			}
+		}
+
+	}
+	&.single {
+		.#{$select-ns}-control {
+			box-shadow: 0 1px 0 rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+			@include selectize-vertical-gradient(#fefefe, #f2f2f2);
+		}
+	}
+}
+
+.#{$select-ns}-wrapper.single .#{$select-ns}-control, .#{$select-ns}-dropdown.single {
+	border-color: #b8b8b8;
+}
+
+.#{$select-ns}-control {
+	.dropdown-active & {
+		border-radius: $select-border-radius $select-border-radius 0 0;
+	}
+}
+
+.#{$select-ns}-dropdown {
+	.optgroup-header {
+		padding-top: $select-padding-dropdown-item-y + 2px;
+		font-weight: bold;
+		font-size: 0.85em;
+	}
+	.optgroup {
+		border-top: 1px solid $select-color-dropdown-border-top;
+		&:first-child {
+			border-top: 0 none;
+		}
+	}
+}

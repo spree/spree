@@ -1,0 +1,175 @@
+/**
+ * tom-select.css (v2.1.0)
+ * Copyright (c) contributors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this
+ * file except in compliance with the License. You may obtain a copy of the License at:
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+ * ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ *
+ */
+
+
+// base styles
+$select-ns:										'ts' !default;
+$select-font-family:							inherit !default;
+$select-font-smoothing:							inherit !default;
+$select-font-size:								13px !default;
+$select-line-height:							18px !default;
+
+$select-color-text:								#303030 !default;
+$select-color-border:							#d0d0d0 !default;
+$select-color-highlight:						rgba(125,168,208,0.2) !default;
+$select-color-input:							#fff !default;
+$select-color-input-full:						$select-color-input !default;
+$select-color-disabled:							#fafafa !default;
+$select-color-item:								#f2f2f2 !default;
+$select-color-item-text:						$select-color-text !default;
+$select-color-item-border:						#d0d0d0 !default;
+$select-color-item-active:						#e8e8e8 !default;
+$select-color-item-active-text:					$select-color-text !default;
+$select-color-item-active-border:				#cacaca !default;
+$select-color-dropdown:							#fff !default;
+$select-color-dropdown-border:					$select-color-border !default;
+$select-color-dropdown-border-top:				#f0f0f0 !default;
+$select-color-dropdown-item-active:				#f5fafd !default;
+$select-color-dropdown-item-active-text: 		#495c68 !default;
+$select-color-dropdown-item-create-text:		rgba(red($select-color-text), green($select-color-text), blue($select-color-text), 0.5) !default;
+$select-color-dropdown-item-create-active-text:	$select-color-dropdown-item-active-text !default;
+$select-color-optgroup:							$select-color-dropdown !default;
+$select-color-optgroup-text:					$select-color-text !default;
+$select-lighten-disabled-item:					30% !default;
+$select-lighten-disabled-item-text:				30% !default;
+$select-lighten-disabled-item-border:			30% !default;
+$select-opacity-disabled:						0.5 !default;
+
+$select-shadow-input:							none !default;
+$select-shadow-input-focus:						none !default;
+$select-border-width:							1px !default;
+$select-border:									$select-border-width solid $select-color-border !default;
+$select-dropdown-border:						1px solid $select-color-dropdown-border !default;
+$select-border-radius:							3px !default;
+
+$select-width-item-border:						0px !default;
+$select-max-height-dropdown:					200px !default;
+
+$select-padding-x:								8px !default;
+$select-padding-y:								8px !default;
+$select-padding-item-x:							6px !default;
+$select-padding-item-y:							2px !default;
+$select-padding-dropdown-item-x:					$select-padding-x !default;
+$select-padding-dropdown-item-y:					5px !default;
+$select-margin-item-x:							3px !default;
+$select-margin-item-y:							3px !default;
+
+$select-arrow-size:								5px !default;
+$select-arrow-color:								#808080 !default;
+$select-arrow-offset:							15px !default;
+
+$select-caret-margin:							0px 4px !default;
+$select-caret-margin-rtl:						0px 4px 0px -2px !default;
+
+$select-spinner-size:							30px !default;
+$select-spinner-border-size:					5px !default;
+$select-spinner-border-color:					$select-color-border !default;
+
+@mixin selectize-vertical-gradient($color-top, $color-bottom) {
+    background-color: mix($color-top, $color-bottom, 60%);
+    background-image: linear-gradient(to bottom, $color-top, $color-bottom);
+    background-repeat: repeat-x;
+}
+
+
+.#{$select-ns}-wrapper.single{
+	.#{$select-ns}-control {
+		&, input {
+			cursor: pointer;
+		}
+	}
+}
+
+
+@mixin ts-caret(){
+
+	.#{$select-ns}-wrapper.single{
+
+		.#{$select-ns}-control {
+			padding-right: 2rem;
+
+			&:after {
+				content: ' ';
+				display: block;
+				position: absolute;
+				top: 50%;
+				right: $select-arrow-offset;
+				margin-top: round(-0.5 * $select-arrow-size);
+				width: 0;
+				height: 0;
+				border-style: solid;
+				border-width: $select-arrow-size $select-arrow-size 0 $select-arrow-size;
+				border-color: $select-arrow-color transparent transparent transparent;
+			}
+		}
+
+		&.dropdown-active .#{$select-ns}-control::after {
+			margin-top: $select-arrow-size * -0.8;
+			border-width: 0 $select-arrow-size $select-arrow-size $select-arrow-size;
+			border-color: transparent transparent $select-arrow-color transparent;
+		}
+
+		&.input-active .#{$select-ns}-control,
+		&.input-active .#{$select-ns}-control input {
+			cursor: text;
+		}
+
+	}
+}
+
+@import "./plugins/drag_drop.scss";
+@import "./plugins/checkbox_options.scss";
+@import "./plugins/clear_button.scss";
+@import "./plugins/dropdown_header.scss";
+@import "./plugins/dropdown_input.scss";
+@import "./plugins/input_autogrow.scss";
+@import "./plugins/optgroup_columns.scss";
+@import "./plugins/remove_button.scss";
+
+
+.#{$select-ns}-wrapper {
+	position: relative;
+}
+
+.#{$select-ns}-dropdown,
+.#{$select-ns}-control,
+.#{$select-ns}-control input {
+	color: $select-color-text;
+	font-family: $select-font-family;
+	font-size: $select-font-size;
+	line-height: $select-line-height;
+	font-smoothing: $select-font-smoothing;
+}
+
+.#{$select-ns}-control,
+.#{$select-ns}-wrapper.single.input-active .#{$select-ns}-control {
+	background: $select-color-input;
+	cursor: text;
+}
+
+@import 'items';
+@import 'dropdown';
+
+.ts-hidden-accessible{
+	border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    //height: 1px !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+}

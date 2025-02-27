@@ -1,0 +1,92 @@
+<% loaded ||= false %>
+<% taxons ||= [] %>
+<% product_limit ||= 20 %>
+<% products ||= [] %>
+<% has_more ||= products.any? && products.count > product_limit %>
+
+<div class="bg-background w-full h-full flex flex-col">
+  <div class="uppercase block py-4 lg:py-6 border-b border-default w-full font-semibold text-sm tracking-widest">
+    <h3 class="page-container"><%= Spree.t(:top_suggestions) %></h3>
+  </div>
+  <div class="flex flex-col md:grid md:grid-cols-4 grid-rows-[1fr_min-content] w-full page-container h-full">
+    <% if loaded %>
+      <div class="flex flex-col justify-between md:!border-r border-default md:h-full md:w-full animate-fadeIn relative border-b md:!border-b-0 w-auto -mx-4">
+        <div class="flex flex-col md:pr-6 mb-4">
+          <h3 class="text-sm uppercase px-4 py-6"><%= Spree.t(:categories) %></h3>
+          <% if taxons.any? %>
+            <% taxons.limit(5).each do |taxon| %>
+              <%= link_to spree.nested_taxons_path(taxon), class: "leading-snug flex justify-between w-full p-4 hover:bg-accent" do %>
+                <%= taxon.name %>
+                <%= render 'spree/shared/icons/chevron_right' %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <% if has_more %>
+          <div class="fixed md:sticky py-6 px-4 bottom-0 left-0 bg-accent w-full z-[60]">
+            <%= link_to spree.search_path(q: query), class: "btn-primary text-center uppercase flex items-baseline justify-center" do %>
+              <span class="whitespace-nowrap"><%= Spree.t(:search_all) %> "</span>
+              <span class="whitespace-nowrap overflow-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
+              <span>"</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="md:pl-[3.75rem] py-6 w-full h-full md:col-span-3 animate-fadeIn">
+        <% if products.present? %>
+          <div>
+            <%= render 'spree/products/swiper',
+              section: theme_layout_sections['header'],
+              products: products.limit(product_limit),
+              desktop_slides: 3,
+              heading: Spree.t(:products),
+              pagination: 'top',
+              heading_class: "text-sm uppercase !leading-4 -mb-4 lg:mb-0 tracking-widest" %>
+          </div>
+        <% else %>
+          <p class="text-center text-sm text-neutral font-bold">
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Product)) %>.
+          </p>
+        <% end %>
+      </div>
+
+      <% if has_more && taxons.none? %>
+        <div class="fixed md:relative md:col-span-2 lg:col-span-1 py-6 px-10 bottom-0 left-0 bg-accent w-full z-[60]">
+          <%= link_to spree.search_path(q: query), class: "btn-primary text-center uppercase flex items-baseline justify-center" do %>
+            <span class="whitespace-nowrap"><%= Spree.t(:search_all) %> "</span>
+            <span class="whitespace-nowrap overflow-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
+            <span>"</span>
+          <% end %>
+        </div>
+      <% end %>
+
+    <% else %>
+      <div class="flex flex-col p-4 md:border-r1 border-default pl-4 gap-2 md:h-full w-full">
+        <% 5.times do %>
+          <div class="block w-full animate-pulse bg-accent h-6"></div>
+        <% end %>
+      </div>
+      <div class='grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 px-4 md:px-[3.75rem] py-6 w-full h-full md:col-span-3 animate-pulse'>
+        <div class='lg:col-span-12 flex justify-between flex-col overflow-hidden'>
+          <div class='grid gap-4 lg:gap-6 grid-cols-8 lg:grid-cols-12'>
+            <div class='col-span-6 lg:col-span-4'>
+              <div class='aspect-1 bg-accent w-full'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded'></div>
+            </div>
+            <div class='col-span-2 lg:col-span-4 flex flex-col h-full overflow-hidden'>
+              <div class='h-full lg:aspect-1 bg-accent w-full'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded shrink-0'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded shrink-0'></div>
+            </div>
+            <div class='hidden col-span-2 lg:col-span-4 lg:flex flex-col h-full overflow-hidden'>
+              <div class='h-full lg:aspect-1 bg-accent w-full'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded shrink-0'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded shrink-0'></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

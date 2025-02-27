@@ -3,7 +3,13 @@ require 'spec_helper'
 describe Spree::Admin::PropertiesController, type: :controller do
   stub_authorization!
 
+  render_views
+
   let(:store) { Spree::Store.default }
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
 
   describe '#index' do
     let!(:property) { create(:property, name: 'Ingredients', presentation: 'Product Ingredients') }

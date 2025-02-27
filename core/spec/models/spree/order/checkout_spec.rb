@@ -235,14 +235,11 @@ describe Spree::Order, type: :model do
 
       context 'cannot transition to delivery' do
         context 'with an existing shipment' do
-          before do
-            line_item = FactoryBot.create(:line_item, price: 10)
-            order.line_items << line_item
-          end
+          let!(:line_item) { create(:line_item, price: 10, order: order) }
 
           context 'if there are no shipping rates for any shipment' do
             it 'raises an InvalidTransitionError' do
-              expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+              expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:products_cannot_be_shipped, product_names: line_item.name)}/)
             end
 
             it 'deletes all the shipments' do

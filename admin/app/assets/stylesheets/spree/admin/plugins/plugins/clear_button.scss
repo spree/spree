@@ -1,0 +1,30 @@
+
+.plugin-clear_button{
+
+	.#{$select-ns}-control{
+		padding-right: calc( 1em + (3 * #{$select-padding-item-x}) ) !important;
+	}
+
+	.clear-button{
+		opacity:		0;
+		position:		absolute;
+		top:			$select-padding-y;
+		right:			calc(#{$select-padding-x} - #{$select-padding-item-x});
+		margin-right:	0 !important;
+		background:		transparent !important;
+		transition:		opacity 0.5s;
+		cursor:			pointer;
+	}
+
+	&.single .clear-button{
+		right:			calc(#{$select-padding-x} - #{$select-padding-item-x} +  2rem);
+	}
+
+	&.focus.has-items .clear-button,
+	&:not(.disabled):hover.has-items .clear-button{
+		opacity:		1;
+	}
+
+
+
+}

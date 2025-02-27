@@ -1,0 +1,40 @@
+<%= search_form_for [:admin, @search], class: "filter-wrap border-bottom", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :search_by_title, label: Spree.t(:title) %>
+
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-reveal-target="item" class="d-none mt-4" id="table-filter">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group">
+          <%= f.label :author_id_eq, Spree.t(:author) %>
+          <%= f.select :author_id_eq,
+                   options_for_select(post_authors_select_options, params.dig(:q, :author_id_eq)),
+                   { include_blank: true },
+                   { class: "custom-select", data: { filters_target: :input } } %>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="form-group">
+          <%= f.label :post_category_id_eq, Spree.t(:category) %>
+          <%= f.select :post_category_id_eq,
+                   options_for_select(Spree::PostCategory.all.pluck(:title, :id), params.dig(:q, :post_category_id_eq)),
+                   { include_blank: true },
+                   { class: "custom-select", data: { filters_target: :input } } %>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <%= turbo_save_button_tag Spree.t(:filter_results) do %>
+        <%= icon("search") %>
+        <%= Spree.t(:filter_results) %>
+      <% end %>
+    </div>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

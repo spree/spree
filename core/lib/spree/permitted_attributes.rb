@@ -42,7 +42,7 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
-      :user_id, :deleted_at, :label,
+      :user_id, :deleted_at, :label, :quick_checkout,
       { country: [:iso, :name, :iso3, :iso_name],
         state: [:name, :abbr] }
     ]
@@ -154,7 +154,7 @@ module Spree
     ]
 
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
-                         :password_confirmation, :selected_locale, :avatar,
+                         :password_confirmation, :selected_locale, :avatar, :accepts_email_marketing, :phone,
                          { public_metadata: {}, private_metadata: {}, tag_list: [] }]
 
     @@variant_attributes = [

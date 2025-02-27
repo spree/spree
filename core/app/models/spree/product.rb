@@ -190,7 +190,6 @@ module Spree
     if defined?(PgSearch)
       scope :multi_search, lambda { |query, include_options = false|
         return none if query.blank?
-        return none if query.length < 3
 
         product_ids = if Spree.use_translations?
                         Spree::Product::Translation.search_by_name(query).pluck(:spree_product_id)
@@ -209,7 +208,6 @@ module Spree
     else
       scope :multi_search, lambda { |query|
         return none if query.blank?
-        return none if query.length < 3
 
         product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
         where(id: product_ids.uniq.compact)
@@ -229,14 +227,24 @@ module Spree
         group(:id).
         having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
     }
-    scope :out_of_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
-    scope :single_variant, lambda {
-      where(variants_count: 0)
+    scope :out_of_stock, lambda {
+                           joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false)
+                         }
+
+    scope :by_best_selling, lambda { |order_direction = :desc|
+      left_joins(:orders).
+        select("#{Spree::Product.table_name}.*, COUNT(#{Spree::Order.table_name}.id) AS completed_orders_count, SUM(#{Spree::Order.table_name}.total) AS completed_orders_total").
+        where(Spree::Order.table_name => { id: nil }).
+        or(where.not(Spree::Order.table_name => { completed_at: nil })).
+        group("#{Spree::Product.table_name}.id").
+        order(completed_orders_count: order_direction, completed_orders_total: order_direction)
     }
 
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_id].blank? || (pp[:id].blank? && pp[:value].blank?) }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp|
+                                                                                         pp[:property_id].blank? || (pp[:id].blank? && pp[:value].blank?)
+                                                                                       }
     accepts_nested_attributes_for(
       :variants,
       allow_destroy: true,
@@ -388,6 +396,12 @@ module Spree
                            elsif variant_images.size > 1
                              variant_images.second
                            end
+    end
+
+    # Returns the short description for the product
+    # @return [String]
+    def storefront_description
+      property('short_description') || description
     end
 
     # Returns tax category for Product
@@ -630,7 +644,9 @@ module Spree
           product_properties.find { |pp| pp.property_id == property.id }&.value
         ]
       end
-      taxons_for_csv ||= taxons.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv.fill(nil, taxons_for_csv.size...3)
+
       csv_lines = []
 
       if has_variants?

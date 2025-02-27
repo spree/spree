@@ -20,6 +20,10 @@ module Spree
 
       validate :address_not_associated_with_other_user, :address_not_deprecated_in_completed_order
 
+      def address
+        @address ||= bill_address || ship_address || addresses.first
+      end
+
       def persist_order_address(order)
         # FIXME: we should check if the User's address is associated with country accepted by Store
         # if not we should try to find an address with valid country in User's address book

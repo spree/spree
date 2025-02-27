@@ -93,13 +93,44 @@ Spree::Core::Engine.add_routes do
     end
 
     # customers
-    resources :users
+    resources :users do
+      resources :store_credits
+      resources :orders, only: [:index]
+      resources :checkouts, only: [:index]
+
+      collection do
+        get :bulk_modal
+        post :bulk_add_tags
+        post :bulk_remove_tags
+      end
+    end
+
+    resources :addresses, except: [:index, :show]
+
+    # promotions
+    resources :promotions do
+      resources :promotion_rules
+      resources :promotion_actions
+      member do
+        post :clone
+      end
+      resources :coupon_codes
+    end
+    get 'promotion_rules/option_values_search', defaults: { format: :json }
+
+    # returns
+    get '/return_authorizations', to: 'return_index#return_authorizations', as: :return_authorizations
+    get '/customer_returns', to: 'return_index#customer_returns', as: :customer_returns
+    resources :return_items, only: [:update]
 
     # translations
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'
 
     # audit log
-    resources :exports, only: %i[new create show index]
+    resources :exports, only: [:index, :new, :create, :show]
+
+    # reporting
+    resources :reports, only: [:index, :new, :create, :show]
 
     # profile settings
     resource :profile, controller: 'profile', only: %i[edit update]
@@ -180,6 +211,11 @@ Spree::Core::Engine.add_routes do
     # account management
     resources :roles, except: :show
 
+    # Action Text
+    namespace :action_text do
+      resources :video_embeds, only: [:create, :destroy]
+    end
+
     # developer tools
     resources :oauth_applications
     resources :webhooks_subscribers
@@ -189,7 +225,11 @@ Spree::Core::Engine.add_routes do
 
     # dashboard
     resource :dashboard, controller: 'dashboard'
+    get '/dashboard/analytics', to: 'dashboard#analytics', as: :dashboard_analytics
+    get '/getting-started', to: 'dashboard#getting_started', as: :getting_started
 
     root to: 'dashboard#show'
   end
+
+  get Spree.admin_path, to: 'admin/dashboard#show', as: :admin
 end

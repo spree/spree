@@ -71,7 +71,7 @@ module Spree
       end
 
       def find_existing_address(attributes)
-        address_attributes = attributes.except(:firstname, :state_name)
+        address_attributes = attributes.except(:state_name)
         state_name = attributes[:state_name]
 
         scope = Spree::Address.not_deleted.where(address_attributes)

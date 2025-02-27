@@ -39,7 +39,7 @@ Trix.config.toolbar.getDefaultHTML = function() {
     <div class="trix-dialogs" data-trix-dialogs>
       <div class="trix-dialog trix-dialog--link" data-trix-dialog="href" data-trix-dialog-attribute="href">
         <div class="trix-dialog__link-fields">
-          <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" required data-trix-input>
+          <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" data-trix-input>
           <div class="trix-button-group">
             <input type="button" class="trix-button trix-button--dialog" value="${lang.link}" data-trix-method="setAttribute">
             <input type="button" class="trix-button trix-button--dialog" value="${lang.unlink}" data-trix-method="removeAttribute">
@@ -49,7 +49,7 @@ Trix.config.toolbar.getDefaultHTML = function() {
 
       <div class="trix-dialog trix-dialog--x-video-embed" data-trix-dialog="href" data-trix-dialog-attribute="href">
         <div class="trix-dialog__link-fields">
-          <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" required data-trix-input>
+          <input type="url" name="href" class="trix-input trix-input--dialog" placeholder="${lang.urlPlaceholder}" aria-label="${lang.url}" data-trix-input>
           <div class="trix-button-group">
             <input type="button" class="trix-button trix-button--dialog" value="${lang.embed}">
           </div>
@@ -75,12 +75,9 @@ document.addEventListener("trix-action-invoke", function(event) {
       activateTrixElement(dialog)
 
       input.disabled = false
-      input.required = true
-
       input.focus()
     } else {
       input.disabled = true
-      input.required = false
 
       deactivateTrixElement(dialog)
       deactivateTrixElement(invokingElement)
@@ -96,9 +93,7 @@ document.addEventListener("trix-attachment-remove", async function(event) {
   destroy(`/admin/action_text/video_embeds/${sgid}`, { responseKind: 'json' })
 })
 
-document.addEventListener("trix-initialize", function(event) {
-  const editor = event.target
-
+function initializeTrixEditor(editor) {
   // Deactivate video embed button after clicking on the editor window
   editor.addEventListener("click", function(_event) {
     const toolbar = editor.previousElementSibling
@@ -146,7 +141,6 @@ document.addEventListener("trix-initialize", function(event) {
         deactivateTrixElement(videoEmbedButton)
 
         input.value = ''
-        input.required = false
         embedButton.disabled = false
       } else {
         const { error } = await response.json
@@ -162,7 +156,7 @@ document.addEventListener("trix-initialize", function(event) {
       }
     })
   }
-})
+}
 
 function activateTrixElement(element) {
   element.classList.add("trix-active")
@@ -173,3 +167,16 @@ function deactivateTrixElement(element) {
   element.classList.remove("trix-active")
   element.removeAttribute("data-trix-active")
 }
+
+// On page reload, trix-initialize event is not fired, so we need to initialize the toolbar and editor here
+const toolbars = document.querySelectorAll('trix-toolbar')
+toolbars.forEach(toolbar => toolbar.innerHTML = Trix.config.toolbar.getDefaultHTML())
+
+const trixEditors = document.querySelectorAll('trix-editor')
+trixEditors.forEach(editor => initializeTrixEditor(editor))
+
+// This will be used to initialize the editor after the page is loaded and the editor is added later, eg. in the page builder
+document.addEventListener("trix-initialize", function(event) {
+  const editor = event.target
+  initializeTrixEditor(editor)
+})

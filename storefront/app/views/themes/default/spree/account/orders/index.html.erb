@@ -1,0 +1,24 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'orders' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5">
+    <div class="flex gap-4">
+      <div class="uppercase font-medium font-base pb-4 border-b border-text">
+        <%= Spree.t(:orders) %>
+      </div>
+    </div>
+    <% if @orders.any? %>
+      <%= render 'spree/account/orders', orders: @orders %>
+      <!-- add pagination -->
+    <% else %>
+      <div class="text-center my-16 lg:my14">
+        <p class="mb-2 font-medium uppercase"><%= Spree.t('storefront.account.no_orders_title') %></p>
+        <p><%= Spree.t('storefront.account.no_orders_description') %></p>
+        <div class="flex justify-center mt-8">
+          <%= link_to Spree.t(:shop_all), spree.root_url, class: 'btn-primary flex' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
