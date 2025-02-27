@@ -23,11 +23,25 @@ Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **
 1. Clone your fork repository
 
     ```bash
-     git clone git://github.com/your_github_username/spree.git
-     cd spree
+    git clone git://github.com/your_github_username/spree.git && cd spree
     ```
 
 2. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/)
+
+    On MacOS, we recommend using [rbenv](https://github.com/rbenv/rbenv) to install Ruby.
+
+    Firstly, install rbenv itself:
+
+    ```bash
+    curl -fsSL https://rbenv.org/install.sh | bash
+    ```
+
+    Then, install Ruby:
+
+    ```bash
+    rbenv init && rbenv install && rbenv global 3.3.0
+    ```
+
 3. Install required libraries
 
     You will need SQLite (or PostgreSQL or MySQL) and libvips installed on your system. You can install them using the following commands:
@@ -47,7 +61,7 @@ Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **
 4. Install the gem dependencies
 
     ```bash
-     bundle install
+    bundle install
     ```
 
 ## Creating Sandbox application
@@ -62,6 +76,27 @@ By default, Sandbox uses the **SQLite** database. But you can switch to **Postgr
 
 ```bash
 DB=postgres bin/sandbox.sh
+```
+
+We recommend sticking to SQLite for development purposes as it doesn't require any additional setup.
+
+## Running the application
+
+You can run the application using the following command:
+
+```bash
+cd sandbox && bin/dev
+```
+
+This will start the web server, you can access the application at [http://localhost:3000](http://localhost:3000).
+
+To access the Admin Panel, you can go to [http://localhost:3000/admin](http://localhost:3000/admin).
+
+The default credentials for the Admin Panel are:
+
+```
+Email: admin@example.com
+Password: password
 ```
 
 ### Performance in development mode
@@ -121,7 +156,7 @@ bundle exec rspec spec/models/spree/state_spec.rb:7
 
 If a large number of tests fail when you run rspec for the first time, confirm that you have Redis installed and running. You can use the command `brew services info redis` to check if Redis is running. If it is not running, start Redis with `brew services start redis`.
 
-### Running integration tests on MacOS (only applicable for Admin Panel)
+### Running integration tests on MacOS (only applicable for Admin Panel/Storefront)
 
 We use chromedriver to run integration tests. To install it please use this command:
 
