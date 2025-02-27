@@ -155,6 +155,7 @@
       "group": "Contributing",
       "pages": [
         "developer/contributing/quickstart",
+        "developer/contributing/developing-spree",
         "developer/contributing/creating-an-extension"
       ]
     },
@@ -835,7 +836,6 @@
     {
       "group": "Products",
       "pages": [
-          "Product Editor",
                       {
                           "group": "Create & Edit Products",
                           "pages": [
@@ -846,7 +846,6 @@
                                  "user/products/cloning-products"                    
                           ]
                       }, 
-          "Product Management",
                       {
                           "group": "Manage Products",
                           "pages": [
@@ -867,7 +866,6 @@
     {
       "group": "Storefront",
       "pages": [
-          "Themes",
                       {
                           "group": "Storefront Themes",
                           "pages": [
@@ -876,7 +874,6 @@
                                  "user/storefront/delete-theme"            
                           ]
                       }, 
-          "Pages",
                       {
                           "group": "Storefront Pages",
                           "pages": [
@@ -885,8 +882,6 @@
                                  "user/storefront/delete-page"
                           ]
                       }, 
-                        
-          "Posts",
                       {
                           "group": "Storefront Posts",
                           "pages": [
