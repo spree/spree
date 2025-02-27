@@ -1407,7 +1407,7 @@ en:
         heading_default: Welcome to my online store!
         text_default: Hi, I'm %{store_name}. I enjoy life and love to share our experiences and energy with you and the world! And here we can share some of our favorite things as well.
       newsletter:
-        heading_default: Subscribe for more feel good content
+        heading_default: Subscribe to our newsletter
         text_default: Thank you for choosing us as your trusted online shopping destination.
       page_title:
         display_name: Page Title
@@ -1427,8 +1427,8 @@ en:
       homepage:
         featured_taxon_heading_new_arrivals: New arrivals
         featured_taxon_heading_on_sale: On sale
-        image_with_text_heading: About me
-        image_with_text_text: I'm always looking for new and exciting projects to work on. Let's make something great together!
+        image_with_text_heading: About us
+        image_with_text_text: Welcome to our shop! We carefully curate high-quality products that we believe in. Our process involves rigorous testing and selection to ensure we only offer items that meet our standards. We're passionate about delivering exceptional value and service to our customers.
       password:
         newsletter_heading: Opening soon
         newsletter_text: Be the first one to know when we launch.
