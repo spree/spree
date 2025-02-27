@@ -20,7 +20,7 @@ module Spree
 
           return unless Rails.root # skip if not in a Rails app, eg. dummy app for testing
 
-          if Rails.root.join("Procfile.dev").exist?
+          if Rails.root && Rails.root.join("Procfile.dev").exist?
             append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')
           else
             create_file 'Procfile.dev', "storefront_css: bin/rails tailwindcss:watch\n"
@@ -30,9 +30,9 @@ module Spree
           copy_file "dev", "bin/dev", force: true
           chmod "bin/dev", 0755, verbose: false
 
-          empty_directory Rails.root.join('app/assets/builds')
+          empty_directory Rails.root.join('app/assets/builds') if Rails.root
 
-          unless Rails.root.join('app/assets/config/manifest.js').exist?
+          unless File.exist?('app/assets/config/manifest.js')
             create_file 'app/assets/config/manifest.js', "//= link_tree ../builds\n"
 
             say "Ensure foreman is installed"
