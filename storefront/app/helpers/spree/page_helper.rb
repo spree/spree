@@ -26,7 +26,7 @@ module Spree
               editor_link: spree.edit_admin_page_section_path(section)
             }
           ) do
-            render(section, **variables)
+            render('/' + section.to_partial_path, **variables)
           end
         end
       elsif section.lazy? && lazy_allowed
@@ -36,10 +36,10 @@ module Spree
         path = section.lazy_path(variables)
 
         turbo_frame_tag("section-#{section.id}", src: path, loading: 'eager') do
-          render(section, **variables)
+          render('/' + section.to_partial_path, **variables)
         end
       else
-        render(section, **variables)
+        render('/' + section.to_partial_path, **variables)
       end
     rescue ActionView::MissingTemplate, ActionView::Template::Error => e
       raise e unless Rails.env.production?
