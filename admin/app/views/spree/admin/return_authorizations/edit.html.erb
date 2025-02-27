@@ -1,7 +1,3 @@
-<% content_for :page_actions do %>
-
-<% end %>
-
 <% content_for :page_title do %>
   <% if controller_name == 'orders' %>
     <%= page_header_back_button spree.admin_orders_path, @order %>
@@ -16,9 +12,9 @@
     <%= @return_authorization.number %>
   </span>
 
-  <small class="badge badge-pill badge-<%= @return_authorization.state %>">
+  <span class="badge badge-pill badge-<%= @return_authorization.state %>">
     <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
-  </small>
+  </span>
 <% end %>
 
 <%= render partial: "spree/admin/shared/error_messages",

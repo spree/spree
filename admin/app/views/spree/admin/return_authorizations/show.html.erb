@@ -30,7 +30,6 @@ locals: {
         <th><%= Spree.t(:purchased_quantity) %></th>
         <th><%= Spree.t(:return_quantity) %></th>
         <th><%= Spree.t(:total) %></th>
-        <th><%= Spree.t(:platform_fee_total) %></th>
         <th><%= Spree.t(:refund_amount) %></th>
         <th><%= Spree.t(:reason) %></th>
         <th><%= Spree.t(:reimbursement_type) %></th>
@@ -52,8 +51,7 @@ locals: {
             <%= return_item.line_item.quantity %>
           </td>
           <td><%= return_item.return_quantity %></td>
-          <td><%= return_item.display_marketplace_total %></td>
-          <td>-<%= return_item.display_marketplace_commission_total %></td>
+          <td><%= return_item.pre_tax_amount %></td>
           <td><%= return_item.display_total %></td>
           <td><%= return_item.return_reason.present? ? return_item.return_reason.name : "-" %></td>
           <td><%= if return_item.preferred_reimbursement_type.present?
