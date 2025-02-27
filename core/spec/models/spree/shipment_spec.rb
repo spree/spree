@@ -890,4 +890,18 @@ describe Spree::Shipment, type: :model do
       expect(state_change.next_state).to eq('ready')
     end
   end
+
+  describe '.ready_or_pending' do
+    subject { described_class.ready_or_pending }
+
+    let!(:ready_shipments) { create_list(:shipment, 2, state: 'ready') }
+    let!(:pending_shipments) { create_list(:shipment, 2, state: 'pending') }
+    let!(:shipped_shipments) { create_list(:shipment, 2, state: 'shipped') }
+
+    it 'returns shipments with state ready or pending' do
+      expect(subject.pluck(:state).uniq).to contain_exactly('ready', 'pending')
+      expect(subject).to include(*ready_shipments, *pending_shipments)
+      expect(subject).not_to include(*shipped_shipments)
+    end
+  end
 end
