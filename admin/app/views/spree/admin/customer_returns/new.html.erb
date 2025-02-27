@@ -1,4 +1,15 @@
-<%= render "spree/admin/orders/header" %>
+<% content_for :page_title do %>
+  <% if controller_name == 'orders' %>
+    <%= page_header_back_button spree.admin_orders_path, @order %>
+  <% else %>
+    <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <% end %>
+  <%= @order.number %>
+  /
+  <%= Spree.t(:customer_returns) %>
+  /
+  <%= Spree.t(:new) %>
+<% end %>
 
 <% if @rma_return_items.any? %>
 
@@ -8,27 +19,31 @@
   } %>
 
   <%= form_for [:admin, @order, @customer_return] do |f| %>
-    <fieldset class="no-border-top" data-controller="return-items">
-      <div>
-        <fieldset>
-          <legend><%= Spree.t(:items_in_rmas) %></legend>
-          <% if @rma_return_items.any? %>
-            <%= render partial: "return_item_selection",
-            locals: {
-              f: f,
-              return_items: @rma_return_items,
-            } %>
-          <% else %>
-            <div
-              class="
-                text-muted p-5 d-flex align-items-center w-100 justify-content-center
-              "
-            >
-              <%= Spree.t(:none) %>
-            </div>
-          <% end %>
-        </fieldset>
+    <div class="card mb-4" data-controller="return-items">
+      <div class="card-header">
+        <h6 class="card-title"><%= Spree.t(:items_in_rmas) %></h6>
+      </div>
+      <div class="card-body p-0">
+        <% if @rma_return_items.any? %>
+          <%= render partial: "return_item_selection",
+          locals: {
+            f: f,
+            return_items: @rma_return_items,
+          } %>
+        <% else %>
+          <div
+            class="
+              text-muted p-5 d-flex align-items-center w-100 justify-content-center
+            "
+          >
+            <%= Spree.t(:none) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
 
+    <div class="card mb-4">
+      <div class="card-body">
         <div class="form-group">
           <%= f.label :stock_location, raw(Spree.t(:stock_location) + required_span_tag) %>
           <%= f.select :stock_location_id,
@@ -38,30 +53,29 @@
           <%= f.error_message_on :stock_location %>
         </div>
       </div>
+    </div>
 
-      <div class="form-actions">
-        <%= button Spree.t(:create) %>
-        <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t("actions.cancel"),
-        spree.admin_order_customer_returns_path(@order),
-        icon: "cancel" %>
-      </div>
-    </fieldset>
+    <div class="form-actions">
+      <%= button Spree.t(:create) %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t("actions.cancel"),
+      spree.admin_order_customer_returns_path(@order),
+      icon: "cancel" %>
+    </div>
   <% end %>
 
 <% else %>
-
-  <div
-    class="
-      text-muted p-5 d-flex align-items-center w-100 justify-content-center
-    "
-  >
-    <%= Spree.t(:all_items_have_been_returned) %>,
-    <%= link_to Spree.t(
-      :back_to_resource_list,
-      resource: Spree::CustomerReturn.model_name.human,
-    ),
-    spree.admin_order_customer_returns_path(@order) %>.
+  <div class="card">
+    <div
+      class="
+        card-body text-muted d-flex align-items-center justify-content-center
+        flex-column gap-2
+      "
+    >
+      <%= Spree.t(:all_items_have_been_returned) %>,
+      <%= link_to "#{Spree.t(:get_back_to_the)} #{Spree.t(:order)}",
+      spree.edit_admin_order_path(@order) %>.
+    </div>
   </div>
 
 <% end %>

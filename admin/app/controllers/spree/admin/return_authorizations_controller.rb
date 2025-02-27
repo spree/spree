@@ -4,6 +4,7 @@ module Spree
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_form_data, only: [:new, :edit]
+      before_action :load_refunds, only: :show
       create.fails  :load_form_data
       update.fails  :load_form_data
 
@@ -46,7 +47,16 @@ module Spree
       def load_return_authorization_reasons
         @reasons = Spree::ReturnAuthorizationReason.active.to_a
         # Only allow an inactive reason if it's already associated to the RMA
-        @reasons << @return_authorization.reason if @return_authorization.reason && !@return_authorization.reason.active?
+        if @return_authorization.reason && !@return_authorization.reason.active?
+          @reasons << @return_authorization.reason
+        end
+      end
+
+      def load_refunds
+        reimbursements = @return_authorization.reimbursements
+        refunds = @return_authorization.refunds
+
+        @refunds = refunds.any? ? refunds : reimbursements.flat_map(&:simulate)
       end
     end
   end

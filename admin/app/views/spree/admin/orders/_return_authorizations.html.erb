@@ -13,7 +13,6 @@
               <th><%= Spree.t(:status) %></th>
               <th><%= Spree.t(:pre_tax_total) %></th>
               <th><%= "#{Spree.t("date")}/#{Spree.t("time")}" %></th>
-              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -23,7 +22,19 @@
                 data-controller="row-link"
                 class="cursor-pointer"
               >
-                <td data-action="click->row-link#openLink" class="font-weight-bolder"><%= return_authorization.number %></td>
+                <td data-action="click->row-link#openLink" class="font-weight-bolder">
+                  <%= link_to return_authorization.number,
+                  (
+                    if can?(:edit, return_authorization) && false
+                      edit_admin_order_return_authorization_path(@order, return_authorization)
+                    else
+                      admin_order_return_authorization_path(@order, return_authorization)
+                    end
+                  ),
+                  data: {
+                    row_link_target: "link",
+                  } %>
+                </td>
                 <td data-action="click->row-link#openLink">
                   <small class="badge badge-pill badge-<%= return_authorization.state %>">
                     <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
@@ -31,32 +42,6 @@
                 </td>
                 <td data-action="click->row-link#openLink"><%= return_authorization.display_pre_tax_total.to_html %></td>
                 <td data-action="click->row-link#openLink"><%= pretty_time(return_authorization.created_at) %></td>
-                <td class="actions">
-                  <span class="d-flex justify-content-end">
-                    <% if can?(:edit, return_authorization) %>
-                      <%= link_to_edit(
-                        return_authorization,
-                        no_text: true,
-                        class: "btn btn-light btn-sm",
-                        url: edit_admin_order_return_authorization_path(@order, return_authorization),
-                        data: {
-                          row_link_target: "link",
-                        },
-                      ) %>
-                    <% else %>
-                      <%= link_to_edit(
-                        return_authorization,
-                        no_text: true,
-                        class: "btn btn-light btn-sm",
-                        url: admin_order_return_authorization_path(@order, return_authorization),
-                        data: {
-                          row_link_target: "link",
-                        },
-                      ) %>
-                    <% end %>
-
-                  </span>
-                </td>
               </tr>
             <% end %>
           </tbody>
