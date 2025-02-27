@@ -18,7 +18,9 @@ module Spree
           template 'application.tailwind.css', 'app/assets/stylesheets/application.tailwind.css'
           template 'tailwind.config.js', 'config/tailwind.config.js'
 
-          if Rails.root && Rails.root.join("Procfile.dev").exist?
+          return unless Rails.root # skip if not in a Rails app, eg. dummy app for testing
+
+          if Rails.root.join("Procfile.dev").exist?
             append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')
           else
             create_file 'Procfile.dev', "storefront_css: bin/rails tailwindcss:watch\n"
