@@ -85,7 +85,7 @@ Rails.application.config.action_mailer.perform_deliveries = true
 RUBY
 
 # add web to Procfile.dev
-echo "web: bin/rails s -p 3000" >> Procfile.dev
+echo "\nweb: bin/rails s -p 3000" >> Procfile.dev
 
 # add root to config/routes.rb
 sed -i '' -e '$i\
