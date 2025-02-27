@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.files        = Dir['{app,config,lib}/**/*', 'LICENSE.md', 'Rakefile'].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  s.add_dependency 'spree_api', ">= #{s.version}"
   s.add_dependency 'spree_core', ">= #{s.version}"
 
   s.add_dependency 'active_link_to'
