@@ -76,7 +76,7 @@ bin/rails g devise:install
 bin/rails g devise Spree::User
 
 # setup spree
-bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true
+bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true --sample=true
 
 # setup letter_opener
 cat <<RUBY >> config/environments/development.rb

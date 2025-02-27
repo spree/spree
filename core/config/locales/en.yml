@@ -1404,8 +1404,8 @@ en:
         heading_default: Welcome to your website
         text_default: This is the place to tell people about your business and what you do.
       image_with_text:
-        heading_default: Welcome to my online store!
-        text_default: Hi, I'm %{store_name}. I enjoy life and love to share our experiences and energy with you and the world! And here we can share some of our favorite things as well.
+        heading_default: Welcome to our shop!
+        text_default: At %{store_name} we offer a wide range of products for your home and business.
       newsletter:
         heading_default: Subscribe to our newsletter
         text_default: Thank you for choosing us as your trusted online shopping destination.
