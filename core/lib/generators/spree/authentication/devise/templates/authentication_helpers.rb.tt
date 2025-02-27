@@ -9,40 +9,40 @@ module Spree
         :spree_forgot_password_path,
         :spree_edit_password_path,
         :spree_admin_login_path,
-        :spree_admin_logout_path,
+        :spree_admin_logout_path
       )
     end
 
     def spree_current_user
-      current_user
+      send("current_#{Spree.user_class.model_name.singular_route_key}")
     end
 
     def spree_login_path(opts = {})
-      main_app.login_path(opts)
+      new_session_path(Spree.user_class.model_name.singular_route_key, opts)
     end
 
     def spree_signup_path(opts = {})
-      main_app.signup_path(opts)
+      new_registration_path(Spree.user_class.model_name.singular_route_key, opts)
     end
 
     def spree_logout_path(opts = {})
-      main_app.logout_path(opts)
+      destroy_session_path(Spree.user_class.model_name.singular_route_key, opts)
     end
 
     def spree_forgot_password_path(opts = {})
-      main_app.forgot_password_path(opts)
+      new_password_path(Spree.user_class.model_name.singular_route_key, opts)
     end
 
     def spree_edit_password_path(opts = {})
-      main_app.edit_password_path(opts)
+      edit_registration_path(Spree.user_class.model_name.singular_route_key, opts)
     end
 
     def spree_admin_login_path(opts = {})
-      main_app.admin_login_path(opts)
+      spree_login_path(opts)
     end
 
     def spree_admin_logout_path(opts = {})
-      main_app.admin_logout_path(opts)
+      spree_logout_path(opts)
     end
   end
 end

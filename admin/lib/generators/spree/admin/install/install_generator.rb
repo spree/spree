@@ -1,10 +1,10 @@
 require 'rails/generators'
 
 module Spree
-  module Storefront
+  module Admin
     module Generators
       class InstallGenerator < Rails::Generators::Base
-        desc 'Installs Spree Storefront'
+        desc 'Installs Spree Admin Dashboard'
 
         def self.source_paths
           [
@@ -15,13 +15,10 @@ module Spree
         end
 
         def install
-          template 'application.tailwind.css', 'app/assets/stylesheets/application.tailwind.css'
-          template 'tailwind.config.js', 'config/tailwind.config.js'
-
           if Rails.root && Rails.root.join("Procfile.dev").exist?
-            append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')
+            append_to_file 'Procfile.dev', "\nadmin_css: bin/rails dartsass:watch" unless File.read('Procfile.dev').include?('admin_css:')
           else
-            create_file 'Procfile.dev', "storefront_css: bin/rails tailwindcss:watch\n"
+            create_file 'Procfile.dev', "admin_css: bin/rails dartsass:watch\n"
           end
 
           say "Add bin/dev to start foreman"
