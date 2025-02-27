@@ -29,6 +29,8 @@ module SpreeSample
         Spree::Sample.load_sample('payments')
         Spree::Sample.load_sample('reimbursements')
         Spree::Sample.load_sample('return_authorization_reasons')
+
+        Spree::Sample.load_sample('posts')
       end
     end
   end
