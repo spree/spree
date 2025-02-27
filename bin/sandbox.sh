@@ -47,6 +47,7 @@ group :test, :development do
   gem 'bullet'
   gem 'pry-byebug'
   gem 'awesome_print'
+  gem 'letter_opener'
 end
 RUBY
 
@@ -76,3 +77,17 @@ bin/rails g devise Spree::User
 
 # setup spree
 bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true
+
+# setup letter_opener
+cat <<RUBY >> config/environments/development.rb
+Rails.application.config.action_mailer.delivery_method = :letter_opener
+Rails.application.config.action_mailer.perform_deliveries = true
+RUBY
+
+# add web to Procfile.dev
+echo "web: bin/rails s -p 3000" >> Procfile.dev
+
+# add root to config/routes.rb
+sed -i '' -e '$i\
+  root "spree/home#index"\
+' config/routes.rb
