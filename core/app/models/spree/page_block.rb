@@ -12,7 +12,7 @@ module Spree
     # Associations
     #
     belongs_to :section, class_name: 'Spree::PageSection', inverse_of: :blocks, touch: true
-    delegate :theme, to: :section
+    delegate :store, :theme, to: :section
 
     #
     # Rich Text
