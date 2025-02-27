@@ -1,0 +1,67 @@
+<%= render "spree/admin/orders/header" %>
+
+<% if @rma_return_items.any? %>
+
+  <%= render partial: "spree/admin/shared/error_messages",
+  locals: {
+    target: @customer_return,
+  } %>
+
+  <%= form_for [:admin, @order, @customer_return] do |f| %>
+    <fieldset class="no-border-top" data-controller="return-items">
+      <div>
+        <fieldset>
+          <legend><%= Spree.t(:items_in_rmas) %></legend>
+          <% if @rma_return_items.any? %>
+            <%= render partial: "return_item_selection",
+            locals: {
+              f: f,
+              return_items: @rma_return_items,
+            } %>
+          <% else %>
+            <div
+              class="
+                text-muted p-5 d-flex align-items-center w-100 justify-content-center
+              "
+            >
+              <%= Spree.t(:none) %>
+            </div>
+          <% end %>
+        </fieldset>
+
+        <div class="form-group">
+          <%= f.label :stock_location, raw(Spree.t(:stock_location) + required_span_tag) %>
+          <%= f.select :stock_location_id,
+                   available_stock_locations_list,
+                   { include_blank: Spree.t(:select_a_stock_location) },
+                   class: "custom-select" %>
+          <%= f.error_message_on :stock_location %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= button Spree.t(:create) %>
+        <span class="or"><%= Spree.t(:or) %></span>
+        <%= button_link_to Spree.t("actions.cancel"),
+        spree.admin_order_customer_returns_path(@order),
+        icon: "cancel" %>
+      </div>
+    </fieldset>
+  <% end %>
+
+<% else %>
+
+  <div
+    class="
+      text-muted p-5 d-flex align-items-center w-100 justify-content-center
+    "
+  >
+    <%= Spree.t(:all_items_have_been_returned) %>,
+    <%= link_to Spree.t(
+      :back_to_resource_list,
+      resource: Spree::CustomerReturn.model_name.human,
+    ),
+    spree.admin_order_customer_returns_path(@order) %>.
+  </div>
+
+<% end %>

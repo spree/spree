@@ -62,6 +62,7 @@ import PageBuilderController from 'spree/admin/controllers/page_builder_controll
 import PasswordToggle from 'spree/admin/controllers/password_toggle_controller'
 import ProductFormController from 'spree/admin/controllers/product_form_controller'
 import RangeInputController from 'spree/admin/controllers/range_input_controller'
+import ReturnItemsController from 'spree/admin/controllers/return_items_controller'
 import ReplaceController from 'spree/admin/controllers/replace_controller'
 import RowLinkController from 'spree/admin/controllers/row_link_controller'
 import RuleFormController from 'spree/admin/controllers/rule_form_controller'
@@ -110,6 +111,7 @@ application.register('password-visibility', PasswordVisibility)
 application.register('product-form', ProductFormController)
 application.register('range-input', RangeInputController)
 application.register('replace', ReplaceController)
+application.register('return-items', ReturnItemsController)
 application.register('reveal', Reveal)
 application.register('row-link', RowLinkController)
 application.register('rule-form', RuleFormController)

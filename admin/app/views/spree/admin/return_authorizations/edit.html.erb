@@ -1,0 +1,56 @@
+<% content_for :page_actions do %>
+
+<% end %>
+
+<% content_for :page_title do %>
+  <% if controller_name == 'orders' %>
+    <%= page_header_back_button spree.admin_orders_path, @order %>
+  <% else %>
+    <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <% end %>
+  <%= @order.number %>
+  /
+  <%= Spree.t(:return_authorizations) %>
+  /
+  <span class="ml-2 mr-3">
+    <%= @return_authorization.number %>
+  </span>
+
+  <small class="badge badge-pill badge-<%= @return_authorization.state %>">
+    <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
+  </small>
+<% end %>
+
+<%= render partial: "spree/admin/shared/error_messages",
+locals: {
+  target: @return_authorization,
+} %>
+
+<%= form_for [:admin, @order, @return_authorization] do |f| %>
+  <%= render partial: "form", locals: { f: f } %>
+
+  <div class="form-actions">
+    <%= turbo_save_button_tag Spree.t("actions.update") %>
+    <div class="ml-auto d-flex gap-3">
+      <% if @return_authorization.can_cancel? %>
+        <%= link_to Spree.t("actions.cancel"),
+        cancel_admin_order_return_authorization_url(@order, @return_authorization),
+        method: :put,
+        class: "btn btn-danger",
+        data: {
+          confirm: Spree.t(:are_you_sure),
+        } %>
+      <% end %>
+      <% if f.object.can_be_deleted? && can?(:delete, f.object) %>
+        <%= link_to Spree.t("actions.destroy"),
+        object_url(f.object),
+        data: {
+          turbo_method: :delete,
+          turbo_confirm: Spree.t(:are_you_sure_delete),
+          turbo_frame: defined?(turbo_frame) ? turbo_frame : nil,
+        },
+        class: "btn btn-danger" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

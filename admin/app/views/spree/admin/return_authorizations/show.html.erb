@@ -1,0 +1,127 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button [:edit, :admin, @order] %>
+  <%= @return_authorization.number %>
+  <span class="state small badge  badge-<%= @return_authorization.state %>  ml-2">
+    <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
+  </span>
+  <%= local_time(@return_authorization.created_at, class: 'badge badge-light with-tip ml-3') %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @return_authorization } %>
+
+<% if flash[:errors].present? %>
+  <div class="alert alert-danger border-danger text-break">
+    <%= flash[:errors].to_sentence %>
+  </div>
+<% end %>
+
+<div class="table-responsive card-lg p-0 mb-4">
+  <table class="table table-condensed return-items-table">
+    <thead class="text-muted">
+      <tr>
+        <th><%= Spree.t(:product) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= Spree.t(:purchased_quantity) %></th>
+        <th><%= Spree.t(:return_quantity) %></th>
+        <th><%= Spree.t(:total) %></th>
+        <th><%= Spree.t(:platform_fee_total) %></th>
+        <th><%= Spree.t(:refund_amount) %></th>
+        <th><%= Spree.t(:reason) %></th>
+        <th><%= Spree.t(:reimbursement_type) %></th>
+        <th><%= Spree.t(:exchange_for) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @return_authorization.return_items.each do |return_item| %>
+        <tr>
+          <td>
+            <div class="variant-name">
+              <%= link_to return_item.inventory_unit.variant.name, spree.edit_admin_product_path(return_item.inventory_unit.variant.product) %>
+            </div>
+            <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+          </td>
+          <td><%= return_item.inventory_unit.state.humanize %></td>
+          <td class="purchased-quantity">
+            <%= return_item.line_item.quantity %>
+          </td>
+          <td><%= return_item.return_quantity %></td>
+          <td><%= return_item.display_marketplace_total %></td>
+          <td>-<%= return_item.display_marketplace_commission_total %></td>
+          <td><%= return_item.display_total %></td>
+          <td><%= return_item.return_reason.present? ? return_item.return_reason.name : '-' %></td>
+          <td><%= return_item.preferred_reimbursement_type.present? ? return_item.preferred_reimbursement_type.name.humanize : '-' %></td>
+          <td><%= return_item.exchange_processed? ? return_item.exchange_variant.exchange_name : '-' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<% if @return_authorization.reason.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="card-title"><%= Spree.t(:reason) %></h6>
+    </div>
+    <div class="card-body">
+      <%= @return_authorization.reason.name %>
+    </div>
+  </div>
+<% end %>
+
+<% if @return_authorization.memo.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="card-title"><%= Spree.t(:memo) %></h6>
+    </div>
+    <div class="card-body">
+      <%= @return_authorization.memo %>
+    </div>
+  </div>
+<% end %>
+
+<% if @return_authorization.reject_reason.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h6 class="card-title"><%= Spree.t(:reject_reason) %></h6>
+    </div>
+    <div class="card-body">
+      <%= @return_authorization.reject_reason %>
+    </div>
+  </div>
+<% end %>
+
+<% if @refunds.any? %>
+  <div class="mb-4">
+    <h5><%= Spree.t(:reimbursement) %></h5>
+    <div class="table-responsive card-lg p-0">
+      <table class="table table-condensed">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:reimbursement_type) %></th>
+            <th><%= Spree.t(:description) %></th>
+            <th><%= Spree.t(:status) %></th>
+            <th><%= Spree.t(:amount) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @refunds.each do |refund| %>
+            <tr>
+              <td><%= refund.class.name.demodulize %></td>
+              <td><%= refund.description %></td>
+              <td>
+                <span class="badge  badge-<%= refund.reimbursement.reimbursement_status %>">
+                  <%= Spree.t("reimbursement_states.#{refund.reimbursement.reimbursement_status}") %>
+                </span>
+              </td>
+              <td><%= refund.display_amount %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+<div class="d-flex flex-row-reverse">
+  <%= render partial: 'spree/admin/return_authorizations/actions', locals: { order: @order, return_authorization: @return_authorization, vendor: @order.vendor } %>
+</div>
