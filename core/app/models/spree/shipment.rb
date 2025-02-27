@@ -45,6 +45,7 @@ module Spree
     scope :pending, -> { with_state('pending') }
     scope :ready,   -> { with_state('ready') }
     scope :shipped, -> { with_state('shipped') }
+    scope :ready_or_pending, -> { where(state: %w(ready pending)) }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
