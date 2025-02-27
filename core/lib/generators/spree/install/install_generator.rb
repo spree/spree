@@ -66,8 +66,13 @@ module Spree
       ROBOTS
     end
 
-    def create_overrides_directory
-      empty_directory 'app/overrides'
+    # Currently we only support devise, in the future we will also add support for default Rails authentication
+    def install_authentication
+      if @authentication == 'devise'
+        generate 'spree:authentication:devise'
+      elsif @authentication == 'dummy'
+        # this is for dummy / test app
+      end
     end
 
     def install_storefront
@@ -85,15 +90,6 @@ module Spree
     def copy_storefront
       if @copy_storefront && Spree::Core::Engine.frontend_available?
         generate 'spree:storefront:copy_storefront'
-      end
-    end
-
-    # Currently we only support devise, in the future we will also add support for default Rails authentication
-    def install_authentication
-      if @authentication == 'devise'
-        generate 'spree:authentication:devise'
-      elsif @authentication == 'dummy'
-        # this is for dummy / test app
       end
     end
 
@@ -128,6 +124,7 @@ module Spree
       say_status :copying, 'migrations'
       silence_stream(STDOUT) do
         silence_warnings { rake 'railties:install:migrations' }
+        silence_warnings { rake 'acts_as_taggable_on_engine:install:migrations' }
       end
     end
 

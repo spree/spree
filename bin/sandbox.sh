@@ -76,6 +76,3 @@ bin/rails g devise Spree::User
 
 # setup spree
 bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true
-
-# we also need to install the acts_as_taggable_on migrations
-bin/rake acts_as_taggable_on_engine:install:migrations
