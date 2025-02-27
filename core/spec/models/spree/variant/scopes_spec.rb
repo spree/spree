@@ -45,6 +45,28 @@ describe 'Variant scopes', type: :model do
       expect(variants).not_to include(variant_1, variant_2, variant_3)
       expect(variants.count).to eq(0)
     end
+
+    context 'when using translations' do
+      before do
+        I18n.with_locale(:pl) do
+          product_1.update!(name: 'Produkt pierwszy')
+          product_2.update!(name: 'Produkt drugi')
+          product_3.update!(name: 'Produkt trzeci')
+        end
+      end
+
+      it 'returns variants based on products translated name' do
+        I18n.with_locale(:pl) do
+          expect(Spree::Variant.product_name_or_sku_cont('Drugi')).to include(variant_2)
+        end
+      end
+
+      it 'does not return variants of products that do not match name' do
+        I18n.with_locale(:pl) do
+          expect(Spree::Variant.product_name_or_sku_cont('Pierwszy')).not_to include(variant_2, variant_3)
+        end
+      end
+    end
   end
 
   describe '#search_by_product_name_or_sku' do
