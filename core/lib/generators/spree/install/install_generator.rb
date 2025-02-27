@@ -92,6 +92,8 @@ module Spree
     def install_authentication
       if @authentication == 'devise'
         generate 'spree:authentication:devise'
+      elsif @authentication == 'dummy'
+        # this is for dummy / test app
       end
     end
 
