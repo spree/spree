@@ -1,5 +1,4 @@
-<% if @user.completed_orders.any? %>
-  <% order = @user.completed_orders.last %>
+<% if @last_order.present? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="card-title">
@@ -7,26 +6,26 @@
       </h5>
     </div>
     <div class="card-body">
-      <% cache spree_base_cache_scope.call(order) do %>
+      <% cache spree_base_cache_scope.call(@last_order) do %>
         <ul class="list-group">
           <li class="list-group-item">
             <div class="row">
               <div class="col-lg-9">
                 <p class="mb-1">
-                  <%= link_to order.number, spree.edit_admin_order_path(order), class: 'font-weight-bold' %>
-                  <%= order_payment_state(order, class: 'ml-2') %>
-                  <%= order_shipment_state(order, class: 'ml-2') %>
+                  <%= link_to @last_order.number, spree.edit_admin_order_path(@last_order), class: 'font-weight-bold' %>
+                  <%= order_payment_state(@last_order, class: 'ml-2') %>
+                  <%= order_shipment_state(@last_order, class: 'ml-2') %>
                 </p>
                 <span class="text-muted">
-                  <%= local_time_ago(order.completed_at, class: 'with-tip') %>
+                  <%= local_time_ago(@last_order.completed_at, class: 'with-tip') %>
                 </span>
               </div>
               <div class="col-lg-3 text-lg-right font-weight-bold">
-                <%= order.display_total %>
+                <%= @last_order.display_total %>
               </div>
             </div>
           </li>
-          <%= render collection: order.all_line_items.includes(variant: :product), partial: 'spree/admin/users/last_order_line_item', as: :line_item, cached: spree_base_cache_scope %>
+          <%= render collection: @last_order_line_items, partial: 'spree/admin/users/last_order_line_item', as: :line_item, cached: spree_base_cache_scope %>
         </ul>
       <% end %>
     </div>

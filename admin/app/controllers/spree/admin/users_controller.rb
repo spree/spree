@@ -7,6 +7,7 @@ module Spree
 
       rescue_from Spree::Core::DestroyWithOrdersError, with: :user_destroy_with_orders_error
 
+      before_action :load_last_order_data, only: :show
       before_action :remove_empty_params, only: :update
 
       def show; end
@@ -79,6 +80,11 @@ module Spree
         return if params[:user].blank?
 
         params[:user][:tag_list] = params.dig(:user, :tag_list).present? ? params.dig(:user, :tag_list).reject(&:empty?) : []
+      end
+
+      def load_last_order_data
+        @last_order = @user.completed_orders.last
+        @last_order_line_items = @last_order.line_items.includes(variant: :product) if @last_order.present?
       end
     end
   end

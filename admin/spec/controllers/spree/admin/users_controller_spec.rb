@@ -143,6 +143,21 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    let(:user) { create(:user) }
+    let!(:order) { create(:completed_order_with_totals, user: user) }
+
+    it 'renders the user page with last order data' do
+      get :show, params: { id: user.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response).to render_template(:show)
+
+      expect(assigns(:last_order)).to eq(order)
+      expect(assigns(:last_order_line_items)).to eq(order.line_items)
+    end
+  end
+
   describe 'GET #new' do
     it 'renders the new user form' do
       get :new
