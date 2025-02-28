@@ -51,42 +51,13 @@ module Spree
       end
 
       def load_orders
-        base_scope = scope.preload(:user).accessible_by(current_ability, :index)
-
-        if params.dig(:q, :multisearch).present?
-          shared_context = Ransack::Context.for(Spree::Order)
-
-          search_by_number = Spree::Order.ransack(
-            { number_i_cont: params.dig(:q, :multisearch) }, context: shared_context
-          )
-
-          search_by_email = Spree::Order.ransack(
-            { email_eq: params.dig(:q, :multisearch) }, context: shared_context
-          )
-
-          search_by_firstname = Spree::Order.ransack(
-            { bill_address_firstname_i_cont_any: params.dig(:q, :multisearch) }, context: shared_context
-          )
-
-          search_by_lastname = Spree::Order.ransack(
-            { bill_address_lastname_eq: params.dig(:q, :multisearch) }, context: shared_context
-          )
-
-          shared_conditions = [search_by_number, search_by_email, search_by_firstname, search_by_lastname].map do |search|
-            Ransack::Visitor.new.accept(search.base)
-          end
-
-          @multisearch_orders = base_scope.joins(shared_context.join_sources).where(shared_conditions.reduce(&:or)).distinct
-        end
-
-        @search = base_scope.ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
+        @search = scope.preload(:user).accessible_by(current_ability, :index).
+                  ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
         # see https://github.com/spree/spree/pull/3919
-        @orders = @search.result(distinct: true)
-        @orders = @orders.merge(@multisearch_orders) if @multisearch_orders.present?
-        @orders = @orders.page(params[:page]).per(params[:per_page])
+        @orders = @search.result(distinct: true).page(params[:page]).per(params[:per_page])
       end
 
       def load_user

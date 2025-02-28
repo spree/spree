@@ -34,6 +34,38 @@ describe Spree::Order, type: :model do
     describe '.not_canceled' do
       it { expect(Spree::Order.not_canceled).not_to include canceled_order }
     end
+
+    describe '.multi_search' do
+      let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
+      let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }
+      let!(:order_3) { create(:order, number: 'R200', user: create(:user, email: 'mary.moe@example.com'), bill_address: create(:address, first_name: 'Mary', last_name: 'Moe')) }
+
+      it 'returns orders based on an email' do
+        expect(described_class.multi_search('don.roe@example.com')).to eq([order_1])
+        expect(described_class.multi_search('jane.gone@example.com')).to eq([order_2])
+        expect(described_class.multi_search('mary.moe@')).to eq([])
+      end
+
+      it 'returns orders based on the first name' do
+        expect(described_class.multi_search('don')).to eq([order_1])
+        expect(described_class.multi_search('jan')).to eq([order_2])
+        expect(described_class.multi_search('greg')).to eq([])
+      end
+
+      it 'returns orders based on the last name' do
+        expect(described_class.multi_search('ro')).to eq([order_1])
+        expect(described_class.multi_search('moe')).to eq([order_3])
+        expect(described_class.multi_search('smith')).to eq([])
+      end
+
+      it 'returns orders based on the full name' do
+        expect(described_class.multi_search('don ro')).to eq([order_1])
+        expect(described_class.multi_search('ane gon')).to eq([order_2])
+        expect(described_class.multi_search('mary moe')).to eq([order_3])
+        expect(described_class.multi_search('jane moe')).to eq([order_2, order_3])
+        expect(described_class.multi_search('greg smith')).to eq([])
+      end
+    end
   end
 
   describe 'Callbacks' do
