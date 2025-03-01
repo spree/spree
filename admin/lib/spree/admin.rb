@@ -19,7 +19,6 @@ require 'local_time'
 require 'payment_icons'
 require 'dartsass-rails'
 require 'tinymce-rails'
-require 'oembed'
 
 require 'spree/admin/action_callbacks'
 require 'spree/admin/callbacks'

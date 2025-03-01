@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'countries'
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
+  s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
   s.add_dependency 'kaminari', '~> 1.2'
   s.add_dependency 'money', '~> 6.13'
@@ -47,6 +48,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'rexml'
+  s.add_dependency 'ruby-oembed', '~> 0.18'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
   s.add_dependency 'state_machines-activemodel', '~> 0.7'
   s.add_dependency 'stringex'
@@ -62,5 +64,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'request_store', '~> 1.7'
   s.add_dependency 'wannabe_bool'
   s.add_dependency 'any_ascii', '~> 0.3.2'
-  s.add_dependency 'geocoder'
 end
