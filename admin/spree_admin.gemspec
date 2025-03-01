@@ -46,5 +46,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'stimulus-rails'
   s.add_dependency 'sprockets', '>= 4.0'
   s.add_dependency 'tinymce-rails', '~> 7.0'
-  s.add_dependency 'ruby-oembed', '~> 0.18'
 end

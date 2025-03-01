@@ -3,6 +3,9 @@ module Spree
     class Video < Spree::PageSection
       alias video asset
 
+      include Spree::MemoizedData
+      MEMOIZED_METHODS = %w(video_embed)
+
       after_create :create_video_embed, if: -> { preferred_youtube_video_url.present? }
       after_update :update_video_embed, if: -> { video_url_changed? || video_embed.nil? }
       after_destroy :destroy_video_embed
@@ -68,7 +71,6 @@ module Spree
           embed.url = preferred_youtube_video_url
           embed.raw_html = oembed_response.html
           embed.thumbnail_url = oembed_response.thumbnail_url
-          embed.raw_data = oembed_response.fields
 
           embed.save
           update(preferred_youtube_video_embed_id: embed.id) if embed.persisted?
