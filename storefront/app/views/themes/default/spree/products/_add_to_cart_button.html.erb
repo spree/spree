@@ -26,10 +26,10 @@ variant_not_available = selected_variant.nil? ||
       <span><%= Spree.t(:please_select_all_options) %></span>
     <% elsif variant_not_available %>
       <span><%= Spree.t(:notify_me_when_available) %></span>
-      <%= render 'spree/shared/icons/bell', color: theme_setting('button_text_color') %>
+      <%= render 'spree/shared/icons/bell' %>
     <% else %>
       <span><%= Spree.t(:add_to_cart) %></span>
-      <%= render 'spree/shared/icons/cart', color: theme_setting('button_text_color') %>
+      <%= render 'spree/shared/icons/cart' %>
     <% end %>
   <% end %>
 </div>
@@ -48,10 +48,10 @@ variant_not_available = selected_variant.nil? ||
         <span><%= Spree.t(:please_select_all_options) %></span>
       <% elsif variant_not_available %>
         <span><%= Spree.t(:notify_me_when_available) %></span>
-        <%= render 'spree/shared/icons/bell', color: theme_setting('button_text_color') %>
+        <%= render 'spree/shared/icons/bell' %>
       <% else %>
         <span><%= Spree.t(:add_to_cart) %></span>
-        <%= render 'spree/shared/icons/cart', color: theme_setting('button_text_color') %>
+        <%= render 'spree/shared/icons/cart' %>
       <% end %>
     <% end %>
   </div>
