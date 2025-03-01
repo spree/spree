@@ -39,7 +39,7 @@ module Spree
       return if fonts.blank?
 
       imports = fonts.map do |font|
-        "family=#{font.split(' ').join('+')}"
+        "family=#{font.split(' ').join('+')}:wght@200..700"
       end.compact.join('&')
 
       return if imports.blank?
