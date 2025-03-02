@@ -62,7 +62,7 @@ end
 RUBY
 
 bundle update
-bundle install --gemfile Gemfile
+bundle install --gemfile Gemfile --path ../vendor/bundle
 
 bin/rails importmap:install
 bin/rails turbo:install
