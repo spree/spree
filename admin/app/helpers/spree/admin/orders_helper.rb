@@ -149,15 +149,15 @@ module Spree
       end
 
       def order_filter_dropdown_value
-        if params[:q][:shipment_state_not_in] == ['shipped', 'canceled']
+        if params.dig(:q, :shipment_state_not_in) == ['shipped', 'canceled']
           Spree.t('admin.orders.unfulfilled')
-        elsif params[:q][:shipment_state_eq] == 'shipped'
+        elsif params.dig(:q, :shipment_state_eq) == 'shipped'
           Spree.t('admin.orders.fulfilled')
-        elsif params[:q][:state_in] == ['canceled','partially_canceled']
+        elsif params.dig(:q, :state_in) == ['canceled','partially_canceled']
           Spree.t('admin.orders.canceled')
-        elsif params.dig(:q, :refunded) && params[:q][:refunded].present?
+        elsif params.dig(:q, :refunded)&.present?
           Spree.t('admin.orders.refunded')
-        elsif params.dig(:q, :partially_refunded) && params[:q][:partially_refunded].present?
+        elsif params.dig(:q, :partially_refunded)&.present?
           Spree.t('admin.orders.partially_refunded')
         else
           Spree.t('admin.orders.all_orders')
