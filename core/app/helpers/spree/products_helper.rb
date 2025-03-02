@@ -74,25 +74,6 @@ module Spree
       string.slice(0..449) + '...'
     end
 
-    # will return a human readable string
-    def available_status(product)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `Spree::ProductsHelper#available_status` method from spree/core is deprecated and will be removed.
-        Please use `Spree::Admin::ProductsHelper#available_status` from spree_backend instead.
-      DEPRECATION
-
-      return Spree.t(:archived) if product.discontinued?
-      return Spree.t(:deleted) if product.deleted?
-
-      if product.available?
-        Spree.t(:active)
-      elsif product.make_active_at&.future?
-        Spree.t(:pending_sale)
-      else
-        Spree.t(:draft)
-      end
-    end
-
     def product_images(product, variants)
       if product.variants_and_option_values(current_currency).any?
         variants_without_master_images = variants.reject(&:is_master).map(&:images).flatten
