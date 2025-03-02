@@ -266,20 +266,21 @@ module Spree
       @formatted_url ||= if Rails.env.development? || Rails.env.test?
         scheme = Rails.application.routes.default_url_options[:protocol] || :http
         port = Rails.application.routes.default_url_options[:port].presence || (Rails.env.development? ? 3000 : nil)
+        clean_url = url.to_s.sub(%r{^https?://}, '').split(':').first
         if scheme.to_sym == :https
           URI::HTTPS.build(
-            host: url.to_s.sub(%r{^https?://}, ''),
+            host: clean_url,
             port: port
           ).to_s
         else
           URI::HTTP.build(
-            host: url.to_s.sub(%r{^https?://}, '').split(':').first,
+            host: clean_url,
             port: port
           ).to_s
         end
       else
         URI::HTTPS.build(
-          host: url.to_s.sub(%r{^https?://}, '')
+          host: clean_url
         ).to_s
       end
     end
