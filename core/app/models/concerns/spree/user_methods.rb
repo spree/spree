@@ -6,7 +6,7 @@ module Spree
     include Spree::UserReporting
     include Spree::UserRoles
     include Spree::RansackableAttributes
-
+    include Spree::MultiSearchable
     included do
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
@@ -43,26 +43,24 @@ module Spree
       #
       attr_accessor :confirm_email, :terms_of_service
 
-      scope :multi_search, lambda { |query|
-        sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
+      def self.multi_search(query)
+        sanitized_query = sanitize_query_for_multi_search(query)
         return none if query.blank?
-
-        query_pattern = "%#{sanitized_query}%"
 
         name_conditions = []
 
-        name_conditions << arel_table[:first_name].lower.matches(query_pattern)
-        name_conditions << arel_table[:last_name].lower.matches(query_pattern)
+        name_conditions << multi_search_condition(self, :first_name, sanitized_query)
+        name_conditions << multi_search_condition(self, :last_name, sanitized_query)
 
         full_name = NameOfPerson::PersonName.full(sanitized_query)
 
         if full_name.first.present? && full_name.last.present?
-          name_conditions << arel_table[:first_name].lower.matches("%#{full_name.first}%")
-          name_conditions << arel_table[:last_name].lower.matches("%#{full_name.last}%")
+          name_conditions << multi_search_condition(self, :first_name, full_name.first)
+          name_conditions << multi_search_condition(self, :last_name, full_name.last)
         end
 
         where(email: sanitized_query).or(where(name_conditions.reduce(:or)))
-      }
+      end
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name accepts_email_marketing]

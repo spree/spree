@@ -26,6 +26,7 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::MemoizedData
     include Spree::Metadata
+    include Spree::MultiSearchable
     if defined?(Spree::Security::Orders)
       include Spree::Security::Orders
     end
@@ -79,7 +80,7 @@ module Spree
       completed_at email number state payment_state shipment_state
       total item_total item_count considered_risky channel
     ]
-    self.whitelisted_ransackable_scopes = %w[refunded partially_refunded]
+    self.whitelisted_ransackable_scopes = %w[refunded partially_refunded multi_search]
 
     attr_reader :coupon_code
     attr_accessor :temporary_address, :temporary_credit_card
@@ -201,6 +202,28 @@ module Spree
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
+
+    def self.multi_search(query)
+      sanitized_query = sanitize_query_for_multi_search(query)
+      return none if query.blank?
+
+      query_pattern = "%#{sanitized_query}%"
+
+      conditions = []
+      conditions << arel_table[:number].lower.matches(query_pattern)
+
+      conditions << multi_search_condition(Spree::Address, :firstname, sanitized_query)
+      conditions << multi_search_condition(Spree::Address, :lastname, sanitized_query)
+
+      full_name = NameOfPerson::PersonName.full(sanitized_query)
+
+      if full_name.first.present? && full_name.last.present?
+        conditions << multi_search_condition(Spree::Address, :firstname, full_name.first)
+        conditions << multi_search_condition(Spree::Address, :lastname, full_name.last)
+      end
+
+      left_joins(:bill_address).where(email: sanitized_query).or(where(conditions.reduce(:or)))
+    end
 
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
