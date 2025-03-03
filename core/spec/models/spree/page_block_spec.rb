@@ -20,4 +20,16 @@ RSpec.describe Spree::PageBlock, type: :model do
       end
     end
   end
+
+  describe '#store' do
+    let(:page_section) { create(:header_page_section, name: 'Test Section') }
+
+    before do
+      page_block.update!(section: page_section)
+    end
+
+    it 'returns the store of the section' do
+      expect(page_block.store).to eq(page_section.store)
+    end
+  end
 end

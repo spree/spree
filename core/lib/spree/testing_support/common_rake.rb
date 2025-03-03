@@ -8,7 +8,12 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 desc 'Generates a dummy app for testing'
 namespace :common do
   task :test_app, :user_class do |_t, args|
-    args.with_defaults(user_class: 'Spree::LegacyUser', install_storefront: 'false', install_admin: 'false')
+    args.with_defaults(
+      user_class: 'Spree::LegacyUser',
+      install_storefront: 'false',
+      install_admin: 'false',
+      authentication: 'dummy'
+    )
     require ENV['LIB_NAME'].to_s
 
     ENV['RAILS_ENV'] = 'test'
@@ -39,7 +44,8 @@ namespace :common do
       '--copy_storefront=false',
       "--install_storefront=#{args[:install_storefront]}",
       "--install_admin=#{args[:install_admin]}",
-      "--user_class=#{args[:user_class]}"
+      "--user_class=#{args[:user_class]}",
+      "--authentication=#{args[:authentication]}"
     ]
 
     puts 'Setting up dummy database...'

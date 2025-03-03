@@ -1,0 +1,60 @@
+---
+title: 'Order States'
+description: 'Order States help you track and manage each stage of the order process.'
+---
+
+Effective order management is essential for ecommerce to ensure timely processing, accurate fulfillment, and a seamless customer experience.
+
+Order States help you track and manage each stage of the order process, making it easier to stay organized and address any issues promptly.
+
+To review Order States, navigate to the Orders tab of the admin dashboard.
+
+<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXf1_HnveahvAvmehYXHDjNtQ5XEfqyS1L8VlaaoMpZimclnXe_vXJRuLQCI6wj7FT0dW8HYCfA_YO4VAkGrzgjoINlbTC6P6_bJf85gCgPN-MxGB5OGMaUMC3DiIZOhDjCXN-v-1w?key=0ncWz4vRy0tXhgnM2AaO802x" />
+
+Here, you’re presented with a list of every order that has been placed on your store, with two columns indicating the ‘Payment State’ and the ‘Shipment State’ of each order.
+
+<img height="371" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfpmtw8z4KjlJoXoesfnLer_jjasahRdEdXPIybutYgtf77frhr5UbBOyEjn3GsuyeScxjO5ku99G4jfHPjq1W3Hd06C8l78XeFSDcmEnT3EYfIaX7KTHQsqGPyeF_sQ05Rsd5r?key=0ncWz4vRy0tXhgnM2AaO802x" />
+
+The Order State is determined by the combination of the Payment State and the Shipment State.
+
+## Payment State
+
+As the name suggests, the payment state indicates the status of the payment(s) associated with the order. Payment states are as follows:
+
+| **Payment State**  | **Description**                                                            |
+| :----------------- | :------------------------------------------------------------------------- |
+| Paid               | Payment for the order has been captured                                    |
+| Balance Due        | Payment for the order has not been captured                                |
+| Credit Owed        | The customer is owed credit for the order (e.g., an item was out of stock) |
+| Refunded           | Payment for the order has been fully refunded                              |
+| Partially Refunded | Payment for the order has been partially refunded                          |
+| Failed             | Payment could not be processed                                             |
+
+Note: You cannot directly update the Payment Status. The Payment Status will be updated automatically when taking certain actions. For example, if you add a line item to an order, the status will update to Balance Due, or if you remove a line item, the status will update to Credit Owe.
+
+## Shipment State
+
+Similar to the above, the Shipment State indicates the status of shipment(s) associated with the order. Shipment states are as follows:
+
+| **Shipment State**   | **Description**                                         |
+| -------------------- | ------------------------------------------------------- |
+| Fulfilled            | Order has been shipped                                  |
+| Partial              | At least one suborder has been shipped                  |
+| Unfulfilled (Yellow) | Order needs to be shipped                               |
+| Unfulfilled (Grey)   | Order needs to be shipped, but payment not yet captured |
+| Cancelled            | Order has been cancelled                                |
+
+Note: You cannot directly update the Shipment Status. The Shipment Status will be updated automatically when taking certain actions. For example, if you ship an order, the status will be updated to Fulfilled, or if you cancel an order, then the status will be updated to Cancelled.
+
+## Using Order States
+
+Understanding the meaning of each Payment State and Shipment State helps you identify the next steps for any given order, for example:
+
+| **Payment State** | **Shipment State** | **Action**                        |
+| ----------------- | ------------------ | --------------------------------- |
+| Paid              | Fulfilled          | None - the order is complete      |
+| Paid              | Unfulfilled        | Ship the order                    |
+| Balance Due       | Unfulfilled        | Request payment from the customer |
+| Credit Owed       | Partial            | Refund the amount owed            |
+
+Now that you understand Order States, check out this support article to learn more about processing orders.

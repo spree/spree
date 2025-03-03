@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Sean Schofield', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
   s.email       = 'hello@spreecommerce.org'
-  s.summary     = 'Headless API-first open source eCommerce platform'
+  s.summary     = 'A complete open source e-commerce solution'
   s.description = 'A complete open source e-commerce solution with multi-store, multi-currency and multi-language capabilities'
   s.homepage    = 'https://spreecommerce.org'
   s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']

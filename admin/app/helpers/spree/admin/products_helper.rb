@@ -64,7 +64,7 @@ module Spree
         return Spree.t('admin.products.draft') if product.draft?
         return Spree.t('admin.products.active') if product.available?
         return Spree.t('admin.products.archived') if product.archived?
-        return Spree.t('admin.products.paused') if product.paused?
+        return Spree.t('admin.products.paused') if product.respond_to?(:paused?) && product.paused?
         return Spree.t('admin.products.deleted') if product.deleted?
         return ''
       end
@@ -87,7 +87,7 @@ module Spree
       end
 
       def product_filter_status_dropdown_value
-        case params[:q][:status_eq]
+        case params.dig(:q, :status_eq)
         when 'active'
           Spree.t('admin.products.active')
         when 'draft'
@@ -100,9 +100,9 @@ module Spree
       end
 
       def product_filter_stock_dropdown_value
-        if params[:q][:in_stock_items] == '1'
+        if params.dig(:q, :in_stock_items) == '1'
           Spree.t('admin.products.in_stock')
-        elsif params[:q][:out_of_stock_items] == '1'
+        elsif params.dig(:q, :out_of_stock_items) == '1'
           Spree.t('admin.products.out_of_stock')
         else
           Spree.t('admin.products.any_stock')

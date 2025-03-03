@@ -155,6 +155,7 @@
       "group": "Contributing",
       "pages": [
         "developer/contributing/quickstart",
+        "developer/contributing/developing-spree",
         "developer/contributing/creating-an-extension"
       ]
     },
@@ -835,7 +836,6 @@
     {
       "group": "Products",
       "pages": [
-          "Product Editor",
                       {
                           "group": "Create & Edit Products",
                           "pages": [
@@ -846,13 +846,11 @@
                                  "user/products/cloning-products"                    
                           ]
                       }, 
-          "Product Management",
                       {
                           "group": "Manage Products",
                           "pages": [
                                  "user/manage-products/search-products",
                                  "user/manage-products/bulk-product-operations",
-                                 "user/manage-products/import-products",
                                  "user/manage-products/product-import-file-template", 
                                  "user/manage-products/export-products",   
                                  "user/manage-products/stock-levels",   
@@ -865,9 +863,21 @@
       ]
     },  
     {
+      "group": "Orders",
+      "pages": [
+        "user/orders/order-states",
+        "user/orders/processing-orders",
+        "user/orders/creating-orders",
+        "user/orders/editing-orders",
+        "user/orders/exporting-orders",
+        "user/orders/cancelling-orders",
+        "user/orders/refunding-orders",
+        "user/orders/searching-orders"        
+      ]
+    }, 
+    {
       "group": "Storefront",
       "pages": [
-          "Themes",
                       {
                           "group": "Storefront Themes",
                           "pages": [
@@ -876,7 +886,6 @@
                                  "user/storefront/delete-theme"            
                           ]
                       }, 
-          "Pages",
                       {
                           "group": "Storefront Pages",
                           "pages": [
@@ -885,8 +894,6 @@
                                  "user/storefront/delete-page"
                           ]
                       }, 
-                        
-          "Posts",
                       {
                           "group": "Storefront Posts",
                           "pages": [

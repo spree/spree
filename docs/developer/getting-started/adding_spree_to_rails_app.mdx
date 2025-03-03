@@ -7,6 +7,10 @@ description: This guide will show you how to add Spree to an existing Ruby on Ra
 If you followed the [Quickstart guide](quickstart) you can skip this page and go to the [Core Concepts](../core-concepts) section.
 </Note>
 
+<Warning>
+  This guide is aimed at advanced users who want to add Spree to an existing Rails application. If you are new to Spree, please follow the [Quickstart guide](quickstart).
+</Warning>
+
 ## Overview
 
 If you already have a Ruby on Rails application, you can add Spree to it by following these steps.
@@ -18,13 +22,12 @@ If you already have a Ruby on Rails application, you can add Spree to it by foll
     Add these lines to your project `Gemfile`:
 
     ```ruby
-    gem 'spree', '~> 4.7' # core and API
-    gem 'spree_backend', '~> 4.7' # Admin panel (optional)
-    gem 'spree_frontend', '~> 4.7' # Storefront (optional)
-    gem 'spree_emails', '~> 4.7' # transactional emails (optional)
-    gem 'spree_sample', '~> 4.7' # dummy data like products, taxons, etc (optional)
-    gem 'spree_auth_devise', '~> 4.6' # Devise integration (optional)
-    gem 'spree_gateway', '~> 3.11' # payment gateways eg. Stripe, Braintree (optional)
+    spree_opts = { 'github': 'spree/spree', 'branch': 'main' }
+    gem 'spree', spree_opts # core and API
+    gem 'spree_admin', spree_opts # Admin panel (optional)
+    gem 'spree_storefront', spree_opts # Storefront (optional)
+    gem 'spree_emails', spree_opts # transactional emails (optional)
+    gem 'spree_sample', spree_opts # dummy data like products, taxons, etc (optional)
     ```
 
     And run the following command to install the gems:
@@ -38,11 +41,7 @@ If you already have a Ruby on Rails application, you can add Spree to it by foll
     These commands will run generators which will perform operations required for Spree to work properly.
 
     ```bash
-    bin/rails g spree:install --user_class=Spree::User
-    bin/rails g spree:backend:install
-    bin/rails g spree:frontend:install
-    bin/rails g spree:auth:install
-    bin/rails g spree_gateway:install
+    bin/rails g spree:install --user_class=Spree::User --install_admin=true --install_storefront=true --authentication=devise
     ```
 
     ### Installation options
@@ -86,7 +85,7 @@ Feel free to explore your store. You can do so because Spree comes with a defaul
 
     Upon successful authentication, you should see the admin screen:
 
-    ![](/images/admin_panel_978-2x.jpg)
+    ![](https://vendo-production-res.cloudinary.com/image/upload/v1740668008/docs/admin_dashboard.png)
 
     Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
   </Accordion>
