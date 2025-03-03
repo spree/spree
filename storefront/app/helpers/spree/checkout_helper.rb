@@ -52,7 +52,7 @@ module Spree
     end
 
     def can_use_store_credit_on_checkout?(order)
-      order.could_use_store_credit? && !order.gift_card.present?
+      order.could_use_store_credit? && (!order.respond_to?(:gift_card) || !order.gift_card.present?)
     end
   end
 end

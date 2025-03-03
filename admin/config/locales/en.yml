@@ -176,6 +176,8 @@ en:
         wrong_destination: Wrong destination
       stock_transfers:
         add_products_tip: You need to select a destination location first
+      store_credit:
+        amount_remaining_of_total: "<strong>%{amount}</strong> remaining (<strong>%{total}</strong> total)"
       store_form:
         customer_support_email_help: This email is visible to your Store visitors in the Footer section
         new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
@@ -215,9 +217,8 @@ en:
         manual_info: Curate products manually. You can add or remove them in bulk.
       url: URL
       user:
-        available_store_credit: User has %{amount} in Store Credit available.
         last_order_placed: Last order placed
-        no_store_credit: User has no Store Credit available.
+        no_store_credit: Customer has no Store Credit available
       users:
         filters:
           search_placeholder: Search customers by email or name

@@ -12,17 +12,18 @@
       <p class="mb-0"><%= Spree.t(:expires) %> <%= source.month %> / <%= source.year %></p>
     </div>
   <% elsif source.is_a?(Spree::StoreCredit) %>
-    <% if source.gift_card %>
+    <% if source.respond_to?(:gift_card) && source.gift_card.present? %>
       <div class="d-flex flex rounded bg-light px-3 py-2 mb-3 align-items-center">
         <%= icon('gift', height: 30, class: 'mr-3 text-muted') %>
         <div>
-          <p class="mb-1">Gift card: <strong><%= source.gift_card.code.upcase %></strong></p>
+          <p class="mb-1"><%= Spree.t(:gift_card) %>: <strong><%= source.gift_card.code.upcase %></strong></p>
           <%= @order.display_gift_card_total %>
         </div>
       </div>
-    <% else %>
-      <div class="rounded bg-light px-3 py-2 mb-3">
-        <%= Spree.t(:store_credits) %>: <%= @order.display_total_applied_store_credit.abs %>
+    <% elsif payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
+      <div class="d-flex flex align-items-center">
+        <div><%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %></div>
+        <div class="mx-2"><%= Spree.t(:store_credit_name) %></div>
       </div>
     <% end %>
   <% elsif source.present? %>
