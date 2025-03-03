@@ -26,6 +26,7 @@ group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
   gem 'capybara-select-2'
+  gem 'committee'
   gem 'database_cleaner-active_record'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 6.2.0'
