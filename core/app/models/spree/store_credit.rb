@@ -40,7 +40,7 @@ module Spree
     scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
     scope :not_authorized, -> { where(amount_authorized: 0) }
-    scope :not_used, -> { where(amount_authorized: 0) }
+    scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
     scope :available, -> { not_authorized.not_used }
 
     after_save :store_event
@@ -49,7 +49,7 @@ module Spree
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
     extend Spree::DisplayMoney
-    money_methods :amount, :amount_used
+    money_methods :amount, :amount_used, :amount_remaining
 
     self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
     self.whitelisted_ransackable_associations = %w[type user created_by]

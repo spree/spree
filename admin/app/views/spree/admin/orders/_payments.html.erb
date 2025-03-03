@@ -46,7 +46,7 @@
   </div>
 <% end %>
 
-<% if @order.payment_required? && @order.bill_address.present? && @order.payment_total < @order.total_minus_store_credits && can?(:create, Spree::Payment.new(order: @order)) %>
+<% if @order.payment_required? && @order.bill_address.present? && @order.payment_total < @order.total && can?(:create, Spree::Payment.new(order: @order)) %>
   <div class="card mb-4">
     <div class="card-header justify-content-between">
       <h5 class="card-title"><%= Spree.t(:payments) %></h5>

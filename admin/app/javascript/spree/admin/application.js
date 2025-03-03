@@ -79,7 +79,7 @@ import WebhooksSubscriberEventsController from 'spree/admin/controllers/webhook_
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
-
+import StoreCreditFormController from 'spree/admin/controllers/store_credit_form_controller'
 
 application.register('active-storage-upload', ActiveStorageUpload)
 application.register('address-autocomplete', AddressAutocompleteController)
