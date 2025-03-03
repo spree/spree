@@ -65,10 +65,12 @@ module Spree
 
       def load_order_items
         @line_items = @order.line_items.includes(variant: [:product, :option_values])
-        @shipments = @order.shipments.includes(:inventory_units, :selected_shipping_rate, shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
+        @shipments = @order.shipments.includes(:inventory_units, :selected_shipping_rate,
+                                               shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
         @payments = @order.payments.includes(:payment_method, :source).order(:created_at)
         @refunds = @order.refunds
 
+        @return_authorizations = @order.return_authorizations
         @customer_returns = @order.customer_returns
       end
 

@@ -1,4 +1,4 @@
-<% orders_active = %[orders checkouts return_index customer_returns].include?(controller_name) || @order %>
+<% orders_active = %[orders checkouts return_index customer_returns return_authorizations].include?(controller_name) || @order %>
 <li class="nav-item">
   <%= active_link_to spree.admin_orders_path, class: 'nav-link  d-flex align-items-center', active: orders_active do %>
     <%= icon 'inbox', class: 'mr-1' %>
@@ -25,7 +25,13 @@
 
       <% if can?(:manage, :customer_returns) %>
         <li class="nav-item">
-          <%= active_link_to Spree.t(:returns), spree.admin_customer_returns_path, class: 'nav-link' %>
+          <%= active_link_to Spree.t(:customer_returns), spree.admin_customer_returns_path, class: 'nav-link' %>
+        </li>
+      <% end %>
+
+      <% if can?(:manage, :return_authorizations) %>
+        <li class="nav-item">
+          <%= active_link_to Spree.t(:return_authorizations), spree.admin_return_authorizations_path, class: 'nav-link' %>
         </li>
       <% end %>
 
