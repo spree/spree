@@ -33,6 +33,7 @@ if (typeof Stimulus === 'undefined') {
   application = window.Stimulus
 }
 import AutoSubmit from '@stimulus-components/auto-submit'
+import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import TextareaAutogrow from 'stimulus-textarea-autogrow'
 import Notification from 'stimulus-notification'
 import PasswordVisibility from 'stimulus-password-visibility'
@@ -94,6 +95,7 @@ application.register('bootstrap-tabs', BootstrapTabs) // We should merge with ta
 application.register('bulk-operation', BulkOperationController)
 application.register('calculator-fields', CalculatorFieldsController)
 application.register('calendar-range', CalendarRangeController)
+application.register('checkbox-select-all', CheckboxSelectAll)
 application.register('clipboard', Clipboard)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)

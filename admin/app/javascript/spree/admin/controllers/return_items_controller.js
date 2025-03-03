@@ -7,6 +7,11 @@ export default class extends CheckboxSelectAll {
     this.updateTotalRefundAmount()
   }
 
+  toggle(event) {
+    super.toggle(event)
+    this.updateTotalRefundAmount()
+  }
+
   refresh() {
     super.refresh()
     this.updateTotalRefundAmount()

@@ -19,7 +19,7 @@
   } %>
 
   <%= form_for [:admin, @order, @customer_return] do |f| %>
-    <div class="card mb-4" data-controller="return-items">
+    <div class="card mb-4" data-controller="checkbox-select-all">
       <div class="card-header">
         <h6 class="card-title"><%= Spree.t(:items_in_rmas) %></h6>
       </div>
