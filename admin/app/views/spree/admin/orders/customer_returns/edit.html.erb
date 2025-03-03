@@ -4,13 +4,8 @@
   <% else %>
     <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <% end %>
-  <%= @order.number %>
-  /
-  <%= Spree.t(:customer_returns) %>
-  /
-  <span class="ml-2 mr-3">
+    <%= Spree.t(:customer_return) %>
     <%= @customer_return.number %>
-  </span>
 
   <% if @customer_return.fully_reimbursed? %>
     <span class="badge badge-pill badge-success"><%= Spree.t(:reimbursed) %></span>
