@@ -9082,75 +9082,75 @@ components:
                         option_values:
                           - id: 4
                             name: black
-                            presentation: '#000000'
+                            presentation: 'Black'
                             position: 4
                           - id: 11
                             name: mint
-                            presentation: '#AAF0D1'
+                            presentation: 'Mint'
                             position: 11
                           - id: 6
                             name: green
-                            presentation: '#228C22'
+                            presentation: 'Green'
                             position: 6
                           - id: 2
                             name: purple
-                            presentation: '#800080'
+                            presentation: 'Purple'
                             position: 2
                           - id: 10
                             name: beige
-                            presentation: '#E1C699'
+                            presentation: 'Beige'
                             position: 10
                           - id: 17
                             name: pink
-                            presentation: '#FFA6C9'
+                            presentation: 'Pink'
                             position: 17
                           - id: 7
                             name: grey
-                            presentation: '#808080'
+                            presentation: 'Grey'
                             position: 7
                           - id: 8
                             name: orange
-                            presentation: '#FF8800'
+                            presentation: 'Orange'
                             position: 8
                           - id: 15
                             name: yellow
-                            presentation: '#FFFF00'
+                            presentation: 'Yellow'
                             position: 15
                           - id: 1
                             name: white
-                            presentation: '#FFFFFF'
+                            presentation: 'White'
                             position: 1
                           - id: 13
-                            name: dark_blue
-                            presentation: '#00008b'
+                            name: 'dark-blue'
+                            presentation: 'Dark Blue'
                             position: 13
                           - id: 19
                             name: ecru
-                            presentation: '#F4F2D6'
+                            presentation: 'Ecru'
                             position: 19
                           - id: 3
                             name: red
-                            presentation: '#FF0000'
+                            presentation: 'Red'
                             position: 3
                           - id: 12
                             name: blue
-                            presentation: '#0000FF'
+                            presentation: 'Blue'
                             position: 12
                           - id: 16
-                            name: light_blue
-                            presentation: '#add8e6'
+                            name: light-blue
+                            presentation: 'Light Blue'
                             position: 16
                           - id: 9
                             name: burgundy
-                            presentation: '#A8003B'
+                            presentation: 'Burgundy'
                             position: 9
                           - id: 14
                             name: khaki
-                            presentation: '#BDB76B'
+                            presentation: 'Khaki'
                             position: 14
                           - id: 5
                             name: brown
-                            presentation: '#8B4513'
+                            presentation: 'Brown'
                             position: 5
                       - id: 2
                         name: length
