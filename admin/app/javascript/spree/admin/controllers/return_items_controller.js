@@ -1,38 +1,42 @@
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 
 export default class extends CheckboxSelectAll {
+  static targets = ['totalPreTaxRefund']
+
   connect() {
-
-    var formFields = $(this.element)
-
-
-
-    this.updateSuggestedAmount()
-
-    formFields.find('input#select-all').on('change', function (ev) {
-      var checkBoxes = $(ev.currentTarget).parents('table:first').find('input.add-item')
-      checkBoxes.prop('checked', this.checked)
-      this.updateSuggestedAmount()
-    })
-
-    formFields.find('input.add-item').on('change', this.updateSuggestedAmount)
-
-    formFields.find('input, select').not('.add-item').on('change', checkAddItemBox)
+    this.updateTotalRefundAmount()
   }
 
-  updateSuggestedAmount = () => {
+  refresh() {
+    super.refresh()
+    this.updateTotalRefundAmount()
+  }
+
+  updateTotalRefundAmount() {
     var totalPretaxRefund = 0
-    var checkedItems = this.element.querySelectorAll('input.add-item:checked')
-    $.each(checkedItems, function (i, checkbox) {
-      var returnItemRow = $(checkbox).parents('tr')
-      var returnQuantity = parseInt(returnItemRow.find('.refund-quantity-input').val(), 10)
-      var purchasedQuantity = parseInt(returnItemRow.find('.purchased-quantity').text(), 10)
-      var amount = (returnQuantity / purchasedQuantity) * parseFloat(returnItemRow.find('.charged-amount').data('chargedAmount'))
-      returnItemRow.find('.refund-amount-input').val(amount.toFixed(2))
+    this.checked.forEach((checkbox) => {
+      const returnItemRow = checkbox.closest('tr')
+      const amount = parseFloat(returnItemRow.querySelector('.refund-amount-input').value)
       totalPretaxRefund += amount
     })
 
-    var displayTotal = isNaN(totalPretaxRefund) ? '' : totalPretaxRefund.toFixed(2)
-    this.element.querySelector('span#total_pre_tax_refund').innerText = displayTotal
+    const displayTotal = isNaN(totalPretaxRefund) ? '' : totalPretaxRefund.toFixed(2)
+    this.totalPreTaxRefundTarget.innerText = displayTotal
+  }
+
+  updateSuggestedAmount = (event) => {
+    const returnItemRow = event.target.closest('tr')
+    const amount = this.calculateSuggestedAmount(returnItemRow)
+    returnItemRow.querySelector('.refund-amount-input').value = amount.toFixed(2)
+
+    this.updateTotalRefundAmount()
+  }
+
+  calculateSuggestedAmount = (row) => {
+    const returnQuantity = parseInt(row.querySelector('.refund-quantity-input').value, 10)
+    const purchasedQuantity = parseInt(row.querySelector('.purchased-quantity').innerText, 10)
+    const chargedAmount = parseFloat(row.querySelector('.charged-amount').dataset.chargedAmount)
+    const amount = (returnQuantity / purchasedQuantity) * chargedAmount
+    return amount
   }
 }
