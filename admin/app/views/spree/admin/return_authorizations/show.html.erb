@@ -104,9 +104,11 @@ locals: {
 <% end %>
 
 <% if @refunds.any? %>
-  <div class="mb-4">
-    <h5><%= Spree.t(:reimbursement) %></h5>
-    <div class="table-responsive card-lg p-0">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5><%= Spree.t(:reimbursement) %></h5>
+    </div>
+    <div class="card-body p-0">
       <table class="table table-condensed">
         <thead class="text-muted">
           <tr>
