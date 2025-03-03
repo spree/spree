@@ -4,11 +4,7 @@
   <% else %>
     <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <% end %>
-  <%= @order.number %>
-  /
-  <%= Spree.t(:customer_returns) %>
-  /
-  <%= Spree.t(:new) %>
+  <%= Spree.t(:new_customer_return) %>
 <% end %>
 
 <% if @rma_return_items.any? %>
