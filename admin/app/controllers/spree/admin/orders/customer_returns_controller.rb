@@ -5,7 +5,6 @@ module Spree
         include Spree::Admin::OrderConcern
 
         before_action :load_order
-        before_action :load_customer_return
         before_action :load_form_data, only: [:new, :edit]
 
         create.before :build_return_items_from_params
@@ -65,18 +64,20 @@ module Spree
           end.compact
         end
 
-        def load_customer_return
-          if @object.order.nil?
-            @object.order = @order
-          end
-
-          @customer_return = @object
+        def object_name
+          'customer_return'
         end
 
         def object_url(object = nil, options = {})
           target = object || @object
 
-          spree.admin_order_customer_returns_url(@order, target, options)
+          spree.admin_order_customer_return_url(@order, target, options)
+        end
+
+        def edit_object_url(object, options = {})
+          target = object || @object
+
+          spree.edit_admin_order_customer_return_url(@order, target, options)
         end
 
         def model_class

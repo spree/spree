@@ -25,7 +25,7 @@
                 <td data-action="click->row-link#openLink" class="font-weight-bolder">
                   <%= link_to return_authorization.number,
                   (
-                    if can?(:edit, return_authorization) && false
+                    if can?(:edit, return_authorization)
                       edit_admin_order_return_authorization_path(@order, return_authorization)
                     else
                       admin_order_return_authorization_path(@order, return_authorization)

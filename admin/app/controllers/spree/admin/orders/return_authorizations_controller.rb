@@ -71,10 +71,20 @@ module Spree
           @return_authorization = @object
         end
 
+        def object_name
+          'return_authorization'
+        end
+
         def object_url(object = nil, options = {})
           target = object || @object
 
-          spree.admin_order_return_authorizations_url(@order, target, options)
+          spree.admin_order_return_authorization_url(@order, target, options)
+        end
+
+        def edit_object_url(object, options = {})
+          target = object || @object
+
+          spree.edit_admin_order_return_authorization_url(@order, target, options)
         end
 
         def model_class
