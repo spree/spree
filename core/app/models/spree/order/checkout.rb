@@ -264,10 +264,10 @@ module Spree
 
           def assign_default_addresses!
             if user
-              self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
+              self.bill_address = user.bill_address.clone if !bill_address_id && user.bill_address&.valid?
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
+              self.ship_address = user.ship_address.clone if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
             end
           end
 
