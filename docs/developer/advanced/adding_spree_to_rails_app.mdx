@@ -3,12 +3,8 @@ title: Adding to an existing Rails app
 description: This guide will show you how to add Spree to an existing Ruby on Rails application.
 ---
 
-<Note>
-If you followed the [Quickstart guide](quickstart) you can skip this page and go to the [Core Concepts](../core-concepts) section.
-</Note>
-
 <Warning>
-  This guide is aimed at advanced users who want to add Spree to an existing Rails application. If you are new to Spree, please follow the [Quickstart guide](quickstart).
+  This guide is aimed at advanced users who want to add Spree to an existing Rails application. If you are new to Spree, please follow the [Quickstart guide](/getting-started/quickstart).
 </Warning>
 
 ## Overview
@@ -37,7 +33,7 @@ If you already have a Ruby on Rails application, you can add Spree to it by foll
     ```
   </Accordion>
 
-  <Accordion icon="terminal" title="Run the install generators">
+  <Accordion icon="terminal" title="Run the install generator">
     These commands will run generators which will perform operations required for Spree to work properly.
 
     ```bash
@@ -46,19 +42,16 @@ If you already have a Ruby on Rails application, you can add Spree to it by foll
 
     ### Installation options
 
-    By default, the installation generator (`rails g spree:install`) will run migrations as well as adding seed. This can be disabled using
+      * `user_class`: The class that you want to use for your users, eg. `Spree::User` or `User`. This class needs to be present in your application.
+      * `authentication`: The authentication gem to use, eg. `devise` or `custom`. Custom will require you to provide your own authentication code.
+      * `install_admin`: Whether to install the Admin Panel.
+      * `install_storefront`: Whether to install the Storefront.
+      * `migrate`: Whether to run migrations.
+      * `sample`: Whether to add sample data (products, taxons, etc).
+      * `seed`: Whether to run the seed file.
+      * `admin_email`: The email of the (first) admin user.
+      * `admin_password`: The password of the (first) admin user.
 
-    ```bash
-    bin/rails g spree:install --migrate=false --sample=false --seed=false
-    ```
-
-    You can always perform any of these steps later by using these commands.
-
-    ```bash
-    bin/rake railties:install:migrations
-    bin/rails db:migrate
-    bin/rails db:seed 
-    ```
    </Accordion>
 
    <Accordion icon="box" title="Adding sample data">
