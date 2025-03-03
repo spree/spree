@@ -172,7 +172,7 @@ module Spree
           return
         end
 
-        source.payment_method_id = payment_method.id
+        source.payment_method_id = payment_method.id if source.respond_to?(:payment_method_id)
         source.user_id = order.user_id if order
       end
     end

@@ -118,7 +118,7 @@ module Spree
             authorization: auth_code || response
           )
         else
-          ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.join, {}, {})
+          ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.to_sentence, {}, {})
         end
       end
     end
