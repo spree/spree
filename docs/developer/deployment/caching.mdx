@@ -1,0 +1,73 @@
+---
+description: >-
+  This guide will cover all sorts of topics related to Spree application
+  performance
+---
+
+Caching is a great way to improve the performance of your Spree application. In all modern web applications, usually the most time consuming operations are database queries and rendering templates. Caching allows you to store the results of these operations in memory and serve them from there.
+
+We recommend using a distributed cache storage engine such as [Solid Cache](https://github.com/rails/solid_cache), Memcached or Redis. Spree Starter uses Solid Cache by default as it doesn't require any additional setup or services to be installed.
+
+## Setting up `solid_cache` as a cache storage engine
+
+<Info>
+If you're using Spree Starter, you don't need to do anything as it's already pre-configured for you.
+</Info>
+
+Firstly add `solid_cache` to your project
+
+```bash
+bundle add solid_cache
+```
+
+And run the installation script:
+
+```bash
+bin/rails solid_cache:install
+```
+
+Now, you will need to change the `config/environments/production.rb` from:
+
+```ruby
+# config.cache_store = :mem_cache_store
+```
+
+to:
+
+```ruby
+config.cache_store = :solid_cache_store
+```
+
+## Testing locally
+
+To enable caching in the development environment please type in your project directory:
+
+```bash
+bin/rails dev cache
+```
+
+You will need to restart your webserver after this.
+
+## API cache
+
+<Info>
+Changing Spree API cache is only required for applications heavily using the API. The default configuration is already optimized for the most common use cases.
+</Info>
+
+Additionally Spree API has a built-in caching mechanism. It's enabled by default and you don't need to do anything to enable it. You can however tweak it to your needs.
+
+The default cache TTL is 1 hour. You can change it by setting `Spree::Api::Config[:api_v2_serializers_cache_ttl]` in `config/initializers/spree.rb`, eg.
+
+```ruby
+Spree::Api::Config[:api_v2_serializers_cache_ttl] = 3600 # 1 hour
+```
+
+This is the setting for caching individual objects (serializers), eg. Products, Orders, etc.
+
+We also have a setting for caching collections of objects (serializers), eg. Product listings. It's `Spree::Api::Config[:api_v2_collection_cache_ttl]`.
+
+```ruby
+Spree::Api::Config[:api_v2_collection_cache_ttl] = 3600 # 1 hour
+```
+
+After modifying the settings, you will need to restart your webserver.

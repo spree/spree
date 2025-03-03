@@ -1,0 +1,160 @@
+---
+title: Assets
+---
+
+Spree uses [Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) to handle file uploads (eg. product images). By default, Active Storage uses local disk storage for attachments. This isn't suitable for production environments.
+
+For production environments, we recommend using a cloud storage service such as [AWS S3](https://aws.amazon.com/s3/) or [Cloudflare R2](https://www.cloudflare.com/r2/).
+
+## AWS S3
+
+To use Amazon S3 as your storage service, you need to configure the storage in the `config/storage.yml` file.
+
+```yaml
+amazon:
+  service: S3
+  access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
+  secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
+  region: "" # e.g. 'us-east-1'
+  bucket: your_own_bucket-<%= Rails.env %>
+```
+
+You will also need to add the `aws-sdk-s3` gem to your Gemfile.
+
+```ruby
+gem "aws-sdk-s3", require: false
+```
+
+And run `bundle install`.
+
+Now you need to switch the storage service in your `config/environments/production.rb` file.
+
+```ruby
+config.active_storage.service = :amazon
+```
+
+Now you will need to grab the credentials from your AWS S3 bucket and add them to rails credentials by running the following command:
+
+```bash
+EDITOR="code --wait" bin/rails credentials:edit
+```
+
+Add the following credentials:
+
+```yaml
+aws:
+  access_key_id: <your_access_key_id>
+  secret_access_key: <your_secret_access_key>
+  region: <your_region>
+  bucket: <your_bucket>
+```
+
+Save and exit the editor. Remember to commit the changes to your repository.
+
+### CORS Configuration
+
+Spree Admin Dashboard uses direct uploads to handle file uploads. For this to work properly, you need to configure CORS on your S3 bucket.
+
+1. Go to your S3 bucket in AWS Console
+2. Click on "Permissions" tab
+3. Scroll down to "Cross-origin resource sharing (CORS)"
+4. Click "Edit" and paste the following configuration:
+
+```json
+[
+  {
+    "AllowedMethods": ["GET", "PUT", "POST"],
+    "AllowedOrigins": ["https://myspreestore.com"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"]
+  }
+]
+```
+
+<Info>
+`myspreestore.com` should be replaced with your domain name which you access your Spree Admin Dashboard.
+</Info>
+
+## Cloudflare R2
+
+Cloudflare R2 is an S3-compatible, zero egress-fee, object storage with a built-in CDN. We strongly recommend using it as your storage service.
+
+To use Cloudflare R2 as your storage service, you need to configure the storage in the `config/storage.yml` file.
+
+```yaml
+cloudflare:
+  service: S3
+  endpoint: <%= Rails.application.credentials.dig(:cloudflare, :endpoint) %>
+  access_key_id: <%= Rails.application.credentials.dig(:cloudflare, :access_key_id) %>
+  secret_access_key: <%= Rails.application.credentials.dig(:cloudflare, :secret_access_key) %>
+  region: auto
+  bucket: <%= Rails.application.credentials.dig(:cloudflare, :bucket) %>
+```
+
+You will also need to add the `aws-sdk-s3` gem to your Gemfile.
+
+```ruby
+gem "aws-sdk-s3", require: false
+```
+
+And run `bundle install`.
+
+Now you need to switch the storage service in your `config/environments/production.rb` file.
+
+```ruby
+config.active_storage.service = :cloudflare
+```
+
+Now you will need to grab the credentials from your Cloudflare R2 bucket and add them to rails credentials by running the following command:
+
+```bash
+EDITOR="code --wait" bin/rails credentials:edit
+```
+
+Add the following credentials:
+
+```yaml
+cloudflare:
+  endpoint: <your_endpoint>
+  access_key_id: <your_access_key_id>
+  secret_access_key: <your_secret_access_key>
+  bucket: <your_bucket>
+```
+
+Save and exit the editor. Remember to commit the changes to your repository.
+
+### CORS Configuration
+
+Spree Admin Dashboard uses direct uploads to handle file uploads. For this to work properly, you need to configure CORS on your R2 bucket.
+
+1. Go to your R2 bucket in Cloudflare Console
+2. Click on "Settings" tab
+3. Scroll down to "CORS policy"
+4. Click "Edit CORS policy" and paste the following configuration:
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "https://myspreestore.com"
+    ],
+    "AllowedMethods": [
+      "PUT"
+    ],
+    "AllowedHeaders": [
+      "*"
+    ],
+    "ExposeHeaders": [
+      "Origin",
+      "Content-Type",
+      "Content-MD5",
+      "Content-Disposition"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+<Info>
+`myspreestore.com` should be replaced with your domain name which you access your Spree Admin Dashboard.
+</Info>
