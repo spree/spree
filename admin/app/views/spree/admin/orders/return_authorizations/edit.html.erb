@@ -28,22 +28,21 @@ locals: {
   <div class="form-actions">
     <%= turbo_save_button_tag Spree.t("actions.update") %>
     <div class="ml-auto d-flex gap-3">
-      <% if @return_authorization.can_cancel? %>
+      <% if f.object.can_cancel? && can?(:cancel, f.object) %>
         <%= link_to Spree.t("actions.cancel"),
-        cancel_admin_order_return_authorization_url(@order, @return_authorization),
-        method: :put,
+        spree.cancel_admin_return_authorization_path(f.object),
         class: "btn btn-danger",
         data: {
-          confirm: Spree.t(:are_you_sure),
+          turbo_method: :patch,
+          turbo_confirm: Spree.t(:are_you_sure),
         } %>
       <% end %>
       <% if f.object.can_be_deleted? && can?(:delete, f.object) %>
         <%= link_to Spree.t("actions.destroy"),
-        object_url(f.object),
+        spree.admin_return_authorization_path(f.object),
         data: {
           turbo_method: :delete,
           turbo_confirm: Spree.t(:are_you_sure_delete),
-          turbo_frame: defined?(turbo_frame) ? turbo_frame : nil,
         },
         class: "btn btn-danger" %>
       <% end %>

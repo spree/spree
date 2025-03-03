@@ -72,11 +72,7 @@ Spree::Core::Engine.add_routes do
           put :refund
         end
       end
-      resources :return_authorizations, except: [:index], controller: 'orders/return_authorizations' do
-        member do
-          put :cancel
-        end
-      end
+      resources :return_authorizations, except: [:index, :destroy], controller: 'orders/return_authorizations'
       resources :payments, except: [:index, :show] do
         member do
           put :capture
@@ -119,7 +115,11 @@ Spree::Core::Engine.add_routes do
     get 'promotion_rules/option_values_search', defaults: { format: :json }
 
     # returns
-    resources :return_authorizations, only: :index
+    resources :return_authorizations, only: [:index, :destroy] do
+      member do
+        patch :cancel
+      end
+    end
     resources :customer_returns, only: :index
     resources :return_items, only: [:update]
 

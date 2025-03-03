@@ -3,7 +3,17 @@ module Spree
     class ReturnAuthorizationsController < ResourceController
       def index; end
 
+      def cancel
+        @return_authorization.cancel!
+        flash[:success] = Spree.t(:return_authorization_canceled)
+        redirect_back fallback_location: spree.edit_admin_order_path(@return_authorization.order)
+      end
+
       private
+
+      def location_after_destroy
+        spree.edit_admin_order_path(@return_authorization.order)
+      end
 
       def collection
         return @collection if @collection.present?

@@ -12,22 +12,12 @@ module Spree
         create.fails  :load_form_data
         update.fails  :load_form_data
 
-        def cancel
-          @return_authorization.cancel!
-          flash[:success] = Spree.t(:return_authorization_canceled)
-          redirect_back fallback_location: spree.edit_admin_order_path(@order)
-        end
-
         private
 
         def load_form_data
           load_return_items
           load_reimbursement_types
           load_return_authorization_reasons
-        end
-
-        def location_after_destroy
-          spree.edit_admin_order_path(@order)
         end
 
         # To satisfy how nested attributes works we want to create placeholder ReturnItems for
