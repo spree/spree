@@ -94,9 +94,9 @@
               <% if editable %>
                 <%= item_fields.text_field :pre_tax_amount,
                                        {
-                                         class: " form-control",
+                                         class: "refund-amount-input form-control",
                                          data: {
-                                           action: "return-items#updateSuggestedAmount",
+                                           action: "return-items#updateTotalRefundAmount",
                                          },
                                        } %>
               <% else %>
@@ -136,7 +136,7 @@
 
   <div class="alert alert-info">
     <%= Spree.t(:total_pre_tax_refund) %>:
-    <span id="total_pre_tax_refund">0.00</span>
+    <span data-return-items-target="totalPreTaxRefund">0.00</span>
   </div>
 
   <div class="card mb-4">
