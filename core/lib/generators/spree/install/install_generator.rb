@@ -128,23 +128,10 @@ module Spree
       end
     end
 
-    def create_database
-      say_status :creating, 'database'
-      silence_stream(STDOUT) do
-        silence_stream(STDERR) do
-          silence_warnings { rake 'db:create' }
-        end
-      end
-    end
-
     def run_migrations
       if @run_migrations
         say_status :running, 'migrations'
-        silence_stream(STDOUT) do
-          silence_stream(STDERR) do
-            silence_warnings { rake 'db:migrate' }
-          end
-        end
+        rake 'db:migrate'
       else
         say_status :skipping, "migrations (don't forget to run rake db:migrate)"
       end
@@ -160,11 +147,7 @@ module Spree
 
         cmd = -> { rake("db:seed #{rake_options.join(' ')}") }
         if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
-          silence_stream(STDOUT) do
-            silence_stream(STDERR) do
-              silence_warnings &cmd
-            end
-          end
+          silence_warnings &cmd
         else
           cmd.call
         end
@@ -178,11 +161,7 @@ module Spree
 
       if @load_sample_data
         say_status :loading, 'sample data'
-        silence_stream(STDOUT) do
-          silence_stream(STDERR) do
-            silence_warnings { rake 'spree_sample:load' }
-          end
-        end
+        rake 'spree_sample:load'
       else
         say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
       end

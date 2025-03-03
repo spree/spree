@@ -16,7 +16,7 @@ platforms :ruby do
   elsif ENV['DB'] == 'postgres'
     gem 'pg'
   else
-    gem 'sqlite3', '~> 1.4'
+    gem 'sqlite3', '>= 2.0'
   end
 end
 
