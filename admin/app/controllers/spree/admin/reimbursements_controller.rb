@@ -27,9 +27,9 @@ module Spree
 
       def location_after_save
         if @reimbursement.reimbursed?
-          admin_order_reimbursement_path(parent, @reimbursement)
+          spree.admin_order_reimbursement_path(parent, @reimbursement)
         else
-          edit_admin_order_reimbursement_path(parent, @reimbursement)
+          spree.edit_admin_order_reimbursement_path(parent, @reimbursement)
         end
       end
 
