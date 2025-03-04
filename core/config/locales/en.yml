@@ -1699,6 +1699,8 @@ en:
     returned: Returned
     returns: Returns
     returns_policy: Returns Policy
+    reject_reason: Reject Reason
+    refund_amount: Refund Amount
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis

@@ -81,7 +81,7 @@ Spree::Core::Engine.add_routes do
         resources :refunds, only: [:new, :create, :edit, :update]
       end
       resources :payment_links, only: [:create], controller: 'orders/payment_links'
-      resources :reimbursements, only: [:index, :create, :show, :edit, :update] do
+      resources :reimbursements, except: [:destroy, :index] do
         member do
           post :perform
         end

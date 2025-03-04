@@ -59,7 +59,7 @@ locals: {
   </div>
   <div class="card-body p-0">
     <table class="table table-condensed">
-      <thead data-hook="customer_return_header">
+      <thead>
         <tr>
           <th><%= Spree.t(:amount) %></th>
           <th><%= Spree.t(:date) %></th>
@@ -68,7 +68,7 @@ locals: {
       </thead>
       <tbody>
         <% @reimbursement.refunds.includes(:reason).each do |refund| %>
-          <tr id="<%= spree_dom_id(refund) %>" data-hook="reimbursement_refund_row">
+          <tr id="<%= spree_dom_id(refund) %>">
             <td><%= refund.display_amount %></td>
             <td><%= local_time(refund.created_at) %></td>
             <td><%= refund.reason&.name %></td>
@@ -86,7 +86,7 @@ locals: {
     </div>
     <div class="card-body p-0">
       <table class="table table-condensed">
-        <thead data-hook="customer_return_header">
+        <thead>
           <tr>
             <th><%= Spree.t(:description) %></th>
             <th><%= Spree.t(:amount) %></th>
@@ -94,7 +94,7 @@ locals: {
         </thead>
         <tbody>
           <% @reimbursement.credits.each do |credit| %>
-            <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
+            <tr id="<%= spree_dom_id(credit) %>">
               <td><%= credit.description %></td>
               <td><%= credit.display_amount %></td>
             </tr>
