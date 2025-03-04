@@ -49,7 +49,7 @@ module Spree
         end
 
         def permitted_resource_params
-          @permitted_resource_params ||= params.require('customer_return').permit(permitted_customer_return_attributes)
+          @permitted_resource_params ||= params.require(:customer_return).permit(permitted_customer_return_attributes)
         end
 
         def build_return_items_from_params

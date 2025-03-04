@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
   stub_authorization!
+  render_views
 
   let(:order) { create(:shipped_order) }
   let(:return_authorization) { create(:return_authorization, order: order) }

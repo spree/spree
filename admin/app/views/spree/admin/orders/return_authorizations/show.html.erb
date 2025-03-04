@@ -31,7 +31,6 @@ locals: {
         <th><%= Spree.t(:return_quantity) %></th>
         <th><%= Spree.t(:total) %></th>
         <th><%= Spree.t(:refund_amount) %></th>
-        <th><%= Spree.t(:reason) %></th>
         <th><%= Spree.t(:reimbursement_type) %></th>
         <th><%= Spree.t(:exchange_for) %></th>
       </tr>
@@ -53,7 +52,6 @@ locals: {
           <td><%= return_item.return_quantity %></td>
           <td><%= return_item.pre_tax_amount %></td>
           <td><%= return_item.display_total %></td>
-          <td><%= return_item.return_reason.present? ? return_item.return_reason.name : "-" %></td>
           <td><%= if return_item.preferred_reimbursement_type.present?
               return_item.preferred_reimbursement_type.name.humanize
             else
@@ -88,17 +86,6 @@ locals: {
     </div>
     <div class="card-body">
       <%= @return_authorization.memo %>
-    </div>
-  </div>
-<% end %>
-
-<% if @return_authorization.reject_reason.present? %>
-  <div class="card mb-4">
-    <div class="card-header">
-      <h6 class="card-title"><%= Spree.t(:reject_reason) %></h6>
-    </div>
-    <div class="card-body">
-      <%= @return_authorization.reject_reason %>
     </div>
   </div>
 <% end %>
