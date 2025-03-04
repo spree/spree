@@ -241,6 +241,29 @@ describe 'Order' do
     end
   end
 
+  describe '#available_store_credits' do
+    subject { order.available_store_credits }
+
+    context 'order does not have an associated user' do
+      let(:order) { create(:store_credits_order_without_user) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context 'order has an associated user' do
+      let(:order) { create(:order, user: user, currency: 'USD') }
+      let(:user) { create(:user) }
+
+      let!(:store_credit_1) { create(:store_credit, user: user, amount: 10, currency: 'USD') }
+      let!(:store_credit_2) { create(:store_credit, user: user, amount: 15, currency: 'USD') }
+      let!(:store_credit_3) { create(:store_credit, user: user, amount: 20, currency: 'EUR') }
+
+      it 'returns the user available store credits' do
+        expect(subject).to eq([store_credit_2, store_credit_1])
+      end
+    end
+  end
+
   describe '#could_use_store_credit?' do
     let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
 

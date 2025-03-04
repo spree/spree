@@ -9,12 +9,7 @@ module Spree
       def new
         payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
 
-        @payment = @order.payments.build(
-          amount: @order.total - @order.payment_total,
-          payment_method: payment_method
-        )
-
-        @payment_max_amount = payment_method.store_credit? ? [@user_store_credits.first.amount_remaining, @payment.amount].min : @payment.amount
+        @payment = @order.payments.build(payment_method: payment_method)
 
         if payment_method.try(:source_required?)
           source_class = (payment_method.try(:payment_source_class) || Spree::CreditCard)
@@ -117,10 +112,7 @@ module Spree
 
       def load_data
         @payment_methods = @order.collect_backend_payment_methods
-
-        if @payment_methods.any?(&:store_credit?)
-          @user_store_credits = @order.user.store_credits.available.for_store(current_store).sort_by(&:amount_remaining).reverse
-        end
+        @store_credits = @order.available_store_credits if @payment_methods.any?(&:store_credit?)
       end
     end
   end

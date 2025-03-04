@@ -80,6 +80,35 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe 'after_initialize :set_amount' do
+    subject { payment.amount }
+
+    context 'when associated with an order' do
+      let(:order) { create(:order, payment_total: 10, total: 45) }
+      let(:payment) { described_class.new(order: order) }
+
+      it 'sets the amount to the order total minus the payment total' do
+        expect(subject).to eq(order.total - order.payment_total)
+      end
+
+      context 'when the amount is already set' do
+        let(:payment) { described_class.new(order: order, amount: 10) }
+
+        it 'does not set the amount' do
+          expect(subject).to eq(10)
+        end
+      end
+    end
+
+    context 'when not associated with an order' do
+      let(:payment) { described_class.new }
+
+      it 'does not set the amount' do
+        expect(subject).to eq(0)
+      end
+    end
+  end
+
   context '.risky' do
     let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }
     let!(:payment_2) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '') }
