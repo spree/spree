@@ -67,16 +67,8 @@ Spree::Core::Engine.add_routes do
         end
       end
       resources :line_items, except: :show
-      resources :customer_returns, only: [:index, :new, :edit, :create, :update] do
-        member do
-          put :refund
-        end
-      end
-      resources :return_authorizations do
-        member do
-          put :cancel
-        end
-      end
+      resources :customer_returns, except: [:index, :destroy], controller: 'orders/customer_returns'
+      resources :return_authorizations, except: [:index, :destroy], controller: 'orders/return_authorizations'
       resources :payments, except: [:index, :show] do
         member do
           put :capture
@@ -85,7 +77,7 @@ Spree::Core::Engine.add_routes do
         resources :refunds, only: [:new, :create, :edit, :update]
       end
       resources :payment_links, only: [:create], controller: 'orders/payment_links'
-      resources :reimbursements, only: [:index, :create, :show, :edit, :update] do
+      resources :reimbursements, except: [:destroy, :index] do
         member do
           post :perform
         end
@@ -119,8 +111,12 @@ Spree::Core::Engine.add_routes do
     get 'promotion_rules/option_values_search', defaults: { format: :json }
 
     # returns
-    get '/return_authorizations', to: 'return_index#return_authorizations', as: :return_authorizations
-    get '/customer_returns', to: 'return_index#customer_returns', as: :customer_returns
+    resources :return_authorizations, only: [:index, :destroy] do
+      member do
+        patch :cancel
+      end
+    end
+    resources :customer_returns, only: :index
     resources :return_items, only: [:update]
 
     # translations

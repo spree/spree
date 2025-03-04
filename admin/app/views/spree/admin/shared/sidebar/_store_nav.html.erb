@@ -1,6 +1,6 @@
 <% settings_active = %w[stores zones shipping_methods oauth_applications
                         payment_methods refund_reasons reimbursement_types
-                        return_authorizations shipping_categories store_credit_categories
+                        shipping_categories store_credit_categories
                         syncs tax_categories tax_rates webhooks accounts
                         custom_domains audits exports imports return_authorization_reasons
                         documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name) %>
@@ -93,19 +93,9 @@
     </li>
 
     <%= render 'spree/admin/shared/sidebar/orders_nav' %>
+    <%= render 'spree/admin/shared/sidebar/returns_nav' %>
     <%= render 'spree/admin/shared/sidebar/products_nav' %>
-    <% if enterprise_edition? %>
-      <%= render 'spree/admin/shared/sidebar/vendors_nav' %>
-    <% else%>
-      <li class="nav-item">
-        <%= external_link_to nil, 'https://spreecommerce.org/pricing', class: 'nav-link d-flex align-items-center w-100' do %>
-          <%= icon 'heart-handshake' %>
-          <%= Spree.t(:vendors) %>
-
-          <span class="badge badge-dark ml-auto with-tip rounded-pill" title="This feature is part of the Enterprise Edition.">Enterprise</span>
-        <% end %>
-      </li>
-    <% end %>
+    <%= render 'spree/admin/shared/sidebar/vendors_nav' %>
 
     <% if can?(:manage, Spree.user_class) %>
       <li class="nav-item">

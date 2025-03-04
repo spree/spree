@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:return_authorizations) %>
+<% end %>
+
+<div class="card-lg p-0">
+  <%= render "spree/admin/return_authorizations/filters" %>
+  <%= render "spree/admin/return_authorizations/list" %>
+
+  <%= render partial: "spree/admin/shared/index_table_options",
+  locals: {
+    collection: @collection,
+    per_page_action: :return_authorizations,
+  } %>
+</div>
