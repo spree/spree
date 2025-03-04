@@ -24,7 +24,7 @@ module Spree
         private
 
         def location_after_save
-          url_for([:edit, :admin, @order, @customer_return])
+          spree.edit_admin_order_path(@order)
         end
 
         def build_resource
