@@ -8,7 +8,7 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
   let(:reimbursement_credit) { create(:reimbursement_credit, creditable: create(:store_credit)) }
   let(:payment) { create(:payment, state: 'completed') }
   let(:type) { :reimbursement }
-  let(:refund) { create(:refund, amount: payment.credit_allowed - 1) } 
+  let(:refund) { create(:refund, amount: payment.credit_allowed - 1) }
   let(:resource) { create(type, refunds: [refund], credits: [reimbursement_credit]) }
 
   it do
@@ -22,6 +22,7 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
           created_at: resource.created_at,
           updated_at: resource.updated_at,
           display_total: resource.display_total.to_s,
+          performed_by: resource.performed_by
         },
         relationships: {
           order: {
