@@ -1,9 +1,5 @@
 <% content_for :page_title do %>
-  <% if controller_name == 'orders' %>
-    <%= page_header_back_button spree.admin_orders_path, @order %>
-  <% else %>
-    <%= page_header_back_button spree.edit_admin_order_path(@order) %>
-  <% end %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <%= Spree.t(:new_customer_return) %>
 <% end %>
 
