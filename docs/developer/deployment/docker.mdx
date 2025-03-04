@@ -1,0 +1,55 @@
+---
+title: Docker
+description: Learn how to build a Docker image of your Spree application.
+---
+
+Spree (when using Spree Starter template) comes with a Dockerfile that can be used to build a Docker image of your application.
+
+You can find the Dockerfile in the [Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) file in the root of the project or in the Spree Starter repository.
+
+This Dockerfile is pre-configured to run Spree with PostgreSQL database. That's the only external dependency you need to have installed on your machine to be able to run Spree.
+
+You can later use that image to run your application in a containerized environment eg. AWS ECS, AWS Fargate, Azure Container Instances, etc.
+
+## Building the Docker image
+
+```bash
+docker build -t spree .
+```
+
+## Running the Docker container
+
+```bash
+docker run -p 3000:3000 spree
+```
+
+You can also run the container with a specific environment variable by using `-e` flag.
+
+```bash
+docker run -e RAILS_ENV=production spree
+```
+
+### Environment variables
+
+You can set environment variables by using `-e` flag when running the container.
+
+```bash
+docker run -e RAILS_ENV=production -e RAILS_MASTER_KEY=... -e DATABASE_URL=... spree
+```
+
+You will need to set the following environment variables:
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `RAILS_ENV` | Rails environment (production, development, test) | `production` |
+| `RAILS_MASTER_KEY` | This should be the contents of your `config/master.key` file | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
+| `DATABASE_URL` | Database URL, this could be your AWS RDS instance or any other PostgreSQL instance | `postgres://user:pass@localhost:5432/spree` |
+
+There are also some other environment variables that you can set to customize your Spree application.
+
+| Variable | Description | Default value |
+| --- | --- | --- |
+| `RAILS_MAX_THREADS` | Web server (Puma) threads | `3` |
+| `PORT` | Web server port | `3000` |
+| `RAILS_LOG_LEVEL` | Log level, you can switch it to `debug` to see more detailed logs | `info` |
+| `DEVISE_SESSION_TIMEOUT` | Session timeout in days | `14` |

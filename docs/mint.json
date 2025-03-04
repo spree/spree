@@ -75,8 +75,7 @@
     {
       "group": "Getting started",
       "pages": [
-        "developer/getting-started/quickstart",
-        "developer/getting-started/adding_spree_to_rails_app"
+        "developer/getting-started/quickstart"
       ]
     },
     {
@@ -120,6 +119,17 @@
     },
 
     {
+      "group": "Deployment",
+      "pages": [
+        "developer/deployment/render",
+        "developer/deployment/docker",
+        "developer/deployment/assets",
+        "developer/deployment/cdn",
+        "developer/deployment/caching"
+      ]
+    },
+
+    {
       "group": "Upgrading",
       "pages": [
         "developer/upgrades/quickstart",
@@ -157,6 +167,12 @@
         "developer/contributing/quickstart",
         "developer/contributing/developing-spree",
         "developer/contributing/creating-an-extension"
+      ]
+    },
+    {
+      "group": "Advanced",
+      "pages": [
+        "developer/advanced/adding_spree_to_rails_app"
       ]
     },
 
