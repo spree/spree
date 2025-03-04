@@ -23,7 +23,7 @@ describe Spree::Admin::RefundsController, type: :controller do
       let!(:refund_reason) { create(:refund_reason) }
       let(:payment) { create(:payment, amount: payment_amount, order: create(:completed_order_with_totals)) }
       let(:payment_amount) { amount * 2 }
-      let(:amount) { 100.0 }
+      let(:amount) { 10.0 }
       let(:amount_in_cents) { amount * 100 }
       let(:authorization) { generate(:refund_transaction_id) }
 

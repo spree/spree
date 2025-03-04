@@ -24,12 +24,12 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#index' do
-    let!(:shipped_order) { create(:shipped_order) }
-    let!(:order) { create(:completed_order_with_totals, line_items_count: 2) }
+    let!(:shipped_order) { create(:shipped_order, with_payment: false, total: 100) }
+    let!(:order) { create(:completed_order_with_totals, line_items_count: 2, total: 100) }
     let(:line_item) { order.line_items.first }
-    let!(:cancelled_order) { create(:completed_order_with_totals, state: 'canceled') }
+    let!(:cancelled_order) { create(:completed_order_with_totals, state: 'canceled', total: 100) }
     let!(:payment) { create(:payment, state: 'completed', amount: shipped_order.total, order: shipped_order) }
-    let!(:cancelled_order_payment) { create(:payment, state: 'completed', amount: shipped_order.total, order: cancelled_order) }
+    let!(:cancelled_order_payment) { create(:payment, state: 'completed', amount: cancelled_order.total, order: cancelled_order) }
     let!(:refund) { create(:refund, payment: payment, amount: payment.amount) }
     let!(:payment_one) { create(:payment, state: 'completed', amount: order.total, order: order) }
     let!(:partial_refund) { create(:refund, payment: payment_one, amount: (payment_one.amount - 10)) }

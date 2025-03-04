@@ -94,7 +94,7 @@ describe 'StoreCreditEvent' do
       end
 
       let(:authorization_code) { '1-SC-TEST' }
-      let(:order) { create(:order, store: store) }
+      let(:order) { create(:order, store: store, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order, response_code: authorization_code) }
 
       it 'returns the order associated with the payment' do

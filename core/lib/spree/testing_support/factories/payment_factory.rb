@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :payment, class: Spree::Payment do
-    order         { create(:order, total: 45.75) }
+    order         { create(:order, total: amount) }
     amount        { 45.75 }
     state         { 'checkout' }
     response_code { '12345' }

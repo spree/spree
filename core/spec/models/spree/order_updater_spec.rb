@@ -9,12 +9,13 @@ module Spree
     context 'order totals' do
       before do
         create_list(:line_item, 2, order: order, price: 10)
+        order.update_with_updater!
       end
 
       it 'updates payment totals' do
-        create(:payment_with_refund, order: order)
+        create(:payment_with_refund, amount: 20, order: order)
         Spree::OrderUpdater.new(order).update_payment_total
-        expect(order.payment_total).to eq(40.75)
+        expect(order.payment_total).to eq(15)
       end
 
       it 'update item total' do

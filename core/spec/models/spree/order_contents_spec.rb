@@ -59,6 +59,7 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
+      let(:order) { create(:order, user: user, store: store, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order) }
 
       it { expect { subject.add(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
@@ -172,7 +173,8 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:payment) { create(:store_credit_payment, order: order) }
+      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       before do
         subject.add(variant, 1)
@@ -225,7 +227,8 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let(:payment) { create(:store_credit_payment, order: order) }
+      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       before do
         @line_item = subject.add(variant, 1)
@@ -278,7 +281,8 @@ describe Spree::OrderContents, type: :model do
     end
 
     context 'when store_credits payment' do
-      let!(:payment) { create(:store_credit_payment, order: order) }
+      let(:order) { create(:order, user: user, store: store, total: 100) }
+      let!(:payment) { create(:store_credit_payment, amount: 10, order: order) }
 
       it { expect { subject.update_cart params }.to change { order.payments.store_credits.count }.by(-1) }
     end
