@@ -106,10 +106,10 @@ module Spree
       total - paid_amount
     end
 
-    def perform!
+    def perform!(performer = nil)
       reimbursement_tax_calculator.call(self)
       reload
-      update!(total: calculated_total)
+      update!(total: calculated_total, performed_by: performer)
 
       reimbursement_performer.perform(self)
 

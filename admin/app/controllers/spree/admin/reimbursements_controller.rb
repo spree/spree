@@ -4,12 +4,11 @@ module Spree
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_simulated_refunds, only: :edit
-      before_action :assign_performer, only: :perform
 
       rescue_from Spree::Core::GatewayError, with: :spree_core_gateway_error
 
       def perform
-        @reimbursement.perform!
+        @reimbursement.perform!(try_spree_current_user)
         redirect_to location_after_save
       end
 
@@ -40,10 +39,6 @@ module Spree
       def spree_core_gateway_error(error)
         flash[:error] = error.message
         redirect_to spree.edit_admin_order_reimbursement_path(parent, @reimbursement)
-      end
-
-      def assign_performer
-        @reimbursement.update!(performed_by: try_spree_current_user)
       end
     end
   end
