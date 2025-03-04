@@ -67,11 +67,7 @@ Spree::Core::Engine.add_routes do
         end
       end
       resources :line_items, except: :show
-      resources :customer_returns, except: [:index, :destroy], controller: 'orders/customer_returns' do
-        member do
-          put :refund
-        end
-      end
+      resources :customer_returns, except: [:index, :destroy], controller: 'orders/customer_returns'
       resources :return_authorizations, except: [:index, :destroy], controller: 'orders/return_authorizations'
       resources :payments, except: [:index, :show] do
         member do
