@@ -1623,6 +1623,7 @@ en:
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
+    refund_amount: Refund Amount
     refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
@@ -1652,6 +1653,7 @@ en:
     reimbursement_types: Reimbursement Types
     reimbursements: Reimbursements
     reject: Reject
+    reject_reason: Reject Reason
     rejected: Rejected
     remember_me: Remember me
     remove: Remove
@@ -1699,8 +1701,6 @@ en:
     returned: Returned
     returns: Returns
     returns_policy: Returns Policy
-    reject_reason: Reject Reason
-    refund_amount: Refund Amount
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis
