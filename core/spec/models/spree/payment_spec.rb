@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Payment, type: :model do
   let(:store) { Spree::Store.default }
-  let(:order) { create(:order, store: store) }
+  let(:order) { create(:order, store: store, total: 200) }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
@@ -175,6 +175,33 @@ describe Spree::Payment, type: :model do
       expect(cc_errors).to include('Month is not a number')
       expect(cc_errors).to include('Year is not a number')
       expect(cc_errors).to include("Verification Value can't be blank")
+    end
+
+    describe 'amount validation' do
+      subject { payment.valid? }
+
+      let(:payment) { build(:payment, amount: payment_amount, order: order) }
+
+      context 'with an associated order' do
+        let(:order) { create(:order, total: 100) }
+
+        context 'when the amount is greater than the max amount' do
+          let(:payment_amount) { 101 }
+
+          it 'is invalid' do
+            subject
+
+            expect(payment).not_to be_valid
+            expect(payment.errors.full_messages).to include('Amount is greater than the allowed maximum amount of 100.0')
+          end
+        end
+
+        context 'when the amount is less than the max amount' do
+          let(:payment_amount) { 99 }
+
+          it { is_expected.to be(true) }
+        end
+      end
     end
   end
 

@@ -233,6 +233,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/product:
           attributes:
             base:

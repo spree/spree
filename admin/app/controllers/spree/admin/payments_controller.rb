@@ -51,6 +51,7 @@ module Spree
         @object.failure if defined?(@object) && @object.persisted?
         invoke_callbacks(:create, :fails)
 
+        flash[:error] = @object.errors.full_messages.to_sentence
         render :new, status: :unprocessable_entity
       end
 

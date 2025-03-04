@@ -53,6 +53,7 @@ module Spree
     after_initialize :build_source
 
     validates :amount, numericality: true
+    validate :amount_must_be_less_than_or_equal_to_max_amount, if: -> { new_record? || amount_changed? }
 
     delegate :store_credit?, to: :payment_method, allow_nil: true
     delegate :name,          to: :payment_method, allow_nil: true, prefix: true
@@ -137,13 +138,15 @@ module Spree
     end
 
     def max_amount
-      return amount if payment_method.nil? || order&.user.nil?
+      return amount if order.nil?
 
-      if payment_method.store_credit?
+      amount_from_order = order.total - order.payment_total
+
+      if payment_method&.store_credit?
         store_credits = order.available_store_credits
-        store_credits.any? ? [store_credits.first.amount_remaining, amount].min : amount
+        store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
       else
-        amount
+        amount_from_order
       end
     end
 
@@ -242,6 +245,10 @@ module Spree
 
     def set_amount
       self.amount = order.total - order.payment_total
+    end
+
+    def amount_must_be_less_than_or_equal_to_max_amount
+      errors.add(:amount, :greater_than_max_amount, max_amount: max_amount) if amount > max_amount
     end
 
     def after_void

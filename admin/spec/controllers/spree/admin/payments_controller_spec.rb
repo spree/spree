@@ -304,13 +304,9 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
           expect(response).to render_template(:new)
           expect(response.status).to eq(422)
 
-          expect(flash[:error]).to eq('Store credit amount remaining is not sufficient and Unable to capture more than authorized amount')
+          expect(flash[:error]).to eq('Amount is greater than the allowed maximum amount of 10.0')
 
-          expect(order.reload.payments.count).to eq(1)
-          expect(order_payment).to be_failed
-          expect(order_payment.source).to eq(store_credit)
-          expect(order_payment.payment_method).to eq(payment_method)
-          expect(order_payment.amount).to eq(12.34)
+          expect(order.reload.payments).to be_empty
         end
       end
     end
