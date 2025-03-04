@@ -17,7 +17,7 @@ module Spree
 
       def build_resource
         if params[:build_from_customer_return_id].present?
-          customer_return = CustomerReturn.find(params[:build_from_customer_return_id])
+          customer_return = current_store.customer_returns.find(params[:build_from_customer_return_id])
 
           Reimbursement.build_from_customer_return(customer_return)
         else
