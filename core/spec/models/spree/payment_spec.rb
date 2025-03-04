@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Payment, type: :model do
   let(:store) { Spree::Store.default }
-  let(:order) { create(:order, store: store) }
+  let(:order) { create(:order, store: store, total: 200) }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
@@ -80,6 +80,35 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe 'after_initialize :set_amount' do
+    subject { payment.amount }
+
+    context 'when associated with an order' do
+      let(:order) { create(:order, payment_total: 10, total: 45) }
+      let(:payment) { described_class.new(order: order) }
+
+      it 'sets the amount to the order total minus the payment total' do
+        expect(subject).to eq(order.total - order.payment_total)
+      end
+
+      context 'when the amount is already set' do
+        let(:payment) { described_class.new(order: order, amount: 10) }
+
+        it 'does not set the amount' do
+          expect(subject).to eq(10)
+        end
+      end
+    end
+
+    context 'when not associated with an order' do
+      let(:payment) { described_class.new }
+
+      it 'does not set the amount' do
+        expect(subject).to eq(0)
+      end
+    end
+  end
+
   context '.risky' do
     let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }
     let!(:payment_2) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '') }
@@ -146,6 +175,33 @@ describe Spree::Payment, type: :model do
       expect(cc_errors).to include('Month is not a number')
       expect(cc_errors).to include('Year is not a number')
       expect(cc_errors).to include("Verification Value can't be blank")
+    end
+
+    describe 'amount validation' do
+      subject { payment.valid? }
+
+      let(:payment) { build(:payment, amount: payment_amount, order: order) }
+
+      context 'with an associated order' do
+        let(:order) { create(:order, total: 100) }
+
+        context 'when the amount is greater than the max amount' do
+          let(:payment_amount) { 101 }
+
+          it 'is invalid' do
+            subject
+
+            expect(payment).not_to be_valid
+            expect(payment.errors.full_messages).to include('Amount is greater than the allowed maximum amount of 100.0')
+          end
+        end
+
+        context 'when the amount is less than the max amount' do
+          let(:payment_amount) { 99 }
+
+          it { is_expected.to be(true) }
+        end
+      end
     end
   end
 

@@ -46,8 +46,8 @@ describe Spree::Store, type: :model do
     end
 
     describe '#orders' do
-      let!(:order) { create(:order, store: subject) }
-      let!(:order_2) { create(:order, store: create(:store)) }
+      let!(:order) { create(:order, store: subject, total: 100) }
+      let!(:order_2) { create(:order, store: create(:store), total: 100) }
 
       it { expect(subject.orders).to eq([order]) }
 

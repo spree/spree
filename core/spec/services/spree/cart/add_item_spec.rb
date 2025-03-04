@@ -4,7 +4,7 @@ module Spree
   describe Cart::AddItem do
     subject { described_class }
 
-    let(:order) { create :order }
+    let(:order) { create :order, total: 100 }
     let(:variant) { create :variant, price: 20 }
     let(:qty) { 1 }
     let(:execute) { subject.call(order: order, variant: variant, quantity: qty) }
@@ -54,7 +54,9 @@ module Spree
     end
 
     context 'with store_credits payment' do
+      let!(:order) { create(:order, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order) }
+
       let(:execute) { subject.call(order: order, variant: variant, quantity: 1) }
 
       it do

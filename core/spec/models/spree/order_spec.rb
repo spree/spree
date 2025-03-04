@@ -1916,15 +1916,20 @@ describe Spree::Order, type: :model do
     subject { order.partially_refunded? }
 
     context 'when orders has refunds' do
-      let(:order) { create(:order_ready_to_ship) }
+      let!(:order) { create(:order_ready_to_ship) }
       let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
       let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
-      let!(:store_credits) { create(:store_credit_payment, amount: 15, order: order) }
+      let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
 
       before do
-        order.update_attribute(:total, 100)
-        order.update_attribute(:additional_tax_total, 10.00)
+        order.update_column(:total, 110)
+        order.update_column(:additional_tax_total, 10)
+        order.update_column(:payment_total, 95)
+
+        order.payments.first.update_column(:amount, 95)
+
+        create(:store_credit_payment, amount: 15, order: order)
       end
 
       context 'when sum of refunds is less than max amount which could be refunded' do
@@ -1936,7 +1941,7 @@ describe Spree::Order, type: :model do
       end
 
       context 'when sum of refunds is equal to max amount which could be refunded' do
-        let(:amount) { 75 }
+        let(:amount) { 85 }
 
         it 'returns false' do
           expect(subject).to be false
@@ -1944,7 +1949,7 @@ describe Spree::Order, type: :model do
       end
 
       context 'when sum of refunds is greater than max amount which could be refunded' do
-        let(:amount) { 75 }
+        let(:amount) { 90 }
 
         it 'returns false' do
           expect(subject).to be false
@@ -1964,7 +1969,7 @@ describe Spree::Order, type: :model do
   describe '#payment_method' do
     subject { order.payment_method }
 
-    let(:order) { create(:order) }
+    let(:order) { create(:order, total: 100) }
     let(:payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
 
     before do
@@ -1979,7 +1984,7 @@ describe Spree::Order, type: :model do
   describe '#payment_source' do
     subject { order.payment_source }
 
-    let(:order) { create(:order) }
+    let(:order) { create(:order, total: 100) }
     let(:payment_source) { create(:credit_card) }
 
     before do

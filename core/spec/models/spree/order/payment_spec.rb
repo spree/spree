@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe Spree::Order, type: :model do
-    let(:order) { create(:order) }
+    let(:order) { create(:order, total: 100, payment_total: 0) }
     let(:updater) { Spree::OrderUpdater.new(order) }
 
     context 'processing payments' do
@@ -11,27 +11,23 @@ module Spree
         Spree::Config[:auto_capture] = true
 
         allow(order).to receive_message_chain(:line_items, :empty?).and_return(false)
-        allow(order).to receive_messages total: 100
       end
 
-      it 'processes all checkout payments' do
-        payment_1 = create(:payment, amount: 50)
-        payment_2 = create(:payment, amount: 50)
-        allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2])
+      it 'processes the checkout payment' do
+        payment = create(:payment, amount: 100, order: order)
 
         order.process_payments!
         updater.update_payment_state
         expect(order.payment_state).to eq('paid')
 
-        expect(payment_1).to be_completed
-        expect(payment_2).to be_completed
+        expect(payment.reload).to be_completed
       end
 
       context 'processes all checkout payments along with store credits' do
         context 'with store credits payment method auto capture turned on' do
           it 'order should be paid' do
-            store_credit = create(:store_credit_payment, amount: 50)
-            payment = create(:payment, amount: 50)
+            store_credit = create(:store_credit_payment, amount: 50, order: order)
+            payment = create(:payment, amount: 50, order: order)
 
             expect(order).to receive(:unprocessed_payments).and_return([store_credit, payment]).at_least(:once)
 
@@ -45,24 +41,22 @@ module Spree
         end
 
         context 'with store credits payment method auto capture turned off' do
-          let!(:payment) { create(:payment, amount: payment_amount) }
+          let!(:payment) { create(:payment, order: order, amount: payment_amount) }
           let!(:store_credit_payment) do
             create(
               :store_credit_payment,
+              order: order,
               amount: store_credit_amount,
               payment_method: create(:store_credit_payment_method, auto_capture: false, stores: [payment.order.store])
             )
           end
 
           before do
-            payments = [store_credit_payment, payment]
-            expect(order).to receive(:payments).and_return(payments).at_least(:once)
-            expect(order.payments).to receive(:valid).and_return(payments)
-
             order.process_payments!
             updater.update_payment_state
-            expect(payment).to be_completed
-            expect(store_credit_payment).to be_pending
+
+            expect(payment.reload).to be_completed
+            expect(store_credit_payment.reload).to be_pending
           end
 
           context 'order payment state should be balance due' do
@@ -88,9 +82,9 @@ module Spree
       end
 
       it 'does not go over total for order' do
-        payment_1 = create(:payment, amount: 50)
-        payment_2 = create(:payment, amount: 50)
-        payment_3 = create(:payment, amount: 50)
+        payment_1 = create(:payment, amount: 50, order: order)
+        payment_2 = create(:payment, amount: 50, order: order)
+        payment_3 = create(:payment, amount: 50, order: order)
         allow(order).to receive(:unprocessed_payments).and_return([payment_1, payment_2, payment_3])
 
         order.process_payments!
@@ -103,8 +97,8 @@ module Spree
       end
 
       it 'does not use failed payments' do
-        payment_1 = create(:payment, amount: 50)
-        payment_2 = create(:payment, amount: 50, state: 'failed')
+        payment_1 = create(:payment, amount: 50, order: order)
+        payment_2 = create(:payment, amount: 50, state: 'failed', order: order)
         allow(order).to receive(:pending_payments).and_return([payment_1])
 
         expect(payment_2).not_to receive(:process!)
@@ -139,20 +133,6 @@ module Spree
 
         persisted_order.update(attributes)
         expect(persisted_order.unprocessed_payments.last.source.number).to be_present
-      end
-    end
-
-    context 'checking if order is paid' do
-      context 'payment_state is paid' do
-        before { allow(order).to receive_messages payment_state: 'paid' }
-
-        it { expect(order).to be_paid }
-      end
-
-      context 'payment_state is credit_owned' do
-        before { allow(order).to receive_messages payment_state: 'credit_owed' }
-
-        it { expect(order).to be_paid }
       end
     end
 

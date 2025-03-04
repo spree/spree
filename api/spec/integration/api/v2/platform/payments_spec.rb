@@ -11,7 +11,7 @@ describe 'Payments API', swagger: true do
   }
 
   let(:id) { create(:payment, payment_method: payment_method, order: order).id }
-  let(:order) { create(:order, store: store) }
+  let(:order) { create(:order, store: store, total: 200) }
   let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
   let(:records_list) { create_list(:payment, 2, order: order, payment_method: payment_method) }
   let(:valid_create_param_value) { build(:payment, payment_method: payment_method, order: order) }

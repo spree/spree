@@ -14,6 +14,7 @@ describe Spree::Order, type: :model do
     context 'when current state is confirm' do
       before do
         order.state = 'confirm'
+        order.total = 100
         order.run_callbacks(:create)
         allow(order).to receive_messages payment_required?: true
         allow(order).to receive_messages process_payments!: true

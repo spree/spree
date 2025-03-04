@@ -37,6 +37,8 @@ module Spree
 
     before_validation :validate_source
 
+    after_initialize :set_amount, if: -> { new_record? && order.present? && !amount_changed? }
+
     after_save :create_payment_profile, if: :profiles_supported?
 
     # update the order totals, etc.
@@ -51,6 +53,7 @@ module Spree
     after_initialize :build_source
 
     validates :amount, numericality: true
+    validate :amount_must_be_less_than_or_equal_to_max_amount, if: -> { new_record? || amount_changed? }
 
     delegate :store_credit?, to: :payment_method, allow_nil: true
     delegate :name,          to: :payment_method, allow_nil: true, prefix: true
@@ -134,6 +137,19 @@ module Spree
       payment_method.payment_source_class.unscoped { super }
     end
 
+    def max_amount
+      return amount if order.nil?
+
+      amount_from_order = order.total - order.payment_total
+
+      if payment_method&.store_credit?
+        store_credits = order.available_store_credits
+        store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
+      else
+        amount_from_order
+      end
+    end
+
     def amount=(amount)
       self[:amount] =
         case amount
@@ -172,7 +188,7 @@ module Spree
           return
         end
 
-        source.payment_method_id = payment_method.id
+        source.payment_method_id = payment_method.id if source.respond_to?(:payment_method_id)
         source.user_id = order.user_id if order
       end
     end
@@ -226,6 +242,14 @@ module Spree
     end
 
     private
+
+    def set_amount
+      self.amount = order.total - order.payment_total
+    end
+
+    def amount_must_be_less_than_or_equal_to_max_amount
+      errors.add(:amount, :greater_than_max_amount, max_amount: max_amount) if amount > max_amount
+    end
 
     def after_void
       # Implement your logic here

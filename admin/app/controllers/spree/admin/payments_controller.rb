@@ -9,10 +9,7 @@ module Spree
       def new
         payment_method = params[:payment_method_id] ? @payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id].to_s } : @payment_methods.first
 
-        @payment = @order.payments.build(
-          amount: @order.total_minus_store_credits - @order.payment_total,
-          payment_method: payment_method
-        )
+        @payment = @order.payments.build(payment_method: payment_method)
 
         if payment_method.try(:source_required?)
           source_class = (payment_method.try(:payment_source_class) || Spree::CreditCard)
@@ -54,6 +51,7 @@ module Spree
         @object.failure if defined?(@object) && @object.persisted?
         invoke_callbacks(:create, :fails)
 
+        flash[:error] = @object.errors.full_messages.to_sentence
         render :new, status: :unprocessable_entity
       end
 
@@ -115,6 +113,7 @@ module Spree
 
       def load_data
         @payment_methods = @order.collect_backend_payment_methods
+        @store_credits = @order.available_store_credits if @payment_methods.any?(&:store_credit?)
       end
     end
   end
