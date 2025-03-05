@@ -130,8 +130,7 @@ locals: {
       <%= Spree.t(:reimburse) %>
     <% end %>
     <span class="or"><%= Spree.t(:or) %></span>
-    <%= button_link_to Spree.t("actions.cancel"),
-    url_for([:edit, :admin, @order, @reimbursement.customer_return]),
-    icon: "cancel.svg" %>
+    <%= link_to Spree.t("actions.cancel"),
+    url_for([:edit, :admin, @order, @reimbursement.customer_return]) %>
   <% end %>
 </div>

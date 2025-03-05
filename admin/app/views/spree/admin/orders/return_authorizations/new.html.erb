@@ -11,7 +11,8 @@
     <div class="form-actions">
       <%= button Spree.t(:create) %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_return_authorizations_path(@order), icon: 'cancel.svg' %>
+      <%= link_to Spree.t("actions.cancel"),
+      spree.admin_order_return_authorizations_path(@order) %>
     </div>
   </fieldset>
 <% end %>
