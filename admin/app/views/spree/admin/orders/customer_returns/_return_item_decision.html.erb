@@ -35,14 +35,14 @@
           end %>
         </td>
         <% if show_decision %>
-          <td class='actions'>
+          <td class='actions d-flex gap-2'>
             <% if can?(:accept, return_item) %>
-              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-primary btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, "data-action" => 'save', title: Spree.t(:accept), method: 'put' } do %>
+              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-primary btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, title: Spree.t(:accept), method: 'put' } do %>
                 <%= Spree.t(:accept) %>
               <% end %>
             <% end %>
             <% if can?(:reject, return_item) %>
-              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-danger btn-sm', params: { "return_item[acceptance_status]" => 'rejected' }, "data-action" => 'remove', title: Spree.t('actions.reject'), method: 'put' } do %>
+              <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-danger btn-sm', params: { "return_item[acceptance_status]" => 'rejected' }, title: Spree.t('actions.reject'), method: 'put' } do %>
                 <%= Spree.t("actions.reject") %>
               <% end %>
             <% end %>
