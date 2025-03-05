@@ -1,5 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@reimbursement.order) %>
+  <%= Spree.t(:reimbursement) %>
   <%= @reimbursement.number %>
 <% end %>
 
