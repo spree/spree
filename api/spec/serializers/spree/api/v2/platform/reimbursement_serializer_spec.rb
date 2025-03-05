@@ -58,7 +58,7 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
           performed_by: {
             data: {
               id: user.id.to_s,
-              type: :user
+              type: :admin_user
             }
           }
         },
