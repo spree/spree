@@ -1,19 +1,6 @@
 <% content_for :page_title do %>
-  <%= page_header_back_button spree.edit_admin_order_customer_return_path(
-    @order,
-    @reimbursement.customer_return,
-  ) %>
-  <%= @order.number %>
-  /
-  <%= Spree.t(:reimbursements) %>
-  /
-  <span class="ml-2 mr-3">
-    <%= @reimbursement.number %>
-  </span>
-
-  <span class="badge badge-pill badge-<%= @reimbursement.reimbursement_status %>">
-    <%= Spree.t("reimbursement_states.#{@reimbursement.reimbursement_status}") %>
-  </span>
+  <%= page_header_back_button spree.edit_admin_order_path(@reimbursement.order) %>
+  <%= @reimbursement.number %>
 <% end %>
 
 <%= render partial: "spree/admin/shared/error_messages",
