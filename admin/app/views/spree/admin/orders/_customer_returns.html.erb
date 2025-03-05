@@ -42,7 +42,7 @@
                   <% end %>
                 </td>
                 <td data-action="click->row-link#openLink"><%= customer_return.display_pre_tax_total.to_html %></td>
-                <td data-action="click->row-link#openLink"><%= pretty_time(customer_return.created_at) %></td>
+                <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
               </tr>
             <% end %>
           </tbody>
