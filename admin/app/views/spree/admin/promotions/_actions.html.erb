@@ -1,0 +1,34 @@
+<div class="card-header">
+  <h5 class="card-title">
+    <%= Spree.t(:promotion_actions) %>
+  </h5>
+</div>
+<div id="action_fields" class="card-body">
+  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), remote: true, id: 'new_promotion_action_form', class: 'mb-3' do %>
+    <% options = options_for_select(  @actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
+
+    <div class="form-group">
+      <%= label_tag :action_type, Spree.t(:add_action_of_type) %>
+      <%= select_tag 'action_type', options, class: 'custom-select' %>
+    </div>
+    <div class="form-actions">
+      <%= button Spree.t(:add), 'plus', 'submit', class: "btn-light" %>
+    </div>
+
+  <% end %>
+
+  <%= form_for @promotion, url: spree.admin_promotion_path(@promotion), method: :put do |f| %>
+    <div id="actions" class="filter_list mt-3">
+      <% if @promotion.actions.any? %>
+        <%= render partial: 'promotion_action',  collection: @promotion.actions %>
+      <% else %>
+        <div class="alert alert-warning">
+          <%= Spree.t(:no_actions_added) %>
+        </div>
+      <% end %>
+    </div>
+    <div class="actions promotion-update">
+      <%= turbo_save_button_tag Spree.t('actions.update') %>
+    </div>
+  <% end %>
+</div>

@@ -9,9 +9,9 @@
     <%= f.hidden_field :date_from %>
     <%= f.hidden_field :date_to %>
     <%= f.hidden_field :currency %>
-    <button class="btn btn-light with-tip" title="Export report in a CSV format">
-      <%= icon('table-export') %>
-      <%= Spree.t(:export) %>
+    <button class="btn btn-light with-tip" title="Download report as CSV file">
+      <%= icon('download') %>
+      <%= Spree.t(:download) %>
     </button>
   <% end %>
 <% end %>

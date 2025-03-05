@@ -1,0 +1,13 @@
+<% if promotion.active? %>
+  <span class="badge badge-success">
+    <%= Spree.t(:active) %>
+  </span>
+<% elsif promotion.inactive? %>
+  <span class="badge badge-light">
+    <%= Spree.t(:inactive) %>
+  </span>
+<% else %>
+  <span class="badge badge-danger">
+    <%= Spree.t(:expired) %>
+  </span>
+<% end %>

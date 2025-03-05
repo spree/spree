@@ -112,8 +112,16 @@ module Spree
       end
     end
 
+    def active?
+      starts_at.present? && starts_at < Time.current && (expires_at.blank? || !expired?)
+    end
+
+    def inactive?
+      !active?
+    end
+
     def expired?
-      !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
+      expires_at.present? && expires_at < Time.current
     end
 
     def activate(payload)
