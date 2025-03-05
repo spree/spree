@@ -89,6 +89,15 @@ describe Spree::Reimbursement, type: :model do
       end
     end
 
+    context 'when performer is provided' do
+      let(:performer) { create(:admin_user) }
+
+      it 'sets the performer' do
+        reimbursement.perform!(performer)
+        expect(reimbursement.performed_by).to eq performer
+      end
+    end
+
     context 'with included tax' do
       let!(:tax_rate) { create(:tax_rate, name: 'VAT Tax', amount: 0.1, included_in_price: true, zone: tax_zone) }
 
