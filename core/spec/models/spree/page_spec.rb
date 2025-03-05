@@ -5,6 +5,20 @@ describe Spree::Page, type: :model do
   let(:theme) { store.default_theme }
   let(:page) { theme.pages.first }
 
+  describe 'validations' do
+    describe 'slug' do
+      it 'validates uniqueness' do
+        other_page = create(:page, slug: 'test-slug')
+
+        page.slug = other_page.slug
+        expect(page).not_to be_valid
+        expect(page.errors.full_messages).to include('Slug has already been taken')
+
+        other_page.destroy
+      end
+    end
+  end
+
   context 'slugs' do
     let(:custom_page) { create(:page, pageable: theme, type: 'Spree::Pages::Custom', name: 'Landing Page') }
 

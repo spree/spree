@@ -14,7 +14,7 @@ module Spree
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
     belongs_to :order, class_name: 'Spree::Order'
 
-    validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+    validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope, conditions: -> { where(deleted_at: nil) } }
     validates :state, :promotion, presence: true
 
     self.whitelisted_ransackable_attributes = %w[state code]

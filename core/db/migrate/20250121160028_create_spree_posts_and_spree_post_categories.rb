@@ -26,7 +26,6 @@ class CreateSpreePostsAndSpreePostCategories < ActiveRecord::Migration[6.1]
         t.timestamps
         t.datetime :deleted_at
 
-        t.index ['slug', 'store_id'], name: 'index_spree_posts_on_slug_and_store_id', unique: true, where: '(deleted_at IS NULL)'
         t.index ['title'], name: 'index_spree_posts_on_title'
       end
     end

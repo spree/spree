@@ -3,7 +3,7 @@ class CreateSpreeCouponCodes < ActiveRecord::Migration[6.1]
     return if table_exists?(:spree_coupon_codes)
 
     create_table :spree_coupon_codes do |t|
-      t.string :code, index: { unique: true, where: 'deleted_at IS NULL' }
+      t.string :code, index: { unique: true }
       t.references :promotion, index: true
       t.references :order, index: true
       t.integer :state, default: 0, null: false, index: true
