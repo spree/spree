@@ -28,7 +28,7 @@
   <% if @order.completed? && can?(:resend, @order) %>
     <%= link_to_with_icon "send",
     Spree.t(:resend),
-    resend_admin_order_path(@order),
+    spree.resend_admin_order_path(@order),
     data: {
       turbo_method: :post,
       turbo_confirm: Spree.t(:are_you_sure),
