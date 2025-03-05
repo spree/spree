@@ -51,10 +51,10 @@ RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
       expect(customer_return.return_items.first.resellable).to eq true
     end
 
-    it 'redirects to edit' do
+    it 'redirects to order edit page' do
       subject
 
-      expect(response).to redirect_to(edit_admin_order_customer_return_path(order, order.customer_returns.first))
+      expect(response).to redirect_to(edit_admin_order_path(order))
     end
   end
 
