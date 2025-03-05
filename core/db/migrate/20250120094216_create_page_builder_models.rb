@@ -14,7 +14,6 @@ class CreatePageBuilderModels < ActiveRecord::Migration[6.1]
         t.datetime :deleted_at
 
         t.index ['deleted_at'], name: 'index_spree_themes_on_deleted_at'
-        t.index ['store_id', 'default'], name: 'index_spree_themes_on_store_id_and_default', unique: true, where: "((deleted_at IS NULL) AND (\"default\" = true))"
       end
 
       create_table :spree_pages do |t|
@@ -32,7 +31,6 @@ class CreatePageBuilderModels < ActiveRecord::Migration[6.1]
         t.datetime :deleted_at
 
         t.index ['pageable_id', 'name'], name: 'index_spree_pages_on_pageable_id_and_name'
-        t.index ['pageable_id', 'pageable_type', 'slug'], name: 'index_spree_pages_on_pageable_id_and_pageable_type_and_slug', unique: true, where: '((deleted_at IS NULL) AND (slug IS NOT NULL))'
         t.index ['pageable_id', 'pageable_type', 'type'], name: 'index_spree_pages_on_pageable_id_and_pageable_type_and_type'
         t.index ['pageable_id', 'pageable_type'], name: 'index_spree_pages_on_pageable_id_and_pageable_type'
       end

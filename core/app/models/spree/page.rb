@@ -22,6 +22,7 @@ module Spree
     #
     validates :name, presence: true
     validates :pageable, presence: true
+    validates :slug, uniqueness: { scope: :pageable, conditions: -> { where(deleted_at: nil).where.not(slug: nil) } }
 
     #
     # Callbacks
