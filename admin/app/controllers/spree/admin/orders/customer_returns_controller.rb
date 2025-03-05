@@ -28,7 +28,7 @@ module Spree
         end
 
         def build_resource
-          Spree::CustomerReturn.new
+          current_store.customer_returns.new
         end
 
         def find_resource
