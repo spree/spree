@@ -23,7 +23,7 @@ module Spree
 
           main_subcategories.first(max_columns).map do |child_category|
             links = subcategories.find_all { |c| c.parent_id == child_category.id }.sort_by(&:position).map(&method(:to_link))
-            ColumnPresenter.new(title: child_category.name, links: links, view_all_linkable: child_category) if links.any?
+            ColumnPresenter.new(title: child_category.name, links: links, view_all_linkable: child_category)
           end.compact_blank
         elsif mega_nav.is_a?(Spree::PageBlocks::MegaNav)
           [ColumnPresenter.new(title: main_link.label, links: mega_nav.links.drop(1), view_all_linkable: main_link.linkable)]
