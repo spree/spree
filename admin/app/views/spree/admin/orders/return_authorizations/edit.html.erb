@@ -1,11 +1,8 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
 
-  <%= Spree.t(:return_authorizations) %>
-  /
-  <span class="ml-2 mr-3">
-    <%= @return_authorization.number %>
-  </span>
+  <%= Spree.t(:return_authorization) %>
+  <%= @return_authorization.number %>
 
   <span class="badge badge-pill badge-<%= @return_authorization.state %>">
     <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
