@@ -28,7 +28,7 @@ module Spree
 
         no_tasks do
           def class_name
-            name.classify
+            name.camelize
           end
 
           def file_name
