@@ -7,11 +7,7 @@
     <td class="font-weight-bold" data-action="click->row-link#openLink">
       <% if can?(:edit, customer_return) %>
         <%= link_to customer_return.number,
-        spree.edit_admin_order_customer_return_url(
-        customer_return.order,
-          customer_return,
-          host: customer_return.order.store.url,
-        ),
+        spree.edit_admin_order_customer_return_path( customer_return.order, customer_return),
         data: {
           row_link_target: "link",
         } %>
@@ -22,10 +18,7 @@
     <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
     <td data-action="click->row-link#openLink"><%= render "spree/admin/orders/customer_summary", order: customer_return.order %></td>
     <td data-action="click->row-link#openLink"><%= link_to customer_return.order.number,
-      spree.edit_admin_order_url(
-        customer_return.order,
-        host: customer_return.order.store.url,
-      ) %></td>
+      spree.edit_admin_order_path(customer_return.order) %></td>
     <td data-action="click->row-link#openLink">
       <% if customer_return.fully_reimbursed? %>
         <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>

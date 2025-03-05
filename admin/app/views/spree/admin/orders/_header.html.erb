@@ -46,7 +46,7 @@
 
       <% if can_create_ra %>
         <%= button_link_to Spree.t(:new_return_authorization),
-        new_admin_order_return_authorization_url(@order),
+        spree.new_admin_order_return_authorization_path(@order),
         class: "btn dropdown-item",
         icon: "add.svg" %>
       <% end %>
