@@ -1,23 +1,53 @@
-<% if @customer_returns.any? %>
+<% if @customer_returns.exists? && can?(:read, Spree::CustomerReturn) %>
   <div class="card mb-4">
-    <div class="card-header">
-      <h5 class="card-title"><%= Spree.t(:customer_returns) %></h5>
+    <div class="card-header justify-content-between">
+      <h5 class="card-title">
+        <%= Spree.t(:customer_returns) %></h5>
     </div>
-    <div class="card-body">
-      <ul class="list-group">
-        <% @customer_returns.each do |customer_return| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span class="text-muted"><%= local_time(customer_return.created_at) %></span>
-            <% if customer_return.fully_reimbursed? %>
-              <span class="badge  badge-success"><%= Spree.t(:reimbursed) %></span>
-            <% else %>
-              <span class="badge  badge-inactive"><%= Spree.t(:incomplete) %></span>
+    <div class="card-body p-0">
+      <div class="table-responsive bg-white">
+        <table class="table">
+          <thead class="border-bottom">
+            <tr>
+              <th><%= Spree.t(:date) %></th>
+              <th><%= Spree.t(:status) %></th>
+              <th><%= Spree.t(:pre_tax_total) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @customer_returns.each do |customer_return| %>
+              <tr
+                id="<%= spree_dom_id(customer_return) %>"
+                data-controller="row-link"
+                class="cursor-pointer"
+              >
+                <td data-action="click->row-link#openLink" class="font-weight-bolder">
+                  <%= link_to customer_return.number,
+                  (
+                    if can?(:edit, customer_return)
+                      spree.edit_admin_order_customer_return_path(@order, customer_return)
+                    else
+                      "#"
+                    end
+                  ),
+                  data: {
+                    row_link_target: "link",
+                  } %>
+                </td>
+                <td data-action="click->row-link#openLink">
+                  <% if customer_return.fully_reimbursed? %>
+                    <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
+                  <% else %>
+                    <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
+                  <% end %>
+                </td>
+                <td data-action="click->row-link#openLink"><%= customer_return.display_pre_tax_total.to_html %></td>
+                <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
+              </tr>
             <% end %>
-            <span><%= customer_return.display_pre_tax_total.to_html %></span>
-            <%= link_to_edit Spree.t(:edit), url: spree.edit_admin_order_customer_return_path(@order, customer_return), class: 'btn btn-light btn-sm' if can?(:edit, customer_return) %>
-          </li>
-        <% end %>
-      </ul>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 <% end %>

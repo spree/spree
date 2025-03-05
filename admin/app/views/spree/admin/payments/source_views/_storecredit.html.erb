@@ -24,7 +24,7 @@
       </tr>
       <tr>
         <th><%= Spree.t(:issued_on) %>:</th>
-        <td><%= pretty_time(payment.source.created_at) %></td>
+        <td><%= local_time(payment.source.created_at) %></td>
       </tr>
     </table>
   </div>
