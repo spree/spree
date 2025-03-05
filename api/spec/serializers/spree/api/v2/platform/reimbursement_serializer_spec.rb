@@ -1,15 +1,16 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::ReimbursementSerializer do
-  include_context 'API v2 serializers params'
-
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
+
+  include_context 'API v2 serializers params'
 
   let(:reimbursement_credit) { create(:reimbursement_credit, creditable: create(:store_credit)) }
   let(:payment) { create(:payment, state: 'completed') }
   let(:type) { :reimbursement }
   let(:refund) { create(:refund, amount: payment.credit_allowed - 1) }
-  let(:resource) { create(type, refunds: [refund], credits: [reimbursement_credit]) }
+  let(:user) { create(:admin_user) }
+  let(:resource) { create(type, refunds: [refund], credits: [reimbursement_credit], performed_by: user) }
 
   it do
     expect(subject).to eq(
@@ -22,7 +23,6 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
           created_at: resource.created_at,
           updated_at: resource.updated_at,
           display_total: resource.display_total.to_s,
-          performed_by: resource.performed_by
         },
         relationships: {
           order: {
@@ -54,6 +54,12 @@ describe Spree::Api::V2::Platform::ReimbursementSerializer do
               id: resource.return_items.first.id.to_s,
               type: :return_item
             }]
+          },
+          performed_by: {
+            data: {
+              id: user.id.to_s,
+              type: :user
+            }
           }
         },
         type: type
