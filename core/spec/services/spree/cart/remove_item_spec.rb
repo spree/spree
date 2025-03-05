@@ -65,6 +65,7 @@ module Spree
     end
 
     context 'when store_credits payment' do
+      let(:order) { create(:order, line_items: [line_item], total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order) }
       let(:execute) { subject.call order: order, variant: variant }
 

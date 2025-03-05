@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::PaymentMethod::StoreCredit do
   let(:store) { Spree::Store.default }
-  let(:order) { create(:order, store: store) }
+  let(:order) { create(:order, store: store, total: 100) }
   let(:payment) { create(:payment, order: order) }
   let(:gateway_options) { payment.gateway_options }
 

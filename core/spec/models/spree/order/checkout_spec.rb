@@ -376,9 +376,10 @@ describe Spree::Order, type: :model do
       context 'without confirmation required' do
         before do
           order.email = 'spree@example.com'
+          order.total = 100
           allow(order).to receive_messages confirmation_required?: false
           allow(order).to receive_messages payment_required?: true
-          order.payments << FactoryBot.create(:payment, state: payment_state, order: order)
+          order.payments << FactoryBot.create(:payment, amount: 100, state: payment_state, order: order)
         end
 
         context 'when there is at least one valid payment' do

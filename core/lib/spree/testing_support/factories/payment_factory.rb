@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :payment, class: Spree::Payment do
-    order
+    order         { create(:order, total: amount) }
     amount        { 45.75 }
     state         { 'checkout' }
     response_code { '12345' }
@@ -18,7 +18,7 @@ FactoryBot.define do
 
   factory :check_payment, class: Spree::Payment do
     amount { 45.75 }
-    order
+    order  { create(:order, total: 45.75) }
 
     association(:payment_method, factory: :check_payment_method)
   end

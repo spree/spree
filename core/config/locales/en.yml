@@ -233,6 +233,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
+        spree/payment:
+          attributes:
+            amount:
+              greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
         spree/product:
           attributes:
             base:
@@ -1948,7 +1952,6 @@ en:
       unable_to_find: Could not find store credit
       unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
       unable_to_void: 'Unable to void code: %{auth_code}'
-      user_has_no_store_credits: User does not have any available store credit
     store_credits: Store Credits
     store_default: Default store
     store_details: Store details

@@ -260,5 +260,55 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
         expect(response).to redirect_to(spree.edit_admin_order_path(order))
       end
     end
+
+    context 'when using the store credit' do
+      let!(:payment_method) { create(:store_credit_payment_method) }
+      let!(:store_credit) { create(:store_credit, user: order.user, amount: 12.34) }
+
+      let(:params) do
+        {
+          order_id: order.number,
+          payment: {
+            amount: '12.34',
+            payment_method_id: payment_method.id.to_s,
+            source_attributes: {
+              id: store_credit.id
+            }
+          }
+        }
+      end
+
+      let(:order_payment) { order.payments.first }
+
+      it 'processes the payment correctly' do
+        subject
+
+        expect(response).to redirect_to(spree.edit_admin_order_path(order))
+
+        expect(order.reload.state).to eq('payment')
+        expect(order.payment_total).to eq(12.34)
+
+        expect(order.payments.count).to eq(1)
+        expect(order_payment).to be_completed
+        expect(order_payment.source).to eq(store_credit)
+        expect(order_payment.payment_method).to eq(payment_method)
+        expect(order_payment.amount).to eq(12.34)
+      end
+
+      context 'when the store credit is not enough' do
+        let!(:store_credit) { create(:store_credit, user: order.user, amount: 10.00) }
+
+        it 'does not process payment' do
+          subject
+
+          expect(response).to render_template(:new)
+          expect(response.status).to eq(422)
+
+          expect(flash[:error]).to eq('Amount is greater than the allowed maximum amount of 10.0')
+
+          expect(order.reload.payments).to be_empty
+        end
+      end
+    end
   end
 end

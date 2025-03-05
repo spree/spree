@@ -22,6 +22,12 @@ module Spree
         user.total_available_store_credit(currency, store)
       end
 
+      def available_store_credits
+        return Spree::StoreCredit.none if user.nil?
+
+        user.store_credits.for_store(store).where(currency: currency).available.sort_by(&:amount_remaining).reverse
+      end
+
       def could_use_store_credit?
         return false if Spree::PaymentMethod::StoreCredit.available.empty?
 

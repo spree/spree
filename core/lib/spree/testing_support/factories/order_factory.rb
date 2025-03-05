@@ -95,8 +95,13 @@ FactoryBot.define do
           payment_state  { 'paid' }
           shipment_state { 'ready' }
 
-          after(:create) do |order|
-            create(:payment, amount: order.total, order: order, state: 'completed')
+          transient do
+            with_payment { true }
+          end
+
+          after(:create) do |order, evaluator|
+            create(:payment, amount: order.total, order: order, state: 'completed') if evaluator.with_payment
+
             order.shipments.each do |shipment|
               shipment.inventory_units.update_all state: 'on_hand'
               shipment.update_column('state', 'ready')

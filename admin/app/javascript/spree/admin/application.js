@@ -82,7 +82,6 @@ import AddressAutocompleteController from 'spree/core/controllers/address_autoco
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
 
-
 application.register('active-storage-upload', ActiveStorageUpload)
 application.register('address-autocomplete', AddressAutocompleteController)
 application.register('address-form', AddressFormController)
