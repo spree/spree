@@ -40,9 +40,5 @@
   <%= render "spree/admin/shared/no_resource_found" %>
   <% end %>
 
-  <%= render partial: "spree/admin/shared/index_table_options",
-  locals: {
-    collection: @collection,
-    per_page_action: :customer_returns,
-  } %>
+  <%= render partial: "spree/admin/shared/index_table_options", locals: { collection: @collection } %>
 </div>
