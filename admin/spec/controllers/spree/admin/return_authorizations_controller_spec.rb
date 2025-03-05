@@ -11,10 +11,18 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
   describe '#index' do
     subject { get :index }
 
-    before { subject }
-
     it 'is successful' do
+      subject
       expect(response).to be_successful
+    end
+
+    context 'when there are no return authorizations' do
+      before { Spree::ReturnAuthorization.destroy_all }
+
+       it 'is successful' do
+         subject
+         expect(response).to be_successful
+       end
     end
   end
 

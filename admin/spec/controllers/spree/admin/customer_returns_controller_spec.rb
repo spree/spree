@@ -10,10 +10,18 @@ RSpec.describe Spree::Admin::CustomerReturnsController do
   describe '#index' do
     subject { get :index }
 
-    before { subject }
-
     it 'is successful' do
+      subject
       expect(response).to be_successful
+    end
+
+    context 'when there are no customer returns' do
+      before { Spree::CustomerReturn.destroy_all }
+
+      it 'is successful' do
+        subject
+        expect(response).to be_successful
+      end
     end
   end
 
