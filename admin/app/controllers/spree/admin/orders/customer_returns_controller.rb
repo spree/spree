@@ -4,10 +4,7 @@ module Spree
       class CustomerReturnsController < ResourceController
         include Spree::Admin::OrderConcern
 
-        belongs_to 'spree/order', find_by: :number
-
         before_action :load_order
-        before_action :load_customer_return
         before_action :load_form_data, only: [:new, :edit]
 
         create.before :build_return_items_from_params
@@ -19,7 +16,7 @@ module Spree
           @accepted_return_items = returned_items.select(&:accepted?)
           @rejected_return_items = returned_items.select(&:rejected?)
           @manual_intervention_return_items = returned_items.select(&:manual_intervention_required?)
-          @pending_reimbursements = @object.reimbursements.select(&:pending?)
+          @pending_reimbursements = @customer_return.reimbursements.select(&:pending?)
 
           super
         end
@@ -36,6 +33,14 @@ module Spree
 
         def find_resource
           current_store.customer_returns.accessible_by(current_ability, :show).find(params[:id])
+        end
+
+        def collection
+          parent # trigger loading the order
+
+          order_customer_return_ids = @order.return_items.accessible_by(current_ability).pluck(:customer_return_id).uniq.compact
+          @collection ||= current_store.customer_returns.where(id: order_customer_return_ids)
+          @customer_returns = @collection
         end
 
         def load_form_data
@@ -59,16 +64,20 @@ module Spree
           end.compact
         end
 
-        def load_customer_return
-          @customer_return = @object
+        def object_name
+          'customer_return'
         end
 
-        def parent
-          # We need this because this controller is nested under the Orders module, and it tries to set parent as `@spree/order` which throws an error
-          return @order if defined?(@order)
+        def object_url(object = nil, options = {})
+          target = object || @object
 
-          load_order
-          @order
+          spree.admin_order_customer_return_url(@order, target, options)
+        end
+
+        def edit_object_url(object, options = {})
+          target = object || @object
+
+          spree.edit_admin_order_customer_return_url(@order, target, options)
         end
 
         def model_class

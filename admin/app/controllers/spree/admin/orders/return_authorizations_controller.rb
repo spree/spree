@@ -4,9 +4,8 @@ module Spree
       class ReturnAuthorizationsController < ResourceController
         include Spree::Admin::OrderConcern
 
-        belongs_to 'spree/order', find_by: :number
-
         before_action :load_order
+
         before_action :load_return_authorization
         before_action :load_form_data, only: [:new, :edit]
         before_action :load_refunds, only: :show
@@ -55,15 +54,27 @@ module Spree
         end
 
         def load_return_authorization
+          if @object.order.nil?
+            @object.order = @order
+          end
+
           @return_authorization = @object
         end
 
-        def parent
-          # We need this because this controller is nested under the Orders module, and it tries to set parent as `@spree/order` which throws an error
-          return @order if defined?(@order)
+        def object_name
+          'return_authorization'
+        end
 
-          load_order
-          @order
+        def object_url(object = nil, options = {})
+          target = object || @object
+
+          spree.admin_order_return_authorization_url(@order, target, options)
+        end
+
+        def edit_object_url(object, options = {})
+          target = object || @object
+
+          spree.edit_admin_order_return_authorization_url(@order, target, options)
         end
 
         def model_class
