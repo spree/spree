@@ -35,14 +35,6 @@ module Spree
           current_store.customer_returns.accessible_by(current_ability, :show).find(params[:id])
         end
 
-        def collection
-          parent # trigger loading the order
-
-          order_customer_return_ids = @order.return_items.accessible_by(current_ability).pluck(:customer_return_id).uniq.compact
-          @collection ||= current_store.customer_returns.where(id: order_customer_return_ids)
-          @customer_returns = @collection
-        end
-
         def load_form_data
           return_items = @order.inventory_units.map(&:current_or_new_return_item).reject(&:customer_return_id)
           @rma_return_items = return_items.select(&:return_authorization_id)
