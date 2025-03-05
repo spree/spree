@@ -14,12 +14,17 @@ export default class extends Controller {
     if (idsToDelete.length && window.confirm('Are you sure?')) {
       this.deleteButtonTarget.disabled = true
 
-      destroy(this.deleteUrlValue, {
+      const response = await destroy(this.deleteUrlValue, {
         body: {
           ids: idsToDelete
         },
         responseKind: 'turbo-stream'
       })
+
+      if (response.ok) {
+        this.deleteButtonTarget.disabled = false
+        this.deleteButtonTarget.classList.add('d-none')
+      }
     }
   }
 

@@ -2,7 +2,7 @@
 <% height ||= 300 %>
 <% crop ||= false unless defined?(crop) %>
 <% auto_submit ||= false %>
-<% can_delete ||= true %>
+<% can_delete ||= true unless defined?(can_delete) %>
 <% css ||= '' %>
 
 <% if field_name && form %>

@@ -17,8 +17,10 @@
         </div>
       </div>
       <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
         <%= turbo_save_button_tag %>
+        <%= link_to Spree.t('actions.destroy'), object_url(@asset),
+            data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: '_top' },
+            class: 'btn btn-danger ml-auto' if can?(:destroy, @asset) %>
       </div>
     <% end %>
   </div>
