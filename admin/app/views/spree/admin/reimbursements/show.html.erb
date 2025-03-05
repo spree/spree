@@ -1,7 +1,13 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@reimbursement.order) %>
-  <%= Spree.t(:reimbursement) %>
-  <%= @reimbursement.number %>
+  <div class="d-flex gap-3 align-items-center">
+    <span><%= Spree.t(:reimbursement) %></span>
+    <span><%= @reimbursement.number %></span>
+
+    <span class="badge badge-<%= reimbursement_status_color(@reimbursement) %>">
+      <%= @reimbursement.reimbursement_status %>
+    </span>
+  </div>
 <% end %>
 
 <%= render partial: "spree/admin/shared/error_messages",

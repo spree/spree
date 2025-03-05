@@ -1,12 +1,14 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
 
-  <%= Spree.t(:return_authorization) %>
-  <%= @return_authorization.number %>
+  <div class="d-flex gap-3 align-items-center">
+    <span><%= Spree.t(:return_authorization) %></span>
+    <span><%= @return_authorization.number %></span>
 
-  <span class="badge badge-pill badge-<%= @return_authorization.state %>">
-    <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
-  </span>
+    <span class="badge badge-pill badge-<%= @return_authorization.state %>">
+      <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
+    </span>
+  </div>
 <% end %>
 
 <%= render partial: "spree/admin/shared/error_messages",
