@@ -72,8 +72,11 @@
               %>
             </div>
             <%= render 'spree/products/tags', product: product %>
+            <% show_waitlist_modal = spree.respond_to?(:waitlists_path) && current_variant.present? %>
             <div
+              <% if show_waitlist_modal %>
               data-controller="modal"
+              <% end %>
               data-modal-allow-background-close="true"
               class="h-full w-full waitlist-modal"
               data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
@@ -85,7 +88,7 @@
                   <%= render 'spree/products/add_to_wishlist', variant: current_variant, css_classes: 'btn-secondary ml-5 h-12 !py-0 !px-3 border-default', icon_size: 24 %>
                 </div>
               <% end %>
-              <%= render 'spree/products/add_to_waitlist', variant: current_variant if spree.respond_to?(:waitlists_path) && current_variant.present? %>
+              <%= render 'spree/products/add_to_waitlist', variant: current_variant if show_waitlist_modal %>
             </div>
 
             <%= render 'spree/products/details', product: product %>

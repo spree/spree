@@ -32,8 +32,11 @@
           </div>
         <% end %>
         <div class="lg:col-span-5 lg:col-start-8">
+          <% show_waitlist_modal = spree.respond_to?(:waitlists_path) && current_variant.present? %>
           <div
+            <% if show_waitlist_modal %>
               data-controller="modal"
+            <% end %>
               data-modal-allow-background-close="true"
               class="h-full w-full waitlist-modal"
               data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
@@ -124,7 +127,7 @@
                 <% end %>
               <% end %>
             <% end %>
-            <%= render('spree/products/add_to_waitlist', variant: current_variant) if spree.respond_to?(:waitlists_path) && current_variant.present? %>
+            <%= render('spree/products/add_to_waitlist', variant: current_variant) if show_waitlist_modal %>
           </div>
         </div>
       </div>
