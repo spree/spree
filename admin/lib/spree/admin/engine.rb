@@ -29,6 +29,7 @@ module Spree
 
       initializer 'spree.admin.importmap', after: 'importmap' do |app|
         app.config.spree_admin = ActiveSupport::OrderedOptions.new
+
         app.config.spree_admin.importmap = Importmap::Map.new
         app.config.spree_admin.importmap.draw(root.join('config/importmap.rb'))
 

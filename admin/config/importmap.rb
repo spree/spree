@@ -1,5 +1,9 @@
 pin 'application-spree-admin', to: 'spree/admin/application.js', preload: false
 
+pin "@hotwired/turbo-rails", to: "turbo.min.js"
+pin "@hotwired/stimulus", to: "stimulus.min.js"
+pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
+
 pin '@rails/actioncable', to: 'actioncable.esm.js', preload: ['application-spree-admin']
 pin '@rails/activestorage', to: 'activestorage.esm.js', preload: ['application-spree-admin']
 pin '@rails/actiontext', to: '@rails--actiontext@7.2.201.js', preload: ['application-spree-admin']
@@ -135,3 +139,5 @@ pin_all_from Spree::Admin::Engine.root.join('app/javascript/spree/admin/helpers'
              under: 'spree/admin/helpers',
              to: 'spree/admin/helpers',
              preload: ['application-spree-admin']
+
+draw Spree::Core::Engine.root.join('config/importmap.rb')
