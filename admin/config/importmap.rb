@@ -5,7 +5,6 @@ pin '@rails/activestorage', to: 'activestorage.esm.js', preload: ['application-s
 pin '@rails/actiontext', to: '@rails--actiontext@7.2.201.js', preload: ['application-spree-admin']
 pin 'trix', to: 'trix@2.1.12.js', preload: ['application-spree-admin']
 
-pin '@rails/request.js', to: '@rails--request.js.js', preload: ['application-spree-admin'] # @0.0.8
 pin 'sortablejs', preload: ['application-spree-admin'] # @1.15.6
 pin 'chartkick', to: 'chartkick.js', preload: ['application-spree-admin']
 pin 'Chart.bundle', to: 'Chart.bundle.js', preload: ['application-spree-admin']
@@ -16,7 +15,6 @@ pin 'bootstrap', to: 'bootstrap--dist--js--bootstrap.bundle.min.js.js', preload:
 pin 'dompurify', preload: ['application-spree-admin'] # @3.2.3
 
 # Stimulus components
-pin '@stimulus-components/auto-submit', to: '@stimulus-components--auto-submit.js', preload: ['application-spree-admin'] # @6.0.0
 pin '@stimulus-components/rails-nested-form', to: '@stimulus-components--rails-nested-form.js', preload: ['application-spree-admin'] # @5.0.0
 pin 'stimulus-notification', preload: ['application-spree-admin'] # @2.2.0
 pin 'stimulus-password-visibility', preload: ['application-spree-admin'] # @2.1.1
