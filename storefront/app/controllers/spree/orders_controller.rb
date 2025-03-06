@@ -89,8 +89,10 @@ module Spree
     def remove_out_of_stock_items
       return unless @order&.persisted?
 
-      @order, messages = cart_remove_out_of_stock_items_service.call(order: @order).value
-      flash[:error] = messages.to_sentence if messages.any?
+      ActiveRecord::Base.connected_to(role: :writing) do
+        @order, messages = cart_remove_out_of_stock_items_service.call(order: @order).value
+        flash[:error] = messages.to_sentence if messages.any?
+      end
     end
   end
 end

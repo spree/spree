@@ -358,7 +358,9 @@ module Spree
 
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
-      self.class.unscoped.where(id: self).update_all(changes)
+      ActiveRecord::Base.connected_to(role: :writing) do
+        self.class.unscoped.where(id: self).update_all(changes)
+      end
     end
 
     def quantity_of(variant, options = {})

@@ -85,8 +85,10 @@ module Spree
 
       def proceed_order_state
         # Move order to payment state in order to capture tax generated on shipments
-        if @order.can_go_to_state?('payment')
-          @order.next
+        ActiveRecord::Base.connected_to(role: :writing) do
+          if @order.can_go_to_state?('payment')
+            @order.next
+          end
         end
       end
 
