@@ -1,5 +1,5 @@
 <% source = payment.source %>
-<div class="d-flex flex items-top gap-2">
+<div class="d-flex flex items-center align-items-center gap-2">
   <% if source.is_a?(Spree::CreditCard) %>
     <div class="flex-shrink-0">
       <% # display wallet icon, eg. Apple Pay, Google Pay, etc. %>
@@ -21,7 +21,7 @@
         </div>
       </div>
     <% elsif payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
-      <div class="d-flex flex align-items-center">
+      <div class="d-flex flex align-items-center items-center">
         <div><%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %></div>
         <div class="mx-2"><%= Spree.t(:store_credit_name) %></div>
       </div>

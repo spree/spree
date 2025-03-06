@@ -17,7 +17,12 @@ module Spree
           apply_store_credits(remaining_total)
         end
 
-        @order.reload.payments.store_credits.valid.any? ? success(@order) : failure(@order)
+        if @order.reload.payments.store_credits.valid.any?
+          @order.updater.run_hooks
+          success(@order)
+        else
+          failure(@order)
+        end
       end
 
       private
