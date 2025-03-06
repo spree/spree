@@ -7,7 +7,7 @@
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>
-  <div class="pt-3 pb-4 d-flex align-items-center">
+  <div class="pt-3 pb-4 d-flex align-items-center" id="page-header">
     <h3 class="page-header-title mb-0 d-flex align-items-center">
       <%= yield :page_title %>
     </h3>

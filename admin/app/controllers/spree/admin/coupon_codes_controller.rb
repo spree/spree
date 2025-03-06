@@ -13,7 +13,7 @@ module Spree
         @collection = if request.format.csv?
                         @search.result
                       else
-                        @search.result.page(params[:page]).per(50)
+                        @search.result.page(params[:page])
                       end
       end
     end

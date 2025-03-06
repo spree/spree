@@ -1,7 +1,4 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_promotions_path, @promotion %>
-  <%= @promotion.name %>
-<% end %>
+<%= render 'spree/admin/promotions/header' %>
 
 <%= turbo_frame_tag :promotion_edit_details do %>
   <%= form_for @promotion, url: object_url, method: :put, data: { turbo_frame: '_top' } do |f| %>
