@@ -336,7 +336,9 @@ module Spree
     def default_stock_location
       @default_stock_location ||= begin
         stock_location_scope = Spree::StockLocation.order_default
-        stock_location_scope.first || stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
+        stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
+          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
+        end
       end
     end
 

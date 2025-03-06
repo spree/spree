@@ -33,7 +33,9 @@ module Spree
       end
 
       def load_simulated_refunds
-        @reimbursement_objects = @reimbursement.simulate
+        ActiveRecord::Base.connected_to(role: :writing) do
+          @reimbursement_objects = @reimbursement.simulate
+        end
       end
 
       def spree_core_gateway_error(error)

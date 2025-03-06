@@ -76,11 +76,12 @@ module Spree
 
         def spree_current_user
           return nil unless doorkeeper_token
-          return @spree_current_user if @spree_current_user
+          return @spree_current_user if defined?(@spree_current_user)
 
-          doorkeeper_authorize!
-
-          @spree_current_user ||= doorkeeper_token.resource_owner
+          @spree_current_user ||= ActiveRecord::Base.connected_to(role: :writing) do
+            doorkeeper_authorize!
+            doorkeeper_token.resource_owner
+          end
         end
 
         alias try_spree_current_user spree_current_user  # for compatibility with spree_legacy_frontend

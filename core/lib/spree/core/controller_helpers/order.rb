@@ -76,12 +76,14 @@ module Spree
           orders_scope_exists = orders_scope.exists?
 
           if orders_scope.exists?
-            orders_to_merge.find_each do |order|
-              current_order.merge!(order, try_spree_current_user)
-            end
+            ActiveRecord::Base.connected_to(role: :writing) do
+              orders_to_merge.find_each do |order|
+                current_order.merge!(order, try_spree_current_user)
+              end
 
-            Spree::Order.where(id: order_ids_to_delete).find_each do |order|
-              Rails.logger.error("Failed to destroy order #{order.id} while merging") unless order.destroy
+              Spree::Order.where(id: order_ids_to_delete).find_each do |order|
+                Rails.logger.error("Failed to destroy order #{order.id} while merging") unless order.destroy
+              end
             end
           end
 
