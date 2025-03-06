@@ -3,6 +3,7 @@ require_relative 'runtime_configuration'
 module Spree
   module Admin
     class Engine < ::Rails::Engine
+
       initializer 'spree.admin.configuration', before: :load_config_initializers do |_app|
         Spree::Admin::RuntimeConfig = Spree::Admin::RuntimeConfiguration.new
       end
@@ -26,10 +27,18 @@ module Spree
         app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
       end
 
-      initializer 'spree.admin.importmap', before: 'importmap' do |app|
-        app.config.importmap.paths << root.join('config/importmap.rb')
-        # https://github.com/rails/importmap-rails?tab=readme-ov-file#sweeping-the-cache-in-development-and-test
-        app.config.importmap.cache_sweepers << root.join('app/javascript')
+      initializer 'spree.admin.importmap', after: 'importmap' do |app|
+        app.config.spree_admin = ActiveSupport::OrderedOptions.new
+        app.config.spree_admin.importmap = Importmap::Map.new
+        app.config.spree_admin.importmap.draw(root.join('config/importmap.rb'))
+
+        if app.config.importmap.sweep_cache && app.config.reloading_enabled?
+          app.config.spree_admin.importmap.cache_sweeper(watches: root.join("app/javascript"))
+
+          ActiveSupport.on_load(:action_controller_base) do
+            before_action { app.config.spree_admin.importmap.cache_sweeper.execute_if_updated }
+          end
+        end
       end
     end
   end
