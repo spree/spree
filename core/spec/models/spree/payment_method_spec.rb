@@ -126,6 +126,29 @@ describe Spree::PaymentMethod, type: :model do
     end
   end
 
+  describe '#available_for_order?' do
+    subject { payment_method.available_for_order?(order) }
+
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:order) { create(:order, total: 100) }
+
+    context 'when the order is not covered by store credit' do
+      it { is_expected.to be(true) }
+    end
+
+    context 'when the order is partially covered by store credit' do
+      let!(:store_credit_payment) { create(:store_credit_payment, order: order, amount: 50) }
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'when the order is fully covered by store credit' do
+      let!(:store_credit_payment) { create(:store_credit_payment, order: order, amount: 100) }
+
+      it { is_expected.to be(false) }
+    end
+  end
+
   describe '#available_for_store?' do
     let!(:store_1) { create(:store) }
     let!(:pm) { create(:credit_card_payment_method, stores: [store]) }

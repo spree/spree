@@ -150,27 +150,25 @@ describe 'Order' do
 
   describe '#covered_by_store_credit' do
     context "order doesn't have an associated user" do
-      subject { create(:store_credits_order_without_user) }
+      subject { order.covered_by_store_credit? }
 
-      it 'returns false' do
-        expect(subject.covered_by_store_credit).to be false
-      end
+      let(:order) { create(:store_credits_order_without_user) }
+
+      it { is_expected.to be(false) }
     end
 
     context 'order has an associated user' do
-      subject { create(:order, user: user) }
+      subject { order.covered_by_store_credit? }
 
+      let(:order) { create(:order, user: user, total: order_total) }
       let(:user) { create(:user) }
+      let(:order_total) { 10.0 }
 
       context 'user has enough store credit to pay for the order' do
-        before do
-          allow(user).to receive(:total_available_store_credit).and_return(10.0)
-          allow(subject).to receive(:total).and_return(5.0)
-        end
+        let!(:store_credit_payment) { create(:store_credit_payment, order: order, source: store_credit, amount: 10.0) }
+        let(:store_credit) { create(:store_credit, amount: 10.0, store: order.store, user: order.user) }
 
-        it 'returns true' do
-          expect(subject.covered_by_store_credit).to be true
-        end
+        it { is_expected.to be(true) }
       end
 
       context 'user does not have enough store credit to pay for the order' do
@@ -179,9 +177,12 @@ describe 'Order' do
           allow(subject).to receive(:total).and_return(5.0)
         end
 
-        it 'returns false' do
-          expect(subject.covered_by_store_credit).to be false
-        end
+        it { is_expected.to be(false) }
+      end
+
+      context 'order total is zero' do
+        let(:order_total) { 0.0 }
+        it { is_expected.to be(false) }
       end
     end
   end

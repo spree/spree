@@ -121,7 +121,10 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   describe '#edit' do
     subject { get :edit, params: { id: order.number } }
 
-    let(:order) { create(:order_ready_to_ship) }
+    let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false) }
+
+    let!(:invalid_payment) { create(:payment, state: 'invalid', amount: 100, order: order) }
+    let!(:valid_payment) { create(:payment, state: 'completed', amount: 100, order: order) }
 
     it 'shows an order' do
       subject
@@ -129,10 +132,9 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(assigns[:order]).to eq(order)
       expect(assigns[:line_items]).to eq(order.line_items)
       expect(assigns[:shipments]).to eq(order.shipments)
-      expect(assigns[:payments]).to eq(order.payments)
+      expect(assigns[:payments]).to contain_exactly(valid_payment, invalid_payment)
     end
   end
-
 
   describe '#cancel' do
     subject(:cancel) { put :cancel, params: { id: order.number } }

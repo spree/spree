@@ -30,7 +30,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods
+      @checkout_available_payment_methods ||= @order.available_payment_methods.reject(&:store_credit?)
     end
 
     def checkout_started?
