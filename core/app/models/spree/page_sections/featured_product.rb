@@ -29,7 +29,6 @@ module Spree
 
       def default_blocks
         [
-          Spree::PageBlocks::Products::Brand.new,
           Spree::PageBlocks::Products::Title.new,
           Spree::PageBlocks::Products::Price.new(text: 'Price', preferred_text_alignment: 'left'),
           Spree::PageBlocks::Products::VariantPicker.new,
