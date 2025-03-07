@@ -14,7 +14,7 @@ module Spree
       private
 
       def user_params
-        params.require(:user).permit(:title, :first_name, :last_name, :phone)
+        params.require(:user).permit(:first_name, :last_name, :phone, :email)
       end
     end
   end
