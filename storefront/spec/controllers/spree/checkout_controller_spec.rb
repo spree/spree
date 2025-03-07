@@ -1097,4 +1097,46 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
   end
+
+  describe '#apply_store_credit' do
+    let!(:order) { create(:order_with_line_items, store: store, user: user) }
+    let(:user) { create(:user) }
+
+    let!(:payment_method) { create(:store_credit_payment_method) }
+    let!(:store_credit) { create(:store_credit, user: user, amount: 12.34) }
+
+    it 'adds the store credit to the order' do
+      post :apply_store_credit, params: { token: order.token }
+
+      expect(response).to redirect_to spree.checkout_path(order.token)
+
+      expect(order.payments.count).to eq(1)
+      expect(order.payments.first).to be_checkout
+      expect(order.payments.first.source).to eq(store_credit)
+      expect(order.payments.first.payment_method).to eq(payment_method)
+      expect(order.payments.first.amount).to eq(12.34)
+    end
+  end
+
+  describe '#remove_store_credit' do
+    let!(:order) { create(:order_with_line_items, store: store, user: user) }
+    let(:user) { create(:user) }
+
+    let!(:payment_method) { create(:store_credit_payment_method) }
+    let!(:store_credit) { create(:store_credit, user: user, amount: 12.34) }
+
+    let!(:store_credit_payment) { create(:store_credit_payment, order: order, source: store_credit, payment_method: payment_method, amount: 12.34) }
+
+    it 'removes the store credit from the order' do
+      post :remove_store_credit, params: { token: order.token }
+
+      expect(response).to redirect_to spree.checkout_path(order.token)
+
+      expect(order.reload.payments.count).to eq(1)
+      expect(order.payments.first).to be_invalid
+      expect(order.payments.first.source).to eq(store_credit)
+      expect(order.payments.first.payment_method).to eq(payment_method)
+      expect(order.payments.first.amount).to eq(12.34)
+    end
+  end
 end

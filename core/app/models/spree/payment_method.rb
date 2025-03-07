@@ -95,8 +95,8 @@ module Spree
 
     # Custom PaymentMethod/Gateway can redefine this method to check method
     # availability for concrete order.
-    def available_for_order?(_order)
-      true
+    def available_for_order?(order)
+      !order.covered_by_store_credit?
     end
 
     def available_for_store?(store)

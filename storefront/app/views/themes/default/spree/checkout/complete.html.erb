@@ -15,11 +15,11 @@
     </p>
   </div>
 
-  <% if @order.payments.any? %>
+  <% if @order.payments.valid.any? %>
     <div class="border p-3 mt-4 rounded-md">
       <h5 class="mb-3 font-bold pb-3 border-b font-body"><%= Spree.t(:payment) %></h5>
-      <div class="flex mb-3 text-sm items-center">
-        <%= render partial: 'spree/shared/payment', collection: @order.payments %>
+      <div class="flex mb-3 text-sm gap-4 items-top">
+        <%= render partial: 'spree/shared/payment', collection: @order.payments.valid %>
       </div>
       <div class="mt-3 border-t pt-3">
         <span class="text-sm"><%= Spree.t(:status) %></span>
