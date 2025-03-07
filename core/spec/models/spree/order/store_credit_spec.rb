@@ -160,8 +160,9 @@ describe 'Order' do
     context 'order has an associated user' do
       subject { order.covered_by_store_credit? }
 
-      let(:order) { create(:order, user: user, total: 10.0) }
+      let(:order) { create(:order, user: user, total: order_total) }
       let(:user) { create(:user) }
+      let(:order_total) { 10.0 }
 
       context 'user has enough store credit to pay for the order' do
         let!(:store_credit_payment) { create(:store_credit_payment, order: order, source: store_credit, amount: 10.0) }
@@ -176,6 +177,11 @@ describe 'Order' do
           allow(subject).to receive(:total).and_return(5.0)
         end
 
+        it { is_expected.to be(false) }
+      end
+
+      context 'order total is zero' do
+        let(:order_total) { 0.0 }
         it { is_expected.to be(false) }
       end
     end

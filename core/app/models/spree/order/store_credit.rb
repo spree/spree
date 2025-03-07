@@ -10,7 +10,7 @@ module Spree
       end
 
       def covered_by_store_credit?
-        user.present? && total_applied_store_credit >= total
+        user.present? && total_applied_store_credit.positive? && total_applied_store_credit >= total
       end
       alias covered_by_store_credit covered_by_store_credit?
 
