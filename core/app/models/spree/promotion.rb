@@ -37,7 +37,7 @@ module Spree
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
-    accepts_nested_attributes_for :promotion_actions, :promotion_rules
+    accepts_nested_attributes_for :promotion_actions, :promotion_rules, allow_destroy: true
 
     #
     # Callbacks
@@ -47,6 +47,7 @@ module Spree
     before_validation :set_usage_limit_to_nil, if: -> { multi_codes? }
     before_validation :set_kind
     before_validation :downcase_code, if: -> { code.present? }
+    before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
     after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
     after_commit :remove_coupons, unless: -> { multi_codes? }, on: :update
     before_destroy :not_used?
@@ -305,6 +306,10 @@ module Spree
       self.number_of_codes = nil
       self.code_prefix = nil
       self.multi_codes = false
+    end
+
+    def set_starts_at_to_current_time
+      self.starts_at = Time.current
     end
 
     def generate_coupon_codes
