@@ -1,0 +1,27 @@
+<div class="bg-gray-25 border rounded p-3 nested-form-wrapper border-bottom mb-3 pb-3" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
+  <% if rf.object.new_record? %>
+    <% @promotion_rules.each do |promotion_rule| %>
+      <template id="rule-form-template-<%= promotion_rule.to_s.demodulize %>" data-rule-form-target="template">
+        <%= render "spree/admin/promotions/rules/#{promotion_rule.to_s.demodulize.underscore}", rule_form: rf %>
+      </template>
+    <% end %>
+
+    <div class="form-group">
+      <%= rf.select :type, @rule_types, {}, { class: 'custom-select', data: { action: 'rule-form#replace' } } %>
+    </div>
+  <% else %>
+    <h6 class="mb-3"><%= Spree.t("admin.promotion_rules.#{rf.object.type.demodulize.underscore}") %></h6>
+
+    <%= rf.hidden_field :type, value: rf.object.type %>
+  <% end %>
+  <div class="form-group" data-rule-form-target="value">
+    <% if rf.object.type.present? %>
+      <%= render "spree/admin/promotions/rules/#{rf.object.type.demodulize.underscore}", rule_form: rf %>
+    <% end %>
+  </div>
+  <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger">
+    <%= icon('x', class: 'mr-0') %>
+    <%= Spree.t(:remove_condition) %>
+  </button>
+  <%= rf.hidden_field :_destroy if rf.object.persisted? %>
+</div>

@@ -1,0 +1,9 @@
+<% active_options = [] %>
+<% active_options = rule_form.object.taxon_ids if rule_form.object.persisted? && rule_form.object.respond_to?(:taxon_ids) %>
+
+<div class="form-group">
+  <%= rule_form.label "taxon_ids", Spree.t('taxon_rule.choose_taxons') %>
+  <%= tom_select_tag "taxon_ids", multiple: true, url: spree.admin_taxons_select_options_path, active_option: active_options %>
+</div>
+
+

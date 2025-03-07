@@ -9,6 +9,7 @@
         </h5>
       </div>
       <div class="card-body">
+        <%= render 'spree/admin/shared/error_messages', target: @promotion %>
         <div class="form-group">
           <%= f.label :name %>
           <%= f.text_field :name, class: 'form-control', required: true, autofocus: true %>
@@ -37,6 +38,7 @@
         </h5>
       </div>
       <div class="card-body">
+        <%= render 'spree/admin/shared/error_messages', target: @promotion %>
         <%= render 'spree/admin/promotions/form/settings', f: f %>
       </div>
       <div class="card-footer d-flex justify-content-between">

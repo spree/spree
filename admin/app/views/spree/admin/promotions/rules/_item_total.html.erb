@@ -1,0 +1,16 @@
+<div class="row mb-3">
+  <div class="col-6">
+    <%= rule_form.select :preferred_operator_min, options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MIN.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, rule_form.object.try(:preferred_operator_min)), {}, { class: 'custom-select' } %>
+  </div>
+  <div class="col-6">
+    <%= rule_form.text_field :preferred_amount_min, class: 'form-control' %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-6">
+    <%= rule_form.select :preferred_operator_max, options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MAX.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, rule_form.object.try(:preferred_operator_max)), {}, { class: 'custom-select' } %>
+  </div>
+  <div class="col-6">
+    <%= rule_form.text_field :preferred_amount_max, class: 'form-control' %>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:rules) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-group mb-4">
+      <div class="d-block d-lg-flex gap-3">
+        <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :match_policy, policy, class: 'custom-control-input' %>
+            <%= f.label "match_policy_#{policy}", class: 'custom-control-label' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div data-controller="nested-form">
+      <template data-nested-form-target="template">
+        <%= f.fields_for :promotion_rules, Spree::PromotionRule.new(type: @promotion_rules.first.to_s), child_index: 'NEW_RECORD' do |rf, index| %>
+          <%= render 'spree/admin/promotions/rule_form', rf: rf %>
+        <% end %>
+      </template>
+
+      <%= f.fields_for :promotion_rules, @promotion.promotion_rules do |rf, index| %>
+        <%= render 'spree/admin/promotions/rule_form', rf: rf %>
+      <% end %>
+
+      <!-- Inserted elements will be injected before that target. -->
+      <div data-nested-form-target="target" class="mb-2"></div>
+
+      <button type="button" class="btn btn-link w-100 py-3" data-action="nested-form#add">
+        <%= icon('plus', class: 'mr-2') %>
+        <%= Spree.t(:add_one)%>
+      </button>
+    </div>
+  </div>
+</div>

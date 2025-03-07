@@ -2,6 +2,11 @@
 
 <div class="row">
   <div class="col-12 col-lg-8">
+    <%= form_for @promotion, url: object_url, method: :put do |f| %>
+      <%= render 'spree/admin/promotions/rules_form', f: f %>
+
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+    <% end %>
   </div>
 
   <div class="col-12 col-lg-4">
