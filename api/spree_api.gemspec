@@ -19,8 +19,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.0'
 
-  s.files        = Dir["{app,config,db,lib}/**/*", "LICENSE.md", "Rakefile"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
-  s.executables   = s.files.grep(%r{^bin/}).map { |f| File.basename(f) }
+  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_paths = ['lib']
 
   s.add_development_dependency 'jsonapi-rspec'

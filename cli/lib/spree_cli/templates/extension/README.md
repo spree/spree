@@ -10,7 +10,7 @@ This is a <%= human_name %> extension for [Spree Commerce](https://spreecommerce
     bundle add <%= file_name %>
     ```
 
-2. Copy & run migrations
+2. Run the install generator
 
     ```ruby
     bundle exec rails g <%= file_name %>:install
