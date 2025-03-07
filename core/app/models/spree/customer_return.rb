@@ -54,6 +54,18 @@ module Spree
       return_items.sum(:pre_tax_amount)
     end
 
+    def can_create_reimbursement?
+      !fully_reimbursed? && completely_decided? && no_pending_reimbursements?
+    end
+
+    def no_pending_reimbursements?
+      if association(:reimbursements).loaded?
+        reimbursements.select(&:pending?).empty?
+      else
+        reimbursements.where(reimbursement_status: :pending).none?
+      end
+    end
+
     private
 
     def inventory_units

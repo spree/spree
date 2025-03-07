@@ -71,7 +71,7 @@ module Spree
         @refunds = @order.refunds
 
         @return_authorizations = @order.return_authorizations
-        @customer_returns = @order.customer_returns
+        @customer_returns = @order.customer_returns.distinct
       end
 
       # Used for extensions which need to provide their own custom event links on the order details view.
