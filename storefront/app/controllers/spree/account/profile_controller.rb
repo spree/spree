@@ -1,8 +1,10 @@
 module Spree
   module Account
     class ProfileController < BaseController
+      # GET /account/profile
       def edit; end
 
+      # PUT /account/profile
       def update
         if try_spree_current_user.update(user_params)
           redirect_to spree.edit_account_profile_path, notice: Spree.t(:account_updated)

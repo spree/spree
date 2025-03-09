@@ -9,5 +9,8 @@ module Spree
     self.table_name = 'spree_users'
 
     attr_accessor :password, :password_confirmation
+
+    validates :email, presence: true, uniqueness: { case_sensitive: false }
+    validates :first_name, :last_name, presence: true
   end
 end

@@ -1,6 +1,7 @@
 module Spree
   module Account
     class StoreCreditsController < BaseController
+      # GET /account/store_credits
       def index
         @store_credit_events = Spree::StoreCreditEvent.where(store_credit: user_store_credits).
                                exposed_events.

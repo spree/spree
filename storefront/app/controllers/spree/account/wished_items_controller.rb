@@ -3,6 +3,7 @@ module Spree
     class WishedItemsController < BaseController
       skip_before_action :verify_authenticity_token
 
+      # POST /account/wished_items
       def create
         variant = current_store.variants.find(wished_item_params[:variant_id])
         @wished_item = current_wishlist.wished_items.build(variant: variant)
