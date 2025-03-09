@@ -33,7 +33,7 @@ module SpreeCli
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
       template 'Gemfile', "#{file_name}/Gemfile"
       template 'gitignore', "#{file_name}/.gitignore"
-      template 'LICENSE', "#{file_name}/LICENSE"
+      template 'LICENSE.md', "#{file_name}/LICENSE.md"
       template 'Rakefile', "#{file_name}/Rakefile"
       template 'README.md', "#{file_name}/README.md"
       template 'config/routes.rb', "#{file_name}/config/routes.rb"
