@@ -111,4 +111,84 @@ describe 'StoreCreditEvent' do
 
     it { expect(subject.store).to eq(store) }
   end
+
+  describe '#allocation?' do
+    subject { store_credit_event.allocation? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is allocation' do
+      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not allocation' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#credit?' do
+    subject { store_credit_event.credit? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is credit' do
+      let(:action) { Spree::StoreCredit::CREDIT_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not credit' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#captured?' do
+    subject { store_credit_event.captured? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is capture' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not capture' do
+      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#voided?' do
+    subject { store_credit_event.voided? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is void' do
+      let(:action) { Spree::StoreCredit::VOID_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not void' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#authorized?' do
+    subject { store_credit_event.authorized? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is authorize' do
+      let(:action) { Spree::StoreCredit::AUTHORIZE_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not authorize' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
 end
