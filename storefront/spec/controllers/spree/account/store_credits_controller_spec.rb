@@ -4,7 +4,7 @@ describe Spree::Account::StoreCreditsController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:user) { create(:user) }
   let(:store_credit) { create(:store_credit, user: user) }
-  let(:store_credit_event) { create(:store_credit_auth_event, store_credit: store_credit) }
+  let!(:store_credit_event) { store_credit.store_credit_events.first }
 
   render_views
 
@@ -23,7 +23,6 @@ describe Spree::Account::StoreCreditsController, type: :controller do
       end
 
       it 'lists store credit events for the user' do
-        store_credit_event # create the event
         subject
         expect(assigns(:store_credit_events)).to include(store_credit_event)
         expect(response).to have_http_status(:ok)
