@@ -4,7 +4,7 @@ describe Spree::AddressesController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:country) { store.default_country }
   let(:state) { create(:state, country: country) }
-  let(:user) { create(:user, first_name: nil, last_name: nil, phone: nil) }
+  let(:user) { create(:user) }
   let(:order) { create(:order_with_totals, store: store) }
   let(:default_billing) { 'true' }
   let(:default_shipping) { 'true' }

@@ -3,6 +3,7 @@ module Spree
     class AddressesController < BaseController
       include Spree::AddressesHelper
 
+      # GET /account/addresses
       def index
         @addresses = user_available_addresses.includes(:user)
       end
