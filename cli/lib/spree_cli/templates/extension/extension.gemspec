@@ -23,7 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   s.add_dependency 'spree_storefront', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   s.add_dependency 'spree_admin', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
-  s.add_dependency
   s.add_dependency 'spree_extension'
 
   s.add_development_dependency 'spree_dev_tools'
