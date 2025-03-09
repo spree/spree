@@ -236,7 +236,7 @@ module Spree
       event.update!(
         amount: action_amount || amount,
         authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
-        user_total_amount: user.total_available_store_credit,
+        user_total_amount: user&.total_available_store_credit || 0,
         originator: action_originator
       )
     end
