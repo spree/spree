@@ -1,12 +1,16 @@
-<div class="bg-gray-25 border rounded p-3 nested-form-wrapper border-bottom mb-3 pb-3" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
+<div class="bg-gray-25 border rounded pt-3 px-3 pb-0 nested-form-wrapper border-bottom mb-3 position-relative" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
   <% if rf.object.new_record? %>
     <% @promotion_rules.each do |promotion_rule| %>
       <template id="rule-form-template-<%= promotion_rule.to_s.demodulize %>" data-rule-form-target="template">
+        <p class="text-muted form-text">
+          <%= Spree.t("promotion_rule_types.#{promotion_rule.to_s.demodulize.underscore}.description") %>
+        </p>
         <%= render "spree/admin/promotions/rules/#{promotion_rule.to_s.demodulize.underscore}", rule_form: rf, prefix: prefix %>
       </template>
     <% end %>
 
     <div class="form-group">
+      <%= rf.label :type, Spree.t(:rule_type) %>
       <%= rf.select :type, @rule_types, {}, { class: 'custom-select', data: { action: 'rule-form#replace' } } %>
     </div>
   <% else %>
@@ -16,12 +20,16 @@
   <% end %>
   <div class="form-group" data-rule-form-target="value">
     <% if rf.object.type.present? %>
+      <p class="text-muted form-text">
+        <%= Spree.t("promotion_rule_types.#{rf.object.type.demodulize.underscore}.description") %>
+      </p>
       <%= render "spree/admin/promotions/rules/#{rf.object.type.demodulize.underscore}", rule_form: rf, prefix: prefix %>
     <% end %>
   </div>
-  <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger">
-    <%= icon('x', class: 'mr-0') %>
-    <%= Spree.t(:remove_condition) %>
-  </button>
+  <div class="position-absolute right-0 top-0">
+    <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger with-tip mt-1 mr-1 rounded-sm px-1" title="<%= Spree.t(:remove_condition) %>">
+      <%= icon('trash', class: 'mr-0') %>
+    </button>
+  </div>
   <%= rf.hidden_field :_destroy if rf.object.persisted? %>
 </div>

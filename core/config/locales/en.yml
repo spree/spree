@@ -1572,8 +1572,11 @@ en:
     promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
     promotion_rule: Promotion Rule
     promotion_rule_types:
+      currency:
+        description: Limit to orders in a specific currency
+        name: Currency
       country:
-        description: Order is shipped to proper (or default) country
+        description: Limit to orders with shipping address in a specific country
         name: Country
       first_order:
         description: Must be the customer's first order
