@@ -122,7 +122,7 @@ module Spree
     end
 
     def expired?
-      expires_at.present? && expires_at < Time.current
+      !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
     end
 
     def activate(payload)

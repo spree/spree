@@ -783,7 +783,6 @@ en:
       label: Choose must be shipped to this country
     coupon: Coupon
     coupon_code: Coupon code
-    coupon_codes: Coupon codes
     coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
     coupon_code_apply: Apply
@@ -795,6 +794,7 @@ en:
     coupon_code_removed: The coupon code was successfully removed from your order.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     coupon_code_used: The coupon code you entered has already been used. Please try again.
+    coupon_codes: Coupon codes
     create: Create
     create_a_new_account: Create a new account
     create_account: Create account
