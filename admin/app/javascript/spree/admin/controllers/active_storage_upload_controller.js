@@ -65,14 +65,14 @@ export default class extends Controller {
         source: 'local',
         isRemote: false
       })
+
+      this.handleUI(updatedFile)
+
+      this.uppy.getPlugin('Dashboard').closeModal()
     })
 
     this.uppy.on('upload-success', (file, response) => {
       this.handleUI(file, response)
-    })
-
-    this.uppy.on('file-editor:complete', (updatedFile, result) => {
-      this.handleUI(updatedFile, result)
     })
 
     this.uppy.on('dashboard:modal-closed', () => {
@@ -118,37 +118,39 @@ export default class extends Controller {
     }
   }
 
-  handleUI(file, response) {
+  handleUI(file, response = null) {
     this.placeholderTarget.style = 'display: none !important'
 
-    const signedId = response.signed_id
+    const signedId = response?.signed_id || file.response?.signed_id
 
-    if (this.hasThumbTarget) {
-      this.thumbTarget.src = URL.createObjectURL(file.data)
-      this.thumbTarget.style.display = null
-      this.thumbTarget.dataset.imageSignedId = signedId
-      this.thumbTarget.width = this.thumbWidthValue
-      this.thumbTarget.height = this.thumbHeightValue
+    if (signedId?.length) {
+      if (this.hasThumbTarget) {
+        this.thumbTarget.src = URL.createObjectURL(file.data)
+        this.thumbTarget.style.display = null
+        this.thumbTarget.dataset.imageSignedId = signedId
+        this.thumbTarget.width = this.thumbWidthValue
+        this.thumbTarget.height = this.thumbHeightValue
+      }
+
+      // Remove existing hidden field for this file, if any
+      const existingField = this.element.querySelector(`input[name="${this.fieldNameValue}"]`)
+      if (existingField) {
+        existingField.remove()
+      }
+
+      const hiddenField = document.createElement('input')
+
+      hiddenField.setAttribute('type', 'hidden')
+      hiddenField.setAttribute('value', signedId)
+
+      if (this.multipleValue) {
+        hiddenField.setAttribute('name', `${this.fieldNameValue}[]`)
+      } else {
+        hiddenField.setAttribute('name', this.fieldNameValue)
+      }
+
+      this.element.appendChild(hiddenField)
     }
-
-    // Remove existing hidden field for this file, if any
-    const existingField = this.element.querySelector(`input[name="${this.fieldNameValue}"]`)
-    if (existingField) {
-      existingField.remove()
-    }
-
-    const hiddenField = document.createElement('input')
-
-    hiddenField.setAttribute('type', 'hidden')
-    hiddenField.setAttribute('value', signedId)
-
-    if (this.multipleValue) {
-      hiddenField.setAttribute('name', `${this.fieldNameValue}[]`)
-    } else {
-      hiddenField.setAttribute('name', this.fieldNameValue)
-    }
-
-    this.element.appendChild(hiddenField)
 
     // show toolbar if attached
     if (this.hasToolbarTarget) {
