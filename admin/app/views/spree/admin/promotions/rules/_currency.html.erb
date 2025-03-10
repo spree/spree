@@ -1,0 +1,13 @@
+
+<% active_option ||= current_store.default_currency %>
+<% active_option = rule_form.object.preferred_currency if rule_form.object.persisted? && rule_form.object.respond_to?(:preferred_currency) %>
+
+<div class="form-group">
+  <%= select_tag "#{prefix}[preferred_currency]",
+    currency_options_for_select(
+      active_option,
+      current_store.supported_currencies.split(',')
+    ),
+    { data: { controller: 'autocomplete-select' } } 
+  %>
+</div>

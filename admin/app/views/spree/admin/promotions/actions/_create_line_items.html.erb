@@ -1,0 +1,27 @@
+<div class="card-body calculator-fields">
+  <% promotion_action.promotion_action_line_items.each do |item| %>
+    <% variant = item.variant %>
+
+    <strong><%= item.quantity %> x <%= variant.name %></strong>
+    <%= variant.options_text %>
+  <% end %>
+
+  <% if promotion_action.promotion_action_line_items.empty? %>
+    <% line_items = promotion_action.promotion_action_line_items %>
+    <% line_items.build %>
+
+    <% line_items.each_with_index do |line_item, index| %>
+      <div class="add-line-item">
+        <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
+        <div class="form-group">
+          <%= label_tag "#{line_item_prefix}_variant_id", Spree.t(:variant) %>
+          <%= select_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: 'variant_autocomplete d-block w-100' %>
+        </div>
+        <div class="form-group mb-0">
+          <%= label_tag "#{line_item_prefix}_quantity", Spree.t(:quantity) %>
+          <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, min: 1, class: 'form-control' %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

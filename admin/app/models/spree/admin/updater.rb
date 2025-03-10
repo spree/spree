@@ -16,7 +16,7 @@ module Spree
       def self.fetch_updates
         @updates ||= Rails.cache.fetch("spree/admin/updater/fetch_updates/#{Spree.version}", expires_in: 1.day) do
           uri = URI(SPREE_CLOUD_UPDATES_URL)
-          params = { version: Spree.version }
+          params = { version: Spree.version, environment: Rails.env, url: Spree::Store.current.url_or_custom_domain }
           uri.query = URI.encode_www_form(params)
 
           http = Net::HTTP.new(uri.host, uri.port)

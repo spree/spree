@@ -760,7 +760,8 @@ en:
     continue_as_guest: Continue as a guest
     continue_selling_when_out_of_stock: Continue selling when out of stock
     continue_shopping: Continue shopping
-    copy_id: Copy
+    copy: Copy
+    copy_id: Copy ID
     copy_link: Copy link
     copy_payment_link: Copy payment link
     copy_to_clipboard: Copy to clipboard
@@ -782,6 +783,7 @@ en:
       label: Choose must be shipped to this country
     coupon: Coupon
     coupon_code: Coupon code
+    coupon_codes: Coupon codes
     coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
     coupon_code_apply: Apply

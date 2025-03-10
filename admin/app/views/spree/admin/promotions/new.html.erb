@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_promotions_path, @promotion %>
+  <%= Spree.t(:new_promotion) %>
+<% end %>
+<%= form_for :promotion, url: collection_url do |f| %>
+  <%= render 'form', f: f %>
+  <p class="alert alert-info text-center mt-3">
+    In the next step you will be able to add actions and rules to your promotion
+  </p>
+  <%= render 'spree/admin/shared/new_resource_links' %>
+<% end %>
