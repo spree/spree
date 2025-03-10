@@ -19,12 +19,12 @@
     <div data-controller="nested-form">
       <template data-nested-form-target="template">
         <%= f.fields_for :promotion_rules, Spree::PromotionRule.new(type: @promotion_rules.first.to_s), child_index: 'NEW_RECORD' do |rf, index| %>
-          <%= render 'spree/admin/promotions/rule_form', rf: rf %>
+          <%= render 'spree/admin/promotions/rule_form', rf: rf, prefix: "promotion[promotion_rules_attributes][#{rf.index}]" %>
         <% end %>
       </template>
 
       <%= f.fields_for :promotion_rules, @promotion.promotion_rules do |rf, index| %>
-        <%= render 'spree/admin/promotions/rule_form', rf: rf %>
+        <%= render 'spree/admin/promotions/rule_form', rf: rf, prefix: "promotion[promotion_rules_attributes][#{rf.index}]" %>
       <% end %>
 
       <!-- Inserted elements will be injected before that target. -->

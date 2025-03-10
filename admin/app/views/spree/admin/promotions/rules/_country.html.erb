@@ -3,7 +3,7 @@
 <% active_option = rule_form.object.preferred_country_iso if rule_form.object.persisted? && rule_form.object.respond_to?(:preferred_country_iso) %>
 
 <div class="form-group">
-  <%= rule_form.label Spree.t('country_rule.label') %>
-  <%= rule_form.country_select('preferred_country_iso', { selected: active_option }, { data: { controller: 'autocomplete-select' } }) %>
+  <%= label_tag "#{prefix}[preferred_country_iso]", Spree.t(:country) %>
+  <%= country_select("#{prefix}[preferred_country_iso]", { selected: active_option }, {}, { data: { controller: 'autocomplete-select' } }) %>
 </div>
 

@@ -1,7 +1,7 @@
 <% active_options = [] %>
 <% active_options = active_options_for_option_value_promotion_rule(rule_form.object) if rule_form.object.persisted? && rule_form.object.respond_to?(:eligible_values) %>
 
-<%= tom_select_tag "[preferred_eligible_values][]",
+<%= tom_select_tag "#{prefix}[preferred_eligible_values][]",
   placeholder: Spree.t(:type_to_search),
   url: spree.admin_promotion_rules_option_values_search_path,
   remote_search: true,

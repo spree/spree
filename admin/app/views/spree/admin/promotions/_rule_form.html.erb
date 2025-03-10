@@ -2,7 +2,7 @@
   <% if rf.object.new_record? %>
     <% @promotion_rules.each do |promotion_rule| %>
       <template id="rule-form-template-<%= promotion_rule.to_s.demodulize %>" data-rule-form-target="template">
-        <%= render "spree/admin/promotions/rules/#{promotion_rule.to_s.demodulize.underscore}", rule_form: rf %>
+        <%= render "spree/admin/promotions/rules/#{promotion_rule.to_s.demodulize.underscore}", rule_form: rf, prefix: prefix %>
       </template>
     <% end %>
 
@@ -16,7 +16,7 @@
   <% end %>
   <div class="form-group" data-rule-form-target="value">
     <% if rf.object.type.present? %>
-      <%= render "spree/admin/promotions/rules/#{rf.object.type.demodulize.underscore}", rule_form: rf %>
+      <%= render "spree/admin/promotions/rules/#{rf.object.type.demodulize.underscore}", rule_form: rf, prefix: prefix %>
     <% end %>
   </div>
   <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger">

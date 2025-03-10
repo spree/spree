@@ -2,6 +2,6 @@
 <% active_options = rule_form.object.product_ids if rule_form.object.persisted? && rule_form.object.respond_to?(:product_ids) %>
 
 <div class="form-group">
-  <%= rule_form.label "product_ids_string", Spree.t('product_rule.choose_products') %>
-  <%= tom_select_tag "product_ids_string", multiple: true, url: select_options_admin_products_path, active_option: active_options %>
+  <%= label_tag "#{prefix}[product_ids_string]", Spree.t('product_rule.choose_products') %>
+  <%= tom_select_tag "#{prefix}[product_ids_string]", multiple: true, url: spree.select_options_admin_products_path, active_option: active_options %>
 </div>
