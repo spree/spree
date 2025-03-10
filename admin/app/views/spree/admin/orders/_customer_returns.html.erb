@@ -12,39 +12,13 @@
               <th><%= Spree.t(:date) %></th>
               <th><%= Spree.t(:status) %></th>
               <th><%= Spree.t(:pre_tax_total) %></th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <% @customer_returns.each do |customer_return| %>
-              <tr
-                id="<%= spree_dom_id(customer_return) %>"
-                data-controller="row-link"
-                class="cursor-pointer"
-              >
-                <td data-action="click->row-link#openLink" class="font-weight-bolder">
-                  <%= link_to customer_return.number,
-                  (
-                    if can?(:edit, customer_return)
-                      spree.edit_admin_order_customer_return_path(@order, customer_return)
-                    else
-                      "#"
-                    end
-                  ),
-                  data: {
-                    row_link_target: "link",
-                  } %>
-                </td>
-                <td data-action="click->row-link#openLink">
-                  <% if customer_return.fully_reimbursed? %>
-                    <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
-                  <% else %>
-                    <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
-                  <% end %>
-                </td>
-                <td data-action="click->row-link#openLink"><%= customer_return.display_pre_tax_total.to_html %></td>
-                <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
-              </tr>
-            <% end %>
+            <%= render partial: "spree/admin/orders/customer_returns/customer_return",
+            collection: @customer_returns,
+            cached: spree_base_cache_scope %>
           </tbody>
         </table>
       </div>

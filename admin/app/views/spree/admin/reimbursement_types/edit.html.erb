@@ -7,7 +7,7 @@
 
 <div class="row">
   <div class="col-lg-6">
-    <%= form_for @reimbursement_type, :url => object_url, :method => :put do |reimbursement_form| %>
+    <%= form_with model: @reimbursement_type, :url => object_url, :method => :put, scope: :reimbursement_type do |reimbursement_form| %>
       <%= render partial: 'form', locals: { f: reimbursement_form } %>
       <%= render 'spree/admin/shared/edit_resource_links', f: reimbursement_form %>
     <% end %>

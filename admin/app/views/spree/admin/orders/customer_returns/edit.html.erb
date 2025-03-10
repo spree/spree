@@ -125,24 +125,21 @@
   </div>
 </div>
 
-<% if !@customer_return.fully_reimbursed? && @pending_reimbursements.empty? && can?(:create, Spree::Reimbursement) %>
-  <fieldset class="mb-3">
-    <% if @customer_return.completely_decided? %>
-      <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
-        <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>
-        <%= f.button class: 'btn btn-primary' do %>
-          <%= icon "plus" %>
-          <%= Spree.t(:create_reimbursement) %>
-        <% end %>
-      <% end %>
-    <% else %>
-      <div
-        class="
-          text-muted p-5 d-flex align-items-center w-100 justify-content-center
-        "
-      >
-        <%= Spree.t(:unable_to_create_reimbursements) %>
-      </div>
+<% if @customer_return.can_create_reimbursement? && can?(:create, Spree::Reimbursement) %>
+  <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
+    <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>
+    <%= f.button class: 'btn btn-primary' do %>
+      <%= icon "plus" %>
+      <%= Spree.t(:create_reimbursement) %>
     <% end %>
-  </fieldset>
+  <% end %>
+<% end %>
+<% if !@customer_return.fully_reimbursed? && @customer_return.no_pending_reimbursements? && !@customer_return.completely_decided? %>
+  <div
+    class="
+      text-muted p-5 d-flex align-items-center w-100 justify-content-center
+    "
+  >
+    <%= Spree.t(:unable_to_create_reimbursements) %>
+  </div>
 <% end %>

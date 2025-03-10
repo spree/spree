@@ -14,6 +14,10 @@ module Spree
 
         private
 
+        def location_after_save
+          spree.edit_admin_order_path(@order)
+        end
+
         def load_form_data
           load_return_items
           load_reimbursement_types

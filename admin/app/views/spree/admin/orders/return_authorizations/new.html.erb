@@ -8,11 +8,6 @@
   <fieldset>
     <%= render 'form', f: f %>
 
-    <div class="form-actions">
-      <%= button Spree.t(:create) %>
-      <span class="or"><%= Spree.t(:or) %></span>
-      <%= link_to Spree.t("actions.cancel"),
-      spree.admin_order_return_authorizations_path(@order) %>
-    </div>
+    <%= render 'spree/admin/shared/new_resource_links' %>
   </fieldset>
 <% end %>

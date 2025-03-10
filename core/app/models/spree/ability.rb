@@ -58,6 +58,8 @@ module Spree
 
     def apply_admin_permissions(user)
       can :manage, :all
+      cannot [:edit, :update], Spree::RefundReason, mutable: false
+      cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
 
     def apply_user_permissions(user)

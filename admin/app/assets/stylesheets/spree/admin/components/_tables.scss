@@ -118,6 +118,10 @@ table.table {
   border-color: $table-border-color !important;
 }
 
+.table-responsive:has(.dropdown.show) {
+  overflow: visible;
+}
+
 .sortable-drag-v {
   border: 1px solid theme-color('info');
   border-radius: $border-radius;

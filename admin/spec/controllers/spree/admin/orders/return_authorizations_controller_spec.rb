@@ -57,7 +57,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
 
     it 'redirects to the edit page of the return authorization' do
       subject
-      expect(response).to redirect_to(spree.edit_admin_order_return_authorization_path(order, order.return_authorizations.last))
+      expect(response).to redirect_to(spree.edit_admin_order_path(order))
     end
   end
 
@@ -105,7 +105,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
 
     it 'redirects to the edit page of the return authorization' do
       subject
-      expect(response).to redirect_to(spree.edit_admin_order_return_authorization_path(order, return_authorization))
+      expect(response).to redirect_to(spree.edit_admin_order_path(order))
     end
   end
 
