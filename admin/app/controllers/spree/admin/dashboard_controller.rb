@@ -79,7 +79,7 @@ module Spree
 
         return if product_ids.empty?
 
-        products = current_store.products.with_deleted.where(id: product_ids)
+        products = current_store.products.with_deleted.includes(:master, :variants).where(id: product_ids)
 
         @top_products = line_items_grouped.map do |li|
           product = products.find { |p| p.id == li.variant_product_id }
