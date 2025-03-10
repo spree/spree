@@ -53,7 +53,7 @@ body.modal-open {
   @extend .align-items-center;
   @extend .rounded-lg;
   @extend .bg-white;
-  @extend .shadow;
+  box-shadow: $dropdown-box-shadow;
 }
 
 #multi-backdrop {
