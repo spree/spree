@@ -104,6 +104,8 @@ Spree::Core::Engine.add_routes do
       member do
         post :clone
       end
+      resources :promotion_actions, as: :actions, except: [:index, :show]
+      resources :promotion_rules, as: :rules, except: [:index, :show]
       resources :coupon_codes, only: :index
     end
     get 'promotion_rules/option_values_search', defaults: { format: :json }

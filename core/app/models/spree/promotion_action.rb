@@ -6,7 +6,7 @@ module Spree
 
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
-    validates :promotion, presence: true
+    validates :promotion, :type, presence: true
 
     scope :of_type, ->(t) { where(type: t) }
 
@@ -23,6 +23,18 @@ module Spree
     # @return [Boolean]
     def free_shipping?
       type == 'Spree::Promotion::Actions::FreeShipping'
+    end
+
+    def human_name
+      Spree.t("promotion_action_types.#{key}.name")
+    end
+
+    def human_description
+      Spree.t("promotion_action_types.#{key}.description")
+    end
+
+    def key
+      type.demodulize.underscore
     end
 
     protected

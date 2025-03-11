@@ -176,7 +176,7 @@ module Spree
                           class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
             else
               if object.preference_type(key).to_sym == :boolean
-                content_tag(:div, class: 'custom-control custom-checkbox') do
+                content_tag(:div, class: 'form-group custom-control custom-checkbox') do
                   preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
                     form.label(
                       "preferred_#{key}",

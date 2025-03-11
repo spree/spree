@@ -1,34 +1,20 @@
-<div class="card-header">
-  <h5 class="card-title">
-    <%= Spree.t(:promotion_actions) %>
-  </h5>
-</div>
-<div id="action_fields" class="card-body">
-  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), remote: true, id: 'new_promotion_action_form', class: 'mb-3' do %>
-    <% options = options_for_select(  @actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:promotion_actions) %>
+    </h5>
 
-    <div class="form-group">
-      <%= label_tag :action_type, Spree.t(:add_action_of_type) %>
-      <%= select_tag 'action_type', options, class: 'custom-select' %>
-    </div>
-    <div class="form-actions">
-      <%= button Spree.t(:add), 'plus', 'submit', class: "btn-light" %>
-    </div>
-
-  <% end %>
-
-  <%= form_for @promotion, url: spree.admin_promotion_path(@promotion), method: :put do |f| %>
-    <div id="actions" class="filter_list mt-3">
-      <% if @promotion.actions.any? %>
-        <%= render partial: 'promotion_action',  collection: @promotion.actions %>
-      <% else %>
-        <div class="alert alert-warning">
-          <%= Spree.t(:no_actions_added) %>
-        </div>
-      <% end %>
-    </div>
-    <div class="actions promotion-update">
-      <%= turbo_save_button_tag Spree.t('actions.update') %>
-    </div>
-  <% end %>
+    <span data-toggle="modal" data-target="#modal">
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
+    </span>
+  </div>
+  <div class="card-body">
+    <% if @promotion.promotion_actions.empty? %>
+      <%= render 'spree/admin/shared/no_resource_found', resource_name: Spree.t(:promotion_actions), model_class: Spree::PromotionAction, new_object_url: spree.new_admin_promotion_action_path(@promotion) %>
+    <% else %>
+      <ul class="list-group">
+        <%= render collection: @promotion.promotion_actions, partial: 'spree/admin/promotion_actions/action', as: :promotion_action %>
+      </ul>
+    <% end %>
+  </div>
 </div>

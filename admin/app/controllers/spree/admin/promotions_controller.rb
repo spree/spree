@@ -28,7 +28,7 @@ module Spree
       def load_form_data
         @promotion_rules = Rails.application.config.spree.promotions.rules
         @rule_types = @promotion_rules.map do |promotion_rule|
-          [Spree.t("admin.promotion_rules.#{promotion_rule.to_s.demodulize.underscore}"), promotion_rule.to_s]
+          [Spree.t("promotion_rule_types.#{promotion_rule.to_s.demodulize.underscore}.name"), promotion_rule.to_s]
         end
       end
 
