@@ -32,7 +32,8 @@
         </thead>
         <tbody>
           <%= render collection: @collection,
-          partial: "spree/admin/orders/customer_returns/customer_return" %>
+          partial: "spree/admin/customer_returns/customer_return",
+          cached: spree_base_cache_scope %>
         </tbody>
       </table>
     </div>

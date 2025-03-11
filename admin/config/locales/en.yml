@@ -46,9 +46,9 @@ en:
         getting_started:
           description: Everything you need to set up to start selling.
         hi: Hi
-        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
         top_products: Top products
         view_report: View report
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
       display_on_options:
         back_end: Only on admin panel
         both: On both admin panel & storefront

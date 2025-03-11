@@ -47,13 +47,7 @@
       </div>
     </div>
 
-    <div class="form-actions">
-      <%= button Spree.t(:create) %>
-      <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t("actions.cancel"),
-      spree.admin_order_customer_returns_path(@order),
-      icon: "cancel" %>
-    </div>
+    <%= render "spree/admin/shared/new_resource_links" %>
   <% end %>
 
 <% else %>
@@ -66,7 +60,7 @@
     >
       <%= Spree.t(:all_items_have_been_returned) %>,
       <%= link_to "#{Spree.t(:get_back_to_the)} #{Spree.t(:order)}",
-      spree.edit_admin_order_path(@order) %>.
+      spree.edit_admin_order_path(@order) %>
     </div>
   </div>
 
