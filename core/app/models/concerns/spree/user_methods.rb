@@ -30,6 +30,7 @@ module Spree
       has_many :store_credits, class_name: 'Spree::StoreCredit', foreign_key: :user_id, dependent: :destroy
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
       has_many :wished_items, through: :wishlists, source: :wished_items
+      has_many :gateway_customers, class_name: 'Spree::GatewayCustomer'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 

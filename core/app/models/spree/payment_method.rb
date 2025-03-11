@@ -26,6 +26,8 @@ module Spree
       has_many :credit_cards, class_name: 'Spree::CreditCard'
     end
 
+    has_many :gateway_customers, class_name: 'Spree::GatewayCustomer'
+
     def self.providers
       Rails.application.config.spree.payment_methods
     end
