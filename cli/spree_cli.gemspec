@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.files         = Dir["{lib}/**/*", "LICENSE.md", "README.md", "Rakefile"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files         = Dir.glob(["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"], File::FNM_DOTMATCH).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.bindir        = 'bin'
   s.executables   = Dir['bin/*'].map { |f| File.basename(f) }
   s.require_paths = ['lib']

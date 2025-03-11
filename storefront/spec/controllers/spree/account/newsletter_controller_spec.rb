@@ -4,9 +4,21 @@ RSpec.describe Spree::Account::NewsletterController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:user) { create(:user, email: 'test@example.com') }
 
+  render_views
+
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:try_spree_current_user).and_return(user)
+  end
+
+  describe 'GET #edit' do
+    subject { get :edit }
+
+    it 'renders the edit template' do
+      subject
+      expect(response).to render_template(:edit)
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe 'PUT #update' do

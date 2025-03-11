@@ -1,10 +1,12 @@
 module Spree
   module Account
     class OrdersController < BaseController
+      # GET /account/orders
       def index
         @orders = orders_scope.page(params[:page]).per(25)
       end
 
+      # GET /account/orders/:id
       def show
         @order = orders_scope.find_by!(number: params[:id])
         @shipments = @order.shipments

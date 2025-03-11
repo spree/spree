@@ -70,6 +70,8 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
 end
 
 describe Spree.user_class, type: :model do
+  subject { create(:user) }
+
   context 'reporting' do
     let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today, currency: currency) }
     let(:currency) { 'USD' }

@@ -29,5 +29,25 @@ module Spree
     def order
       store.payments.find_by(response_code: authorization_code).try(:order)
     end
+
+    def allocation?
+      action == Spree::StoreCredit::ALLOCATION_ACTION
+    end
+
+    def credit?
+      action == Spree::StoreCredit::CREDIT_ACTION
+    end
+
+    def captured?
+      action == Spree::StoreCredit::CAPTURE_ACTION
+    end
+
+    def voided?
+      action == Spree::StoreCredit::VOID_ACTION
+    end
+
+    def authorized?
+      action == Spree::StoreCredit::AUTHORIZE_ACTION
+    end
   end
 end

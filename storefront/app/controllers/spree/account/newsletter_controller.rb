@@ -1,8 +1,10 @@
 module Spree
   module Account
     class NewsletterController < BaseController
+      # GET /account/newsletter
       def edit; end
 
+      # PUT /account/newsletter
       def update
         try_spree_current_user.update(newsletter_params)
 

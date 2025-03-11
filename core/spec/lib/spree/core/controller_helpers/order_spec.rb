@@ -151,8 +151,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
     end
 
-    context "user's email is blank" do
-      let(:user) { create(:user, email: '') }
+    context "user is blank" do
+      let(:order) { create(:order, user: nil, store: store) }
 
       it 'calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).to receive(:associate_user!)
@@ -161,6 +161,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context "user isn't blank" do
+      let(:order) { create(:order, user: user, store: store) }
+
       it 'does not calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
         controller.associate_user

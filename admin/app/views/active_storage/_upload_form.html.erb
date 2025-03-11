@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    <div class="d-flex align-items-center" data-active-storage-upload-target="toolbar" <% unless form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
+    <div class="d-flex align-items-center pb-3" data-active-storage-upload-target="toolbar" <% unless form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
       <button type="button" class="btn btn-light" data-action="active-storage-upload#open">
         <%= icon('upload') %>
         <%= Spree.t('actions.select_file') %>

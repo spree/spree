@@ -1,8 +1,8 @@
 module Spree
   module Account
     class StoreCreditsController < BaseController
+      # GET /account/store_credits
       def index
-        user_store_credits = try_spree_current_user.store_credits.without_gift_card
         @store_credit_events = Spree::StoreCreditEvent.where(store_credit: user_store_credits).
                                exposed_events.
                                reverse_chronological.
@@ -13,6 +13,10 @@ module Spree
 
       def accurate_title
         Spree.t(:store_credit_name)
+      end
+
+      def user_store_credits
+        try_spree_current_user.store_credits
       end
     end
   end
