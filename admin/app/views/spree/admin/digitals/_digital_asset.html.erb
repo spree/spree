@@ -1,0 +1,27 @@
+<tr>
+  <% unless variant.is_master? %>
+    <td><%= variant.options_text %></td>
+  <% end %>
+  <td><%= digital.attachment.filename %></td>
+  <td><%= number_to_human_size(digital.attachment.byte_size) %></td>
+  <td class="actions">
+    <% if can? :edit, digital %>
+      <span data-toggle="modal" data-target="#modal">
+        <%= link_to_edit(
+          digital,
+          no_text: true,
+          url: spree.edit_admin_product_digital_path(product, digital),
+          data: {
+            turbo_frame: "dialog_modal",
+          },
+        ) %>
+      </span>
+    <% end %>
+    <% if can? :destroy, digital %>
+      <%= link_to_delete(
+        digital,
+        { url: spree.admin_product_digital_path(product, digital), no_text: true },
+      ) %>
+    <% end %>
+  </td>
+</tr>

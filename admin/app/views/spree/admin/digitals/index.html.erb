@@ -1,0 +1,29 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_product_path(@product) %>
+  <span class="mr-3"><%= @product.name %></span>
+  <span><%= Spree.t(:digital_assets) %></span>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
+    <span data-toggle="modal" data-target="#modal">
+      <%= link_to_with_icon "plus",
+      Spree.t("admin.digitals.new"),
+      new_object_url,
+      class: "btn btn-primary",
+      data: {
+        turbo_frame: "dialog_modal",
+      } %>
+    </span>
+  <% end %>
+<% end %>
+
+<div class="card p-0">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <%= turbo_frame_tag [:admin, @product.id, :digitals] do %>
+        <%= render "spree/admin/digitals/table" %>
+      <% end %>
+    </div>
+  </div>
+</div>
