@@ -12,7 +12,7 @@ class CreateSpreeGatewayCustomers < ActiveRecord::Migration[7.2]
       t.index ['user_id'], name: 'index_spree_gateway_customers_on_user_id'
     end
 
-    add_column :spree_credit_cards, :gateway_customer_id, if_not_exists: true
+    add_column :spree_credit_cards, :gateway_customer_id, :bigint, if_not_exists: true
     add_index :spree_credit_cards, :gateway_customer_id, if_not_exists: true
   end
 end
