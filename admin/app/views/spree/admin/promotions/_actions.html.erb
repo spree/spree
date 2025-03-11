@@ -3,18 +3,18 @@
     <h5 class="card-title">
       <%= Spree.t(:promotion_actions) %>
     </h5>
-
     <span data-toggle="modal" data-target="#modal">
       <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
     </span>
   </div>
   <div class="card-body">
     <% if @promotion.promotion_actions.empty? %>
-      <%= render 'spree/admin/shared/no_resource_found', resource_name: Spree.t(:promotion_actions), model_class: Spree::PromotionAction, new_object_url: spree.new_admin_promotion_action_path(@promotion) %>
+      <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+        <%= Spree.t(:no_resource_found, resource: Spree.t(:promotion_actions)) %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
+      </div>
     <% else %>
-      <ul class="list-group">
-        <%= render collection: @promotion.promotion_actions, partial: 'spree/admin/promotion_actions/action', as: :promotion_action %>
-      </ul>
+      <%= render collection: @promotion.promotion_actions, partial: 'spree/admin/promotion_actions/promotion_action', as: :promotion_action %>
     <% end %>
   </div>
 </div>

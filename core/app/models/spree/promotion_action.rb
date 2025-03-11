@@ -25,14 +25,23 @@ module Spree
       type == 'Spree::Promotion::Actions::FreeShipping'
     end
 
+    # Returns the human name of the promotion action
+    #
+    # @return [String] eg. Free Shipping
     def human_name
       Spree.t("promotion_action_types.#{key}.name")
     end
 
+    # Returns the human description of the promotion action
+    #
+    # @return [String]
     def human_description
       Spree.t("promotion_action_types.#{key}.description")
     end
 
+    # Returns the key of the promotion action
+    #
+    # @return [String] eg. free_shipping
     def key
       type.demodulize.underscore
     end

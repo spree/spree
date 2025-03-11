@@ -1,0 +1,34 @@
+<div class="card mb-4">
+  <div class="card-header d-flex justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:rules) %>
+    </h5>
+    <span data-toggle="modal" data-target="#modal">
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm' %>
+    </span>
+  </div>
+  <div class="card-body">
+    <div class="form-group mb-0">
+      <div class="d-block d-lg-flex gap-3">
+        <%= form_with model: @promotion, url: spree.admin_promotion_path(@promotion), method: :put, data: { controller: 'auto-submit' } do |f| %>
+          <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
+            <div class="custom-control custom-radio custom-control-inline">
+              <%= f.radio_button :match_policy, policy, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+              <%= f.label "match_policy_#{policy}", class: 'custom-control-label' %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body pb-0">
+    <% if @promotion.promotion_rules.empty? %>
+      <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+        <%= Spree.t(:no_resource_found, resource: Spree.t(:promotion_rules)) %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
+      </div>
+    <% else %>
+      <%= render collection: @promotion.promotion_rules, partial: 'spree/admin/promotion_rules/promotion_rule', as: :promotion_rule %>
+    <% end %>
+  </div>
+</div>

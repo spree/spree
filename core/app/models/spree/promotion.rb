@@ -37,7 +37,7 @@ module Spree
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
-    accepts_nested_attributes_for :promotion_actions, :promotion_rules, allow_destroy: true
+    accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     #
     # Callbacks

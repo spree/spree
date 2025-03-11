@@ -37,8 +37,8 @@
       </div>
       <% if @promotion_action.type.present? %>
         <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
           <%= turbo_save_button_tag Spree.t('actions.create'), data: { turbo_frame: '_top' } %>
-          <%= link_to Spree.t('actions.discard'), spree.admin_promotion_path(@promotion), class: 'btn btn-light' %>
         </div>
       <% end %>
     </div>
