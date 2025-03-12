@@ -20,10 +20,6 @@ module Spree
       def permitted_resource_params
         params.require(:digital).permit(permitted_digital_attributes)
       end
-
-      def permitted_digital_attributes
-        %i[variant_id attachment]
-      end
     end
   end
 end
