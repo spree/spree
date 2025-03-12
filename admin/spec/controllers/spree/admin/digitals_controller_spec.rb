@@ -7,7 +7,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
   let(:store) { Spree::Store.default }
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { product.master }
-  let(:attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), 'image/jpeg') }
+  let(:attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root, 'spec/fixtures', 'thinking-cat.jpg'), 'image/jpeg') }
 
   describe '#create' do
     subject { post :create, params: params, format: :turbo_stream }
@@ -51,7 +51,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
     subject { put :update, params: params, format: :turbo_stream }
 
     let!(:digital) { create(:digital, variant: variant) }
-    let(:new_attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), 'image/jpeg') }
+    let(:new_attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root, 'spec/fixtures', 'thinking-cat.jpg'), 'image/jpeg') }
 
     let(:params) do
       {
