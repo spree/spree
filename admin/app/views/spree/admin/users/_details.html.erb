@@ -17,7 +17,7 @@
         <li class="list-group-item d-flex justify-content-between align-items-center">
           Phone
           <span>
-            <%= @user.phone.presence || 'N/A' %>
+            <%= @user.phone.presence || Spree.t(:not_available) %>
           </span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
