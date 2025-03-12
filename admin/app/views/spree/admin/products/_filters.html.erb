@@ -13,7 +13,7 @@
       <div class="col-12 col-lg-6">
         <div class="form-group">
           <%= f.label :taxons_id_in, Spree.t(:taxons) %>
-          <% @categories = Spree::Taxon.where(id: params.dig(:q, :taxons_id_in)).pluck(:pretty_name, :id) if params.dig(
+          <% @categories = current_store.taxons.where(id: params.dig(:q, :taxons_id_in)).pluck(:pretty_name, :id) if params.dig(
             :q,
             :taxons_id_in,
           ) %>

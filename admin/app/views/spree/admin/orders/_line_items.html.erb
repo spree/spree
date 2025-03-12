@@ -13,7 +13,7 @@
           </div>
         <% end %>
         <% if @order.completed? %>
-          <button class="btn btn-light btn-sm text-muted" type="button" data-toggle="collapse" data-target="#line-items" aria-expanded="false" aria-controls="collapseExample">
+          <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#line-items" aria-expanded="false" aria-controls="collapseExample">
             <%= Spree.t(:show_details) %>
             <%= icon('selector', height: 12, class: 'mr-0 ml-1') %>
           </button>
