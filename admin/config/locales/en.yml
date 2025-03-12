@@ -51,7 +51,6 @@ en:
         whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
       digital_assets:
         edit: Edit asset
-        new: New asset
       display_on_options:
         back_end: Only on admin panel
         both: On both admin panel & storefront

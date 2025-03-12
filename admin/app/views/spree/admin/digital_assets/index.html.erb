@@ -8,7 +8,7 @@
   <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
     <span data-toggle="modal" data-target="#modal">
       <%= link_to_with_icon "plus",
-      Spree.t("admin.digital_assets.new"),
+      Spree.t(:add_one),
       spree.new_admin_product_digital_asset_path(@product),
       class: "btn btn-primary",
       data: {
