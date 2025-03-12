@@ -3,8 +3,6 @@ module Spree
     class DigitalAssetsController < ResourceController
       belongs_to 'spree/product', find_by: :slug
 
-      def index; end
-
       private
 
       def model_class
