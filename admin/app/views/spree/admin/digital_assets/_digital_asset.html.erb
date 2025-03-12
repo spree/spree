@@ -10,7 +10,7 @@
         <%= link_to_edit(
           digital_asset,
           no_text: true,
-          url: spree.edit_admin_product_digital_asset_path(product, digital_asset),
+          url: spree.edit_admin_product_digital_asset_path(digital_asset.product, digital_asset),
           data: {
             turbo_frame: "dialog_modal",
           },
@@ -21,7 +21,7 @@
       <%= link_to_delete(
         digital_asset,
         {
-          url: spree.admin_product_digital_asset_path(product, digital_asset),
+          url: spree.admin_product_digital_asset_path(digital_asset.product, digital_asset),
           no_text: true,
         },
       ) %>
