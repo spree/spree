@@ -10,7 +10,7 @@ describe Spree::Admin::DigitalAssetsController, type: :controller do
   let(:attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root, 'spec/fixtures', 'thinking-cat.jpg'), 'image/jpeg') }
 
   describe '#create' do
-    subject { post :create, params: params, format: :turbo_stream }
+    subject { post :create, params: params }
 
     let(:params) do
       {
@@ -48,7 +48,7 @@ describe Spree::Admin::DigitalAssetsController, type: :controller do
   end
 
   describe '#update' do
-    subject { put :update, params: params, format: :turbo_stream }
+    subject { put :update, params: params }
 
     let!(:digital) { create(:digital, variant: variant) }
     let(:new_attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Core::Engine.root, 'spec/fixtures', 'thinking-cat.jpg'), 'image/jpeg') }

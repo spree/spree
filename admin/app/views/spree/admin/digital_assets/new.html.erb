@@ -15,7 +15,7 @@
       </div>
       <div class="modal-footer d-flex justify-content-between">
         <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t("actions.discard") %></button>
-        <%= turbo_save_button_tag %>
+        <%= turbo_save_button_tag Spree.t("actions.save"), data: { turbo_frame: :_top } %>
       </div>
     </div>
   <% end %>

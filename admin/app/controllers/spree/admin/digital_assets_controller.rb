@@ -26,11 +26,15 @@ module Spree
       end
 
       def create_turbo_stream_enabled?
-        true
+        @object.errors.any?
       end
 
       def update_turbo_stream_enabled?
-        true
+        @object.errors.any?
+      end
+
+      def location_after_save
+        spree.admin_product_digital_assets_path(parent)
       end
 
       def permitted_resource_params
