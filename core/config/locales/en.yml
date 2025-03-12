@@ -321,6 +321,9 @@ en:
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
+      spree/digital:
+        one: Digital asset
+        other: Digital assets
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units

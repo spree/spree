@@ -35,7 +35,10 @@
               text-muted p-5 d-flex align-items-center w-100 justify-content-center
             "
           >
-            <%= Spree.t(:no_resource_found, resource: "digital assets") %>
+            <%= Spree.t(
+              :no_resource_found,
+              resource: Spree::Digital.model_name.human(count: 2),
+            ) %>
             <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
               <span data-toggle="modal" data-target="#modal">
                 <%= link_to_with_icon "plus",
