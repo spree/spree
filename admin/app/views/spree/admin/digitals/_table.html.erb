@@ -11,7 +11,7 @@
   </thead>
   <tbody>
     <% if @product.has_variants? %>
-      <% @product.variants.each do |variant| %>
+      <% @product.variants.includes(:digitals).each do |variant| %>
         <% variant.digitals.each do |digital| %>
           <%= render "spree/admin/digitals/digital_asset",
           product: @product,
