@@ -49,6 +49,10 @@ en:
         top_products: Top products
         view_report: View report
         whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+      digitals:
+        edit: Edit asset
+        new: New asset
+        no_digital_assets_added: No digital assets added
       display_on_options:
         back_end: Only on admin panel
         both: On both admin panel & storefront
@@ -236,9 +240,6 @@ en:
         compare_at_price_description: This price is used to shown marked price on the product page.
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
-      digitals:
-        new: New asset
-        no_digital_assets_added: No digital assets added
       view_all_orders: View all orders
       webhooks_subscribers:
         addresses: Addresses
