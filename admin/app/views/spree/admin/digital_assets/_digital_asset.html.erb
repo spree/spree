@@ -20,7 +20,10 @@
     <% if can? :destroy, digital_asset %>
       <%= link_to_delete(
         digital_asset,
-        { url: spree.admin_product_digital_asset_path(product, digital_asset), no_text: true },
+        {
+          url: spree.admin_product_digital_asset_path(product, digital_asset),
+          no_text: true,
+        },
       ) %>
     <% end %>
   </td>

@@ -11,19 +11,17 @@
   </thead>
   <tbody>
     <% if @product.has_variants? %>
-      <% @product.variants.includes(:digitals).each do |variant| %>
+      <% @product.variants.includes(digitals: {attachment_attachment: [:blob]}).each do |variant| %>
         <% variant.digitals.each do |digital_asset| %>
           <%= render "spree/admin/digital_assets/digital_asset",
           product: @product,
-          variant: variant,
           digital_asset: digital_asset %>
         <% end %>
       <% end %>
     <% else %>
-      <% @product.master.digitals.each do |digital_asset| %>
+      <% @product.master.digitals.includes( attachment_attachment: [:blob]).each do |digital_asset| %>
         <%= render "spree/admin/digital_assets/digital_asset",
         product: @product,
-        variant: @product.master,
         digital_asset: digital_asset %>
       <% end %>
     <% end %>
@@ -35,10 +33,7 @@
               text-muted p-5 d-flex align-items-center w-100 justify-content-center
             "
           >
-            <%= Spree.t(
-              :no_resource_found,
-              resource: Spree::Digital.model_name.human(count: 2),
-            ) %>
+            <%= Spree.t(:no_resource_found, resource: Spree::Digital.model_name.human(count: 2)) %>
             <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
               <span data-toggle="modal" data-target="#modal">
                 <%= link_to_with_icon "plus",
