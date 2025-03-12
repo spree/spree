@@ -6,11 +6,6 @@
       Leave this field blank for unlimited usage.
     </span>
   </div>
-  <% if @promotion.persisted? %>
-    <span class="form-text text-muted">
-      <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
-    </span>
-  <% end %>
 <% end %>
 
 <div class="form-group">

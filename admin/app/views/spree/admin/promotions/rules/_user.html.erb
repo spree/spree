@@ -1,7 +1,0 @@
-<% active_options = [] %>
-<% active_options = rule_form.object.user_ids if rule_form.object.persisted? && rule_form.object.respond_to?(:user_ids) %>
-
-<div class="form-group mb-0">
-  <%= label_tag "#{prefix}[user_ids]", Spree.t('user_rule.choose_users') %>
-  <%= tom_select_tag "#{prefix}[user_ids]", multiple: true, options: users_for_select_options, active_option: active_options %>
-</div>

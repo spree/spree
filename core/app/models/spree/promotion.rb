@@ -125,6 +125,10 @@ module Spree
       !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
     end
 
+    def all_codes_used?
+      coupon_codes.used.count == coupon_codes.count
+    end
+
     def activate(payload)
       order = payload[:order]
       return unless self.class.order_activatable?(order)

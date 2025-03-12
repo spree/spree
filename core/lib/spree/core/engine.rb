@@ -121,6 +121,7 @@ module Spree
 
         Rails.application.config.spree.promotions.rules.concat [
           Spree::Promotion::Rules::Currency,
+          Spree::Promotion::Rules::Country,
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
@@ -129,7 +130,6 @@ module Spree
           Spree::Promotion::Rules::OneUsePerUser,
           Spree::Promotion::Rules::Taxon,
           Spree::Promotion::Rules::OptionValue,
-          Spree::Promotion::Rules::Country
         ]
 
         Rails.application.config.spree.promotions.actions = [

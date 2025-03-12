@@ -5,6 +5,7 @@
         <h5 class="card-title"><%= @promotion_action.human_name %></h5>
       </div>
       <div class="card-body pb-0">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_action } %>
         <%= render "spree/admin/promotion_actions/forms/#{@promotion_action.key}", f: f %>
       </div>
       <div class="card-footer d-flex justify-content-between">

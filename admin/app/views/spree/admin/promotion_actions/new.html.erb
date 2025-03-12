@@ -11,7 +11,8 @@
         </h5>
         <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
       </div>
-      <div class="modal-body border-bottom pb-3">
+      <div class="modal-body">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_action } %>
         <% if @promotion_action.type.nil? %>
           <ul class="list-group">
             <% allowed_action_types.each do |action_type| %>

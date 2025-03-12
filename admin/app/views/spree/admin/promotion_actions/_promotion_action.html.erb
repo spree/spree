@@ -16,15 +16,13 @@
     <div class="card-body">
       <p class="text-muted"><%= promotion_action.human_description %></p>
 
+      <% if promotion_action.preferences.present? %>
+        <%= render 'spree/admin/shared/preferences', object: promotion_action %>
+      <% end %>
+
       <% if promotion_action.respond_to?(:calculator) && promotion_action.calculator.preferences.present? %>
         <h6><%= Spree.t(:calculator) %>: <%= promotion_action.calculator.description %></h6>
-        <p class="mb-0">
-          <% promotion_action.calculator.preferences.each do |key, value| %>
-            <% next if value.blank? %>
-            <span><%= Spree.t(key) %></span>
-            <code><%= value %></code>
-          <% end %>
-        </p>
+        <%= render 'spree/admin/shared/preferences', object: promotion_action.calculator %>
       <% end %>
     </div>
   </div>

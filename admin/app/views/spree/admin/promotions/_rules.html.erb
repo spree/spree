@@ -1,10 +1,11 @@
 <div class="card mb-4">
   <div class="card-header d-flex justify-content-between">
     <h5 class="card-title">
+      <%= icon('checklist', class: 'mr-2') %>
       <%= Spree.t(:rules) %>
     </h5>
     <span data-toggle="modal" data-target="#modal">
-      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm' %>
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog_modal' } %>
     </span>
   </div>
   <div class="card-body">
@@ -21,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="card-body pb-0">
+  <div class="card-body py-0">
     <% if @promotion.promotion_rules.empty? %>
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
         <%= Spree.t(:no_resource_found, resource: Spree.t(:promotion_rules)) %>

@@ -18,6 +18,13 @@
             Customers will see this in their cart and at checkout.
           </span>
         </div>
+
+        <% if @promotion.coupon_code? && !@promotion.multi_codes? %>
+          <div class="form-group">   
+            <%= f.label :code %>
+            <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: 'Your coupon code' %>
+          </div>
+        <% end %>
       </div>
       <div class="card-footer d-flex justify-content-between">
         <%= turbo_save_button_tag Spree.t('actions.update') %>

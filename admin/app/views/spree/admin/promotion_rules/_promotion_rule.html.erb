@@ -17,13 +17,31 @@
       <p class="text-muted"><%= promotion_rule.human_description %></p>
 
       <% if promotion_rule.preferences.present? %>
-        <p class="mb-0">
-          <% promotion_rule.preferences.each do |key, value| %>
-            <% next if value.blank? %>
-            <span><%= Spree.t(key) %></span>
-            <code><%= value %></code>
+        <%= render 'spree/admin/shared/preferences', object: promotion_rule %>
+      <% end %>
+
+      <% if promotion_rule.respond_to?(:products) %>
+        <div class="small mt-3">
+          <% promotion_rule.products.pluck(:name).each do |product_name| %>
+            <code><%= product_name %></code>
           <% end %>
-        </dl>
+        </div>
+      <% end %>
+
+      <% if promotion_rule.respond_to?(:taxons) %>
+        <div class="small mt-3">
+          <% promotion_rule.taxons.pluck(:pretty_name).each do |taxon_name| %>
+            <code><%= taxon_name %></code>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if promotion_rule.respond_to?(:users) %>
+        <div class="small mt-3">
+          <% promotion_rule.users.pluck(:email).each do |user_email| %>
+            <code><%= user_email %></code>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div>
