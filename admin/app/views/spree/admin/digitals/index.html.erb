@@ -1,7 +1,7 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_product_path(@product) %>
   <span class="mr-3"><%= @product.name %></span>
-  <span><%= Spree.t(:digital_assets) %></span>
+  <span><%= Spree.t("digital.assets") %></span>
 <% end %>
 
 <% content_for :page_actions do %>
@@ -21,7 +21,7 @@
 <div class="card p-0">
   <div class="card-body p-0">
     <div class="table-responsive">
-      <%= turbo_frame_tag [:admin, @product.id, :digitals] do %>
+      <%= turbo_frame_tag @product, :digitals do %>
         <%= render "spree/admin/digitals/table" %>
       <% end %>
     </div>
