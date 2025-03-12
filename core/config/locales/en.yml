@@ -321,6 +321,9 @@ en:
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
+      spree/digital:
+        one: Digital asset
+        other: Digital assets
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units
@@ -869,6 +872,7 @@ en:
     developers: Developers
     digital:
       digital_delivery: Digital Delivery
+    digital_assets: Digital assets
     dimension_units:
       centimeter: Centimeter (cm)
       foot: Foot (ft)
@@ -1208,6 +1212,7 @@ en:
     new_country: New Country
     new_customer: Create new account
     new_customer_return: New Customer Return
+    new_digital_asset: New digital asset
     new_domain: New domain
     new_image: New Image
     new_line_item: Add line item

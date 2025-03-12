@@ -11,5 +11,7 @@ module Spree
 
     validates :attachment, attached: true
     validates :variant, presence: true
+
+    delegate :product, to: :variant
   end
 end

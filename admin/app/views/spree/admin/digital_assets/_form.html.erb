@@ -1,0 +1,18 @@
+<div class="form-group mb-3">
+  <%= f.label :attachment, Spree.t(:filename) %>
+  <%= f.file_field :attachment, required: true, class: "form-control w-100" %>
+</div>
+<%= f.error_message_on :attachment %>
+
+<% if @product.has_variants? %>
+  <div class="form-group">
+    <%= f.label :variant_id, Spree.t(:variant) %>
+    <%= f.select :variant_id,
+             @product.variants.map { |variant| [variant.options_text, variant.id] },
+             {},
+             required: true,
+             class: "custom-select" %>
+  </div>
+<% else %>
+  <%= hidden_field_tag "digital_asset[variant_id]", @product.master.id %>
+<% end %>
