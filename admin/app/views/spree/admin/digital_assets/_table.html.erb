@@ -12,19 +12,19 @@
   <tbody>
     <% if @product.has_variants? %>
       <% @product.variants.includes(:digitals).each do |variant| %>
-        <% variant.digitals.each do |digital| %>
-          <%= render "spree/admin/digitals/digital_asset",
+        <% variant.digitals.each do |digital_asset| %>
+          <%= render "spree/admin/digital_assets/digital_asset",
           product: @product,
           variant: variant,
-          digital: digital %>
+          digital_asset: digital_asset %>
         <% end %>
       <% end %>
     <% else %>
-      <% @product.master.digitals.each do |digital| %>
-        <%= render "spree/admin/digitals/digital_asset",
+      <% @product.master.digitals.each do |digital_asset| %>
+        <%= render "spree/admin/digital_assets/digital_asset",
         product: @product,
         variant: @product.master,
-        digital: digital %>
+        digital_asset: digital_asset %>
       <% end %>
     <% end %>
     <% if @product.digitals.empty? %>
@@ -43,7 +43,7 @@
               <span data-toggle="modal" data-target="#modal">
                 <%= link_to_with_icon "plus",
                 Spree.t(:add_one),
-                new_object_url,
+                spree.new_admin_product_digital_asset_path(@product),
                 class: "btn btn-light ml-3",
                 data: {
                   turbo_frame: "dialog_modal",

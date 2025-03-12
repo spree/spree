@@ -2,8 +2,8 @@
   <%= link_to_edit_translations(@product) %>
   <%= link_to_with_icon(
     "file",
-    Spree.t("digital.assets"),
-    spree.admin_product_digitals_path(@product),
+    Spree::Digital.model_name.human(count:2),
+    spree.admin_product_digital_assets_path(@product),
     class: "dropdown-item",
   ) %>
   <%= external_page_preview_link(@product) %>

@@ -49,7 +49,7 @@ en:
         top_products: Top products
         view_report: View report
         whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
-      digitals:
+      digital_assets:
         edit: Edit asset
         new: New asset
       display_on_options:

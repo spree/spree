@@ -1,8 +1,8 @@
 <%= turbo_frame_tag :dialog_modal do %>
-  <%= form_for :digital, url: spree.admin_product_digital_path(@product, @digital), method: :put do |f| %>
+  <%= form_for :digital_asset, url: spree.admin_product_digital_asset_path(@product, @digital_asset), method: :put do |f| %>
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><%= @digital.name %></h5>
+        <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t("admin.digital_assets.edit") %></h5>
         <button
           type="button"
           class="btn-close"
@@ -11,7 +11,7 @@
         />
       </div>
       <div class="modal-body">
-        <%= render "spree/admin/digitals/form", f: f %>
+        <%= render "spree/admin/digital_assets/form", f: f %>
       </div>
       <div class="modal-footer d-flex justify-content-between">
         <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t("actions.discard") %></button>

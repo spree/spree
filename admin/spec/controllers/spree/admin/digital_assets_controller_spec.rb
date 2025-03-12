@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::DigitalsController, type: :controller do
+describe Spree::Admin::DigitalAssetsController, type: :controller do
   stub_authorization!
   render_views
 
@@ -15,7 +15,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
     let(:params) do
       {
         product_id: product.slug,
-        digital: {
+        digital_asset: {
           variant_id: variant.id,
           attachment: attachment
         }
@@ -35,7 +35,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
       let(:params) do
         {
           product_id: product.slug,
-          digital: {
+          digital_asset: {
             variant_id: variant.id
           }
         }
@@ -57,7 +57,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
       {
         product_id: product.slug,
         id: digital.id,
-        digital: {
+        digital_asset: {
           attachment: new_attachment
         }
       }
@@ -73,7 +73,7 @@ describe Spree::Admin::DigitalsController, type: :controller do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: params, format: :turbo_stream }
+    subject { delete :destroy, params: params }
 
     let!(:digital) { create(:digital, variant: variant) }
 

@@ -871,8 +871,8 @@ en:
     details: Details
     developers: Developers
     digital:
-      assets: Digital Assets
       digital_delivery: Digital Delivery
+    digital_assets: Digital assets
     dimension_units:
       centimeter: Centimeter (cm)
       foot: Foot (ft)

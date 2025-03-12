@@ -20,7 +20,7 @@ Spree::Core::Engine.add_routes do
         post :clone
       end
       resources :variants, only: [:edit, :update, :destroy]
-      resources :digitals, except: [:show]
+      resources :digital_assets, except: [:show]
     end
     # variant search
     post 'variants/search'
