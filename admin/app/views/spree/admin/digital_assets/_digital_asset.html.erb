@@ -1,6 +1,6 @@
-<tr>
-  <% unless variant.is_master? %>
-    <td><%= variant.options_text %></td>
+<tr id="<%= dom_id(digital_asset) %>">
+  <% unless digital_asset.variant.is_master? %>
+    <td><%= digital_asset.variant.options_text %></td>
   <% end %>
   <td><%= digital_asset.attachment.filename %></td>
   <td><%= number_to_human_size(digital_asset.attachment.byte_size) %></td>

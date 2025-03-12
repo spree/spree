@@ -1,5 +1,8 @@
 <%= turbo_render_alerts %>
 <%= turbo_close_modal %>
 
-<%= turbo_stream.update dom_id(@product, :digital_assets),
-                    partial: "spree/admin/digital_assets/table" %>
+<%= turbo_stream.replace dom_id(@digital_asset) do %>
+  <%= render "spree/admin/digital_assets/digital_asset",
+  digital_asset: @digital_asset,
+  product: @product %>
+<% end %>
