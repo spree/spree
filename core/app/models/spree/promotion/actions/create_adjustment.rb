@@ -5,6 +5,8 @@ module Spree
         include Spree::CalculatedAdjustments
         include Spree::AdjustmentSource
 
+        before_validation -> { self.calculator ||= Calculator::FlatPercentItemTotal.new }
+
         def perform(options = {})
           order = options[:order]
 
