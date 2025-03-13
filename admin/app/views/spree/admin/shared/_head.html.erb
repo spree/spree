@@ -8,17 +8,12 @@
   <% if content_for? :title %>
     <%= yield :title %>
   <% else %>
-    <% if @object.present? %>
-      <%= @object.try(:name) || @object.try(:title) || Spree.t(controller_name.singularize, default: controller_name.singularize.titleize)%>
-    <% elsif @parent.present? %>
-      <%= @parent.try(:name) || @parent.try(:title) || Spree.t(controller_name.singularize, default: controller_name.singularize.titleize) %>
-    <% elsif @order.present? %>
-      <%= Spree.t('order') %> #<%= @order.number %>
-    <% elsif action_name == 'index' %>
-      <%= Spree.t(controller_name, default: controller_name.titleize) %>
-    <% else %>
-      <%= Spree.t(controller_name.singularize, default: controller_name.singularize.titleize) %>
+    <% if @object.present? && @object.persisted? %><%= @object.try(:name) || @object.try(:title) %> - <% end %>
+    <% if @order.present? && @order.persisted? %><%= @order.number %> - <% end %>
+    <% if @parent.present? && @parent.persisted? %>
+      - <%= @parent.try(:name) || @parent.try(:title) || @parent.try(:number) %>
     <% end %>
+    <%= Spree.t(controller_name, default: controller_name.titleize) %>
   <% end %>
   -
   <% if defined?(current_store) && current_store.present? %>
@@ -35,6 +30,8 @@
 <%= stylesheet_link_tag 'spree/admin/application', media: :all, data: { turbo_track: "reload" } %>
 <%= stylesheet_link_tag 'spree/admin/actiontext', media: :all, data: { turbo_track: "reload" } %>
 <%= action_cable_meta_tag %>
+
+<%= favicon_link_tag 'favicon_256x256.png' %>
 
 <link
   rel="stylesheet"
