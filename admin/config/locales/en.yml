@@ -41,6 +41,9 @@ en:
             remove_tags: Remove tags
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
+      coupon_codes:
+        used: Used
+        unused: Unused
       created_at: Created At
       dashboard:
         getting_started:

@@ -632,6 +632,7 @@ en:
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
+    automatic_promotion: Automatic
     automatic_taxon_names:
       new_arrivals: New arrivals
       on_sale: On sale
@@ -977,6 +978,7 @@ en:
     expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
     expiration: Expiration
     expiration_date: Expiration Date
+    expired: Expired
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1571,12 +1573,12 @@ en:
     promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
     promotion_rule: Promotion Rule
     promotion_rule_types:
-      currency:
-        description: Limit to orders in a specific currency
-        name: Currency
       country:
         description: Limit to orders with shipping address in a specific country
         name: Country
+      currency:
+        description: Limit to orders in a specific currency
+        name: Currency
       first_order:
         description: Must be the customer's first order
         name: First order
@@ -1587,7 +1589,7 @@ en:
         description: Only One Use Per User
         name: One Use Per User
       option_value:
-        description: Order includes specified product(s) with matching option value(s)
+        description: Order includes products with matching option value(s)
         name: Option Value(s)
       product:
         description: Order includes specified product(s)
