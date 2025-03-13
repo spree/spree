@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
+      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, as: :user, dependent: :destroy
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
 
       scope :spree_admin, -> { joins(:spree_roles).where(Spree::Role.table_name => { name: 'admin' }) }
