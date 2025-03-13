@@ -15,7 +15,7 @@ module Spree
           redirect_to spree.admin_promotion_path(@new_promo)
         else
           flash[:error] = Spree.t('promotion_not_cloned', error: @new_promo.errors.full_messages.to_sentence)
-          redirect_to spree.admin_promotions_path(@new_promo)
+          redirect_to spree.admin_promotions_path
         end
       end
 

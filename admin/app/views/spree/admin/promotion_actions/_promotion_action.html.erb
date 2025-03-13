@@ -20,7 +20,7 @@
         <%= render 'spree/admin/shared/preferences', object: promotion_action %>
       <% end %>
 
-      <% if promotion_action.respond_to?(:calculator) && promotion_action.calculator.preferences.present? %>
+      <% if promotion_action.respond_to?(:calculator) && promotion_action.calculator.present? && promotion_action.calculator.preferences.present? %>
         <h6><%= Spree.t(:calculator) %>: <%= promotion_action.calculator.description %></h6>
         <%= render 'spree/admin/shared/preferences', object: promotion_action.calculator %>
       <% end %>
