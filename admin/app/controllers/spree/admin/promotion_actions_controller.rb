@@ -5,6 +5,8 @@ module Spree
 
       helper_method :allowed_action_types
 
+      before_action :set_calculator_type, only: [:new]
+
       private
 
       def model_class
@@ -33,6 +35,12 @@ module Spree
 
       def collection_url
         spree.admin_promotion_path(parent)
+      end
+
+      def set_calculator_type
+        if @promotion_action.respond_to?(:calculator_type)
+          @promotion_action.calculator_type = @promotion_action.class.calculators.first.name
+        end
       end
     end
   end

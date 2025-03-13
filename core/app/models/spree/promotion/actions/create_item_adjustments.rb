@@ -5,8 +5,6 @@ module Spree
         include Spree::CalculatedAdjustments
         include Spree::AdjustmentSource
 
-        after_initialize -> { self.calculator ||= Calculator::PercentOnLineItem.new }
-
         def perform(options = {})
           order     = options[:order]
           promotion = options[:promotion]
