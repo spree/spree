@@ -7,7 +7,7 @@ module Spree
         elsif params.dig(:q, :active)
           Spree.t(:active)
         else
-          Spree.t(:all_promotions)
+          Spree.t(:all)
         end
       end
 

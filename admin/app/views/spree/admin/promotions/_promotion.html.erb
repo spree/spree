@@ -4,12 +4,23 @@
   </td>
     <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
       <% if promotion.coupon_code? && promotion.code.present? %>
-        <code><%= promotion.code %></code>
+        <code><%= promotion.code.upcase %></code>
+      <% elsif promotion.multi_codes? && promotion.code_prefix.present? %>
+        <code><%= promotion.code_prefix %>-<%= '*' * 6 %></code>
+      <% else %>
+        <span class="text-muted small"><%= Spree.t(:not_available) %></span>
       <% end %>
     </td>
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
-    <%= promotion.kind.humanize %>
+    <span class="badge badge-<% if promotion.automatic? %>info<% else %>light<% end %>">
+      <% if promotion.automatic? %>
+        <%= icon('automation', class: 'mr-1') %>
+      <% else %>
+        <%= icon('ticket', class: 'mr-1') %>
+      <% end %>
+      <%= promotion.kind.humanize %>
+    </span>
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
     <%= render 'spree/admin/promotions/usage_limit', promotion: promotion %>

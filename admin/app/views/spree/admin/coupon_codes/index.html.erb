@@ -18,7 +18,7 @@
                 <%= Spree.t('admin.coupon_codes.unused') if params.dig(:q, :state_eq) == 'unused' %>
               </button>
               <div class="dropdown-menu w-100 font-size-sm" style="min-width: 200px">
-                <%= active_link_to Spree.t('admin.orders.all'),
+                <%= active_link_to Spree.t(:all),
                   spree.admin_promotion_coupon_codes_path,
                   class: 'dropdown-item',
                   active: (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>

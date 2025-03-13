@@ -25,8 +25,10 @@
   <div class="card-body py-0">
     <% if @promotion.promotion_rules.empty? %>
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-        <%= Spree.t(:no_resource_found, resource: Spree.t(:promotion_rules)) %>
-        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
+        <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionRule)) %>
+        <span data-toggle="modal" data-target="#modal">
+          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm ml-3', data: { turbo_frame: 'dialog_modal' } %>
+        </span>
       </div>
     <% else %>
       <%= render collection: @promotion.promotion_rules, partial: 'spree/admin/promotion_rules/promotion_rule', as: :promotion_rule %>

@@ -9,6 +9,7 @@
         <h5 class="card-title">
           <%= Spree.t(:coupon_codes) %>
         </h5>
+        <%= link_to_with_icon 'eye', Spree.t(:view), spree.admin_promotion_coupon_codes_path(@promotion), class: 'btn btn-sm btn-light' %>
       </div>
       <div class="card-body">
         <div class="progress">
@@ -97,7 +98,7 @@
           <% if @promotion.starts_at %>
             <span><%= local_time(@promotion.starts_at) %></span>
           <% else %>
-            <span class="text-muted"><%= Spree.t(:no_start_date) %></span>
+            <span class="text-muted"><%= Spree.t(:not_available) %></span>
           <% end %>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">

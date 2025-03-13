@@ -36,7 +36,10 @@
 <%= stylesheet_link_tag 'spree/admin/actiontext', media: :all, data: { turbo_track: "reload" } %>
 <%= action_cable_meta_tag %>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
+/>
 
 <%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
 
