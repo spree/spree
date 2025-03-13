@@ -52,7 +52,8 @@ module Spree
             end
 
             format.json do
-              render json: @variants.to_tom_select_json
+              # we cannot use pluck here, as `descriptive_name` is not a column
+              render json: @variants.map { |v| { id: v.id, name: v.descriptive_name } }
             end
           end
         end
