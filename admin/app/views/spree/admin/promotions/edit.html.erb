@@ -1,0 +1,59 @@
+<%= render 'spree/admin/promotions/header' %>
+
+<%= turbo_frame_tag :promotion_edit_details do %>
+  <%= form_for @promotion, url: object_url, method: :put, data: { turbo_frame: '_top' } do |f| %>
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+          <%= Spree.t(:details) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= render 'spree/admin/shared/error_messages', target: @promotion %>
+        <div class="form-group">
+          <%= f.label :name %>
+          <%= f.text_field :name, class: 'form-control', required: true, autofocus: true %>
+          <%= f.error_message_on :name %>
+          <span class="form-text text-muted mt-2">
+            Customers will see this in their cart and at checkout.
+          </span>
+        </div>
+
+        <% if @promotion.coupon_code? && !@promotion.multi_codes? %>
+          <div class="form-group">   
+            <%= f.label :code %>
+            <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: 'Your coupon code' %>
+          </div>
+        <% end %>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+        <%= link_to spree.admin_promotion_path(@promotion), class: 'btn btn-light' do %>
+          <%= Spree.t('actions.discard') %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%= turbo_frame_tag :promotion_edit_settings do %>
+  <%= form_for @promotion, url: object_url, method: :put do |f| %>
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">
+          <%= Spree.t(:settings) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= render 'spree/admin/shared/error_messages', target: @promotion %>
+        <%= render 'spree/admin/promotions/form/settings', f: f %>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+        <%= link_to spree.admin_promotion_path(@promotion), class: 'btn btn-light' do %>
+          <%= Spree.t('actions.discard') %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

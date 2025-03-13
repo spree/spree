@@ -12,9 +12,9 @@ describe 'Promotion Actions API', swagger: true do
 
   let(:promotion) { create(:promotion) }
 
-  let(:id) { create(:promotion_action, promotion: promotion).id }
-  let(:records_list) { create_list(:promotion_action, 2, promotion: promotion) }
-  let(:valid_create_param_value) { build(:promotion_action, promotion: promotion).attributes }
+  let(:id) { create(:promotion_action_create_adjustment, promotion: promotion).id }
+  let(:records_list) { create_list(:promotion_action_create_adjustment, 2, promotion: promotion) }
+  let(:valid_create_param_value) { build(:promotion_action_create_adjustment, promotion: promotion).attributes }
   let(:valid_update_param_value) do
     {
       type: 'Spree::Promotion::Actions::CreateAdjustment'

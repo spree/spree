@@ -1,0 +1,8 @@
+<div class="form-group">
+  <%= f.label :preferred_country_iso, Spree.t(:country) %>
+  <%= f.country_select(:preferred_country_iso, 
+    { selected: f.object.preferred_country_iso }, 
+    { data: { controller: 'autocomplete-select' } 
+  }) %>
+</div>
+

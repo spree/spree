@@ -4,7 +4,7 @@
       <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:add_variant) %></h5>
       <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
     </div>
-    <div class="modal-body border-bottom pb-3">
+    <div class="modal-body">
       <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
         <%= form.hidden_field :param_name, value: 'line_item' %>
@@ -20,7 +20,7 @@
           </p>
         </div>
       </div>
-      <div class="modal-footer border-top d-flex justify-content-between">
+      <div class="modal-footer d-flex justify-content-between">
         <div class="d-flex gap-2 m-0 align-items-center">
           <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
           <%= form.number_field :quantity, class: "form-control" %>

@@ -635,6 +635,7 @@ en:
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
+    automatic_promotion: Automatic
     automatic_taxon_names:
       new_arrivals: New arrivals
       on_sale: On sale
@@ -763,7 +764,8 @@ en:
     continue_as_guest: Continue as a guest
     continue_selling_when_out_of_stock: Continue selling when out of stock
     continue_shopping: Continue shopping
-    copy_id: Copy
+    copy: Copy
+    copy_id: Copy ID
     copy_link: Copy link
     copy_payment_link: Copy payment link
     copy_to_clipboard: Copy to clipboard
@@ -796,6 +798,7 @@ en:
     coupon_code_removed: The coupon code was successfully removed from your order.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     coupon_code_used: The coupon code you entered has already been used. Please try again.
+    coupon_codes: Coupon codes
     create: Create
     create_a_new_account: Create a new account
     create_account: Create account
@@ -979,6 +982,7 @@ en:
     expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
     expiration: Expiration
     expiration_date: Expiration Date
+    expired: Expired
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1510,7 +1514,6 @@ en:
     preview_product: Preview Product
     preview_taxon: Preview Taxon
     previous: Previous
-    previous_state_missing: n/a
     previously_used_card: Previously Used Cards
     price: Price
     price_range: Price Range
@@ -1576,8 +1579,11 @@ en:
     promotion_rule: Promotion Rule
     promotion_rule_types:
       country:
-        description: Order is shipped to proper (or default) country
+        description: Limit to orders with shipping address in a specific country
         name: Country
+      currency:
+        description: Limit to orders in a specific currency
+        name: Currency
       first_order:
         description: Must be the customer's first order
         name: First order
@@ -1588,7 +1594,7 @@ en:
         description: Only One Use Per User
         name: One Use Per User
       option_value:
-        description: Order includes specified product(s) with matching option value(s)
+        description: Order includes products with matching option value(s)
         name: Option Value(s)
       product:
         description: Order includes specified product(s)

@@ -40,6 +40,10 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   }
 }
 
+#page-header {
+  min-height: 74px;
+}
+
 .page-header-title {
   font-size: 1.5rem;
   font-weight: 700;

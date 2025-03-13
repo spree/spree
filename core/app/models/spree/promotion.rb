@@ -47,6 +47,7 @@ module Spree
     before_validation :set_usage_limit_to_nil, if: -> { multi_codes? }
     before_validation :set_kind
     before_validation :downcase_code, if: -> { code.present? }
+    before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
     after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
     after_commit :remove_coupons, unless: -> { multi_codes? }, on: :update
     before_destroy :not_used?
@@ -112,8 +113,20 @@ module Spree
       end
     end
 
+    def active?
+      starts_at.present? && starts_at < Time.current && (expires_at.blank? || !expired?)
+    end
+
+    def inactive?
+      !active?
+    end
+
     def expired?
       !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
+    end
+
+    def all_codes_used?
+      coupon_codes.used.count == coupon_codes.count
     end
 
     def activate(payload)
@@ -297,6 +310,10 @@ module Spree
       self.number_of_codes = nil
       self.code_prefix = nil
       self.multi_codes = false
+    end
+
+    def set_starts_at_to_current_time
+      self.starts_at = Time.current
     end
 
     def generate_coupon_codes

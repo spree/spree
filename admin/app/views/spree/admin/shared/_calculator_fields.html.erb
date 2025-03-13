@@ -1,5 +1,5 @@
 <div data-controller="calculator-fields">
-  <% @calculators.each do |calculator| %>
+  <% calculators.each do |calculator| %>
     <template id="<%= calculator.name.demodulize.underscore %>_fields">
       <div class="calculator-settings">
         <%= f.fields_for :calculator, calculator.new do |calc_form| %>
@@ -18,8 +18,8 @@
     </div>
     <div id="preference-settings" class="card-body">
       <div class="form-group">
-        <%= f.label(:calculator_type, Spree.t(:calculator), for: 'calc_type') %>
-        <%= select_tag(:calculator_type, options_for_select(@calculators.map { |c| [c.description, c.name] }, @object.calculator_type), {id: 'calc_type', class: 'custom-select', data: { action: 'calculator-fields#replaceFields' }}) %>
+        <%= f.label(:calculator_type, Spree.t(:calculator), for: 'calculator_type') %>
+        <%= select_tag(:calculator_type, options_for_select(calculators.map { |c| [c.description, c.name] }, @object.calculator_type), {id: 'calculator_type', class: 'custom-select', data: { action: 'calculator-fields#replaceFields' }}) %>
       </div>
       <div class="form-group" data-calculator-fields-target="container">
         <div class="calculator-settings">

@@ -87,7 +87,7 @@ $input-disabled-bg: $gray-50 !default;
 $custom-select-disabled-bg: $gray-50 !default;
 $custom-select-focus-width: 1px !default;
 
-$text-muted: $gray-500 !default;
+$text-muted: $gray-400 !default;
 
 $link-color: $primary !default;
 $link-hover-decoration:                   underline !default;
@@ -137,9 +137,12 @@ $display2-weight:             400 !default;
 $display3-weight:             400 !default;
 $display4-weight:             400 !default;
 
-$dropdown-border-radius:            $border-radius-lg !default;
-$dropdown-link-hover-bg:            $gray-50 !default;
-$dropdown-border-color: $gray-150 !default;
+$dropdown-border-width:  0px !default;
+$dropdown-border-radius: $border-radius-lg !default;
+$dropdown-link-hover-bg: $gray-50 !default;
+$dropdown-box-shadow:    rgba(209, 217, 224, 0.5) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
+$dropdown-padding-x:    0.25rem !default;
+$dropdown-padding-y:    0.25rem !default;
 
 $modal-header-padding: 1rem 1.5rem 0.5rem 1.5rem;
 $modal-inner-padding: 1rem 1.5rem 1rem 1.5rem;

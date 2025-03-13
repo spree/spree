@@ -48,13 +48,13 @@
     <div class="card-header">
       <h5 class="card-title">Add a new theme</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body pb-0">
       <p>Pick a theme from the list of available themes</p>
 
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         <% available_themes.each do |theme| %>
           <div class="col mb-4">
-            <div class="card">
+            <div class="card hover-light">
               <% if theme.preview_image_url.present? %>
                 <%= image_tag theme.preview_image_url, class: 'card-img-top' %>
               <% end %>

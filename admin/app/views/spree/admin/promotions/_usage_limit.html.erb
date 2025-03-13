@@ -1,0 +1,13 @@
+<% if promotion.multi_codes? %>
+  <span class="badge <% if promotion.all_codes_used? %>badge-danger<% else %>badge-info<% end %>">
+    <%= promotion.coupon_codes.used.count %>
+    /
+    <%= promotion.coupon_codes.count %>
+  </span>
+<% else %>
+  <span class="badge <% if promotion.credits_count == promotion.usage_limit %>badge-danger<% else %>badge-info<% end %>">
+    <%= promotion.credits_count %>
+    /
+    <%= promotion.usage_limit || '∞' %>
+  </span>
+<% end %>

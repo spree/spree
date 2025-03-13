@@ -9,6 +9,41 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
   let!(:variant) { create(:variant, product: product) }
   let(:tax_category) { create(:tax_category) }
 
+  describe 'GET #search' do
+    context 'JSON format' do
+      subject(:search) { get :search, params: params, format: :json }
+
+      let(:params) { { q: q } }
+
+      context 'when query is blank' do
+        let(:q) { '' }
+
+        it 'returns an empty response' do
+          search
+        end
+      end
+
+      context 'when query is less than 3 characters' do
+        let(:q) { 'sh' }
+
+        it 'returns an empty response' do
+          search
+        end
+      end
+
+      context 'when query is valid' do
+        let(:q) { 'shoe' }
+
+        it 'returns the variants' do
+          search
+
+          expect(response).to have_http_status(:ok)
+          expect(JSON.parse(response.body)).to eq([{ 'id' => variant.id, 'name' => variant.descriptive_name }])
+        end
+      end
+    end
+  end
+
   describe 'POST #search' do
     subject(:search) { get :search, params: params, format: :turbo_stream }
 

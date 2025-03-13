@@ -1,0 +1,70 @@
+<%= render 'spree/admin/promotions/header' %>
+
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <div class="card-lg p-0">
+      <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap border-bottom" do |f| %>
+        <div class="d-flex flex-column flex-lg-row gap-2">
+          <%= render 'spree/admin/shared/filters_search_bar', param: :code_eq %>
+
+          <div class="d-flex align-items-center justify-content-between">
+            <div class="dropdown h-100">
+              <button class="btn btn-light h-100 dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
+                <span class="text-muted font-weight-normal">
+                  <%= Spree.t(:show) %>
+                </span>
+                <%= Spree.t(:all) if (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
+                <%= Spree.t('admin.coupon_codes.used') if params.dig(:q, :state_eq) == 'used' %>
+                <%= Spree.t('admin.coupon_codes.unused') if params.dig(:q, :state_eq) == 'unused' %>
+              </button>
+              <div class="dropdown-menu w-100 font-size-sm" style="min-width: 200px">
+                <%= active_link_to Spree.t(:all),
+                  spree.admin_promotion_coupon_codes_path,
+                  class: 'dropdown-item',
+                  active: (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
+                <%= link_to Spree.t('admin.coupon_codes.used'),
+                  params.merge({q: {state_eq: :used}}).permit!,
+                  class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'used'}" %>
+                <%= link_to Spree.t('admin.coupon_codes.unused'),
+                  params.merge({q: {state_eq: :unused}}).permit!,
+                  class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'unused'}" %>
+              </div>
+            </div>
+          </div>
+
+          <%= link_to spree.admin_promotion_coupon_codes_path(@promotion, format: :csv), class: 'btn btn-light bg-transparent with-tip', title: 'Download coupons as a CSV file' do %>
+            <%= icon 'download' %>
+            <%= Spree.t(:download) %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="table-responsive">
+        <% if @coupon_codes.any? %>
+          <table class="table">
+            <thead class="text-muted">
+            <tr data-hook="rate_header">
+              <th><%= Spree.t(:code) %></th>
+              <th><%= Spree.t(:used) %></th>
+              <th><%= Spree.t(:created_at) %></th>
+            </tr>
+            </thead>
+            <tbody>
+              <%= render collection: @coupon_codes.pluck(:id, :code, :state, :created_at), partial: 'spree/admin/coupon_codes/coupon_code', cached: spree_base_cache_scope %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CouponCode)) %>
+          </div>
+        <% end %>
+      </div>
+
+      <%= render 'spree/admin/shared/index_table_options', collection: @coupon_codes, simple: true if @coupon_codes.any? %>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <%= render 'spree/admin/promotions/sidebar' %>
+  </div>
+</div>

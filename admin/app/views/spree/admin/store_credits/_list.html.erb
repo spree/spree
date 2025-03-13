@@ -28,7 +28,7 @@
 <% else %>
   <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
-    <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-link', data: { 'turbo-frame': '_top' } if can?(:create, Spree::StoreCredit) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-link ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::StoreCredit) %>
   </div>
 <% end %>
 
