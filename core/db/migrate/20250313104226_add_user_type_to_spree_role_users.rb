@@ -12,7 +12,7 @@ class AddUserTypeToSpreeRoleUsers < ActiveRecord::Migration[6.1]
   end
 
   def down
-    remove_index :spree_role_users, :user_type if index_exists?(:spree_role_users, :user_type)
-    remove_column :spree_role_users, :user_type if column_exists?(:spree_role_users, :user_type)
+    remove_index :spree_role_users, :user_type, if_exists: true
+    remove_column :spree_role_users, :user_type, if_exists: true
   end
 end
