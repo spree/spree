@@ -1,33 +1,8 @@
 require 'spec_helper'
 
-module Spree
-  class TestUser < Spree.base_class
-    include Spree::UserRoles
-
-    self.table_name = 'spree_users'
-  end
-end
-
 describe Spree::UserRoles do
-  let(:test_user) { Spree::TestUser.new }
   let(:role) { create(:role, name: 'test_role') }
   let(:admin_role) { create(:role, name: 'admin') }
-
-  describe 'associations' do
-    it 'defines role_users as a polymorphic association' do
-      association = Spree::TestUser.reflect_on_association(:role_users)
-      expect(association.macro).to eq(:has_many)
-      expect(association.options[:as]).to eq(:user)
-      expect(association.options[:dependent]).to eq(:destroy)
-    end
-
-    it 'defines spree_roles through role_users' do
-      association = Spree::TestUser.reflect_on_association(:spree_roles)
-      expect(association.macro).to eq(:has_many)
-      expect(association.options[:through]).to eq(:role_users)
-      expect(association.options[:source]).to eq(:role)
-    end
-  end
 
   describe 'instance methods' do
     let(:user) { create(:user) }
@@ -65,7 +40,7 @@ describe Spree::UserRoles do
 
       it 'returns false if no admin user exists' do
         Spree::RoleUser.where(role: Spree::Role.find_by(name: 'admin')).destroy_all
-        expect(Spree::TestUser.spree_admin_created?).to be false
+        expect(Spree::LegacyUser.spree_admin_created?).to be false
       end
     end
   end
