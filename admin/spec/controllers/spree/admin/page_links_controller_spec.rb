@@ -81,6 +81,38 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
     end
   end
 
+  describe '#edit' do
+    subject :get_edit do
+      get :edit, params: { id: page_link.id }
+    end
+
+    let(:page_link) { create(:page_link) }
+
+    it 'renders the edit template' do
+      get_edit
+
+      expect(response).to render_template(:edit)
+    end
+  end
+
+  describe '#update' do
+    subject :post_update do
+      post :update, params: { id: page_link.id, page_link: { label: 'New Label' } }, as: :turbo_stream
+    end
+
+    let(:page_link) { create(:page_link) }
+
+    it 'updates the page link' do
+      expect { post_update }.to change { page_link.reload.label }.to 'New Label'
+    end
+
+    it 'renders the update template' do
+      post_update
+
+      expect(response).to render_template(:update)
+    end
+  end
+
   describe '#destroy' do
     let(:page_link) { create(:page_link) }
 
