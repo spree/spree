@@ -123,8 +123,10 @@ module Spree
     def install_migrations
       say_status :copying, 'migrations'
       silence_stream(STDOUT) do
-        silence_warnings { rake 'railties:install:migrations' }
-        silence_warnings { rake 'acts_as_taggable_on_engine:install:migrations' }
+        silence_warnings { rake 'active_storage:install:migrations' }
+        silence_warnings { rake 'action_mailbox:install:migrations' }
+        silence_warnings { rake 'action_text:install:migrations' }
+        silence_warnings { rake 'spree:install:migrations' }
       end
     end
 

@@ -36,7 +36,7 @@ module Spree
           missing_migrations.each do |migration|
             puts "[#{engine_name.capitalize} WARNING] #{migration} from #{engine_name} is missing."
           end
-          puts "[#{engine_name.capitalize} WARNING] Run `bundle exec rake railties:install:migrations` to get them.\n\n"
+          puts "[#{engine_name.capitalize} WARNING] Run `bundle exec rake spree:install:migrations` to get them.\n\n"
           true
         end
       end
