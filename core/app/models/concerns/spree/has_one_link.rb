@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_one :link, ->(ps) { ps.links.where(position: 1) }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
+      has_one :link, ->(ps) { ps.links }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
       accepts_nested_attributes_for :link
 
       def allowed_linkable_types
