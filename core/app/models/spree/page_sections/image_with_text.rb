@@ -7,7 +7,7 @@ module Spree
       preference :desktop_image_alignment, :string, default: 'right'
       preference :vertical_alignment, :string, default: :middle
 
-      has_one :link, ->(ps) { ps.links.where(position: 1) }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
+      has_one :link, ->(ps) { ps.links }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
       accepts_nested_attributes_for :link
 
       def default_blocks
