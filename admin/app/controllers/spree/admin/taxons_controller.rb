@@ -13,7 +13,11 @@ module Spree
       update.before :set_parent
       update.before :set_position
 
-      before_action :load_form_data, only: [:show, :new, :create, :edit, :update]
+      before_action :load_form_data, only: [:new, :create, :edit, :update]
+
+      def show
+        redirect_to location_after_save
+      end
 
       def select_options
         render json: taxons_options_json_array(with_automatic: params[:with_automatic].to_b)

@@ -22,6 +22,33 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'redirects to the edit page' do
+      get :show, params: { taxonomy_id: taxonomy.id, id: taxon.id }
+      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+    end
+  end
+
+  describe 'GET #edit' do
+    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'returns a successful response' do
+      get :edit, params: { taxonomy_id: taxonomy.id, id: taxon.id }
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'PUT #update' do
+    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+
+    it 'returns a successful response' do
+      put :update, params: { taxonomy_id: taxonomy.id, id: taxon.id, taxon: { name: 'New Name' } }
+      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+    end
+  end
+
   describe 'PUT #reposition' do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
     let(:new_parent) { create(:taxon, taxonomy: taxonomy) }
