@@ -5,13 +5,6 @@ module Spree
 
       included do
         before_action :set_variables
-        layout :choose_layout
-      end
-
-      def choose_layout
-        return 'turbo_rails/frame' if turbo_frame_request?
-
-        'spree/page_builder'
       end
 
       def set_variables

@@ -2,6 +2,7 @@ module Spree
   module Admin
     class PageLinksController < ResourceController
       include Spree::Admin::PageBuilderConcern
+      include Spree::Admin::TurboFrameLayoutConcern
 
       before_action :load_parent
 

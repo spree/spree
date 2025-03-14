@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class PromotionRulesController < ResourceController
+      include Spree::Admin::TurboFrameLayoutConcern
+
       belongs_to 'spree/promotion', find_by: :id
 
       helper_method :allowed_rule_types

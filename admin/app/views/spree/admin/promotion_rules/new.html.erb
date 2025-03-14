@@ -14,6 +14,7 @@
       <div class="modal-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
         <% if @promotion_rule.type.nil? %>
+          <%= render 'spree/admin/shared/spinner' %>
           <ul class="list-group">
             <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
               <% key = rule_type.demodulize.underscore %>
