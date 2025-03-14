@@ -1,8 +1,5 @@
 class CreateSpreeTaggingsAndSpreeTags < ActiveRecord::Migration[7.2]
   def change
-    drop_table :taggings if table_exists?(:taggings)
-    drop_table :tags if table_exists?(:tags)
-
     create_table :spree_taggings do |t|
       t.bigint "tag_id"
       t.string "taggable_type"
