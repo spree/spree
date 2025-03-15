@@ -2,7 +2,7 @@ module Spree
   module Admin
     module PromotionRulesHelper
       def options_for_promotion_rule_types(promotion)
-        existing = promotion.rules.map { |rule| rule.class.name }
+        existing = promotion.rules.pluck(:type)
         Rails.application.config.spree.promotions.rules.map(&:name).reject { |r| existing.include? r }
       end
 

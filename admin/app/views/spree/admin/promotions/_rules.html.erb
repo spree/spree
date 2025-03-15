@@ -31,7 +31,10 @@
         </span>
       </div>
     <% else %>
-      <%= render collection: @promotion.promotion_rules, partial: 'spree/admin/promotion_rules/promotion_rule', as: :promotion_rule %>
+      <%= render collection: @promotion.promotion_rules, 
+                 partial: 'spree/admin/promotion_rules/promotion_rule', 
+                 as: :promotion_rule,
+                 cached: spree_base_cache_scope %>
     <% end %>
   </div>
 </div>
