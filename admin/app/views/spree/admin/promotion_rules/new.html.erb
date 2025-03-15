@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <%= form_with model: @promotion_rule, url: spree.admin_promotion_rules_path(@promotion), method: :post, scope: :promotion_rule do |f| %>
-    <div class="modal-content" data-controller="search-picker">
+    <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
           <% if @promotion_rule.type.nil? %>
