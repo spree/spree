@@ -140,7 +140,7 @@ describe Spree::Store, type: :model do
       end
 
       context 'when code is already taken' do
-        let(:default_store) { Spree::Store.default }
+        let(:default_store) { described_class.default }
         let(:store) { build(:store, name: 'Store', code: default_store.code) }
 
         it 'generates a new code' do
@@ -228,7 +228,7 @@ describe Spree::Store, type: :model do
 
   context 'Validations' do
     describe '#code' do
-      let(:default_store) { Spree::Store.default }
+      let(:default_store) { described_class.default }
 
       it 'cannot create 2 stores with the same code' do
         new_store = create(:store, name: default_store.code)
@@ -300,7 +300,7 @@ describe Spree::Store, type: :model do
       let!(:store_2)  { create(:store, default: true) }
 
       it 'returns the already existing default store' do
-        expect(Spree::Store.default).to eq(store_2)
+        expect(described_class.default).to eq(store_2)
       end
 
       it "ensures there is a default if one doesn't exist yet" do
@@ -687,16 +687,16 @@ describe Spree::Store, type: :model do
     end
 
     context 'without an attached favicon image' do
-      let(:store) { Spree::Store.default }
+      let(:store) { build(:store) }
 
       it 'returns a blank favicon' do
-        expect(favicon).to be(nil)
+        expect(favicon).to be_nil
       end
     end
   end
 
   describe '#can_be_deleted?' do
-    let(:default_store) { Spree::Store.default }
+    let(:default_store) { described_class.default }
 
     it 'cannot delete the only store' do
       expect(default_store.can_be_deleted?).to eq(false)
