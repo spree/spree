@@ -9,6 +9,8 @@ module Spree
 
     class IncompleteReimbursementError < StandardError; end
 
+    serialize :preferences, type: Hash, coder: YAML
+
     with_options inverse_of: :reimbursements do
       belongs_to :order
       belongs_to :customer_return, touch: true, optional: true

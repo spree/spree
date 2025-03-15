@@ -10,6 +10,8 @@ module Spree
       include Spree::Security::Addresses
     end
 
+    serialize :preferences, type: Hash, coder: YAML, default: {}
+
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
       'CD', 'CK', 'CUW', 'CI', 'DJ', 'DM', 'GQ', 'ER', 'FJ', 'TF', 'GAB', 'GM', 'GH', 'GD', 'GN',

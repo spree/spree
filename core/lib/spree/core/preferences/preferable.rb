@@ -38,7 +38,7 @@ module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   included do
-    serialize :preferences, type: Hash, coder: YAML, default: {} if defined?(serialize)
+    serialize :preferences, type: Hash, coder: YAML if defined?(serialize)
     extend Spree::Preferences::PreferableClassMethods
   end
 
