@@ -92,7 +92,8 @@
         "developer/core-concepts/promotions",
         "developer/core-concepts/shipments",
         "developer/core-concepts/addresses",
-        "developer/core-concepts/i18n"
+        "developer/core-concepts/i18n",
+        "developer/core-concepts/preferences"
       ]
     },
 
