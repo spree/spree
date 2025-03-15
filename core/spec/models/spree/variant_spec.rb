@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let!(:store) { Spree::Store.default }
-  let!(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
+  let(:store) { Spree::Store.default }
+  let(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
@@ -771,6 +771,8 @@ describe Spree::Variant, type: :model do
     end
 
     describe '#can_supply?' do
+      before { variant }
+
       it 'calls out to quantifier' do
         expect(Spree::Stock::Quantifier).to receive(:new).and_return(quantifier = double)
         expect(quantifier).to receive(:can_supply?).with(10)
@@ -910,16 +912,18 @@ describe Spree::Variant, type: :model do
 
     context 'when tax category is deleted also in product' do
       let(:tax_category) { create(:tax_category) }
-      let!(:default_tax_category) { create(:tax_category, is_default: true) }
-      let(:product) { create(:product, tax_category: tax_category) }
-      let(:variant) { build(:variant, product: product, tax_category: tax_category) }
-
-      before do
-        tax_category.destroy
-        product.reload
-      end
+      let!(:product) { create(:product, tax_category: tax_category) }
+      let!(:variant) { create(:variant, product: product, tax_category: tax_category) }
 
       context 'with default tax category' do
+        let!(:default_tax_category) { create(:tax_category, is_default: true) }
+
+        before do
+          tax_category.destroy
+          product.reload
+          variant.reload
+        end
+
         it 'returns the default tax category' do
           expect(variant.tax_category).to eq(default_tax_category)
         end
@@ -927,11 +931,13 @@ describe Spree::Variant, type: :model do
 
       context 'without default tax category' do
         before do
-          default_tax_category.destroy
+          tax_category.destroy
+          product.reload
+          variant.reload
         end
 
         it 'returns nil' do
-          expect(variant.tax_category).to eq(nil)
+          expect(variant.reload.tax_category).to eq(nil)
         end
       end
     end
