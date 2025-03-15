@@ -1,11 +1,5 @@
 class Spree::Base < ApplicationRecord
   include Spree::Preferences::Preferable
-  if Rails::VERSION::STRING >= '7.1.0'
-    serialize :preferences, type: Hash, coder: YAML
-  else
-    serialize :preferences, Hash
-  end
-
   include Spree::RansackableAttributes
   include Spree::TranslatableResourceScopes
 

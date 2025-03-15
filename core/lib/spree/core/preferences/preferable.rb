@@ -38,6 +38,7 @@ module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   included do
+    serialize :preferences, type: Hash, coder: YAML
     extend Spree::Preferences::PreferableClassMethods
   end
 
