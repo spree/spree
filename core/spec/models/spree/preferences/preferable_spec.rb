@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::Preferences::Preferable, type: :model do
   before :all do
     class A
+      include ActiveModel::Model
       include Spree::Preferences::Preferable
       attr_reader :id
 
