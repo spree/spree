@@ -99,15 +99,32 @@
 
     {
       "group": "Customizing Spree",
+      "version": "v5",
       "pages": [
         "developer/customization/quickstart",
         "developer/customization/authentication",
-        "developer/customization/images",
         "developer/customization/checkout",
         "developer/customization/permissions",
         "developer/customization/dependencies",
         "developer/customization/decorators",
         "developer/customization/routes"
+      ]
+    },
+
+    {
+      "group": "Customizing Spree",
+      "version": "v4",
+      "pages": [
+        "developer/customization/quickstart",
+        "developer/customization/v4/authentication",
+        "developer/customization/images",
+        "developer/customization/checkout",
+        "developer/customization/permissions",
+        "developer/customization/dependencies",
+        "developer/customization/decorators",
+        "developer/customization/routes",
+        "developer/customization/v4/admin-panel",
+        "developer/customization/v4/deface"
       ]
     },
 
