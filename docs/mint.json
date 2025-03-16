@@ -189,6 +189,13 @@
       ]
     },
     {
+      "group": "Security",
+      "pages": [
+        "developer/security/security_policy",
+        "developer/security/pci_compliance"
+      ]
+    },
+    {
       "group": "Advanced",
       "pages": [
         "developer/advanced/adding_spree_to_rails_app"
