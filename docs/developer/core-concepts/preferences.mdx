@@ -11,7 +11,6 @@ Here is a list of all the runtime preferences that are available in Spree.
       | `allow_checkout_on_gateway_error`  | Continues the checkout process even if the payment gateway error failed.                             | `false`             |
       | `address_requires_phone`            | Determines whether a phone number is required for Addresses. | `true`              |
       | `alternative_shipping_phone`       | Determines if an alternative phone number should be present for the shipping address on the checkout page. | `false`         |
-      | `allow_guest_checkout`             | Determines if guests can proceed to checkout without creating an account. | `true`              |
       | `always_include_confirm_step`      | Determines if the confirmation step is always included in the checkout process, regardless of the payment method. | `false`             |
       | `auto_capture`                     | Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway). | `false` |
       | `auto_capture_on_dispatch`         | Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized. | `false` |

@@ -117,14 +117,15 @@
       "pages": [
         "developer/customization/quickstart",
         "developer/customization/v4/authentication",
-        "developer/customization/images",
-        "developer/customization/checkout",
+        "developer/customization/v4/images",
+        "developer/customization/v4/checkout",
+        "developer/customization/v4/admin-panel",
+        "developer/customization/v4/storefront",
+        "developer/customization/v4/deface",
         "developer/customization/permissions",
         "developer/customization/dependencies",
         "developer/customization/decorators",
         "developer/customization/routes",
-        "developer/customization/v4/admin-panel",
-        "developer/customization/v4/deface"
       ]
     },
 
