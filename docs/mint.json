@@ -125,7 +125,7 @@
         "developer/customization/permissions",
         "developer/customization/dependencies",
         "developer/customization/decorators",
-        "developer/customization/routes",
+        "developer/customization/routes"
       ]
     },
 
