@@ -41,6 +41,7 @@ gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
 gem 'spree_admin', path: '../admin'
 gem 'spree_storefront', path: '../storefront'
+gem 'spree_stripe', github: 'spree/spree_stripe', branch: 'main'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
@@ -77,6 +78,7 @@ bin/rails g devise Spree::User
 
 # setup spree
 bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true --sample=true
+bin/rails g spree_stripe:install
 
 # setup letter_opener
 cat <<RUBY >> config/environments/development.rb
