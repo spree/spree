@@ -84,8 +84,6 @@ RSpec.configure do |config|
 
   config.before do
     Spree::Webhooks.disabled = true
-
-    Rails.cache.clear
     reset_spree_preferences
 
     # Request specs to paths with ?locale=xx don't reset the locale afterwards
