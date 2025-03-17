@@ -96,9 +96,8 @@ module Spree
           return if taxon_ids_to_add.nil?
 
           promotion_rule_taxons.delete_all
-          promotion_rule_taxons.upsert_all(
-            taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } },
-            unique_by: [:taxon_id, :promotion_rule_id]
+          promotion_rule_taxons.insert_all(
+            taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } }
           )
         end
       end
