@@ -9,9 +9,10 @@ describe 'Wishlists API', swagger: true do
     filter_examples: [{ name: 'filter[name_cont]', example: 'Birthday' }]
   }
 
+  let(:store) { @default_store }
   let!(:user) { create(:user) }
 
-  let(:id) { create(:wishlist, name: 'My Wishlist', user: user).id }
+  let(:id) { create(:wishlist, name: 'My Wishlist', user: user, store: store).id }
   let(:records_list) do
     build_list(:wishlist, 2) do |record, i|
       record.name = if i == 0
