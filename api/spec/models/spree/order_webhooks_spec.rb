@@ -32,7 +32,7 @@ describe Spree::Order::Webhooks do
   describe 'order.resumed' do
     let(:event_name) { 'order.resumed' }
     let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
-    let(:order) { create(:order, store: storestate: :canceled) }
+    let(:order) { create(:order, store: store, state: :canceled) }
 
     context 'when order state changes' do
       context 'when order state changes "resumed"' do
