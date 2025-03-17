@@ -100,6 +100,9 @@ module Spree
           # upsert the rest
           records_for_upsert = promotion_action_line_items_attributes.map { |key, params| params["_destroy"] != "1" ? params : nil }.compact
 
+          opts = {}
+          opts[:unique_by] = [:promotion_action_id, :variant_id] unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
           promotion_action_line_items.upsert_all(
             records_for_upsert.map do |params|
               {
@@ -108,7 +111,7 @@ module Spree
                 promotion_action_id: id
               }
             end,
-            unique_by: %i[promotion_action_id variant_id]
+            **opts
           )
         end
       end

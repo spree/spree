@@ -89,9 +89,8 @@ module Spree
           return if product_ids_to_add.nil?
 
           product_promotion_rules.delete_all
-          product_promotion_rules.upsert_all(
-            product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } },
-            unique_by: [:product_id, :promotion_rule_id]
+          product_promotion_rules.insert_all(
+            product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
           )
         end
       end

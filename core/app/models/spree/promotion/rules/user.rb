@@ -50,9 +50,8 @@ module Spree
           return if user_ids_to_add.nil?
 
           promotion_rule_users.delete_all
-          promotion_rule_users.upsert_all(
-            user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } },
-            unique_by: [:user_id, :promotion_rule_id]
+          promotion_rule_users.insert_all(
+            user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } }
           )
         end
       end

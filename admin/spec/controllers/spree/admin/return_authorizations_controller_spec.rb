@@ -58,7 +58,15 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
   end
 
   describe '#collection' do
-    let!(:return_authorizations) { create_list(:return_authorization, 3) }
+    let!(:return_authorizations) do
+      [
+        create(:return_authorization, order: order, created_at: 3.days.ago),
+        create(:return_authorization, order: order, created_at: 1.hour.ago),
+        create(:return_authorization, order: order, created_at: 10.minutes.ago)
+      ]
+    end
+
+    let(:return_authorization) { create(:return_authorization, order: order, created_at: 1.week.ago) }
 
     before do
       # Create one for a different store to test store filtering

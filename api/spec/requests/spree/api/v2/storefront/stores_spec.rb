@@ -64,6 +64,11 @@ describe 'Storefront API v2 Stores spec', type: :request do
         get "/api/v2/storefront/stores/#{store.code}?locale=pl"
       end
 
+      after do
+        I18n.locale = :en
+        Spree::Store.default.update!(supported_locales: 'en')
+      end
+
       it 'return store with translated attributes' do
         expect(json_response['data']).to have_attribute(:name).with_value('Test Store PL')
         expect(json_response['data']).to have_attribute(:meta_description).with_value('Meta Desc PL')

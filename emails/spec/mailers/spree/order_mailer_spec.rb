@@ -179,6 +179,16 @@ describe Spree::OrderMailer, type: :mailer do
         pt_br_cancel_mail = { spree: { order_mailer: { cancel_email: { order_summary_canceled: 'Resumo da Pedido [CANCELADA]' } } } }
         I18n.backend.store_translations :'pt-BR', pt_br_confirm_mail
         I18n.backend.store_translations :'pt-BR', pt_br_cancel_mail
+
+        I18n.backend.store_translations :'pt-BR', {
+          spree: {
+            default_post_categories: {
+              articles: 'Artigos',
+              news: 'Notícias',
+              resources: 'Recursos'
+            }
+          }
+        }
       end
 
       after do
@@ -213,6 +223,7 @@ describe Spree::OrderMailer, type: :mailer do
 
         after do
           I18n.locale = :en
+          first_store.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
@@ -222,6 +233,11 @@ describe Spree::OrderMailer, type: :mailer do
         before do
           order
           order.store.update!(default_locale: 'pt-BR')
+        end
+
+        after do
+          I18n.locale = :en
+          order.store.reload.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
