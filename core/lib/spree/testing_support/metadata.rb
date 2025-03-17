@@ -60,7 +60,7 @@ shared_examples_for 'metadata' do |factory: described_class.name.demodulize.unde
     subject.save!
 
     expect(described_class.where("JSON_EXTRACT(public_metadata, '$.color') = ?", 'red').count).to eq(1)
-    expect(described_class.where("JSON_EXTRACT(public_metadata, '$.priority') = ?", 1).count).to eq(1)
+    expect(described_class.where("JSON_EXTRACT(public_metadata, '$.priority') = 1").count).to eq(1)
     expect(described_class.where("JSON_EXTRACT(public_metadata, '$.additional_data.size') = :size", size: 'big').count).to eq(1)
   end
 end
