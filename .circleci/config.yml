@@ -80,10 +80,14 @@ jobs:
       - image: *ruby_image
       - image: cimg/mysql:8.0
         command: [--default-authentication-plugin=mysql_native_password]
+        environment:
+          MYSQL_ROOT_PASSWORD: password
     environment: &mysql_environment
       <<: *environment
       DB: mysql
       DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_HOST: 127.0.0.1
 
   # postgres tests
   test_core_postgres:
