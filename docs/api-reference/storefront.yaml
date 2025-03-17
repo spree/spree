@@ -3213,6 +3213,9 @@ components:
             cvv_response_message:
               type: string
               default: authorized
+            payment_method_id:
+              type: integer
+              default: 1
             payment_method_name:
               type: string
               default: Credit Card
@@ -3794,6 +3797,10 @@ components:
               type: string
               example: '0.0'
               description: Eligible tax for service (if any)
+            shipping_method_id:
+              type: integer
+              example: 1
+              description: ID of a Shipping Method. You will need this for the Checkout Update action
             final_price:
               type: string
               example: '10.0'
@@ -4643,7 +4650,7 @@ components:
     SparseFieldsShippingRate:
       in: query
       name: 'fields[shipping_rate]'
-      example: 'name,selected,final_price,display_final_price,cost,display_cost,tax_amount,display_tax_amount'
+      example: 'name,selected,final_price,display_final_price,cost,display_cost,tax_amount,display_tax_amount,shipping_method_id'
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
@@ -5189,6 +5196,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -5598,6 +5606,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -15958,6 +15967,7 @@ components:
                       display_cost: $5.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
+                      shipping_method_id: "1"
                       free: false
                     relationships:
                       shipping_method:
@@ -15975,6 +15985,7 @@ components:
                       display_cost: $10.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
+                      shipping_method_id: "2"
                       free: false
                     relationships:
                       shipping_method:
@@ -15992,6 +16003,7 @@ components:
                       display_cost: $15.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
+                      shipping_method_id: "3"
                       free: false
                     relationships:
                       shipping_method:
@@ -16027,6 +16039,7 @@ components:
                       cost: '5.0'
                       tax_amount: '0.0'
                       final_price: '5.0'
+                      shipping_method_id: "1"
                       display_cost: $5.00
                       display_final_price: $5.00
                       display_tax_amount: $0.00
@@ -16044,6 +16057,7 @@ components:
                       cost: '10.0'
                       tax_amount: '0.0'
                       final_price: '10.0'
+                      shipping_method_id: "2"
                       display_cost: $10.00
                       display_final_price: $10.00
                       display_tax_amount: $0.00
@@ -16061,6 +16075,7 @@ components:
                       cost: '15.0'
                       tax_amount: '0.0'
                       final_price: '15.0'
+                      shipping_method_id: "3"
                       display_cost: $15.00
                       display_final_price: $15.00
                       display_tax_amount: $0.00

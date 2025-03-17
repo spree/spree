@@ -8,6 +8,10 @@ module Spree
 
         attributes :name, :selected, :cost, :tax_amount
 
+        attribute :shipping_method_id do |shipping_rate|
+          shipping_rate.shipping_method_id.to_s
+        end
+
         belongs_to :shipping_method
 
         attribute :final_price do |shipping_rate|
