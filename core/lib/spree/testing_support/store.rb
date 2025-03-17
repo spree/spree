@@ -5,6 +5,10 @@ RSpec.configure do |config|
     @default_store = FactoryBot.create(:store, default: true, default_country: @default_country, default_currency: 'USD')
   end
 
+  config.before(:each) do
+    @default_store.products = []
+  end
+
   config.after(:all) do
     @default_store&.destroy
     @default_country&.destroy
