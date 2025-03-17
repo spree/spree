@@ -77,6 +77,7 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
+    Spree::Webhooks.disabled = true
     begin
       Rails.cache.clear
       reset_spree_preferences
