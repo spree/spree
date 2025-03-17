@@ -210,7 +210,7 @@ describe 'Orders API', swagger: true do
       let(:amount) { { amount: 15.0 } }
 
       response '200', 'store credit payment created' do
-        let!(:store_credit) { create(:store_credit, user: persisted_order.user, store: storeamount: 15.0) }
+        let!(:store_credit) { create(:store_credit, user: persisted_order.user, store: store, amount: 15.0) }
         run_test!
       end
       response '422', 'user does not have store credit available' do
