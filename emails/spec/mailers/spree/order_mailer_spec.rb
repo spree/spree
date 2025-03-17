@@ -264,4 +264,22 @@ describe Spree::OrderMailer, type: :mailer do
       expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
     end
   end
+
+  describe '#payment_link_email' do
+    let(:payment_link_email) { described_class.payment_link_email(order_for_payment.id) }
+
+    let(:order_for_payment) { create(:order_with_line_items, store: first_store) }
+    let(:payment_url) { "http://shop.com/checkout/#{order_for_payment.token}/payment" }
+
+    before do
+      allow(Spree::Core::Engine.routes.url_helpers).to receive(:checkout_state_url).and_return(payment_url)
+    end
+
+    it 'sends an email with the payment link' do
+      expect(payment_link_email.from).to contain_exactly(first_store.mail_from_address)
+      expect(payment_link_email.to).to contain_exactly(order_for_payment.email)
+      expect(payment_link_email.subject).to eq("Payment link for order ##{order_for_payment.number}")
+      expect(payment_link_email.body).to include(payment_url)
+    end
+  end
 end
