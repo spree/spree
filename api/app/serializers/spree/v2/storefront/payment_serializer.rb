@@ -7,8 +7,7 @@ module Spree
         has_one :source, polymorphic: true
         has_one :payment_method
 
-        attributes :amount, :response_code, :number, :cvv_response_code, :cvv_response_message,
-                   :payment_method_id, :payment_method_name, :state, :public_metadata
+        attributes :amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_name, :state, :public_metadata
       end
     end
   end

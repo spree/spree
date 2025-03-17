@@ -6,7 +6,9 @@ module Spree
 
         cache_options store: nil
 
-        attributes :name, :selected, :cost, :tax_amount, :shipping_method_id
+        attributes :name, :selected, :cost, :tax_amount
+
+        belongs_to :shipping_method
 
         attribute :final_price do |shipping_rate|
           shipping_rate.cost
