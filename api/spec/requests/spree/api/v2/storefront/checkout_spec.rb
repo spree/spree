@@ -737,22 +737,23 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_relationships(:shipping_rates)
         expect(json_response['included']).to be_present
         expect(json_response['included'].size).to eq(shipment.shipping_rates.count + 2)
-        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping[:shipping_rate].id.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
+        [{ shipping_method: shipping_method, shipping_rate: shipping_rate }, { shipping_method: shipping_method_2, shipping_rate: shipping_rate_2 }].each do |shipping|
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:name).with_value(shipping[:shipping_method].name)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_relationship(:shipping_method).with_data({ 'id' => shipping[:shipping_method].id.to_s, 'type' => 'shipping_method' })))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_id(shipping[:shipping_rate].id.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:selected).with_value(shipping[:shipping_rate].selected)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:free).with_value(shipping[:shipping_rate].free?)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s)))
         end
-        expect(json_response['included']).to include(have_type('stock_location').and have_id(shipment.stock_location_id.to_s))
-        expect(json_response['included']).to include(have_type('stock_location').and have_attribute(:name).with_value(shipment.stock_location.name))
-        expect(json_response['included']).to include(have_type('line_item').and have_id(shipment.line_items.first.id.to_s))
+        expect(json_response['included']).to include(have_type('stock_location').and(have_id(shipment.stock_location_id.to_s)))
+        expect(json_response['included']).to include(have_type('stock_location').and(have_attribute(:name).with_value(shipment.stock_location.name)))
+        expect(json_response['included']).to include(have_type('line_item').and(have_id(shipment.line_items.first.id.to_s)))
       end
     end
 
@@ -1045,7 +1046,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
       it_behaves_like 'returns valid cart JSON'
 
-      it 'should return an error' do
+      it 'returns an error' do
         expect(json_response['meta']['messages']).to eq(["#{product.name} was removed because it was discontinued"])
       end
     end
@@ -1061,7 +1062,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
       it_behaves_like 'returns valid cart JSON'
 
-      it 'should return an error' do
+      it 'returns an error' do
         expect(json_response['meta']['messages']).to eq(['Cart changed'])
       end
     end
@@ -1092,7 +1093,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers, params: { skip_state: true }
       end
 
-      it 'should return a valid cart' do
+      it 'returns a valid cart' do
         expect(json_response['data']).to have_id(order.id.to_s)
         expect(response.status).to eq(200)
       end
@@ -1106,7 +1107,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
       end
 
-      it 'should return an error' do
+      it 'returns an error' do
         expect(response.status).to eq(422)
         expect(json_response['meta']['messages']).to eq(['Cart changed'])
       end
