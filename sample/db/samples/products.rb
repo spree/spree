@@ -37,8 +37,11 @@ store_ids = Spree::Store.ids
 product_ids = Spree::Product.ids
 
 store_ids.each do |store_id|
+  opts = {}
+  opts[:unique_by] = [:store_id, :product_id] unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
   Spree::StoreProduct.upsert_all(
     product_ids.map { |product_id| { store_id: store_id, product_id: product_id } },
-    unique_by: [:store_id, :product_id]
+    **opts
   )
 end

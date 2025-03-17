@@ -12,4 +12,7 @@ reasons = [
   {name: name}
 end
 
-Spree::ReturnAuthorizationReason.insert_all(reasons, unique_by: :name)
+opts = {}
+opts[:unique_by] = :name unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
+Spree::ReturnAuthorizationReason.upsert_all(reasons, **opts)
