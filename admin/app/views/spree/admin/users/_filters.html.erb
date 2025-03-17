@@ -44,7 +44,7 @@
             filters_target: "input",
           } %>
         </div>
-      </div>
+      </div>      
     </div>
     <div class="row">
       <div class="col-lg-3">
@@ -55,6 +55,20 @@
                    { include_blank: true },
                    { class: "custom-select", data: { filters_target: :input } } %>
         </div>
+      </div>
+      <div class="col-lg-3">
+        <div class="form-group">
+          <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
+          <%= tom_select_tag "q[spree_roles_name_in]",
+          active_option: params[:q][:spree_roles_name_in],
+          options: user_roles_json_array,
+          multiple: true,
+          value_field: :name,
+          select_class: "w-100",
+          select_data: {
+            filters_target: "input",
+          } %>
+        </div>  
       </div>
     </div>
     <div class="form-actions">

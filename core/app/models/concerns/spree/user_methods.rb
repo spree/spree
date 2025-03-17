@@ -63,7 +63,7 @@ module Spree
         where(email: sanitized_query).or(where(name_conditions.reduce(:or)))
       end
 
-      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags]
+      self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles]
       self.whitelisted_ransackable_attributes = %w[id email first_name last_name accepts_email_marketing]
       self.whitelisted_ransackable_scopes = %w[multi_search]
 

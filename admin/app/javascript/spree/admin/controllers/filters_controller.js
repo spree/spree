@@ -9,7 +9,7 @@ export default class extends Controller {
   };
 
   connect() {
-    this.inputTargets.forEach((input) => {
+    this.inputTargets.forEach((input) => {     
       this.createBadgeFor(input);
     });
   }
@@ -20,17 +20,18 @@ export default class extends Controller {
       input.dataset.selectTarget &&
       !input.classList.contains("tomselected")
     ) {
-      input.addEventListener("tomSelectInitialized", () => {
+      input.addEventListener("tomSelectInitialized", () => {        
         this.createBadgeFor(input, true);
       });
     } else if (input.value !== null && input.value.length !== 0) {
       let labelEl;
       if (tomSelect) {
+        console.log('is tom');        
         labelEl = document.querySelector(`label[for="${input.id}-ts-control"]`);
       } else {
         labelEl = document.querySelector(`label[for="${input.id}"]`);
       }
-
+console.log(labelEl);
       let label;
       if (labelEl) {
         label = labelEl.textContent;
@@ -48,6 +49,7 @@ export default class extends Controller {
       } else {
         ransackValue = input.value;
       }
+
 
       label = DOMPurify.sanitize(`${label.trim()}: ${ransackValue.trim()}`);
 
