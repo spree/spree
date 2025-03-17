@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Countries spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:default_country) { store.default_country }
   let!(:country) { create(:country) }
   let!(:states)    { create_list(:state, 2, country: country) }

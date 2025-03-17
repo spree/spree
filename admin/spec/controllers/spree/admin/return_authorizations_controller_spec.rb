@@ -4,7 +4,8 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
   stub_authorization!
   render_views
 
-  let(:order) { create(:shipped_order) }
+  let(:store) { @default_store }
+  let(:order) { create(:shipped_order, store: store) }
   let(:return_authorization) { create(:return_authorization, order: order) }
   let!(:return_item) { create(:return_item, return_authorization: return_authorization, inventory_unit: order.inventory_units.shipped.first) }
 
@@ -79,7 +80,7 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
       collection = controller.send(:collection)
 
       expect(collection.count).to eq 4 # 3 created above + 1 from let
-      expect(collection.all? { |ra| ra.order.store == Spree::Store.default }).to be true
+      expect(collection.all? { |ra| ra.order.store == @default_store }).to be true
     end
 
     it 'orders by created_at desc' do

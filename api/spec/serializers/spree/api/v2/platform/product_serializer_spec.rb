@@ -5,7 +5,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
 
   subject { described_class.new(product, params: serializer_params).serializable_hash }
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:taxonomy) { store.taxonomies.first }
   let!(:images) { create_list(:image, 2) }
   let(:product) do

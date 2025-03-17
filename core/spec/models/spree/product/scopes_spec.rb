@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Product scopes', type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:product) { create(:product, stores: [store]) }
 
   describe '#available' do

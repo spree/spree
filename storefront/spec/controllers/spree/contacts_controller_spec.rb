@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ContactsController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:contact_params) { { name: "John Doe", email: "john@example.com", message: "Test message" } }
 
   render_views
@@ -12,7 +12,7 @@ RSpec.describe Spree::ContactsController, type: :controller do
 
   context 'when customer support email is not configured' do
     before do
-      store.update(customer_support_email: nil)
+      allow_any_instance_of(Spree::Store).to receive(:customer_support_email).and_return(nil)
     end
 
     it 'redirects to root path' do
@@ -23,7 +23,7 @@ RSpec.describe Spree::ContactsController, type: :controller do
 
   context 'when customer support email is configured' do
     before do
-      store.update(customer_support_email: 'test@example.com')
+      allow_any_instance_of(Spree::Store).to receive(:customer_support_email).and_return('test@example.com')
     end
 
     describe "POST #create" do

@@ -5,7 +5,7 @@ describe 'Promotion API v2 spec', type: :request do
   include_context 'Platform API v2'
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:second_store) { create(:store) }
   let(:third_store) { create(:store) }
 

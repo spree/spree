@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::ProductsController, type: :controller do
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:product) { create(:product, stores: [store]) }
   let(:preview_id) { nil }
 

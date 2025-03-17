@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Order, type: :model do
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   context '#finalize!' do
     let(:order) { create(:order, email: 'test@example.com', store: store) }

@@ -5,8 +5,8 @@ describe Spree::Admin::CheckoutsController, type: :controller do
   render_views
 
   describe '#index' do
-    let!(:order) { create(:order_with_totals) }
-    let!(:completed_order) { create(:completed_order_with_totals) }
+    let!(:order) { create(:order_with_totals, store: store) }
+    let!(:completed_order) { create(:completed_order_with_totals, store: store) }
     let(:line_item) { order.line_items.first }
 
     it 'renders index' do

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
-  let!(:store)                     { Spree::Store.default }
+  let!(:store)                     { @default_store }
   let!(:products)                  { create_list(:product, 5, stores: [store]) }
   let(:taxonomy)                   { create(:taxonomy, store: store) }
   let!(:taxon)                     { taxonomy.root }
@@ -160,7 +160,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       context 'with locale set to polish' do
         # generate translations for default store
         let!(:store) do
-          default_store = Spree::Store.default
+          default_store = @default_store
           default_store.default_locale = 'en'
           default_store.supported_locales = 'en,pl'
 
@@ -353,7 +353,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       context 'with locale set to polish' do
         let!(:store) do
-          default_store = Spree::Store.default
+          default_store = create(:store)
           default_store.default_locale = 'en'
           default_store.supported_locales = 'en,pl'
           default_store.save

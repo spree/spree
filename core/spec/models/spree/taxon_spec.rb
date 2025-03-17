@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
-  let(:store) { Spree::Store.default }
-  let(:taxonomy) { create(:taxonomy, store: store) }
+  let(:store) { @default_store }
+  let(:taxonomy) { store.taxonomies.first }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
 
   it_behaves_like 'metadata'

@@ -27,12 +27,12 @@ rescue LoadError
 end
 
 require 'rspec/rails'
+require 'database_cleaner/active_record'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-require 'database_cleaner/active_record'
 require 'ffaker'
 
 require 'spree/testing_support/authorization_helpers'

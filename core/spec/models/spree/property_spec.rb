@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Property, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   it_behaves_like 'metadata'
 

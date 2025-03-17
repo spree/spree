@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Account::NewsletterController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user, email: 'test@example.com') }
 
   render_views

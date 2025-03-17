@@ -3,10 +3,11 @@ require 'spec_helper'
 RSpec.describe Spree::Products::AutoMatchTaxons do
   subject { described_class.call(product: product) }
 
-  let(:product) { create(:product) }
+  let(:store) { @default_store }
+  let(:product) { create(:product, stores: [store]) }
 
   context 'when product matches new taxon' do
-    let!(:taxon) { create(:automatic_taxon) }
+    let!(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first) }
 
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')
@@ -31,7 +32,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
   end
 
   context 'when product no longer matches taxon' do
-    let!(:taxon) { create(:automatic_taxon) }
+    let(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first) }
 
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')
@@ -47,7 +48,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
   end
 
   context 'for a featured taxon' do
-    let!(:taxon) { create(:automatic_taxon) }
+    let!(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first) }
     let!(:featured_taxon) { Spree::PageSections::FeaturedTaxon.create!(pageable: Spree::Page.find_by(name: 'Homepage')) }
 
     before do

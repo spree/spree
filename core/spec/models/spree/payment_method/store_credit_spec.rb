@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod::StoreCredit do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:order) { create(:order, store: store, total: 100) }
   let(:payment) { create(:payment, order: order) }
   let(:gateway_options) { payment.gateway_options }
@@ -294,7 +294,7 @@ describe Spree::PaymentMethod::StoreCredit do
     let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
 
     context 'when user have store credits' do
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
       let!(:user_with_store_credits) { create(:user) }
       let!(:store_credit) { create(:store_credit, user: user_with_store_credits, store: store) }
       let!(:order_with_store_credit) { create(:order, user: user_with_store_credits, store: store) }

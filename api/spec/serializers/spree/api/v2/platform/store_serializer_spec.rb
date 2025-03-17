@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::StoreSerializer do
   subject { described_class.new(store).serializable_hash }
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:logo) do
     store.logo.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
     store.save

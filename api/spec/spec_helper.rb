@@ -28,6 +28,7 @@ rescue LoadError
 end
 
 require 'rspec/rails'
+require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 require 'i18n/tasks'
@@ -98,5 +99,4 @@ RSpec.configure do |config|
   end
 
   config.order = :random
-  Kernel.srand config.seed
 end

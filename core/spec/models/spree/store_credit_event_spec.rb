@@ -75,7 +75,7 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#order' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:store_credit) { create(:store_credit, store: store) }
 
     context 'there is no associated payment with the event' do
@@ -104,7 +104,7 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#store' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:store_credit) { create(:store_credit, store: store) }
 
     subject { build(:store_credit_auth_event, store_credit: store_credit) }

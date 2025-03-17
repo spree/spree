@@ -59,14 +59,14 @@ describe 'Storefront API v2 Stores spec', type: :request do
       end
 
       before do
-        Spree::Store.default.update!(supported_locales: 'en,pl')
+        store.update!(supported_locales: 'en,pl')
 
         get "/api/v2/storefront/stores/#{store.code}?locale=pl"
       end
 
       after do
         I18n.locale = :en
-        Spree::Store.default.update!(supported_locales: 'en')
+        store.update!(supported_locales: 'en')
       end
 
       it 'return store with translated attributes' do

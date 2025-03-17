@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::WishlistsController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:wishlist) { create(:wishlist, user: user, store: store, is_default: true) }
   let(:variant) { create(:variant) }

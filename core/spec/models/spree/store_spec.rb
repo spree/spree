@@ -709,7 +709,7 @@ describe Spree::Store, type: :model do
   end
 
   describe 'soft deletion' do
-    let!(:default_store) { described_class.default }
+    let!(:default_store) { create(:store, default: true) }
     let(:another_store) { create(:store) }
 
     context 'default store' do

@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::HomeController, type: :controller do
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   before do
     allow(controller).to receive(:current_store).and_return(store)

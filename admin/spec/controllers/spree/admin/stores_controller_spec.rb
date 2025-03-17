@@ -4,8 +4,12 @@ describe Spree::Admin::StoresController do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { create(:store) }
   let!(:uk_country) { create(:country, iso: 'GB', iso3: 'GBR', name: 'United Kingdom') }
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
 
   describe 'POST #create' do
     subject { post :create, params: { store: store_params }, format: :turbo_stream }

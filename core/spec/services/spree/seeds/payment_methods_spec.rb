@@ -4,7 +4,7 @@ RSpec.describe Spree::Seeds::PaymentMethods do
   subject { described_class.call }
 
   let(:store_credit_payment_method) { Spree::PaymentMethod::StoreCredit.last }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   let!(:other_store) { create(:store) }
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Contact, type: :model do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   subject { Spree::Contact.new(name: 'José', email: 'jose@email.com', message: 'Cool!', customer_support_email: 'john@example.com') }
 
   context 'contact form' do

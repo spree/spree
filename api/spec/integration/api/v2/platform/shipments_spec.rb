@@ -14,7 +14,7 @@ describe 'Shipments API', swagger: true do
   let(:product) { create(:product_in_stock, stores: [store]) }
   let(:id) { create(:shipment, order: order).id }
   let(:records_list) { create_list(:shipment, 2) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:valid_create_param_value) do
     {
       shipment: {

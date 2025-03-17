@@ -13,7 +13,7 @@ describe 'Orders API', swagger: true do
   let(:persisted_order) { create(:order_with_line_items, state: :delivery) }
   let(:id) { persisted_order.number }
   let(:records_list) { create_list(:order, 2) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:product) { create(:product, price: 10.0, stores: [store]) }
   let(:country) { create(:country, states_required: true) }
   let(:state) { create(:state, country: country) }
@@ -210,7 +210,7 @@ describe 'Orders API', swagger: true do
       let(:amount) { { amount: 15.0 } }
 
       response '200', 'store credit payment created' do
-        let!(:store_credit) { create(:store_credit, user: persisted_order.user, store: store, amount: 15.0) }
+        let!(:store_credit) { create(:store_credit, user: persisted_order.user, store: storeamount: 15.0) }
         run_test!
       end
       response '422', 'user does not have store credit available' do

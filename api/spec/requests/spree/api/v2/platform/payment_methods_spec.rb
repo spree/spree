@@ -4,7 +4,7 @@ describe 'Platform API v2 Payment Methods', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
 
   let!(:resource_a) { create(:payment_method, stores: [store]) }
   let!(:resource_b) { create(:payment_method, stores: [store]) }

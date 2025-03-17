@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Promotion, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'validations' do

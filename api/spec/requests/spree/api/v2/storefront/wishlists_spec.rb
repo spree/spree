@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:other_store) { create(:store) }
   let!(:other_user) { create(:user) }
 

@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'Platform API v2 Taxons API' do
   include_context 'Platform API v2'
 
+  let(:store) { @default_store }
   let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
   let(:store_2) { create(:store) }
   let(:bearer_token) { { 'Authorization' => valid_authorization } }

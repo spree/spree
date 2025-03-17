@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks::HasWebhooks do
   let(:images) { create_list(:image, 2) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:variant_with_images) { create(:variant, images: images) }
   let(:variant) { build(:variant) }
   let(:product) do

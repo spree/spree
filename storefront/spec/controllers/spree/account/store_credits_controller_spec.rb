@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Account::StoreCreditsController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:store_credit) { create(:store_credit, user: user) }
   let!(:store_credit_event) { store_credit.store_credit_events.first }

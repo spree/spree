@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Promotion::Rules::Taxon, type: :model do
   let(:rule) { subject }
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#eligible?(order)' do
     let(:taxonomy) { create(:taxonomy, store: store) }

@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:order) { build(:order, store: store) }
   let(:country) { store.default_country }
   let!(:state) { country.states.first || create(:state, country: country) }

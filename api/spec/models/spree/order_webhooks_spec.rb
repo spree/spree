@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order::Webhooks do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:webhook_payload_body) do
     Spree::Api::V2::Platform::OrderSerializer.new(
       order,
@@ -32,7 +32,7 @@ describe Spree::Order::Webhooks do
   describe 'order.resumed' do
     let(:event_name) { 'order.resumed' }
     let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: [event_name]) }
-    let(:order) { create(:order, store: store, state: :canceled) }
+    let(:order) { create(:order, store: storestate: :canceled) }
 
     context 'when order state changes' do
       context 'when order state changes "resumed"' do

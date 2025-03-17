@@ -4,8 +4,8 @@ RSpec.describe Spree::Admin::CustomerReturnsController do
   stub_authorization!
   render_views
 
-  let(:order) { create(:shipped_order) }
-  let!(:customer_return) { create(:customer_return) }
+  let(:order) { create(:shipped_order, store: store) }
+  let!(:customer_return) { create(:customer_return, store: store) }
 
   describe '#index' do
     subject { get :index }
@@ -26,7 +26,7 @@ RSpec.describe Spree::Admin::CustomerReturnsController do
   end
 
   describe '#collection' do
-    let!(:customer_returns) { create_list(:customer_return, 3) }
+    let!(:customer_returns) { create_list(:customer_return, 3, store: store) }
 
     it 'orders by created_at desc' do
       # Call the private method directly

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::OrdersController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product) }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::SettingsController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
 
   before do
@@ -10,7 +10,8 @@ describe Spree::SettingsController, type: :controller do
     class_double('SpreeI18n::Locale', all: [:en, :fr, :es]).as_stubbed_const(transfer_nested_constants: true)
     Rails.application.reload_routes!
 
-    store.update(supported_locales: 'en,fr,es')
+    allow(controller).to receive(:current_store).and_return(store)
+    allow(store).to receive(:supported_locales).and_return('en,fr,es')
   end
 
   describe 'PUT #update' do
@@ -22,7 +23,7 @@ describe Spree::SettingsController, type: :controller do
 
       before do
         allow(controller).to receive(:current_order).and_return(order)
-        store.update!(supported_currencies: supported_currencies)
+        allow(store).to receive(:supported_currencies).and_return(supported_currencies)
       end
 
       context 'when switching to a supported currency' do

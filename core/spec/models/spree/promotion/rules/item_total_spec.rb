@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::ItemTotal, type: :model do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
   let(:order) { double(:order) }
 

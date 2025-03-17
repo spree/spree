@@ -52,7 +52,7 @@ module Spree
     describe '#logo_path' do
       subject { helper.logo_path }
 
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
 
       before do
         allow(helper).to receive(:current_store) { store }
