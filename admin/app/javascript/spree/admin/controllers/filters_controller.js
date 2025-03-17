@@ -9,7 +9,7 @@ export default class extends Controller {
   };
 
   connect() {
-    this.inputTargets.forEach((input) => {     
+    this.inputTargets.forEach((input) => {
       this.createBadgeFor(input);
     });
   }
