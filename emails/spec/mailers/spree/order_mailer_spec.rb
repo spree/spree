@@ -110,14 +110,14 @@ describe Spree::OrderMailer, type: :mailer do
   context 'when order does not have customer\'s name' do
     before { allow(order).to receive(:name).and_return nil }
 
-    specify 'shows Dear Customer in confirm_email body' do
+    specify 'shows Hey Customer in confirm_email body' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email).to have_body_text('Dear Customer')
+      expect(confirmation_email).to have_body_text('Hey Customer')
     end
 
-    specify 'shows Dear Customer in cancel_email body' do
+    specify 'shows Hey Customer in cancel_email body' do
       confirmation_email = described_class.cancel_email(order)
-      expect(confirmation_email).to have_body_text('Dear Customer')
+      expect(confirmation_email).to have_body_text('Hey Customer')
     end
   end
 
@@ -126,12 +126,12 @@ describe Spree::OrderMailer, type: :mailer do
 
     specify 'shows order\'s user name in confirm_email body' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email).to have_body_text('Dear Test User')
+      expect(confirmation_email).to have_body_text('Hey Test User')
     end
 
     specify 'shows order\'s user name in cancel_email body' do
       confirmation_email = described_class.cancel_email(order)
-      expect(confirmation_email).to have_body_text('Dear Test User')
+      expect(confirmation_email).to have_body_text('Hey Test User')
     end
   end
 
