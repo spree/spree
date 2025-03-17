@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::CheckoutController, type: :controller do
   let(:store) { @default_store }
   let(:country) { store.default_country }
-  let(:state) { country.states.first }
+  let!(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
   let(:user) { nil }
   let(:order) { create(:order_with_totals, store: store, user: user, email: 'example@email.com') }
 
@@ -533,8 +533,8 @@ describe Spree::CheckoutController, type: :controller do
                 city: 'Bethesda',
                 zipcode: '20814',
                 phone: '3014445002',
-                state_id: store.default_country.states.first.id,
-                country_id: store.default_country.id,
+                state_id: country.states.first.id,
+                country_id: country.id,
               },
               payments_attributes: [{
                 payment_method_id: payment_method.id,
@@ -847,8 +847,8 @@ describe Spree::CheckoutController, type: :controller do
             lastname: 'Doe',
             address1: '7735 Old Georgetown Road',
             city: 'Bethesda',
-            country_id: store.default_country.id,
-            state_id: store.default_country.states.first.id,
+            country_id: country.id,
+            state_id: country.states.first.id,
             zipcode: '20814',
             phone: '3014445555'
           }
