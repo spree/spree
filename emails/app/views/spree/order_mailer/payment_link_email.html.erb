@@ -1,0 +1,16 @@
+<h1>
+  <%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('order_mailer.payment_link_email.message', store_name: @current_store.name) %>
+</p>
+<p>
+  <%= link_to Spree.t('order_mailer.payment_link_email.pay_for_order'), @checkout_payment_url, class: 'button' %>
+  <p>
+    <%= Spree.t('order_mailer.payment_link_email.message_copy_link') %>
+    <br>
+    <span style="word-break: break-all;">
+      <%= link_to @checkout_payment_url, @checkout_payment_url %>
+    </span>
+  </p>
+</p>
