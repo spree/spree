@@ -684,7 +684,7 @@ module Spree
       # This query will select the first available shipping method from the shipments.
       # It will use subquery to first select the shipping method id from the shipments' selected_shipping_rate.
       Spree::ShippingMethod.
-        where(id: shipments.with_selected_shipping_method.limit(1)).
+        where(id: shipments.with_selected_shipping_method.limit(1).pluck(:shipping_method_id)).
         limit(1).
         first
     end
