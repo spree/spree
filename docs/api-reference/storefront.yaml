@@ -3818,10 +3818,20 @@ components:
               type: boolean
               example: true
               description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+        relationships:
+          type: object
+          properties:
+            shipping_method:
+              type: object
+              description: Shipping method for which this shipping rate belongs to
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
         - attributes
+        - relationships
     StockLocation:
       title: Stock Location
       type: object
@@ -5186,7 +5196,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
-                      payment_method_id: 2
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -5596,7 +5606,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
-                      payment_method_id: 2
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -15957,8 +15967,13 @@ components:
                       display_cost: $5.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 1
+                      shipping_method_id: "1"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "1"
+                          type: shipping_method
                   - id: '11'
                     type: shipping_rate
                     attributes:
@@ -15970,8 +15985,13 @@ components:
                       display_cost: $10.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 2
+                      shipping_method_id: "2"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "2"
+                          type: "shipping_method"
                   - id: '12'
                     type: shipping_rate
                     attributes:
@@ -15983,8 +16003,13 @@ components:
                       display_cost: $15.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 3
+                      shipping_method_id: "3"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "3"
+                          type: shipping_method
                   - id: '1'
                     type: stock_location
                     attributes:
@@ -16013,12 +16038,17 @@ components:
                       selected: true
                       cost: '5.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 1
                       final_price: '5.0'
+                      shipping_method_id: "1"
                       display_cost: $5.00
                       display_final_price: $5.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          type: shipping_method
+                          id: "1"
                   - id: null
                     type: shipping_rate
                     attributes:
@@ -16026,12 +16056,17 @@ components:
                       selected: false
                       cost: '10.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 2
                       final_price: '10.0'
+                      shipping_method_id: "2"
                       display_cost: $10.00
                       display_final_price: $10.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "2"
+                          type: shipping_method
                   - id: null
                     type: shipping_rate
                     attributes:
@@ -16039,12 +16074,17 @@ components:
                       selected: false
                       cost: '15.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 3
                       final_price: '15.0'
+                      shipping_method_id: "3"
                       display_cost: $15.00
                       display_final_price: $15.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "3"
+                          type: shipping_method
     Menu:
       description: 200 Success - Returns the `menu` object.
       content:
