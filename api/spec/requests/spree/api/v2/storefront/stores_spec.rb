@@ -59,8 +59,6 @@ describe 'Storefront API v2 Stores spec', type: :request do
       end
 
       before do
-        store.update!(supported_locales: 'en,pl')
-
         get "/api/v2/storefront/stores/#{store.code}?locale=pl"
       end
 

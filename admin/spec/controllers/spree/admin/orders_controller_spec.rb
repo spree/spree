@@ -4,6 +4,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   stub_authorization!
   render_views
 
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
 
   describe '#create' do

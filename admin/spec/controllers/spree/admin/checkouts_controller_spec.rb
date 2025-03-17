@@ -4,6 +4,8 @@ describe Spree::Admin::CheckoutsController, type: :controller do
   stub_authorization!
   render_views
 
+  let(:store) { @default_store }
+
   describe '#index' do
     let!(:order) { create(:order_with_totals, store: store) }
     let!(:completed_order) { create(:completed_order_with_totals, store: store) }

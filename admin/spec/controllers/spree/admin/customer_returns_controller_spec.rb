@@ -4,6 +4,7 @@ RSpec.describe Spree::Admin::CustomerReturnsController do
   stub_authorization!
   render_views
 
+  let(:store) { @default_store }
   let(:order) { create(:shipped_order, store: store) }
   let!(:customer_return) { create(:customer_return, store: store) }
 
