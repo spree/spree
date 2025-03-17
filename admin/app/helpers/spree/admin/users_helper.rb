@@ -26,7 +26,7 @@ module Spree
       end
 
       def users_for_select_options
-       @users_for_select_options ||= Spree.user_class.accessible_by(current_ability).pluck(:id, :email).map { |id, email| { id: id, name: email } }.as_json
+        @users_for_select_options ||= Spree.user_class.accessible_by(current_ability).pluck(:id, :email).map { |id, email| { id: id, name: email } }.as_json
       end
 
       def user_roles_json_array
