@@ -29,12 +29,17 @@ module Spree
 
       initializer 'spree.admin.importmap', after: 'importmap' do |app|
         app.config.spree_admin = ActiveSupport::OrderedOptions.new
+        app.config.spree_admin.cache_sweepers = []
 
         app.config.spree_admin.importmap = Importmap::Map.new
         app.config.spree_admin.importmap.draw(root.join('config/importmap.rb'))
+      end
 
+      initializer 'spree.admin.importmap.cache_sweeper', after: 'spree.admin.importmap' do |app|
         if app.config.importmap.sweep_cache && app.config.reloading_enabled?
-          app.config.spree_admin.importmap.cache_sweeper(watches: root.join("app/javascript"))
+          app.config.spree_admin.cache_sweepers << root.join('app/javascript')
+
+          app.config.spree_admin.importmap.cache_sweeper(watches: app.config.spree_admin.cache_sweepers)
 
           ActiveSupport.on_load(:action_controller_base) do
             before_action { app.config.spree_admin.importmap.cache_sweeper.execute_if_updated }
