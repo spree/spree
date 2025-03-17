@@ -33,8 +33,6 @@ namespace :common do
       system('bin/rails stimulus:install')
     end
 
-    system('bin/rake acts_as_taggable_on_engine:install:migrations > /dev/null 2>&1')
-
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
       '--auto-accept',
