@@ -127,6 +127,7 @@ module Spree
         silence_warnings { rake 'action_mailbox:install:migrations' }
         silence_warnings { rake 'action_text:install:migrations' }
         silence_warnings { rake 'spree:install:migrations' }
+        silence_warnings { rake 'spree_api:install:migrations' }
       end
     end
 
