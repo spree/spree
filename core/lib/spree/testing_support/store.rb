@@ -7,6 +7,12 @@ RSpec.configure do |config|
     end
   end
 
+  config.before(:each) do
+    unless self.class.metadata[:without_global_store]
+      allow_any_instance_of(Spree::Store).to receive(:default).and_return(@default_store)
+    end
+  end
+
   config.after(:each) do
     unless self.class.metadata[:without_global_store]
       @default_store&.products = []
