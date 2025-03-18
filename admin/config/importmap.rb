@@ -30,6 +30,10 @@ pin 'stimulus-checkbox-select-all', preload: ['application-spree-admin'] # @5.3.
 pin 'stimulus-clipboard', preload: ['application-spree-admin'] # @4.0.1
 #
 
+# All the pins that are pinning to `ga.jspm.io`
+# can be replaced with vendored versions
+# after this PR: https://github.com/rails/importmap-rails/pull/235 is merged
+
 # Uppy
 # Uppy can't be downloaded, it has many relative imports in the code, and importmaps don't handle them, leaving us with broken imports.
 pin '@uppy/core', to: 'https://ga.jspm.io/npm:@uppy/core@4.4.1/lib/index.js', preload: ['application-spree-admin']
