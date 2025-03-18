@@ -562,7 +562,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         it 'moves to confirm state' do
-          expect { update }.to change { order.state }.from('payment').to('confirm')
+          expect { update }.to change(order, :state).from('payment').to('confirm')
         end
 
         it 'tracks event' do

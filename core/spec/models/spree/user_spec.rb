@@ -4,7 +4,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   # Regression test for #2844 + #3346
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
-    let!(:order) { create(:order, store: storebill_address: create(:address), ship_address: create(:address)) }
+    let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
     let(:store) { @default_store }
 
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: store) }

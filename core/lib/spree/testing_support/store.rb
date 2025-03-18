@@ -12,6 +12,7 @@ RSpec.configure do |config|
       @default_store&.products = []
       @default_store&.promotions = []
       @default_store&.checkout_zone = nil
+      @default_store&.payment_methods = []
     end
   end
 
