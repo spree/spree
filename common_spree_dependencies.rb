@@ -11,13 +11,10 @@ platforms :jruby do
 end
 
 platforms :ruby do
-  if ENV['DB'] == 'mysql'
-    gem 'mysql2'
-  elsif ENV['DB'] == 'postgres'
-    gem 'pg'
-  else
-    gem 'sqlite3', '>= 2.0'
-  end
+  gem 'mysql2' if ENV['DB'] == 'mysql' || ENV['CI']
+  gem 'pg' if ENV['DB'] == 'postgres' || ENV['CI']
+
+  gem 'sqlite3', '>= 2.0'
 end
 
 gem 'sprockets-rails', '>= 2.0.0'

@@ -13,12 +13,9 @@ gem 'spree_emails', spree_opts
 gem 'spree_admin', spree_opts
 gem 'spree_storefront', spree_opts
 
-if ENV['DB'] == 'mysql'
-  gem 'mysql2'
-elsif ENV['DB'] == 'postgres'
-  gem 'pg'
-else
-  gem 'sqlite3', '~> 1.4'
-end
+gem 'mysql2' if ENV['DB'] == 'mysql' || ENV['CI']
+gem 'pg' if ENV['DB'] == 'postgres' || ENV['CI']
+
+gem 'sqlite3', '>= 2.0'
 
 gemspec
