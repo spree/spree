@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 describe Spree::SettingsController, type: :controller do
-  let(:store) { @default_store }
+  let(:supported_currencies) { 'USD,EUR,PLN' }
+  let(:supported_locales) { 'en,fr,es' }
+  let(:store) { create(:store, supported_locales: supported_locales, supported_currencies: supported_currencies) }
   let(:user) { create(:user) }
 
   before do
@@ -11,7 +13,6 @@ describe Spree::SettingsController, type: :controller do
     Rails.application.reload_routes!
 
     allow(controller).to receive(:current_store).and_return(store)
-    allow(store).to receive(:supported_locales).and_return('en,fr,es')
   end
 
   describe 'PUT #update' do
@@ -23,7 +24,6 @@ describe Spree::SettingsController, type: :controller do
 
       before do
         allow(controller).to receive(:current_order).and_return(order)
-        allow(store).to receive(:supported_currencies).and_return(supported_currencies)
       end
 
       context 'when switching to a supported currency' do
@@ -122,7 +122,7 @@ describe Spree::SettingsController, type: :controller do
             end
 
             context 'when referer is a product page' do
-              let!(:product) { create(:product, name: 'Test Product') }
+              let!(:product) { create(:product, name: 'Test Product', stores: [store]) }
 
               before do
                 Mobility.with_locale(:fr) { product.update!(name: 'Produit Test', slug: 'produit-test') }
@@ -149,7 +149,7 @@ describe Spree::SettingsController, type: :controller do
             end
 
             context 'when referer is a taxon page' do
-              let!(:taxon) { create(:taxon, name: 'Category') }
+              let!(:taxon) { create(:taxon, name: 'Category', taxonomy: store.taxonomies.first) }
 
               before do
                 Mobility.with_locale(:fr) { taxon.update!(name: 'Catégorie', permalink: 'categorie') }
