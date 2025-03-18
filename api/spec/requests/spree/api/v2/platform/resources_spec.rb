@@ -4,7 +4,7 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:store_two) { create(:store) }
   let(:store_three) { create(:store) }
 

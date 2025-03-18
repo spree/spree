@@ -10,7 +10,7 @@ end
 
 describe Spree::Api::V2::Platform::ResourceController, type: :controller do
   let(:dummy_controller) { PlatformApiDummyController.new }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#resource_serializer' do
     subject { dummy_controller.send(:resource_serializer) }

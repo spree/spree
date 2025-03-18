@@ -4,7 +4,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe 'GET #index' do
     let!(:user_1) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com') }

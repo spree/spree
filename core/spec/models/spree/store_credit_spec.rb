@@ -709,7 +709,7 @@ describe Spree::StoreCredit, type: :model do
     end
 
     describe '#store_events' do
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
 
       context 'create' do
         context 'user has one store credit' do

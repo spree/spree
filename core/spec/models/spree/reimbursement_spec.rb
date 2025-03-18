@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#display_total' do
     subject { reimbursement.display_total }
@@ -41,7 +41,7 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_rate)               { nil }
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:order)                   { create(:shipped_order, line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0, store: store) }
     let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }

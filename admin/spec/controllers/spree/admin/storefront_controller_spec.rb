@@ -4,7 +4,7 @@ describe Spree::Admin::StorefrontController do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:uk_country) { create(:country, iso: 'GB', iso3: 'GBR', name: 'United Kingdom') }
 
   describe 'GET #edit' do

@@ -11,7 +11,7 @@ describe Spree::StockMovement::Webhooks do
   let(:stock_location) { variant.stock_locations.first }
 
   describe 'emitting product events' do
-    let!(:store) { Spree::Store.default }
+    let!(:store) { @default_store }
     let!(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:variant, product: product) }
     let!(:variant2) { create(:variant, product: product) }

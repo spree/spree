@@ -4,7 +4,7 @@ RSpec.describe Spree::Admin::PagesController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:theme) { create(:theme, store: store) }
   let(:page) { create(:custom_page, pageable: store) }
 

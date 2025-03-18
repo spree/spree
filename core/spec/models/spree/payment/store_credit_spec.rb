@@ -4,7 +4,7 @@ describe 'Payment' do
   context '#cancel!' do
     subject { payment.cancel! }
 
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
 
     context 'a store credit' do
       let(:store_credit) { create(:store_credit, amount_used: captured_amount, store: store) }

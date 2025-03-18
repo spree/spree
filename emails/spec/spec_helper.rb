@@ -71,11 +71,8 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    begin
-      Rails.cache.clear
-      reset_spree_preferences
-    rescue Errno::ENOTEMPTY
-    end
+    Spree::Webhooks.disabled = true
+    reset_spree_preferences
   end
 
   config.include FactoryBot::Syntax::Methods

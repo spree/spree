@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CustomDomain, type: :model do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
 
   describe 'Validations' do
     describe '#sanitize_url' do

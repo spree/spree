@@ -4,7 +4,7 @@ RSpec.describe Spree::Admin::PostCategoriesController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe 'GET #index' do
     subject(:index) { get :index }

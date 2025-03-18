@@ -5,7 +5,7 @@ module Spree
     describe Coordinator, type: :model do
       subject { Coordinator.new(order) }
 
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
       let(:order) { create(:order_with_line_items, store: store) }
 
       context 'packages' do

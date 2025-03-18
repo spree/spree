@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::PagesController, type: :controller do
   describe 'GET #show' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:page) { create(:custom_page, pageable: store) }
 
     render_views

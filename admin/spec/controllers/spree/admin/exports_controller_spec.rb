@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Admin::ExportsController, type: :controller do
   stub_authorization!
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#new' do
     subject { get :new, params: { export: { type: 'Spree::Exports::Products', search_params: { name_cont: 'Product' }.as_json } } }

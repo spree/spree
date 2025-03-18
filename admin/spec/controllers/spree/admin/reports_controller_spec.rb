@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Admin::ReportsController, type: :controller do
   stub_authorization!
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#index' do
     subject { get :index }

@@ -137,7 +137,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
   end
 
   describe '#serializer_params' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:currency) { store.default_currency }
     let(:locale) { store.default_locale }
     let(:user) { nil }

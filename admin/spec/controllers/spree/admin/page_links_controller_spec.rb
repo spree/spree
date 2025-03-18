@@ -4,14 +4,11 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
-
-  let(:page) { create(:page, :preview) }
-  let(:theme) { create(:theme, :preview) }
+  let(:store) { @default_store }
+  let(:theme) { create(:theme, :preview, parent: store.default_theme) }
+  let(:page) { create(:page, :preview, pageable: store.default_theme) }
 
   before do
-    page.update!(pageable: theme.parent)
-
     session[:page_preview_id] = page.id
     session[:theme_preview_id] = theme.id
   end
@@ -36,20 +33,8 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
     end
 
     context 'for featured taxons' do
-      let(:taxonomy) { store.taxonomies.first }
-      let!(:taxon) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:page_section) { create(:featured_taxons_page_section) }
-
-      it 'creates a new page link' do
-        expect { post_create }.to change { page_section.links.count }.by 1
-        expect(page_section.links.last.linkable).to be_a Spree::Taxon
-      end
-    end
-
-    context 'for featured taxons' do
-      let(:taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories') }
-      let!(:category) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
-      let!(:page_section) { create(:featured_taxons_page_section) }
+      let!(:taxon) { create(:taxon, taxonomy: store.taxonomies.first) }
+      let!(:page_section) { create(:featured_taxons_page_section, pageable: page) }
 
       it 'creates a new page link' do
         expect { post_create }.to change { page_section.links.count }.by 1
@@ -71,7 +56,7 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
         post :create, params: { page_section_id: page_section.id, block_id: page_block.id }, as: :turbo_stream
       end
 
-      let(:page_section) { create(:header_page_section) }
+      let(:page_section) { create(:header_page_section, pageable: theme) }
       let(:page_block) { create(:page_block, :nav, section: page_section) }
 
       it 'creates a new page link' do

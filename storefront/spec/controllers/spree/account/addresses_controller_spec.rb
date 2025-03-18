@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Account::AddressesController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:address) { create(:address, user: user) }
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ReportLineItem do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:order) { create(:order, store: store) }
   let(:report) { create(:report, store: store, currency: 'USD') }
   let(:report_line_item) { described_class.new(report: report, record: order) }

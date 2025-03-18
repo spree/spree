@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Account::OrdersController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:order) { create(:completed_order_with_totals, user: user, store: store) }
 

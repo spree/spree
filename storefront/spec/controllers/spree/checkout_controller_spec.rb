@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Spree::CheckoutController, type: :controller do
-  let(:store) { Spree::Store.default }
-  let(:country) { store.default_country }
-  let(:state) { country.states.first }
+  let(:store) { @default_store }
+  let(:country) { store.default_country || create(:country_us) }
+  let!(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
   let(:user) { nil }
   let(:order) { create(:order_with_totals, store: store, user: user, email: 'example@email.com') }
 
@@ -174,7 +174,7 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'on quick checkout' do
-        let(:address) { create(:address, quick_checkout: true) }
+        let(:address) { create(:address, quick_checkout: true, country: country, state: state) }
         include_examples 'restarting checkout'
       end
 
@@ -322,7 +322,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context 'with shipping address (with delivery step)' do
-          let(:ship_address) { create(:address, user: user) }
+          let(:ship_address) { create(:address, user: user, country: country, state: state) }
 
           context 'when all addresses attributes are nil' do
             let!(:ship_address_params) { nil }
@@ -421,7 +421,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when submitted addresses already exist' do
-              let!(:ship_address) { create(:address, city: 'Washington', user: nil) }
+              let!(:ship_address) { create(:address, city: 'Washington', user: nil, country: country, state: state) }
               let(:order) do
                 create(:order_with_totals, store: store, bill_address: nil, ship_address: nil, state: 'address', user: nil,
                                            email: 'example@email.com')
@@ -474,7 +474,7 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'with the order in the delivery state' do
-        let(:ship_address) { create(:address, user: user) }
+        let(:ship_address) { create(:address, user: user, country: country, state: state) }
         let(:order) { create(:order_with_line_items, state: 'delivery', ship_address: ship_address, user: user, store: store, email: 'test@example.com') }
 
         before do
@@ -533,8 +533,8 @@ describe Spree::CheckoutController, type: :controller do
                 city: 'Bethesda',
                 zipcode: '20814',
                 phone: '3014445002',
-                state_id: store.default_country.states.first.id,
-                country_id: store.default_country.id,
+                state_id: state.id,
+                country_id: country.id,
               },
               payments_attributes: [{
                 payment_method_id: payment_method.id,
@@ -562,7 +562,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         it 'moves to confirm state' do
-          expect { update }.to change { order.state }.from('payment').to('confirm')
+          expect { update }.to change(order, :state).from('payment').to('confirm')
         end
 
         it 'tracks event' do
@@ -625,8 +625,8 @@ describe Spree::CheckoutController, type: :controller do
                 city: 'Bethesda',
                 zipcode: '20814',
                 phone: '3014445002',
-                state_id: store.default_country.states.first.id,
-                country_id: store.default_country.id,
+                state_id: state.id,
+                country_id: country.id,
               },
               state_lock_version: 0
             }
@@ -735,7 +735,7 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     context 'with missing shipping rates' do
-      let(:address) { create(:address) }
+      let(:address) { create(:address, country: country, state: state) }
       let!(:order) { create(:order_with_totals, store: store, ship_address: address, user: user) }
 
       before do
@@ -819,7 +819,7 @@ describe Spree::CheckoutController, type: :controller do
 
     context 'same as shipping' do
       let(:user) { create(:user) }
-      let(:ship_address) { create(:address, user: user) }
+      let(:ship_address) { create(:address, user: user, country: country, state: state) }
       let(:order) { create(:order_with_line_items, state: 'payment', store: store, bill_address: nil, ship_address: ship_address, user: user) }
 
       context 'same as shipping' do
@@ -847,8 +847,8 @@ describe Spree::CheckoutController, type: :controller do
             lastname: 'Doe',
             address1: '7735 Old Georgetown Road',
             city: 'Bethesda',
-            country_id: store.default_country.id,
-            state_id: store.default_country.states.first.id,
+            country_id: country.id,
+            state_id: state.id,
             zipcode: '20814',
             phone: '3014445555'
           }
@@ -856,7 +856,7 @@ describe Spree::CheckoutController, type: :controller do
 
         it 'creates new address and assigns it' do
           order
-          expect { put :update, params: { token: order.token, state: 'payment',order: { bill_address_attributes: bill_address_attributes } } }.to change {
+          expect { put :update, params: { token: order.token, state: 'payment', order: { bill_address_attributes: bill_address_attributes } } }.to change {
                                                                                                                                             order.reload.bill_address
                                                                                                                                           }.from(nil).to(an_instance_of(Spree::Address)).and change {
                                                                                                                                                                                                 Spree::Address.count

@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product, prices: [create(:price, currency: store.default_currency)]) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::CartController).to receive(:current_store).and_return(store)
+  end
 
   include_context 'API v2 tokens'
 
@@ -532,17 +536,13 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'for specified currency' do
       context 'store default' do
-        before do
-          store.update!(default_currency: 'EUR')
-        end
-
         include_context 'creates guest order with guest token'
 
         it_behaves_like 'showing the cart'
 
         it 'includes the same currency' do
           get '/api/v2/storefront/cart', headers: headers
-          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+          expect(json_response['data']).to have_attribute(:currency).with_value('USD')
         end
       end
 
@@ -895,11 +895,12 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:params) { { country_iso: 'USA' } }
     let(:execute) { get '/api/v2/storefront/cart/estimate_shipping_rates', params: params, headers: headers }
 
-    let(:country) { store.default_country }
+    let(:country) { store.default_country || create(:country_us) }
+    let(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }
-    let(:address) { create(:address, country: country) }
+    let(:address) { create(:address, country: country, state: state) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ReportLineItems::ProductsPerformance do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:report) { create(:products_performance_report, store: store) }
   let(:order) { create(:completed_order_with_totals, store: store, currency: report.currency) }
 

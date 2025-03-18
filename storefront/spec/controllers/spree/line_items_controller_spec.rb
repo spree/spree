@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::LineItemsController, type: :controller do
   let(:user) { create(:user) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:order) { create(:order, store: store, user: user) }
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product) }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Report, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:report) { build(:report, store: store, user: user) }
 

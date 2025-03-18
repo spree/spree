@@ -15,7 +15,7 @@ describe 'Payment Methods API', swagger: true do
     }
   }
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:store_two) { create(:store) }
 
   let!(:payment_method) { create(:payment_method, stores: [store]) }

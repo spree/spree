@@ -4,7 +4,7 @@ module Spree
   describe Wallet::CreatePaymentSource do
     subject { described_class }
 
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
 
     let(:execute) { subject.call(payment_method: payment_method, params: params) }
     let(:value) { execute.value }

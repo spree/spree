@@ -5,14 +5,13 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let(:first_store) { create(:store, name: 'First Store', default: true) }
-  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
+  let(:store) { @default_store }
+  let(:first_store) { create(:store, name: 'First Store', default: true, default_locale: 'en') }
+  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: 'en') }
 
   before do
     # Make sure we always start with the default locale
     I18n.locale = :en
-    first_store.update!(default_locale: 'en')
-    second_store.update!(default_locale: 'en')
   end
 
   let(:order) do
@@ -46,18 +45,18 @@ describe Spree::OrderMailer, type: :mailer do
   context ':from not set explicitly' do
     it 'uses store mail from address' do
       message = described_class.confirm_email(order)
-      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      expect(message.from).to eq([store.mail_from_address])
       message = described_class.cancel_email(order)
-      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      expect(message.from).to eq([store.mail_from_address])
     end
   end
 
   context ':reply_to not set explicitly' do
     it 'uses store mail from address' do
       message = described_class.confirm_email(order)
-      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+      expect(message.reply_to).to eq([store.mail_from_address])
       message = described_class.cancel_email(order)
-      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+      expect(message.reply_to).to eq([store.mail_from_address])
     end
   end
 

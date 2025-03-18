@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Checkout::AddStoreCredit, type: :service do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#call' do
     subject { described_class.call(order: order) }

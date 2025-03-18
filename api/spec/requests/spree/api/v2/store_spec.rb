@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API v2 Store Switching spec', type: :request do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:another_store) { create(:store, url: 'another-store.lvh.me', name: 'Another Store') }
 
   let!(:product) { create(:product, stores: [store]) }

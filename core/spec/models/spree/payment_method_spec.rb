@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::PaymentMethod, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   # register test gateways
   before do

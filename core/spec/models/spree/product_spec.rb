@@ -920,7 +920,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#ensure_store_presence' do
-    let(:product) { create(:product) }
+    let(:product) { create(:product, stores: []) }
 
     context 'no store passed' do
       it 'auto-assigns store' do

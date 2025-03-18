@@ -4,7 +4,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:product) { create(:product, name: 'Shoes', stores: [store]) }
   let!(:variant) { create(:variant, product: product) }
   let(:tax_category) { create(:tax_category) }

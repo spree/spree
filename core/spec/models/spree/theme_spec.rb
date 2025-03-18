@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Theme, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:theme) { create(:theme, store: store) }
 
   context 'Callbacks' do

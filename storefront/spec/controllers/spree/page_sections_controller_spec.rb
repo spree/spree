@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::PageSectionsController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:theme) { create(:theme, store: store) }
   let(:section) { create(:featured_taxon_page_section) }
 
