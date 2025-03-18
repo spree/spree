@@ -30,12 +30,15 @@ pin 'stimulus-checkbox-select-all', preload: ['application-spree-admin'] # @5.3.
 pin 'stimulus-clipboard', preload: ['application-spree-admin'] # @4.0.1
 #
 
+# We can't vendor some of the javascript libraries
+# because they have relative imports in the code,
+# and importmaps don't handle them, leaving us with broken imports.
+
 # All the pins that are pinning to `ga.jspm.io`
 # can be replaced with vendored versions
 # after this PR: https://github.com/rails/importmap-rails/pull/235 is merged
 
 # Uppy
-# Uppy can't be downloaded, it has many relative imports in the code, and importmaps don't handle them, leaving us with broken imports.
 pin '@uppy/core', to: 'https://ga.jspm.io/npm:@uppy/core@4.4.1/lib/index.js', preload: ['application-spree-admin']
 pin '@uppy/dashboard', to: 'https://ga.jspm.io/npm:@uppy/dashboard@4.3.1/lib/index.js', preload: ['application-spree-admin']
 pin '@uppy/image-editor', to: 'https://ga.jspm.io/npm:@uppy/image-editor@3.3.1/lib/index.js', preload: ['application-spree-admin']
@@ -104,7 +107,6 @@ pin '@noble/hashes/crypto', to: 'https://ga.jspm.io/npm:@noble/hashes@1.7.1/cryp
 pin '@noble/hashes/sha3', to: 'https://ga.jspm.io/npm:@noble/hashes@1.7.1/sha3.js', preload: ['application-spree-admin']
 
 # Tom Select
-# Same as Uppy, Tom Select can't be downloaded, it has many relative imports in the code, and importmaps don't handle them, leaving us with broken imports.
 pin 'tom-select/dist/esm/tom-select.complete.js',
     to: 'https://ga.jspm.io/npm:tom-select@2.4.1/dist/esm/tom-select.complete.js',
     preload: ['application-spree-admin']
