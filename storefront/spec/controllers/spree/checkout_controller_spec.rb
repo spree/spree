@@ -819,7 +819,7 @@ describe Spree::CheckoutController, type: :controller do
 
     context 'same as shipping' do
       let(:user) { create(:user) }
-      let(:ship_address) { create(:address, user: user) }
+      let(:ship_address) { create(:address, user: user, country: country, state: state) }
       let(:order) { create(:order_with_line_items, state: 'payment', store: store, bill_address: nil, ship_address: ship_address, user: user) }
 
       context 'same as shipping' do
