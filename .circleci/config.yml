@@ -19,8 +19,8 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}
       - install_libvips
       - run:
           name: Install global dependencies
@@ -53,7 +53,7 @@ jobs:
       - checkout
       - bundle_install
       - save_cache:
-          key: spree-bundle-v10-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          key: spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
   test: &test
