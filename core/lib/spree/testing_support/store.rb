@@ -2,7 +2,7 @@
 RSpec.configure do |config|
   config.before(:all) do
     unless self.class.metadata[:without_global_store]
-      @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
+      @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
       @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_country: @default_country, default_currency: 'USD')
     end
   end

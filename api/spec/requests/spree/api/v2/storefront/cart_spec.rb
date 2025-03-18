@@ -536,17 +536,13 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'for specified currency' do
       context 'store default' do
-        before do
-          store.update!(default_currency: 'EUR')
-        end
-
         include_context 'creates guest order with guest token'
 
         it_behaves_like 'showing the cart'
 
         it 'includes the same currency' do
           get '/api/v2/storefront/cart', headers: headers
-          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+          expect(json_response['data']).to have_attribute(:currency).with_value('USD')
         end
       end
 
@@ -899,11 +895,12 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:params) { { country_iso: 'USA' } }
     let(:execute) { get '/api/v2/storefront/cart/estimate_shipping_rates', params: params, headers: headers }
 
-    let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
+    let(:country) { store.default_country || create(:country_us) }
+    let(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }
-    let(:address) { create(:address, country: country) }
+    let(:address) { create(:address, country: country, state: state) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }

@@ -4,8 +4,8 @@ module Spree
   module Core
     describe Importer::Order do
       let(:store) { @default_store }
-      let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
-      let(:state) { country.states.first.presence || create(:state, country: country) }
+      let(:country) { store.default_country || create(:country_us) }
+      let(:state) { country.states.first.presence || create(:state, country: country, name: 'New York', abbr: 'NY') }
       let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
       let(:user) { create(:user) }

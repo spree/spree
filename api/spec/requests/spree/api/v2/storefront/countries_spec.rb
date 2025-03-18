@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Storefront API v2 Countries spec', type: :request do
   let(:store) { @default_store }
-  let(:default_country) { store.default_country || create(:country, iso: 'US', iso3: 'USA', iso_name: 'United States of America', name: 'United States') }
+  let(:default_country) { store.default_country || create(:country_us) }
   let!(:country) { create(:country) }
   let!(:states)    { create_list(:state, 2, country: country) }
 
