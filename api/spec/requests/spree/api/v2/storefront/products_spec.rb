@@ -498,7 +498,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'sorting by name' do
-        before { store.update_column(:supported_locales, 'en,pl') }
+        let(:store) { create(:store, supported_locales: 'en,pl') }
+
         after  { I18n.locale = :en }
 
         context 'A-Z' do
@@ -922,7 +923,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'fetch products by curency param' do
-      before { store.update(supported_currencies: 'USD,EUR,GBP') }
+      let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
 
       context 'with default currency' do
         before { get '/api/v2/storefront/products?currency=USD' }
@@ -1013,8 +1014,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with supported currency but without prices in that currency' do
+      let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+
       before do
-        store.update(supported_currencies: 'USD,EUR,GBP')
         get "/api/v2/storefront/products/#{product.slug}?currency=EUR&include=default_variant"
       end
 
