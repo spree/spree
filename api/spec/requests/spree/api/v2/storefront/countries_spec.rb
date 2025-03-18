@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Storefront API v2 Countries spec', type: :request do
   let(:store) { @default_store }
-  let(:default_country) { store.default_country }
+  let(:default_country) { store.default_country || create(:country, iso: 'US', iso3: 'USA', iso_name: 'United States of America', name: 'United States') }
   let!(:country) { create(:country) }
   let!(:states)    { create_list(:state, 2, country: country) }
 
@@ -30,7 +30,7 @@ describe 'Storefront API v2 Countries spec', type: :request do
       before { get '/api/v2/storefront/countries' }
 
       it 'returns all countries' do
-        expect(json_response['data'].size).to eq(240)
+        expect(json_response['data'].size).to eq(Spree::Country.count)
         expect(json_response['data'][0]).to have_type('country')
         expect(json_response['data'][0]).not_to have_relationships(:states)
       end
