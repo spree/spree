@@ -13,11 +13,7 @@ FactoryBot.define do
     state { |address| address.association(:state) || country.states.first || Spree::State.last }
 
     country do |address|
-      if address.state
-        address.state.country
-      else
-        address.association(:country)
-      end
+      address.association(:country) || Spree::Store.default&.default_country || Spree::Country.find_by(iso: 'US') || Spree::Country.first
     end
   end
 end
