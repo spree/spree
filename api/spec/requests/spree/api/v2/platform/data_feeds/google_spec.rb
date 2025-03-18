@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Data Feeds API Google Feed', type: :request do
   subject { get '/api/v2/data_feeds/google/test-feed.rss' }
 
+  let(:store) { @default_store }
+
   context 'when a feed with given permalink does not exist' do
     before { subject }
 
