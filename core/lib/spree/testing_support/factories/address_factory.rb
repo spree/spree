@@ -10,10 +10,14 @@ FactoryBot.define do
     phone             { '555-555-0199' }
     alternative_phone { '555-555-0199' }
 
-    state { |address| address.association(:state) || country.states.first || Spree::State.last }
+    state { |address| address.association(:state) || Spree::State.last }
 
     country do |address|
-      address.association(:country) || Spree::Store.default&.default_country || Spree::Country.find_by(iso: 'US') || Spree::Country.first
+      if address.state
+        address.state.country
+      else
+        address.association(:country)
+      end
     end
   end
 end
