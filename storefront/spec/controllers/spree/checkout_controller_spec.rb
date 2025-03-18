@@ -533,7 +533,7 @@ describe Spree::CheckoutController, type: :controller do
                 city: 'Bethesda',
                 zipcode: '20814',
                 phone: '3014445002',
-                state_id: country.states.first.id,
+                state_id: state.id,
                 country_id: country.id,
               },
               payments_attributes: [{
@@ -625,8 +625,8 @@ describe Spree::CheckoutController, type: :controller do
                 city: 'Bethesda',
                 zipcode: '20814',
                 phone: '3014445002',
-                state_id: store.default_country.states.first.id,
-                country_id: store.default_country.id,
+                state_id: state.id,
+                country_id: country.id,
               },
               state_lock_version: 0
             }
@@ -848,7 +848,7 @@ describe Spree::CheckoutController, type: :controller do
             address1: '7735 Old Georgetown Road',
             city: 'Bethesda',
             country_id: country.id,
-            state_id: country.states.first.id,
+            state_id: state.id,
             zipcode: '20814',
             phone: '3014445555'
           }
