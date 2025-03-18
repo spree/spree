@@ -649,7 +649,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           let!(:time) { Time.current }
 
           context 'when updated_at date is same for each product' do
-            before { store.products.each { |p| p.update(updated_at: time) } }
+            before { store.products.update_all(updated_at: time) }
 
             it_behaves_like 'returning products in ascending sku order'
             it_behaves_like 'returning products in descending sku order'
