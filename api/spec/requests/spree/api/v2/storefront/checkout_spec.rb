@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Checkout Spec', type: :request do
-  let(:store) { @default_store }
+  let!(:store) { @default_store }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:payment) { create(:payment, amount: order.total, order: order) }
   let(:shipment) { create(:shipment, order: order) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::CartController).to receive(:current_store).and_return(store)
+  end
 
   let(:address) do
     {

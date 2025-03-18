@@ -8,6 +8,10 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product, prices: [create(:price, currency: store.default_currency)]) }
 
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::CartController).to receive(:current_store).and_return(store)
+  end
+
   include_context 'API v2 tokens'
 
   shared_examples 'coupon code error' do

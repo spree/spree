@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Stores spec', type: :request do
-  let!(:store) { create(:store, default_country: create(:country)) }
+  let(:store) { @default_store }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::StoresController).to receive(:current_store).and_return(store)
+  end
 
   describe 'stores#show' do
     context 'with code param' do
@@ -85,7 +89,6 @@ describe 'Storefront API v2 Stores spec', type: :request do
 
     describe 'stores#current_store' do
       before do
-        allow_any_instance_of(Spree::Api::V2::Storefront::StoresController).to receive(:current_store).and_return(store)
         get "/api/v2/storefront/store"
       end
 
