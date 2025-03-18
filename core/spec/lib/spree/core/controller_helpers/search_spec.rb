@@ -7,6 +7,8 @@ end
 describe Spree::Core::ControllerHelpers::Search, type: :controller do
   controller(FakesController) {}
 
+  let(:store) { @default_store }
+
   describe '#build_searcher' do
     it 'returns Spree::Core::Search::Base instance' do
       allow(controller).to receive_messages(try_spree_current_user: create(:user),
