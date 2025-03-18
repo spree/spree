@@ -794,6 +794,12 @@ describe Spree::Store, type: :model do
 
       it { expect(store.formatted_url).to eq('http://localhost:3000') }
     end
+
+    context 'on production' do
+      before { allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production')) }
+
+      it { expect(store.formatted_url).to eq('https://mystore.mydomain.dev') }
+    end
   end
 
   describe '#formatted_url_or_custom_domain' do
