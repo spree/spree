@@ -507,8 +507,8 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'with the order in the payment state' do
-        let(:order) { create(:order_with_line_items, state: 'payment', user: user,store: store, email: 'test@example.com') }
-        let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+        let!(:order) { create(:order_with_line_items, state: 'payment', user: user,store: store, email: 'test@example.com') }
+        let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
 
         let(:payment_source_attributes) do
           {
@@ -854,8 +854,9 @@ describe Spree::CheckoutController, type: :controller do
           }
         end
 
+        before { order }
+
         it 'creates new address and assigns it' do
-          order
           expect { put :update, params: { token: order.token, state: 'payment', order: { bill_address_attributes: bill_address_attributes } } }.to change {
                                                                                                                                             order.reload.bill_address
                                                                                                                                           }.from(nil).to(an_instance_of(Spree::Address)).and change {
