@@ -1,6 +1,10 @@
 require 'spec_helper'
 
-describe Spree::Store, type: :model do
+describe Spree::Store, type: :model, without_global_store: true do
+  before(:all) do
+    create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
+  end
+
   before do
     allow(Spree).to receive(:root_domain).and_return('mydomain.dev')
   end
@@ -140,7 +144,7 @@ describe Spree::Store, type: :model do
       end
 
       context 'when code is already taken' do
-        let(:default_store) { described_class.default }
+        let(:default_store) { create(:store, default: true, code: 'store') }
         let(:store) { build(:store, name: 'Store', code: default_store.code) }
 
         it 'generates a new code' do
@@ -228,7 +232,7 @@ describe Spree::Store, type: :model do
 
   context 'Validations' do
     describe '#code' do
-      let(:default_store) { described_class.default }
+      let(:default_store) { create(:store, default: true, code: 'store') }
 
       it 'cannot create 2 stores with the same code' do
         new_store = create(:store, name: default_store.code)
@@ -696,7 +700,7 @@ describe Spree::Store, type: :model do
   end
 
   describe '#can_be_deleted?' do
-    let(:default_store) { described_class.default }
+    let(:default_store) { create(:store, default: true) }
 
     it 'cannot delete the only store' do
       expect(default_store.can_be_deleted?).to eq(false)

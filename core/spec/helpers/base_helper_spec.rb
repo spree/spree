@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::BaseHelper, type: :helper do
   include described_class
 
-  let(:current_store) { @default_store }
+  let(:current_store) { create(:store) }
 
   before do
     allow(controller).to receive(:controller_name).and_return('test')
@@ -36,7 +36,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'return complete list of countries' do
-        expect(available_countries.count).to eq(Spree::Country.count)
+        expect(available_countries).to contain_exactly(*Spree::Country.all)
       end
     end
   end
