@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::AddressesController, type: :controller do
   let(:store) { @default_store }
-  let(:country) { store.default_country }
+  let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
   let(:state) { create(:state, country: country) }
   let(:user) { create(:user) }
   let(:order) { create(:order_with_totals, store: store) }

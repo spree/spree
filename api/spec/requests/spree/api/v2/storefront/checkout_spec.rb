@@ -707,7 +707,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   describe 'checkout#shipping_rates' do
     let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
 
-    let(:country) { store.default_country }
+    let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }

@@ -4,7 +4,7 @@ require 'spree/testing_support/order_walkthrough'
 describe Spree::Order, type: :model do
   let!(:store) { @default_store }
   let(:order) { build(:order, store: store) }
-  let(:country) { store.default_country }
+  let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
   let!(:state) { country.states.first || create(:state, country: country) }
 
   def assert_state_changed(order, from, to)

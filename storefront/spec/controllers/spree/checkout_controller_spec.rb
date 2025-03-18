@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::CheckoutController, type: :controller do
   let(:store) { @default_store }
-  let(:country) { store.default_country }
+  let(:country) { store.default_country || create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true) }
   let!(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
   let(:user) { nil }
   let(:order) { create(:order_with_totals, store: store, user: user, email: 'example@email.com') }
