@@ -548,21 +548,20 @@ describe Spree::CheckoutController, type: :controller do
 
         subject :update do
           patch :update, params: update_params
-          order.reload
         end
 
         it 'saves payment method' do
-          expect { update }.to change { order.payments.count }.by(1)
+          expect { update }.to change { order.reload.payments.count }.by(1)
           expect(order.payment_method).to eq(payment_method)
           expect(order.payment_source.gateway_payment_profile_id).to eq('BGS-123')
         end
 
         it 'saves bill address' do
-          expect { update }.to change { order.bill_address.address1 }.to('7735 Old Georgetown Road')
+          expect { update }.to change { order.reload.bill_address.address1 }.to('7735 Old Georgetown Road')
         end
 
         it 'moves to confirm state' do
-          expect { update }.to change(order, :state).from('payment').to('confirm')
+          expect { update }.to change { order.reload.state }.from('payment').to('confirm')
         end
 
         it 'tracks event' do
@@ -589,11 +588,11 @@ describe Spree::CheckoutController, type: :controller do
           end
 
           it 'moves to confirm state' do
-            expect { update }.to change { order.state }.from('payment').to('confirm')
+            expect { update }.to change { order.reload.state }.from('payment').to('confirm')
           end
 
           it 'saves bill address' do
-            expect { update }.to change { order.bill_address }.to(order.ship_address)
+            expect { update }.to change { order.reload.bill_address }.to(order.ship_address)
           end
         end
 
@@ -606,7 +605,7 @@ describe Spree::CheckoutController, type: :controller do
             expect(controller).to receive(:track_event).with('payment_info_entered', { order: order })
             expect(controller).to receive(:track_event).with('checkout_step_completed', { order: order, step: 'payment' })
             expect(controller).to receive(:track_event).with('checkout_completed', { order: order })
-            expect { update }.to change { order.state }.from('payment').to('complete')
+            expect { update }.to change { order.reload.state }.from('payment').to('complete')
             expect(response).to redirect_to spree.checkout_complete_path(order.token)
           end
         end
@@ -813,7 +812,6 @@ describe Spree::CheckoutController, type: :controller do
 
       def put_address_to_order(params)
         put :update, params: { state: 'address', order: params, token: order.token }
-        order.reload
       end
     end
 
@@ -854,9 +852,8 @@ describe Spree::CheckoutController, type: :controller do
           }
         end
 
-        before { order }
-
         it 'creates new address and assigns it' do
+          order
           expect { put :update, params: { token: order.token, state: 'payment', order: { bill_address_attributes: bill_address_attributes } } }.to change {
                                                                                                                                             order.reload.bill_address
                                                                                                                                           }.from(nil).to(an_instance_of(Spree::Address)).and change {
