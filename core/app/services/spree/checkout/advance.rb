@@ -47,7 +47,7 @@ module Spree
       private
 
       def cannot_make_transition?(order, state = nil)
-        order.state == state || order.confirm? || order.complete? || order.errors.present?
+        order.state == state || order.confirm? || order.complete? || order.errors.present? || order.passed_checkout_step?(state)
       end
 
       def report_advance_error(error, order)

@@ -219,6 +219,8 @@ module Spree
         'payment'
       elsif @order.state == 'cart'
         'address'
+      elsif @order.digital? && @order.delivery?
+        'address'
       else
         @order.state
       end

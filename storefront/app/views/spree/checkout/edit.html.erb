@@ -65,9 +65,11 @@
               <% end %>
             </div>
           </div>
-          <div class="text-xs">
-            <%= link_to Spree.t(:edit), spree.checkout_state_path(@order.token, 'delivery'), class: 'text-dark' %>
-          </div>
+          <% unless @order.digital? %>
+            <div class="text-xs">
+              <%= link_to Spree.t(:edit), spree.checkout_state_path(@order.token, 'delivery'), class: 'text-dark' %>
+            </div>
+          <% end %>
         </div>
       <% end %>
   </div>

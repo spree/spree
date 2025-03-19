@@ -20,6 +20,8 @@ module Spree
     validates :digital, :line_item, presence: true
     validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
+    delegate :filename, :content_type, to: :digital
+
     def authorizable?
       !(expired? || access_limit_exceeded?)
     end
@@ -43,21 +45,15 @@ module Spree
     # This method should be called when a download is initiated.
     # It returns +true+ or +false+ depending on whether the authorization is granted.
     def authorize!
-      authorizable? && increment!(:access_counter, touch: true) ? true : false
+      ActiveRecord::Base.connected_to(role: :writing) do
+        authorizable? && increment!(:access_counter, touch: true) ? true : false
+      end
     end
 
     def reset!
       self.access_counter = 0
       self.created_at = Time.current
       save!
-    end
-
-    def filename
-      digital.attachment.filename.to_s
-    end
-
-    def content_type
-      digital.attachment.content_type
     end
 
     private

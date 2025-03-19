@@ -66,7 +66,7 @@ Spree::Core::Engine.add_routes do
           end
         end
 
-        get '/digitals/:token', to: 'digitals#download', as: 'digital'
+        resources :digital_links, only: %i[show]
       end
 
       namespace :platform do

@@ -29,7 +29,7 @@ module Spree
         end
       end
 
-      def go_to_payment_if_digital
+      def go_to_payment_if_fully_digital!
         return unless digital?
         return unless delivery?
 

@@ -13,5 +13,6 @@ module Spree
     validates :variant, presence: true
 
     delegate :product, to: :variant
+    delegate :filename, :content_type, to: :attachment
   end
 end
