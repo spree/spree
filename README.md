@@ -164,7 +164,7 @@ Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
 
 Spree Commerce versions 4.9 and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the BSD-3-Clause license and users are required to comply with its terms.
 
-If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for a SaaS business, please talk to us about obtaining a [Commercial License](LICENSE.md#commercial-license).
+If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for a SaaS business, please talk to us about obtaining a [Commercial License](https://github.com/spree/spree/blob/main/license.md#commercial-license).
 
 All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
 
