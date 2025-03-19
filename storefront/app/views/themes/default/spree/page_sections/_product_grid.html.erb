@@ -47,6 +47,6 @@
       <%= render 'spree/products/show_more_button' %>
     </div>
 
-    <%= render 'spree/products/json_ld_list', products: products %>
+    <%= render 'spree/products/json_ld_list', products: products unless turbo_frame_request? %>
   <% end %>
 <% end %>

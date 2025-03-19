@@ -84,12 +84,15 @@ module Spree
     end
 
     def track_show
+      return if turbo_frame_request? || turbo_stream_request?
       return if params[:options].present? # we don't want to track product views for variants
 
       track_event('product_viewed', { product: @product })
     end
 
     def track_index
+      return if turbo_frame_request? || turbo_stream_request?
+
       track_event('product_list_viewed', { taxon: @taxon })
     end
   end
