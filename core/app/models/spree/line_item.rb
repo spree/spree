@@ -53,6 +53,8 @@ module Spree
     delegate :tax_zone, to: :order
     delegate :digital?, to: :variant
 
+    scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
+
     attr_accessor :target_shipment
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]

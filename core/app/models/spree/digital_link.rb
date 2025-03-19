@@ -52,6 +52,14 @@ module Spree
       save!
     end
 
+    def filename
+      digital.attachment.filename.to_s
+    end
+
+    def content_type
+      digital.attachment.content_type
+    end
+
     private
 
     def set_defaults

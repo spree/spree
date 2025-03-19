@@ -275,9 +275,9 @@ module Spree
       line_items.exists?
     end
 
-    # Does this order require a physical delivery.
+    # Does this order require a delivery (physical or digital).
     def delivery_required?
-      !digital?
+      true # true for Spree, can be decorated
     end
 
     # Is this a free order in which case the payment step should be skipped

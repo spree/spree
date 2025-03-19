@@ -122,6 +122,8 @@ module Spree
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
     }
 
+    scope :with_digital_assets, -> { joins(:digitals) }
+
     if defined?(PgSearch)
       include PgSearch::Model
 
@@ -475,8 +477,12 @@ module Spree
       @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
-    # Is this variant to be downloaded by the customer?
+    # Is this variant purely digital? (no physical product)
     def digital?
+      digitals.present? && product.digital?
+    end
+
+    def with_digital_assets?
       digitals.present?
     end
 

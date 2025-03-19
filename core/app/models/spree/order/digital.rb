@@ -14,7 +14,7 @@ module Spree
       end
 
       def digital_line_items
-        line_items.select(&:digital?)
+        line_items.with_digital_assets
       end
 
       def digital_links
@@ -27,6 +27,13 @@ module Spree
             line_item.digital_links.create!(digital: digital)
           end
         end
+      end
+
+      def go_to_payment_if_digital
+        return unless digital?
+        return unless delivery?
+
+        next!
       end
     end
   end

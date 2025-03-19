@@ -80,6 +80,9 @@ Spree::Core::Engine.add_routes do
     resources :contacts, only: [:new, :create]
     get '/contact', to: 'contacts#new', as: 'contact'
 
+    # Digital Links
+    resources :digital_links, only: [:show]
+
     root to: 'home#index'
   end
 end

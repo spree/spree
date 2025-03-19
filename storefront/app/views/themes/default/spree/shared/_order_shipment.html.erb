@@ -26,13 +26,23 @@
             <% end %>
           </div>
         </div>
-        <div class="mt-4 lg:-mt-2 lg:-mr-2">
-        <% if shipment.shipped? && shipment.tracked? && shipment.tracking_url.present? %>
-          <%= link_to Spree.t(:track_items), shipment.tracking_url, class: "!px-3 !py-1 block btn-primary !leading-6 text-sm text-center", target: :_blank %>
-        <% else %>
-          <button class="!px-3 !py-1 block btn-primary !leading-6 text-sm text-center" disabled><%= Spree.t(:track_items) %></button>
+        <% unless shipment.digital? %>
+          <div class="mt-4 lg:-mt-2 lg:-mr-2">
+            <% if shipment.shipped? && shipment.tracked? && shipment.tracking_url.present? %>
+              <%= link_to Spree.t(:track_items),
+              shipment.tracking_url,
+              class: "!px-3 !py-1 block btn-primary !leading-6 text-sm text-center",
+              target: :_blank %>
+            <% else %>
+              <button
+                class="
+                  !px-3 !py-1 block btn-primary !leading-6 text-sm text-center
+                "
+                disabled
+              ><%= Spree.t(:track_items) %></button>
+            <% end %>
+          </div>
         <% end %>
-        </div>
       </div>
     </div>
     <% if shipment.canceled? && shipment.shipped_at.present? %>
@@ -43,7 +53,7 @@
         <%= Spree.t(:shipment_refunded_message) %>
       </div>
     <% elsif shipment.shipped? && shipment.tracked? %>
-    <% else %>
+    <% elsif !shipment.digital? %>
       <div class="text-sm uppercase text-center bg-neutral-100 mt-3 px-3 py-2">
         <%= Spree.t(:no_tracking_present) %>
       </div>

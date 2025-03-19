@@ -3,7 +3,7 @@ module Spree
     class OrdersController < BaseController
       # GET /account/orders
       def index
-        @orders = orders_scope.page(params[:page]).per(25)
+        @orders = orders_scope.order(created_at: :desc).page(params[:page]).per(25)
       end
 
       # GET /account/orders/:id

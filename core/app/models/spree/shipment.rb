@@ -228,6 +228,10 @@ module Spree
       inventory_units.includes(:line_item).map(&:line_item).uniq
     end
 
+    def digital?
+      shipping_method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
+    end
+
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
 
     def manifest

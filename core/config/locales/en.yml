@@ -148,6 +148,10 @@ en:
         updated: Updated
         user: User
       spree/store:
+        preferred_limit_digital_download_days: Limit digital links download days
+        preferred_limit_digital_download_count: Limit digital links download count
+        preferred_digital_asset_authorized_days: Download days limit
+        preferred_digital_asset_authorized_clicks: Download clicks limit
         mail_from_address: Mail From Address
         meta_description: Meta Description
         meta_keywords: Meta Keywords
@@ -507,6 +511,7 @@ en:
     account_members: Team
     account_updated: Account updated
     action: Action
+    digital_link_unauthorized: You are not authorized to access this asset
     actions:
       approve: Approve
       cancel: Cancel
