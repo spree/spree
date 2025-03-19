@@ -8,7 +8,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store', inverse_of: :custom_domains
+    belongs_to :store, class_name: 'Spree::Store', inverse_of: :custom_domains, touch: true
 
     #
     # Validations
