@@ -15,6 +15,7 @@
         data-variants-form-current-stock-location-id-value="<%= default_stock_location_for_product(@product).id %>"
         data-variants-form-stock-locations-value="<%= available_stock_locations_for_product(@product).ids.map(&:to_s).to_json %>"
         <% if @product_options.present? %> data-variants-form-options-value="<%= @product_options.to_json %>" <% end %>
+        <% if @product_available_options.present? %> data-variants-form-available-options-value="<%= @product_available_options.to_json %>" <% end %>
         <% if @product_stock.present? %> data-variants-form-stock-value="<%= @product_stock.to_json %>" <% end %>
         <% if @product_prices.present? %> data-variants-form-prices-value="<%= @product_prices.to_json %>" <% end %>
         <% if @product_variant_ids.present? %> data-variants-form-variant-ids-value="<%= @product_variant_ids.to_json %>" <% end %>
@@ -70,12 +71,10 @@
                 <span class="label"><%= Spree.t(:option_values) %></span>
                 <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer">
                   <%= tom_select_tag "new_option_values[]",
-                    preloaded_options: @option_values,
+                    template: true,
                     multiple: false,
                     create: true,
                     include_blank: true,
-                    template: true,
-                    class: 'w-100 mb-1',
                     data: {
                       multi_tom_select_target: "selectTemplate"
                     },
@@ -84,21 +83,17 @@
                       action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
                     } %>
 
-                  <div class="values-inputs__input">
-                    <%= tom_select_tag "new_option_values[]",
-                      preloaded_options: @option_values,
-                      multiple: false,
-                      create: true,
-                      include_blank: true,
-                      class: 'w-100 mb-1',
-                      data: {
-                        multi_tom_select_target: "select"
-                      },
-                      select_data: {
-                        variants_form_target: "newOptionValuesSelect",
-                        action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
-                      } %>
-                  </div>
+                  <%= tom_select_tag "new_option_values[]",
+                    multiple: false,
+                    create: true,
+                    include_blank: true,
+                    data: {
+                      multi_tom_select_target: "select"
+                    },
+                    select_data: {
+                      variants_form_target: "newOptionValuesSelect",
+                      action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
+                    } %>
                 </div>
               </div>
               <div class="d-flex justify-content-between">

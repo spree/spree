@@ -28,10 +28,19 @@
       </div>
       <div class="form-group">
         <span class="label"><%= Spree.t(:option_values) %></span>
-        <div data-controller="multi-input" class="values-inputs" data-slot="optionValuesInput">
-          <div class="values-inputs__input" data-multi-input-target="input">
-            <input class="form-control" data-variants-form-option-id-param="" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#saveOption:prevent">
-          </div>
+        <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer" data-slot="optionValuesSelectContainer">
+          <%= tom_select_tag "new_option_values[]",
+            template: true,
+            multiple: false,
+            create: true,
+            include_blank: true,
+            data: {
+              multi_tom_select_target: "selectTemplate"
+            },
+            select_data: {
+              variants_form_target: "newOptionValuesSelect",
+              action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
+            } %>
         </div>
       </div>
       <div class="d-flex justify-content-between">

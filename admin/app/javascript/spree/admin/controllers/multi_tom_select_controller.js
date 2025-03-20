@@ -13,11 +13,7 @@ export default class extends Controller {
     this.element.values = this.values.bind(this)
     this.element.setValues = this.setValues.bind(this)
 
-    this.lastSelect = this.selectTargets[this.selectTargets.length - 1].querySelector('select')
-
-    if (this.preloadedValuesValue.length > 0) {
-      this.setValues(this.preloadedValuesValue)
-    }
+    this.setValues(this.preloadedValuesValue)
   }
 
   reset() {
@@ -35,7 +31,7 @@ export default class extends Controller {
       }
     })
 
-    this.lastSelect = this.selectTargets[0]
+    this.lastSelect = this.selectTargets[0]?.querySelector('select')
   }
 
   values() {
@@ -45,22 +41,9 @@ export default class extends Controller {
       .filter((text) => text?.length > 0)
   }
 
-  setValues(values) {
+  setValues() {
     this.reset()
-
-    values.forEach((value, i) => {
-      if (i > 0) this.addSelect()
-
-      const select = this.selectTargets[i].querySelector('select')
-      const tomSelect = select.tomselect
-
-      if (tomSelect) {
-        tomSelect.clear()
-        tomSelect.clearOptions()
-        tomSelect.addOptions(this.preloadedOptionsValue)
-        tomSelect.addItem(value)
-      }
-    })
+    this.preloadedValuesValue.forEach((value) => this.addSelect(value))
   }
 
   handleSelect(event) {
@@ -91,13 +74,23 @@ export default class extends Controller {
     }
   }
 
-  addSelect() {
+  addSelect(value = null) {
     const newTomSelectTag = this.selectTemplateTarget.cloneNode(true)
+
+    if (value) {
+      newTomSelectTag.setAttribute('data-select-options-value', JSON.stringify(this.preloadedOptionsValue))
+      newTomSelectTag.setAttribute('data-select-active-option-value', value.id)
+    }
+
     newTomSelectTag.setAttribute('data-multi-tom-select-target', 'select')
     newTomSelectTag.setAttribute('data-controller', 'select')
 
-    const lastSelect = this.selectTargets[this.selectTargets.length - 1]
-    lastSelect.insertAdjacentElement('afterend', newTomSelectTag)
+    if (this.hasSelectTargets) {
+      const lastSelect = this.selectTargets[this.selectTargets.length - 1]
+      lastSelect.insertAdjacentElement('afterend', newTomSelectTag)
+    } else {
+      this.element.insertAdjacentElement('beforeend', newTomSelectTag)
+    }
 
     this.lastSelect = newTomSelectTag.querySelector('select')
   }

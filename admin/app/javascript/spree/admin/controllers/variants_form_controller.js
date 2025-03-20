@@ -27,6 +27,7 @@ export default class extends CheckboxSelectAll {
   static values = {
     productId: String,
     options: Object,
+    availableOptions: Object,
     variants: Array,
     stock: Object,
     prices: Object,
@@ -703,8 +704,7 @@ export default class extends CheckboxSelectAll {
     }
   }
 
-  // After selecting an option name (eg. "Color"), we fetch the option values for that option name
-  // and dispatch a custom event to select tag to update the options
+  // After selecting an option name (eg. "Color"), we fetch the option values for that option name and update the tom select options
   async handleSelectedOptionName(event) {
     const targetInput = event.target
     const optionNameId = targetInput.value
@@ -771,8 +771,9 @@ export default class extends CheckboxSelectAll {
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
 
     const { name, values } = this.optionsValue[optionId]
+    const availableOptions = this.availableOptionsValue[optionId]
 
-    const form = this.optionFormTemplate(name, values, optionId)
+    const form = this.optionFormTemplate(name, values, optionId, availableOptions)
 
     option.replaceWith(form)
   }
@@ -795,7 +796,7 @@ export default class extends CheckboxSelectAll {
     let position = this.optionsValue[optionId].position
     let newOptionsPositions = {}
 
-    const optionValues = option.querySelector('[data-slot="optionValuesInput"]').values()
+    const optionValues = option.querySelector('[data-slot="optionValuesSelectContainer"]').values()
 
     if (optionValues.length === 0) {
       return
@@ -865,7 +866,7 @@ export default class extends CheckboxSelectAll {
     this.refreshParentInputs()
   }
 
-  optionFormTemplate(optionName, optionValues, id) {
+  optionFormTemplate(optionName, optionValues, id, availableOptions) {
     const template = this.optionFormTemplateTarget.content.cloneNode(true)
 
     const optionNameSelect = template.querySelector('select[name="option_name"]')
@@ -887,8 +888,16 @@ export default class extends CheckboxSelectAll {
       optionNameSelect.appendChild(newOption)
     }
 
-    const optionValuesInput = template.querySelector('[data-slot="optionValuesInput"]')
-    optionValuesInput.dataset.multiInputPreloadedValuesValue = JSON.stringify(optionValues)
+    const optionValuesSelectContainer = template.querySelector('[data-slot="optionValuesSelectContainer"]')
+    const tomSelectOptionValues = optionValues.map((optionValue) => {
+      return {
+        id: availableOptions.find((availableOption) => availableOption.name === optionValue).id,
+        name: optionValue
+      }
+    })
+
+    optionValuesSelectContainer.setAttribute('data-multi-tom-select-preloaded-options-value', JSON.stringify(availableOptions))
+    optionValuesSelectContainer.setAttribute('data-multi-tom-select-preloaded-values-value', JSON.stringify(tomSelectOptionValues))
 
     template.querySelectorAll('[data-variants-form-option-id-param]').forEach((el) => {
       el.dataset.variantsFormOptionIdParam = id
