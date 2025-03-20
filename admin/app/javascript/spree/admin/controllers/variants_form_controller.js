@@ -1,5 +1,6 @@
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import { Sortable } from 'sortablejs'
+import { get } from '@rails/request.js'
 
 export default class extends CheckboxSelectAll {
   static targets = [
@@ -8,6 +9,7 @@ export default class extends CheckboxSelectAll {
     'optionsContainer',
     'optionFormTemplate',
     'newOptionForm',
+    'newOptionValuesSelect',
     'newOptionValuesInput',
     'newOptionNameInput',
     'newOptionButton',
@@ -32,7 +34,8 @@ export default class extends CheckboxSelectAll {
     currencies: Array,
     variantIds: Object,
     currentStockLocationId: String,
-    stockLocations: Array
+    stockLocations: Array,
+    optionValuesSelectOptions: Array
   }
 
   connect() {
@@ -699,10 +702,34 @@ export default class extends CheckboxSelectAll {
     }
   }
 
+  // After selecting an option name (eg. "Color"), we fetch the option values for that option name
+  // and dispatch a custom event to select tag to update the options
+  async handleSelectedOptionName(event) {
+    const targetInput = event.target
+    const optionNameId = targetInput.value
+
+    if (optionNameId) {
+      const response = await get(`/admin/option_types/${optionNameId}/option_values/select_options`)
+
+      if (response.ok) {
+        const optionValues = await response.json
+
+        this.newOptionValuesSelectTargets.forEach((select) => {
+          const tomSelect = select.tomselect
+
+          tomSelect.clear()
+          tomSelect.clearOptions()
+          tomSelect.addOptions(optionValues)
+        })
+      }
+    }
+  }
+
   handleNewOption(event) {
     const newOptionName = this.newOptionNameInputTarget.options[this.newOptionNameInputTarget.selectedIndex].text
     const newOptionId = String(this.newOptionNameInputTarget.value)
-    const newOptionValues = this.newOptionValuesInputTarget.values()
+    const newOptionValues = this.newOptionValuesSelectTargets.map((select) => select.options[select.selectedIndex].text)
+
     if (
       !newOptionName.length ||
       this.optionsValue[newOptionId] ||
@@ -722,7 +749,7 @@ export default class extends CheckboxSelectAll {
 
   hideNewOptionForm() {
     this.newOptionNameInputTarget.tomselect.clear()
-    this.newOptionValuesInputTarget.reset()
+    this.newOptionValuesSelectTargets.forEach((select) => select.tomselect.clear() )
 
     this.newOptionFormTarget.classList.add('d-none')
 

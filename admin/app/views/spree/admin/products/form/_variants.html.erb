@@ -51,7 +51,15 @@
             <div class="w-100">
               <div class="form-group">
                 <label class="label" for="new_option_name"><%= Spree.t(:option_name) %></label>
-                <%= tom_select_tag :new_option_name, multiple: false, create: true, preloaded_options: option_types_for_select, include_blank: true, select_data: {variants_form_target: "newOptionNameInput"} %>
+                <%= tom_select_tag :new_option_name,
+                  multiple: false,
+                  create: true,
+                  preloaded_options: option_types_for_select,
+                  include_blank: true,
+                  select_data: {
+                    variants_form_target: "newOptionNameInput",
+                    action: "variants-form#handleSelectedOptionName"
+                  } %>
                 <% if can?(:manage, Spree::OptionType) %>
                   <p class="form-text text-muted mt-2">
                     <%= Spree.t('admin.products.variants.option_types_link', link: spree.admin_option_types_path).html_safe %>
@@ -60,9 +68,17 @@
               </div>
               <div class="form-group">
                 <span class="label"><%= Spree.t(:option_values) %></span>
-                <div data-controller="multi-input" class="values-inputs" data-variants-form-target="newOptionValuesInput">
+                <!-- TODO add multi-input: <div data-controller="multi-input" class="values-inputs" data-variants-form-target="newOptionValuesInput">-->
+                <div class="values-inputs" data-variants-form-target="newOptionValuesInput">
                   <div class="values-inputs__input" data-multi-input-target="input">
-                    <input class="form-control" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent">
+                    <%= tom_select_tag "new_option_values[]",
+                      preloaded_options: @option_values,
+                      multiple: false,
+                      create: true,
+                      include_blank: true,
+                      select_data: {
+                        variants_form_target: "newOptionValuesSelect"
+                      } %>
                   </div>
                 </div>
               </div>

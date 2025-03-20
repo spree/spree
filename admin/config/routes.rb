@@ -3,7 +3,11 @@ Spree::Core::Engine.add_routes do
     # product catalog
     resources :properties, except: :show
     resources :option_types, except: :show do
-      resources :option_values, only: [:update]
+      resources :option_values, only: [:update] do
+        collection do
+          get :select_options
+        end
+      end
     end
     resources :products do
       collection do
