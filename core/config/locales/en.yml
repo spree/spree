@@ -148,14 +148,14 @@ en:
         updated: Updated
         user: User
       spree/store:
-        preferred_limit_digital_download_days: Limit digital links download days
-        preferred_limit_digital_download_count: Limit digital links download count
-        preferred_digital_asset_authorized_days: Download days limit
-        preferred_digital_asset_authorized_clicks: Download clicks limit
         mail_from_address: Mail From Address
         meta_description: Meta Description
         meta_keywords: Meta Keywords
         name: Site Name
+        preferred_digital_asset_authorized_clicks: Download clicks limit
+        preferred_digital_asset_authorized_days: Download days limit
+        preferred_limit_digital_download_count: Limit digital links download count
+        preferred_limit_digital_download_days: Limit digital links download days
         seo_robots: SEO Robots
         seo_title: SEO Title
         url: Site URL
@@ -511,7 +511,6 @@ en:
     account_members: Team
     account_updated: Account updated
     action: Action
-    digital_link_unauthorized: You are not authorized to access this asset
     actions:
       approve: Approve
       cancel: Cancel
@@ -881,6 +880,7 @@ en:
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
+    digital_link_unauthorized: You are not authorized to access this asset
     dimension_units:
       centimeter: Centimeter (cm)
       foot: Foot (ft)
@@ -1364,7 +1364,7 @@ en:
         message: Please click the button below to pay for your order.
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
         pay_for_order: Pay for order
-        subject: "Payment link for order #%{number}"
+        subject: 'Payment link for order #%{number}'
       store_owner_notification_email:
         heading: New Order Received
         instructions: You have received a new order.
