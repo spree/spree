@@ -23,7 +23,7 @@
   <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-100', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
 </div>
 <div class="form-group">
-  <%= f.label :role_list, Spree.t(:roles) %>
+  <%= f.label :spree_role_ids, Spree.t(:roles) %>
   <%= f.select :spree_role_ids,
           options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),
           { prompt: false },
