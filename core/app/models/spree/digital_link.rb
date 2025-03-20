@@ -46,7 +46,7 @@ module Spree
     # It returns +true+ or +false+ depending on whether the authorization is granted.
     def authorize!
       ActiveRecord::Base.connected_to(role: :writing) do
-        authorizable? && increment!(:access_counter, touch: true) ? true : false
+        authorizable? && increment!(:access_counter, touch: true)
       end
     end
 

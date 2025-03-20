@@ -52,7 +52,6 @@
         <strong><%= Spree.t(:shipment) %> <%= Spree.t('shipment_states.canceled') %></strong>.
         <%= Spree.t(:shipment_refunded_message) %>
       </div>
-    <% elsif shipment.shipped? && shipment.tracked? %>
     <% elsif !shipment.digital? %>
       <div class="text-sm uppercase text-center bg-neutral-100 mt-3 px-3 py-2">
         <%= Spree.t(:no_tracking_present) %>
@@ -63,6 +62,9 @@
   <hr class="border-accent mx-4" >
 
   <div class="grid grid-cols-1 gap-4 lg:gap-6 p-4 lg:p-6">
-    <%= render partial: 'spree/shared/order_line_item', collection: shipment.line_items, as: :line_item, cached: spree_base_cache_scope %>
+    <%= render partial: "spree/shared/order_line_item",
+    collection: shipment.inventory_units,
+    as: :inventory_unit,
+    cached: spree_base_cache_scope %>
   </div>
 </li>

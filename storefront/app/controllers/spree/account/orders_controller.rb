@@ -9,7 +9,7 @@ module Spree
       # GET /account/orders/:id
       def show
         @order = orders_scope.find_by!(number: params[:id])
-        @shipments = @order.shipments
+        @shipments = @order.shipments.includes(:stock_location, :address, selected_shipping_rate: :shipping_method, inventory_units: :line_item)
       end
 
       private

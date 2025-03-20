@@ -1,3 +1,5 @@
+<% line_item = inventory_unit.line_item %>
+
 <div class="flex flex-col gap-4">
   <div class="flex gap-4">
     <div class="flex-shrink-0">
@@ -29,7 +31,7 @@
           "
         >
           <%= Spree.t(:quantity) %>:
-          <%= line_item.quantity %>
+          <%= inventory_unit.quantity %>
         </div>
       </div>
     </div>

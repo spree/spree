@@ -80,6 +80,7 @@ en:
       not_tracking_inventory: Not tracking inventory
       notifications: Notifications
       num_orders: No. of Orders
+      digital_shipment_fulfillment_note: This shipment will be marked as fulfilled once the user downloads the digital product
       oauth_applications:
         last_used: Last used
         list: API keys
