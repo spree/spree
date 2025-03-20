@@ -2,6 +2,7 @@
 title: Checkout Flow
 description: Learn how to customize the checkout process in Spree.
 version: v5
+icon: "cart-shopping"
 ---
 
 ## Overview
@@ -81,7 +82,7 @@ This step is disabled by default, but can be enabled by two ways:
     Spree::Config[:always_include_confirm_step] = true
     ```
 
-2. conditionally for specific orders by overriding the `confirmation_required?` method in `Spree::Order`, eg.
+2. conditionally for specific orders by overriding the `confirmation_required?` method in `Spree::Order` with a [decorator](/developer/customization/decorators), eg.
 
    `app/models/spree/order_decorator.rb` file:
 

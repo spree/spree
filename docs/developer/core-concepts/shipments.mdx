@@ -1,5 +1,6 @@
 ---
 title: Shipments
+icon: "truck-fast"
 ---
 
 ## Overview
@@ -277,11 +278,11 @@ Split shipments are a feature for more complex Spree applications that require s
 
 ### Creating Proposed Shipments
 
-This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](shipments#components-of-split-shipments) section of this guide.
+This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](#components-of-split-shipments) section of this guide.
 
 The process of determining shipments for an order is triggered by calling `create_proposed_shipments` on an `Order` object while transitioning to the `delivery` state during checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
 
-`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](shipments#the-packer).
+`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](#the-packer).
 
 After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
 
@@ -289,7 +290,7 @@ At this point, the checkout process can continue to the delivery step.
 
 ## Components of Split Shipments
 
-This section describes the four main components that power split shipments: [The Coordinator](shipments#the-coordinator), [The Packer](shipments#the-packer), [The Prioritizer](shipments#the-prioritizer), and [The Estimator](shipments#the-estimator).
+This section describes the four main components that power split shipments: [The Coordinator](#the-coordinator), [The Packer](#the-packer), [The Prioritizer](#the-prioritizer), and [The Estimator](#the-estimator).
 
 ### The Coordinator
 

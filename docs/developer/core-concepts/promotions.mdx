@@ -1,5 +1,6 @@
 ---
 title: Promotions
+icon: "ticket"
 ---
 
 ## Overview
@@ -12,7 +13,6 @@ Promotions can be activated in three different ways:
 
 * When a user adds a product to their cart (automatic promotions, eg. free shipping with a threshold)
 * When a user enters a coupon code during the checkout process
-* When a user visits a page within the Spree store (path-based promotions, eg. a promotion that offers a discount on a specific page)
 
 Promotions for these individual ways are activated through their corresponding [PromotionHandler class](https://github.com/spree/spree/tree/main/core/app/models/spree/promotion_handler), once they've been checked for eligibility.
 
@@ -29,12 +29,10 @@ Here is a table showcasing the attributes of the `Spree::Promotion` model along 
 | `code`                   | A code that users can enter to apply the promotion    | `SUMMER2023`           |
 | `usage_limit`            | The total number of times the promotion can be used   | 500                    |
 | `match_policy`           | The policy for how promotion rules are matched        | `all`                  |
-| `path`                   | The specific path that activates the promotion        | `/summer-sale`         |
-| `per_code_usage_limit`   | The number of times a single code can be used         | 1                      |
-
-<Info>
- Path-based promotions will only work when the `Spree::PromotionHandler::Page` class is used, as in `Spree::ContentController` from [spree_rails_frontend](https://github.com/spree/spree_rails_frontend) gem
-</Info>
+| `code_prefix`            | A prefix for generated coupon codes                | `SUMMER`               |
+| `number_of_codes`        | The number of unique codes to be generated for the promotion| 1000                   |
+| `kind`                   | The type of promotion (coupon_code or automatic)      | `coupon_code`          |
+| `multi_codes`            | Indicates if the promotion uses multiple coupon codes        | `false`                |
 
 ## Actions
 
@@ -43,7 +41,7 @@ There are four actions that come with Spree:
 <AccordionGroup>
   <Accordion title="Creating an Adjustment">
     <p>When a <code>CreateAdjustment</code> action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.</p>
-    <p>Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the <code>Promotion#eligible?</code> method, which uses <code>Promotion#eligible_rules</code> to determine if the promotion is still eligible based on its rules. For how this process works, please see the <a href="promotions#rules">rules section</a> below.</p>
+    <p>Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the <code>Promotion#eligible?</code> method, which uses <code>Promotion#eligible_rules</code> to determine if the promotion is still eligible based on its rules. For how this process works, please see the <a href="#rules">rules section</a> below.</p>
     <p>An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the <a href="calculators">Calculators guide</a>.</p>
   </Accordion>
   <Accordion title="Creating an Item Adjustment">
@@ -91,6 +89,23 @@ Here's a list of all the rules that come with Spree:
 </AccordionGroup>
 
 Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply.
+
+## Coupon Codes
+
+Coupon codes are a way to track the usage of a promotion. They are associated with a promotion and can be used to apply the promotion to an order.
+
+Coupon codes are generated when a promotion is created. The number of codes to be generated is set in the `number_of_codes` attribute on the `Promotion` object.
+
+Here is a list of attributes for the `CouponCode` model:
+
+| Attribute      | Description                                                                 | Example       |
+|----------------|-----------------------------------------------------------------------------|---------------|
+| `code`         | Auto-generated unique 16-character code for the promotion.                   | `22A0F62A230BD919`  |
+| `promotion_id` | ID of the associated promotion.                          | `12345`       |
+| `order_id`     | ID of the order to which the coupon code is applied.                            | `67890`       |
+| `state`        | Sate of the promotion code | `unused`, `used`           |
+
+If `code_prefix` is set in the `Promotion` object (eg. `PRM`), the `code` will be generated with that prefix, eg. `PRM22A0F62A230BD919`.
 
 ## Extending Promotions
 

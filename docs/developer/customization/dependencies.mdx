@@ -1,17 +1,16 @@
 ---
 title: Dependencies
 section: customization
+icon: gears
 ---
 
 ## Overview
 
-With Dependencies, you can easily replace parts of Spree core with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), CanCanCan Abilities (user for [Permissions](permissions)), and [API Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2) (used for generating JSON API responses). 
-
-We plan to expand this feature to include more classes in the future.
+With Dependencies, you can easily replace parts of Spree core with your custom code. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), CanCanCan Abilities (user for [Permissions](permissions)), and [API Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2) (used for generating JSON API responses).
 
 ## Application (global) customization
 
-This will change every aspect of the application (both APIs, Admin Panel, and default Rails frontend if you're using it).
+This will change every aspect of the application (both APIs, Admin Panel, and Storefront).
 
 In your `config/initializers/spree.rb` file, you can set the following:
 
@@ -41,14 +40,14 @@ module MyAddToCartService < Spree::Cart::AddItem
     ApplicationRecord.transaction do
       run :add_to_line_item
       run Spree::Dependencies.cart_recalculate_service.constantize
-      run :send_notification
+      run :update_in_external_system
     end
   end
 
   private
 
-  def send_notification(new_order_line_item)
-
+  def update_in_external_system(new_order_line_item)
+    # Your custom logic here
   end
 end
 ```
@@ -59,19 +58,21 @@ This code will:
 2. Override the `call` method to add your custom logic
 3. Call `run :add_to_line_item` to add the item to the cart
 4. Call `run Spree::Dependencies.cart_recalculate_service.constantize` to recalculate the cart
-5. Call `run :send_notification` to send a notification
+5. Call `run :update_in_external_system` to execute your custom logic, eg. updating Order in an external system such as ERP
 
 <Warning>
 Values set in the initializer have to be strings, eg. `'MyNewAwesomeAddItemToCart'`
 </Warning>
 
-
-
 ## Controller level customization
 
-To replace [serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) or Services in a specific API endpoint you can create a simple decorator:
+If you need to replace [serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) or Services in a specific API endpoint you can create a [code decorator](/developer/customization/decorators):
 
-Create a `app/controllers/spree/cart_controller_decorator.rb`
+```bash
+mkdir app/controllers/spree -f && touch app/controllers/spree/cart_controller_decorator.rb
+```
+
+and add the following code to it:
 
 ```ruby
 module Spree
@@ -91,11 +92,11 @@ end
 
 This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.
 
-Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/master/api/app/controllers/spree/api/v2) to see what you can configure.
+Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/master/api/app/controllers/spree/api/v2) to see what you can replace.
 
 ## API level customization
 
-Storefront and Platform APIs have separate Dependencies injection points so you can easily customize one without touching the other.
+Storefront API and Platform API have separate Dependencies injection points so you can easily customize one without touching the other.
 
 In your Spree initializer (`config/initializers/spree.rb`) please add:
 

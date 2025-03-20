@@ -1,0 +1,44 @@
+---
+title: Metadata
+icon: "tags"
+---
+
+## Overview
+
+Metadata is a way to add additional information to Spree objects. There are two types of metadata:
+
+<CardGroup>
+  <Card title="Public Metadata">
+    Public metadata is available via <a href="/api-reference/storefront">Storefront API</a> without any authentication. It is stored in the <code>public_metadata</code> JSONB column of the table. This kind of metadata should be only used for public information that is visible to all users, eg. additional information about the object.
+  </Card>
+  <Card title="Private Metadata">
+    Private metadata is only available via <a href="/api-reference/platform">Platform API</a> and requires authentication. It is stored in the <code>private_metadata</code> JSONB column of the table. This kind of metadata should be only used for private information that is not visible to the public, eg. IDs in external systems, private notes, etc.
+  </Card>
+</CardGroup>
+
+## Usage
+
+### Adding metadata to an object
+
+```ruby
+taxon = Spree::Taxon.find(1)
+taxon.public_metadata = { "google_category_id": "123" }
+taxon.save!
+```
+
+### Fetching metadata from an object
+
+```ruby
+taxon = Spree::Taxon.find(1)
+puts taxon.public_metadata["google_category_id"]
+```
+
+### Querying objects by metadata
+
+```ruby
+Spree::Taxon.where("public_metadata->>'google_category_id' = ?", "123")
+```
+
+<Warning>
+  For Products it's recommended to use [Properties](/developer/core-concepts/products#product-properties) or [Option Types](/developer/core-concepts/products#option-types-and-option-values) instead of Metadata.
+</Warning>
