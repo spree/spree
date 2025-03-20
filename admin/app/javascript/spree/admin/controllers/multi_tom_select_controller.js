@@ -16,22 +16,11 @@ export default class extends Controller {
     this.setValues(this.preloadedValuesValue)
   }
 
-  reset() {
-    this.selectTargets.forEach((container, i) => {
-      if (i > 0) {
-        container.remove()
-      } else {
-        const select = container.querySelector('select')
-        const tomSelect = select.tomselect
+  reset(addBlankSelect = true) {
+    this.selectTargets.forEach((container) => container.remove())
 
-        if (tomSelect) {
-          tomSelect.clear()
-          tomSelect.clearOptions()
-        }
-      }
-    })
-
-    this.lastSelect = this.selectTargets[0]?.querySelector('select')
+    if (addBlankSelect)
+      this.addSelect()
   }
 
   values() {
@@ -42,8 +31,11 @@ export default class extends Controller {
   }
 
   setValues() {
-    this.reset()
+    this.reset(false)
     this.preloadedValuesValue.forEach((value) => this.addSelect(value))
+
+    if (this.selectTargets.length === this.preloadedValuesValue.length)
+      this.addSelect()
   }
 
   handleSelect(event) {
@@ -51,12 +43,7 @@ export default class extends Controller {
 
     if (ts && ts.getValue().length > 0 && (this.lastSelect === event.target || this.selectTargets.length === 1)) {
       this.addSelect()
-    }
-  }
-
-  handleKeyDown(event) {
-    const ts = this.tomSelects.get(event.target)
-    if (event.key === 'Backspace' && (!ts || ts.getValue().length === 0) && this.selectTargets.length > 1) {
+    } else if (ts && ts.getValue().length === 0 && this.selectTargets.length > 1) {
       const inputContainer = event.target.closest('[data-multi-tom-select-target="select"]')
       this.removeSelect(inputContainer)
     }
@@ -64,12 +51,8 @@ export default class extends Controller {
 
   removeSelect(container) {
     if (this.selectTargets.length > 1) {
-      const input = container.querySelector('input, select')
-      const ts = this.tomSelects.get(input)
-      if (ts) {
-        ts.destroy()
-        this.tomSelects.delete(input)
-      }
+      const select = container.querySelector('select')
+      select.tomselect?.destroy()
       container.remove()
     }
   }
@@ -77,10 +60,10 @@ export default class extends Controller {
   addSelect(value = null) {
     const newTomSelectTag = this.selectTemplateTarget.cloneNode(true)
 
-    if (value) {
-      newTomSelectTag.setAttribute('data-select-options-value', JSON.stringify(this.preloadedOptionsValue))
+    newTomSelectTag.setAttribute('data-select-options-value', JSON.stringify(this.preloadedOptionsValue))
+
+    if (value)
       newTomSelectTag.setAttribute('data-select-active-option-value', value.id)
-    }
 
     newTomSelectTag.setAttribute('data-multi-tom-select-target', 'select')
     newTomSelectTag.setAttribute('data-controller', 'select')
