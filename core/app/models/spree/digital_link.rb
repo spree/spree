@@ -21,6 +21,7 @@ module Spree
     validates :access_counter, numericality: { greater_than_or_equal_to: 0 }
 
     delegate :filename, :content_type, to: :digital
+    delegate :order, to: :line_item
 
     def authorizable?
       !(expired? || access_limit_exceeded?)

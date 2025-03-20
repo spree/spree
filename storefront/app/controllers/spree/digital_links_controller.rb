@@ -13,10 +13,10 @@ module Spree
             ) and return
         else
           redirect_to attachment.url(
-            expires_in: current_store.digital_asset_link_expire_time.seconds,
+            expires_in: current_store.preferred_digital_asset_link_expire_time.seconds,
             disposition: 'attachment',
             host: current_store.formatted_url_or_custom_domain
-          ) and return
+          ), allow_other_host: true and return
         end
       end
 
