@@ -21,7 +21,7 @@ shared_context 'order with a digital line item' do
   let(:digital_shipping_method) { create(:digital_shipping_method) }
   let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
   let(:variant_digital) { create(:variant, product: digital_product) }
-  let!(:digital) { create(:digital, variant: digital_variant) }
+  let!(:digital) { create(:digital, variant: variant_digital) }
   let!(:line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
   let!(:headers) { headers_bearer }
 
@@ -33,8 +33,8 @@ end
 
 shared_context 'order with a physical and digital line item' do
   let(:digital_shipping_method) { create(:digital_shipping_method) }
-  let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
-  let(:variant_digital) { create(:variant, product: digital_product) }
+  let(:product_digital) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+  let(:variant_digital) { create(:variant, product: product_digital) }
   let!(:digital) { create(:digital, variant: variant_digital) }
   let!(:digital_line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
   let!(:physical_line_item) { create(:line_item, order: order, currency: currency) }
