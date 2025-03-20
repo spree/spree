@@ -15,11 +15,9 @@
             <div class="d-flex align-items-center justify-content-between">
               <span><%= text %></span>
             </div>
-            <div class="ml-3">
-              <button type="button" class="btn" data-action="notification#hide" aria-label="<%= Spree.t(:close) %>">
-                <%= icon('x', height: 20, class: 'mr-0') %>
-              </button>
-            </div>
+            <button type="button" class="btn ml-3 p-1" data-action="notification#hide" aria-label="<%= Spree.t(:close) %>">
+              <%= icon('x', height: 20, class: 'mr-0') %>
+            </button>
           </div>
         </div>
       </div>

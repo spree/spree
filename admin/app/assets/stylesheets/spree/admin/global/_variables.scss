@@ -147,6 +147,10 @@ $dropdown-padding-y:    0.25rem !default;
 $modal-header-padding: 1rem 1.5rem 0.5rem 1.5rem;
 $modal-inner-padding: 1rem 1.5rem 1rem 1.5rem;
 
+$alert-padding-y:                   0.5rem !default;
+$alert-padding-x:                   1rem !default;
+$alert-border-radius: $border-radius-lg;
+
 label {
   font-size: 100%;
 }
