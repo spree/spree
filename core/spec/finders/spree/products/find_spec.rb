@@ -2,15 +2,15 @@ require 'spec_helper'
 
 module Spree
   describe Products::Find do
-    let!(:product)                   { create(:product, price: 15.99) }
-    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
-    let!(:product_3)                 { create(:variant, price: 19.99).product }
+    let(:store)                      { @default_store }
+    let!(:product)                   { create(:product, price: 15.99, stores: [store]) }
+    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
+    let!(:product_3)                 { create(:product, stores: [store]) }
     let!(:option_value)              { create(:option_value) }
     let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product)      { create(:product, status: 'archived') }
     let!(:in_stock_product)          { create(:product_in_stock) }
     let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder) }
-    let(:store)                      { product.stores.first }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do

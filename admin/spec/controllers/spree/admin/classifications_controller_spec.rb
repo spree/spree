@@ -1,17 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
-  let(:store) { Spree::Store.default }
-
   stub_authorization!
 
   render_views
 
-  let(:taxon) { create(:taxon, sort_order: sort_order) }
+  let(:store) { @default_store }
+  let(:taxon) { create(:taxon, sort_order: sort_order, taxonomy: store.taxonomies.first) }
   let(:sort_order) { 'manual' }
 
-  let(:product1) { create(:product) }
-  let(:product2) { create(:product) }
+  let(:product1) { create(:product, stores: [store]) }
+  let(:product2) { create(:product, stores: [store]) }
 
   describe 'GET #index' do
     let!(:classifications) do

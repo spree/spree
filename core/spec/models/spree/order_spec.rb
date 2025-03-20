@@ -8,7 +8,7 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { create(:user) }
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
   before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
@@ -1237,7 +1237,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'with promo code' do
-      let(:order) { create(:order_with_line_items, line_items_count: 2, store: Spree::Store.default) }
+      let(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
       let(:promotion) { create(:free_shipping_promotion, code: 'GWP', kind: :coupon_code) }
 
       context 'with single coupon code' do

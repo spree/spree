@@ -6,7 +6,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   render_views
 
   let(:user) { create(:admin_user) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   before do
     allow(controller).to receive(:current_ability).and_call_original

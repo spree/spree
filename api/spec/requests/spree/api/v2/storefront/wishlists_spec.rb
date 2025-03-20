@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
-  let!(:store) { Spree::Store.default }
-  let!(:other_store) { create(:store) }
-  let!(:other_user) { create(:user) }
+  let(:store) { @default_store }
+  let(:other_store) { create(:store) }
+  let(:other_user) { create(:user) }
 
-  let(:wishlist) { create(:wishlist) }
+  let(:wishlist) { create(:wishlist, store: store) }
   let(:user) { wishlist.user }
 
   include_context 'API v2 tokens'
@@ -55,8 +55,8 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#index' do
-    let!(:wishlists) { create_list(:wishlist, 30, user: user) }
-    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user) }
+    let!(:wishlists) { create_list(:wishlist, 30, user: user, store: store) }
+    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user, store: store) }
     let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store) }
 
     it 'must return a list of wishlists paged' do
@@ -82,8 +82,8 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#show' do
-    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true) }
-    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false) }
+    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true, store: store) }
+    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false, store: store) }
 
     let!(:wished_item) do
       wishlist.wished_items.create({ variant: create(:variant) })

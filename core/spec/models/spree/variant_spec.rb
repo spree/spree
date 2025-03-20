@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
@@ -1123,7 +1123,7 @@ describe Spree::Variant, type: :model do
   describe 'validate :check_price' do
     subject { variant.save }
 
-    let(:currency) { Spree::Store.default.default_currency }
+    let(:currency) { store.default_currency }
 
     context 'when variant has a default price' do
       let(:variant) { build(:variant, product: product, default_price: default_price) }

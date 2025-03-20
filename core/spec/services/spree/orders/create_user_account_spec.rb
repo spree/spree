@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Orders::CreateUserAccount do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:address) { create(:address, country: store.default_country, firstname: 'John', lastname: 'Snow') }
   let(:order) do
     create(:completed_order_with_totals, bill_address: address, ship_address: address, store: store, user: nil, email: 'new@customer.com')

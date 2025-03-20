@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::OrderStatusController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:order) { create(:completed_order_with_totals, store: store) }
 
   render_views

@@ -444,7 +444,6 @@ module Spree
     end
 
     def ensure_default_country
-      return unless has_attribute?(:default_country_id)
       return if default_country.present? && (checkout_zone.blank? || checkout_zone.country_list.blank? || checkout_zone.country_list.include?(default_country))
 
       self.default_country = if checkout_zone.present? && checkout_zone.country_list.any?

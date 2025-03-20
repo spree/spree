@@ -1,9 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
+  let(:store) { @default_store }
   let(:order) { create(:order, store: store) }
-
-  before { Spree::Store.default }
 
   context '#finalize!' do
     let(:order) { Spree::Order.create(email: 'test@example.com') }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API v2 JSON API Resource Includes Spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:products) { create_list(:product, 5, stores: [store]) }
   let!(:product) { create(:product, stores: [store]) }
   let!(:product_option_type) { create(:product_option_type, product: product) }

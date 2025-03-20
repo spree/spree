@@ -13,7 +13,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
   controller(FakesController) {}
 
   describe '#current_store' do
-    let!(:store) { create :store, default: true }
+    let!(:store) { @default_store }
     let!(:store_2) { create :store, url: 'another.com' }
 
     context 'default store' do

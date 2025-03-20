@@ -9,7 +9,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     allow(controller).to receive(:current_ability).and_call_original
   end
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe 'GET #index' do
     it 'can find a product by SKU' do

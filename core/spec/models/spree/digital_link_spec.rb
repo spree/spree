@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::DigitalLink, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:digital) { create(:digital) }
   let(:variant) { digital.variant }
   let(:line_item) { create(:line_item, variant: variant) }

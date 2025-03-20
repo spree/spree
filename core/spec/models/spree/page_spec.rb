@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Page, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:theme) { store.default_theme }
   let(:page) { theme.pages.first }
 

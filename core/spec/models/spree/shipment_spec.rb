@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::Shipment, type: :model do
   it_behaves_like 'metadata'
 
-  let!(:order) { create(:order, number: 'S12345') }
+  let(:store) { @default_store }
+  let!(:order) { create(:order, number: 'S12345', store: store) }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
     create(:shipment, number: 'H21265865494', cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
@@ -251,7 +252,7 @@ describe Spree::Shipment, type: :model do
   end
 
   context '#store' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let!(:order) { create(:order, store: store) }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
 
@@ -805,12 +806,12 @@ describe Spree::Shipment, type: :model do
 
   context '#transfer_to_location' do
     # Order with 2 line items in order to be able to split one shipment into 2
-    let(:order) { create(:completed_order_with_totals, line_items_count: 2) }
+    let(:order) { create(:completed_order_with_totals, line_items_count: 2, store: store) }
     let!(:stock_location) { create(:stock_location, propagate_all_variants: true, backorderable_default: true) }
     let(:variant) { order.line_items.first.variant }
 
     before do
-      perform_enqueued_jobs(except: Spree::Addresses::GeocodeAddressJob)
+      perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
       shipping_method = order.shipments.first.shipping_method
       shipping_method.calculator.preferences[:amount] = order.shipments.first.cost
       shipping_method.calculator.save!

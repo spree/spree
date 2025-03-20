@@ -30,11 +30,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
 
   config.before do
-    begin
-      Rails.cache.clear
-      reset_spree_preferences
-    rescue Errno::ENOTEMPTY
-    end
+    Spree::Webhooks.disabled = true
+    reset_spree_preferences
   end
 
   config.before(:suite) do

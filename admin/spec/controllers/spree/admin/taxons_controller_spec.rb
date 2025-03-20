@@ -5,7 +5,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
 
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:taxonomy) { create(:taxonomy, store: store) }
 
   describe 'GET #new' do

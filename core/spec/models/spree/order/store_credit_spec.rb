@@ -211,7 +211,7 @@ describe 'Order' do
       end
 
       context 'when store is provided' do
-        let!(:store) { Spree::Store.default }
+        let!(:store) { @default_store }
         let!(:second_store) { create(:store) }
         let!(:store_credit) { create(:store_credit, amount: '100', user: user, store: store) }
 
@@ -361,7 +361,7 @@ describe 'Order' do
       context 'the associated user has store credits' do
         subject { order }
 
-        let(:store) { Spree::Store.default }
+        let(:store) { @default_store }
         let(:store_credit) { create(:store_credit, store: store) }
         let(:order) { create(:order, user: store_credit.user, store: store) }
 

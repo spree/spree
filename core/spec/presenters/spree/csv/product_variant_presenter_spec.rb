@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CSV::ProductVariantPresenter do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:product) { create(:product, stores: [store], width: 10, height: 15, depth: 20, dimensions_unit: 'in', weight_unit: 'lb') }
   let(:variant) { product.master }
   let(:properties) { [] }

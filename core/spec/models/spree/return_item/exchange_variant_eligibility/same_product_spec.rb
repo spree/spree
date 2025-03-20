@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module ReturnItem::ExchangeVariantEligibility
     describe SameProduct, type: :model do
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
 
       describe '.eligible_variants' do
         context 'product has no variants' do

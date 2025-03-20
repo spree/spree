@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CustomDomain, type: :model do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
 
   describe 'Validations' do
     describe '#sanitize_url' do
@@ -20,6 +20,18 @@ RSpec.describe Spree::CustomDomain, type: :model do
 
       it 'is invalid with wrong number of parts' do
         expect(build(:custom_domain, url: 'com')).not_to be_valid
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    let(:store) { create(:store) }
+    let(:custom_domain) { build(:custom_domain, store: store) }
+
+    describe 'touch store' do
+      it 'touches the store when the custom domain is created' do
+        expect(store).to receive(:touch)
+        custom_domain.save!
       end
     end
   end

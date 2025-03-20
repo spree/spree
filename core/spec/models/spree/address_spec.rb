@@ -111,7 +111,7 @@ describe Spree::Address, type: :model do
 
   describe 'delegated method' do
     context 'Country' do
-      let(:country) { Spree::Store.default.default_country }
+      let(:country) { @default_store.default_country }
       let(:address) { create(:address, country: country) }
 
       context '#country_name' do

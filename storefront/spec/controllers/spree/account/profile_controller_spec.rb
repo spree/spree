@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Account::ProfileController, type: :controller do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:user) { create(:user, first_name: 'John', last_name: 'Doe', email: 'test@example.com', phone: '1234567890') }
 
   render_views

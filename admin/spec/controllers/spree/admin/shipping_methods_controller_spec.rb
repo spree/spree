@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Admin::ShippingMethodsController, type: :controller do
   stub_authorization!
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:shipping_category) { create(:shipping_category) }
 
   describe '#index' do

@@ -4,6 +4,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   stub_authorization!
   render_views
 
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
 
   describe '#create' do
@@ -24,10 +25,10 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#index' do
-    let!(:shipped_order) { create(:shipped_order, with_payment: false, total: 100) }
-    let!(:order) { create(:completed_order_with_totals, line_items_count: 2, total: 100) }
+    let!(:shipped_order) { create(:shipped_order, with_payment: false, total: 100, store: store) }
+    let!(:order) { create(:completed_order_with_totals, line_items_count: 2, total: 100, store: store) }
     let(:line_item) { order.line_items.first }
-    let!(:cancelled_order) { create(:completed_order_with_totals, state: 'canceled', total: 100) }
+    let!(:cancelled_order) { create(:completed_order_with_totals, state: 'canceled', total: 100, store: store) }
     let!(:payment) { create(:payment, state: 'completed', amount: shipped_order.total, order: shipped_order) }
     let!(:cancelled_order_payment) { create(:payment, state: 'completed', amount: cancelled_order.total, order: cancelled_order) }
     let!(:refund) { create(:refund, payment: payment, amount: payment.amount) }
@@ -79,8 +80,8 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         }
       end
 
-      let!(:order1) { create(:completed_order_with_totals) }
-      let!(:order2) { create(:completed_order_with_totals) }
+      let!(:order1) { create(:completed_order_with_totals, store: store) }
+      let!(:order2) { create(:completed_order_with_totals, store: store) }
 
       context 'for All Orders' do
         before do
@@ -96,7 +97,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       end
 
       context 'filtering by "yesterday"' do
-        let!(:order2) { create(:completed_order_with_totals, completed_at: Date.today) }
+        let!(:order2) { create(:completed_order_with_totals, completed_at: Date.today, store: store) }
 
         before do
           order1.update(completed_at: Date.yesterday + 3.hours)
@@ -121,7 +122,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   describe '#edit' do
     subject { get :edit, params: { id: order.number } }
 
-    let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false) }
+    let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
 
     let!(:invalid_payment) { create(:payment, state: 'invalid', amount: 100, order: order) }
     let!(:valid_payment) { create(:payment, state: 'completed', amount: 100, order: order) }
@@ -139,7 +140,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   describe '#cancel' do
     subject(:cancel) { put :cancel, params: { id: order.number } }
 
-    let(:order) { create(:order_ready_to_ship) }
+    let(:order) { create(:order_ready_to_ship, store: store) }
 
     it 'cancels an order' do
       cancel
@@ -154,7 +155,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     subject { put :resend, params: { id: order.number } }
 
     context 'for a complete order' do
-      let(:order) { create(:order_ready_to_ship) }
+      let(:order) { create(:order_ready_to_ship, store: store) }
 
       it 'resends an email' do
         subject
@@ -163,7 +164,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     end
 
     context 'for an incomplete order' do
-      let(:order) { create(:order) }
+      let(:order) { create(:order, store: store) }
 
       it "doesn't resend the email" do
         subject

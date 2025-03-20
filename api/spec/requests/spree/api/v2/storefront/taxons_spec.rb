@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Taxons Spec', type: :request do
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:taxonomy) { store.taxonomies.first }
   let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root) }
 

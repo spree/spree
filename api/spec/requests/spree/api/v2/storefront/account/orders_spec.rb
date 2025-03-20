@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Orders spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:user) { create(:user_with_addresses) }
   let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current, store: store) }
 

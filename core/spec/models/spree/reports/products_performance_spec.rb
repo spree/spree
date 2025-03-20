@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Reports::ProductsPerformance do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:report) { create(:products_performance_report, store: store) }
   let(:product) { create(:product, stores: [store]) }
   let(:variant) { create(:variant, product: product) }

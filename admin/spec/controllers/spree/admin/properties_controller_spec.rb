@@ -5,7 +5,7 @@ describe Spree::Admin::PropertiesController, type: :controller do
 
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   before do
     allow(controller).to receive(:current_store).and_return(store)

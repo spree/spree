@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
+  let(:store) { @default_store }
   let(:user) { create(:user) }
-  let(:order) { create(:order, user: user) }
-  let(:store) { Spree::Store.default }
+  let(:order) { create(:order, user: user, store: store) }
 
   context '#finalize!' do
     let(:order) { create(:order, email: 'test@example.com', store: store) }
@@ -34,13 +34,14 @@ describe Spree::Order, type: :model do
     context 'new order notifications' do
       it 'sends a new order notification email to store owner when notification email address is set' do
         mail_message = double 'Mail::Message'
+        allow(store).to receive(:new_order_notifications_email).and_return('test@example.com')
         expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
         expect(mail_message).to receive :deliver_later
         order.finalize!
       end
 
       it 'does not send a new order notification email to store owner when notification email address is blank' do
-        order.store.update(new_order_notifications_email: nil)
+        allow(store).to receive(:new_order_notifications_email).and_return(nil)
 
         mail_message = double 'Mail::Message'
         expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)

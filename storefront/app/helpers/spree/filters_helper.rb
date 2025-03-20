@@ -69,7 +69,7 @@ module Spree
     end
 
     def default_storefront_filter_values_scope
-      Spree::OptionValue.for_products(products_for_filters_default_scope).distinct
+      @default_storefront_filter_values_scope ||= Spree::OptionValue.for_products(products_for_filters_default_scope).distinct
     end
 
     def storefront_filter_values_scope(filter_selected)
@@ -82,7 +82,11 @@ module Spree
 
     def filter_values_for_filter(filter)
       selected = single_option_filter_selected?(filter.name)
-      filter.option_values.where(id: storefront_filter_values_scope(selected))
+      if filter.option_values.loaded?
+        filter.option_values.find_all { |option_value| storefront_filter_values_scope(selected).include?(option_value.id) }
+      else
+        filter.option_values.where(id: storefront_filter_values_scope(selected))
+      end
     end
 
     def storefront_products_for_taxon_filters
@@ -90,7 +94,7 @@ module Spree
     end
 
     def filter_taxon_ids
-      @filter_taxon_ids ||= begin
+      @filter_taxon_ids ||= Rails.cache.fetch([spree_base_cache_key, storefront_products_for_taxon_filters, @taxon], expires_in: 1.day) do
         scope = storefront_products_for_taxon_filters.joins(:classifications)
         scope = scope.in_taxon(@taxon).unscope(:order) if @taxon.present?
         scope.distinct.pluck(:taxon_id)
@@ -106,15 +110,17 @@ module Spree
     end
 
     def product_taxon_aggregations
-      @product_taxon_aggregations ||= current_store.taxons.
-                                      joins(:classifications).
-                                      where("#{Spree::Classification.table_name}.product_id" => storefront_products_for_taxon_filters.ids).
+      @product_taxon_aggregations ||= Rails.cache.fetch([spree_base_cache_key, storefront_products_for_taxon_filters, current_store.taxons], expires_in: 1.day) do
+        current_store.taxons.
+          joins(:classifications).
+          where("#{Spree::Classification.table_name}.product_id" => storefront_products_for_taxon_filters.ids).
                                       group(
                                         "#{Spree::Taxon.table_name}.id",
                                         "#{Spree::Classification.table_name}.product_id"
                                       ).
-                                      unscope(:order).
-                                      count("#{Spree::Classification.table_name}.product_id")
+          unscope(:order).
+          count("#{Spree::Classification.table_name}.product_id")
+      end
     end
 
     def products_count_for_taxon(taxon)

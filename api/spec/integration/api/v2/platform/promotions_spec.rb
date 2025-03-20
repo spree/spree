@@ -23,7 +23,7 @@ describe 'Promotions API', swagger: true do
     }
   }
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let!(:store_two) { create(:store) }
   let!(:store_three) { create(:store) }
 

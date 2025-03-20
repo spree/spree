@@ -5,7 +5,7 @@ describe Spree::Api::V2::Platform::PaymentMethodSerializer do
 
   subject { described_class.new(resource, params: serializer_params) }
 
-  let!(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:resource) { create(:credit_card_payment_method) }
 
   it { expect(subject.serializable_hash).to be_kind_of(Hash) }

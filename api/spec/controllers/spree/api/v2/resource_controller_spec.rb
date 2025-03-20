@@ -10,7 +10,7 @@ end
 
 describe Spree::Api::V2::ResourceController, type: :controller do
   let(:dummy_controller) { ApiV2DummyController.new }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   describe '#finder_params' do
     let(:currency) { store.default_currency }

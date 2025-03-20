@@ -13,7 +13,7 @@ describe 'Orders API', swagger: true do
   let(:persisted_order) { create(:order_with_line_items, state: :delivery) }
   let(:id) { persisted_order.number }
   let(:records_list) { create_list(:order, 2) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:product) { create(:product, price: 10.0, stores: [store]) }
   let(:country) { create(:country, states_required: true) }
   let(:state) { create(:state, country: country) }

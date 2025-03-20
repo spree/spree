@@ -5,7 +5,7 @@ module Spree
     describe Coupon, type: :model do
       subject { Coupon.new(order) }
 
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
       let(:order) { double('Order', coupon_code: '10off', store: store).as_null_object }
 
       it 'returns self in apply' do
@@ -306,7 +306,7 @@ module Spree
         let(:calculator) { create(:flat_rate_calculator) }
         let(:flat_percent_calculator) { create(:flat_percent_item_total_calculator, preferred_flat_percent: 10) }
         let(:order) do
-          create(:order_with_line_items, line_items_count: 3, user: user, store: Spree::Store.default)
+          create(:order_with_line_items, line_items_count: 3, user: user, store: store)
         end
         let!(:promotion) { create(:promotion, name: 'promo', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:coupon_code) { promotion.coupon_codes.first }
@@ -378,7 +378,7 @@ module Spree
       context 'number of usages for' do
         let!(:user) { create(:user) }
         let(:calculator) { create(:flat_rate_calculator) }
-        let(:order) { create(:order_with_line_items, line_items_count: 3, user: user, store: Spree::Store.default) }
+        let(:order) { create(:order_with_line_items, line_items_count: 3, user: user, store: store) }
         subject { Spree::PromotionHandler::Coupon.new(order) }
 
         context 'one common promotion code' do

@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
-  let!(:store)                     { Spree::Store.default }
-  let!(:products)                  { create_list(:product, 5, stores: [store]) }
-  let(:taxonomy)                   { create(:taxonomy, store: store) }
-  let!(:taxon)                     { taxonomy.root }
+  let(:store)                      { @default_store }
+  let!(:products)                   { create_list(:product, 5, stores: [store]) }
+  let(:taxonomy)                   { store.taxonomies.first || create(:taxonomy, store: store) }
+  let(:taxon)                      { taxonomy.root }
   let(:product_with_taxon)         { create(:product, taxons: [taxon], stores: [store]) }
   let(:product_with_name)          { create(:product, name: 'Test Product', stores: [store]) }
   let(:product_with_price)         { create(:product, price: 13.44, stores: [store]) }
@@ -28,6 +28,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
   before do
     I18n.default_locale = :en
     Spree::Api::Config[:api_v2_per_page_limit] = 4
+    allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store)
   end
 
   after { I18n.locale = :en }
@@ -160,9 +161,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
       context 'with locale set to polish' do
         # generate translations for default store
         let!(:store) do
-          default_store = Spree::Store.default
-          default_store.default_locale = 'en'
-          default_store.supported_locales = 'en,pl'
+          default_store = create(:store, default_locale: 'en', supported_locales: 'en,pl')
 
           Mobility.with_locale(:pl) do
             default_store.name = 'Spree Sklep Testowy'
@@ -353,7 +352,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       context 'with locale set to polish' do
         let!(:store) do
-          default_store = Spree::Store.default
+          default_store = create(:store)
           default_store.default_locale = 'en'
           default_store.supported_locales = 'en,pl'
           default_store.save
@@ -499,7 +498,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
 
       context 'sorting by name' do
-        before { store.update_column(:supported_locales, 'en,pl') }
+        let(:store) { create(:store, supported_locales: 'en,pl') }
+
         after  { I18n.locale = :en }
 
         context 'A-Z' do
@@ -539,7 +539,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
             it 'returns products sorted by name' do
               expect(json_response['data'].count).to      eq store.products.available.count
-              expect(json_response['data'].pluck(:id)).to eq store.products.available.
+              expect(json_response['data'].pluck(:id)).to eq store.products.i18n.available.
                 select("#{Spree::Product.table_name}.*, #{Spree::Product::Translation.table_name}_pl.name").
                 order(name: :desc).map(&:id).map(&:to_s)
             end
@@ -649,7 +649,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           let!(:time) { Time.current }
 
           context 'when updated_at date is same for each product' do
-            before { store.products.each { |p| p.update(updated_at: time) } }
+            before { store.products.update_all(updated_at: time) }
 
             it_behaves_like 'returning products in ascending sku order'
             it_behaves_like 'returning products in descending sku order'
@@ -923,7 +923,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'fetch products by curency param' do
-      before { store.update(supported_currencies: 'USD,EUR,GBP') }
+      let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
 
       context 'with default currency' do
         before { get '/api/v2/storefront/products?currency=USD' }
@@ -1014,8 +1014,9 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with supported currency but without prices in that currency' do
+      let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+
       before do
-        store.update(supported_currencies: 'USD,EUR,GBP')
         get "/api/v2/storefront/products/#{product.slug}?currency=EUR&include=default_variant"
       end
 

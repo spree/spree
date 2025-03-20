@@ -4,7 +4,7 @@ RSpec.describe Spree::Admin::LineItemsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:order) { create(:order_ready_to_ship, store: store) }
   let(:line_item) { order.line_items.first }
 

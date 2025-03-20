@@ -10,11 +10,11 @@ describe 'Shipments API', swagger: true do
     filter_examples: [{ name: 'filter[state_eq]', example: 'complete' }]
   }
 
+  let(:store) { @default_store }
   let(:order) { create(:order_ready_to_ship, store: store) }
   let(:product) { create(:product_in_stock, stores: [store]) }
   let(:id) { create(:shipment, order: order).id }
-  let(:records_list) { create_list(:shipment, 2) }
-  let(:store) { Spree::Store.default }
+  let(:records_list) { create_list(:shipment, 2, order: order) }
   let(:valid_create_param_value) do
     {
       shipment: {

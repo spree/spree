@@ -146,9 +146,10 @@ module Spree
     end
 
     def product_breadcrumb_taxons(product)
-      return Spree::Taxon.none if product.taxons.empty?
+      return Spree::Taxon.none if product.main_taxon.blank?
 
-      product.main_taxon.self_and_ancestors.where.not(depth: 0)
+      # using find_all as we already iterate over the taxons in #product_json_ld_breadcrumbs
+      product.main_taxon.self_and_ancestors.find_all { |taxon| taxon.depth != 0 }
     end
 
     def product_list_json_ld_elements(product_slugs)
