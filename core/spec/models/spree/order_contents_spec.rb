@@ -9,7 +9,7 @@ describe Spree::OrderContents, type: :model do
   let(:order) { create(:order, user: user, store: store) }
   let(:variant) { create(:variant) }
 
-  context '#add' do
+  describe '#add' do
     context 'given quantity is not explicitly provided' do
       it 'adds one line item' do
         line_item = subject.add(variant)
@@ -129,7 +129,7 @@ describe Spree::OrderContents, type: :model do
     end
   end
 
-  context '#remove' do
+  describe '#remove' do
     context 'given an invalid variant' do
       it 'raises an exception' do
         expect do
@@ -143,7 +143,7 @@ describe Spree::OrderContents, type: :model do
         line_item = subject.add(variant, 3)
         subject.remove(variant)
 
-        expect(line_item.quantity).to eq(2)
+        expect(line_item.reload.quantity).to eq(2)
       end
     end
 
@@ -169,7 +169,7 @@ describe Spree::OrderContents, type: :model do
       line_item = subject.add(variant, 3)
       subject.remove(variant, 1)
 
-      expect(line_item.quantity).to eq(2)
+      expect(line_item.reload.quantity).to eq(2)
     end
 
     context 'when store_credits payment' do
@@ -207,7 +207,7 @@ describe Spree::OrderContents, type: :model do
     end
   end
 
-  context '#remove_line_item' do
+  describe '#remove_line_item' do
     context 'given a shipment' do
       it 'ensure shipment calls update_amounts instead of order calling ensure_updated_shipments' do
         line_item = subject.add(variant, 1)
