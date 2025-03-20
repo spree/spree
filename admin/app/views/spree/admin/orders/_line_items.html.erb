@@ -1,5 +1,5 @@
 
-<%= turbo_frame_tag dom_id(@order, :line_items), class: "card mb-4 overflow-hidden" do %>
+<%= turbo_frame_tag dom_id(@order, :line_items), class: "card mb-4" do %>
   <% if @line_items.any? %>
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title d-flex align-items-center">

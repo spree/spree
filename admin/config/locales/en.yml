@@ -81,6 +81,8 @@ en:
       notifications: Notifications
       num_orders: No. of Orders
       digital_shipment_fulfillment_note: This shipment will be marked as fulfilled once the user downloads the digital product
+      reset_digital_link_download_limits: Reset download limits
+      successfully_reset_digital_links_limit: Download limits have been reset
       oauth_applications:
         last_used: Last used
         list: API keys

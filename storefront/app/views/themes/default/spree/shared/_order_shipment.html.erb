@@ -6,7 +6,8 @@
           <%= Spree.t(:delivery_address) %>
         </div>
         <div class="!leading-[1.375rem] text-neutral-800">
-          <%= render 'spree/shared/address', address: shipment.address || shipment.order.ship_address %>
+          <%= render "spree/shared/address",
+          address: shipment.address || shipment.order.ship_address %>
         </div>
       </div>
       <div class="text-sm lg:w-1/2 lg:flex justify-between">
@@ -18,11 +19,12 @@
             <% if shipment.shipping_method.present? %>
               <%= shipment.shipping_method.name %>
             <% else %>
-              <%= Spree.t('shipment_states.canceled') %>
+              <%= Spree.t("shipment_states.canceled") %>
             <% end %>
-            <br >
+            <br>
             <% if shipment.stock_location.present? %>
-              <%= Spree.t(:shipped_from) %> <%= shipment.stock_location.name %>
+              <%= Spree.t(:shipped_from) %>
+              <%= shipment.stock_location.name %>
             <% end %>
           </div>
         </div>
@@ -49,7 +51,8 @@
       <%# No message if shipment has been shipped already %>
     <% elsif shipment.canceled? && shipment.shipped_at.nil? %>
       <div class="alert-warning text-sm uppercase mt-3 px-3 py-2">
-        <strong><%= Spree.t(:shipment) %> <%= Spree.t('shipment_states.canceled') %></strong>.
+        <strong><%= Spree.t(:shipment) %>
+          <%= Spree.t("shipment_states.canceled") %></strong>.
         <%= Spree.t(:shipment_refunded_message) %>
       </div>
     <% elsif !shipment.digital? %>
@@ -59,7 +62,7 @@
     <% end %>
   </div>
 
-  <hr class="border-accent mx-4" >
+  <hr class="border-accent mx-4">
 
   <div class="grid grid-cols-1 gap-4 lg:gap-6 p-4 lg:p-6">
     <%= render partial: "spree/shared/order_line_item",
