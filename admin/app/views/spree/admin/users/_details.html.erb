@@ -38,6 +38,14 @@
             <% end %>
           </span>
         </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= Spree.t(:roles) %>
+          <span>
+            <% @user.spree_roles.each do |role| %>
+              <span class="tag small"><%= role.name %></span>
+            <% end %>
+          </span>
+        </li>
       </ul>
     <% end %>
   </div>
