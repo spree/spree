@@ -68,16 +68,35 @@
               </div>
               <div class="form-group">
                 <span class="label"><%= Spree.t(:option_values) %></span>
-                <!-- TODO add multi-input: <div data-controller="multi-input" class="values-inputs" data-variants-form-target="newOptionValuesInput">-->
-                <div class="values-inputs" data-variants-form-target="newOptionValuesInput">
-                  <div class="values-inputs__input" data-multi-input-target="input">
+                <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer">
+                  <%= tom_select_tag "new_option_values[]",
+                    preloaded_options: @option_values,
+                    multiple: false,
+                    create: true,
+                    include_blank: true,
+                    template: true,
+                    class: 'w-100 mb-1',
+                    data: {
+                      multi_tom_select_target: "selectTemplate"
+                    },
+                    select_data: {
+                      variants_form_target: "newOptionValuesSelect",
+                      action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
+                    } %>
+
+                  <div class="values-inputs__input">
                     <%= tom_select_tag "new_option_values[]",
                       preloaded_options: @option_values,
                       multiple: false,
                       create: true,
                       include_blank: true,
+                      class: 'w-100 mb-1',
+                      data: {
+                        multi_tom_select_target: "select"
+                      },
                       select_data: {
-                        variants_form_target: "newOptionValuesSelect"
+                        variants_form_target: "newOptionValuesSelect",
+                        action: "multi-tom-select#handleSelect keydown->multi-tom-select#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent"
                       } %>
                   </div>
                 </div>

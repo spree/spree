@@ -9,8 +9,8 @@ export default class extends CheckboxSelectAll {
     'optionsContainer',
     'optionFormTemplate',
     'newOptionForm',
+    'newOptionValuesSelectContainer',
     'newOptionValuesSelect',
-    'newOptionValuesInput',
     'newOptionNameInput',
     'newOptionButton',
     'newOptionButtonLabel',
@@ -54,6 +54,7 @@ export default class extends CheckboxSelectAll {
       this.element.closest('[data-controller*="product-form"]'),
       'product-form'
     )
+    this.currentOptionValues = []
 
     // Set ignoredVariants to all the variants that are not on the server
     const existingVariantsOnServer = Object.keys(this.variantIdsValue)
@@ -712,23 +713,30 @@ export default class extends CheckboxSelectAll {
       const response = await get(`/admin/option_types/${optionNameId}/option_values/select_options`)
 
       if (response.ok) {
-        const optionValues = await response.json
-
-        this.newOptionValuesSelectTargets.forEach((select) => {
-          const tomSelect = select.tomselect
-
-          tomSelect.clear()
-          tomSelect.clearOptions()
-          tomSelect.addOptions(optionValues)
-        })
+        this.currentOptionValues = await response.json
+        this.newOptionValuesSelectTargets.forEach((select) => this.replaceSelectOptions(select))
       }
     }
   }
 
-  handleNewOption(event) {
+  replaceSelectOptions(select) {
+    const tomSelect = select.tomselect
+
+    if (tomSelect) {
+      tomSelect.clear()
+      tomSelect.clearOptions()
+      tomSelect.addOptions(this.currentOptionValues)
+    }
+  }
+
+  newOptionValuesSelectTargetConnected(select) {
+    this.replaceSelectOptions(select)
+  }
+
+  handleNewOption(_event) {
     const newOptionName = this.newOptionNameInputTarget.options[this.newOptionNameInputTarget.selectedIndex].text
     const newOptionId = String(this.newOptionNameInputTarget.value)
-    const newOptionValues = this.newOptionValuesSelectTargets.map((select) => select.options[select.selectedIndex].text)
+    const newOptionValues = this.newOptionValuesSelectContainerTarget.values()
 
     if (
       !newOptionName.length ||
@@ -749,7 +757,7 @@ export default class extends CheckboxSelectAll {
 
   hideNewOptionForm() {
     this.newOptionNameInputTarget.tomselect.clear()
-    this.newOptionValuesSelectTargets.forEach((select) => select.tomselect.clear() )
+    this.newOptionValuesSelectContainerTarget.reset()
 
     this.newOptionFormTarget.classList.add('d-none')
 

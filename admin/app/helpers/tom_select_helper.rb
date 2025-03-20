@@ -4,9 +4,9 @@ module TomSelectHelper
   #
   # @param [String] name
   # @param [Hash] options
-  def tom_select_tag(name, options = { multiple: false, url: nil, active_option: nil, class: 'w-100', create: false, select_data: {} })
+  def tom_select_tag(name, options = { template: false, multiple: false, url: nil, active_option: nil, class: 'w-100', create: false, select_data: {} })
     stimulus_options = options[:data] || {}
-    stimulus_options[:controller] = 'select'
+    stimulus_options[:controller] = 'select' unless options[:template].present?
     stimulus_options['select-active-option-value'] = options[:active_option].as_json if options[:active_option]
     stimulus_options['select-empty-option-value'] = options[:empty_option] if options[:empty_option]
     stimulus_options['select-options-value'] = options[:options].as_json if options[:options]
