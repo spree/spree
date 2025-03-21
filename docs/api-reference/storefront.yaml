@@ -39,7 +39,7 @@ paths:
       security:
         - bearerAuth: []
     post:
-      description: 'Creates a new account. This endpoint requires the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem to be installed.'
+      description: 'Creates a new account'
       summary: Create an Account
       tags:
         - Account
@@ -89,7 +89,7 @@ paths:
         '422':
           $ref: '#/components/responses/422UnprocessableEntity'
     patch:
-      description: 'Updates the users account details. This endpoint requires the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem to be installed.'
+      description: 'Updates the users account details'
       summary: Update an Account
       tags:
         - Account
@@ -932,7 +932,7 @@ paths:
 
         To generate shipments you first need to fetch shipping rates via
 
-        [Get Shipping Rates](https://api.spreecommerce.org/docs/api-v2/b3A6MzE0Mjc2MQ-list-shipping-rates) endpoint
+        [Get Shipping Rates](/api-reference/storefront/checkout-shipments/list-shipping-rates) endpoint
       operationId: select-shipping-method
       responses:
         '200':

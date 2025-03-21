@@ -17,11 +17,14 @@ module Spree
       variables[:section] = section
       variables[:loaded] = true
 
+      css_id = "section-#{section.id}"
+      css_class = "section-#{section.class.name.demodulize.underscore.dasherize}"
+
       if page_builder_enabled?
-        turbo_frame_tag("section-#{section.id}") do
+        turbo_frame_tag(css_id, class: css_class) do
           content_tag(:div,
             data: {
-              editor_id: "section-#{section.id}",
+              editor_id: css_id,
               editor_name: section.name,
               editor_link: spree.edit_admin_page_section_path(section)
             }
@@ -35,11 +38,13 @@ module Spree
 
         path = section.lazy_path(variables)
 
-        turbo_frame_tag("section-#{section.id}", src: path, loading: 'eager') do
+        turbo_frame_tag(css_id, src: path, loading: 'eager', class: css_class) do
           render('/' + section.to_partial_path, **variables)
         end
       else
-        render('/' + section.to_partial_path, **variables)
+        content_tag(:div, id: css_id, class: css_class) do
+          render('/' + section.to_partial_path, **variables)
+        end
       end
     rescue ActionView::MissingTemplate, ActionView::Template::Error => e
       raise e unless Rails.env.production?

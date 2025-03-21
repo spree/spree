@@ -71,7 +71,7 @@ input[type="file"] {
 
   .option {
     @extend .p-2;
-    @extend .rounded;
+    @extend .rounded-sm;
   }
 
   .ts-dropdown-content {

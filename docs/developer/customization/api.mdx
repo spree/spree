@@ -1,0 +1,98 @@
+---
+title: API
+icon: code
+description: >-
+  This page covers adding new Spree API endpoints and customization of
+  existing ones
+---
+
+Before you start customizing Spree API endpoints, make sure you reviewed all existing API endpoints in the [Spree API docs](/api-reference).
+
+## Customizing JSON response
+
+Spree uses a library called [JSON API serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) to represent data returned by API endpoints.
+
+You can easily replace existing Spree serializers with your own thanks to [Spree Dependencies](dependencies). Here's a list of all serializers that you can override:
+
+| Key                                      | Value                                               |
+|------------------------------------------|-----------------------------------------------------|
+| `storefront_address_serializer`            | [Spree::V2::Storefront::AddressSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/address_serializer.rb)          |
+| `storefront_cart_serializer`               | [Spree::V2::Storefront::CartSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/cart_serializer.rb)             |
+| `storefront_credit_card_serializer`        | [Spree::V2::Storefront::CreditCardSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/credit_card_serializer.rb)       |
+| `storefront_country_serializer`            | [Spree::V2::Storefront::CountrySerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/country_serializer.rb)          |
+| `storefront_user_serializer`               | [Spree::V2::Storefront::UserSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/user_serializer.rb)             |
+| `storefront_shipment_serializer`           | [Spree::V2::Storefront::ShipmentSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/shipment_serializer.rb)         |
+| `storefront_taxon_serializer`              | [Spree::V2::Storefront::TaxonSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/taxon_serializer.rb)            |
+| `storefront_payment_method_serializer`     | [Spree::V2::Storefront::PaymentMethodSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/payment_method_serializer.rb)    |
+| `storefront_payment_serializer`            | [Spree::V2::Storefront::PaymentSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/payment_serializer.rb)          |
+| `storefront_product_serializer`            | [Spree::V2::Storefront::ProductSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/product_serializer.rb)          |
+| `storefront_estimated_shipment_serializer` | [Spree::V2::Storefront::EstimatedShippingRateSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/estimated_shipping_rate_serializer.rb) |
+| `storefront_store_serializer`              | [Spree::V2::Storefront::StoreSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/store_serializer.rb)            |
+| `storefront_order_serializer`              | [Spree::V2::Storefront::OrderSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/order_serializer.rb)            |
+| `storefront_variant_serializer`            | [Spree::V2::Storefront::VariantSerializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/variant_serializer.rb)          |
+
+### Adding custom attributes
+
+<Note>
+As a rule of thumb it's recommended to use [Properties](/developer/core-concepts/products#product-properties) and [OptionTypes/Option Values](/developer/core-concepts/products#option-types-and-option-values) for custom attributes and not to modify the Spree database schema
+</Note>
+
+Let's say you want to customize the Storefront API's [Product serializer](https://github.com/spree/spree/blob/main/api/app/serializers/spree/v2/storefront/product_serializer.rb) to include you custom database column `my_newcustom_attribute` that you've added to the `spree_products` database table.
+
+Let's start with creating a new serializer file:
+
+```bash
+mkdir -p app/serializers && touch app/serializers/my_product_serializer.rb
+```
+
+Place the following code in your new serializer file:
+
+```ruby
+class MyProductSerializer < Spree::V2::Storefront::ProductSerializer
+  attribute :my_new_custom_attribute
+end
+```
+
+<Info>
+This serializer will inherit from the `Spree::V2::Storefront::ProductSerializer` serializer, so you don't need to rewrite the whole serializer.
+</Info>
+
+Now let's tell Spree to use this new serializer, in `config/initializers/spree.rb` please set:
+
+```ruby
+Spree::Api::Dependencies.storefront_product_serializer = 'MyProductSerializer'
+```
+
+Restart the webserver and hit the [Products API](/api-reference/storefront/products/list-all-products) to notice that the payload now includes your new attribute.
+
+### Adding a new association
+
+Let's say you've created a new model called `Video` that belongs to `Product` (_Product has multiple Videos_).
+
+Let's create a new serializer `app/serializers/video_serializer.rb`:
+
+```ruby
+class VideoSerializer < Spree::Api::V2::BaseSerializer
+  set_type: :video
+  
+  attributes :url
+end
+```
+
+Now in your `app/serializers/my_product_serializer.rb`
+
+```ruby
+class MyProductSerializer < Spree::V2::Storefront::ProductSerializer
+  attribute :my_new_custom_attribute
+  
+  has_many :videos, serializer: :video
+end
+```
+
+Hitting the Products API you will notice that in the [relationships](https://jsonapi.org/format/#document-resource-object-relationships) key there will be a new key called `videos`
+
+To include Video response in the Product API add `?includes=videos` in the API URL, eg.
+
+```http
+GET https://localhost:3000/api/v2/storefront/products?include=videos
+```

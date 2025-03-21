@@ -1,17 +1,14 @@
 ---
 title: Decorators
-description: Decorators allow you to add behavior to Spree classes in your application.
+description: Decorators allow you to add or modify behavior of Spree classes in your application.
+icon: "code"
 ---
-
-<Warning>
-  It is highly recommended to use [Dependencies](dependencies) instead of decorators. Decorators should be used as a last resort. They can make upgrading Spree more difficult.
-</Warning>
 
 ## Overview
 
-All of Spree's models, controllers, helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
+All of Spree's models, controllers, services,helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
 
-Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended.
+Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended, eg. for the `Spree::Product` model, create a file called `app/models/spree/product_decorator.rb`.
 
 ## Decorating Models
 
@@ -43,7 +40,7 @@ Let's say you want to change the behavior of the `available?` in the [Product](h
 
 ### Adding a new method to the model
 
-You can also add a new method to the model. Or even add validations or any other rails magic methods, see example below.
+You can also add a new method to the model. Or even add custom validations, callbacks, etc.
 
 ```ruby
 module Spree
