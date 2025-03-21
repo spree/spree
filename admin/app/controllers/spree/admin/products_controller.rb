@@ -167,20 +167,25 @@ module Spree
         return unless @product.has_variants?
 
         @product_options = {}
+        @product_available_options = {}
 
         @product.
           option_values.
           joins(option_type: :product_option_types).
+          includes(option_type: :option_values).
           merge(@product.product_option_types).
           reorder('spree_product_option_types.position').
           uniq.group_by(&:option_type).each_with_index do |option, index|
-          option_type, option_values = option
-          @product_options[option_type.id.to_s] = {
-            name: option_type.presentation,
-            position: index + 1,
-            values: option_values.pluck(:presentation).uniq
-          }
-        end
+            option_type, option_values = option
+
+            @product_options[option_type.id.to_s] = {
+              name: option_type.presentation,
+              position: index + 1,
+              values: option_values.pluck(:presentation).uniq
+            }
+
+            @product_available_options[option_type.id.to_s] = option_type.option_values.to_tom_select_json
+          end
 
         @product_stock = {}
         @product.stock_items.includes(:variant).each do |stock_item|

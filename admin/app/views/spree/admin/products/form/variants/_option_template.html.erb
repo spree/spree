@@ -24,14 +24,30 @@
     <div class="w-100">
       <div class="form-group">
         <label class="label" for="option_name"><%= Spree.t(:option_name) %></label>
-        <%= tom_select_tag :option_name, multiple: false, create: true, preloaded_options: option_types_for_select, include_blank: true %>
+        <%= tom_select_tag :option_name,
+          multiple: false,
+          create: true,
+          preloaded_options: option_types_for_select,
+          include_blank: true,
+          select_data: {
+            action: "variants-form#handleSelectedOptionName tomSelectInitialized->variants-form#refreshOptionNameSelect"
+          } %>
       </div>
       <div class="form-group">
         <span class="label"><%= Spree.t(:option_values) %></span>
-        <div data-controller="multi-input" class="values-inputs" data-slot="optionValuesInput">
-          <div class="values-inputs__input" data-multi-input-target="input">
-            <input class="form-control" data-variants-form-option-id-param="" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#saveOption:prevent">
-          </div>
+        <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer" data-slot="optionValuesSelectContainer">
+          <%= tom_select_tag "new_option_values[]",
+            template: true,
+            multiple: false,
+            create: true,
+            include_blank: true,
+            data: {
+              multi_tom_select_target: "selectTemplate"
+            },
+            select_data: {
+              variants_form_target: "newOptionValuesSelect",
+              action: "multi-tom-select#handleSelect keydown.enter->variants-form#handleNewOption:prevent"
+            } %>
         </div>
       </div>
       <div class="d-flex justify-content-between">

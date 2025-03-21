@@ -15,6 +15,7 @@
         data-variants-form-current-stock-location-id-value="<%= default_stock_location_for_product(@product).id %>"
         data-variants-form-stock-locations-value="<%= available_stock_locations_for_product(@product).ids.map(&:to_s).to_json %>"
         <% if @product_options.present? %> data-variants-form-options-value="<%= @product_options.to_json %>" <% end %>
+        <% if @product_available_options.present? %> data-variants-form-available-options-value="<%= @product_available_options.to_json %>" <% end %>
         <% if @product_stock.present? %> data-variants-form-stock-value="<%= @product_stock.to_json %>" <% end %>
         <% if @product_prices.present? %> data-variants-form-prices-value="<%= @product_prices.to_json %>" <% end %>
         <% if @product_variant_ids.present? %> data-variants-form-variant-ids-value="<%= @product_variant_ids.to_json %>" <% end %>
@@ -51,7 +52,15 @@
             <div class="w-100">
               <div class="form-group">
                 <label class="label" for="new_option_name"><%= Spree.t(:option_name) %></label>
-                <%= tom_select_tag :new_option_name, multiple: false, create: true, preloaded_options: option_types_for_select, include_blank: true, select_data: {variants_form_target: "newOptionNameInput"} %>
+                <%= tom_select_tag :new_option_name,
+                  multiple: false,
+                  create: true,
+                  preloaded_options: option_types_for_select,
+                  include_blank: true,
+                  select_data: {
+                    variants_form_target: "newOptionNameInput",
+                    action: "variants-form#handleSelectedOptionName tomSelectInitialized->variants-form#refreshOptionNameSelect"
+                  } %>
                 <% if can?(:manage, Spree::OptionType) %>
                   <p class="form-text text-muted mt-2">
                     <%= Spree.t('admin.products.variants.option_types_link', link: spree.admin_option_types_path).html_safe %>
@@ -60,10 +69,31 @@
               </div>
               <div class="form-group">
                 <span class="label"><%= Spree.t(:option_values) %></span>
-                <div data-controller="multi-input" class="values-inputs" data-variants-form-target="newOptionValuesInput">
-                  <div class="values-inputs__input" data-multi-input-target="input">
-                    <input class="form-control" name="new_option_values[]" data-action="multi-input#handleInput keydown->multi-input#handleKeyDown keydown.enter->variants-form#handleNewOption:prevent">
-                  </div>
+                <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer">
+                  <%= tom_select_tag "new_option_values[]",
+                    template: true,
+                    multiple: false,
+                    create: true,
+                    include_blank: true,
+                    data: {
+                      multi_tom_select_target: "selectTemplate"
+                    },
+                    select_data: {
+                      variants_form_target: "newOptionValuesSelect",
+                      action: "multi-tom-select#handleSelect keydown.enter->variants-form#handleNewOption:prevent"
+                    } %>
+
+                  <%= tom_select_tag "new_option_values[]",
+                    multiple: false,
+                    create: true,
+                    include_blank: true,
+                    data: {
+                      multi_tom_select_target: "select"
+                    },
+                    select_data: {
+                      variants_form_target: "newOptionValuesSelect",
+                      action: "multi-tom-select#handleSelect keydown.enter->variants-form#handleNewOption:prevent"
+                    } %>
                 </div>
               </div>
               <div class="d-flex justify-content-between">
