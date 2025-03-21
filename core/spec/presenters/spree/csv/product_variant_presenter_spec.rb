@@ -8,6 +8,8 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
   let(:taxons) { [] }
   let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store) }
 
+  let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+
   describe '#call' do
     subject { presenter.call }
 
@@ -41,9 +43,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[26]).to eq variant.backorderable?
       expect(subject[27]).to eq variant.tax_category&.name
       expect(subject[28]).to eq variant.digital?
-      expect(subject[29]).to eq variant.images[0]&.attachment&.url
-      expect(subject[30]).to eq variant.images[1]&.attachment&.url
-      expect(subject[31]).to eq variant.images[2]&.attachment&.url
+      expect(subject[29]).to eq variant.images[0].original_url
+      expect(subject[30]).to eq variant.images[1].original_url
+      expect(subject[31]).to eq variant.images[2].original_url
     end
 
     context 'when index is not zero' do
