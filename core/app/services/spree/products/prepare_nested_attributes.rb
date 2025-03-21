@@ -16,7 +16,7 @@ module Spree
 
             if can_update_prices?
               # If the variant price is nil then mark it for destruction
-              variant_params[:prices_attributes].each do |_key, price_params|
+              variant_params[:prices_attributes]&.each do |_key, price_params|
                 variant_params[:prices_attributes][key]['_destroy'] = '1' if price_params[:amount].blank?
               end
             else
@@ -37,7 +37,7 @@ module Spree
 
           if can_update_prices?
             # If the master price is nil then mark it for destruction
-            params[:master_attributes][:prices_attributes].each do |key, price_params|
+            params[:master_attributes][:prices_attributes]&.each do |key, price_params|
               params[:master_attributes][:prices_attributes][key]['_destroy'] = '1' if price_params[:amount].blank?
             end
           else

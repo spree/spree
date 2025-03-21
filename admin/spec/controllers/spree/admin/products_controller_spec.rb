@@ -4,12 +4,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
   let(:user) { create(:admin_user) }
+  let(:store) { @default_store }
 
   before do
     allow(controller).to receive(:current_ability).and_call_original
   end
-
-  let(:store) { @default_store }
 
   describe 'GET #index' do
     it 'can find a product by SKU' do
@@ -491,6 +490,48 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
+    describe 'master variant prices' do
+      let(:product_params) do
+        {
+          master_attributes: {
+            id: product.master_id,
+            prices_attributes: {
+              '0' => {
+                currency: 'PLN',
+                amount: 10,
+                id: product.master.price_in('PLN')&.id
+              },
+              '1' => {
+                currency: 'USD',
+                amount: 20,
+                id: product.master.price_in('USD')&.id
+              }
+            }
+          }
+        }
+      end
+
+      it 'updates the prices of the master variant' do
+        send_request
+        expect(product.master.price_in('PLN').amount).to eq 10
+        expect(product.master.price_in('USD').amount).to eq 20
+      end
+
+      context 'when price is not present' do
+        before do
+          product_params[:master_attributes][:prices_attributes]['0'][:amount] = nil
+        end
+
+        it 'removes the price' do
+          send_request
+          expect(product.master.price_in('PLN').amount).to be_nil
+          expect(product.master.price_in('PLN').id).to be_nil
+          expect(product.master.price_in('USD').amount).to eq 20
+          expect(product.master.price_in('USD').id).to be_present
+        end
+      end
+    end
+
     context 'adding variants to existing product' do
       let(:stock_location) { create(:stock_location) }
       let(:other_stock_location) { create(:stock_location) }
@@ -594,8 +635,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           variants_attributes: {
             '0' => {
               prices_attributes: {
-                '0': { currency: 'PLN', amount: 10, id: variant1.price_in('PLN')&.id },
-                '1': { currency: 'USD', amount: 20, id: variant1.price_in('USD')&.id }
+                '0' => { currency: 'PLN', amount: 10, id: variant1.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 20, id: variant1.price_in('USD')&.id }
               },
               id: variant1.id,
               stock_items_attributes: {
@@ -620,8 +661,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
             },
             '1' => {
               prices_attributes: {
-                '0': { currency: 'PLN', amount: 30, id: variant2.price_in('PLN')&.id },
-                '1': { currency: 'USD', amount: 40, id: variant2.price_in('USD')&.id }
+                '0' => { currency: 'PLN', amount: 30, id: variant2.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 40, id: variant2.price_in('USD')&.id }
               },
               id: variant2.id,
               stock_items_attributes: {
@@ -646,6 +687,21 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
             }
           }
         }
+      end
+
+      context 'when price is not present' do
+        before do
+          product_params[:variants_attributes]['0'][:prices_attributes]['0'][:amount] = nil
+        end
+
+        it 'removes the price' do
+          send_request
+
+          expect(variant1.price_in('PLN').amount).to be_nil
+          expect(variant1.price_in('PLN').id).to be_nil
+          expect(variant1.price_in('USD').amount).to eq 20
+          expect(variant1.price_in('USD').id).to be_present
+        end
       end
 
       it 'updates the variants' do
@@ -1068,7 +1124,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         let!(:taxon_1) { create(:taxon) }
 
         it 'skips auto matching taxons' do
-          expect { send_request }.to_not have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+          expect { send_request }.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
         end
       end
     end
@@ -1165,7 +1221,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         let!(:taxon_1) { create(:taxon) }
 
         it 'skips auto matching taxons' do
-          expect { send_request }.to_not have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
+          expect { send_request }.not_to have_enqueued_job(Spree::Products::AutoMatchTaxonsJob)
         end
       end
     end
