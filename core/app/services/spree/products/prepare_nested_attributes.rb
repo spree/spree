@@ -14,7 +14,14 @@ module Spree
             existing_variant = variant_params[:id].presence && @product.variants.find_by(id: variant_params[:id])
             variants_to_remove.delete(variant_params[:id]) if variant_params[:id].present?
 
-            variant_params.delete(:prices_attributes) unless can_update_prices?
+            if can_update_prices?
+              # If the variant price is nil then mark it for destruction
+              variant_params[:prices_attributes]&.each do |_key, price_params|
+                variant_params[:prices_attributes][key]['_destroy'] = '1' if price_params[:amount].blank?
+              end
+            else
+              variant_params.delete(:prices_attributes)
+            end
 
             variant_params[:option_value_variants_attributes] = update_option_value_variants(variant_params.delete(:options), existing_variant)
 
@@ -27,6 +34,15 @@ module Spree
           params[:product_option_types_attributes] = product_option_types_params.merge(removed_product_option_types_attributes)
         elsif params[:master_attributes]
           params[:master_attributes].delete(:stock_items_attributes) unless can_update_stock_items?
+
+          if can_update_prices?
+            # If the master price is nil then mark it for destruction
+            params[:master_attributes][:prices_attributes]&.each do |key, price_params|
+              params[:master_attributes][:prices_attributes][key]['_destroy'] = '1' if price_params[:amount].blank?
+            end
+          else
+            params[:master_attributes].delete(:prices_attributes)
+          end
         end
 
         params.delete(:variants_attributes) if params[:variants_attributes].blank?

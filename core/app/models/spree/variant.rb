@@ -170,7 +170,7 @@ module Spree
     accepts_nested_attributes_for(
       :prices,
       reject_if: ->(attributes) { attributes['currency'].blank? || attributes['amount'].blank? },
-      allow_destroy: false
+      allow_destroy: true
     )
 
     accepts_nested_attributes_for(
