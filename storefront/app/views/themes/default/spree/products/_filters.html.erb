@@ -24,7 +24,7 @@
         <% end %>
 
         <% Spree::OptionType.filterable.order(:position).includes(:option_values).each do |filter| %>
-          <% if filter.name == 'color'%>
+          <% if filter.color? %>
             <%= render 'spree/products/filters/colors', filter: filter, f: f %>
           <% else %>
             <%= render 'spree/products/filters/generic', filter: filter, f: f %>
