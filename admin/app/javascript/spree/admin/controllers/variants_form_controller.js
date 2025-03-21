@@ -244,7 +244,7 @@ export default class extends CheckboxSelectAll {
         label.textContent = label.dataset.noOptionsText
       }
     }
-    this.refreshTomSelect()
+    this.refreshOptionNameSelect()
     this.variantsValue = this.generateVariants(value)
 
     // We want to clear the ignoredVariants when the options change
@@ -836,6 +836,7 @@ export default class extends CheckboxSelectAll {
     event.preventDefault()
     this.newOptionFormTarget.classList.remove('d-none')
     this.newOptionButtonTarget.classList.add('d-none')
+    this.refreshOptionNameSelect()
   }
 
   optionTemplate(name, values, id, color = false) {
@@ -928,24 +929,34 @@ export default class extends CheckboxSelectAll {
     return templates
   }
 
-  refreshTomSelect() {
+  refreshOptionNameSelect() {
     const alreadySelectedOptions = Object.keys(this.optionsValue).filter((k) => this.optionsValue[k] !== null)
 
     Array.from(this.newOptionNameInputTarget.options).forEach((option) => {
-      const tomselectOption = this.newOptionNameInputTarget.tomselect?.getOption(option.value)
+      const tomSelect = this.newOptionNameInputTarget.tomselect
+      if (!tomSelect) return
+
+      const tomselectOption = tomSelect.getOption(option.value)
       if (!tomselectOption) return
+
       const alreadySelected = alreadySelectedOptions.includes(option.value)
       tomselectOption.ariaDisabled = alreadySelected
+
       if (alreadySelected) {
         tomselectOption.removeAttribute('data-selectable')
       } else {
         tomselectOption.setAttribute('data-selectable', '')
       }
+
       tomselectOption.disabled = alreadySelected
     })
 
-    this.newOptionNameInputTarget.tomselect?.sync()
-    this.newOptionNameInputTarget.tomselect?.refreshOptions()
+    const optionNameTomSelect = this.newOptionNameInputTarget.tomselect
+
+    if (optionNameTomSelect) {
+      optionNameTomSelect.sync()
+      optionNameTomSelect.refreshOptions(false)
+    }
   }
 
   generateVariants(optionsValue) {

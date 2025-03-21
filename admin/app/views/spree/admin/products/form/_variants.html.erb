@@ -59,7 +59,7 @@
                   include_blank: true,
                   select_data: {
                     variants_form_target: "newOptionNameInput",
-                    action: "variants-form#handleSelectedOptionName"
+                    action: "variants-form#handleSelectedOptionName tomSelectInitialized->variants-form#refreshOptionNameSelect"
                   } %>
                 <% if can?(:manage, Spree::OptionType) %>
                   <p class="form-text text-muted mt-2">
