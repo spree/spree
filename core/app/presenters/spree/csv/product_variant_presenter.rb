@@ -57,6 +57,17 @@ module Spree
 
       attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency
 
+      ##
+      # Generates an array representing a CSV row of product variant data.
+      #
+      # For the primary variant row (when the index is zero), product-level details such as name,
+      # slug, status, vendor and brand names, description, meta tags, and tag/label lists are included.
+      # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
+      # availability dates, inventory count, digital flag, tax category, image URLs via original_url,
+      # and the first three option types and corresponding option values) are appended.
+      # Additionally, when the index is zero, associated taxons and properties are added.
+      #
+      # @return [Array] An array containing the combined product and variant CSV data.
       def call
         csv = [
           product.id,
