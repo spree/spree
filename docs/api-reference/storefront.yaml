@@ -2034,7 +2034,7 @@ paths:
         - bearerAuth: [ ]
       tags:
         - Wishlists / Wished Items
-  '/api/v2/storefront/digital_links/{token}':
+  '/api/v2/storefront/digitals/{token}':
     get:
       summary: Download a Digital Asset
       tags:
