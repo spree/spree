@@ -35,6 +35,10 @@ module Spree
     validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validate :at_least_one_shipping_category
 
+    scope :digital, lambda {
+                      joins(:calculator).where(spree_calculators: { type: Spree::Calculator::Shipping::DigitalDelivery.to_s })
+                    }
+
     if defined?(PgSearch)
       # full text search
       include PgSearch::Model

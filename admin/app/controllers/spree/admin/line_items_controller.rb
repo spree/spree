@@ -80,6 +80,13 @@ module Spree
         redirect_to spree.edit_admin_order_path(@order, line_item_updated: true)
       end
 
+      def reset_digital_links_limit
+        @line_item.digital_links.update_all(access_counter: 0, created_at: Time.current, updated_at: Time.current)
+        flash[:success] = Spree.t('admin.successfully_reset_digital_links_limit')
+
+        redirect_to spree.edit_admin_order_path(@order)
+      end
+
       private
 
       def model_class

@@ -14,9 +14,9 @@ module Spree
     def show
       @order = complete_order_finder.new(number: params[:id], token: params[:token], store: current_store).execute.first
 
-      raise ActiveRecord::RecordNotFound if @order.blank?
+      raise ActiveRecord::RecordNotFound if @order.blank? || !authorize_access
 
-      @shipments = @order.shipments
+      @shipments = @order.shipments.includes(:stock_location, :address, selected_shipping_rate: :shipping_method, inventory_units: :line_item)
     end
 
     # PUT /cart
@@ -47,6 +47,12 @@ module Spree
     end
 
     private
+
+    def authorize_access
+      return true if @order.user_id.nil?
+
+      @order.user == try_spree_current_user
+    end
 
     def find_order_by_cookie
       if order_token.present?

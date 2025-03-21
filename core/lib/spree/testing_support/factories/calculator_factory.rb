@@ -29,4 +29,8 @@ FactoryBot.define do
   factory :non_free_shipping_calculator, class: Spree::Calculator::Shipping::FlatRate do
     after(:create) { |c| c.set_preference(:amount, 20.0) }
   end
+
+  factory :digital_shipping_calculator, class: Spree::Calculator::Shipping::DigitalDelivery do
+    after(:create) { |c| c.set_preference(:amount, 0) }
+  end
 end

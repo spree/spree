@@ -9,6 +9,7 @@ describe Spree::OrdersController, type: :controller do
   render_views
 
   before do
+    allow(controller).to receive_messages(try_spree_current_user: user)
     allow(controller).to receive(:current_store).and_return(store)
   end
 
@@ -50,7 +51,7 @@ describe Spree::OrdersController, type: :controller do
       allow(controller).to receive_messages(try_spree_current_user: user)
     end
 
-    context '#update' do
+    describe '#update' do
       context 'with authorization' do
         before do
           allow(controller).to receive :check_authorization
@@ -73,7 +74,7 @@ describe Spree::OrdersController, type: :controller do
     end
 
     # Regression test for #2750
-    context '#update' do
+    describe '#update' do
       before do
         allow(user).to receive :last_incomplete_spree_order
         allow(controller).to receive :set_current_order
@@ -104,7 +105,7 @@ describe Spree::OrdersController, type: :controller do
   end
 
   describe '#show' do
-    let(:order) { create(:completed_order_with_totals, store: store) }
+    let(:order) { create(:completed_order_with_totals, store: store, user: user) }
 
     it 'renders the show template' do
       get :show, params: { id: order.number, token: order.token }
@@ -113,9 +114,19 @@ describe Spree::OrdersController, type: :controller do
 
     context 'when order is not found' do
       it 'raises ActiveRecord::RecordNotFound' do
-        expect {
+        expect do
           get :show, params: { id: 'invalid', token: order.token }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'when order belongs to another user' do
+      let(:order) { create(:completed_order_with_totals, store: store, user: create(:user)) }
+
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect do
+          get :show, params: { id: order.number, token: order.token }
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

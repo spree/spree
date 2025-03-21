@@ -3,13 +3,13 @@ module Spree
     class OrdersController < BaseController
       # GET /account/orders
       def index
-        @orders = orders_scope.page(params[:page]).per(25)
+        @orders = orders_scope.order(created_at: :desc).page(params[:page]).per(25)
       end
 
       # GET /account/orders/:id
       def show
         @order = orders_scope.find_by!(number: params[:id])
-        @shipments = @order.shipments
+        @shipments = @order.shipments.includes(:stock_location, :address, selected_shipping_rate: :shipping_method, inventory_units: :line_item)
       end
 
       private

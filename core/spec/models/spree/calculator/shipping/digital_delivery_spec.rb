@@ -22,9 +22,12 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
   end
 
   describe '#available?' do
+    let(:digital_shipping_method) { create(:digital_shipping_method) }
+    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+
     let(:digital_order) do
       order = create(:order)
-      variants = 3.times.map { create(:variant, digitals: [FactoryBot.create(:digital)]) }
+      variants = 3.times.map { create(:variant, digitals: [FactoryBot.create(:digital)], product: digital_product) }
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|
         add_line_item_to_order(order, v, 1)
@@ -36,7 +39,7 @@ RSpec.describe Spree::Calculator::Shipping::DigitalDelivery do
 
     let(:mixed_order) do
       order = create(:order)
-      variants = 2.times.map { create(:variant, digitals: [FactoryBot.create(:digital)]) }
+      variants = 2.times.map { create(:variant, digitals: [FactoryBot.create(:digital)], product: digital_product) }
       variants << create(:variant)
       package = Spree::Stock::Package.new(create(:stock_location), [])
       variants.each do |v|

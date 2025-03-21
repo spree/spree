@@ -70,7 +70,7 @@ describe Spree::Order, type: :model do
       expect(order.passed_checkout_step?('delivery')).to be true
     end
 
-    context '#checkout_steps' do
+    describe '#checkout_steps' do
       context 'when confirmation not required' do
         before do
           allow(order).to receive_messages confirmation_required?: false
@@ -450,16 +450,19 @@ describe Spree::Order, type: :model do
     end
 
     context 'default credit card' do
-      let(:digital) { create(:digital) }
+      let(:digital_shipping_method) { create(:digital_shipping_method) }
+      let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+      let(:variant_digital) { create(:variant, product: digital_product) }
 
       before do
         order.user = FactoryBot.create(:user)
         order.email = 'spree@example.org'
         order.payments << FactoryBot.create(:payment)
+        create(:digital, variant: variant_digital)
 
         # make sure we will actually capture a payment
         allow(order).to receive_messages(payment_required?: true)
-        order.line_items << FactoryBot.create(:line_item, variant: digital.variant)
+        order.line_items << FactoryBot.create(:line_item, variant: variant_digital)
         Spree::OrderUpdater.new(order).update
 
         order.save!

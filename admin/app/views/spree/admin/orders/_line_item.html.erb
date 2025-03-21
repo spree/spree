@@ -1,5 +1,5 @@
 <%= turbo_frame_tag dom_id(line_item), class: "border-bottom px-3 order-line-items__form hover-light" do %>
-  <%= render 'spree/admin/variants/variant', variant: line_item.variant %>
+  <%= render "spree/admin/variants/variant", variant: line_item.variant %>
   <span class="d-flex align-items-center justify-content-center">
     <%= line_item.single_money.to_html %>
   </span>
@@ -19,8 +19,56 @@
     <%= line_item.display_total %>
   </span>
   <span class="d-flex align-items-center justify-content-end">
-    <% if can?(:edit, line_item) %>
-      <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_line_item_path(@order, line_item), class: 'with-tip btn btn-sm btn-light', no_text: true, data: {test_id: :edit_line_item} %>
+
+    <% if line_item.digital_links.any? && can?(:edit, line_item) %>
+      <div class="dropdown">
+        <button
+          class="btn btn-sm btn-light"
+          type="button"
+          data-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <%= icon "dots-vertical", class: "mr-0" %>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px;">
+          <%= link_to_with_icon "edit",
+          Spree.t(:edit),
+          spree.edit_admin_order_line_item_path(@order, line_item),
+          class: "btn-light dropdown-item",
+          data: {
+            test_id: :edit_line_item,
+          } %>
+          <%= link_to_with_icon "refresh",
+          Spree.t("admin.reset_digital_link_download_limits"),
+          spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
+          data: {
+            turbo_method: :post,
+            turbo_confirm: Spree.t(:are_you_sure),
+            turbo_frame: :_top,
+          },
+          class: "btn-light dropdown-item" %>
+        </div>
+      </div>
+    <% elsif line_item.digital_links.any? %>
+      <%= link_to_with_icon "refresh",
+      Spree.t("admin.reset_digital_link_download_limits"),
+      spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
+      data: {
+        turbo_method: :post,
+        turbo_confirm: Spree.t(:are_you_sure),
+        turbo_frame: :_top,
+      },
+      no_text: true,
+      class: "with-tip btn btn-sm btn-light" %>
+    <% elsif can?(:edit, line_item) %>
+      <%= link_to_with_icon "edit",
+      Spree.t(:edit),
+      spree.edit_admin_order_line_item_path(@order, line_item),
+      class: "with-tip btn btn-sm btn-light",
+      no_text: true,
+      data: {
+        test_id: :edit_line_item,
+      } %>
     <% end %>
   </span>
 <% end %>

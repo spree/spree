@@ -2,21 +2,21 @@ module Spree
   module CheckoutHelper
     def checkout_progress(numbers: false)
       states = (@order.checkout_steps - ['complete']).unshift('cart')
+      states -= ['delivery'] if @order.digital?
+
       items = states.each_with_index.map do |state, i|
         text = Spree.t("order_state.#{state}").titleize
         text.prepend("#{i.succ}. ") if numbers
 
         css_classes = ['breadcrumb-item']
-        current_index = states.index(@order.state)
-        state_index = states.index(state)
 
-        if state_index < current_index
+        if @order.passed_checkout_step?(state)
           link_content = text
-          if state == 'cart'
-            link_url = spree.cart_url(host: current_store.url_or_custom_domain, order_token: @order.token)
-          else
-            link_url = spree.checkout_state_path(@order.token, state)
-          end
+          link_url = if state == 'cart'
+                       spree.cart_url(host: current_store.url_or_custom_domain, order_token: @order.token)
+                     else
+                       spree.checkout_state_path(@order.token, state)
+                     end
 
           text = link_to(link_content, link_url)
           css_classes << 'text-primary'
@@ -25,8 +25,7 @@ module Spree
           content_tag('li', text, class: "breadcrumb-item #{state == @order.state ? 'font-bold' : 'text-text'}")
         end
       end
-      content = content_tag('ol', raw(items.join("\n")), class: 'breadcrumb flex items-center py-6 gap-2', id: "checkout-step-#{@order.state}")
-      content
+      content_tag('ol', raw(items.join("\n")), class: 'breadcrumb flex items-center py-6 gap-2', id: "checkout-step-#{@order.state}")
     end
 
     def checkout_available_payment_methods
@@ -48,7 +47,8 @@ module Spree
     end
 
     def quick_checkout_enabled?(order)
-      order.payment_required? && order.shipments.count <= 1
+      order.payment_required? && order.shipments.count <= 1 &&
+        (order.digital? || !order.some_digital?) # Either fully digital or not digital at all
     end
 
     def can_use_store_credit_on_checkout?(order)

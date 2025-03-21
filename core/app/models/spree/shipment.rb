@@ -59,7 +59,8 @@ module Spree
                                                  joins(:selected_shipping_rate).
                                                    where(Spree::ShippingRate.arel_table[:shipping_method_id].not_eq(nil)).
                                                    select(Spree::ShippingRate.arel_table[:shipping_method_id])
-                                               }
+                                          }
+    scope :digital_delivery, -> { joins(:shipping_methods).merge(Spree::ShippingMethod.digital) }
 
     delegate :store, :currency, to: :order
     delegate :amount_in_cents, to: :display_cost
@@ -153,7 +154,7 @@ module Spree
     #
     # @return [Boolean]
     def shippable?
-      can_ship? && tracked?
+      can_ship? && (tracked? || digital?)
     end
 
     # Returns true if not all of the shipment's line items are fully shipped
@@ -174,7 +175,7 @@ module Spree
     def determine_state(order)
       return 'canceled' if canceled? || order.canceled?
       return 'pending' unless order.can_ship?
-      return 'pending' if inventory_units.any? &:backordered?
+      return 'pending' if inventory_units.any?(&:backordered?)
       return 'shipped' if shipped?
 
       order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
@@ -196,7 +197,7 @@ module Spree
     def free?
       return true if final_price == BigDecimal(0)
 
-      return with_free_shipping_promotion?
+      with_free_shipping_promotion?
     end
 
     def with_free_shipping_promotion?
@@ -226,6 +227,10 @@ module Spree
 
     def line_items
       inventory_units.includes(:line_item).map(&:line_item).uniq
+    end
+
+    def digital?
+      shipping_method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)

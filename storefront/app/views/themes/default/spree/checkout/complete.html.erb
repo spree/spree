@@ -8,8 +8,8 @@
 
   <div class="border p-3 rounded-md">
     <h5 class="mb-3 font-semibold pb-3 border-b font-body">
-      <%= Spree.t('storefront.checkout.order_success') %>
-    </h6>
+      <%= Spree.t("storefront.checkout.order_success") %>
+    </h5>
     <p class="mb-0">
       <%= Spree.t('storefront.checkout.order_success_message') %>
     </p>
@@ -57,6 +57,28 @@
         <% end %>
     </div>
   </div>
+
+  <% if @order.digital_links.any? %>
+    <div class="border p-3 rounded-md mt-4">
+      <h5 class="mb-3 font-bold pb-3 border-b font-body"><%= Spree.t(:attachments) %></h5>
+
+      <ul class="flex flex-col gap-2">
+        <% @order.digital_line_items.each do |line_item| %>
+          <li class="flex flex-col gap-1">
+            <span class="font-bold"><%= line_item.product.name %></span>
+            <ul class="flex flex-col gap-1">
+              <% line_item.digital_links.each do |digital_link| %>
+                <li>
+                  <%= link_to "#{Spree.t(:download)} #{digital_link.filename}",
+                  spree.digital_link_path(digital_link.token) %>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>
 
-<%= render_storefront_partials(:checkout_complete_partials) if order_just_completed?%>
+<%= render_storefront_partials(:checkout_complete_partials) if order_just_completed? %>
