@@ -14,7 +14,7 @@ module Spree
       end
 
       def digital_line_items
-        line_items.with_digital_assets
+        line_items.with_digital_assets.distinct
       end
 
       def digital_links
