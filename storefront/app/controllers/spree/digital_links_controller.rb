@@ -35,7 +35,7 @@ module Spree
     end
 
     def digital_link
-      @digital_link ||= DigitalLink.find_by!(token: params[:id])
+      @digital_link ||= current_store.digital_links.find_by!(token: params[:id])
     end
 
     def shipments
