@@ -479,11 +479,7 @@ module Spree
 
     # Is this variant purely digital? (no physical product)
     def digital?
-      digitals.present? && product.digital?
-    end
-
-    def with_digital_assets?
-      digitals.present?
+      product.digital?
     end
 
     def clear_in_stock_cache

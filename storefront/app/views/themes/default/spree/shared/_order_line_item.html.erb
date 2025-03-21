@@ -36,25 +36,27 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col gap-2">
-    <span class="font-medium"><%= Spree.t(:attachments) %></span>
-    <ul class="flex flex-col gap-1">
-      <% line_item.digital_links.each do |digital_link| %>
-        <li>
-          <% if digital_link.authorizable? %>
-            <%= link_to "#{Spree.t(:download)} #{digital_link.filename}",
-            spree.digital_link_path(digital_link.token) %>
-          <% else %>
-            <span class="text-neutral cursor-not-allowed">
-              <%= Spree.t(:download) %>
-              <%= digital_link.filename %>
-              (<%= Spree.t(:expired) %>)
-            </span>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
+  <% if line_item.digital_links.any? %>
+    <div class="flex flex-col gap-2">
+      <span class="font-medium"><%= Spree.t(:attachments) %></span>
+      <ul class="flex flex-col gap-1">
+        <% line_item.digital_links.each do |digital_link| %>
+          <li>
+            <% if digital_link.authorizable? %>
+              <%= link_to "#{Spree.t(:download)} #{digital_link.filename}",
+              spree.digital_link_path(digital_link.token) %>
+            <% else %>
+              <span class="text-neutral cursor-not-allowed">
+                <%= Spree.t(:download) %>
+                <%= digital_link.filename %>
+                (<%= Spree.t(:expired) %>)
+              </span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <div>
     <%= link_to Spree.t(:order_again),
     spree_storefront_resource_url(line_item.product, relative: true),

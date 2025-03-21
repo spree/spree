@@ -22,7 +22,7 @@ module Spree
       end
 
       def create_digital_links
-        digital_line_items.each do |line_item|
+        digital_line_items.includes(variant: :digitals).each do |line_item|
           line_item.variant.digitals.each do |digital|
             line_item.digital_links.create!(digital: digital)
           end
