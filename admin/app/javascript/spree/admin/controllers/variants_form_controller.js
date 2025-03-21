@@ -714,7 +714,11 @@ export default class extends CheckboxSelectAll {
 
       if (response.ok) {
         this.currentOptionValues = await response.json
-        this.newOptionValuesSelectTargets.forEach((select) => this.replaceSelectOptions(select))
+
+        const optionsCreatorContainer = targetInput.closest('.options-creator__option')
+        const newOptionValuesSelects = optionsCreatorContainer.querySelectorAll('[data-variants-form-target="newOptionValuesSelect"]')
+
+        newOptionValuesSelects.forEach((select) => this.replaceSelectOptions(select))
       }
     }
   }
