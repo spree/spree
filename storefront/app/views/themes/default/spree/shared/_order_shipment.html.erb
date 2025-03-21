@@ -47,15 +47,13 @@
         <% end %>
       </div>
     </div>
-    <% if shipment.canceled? && shipment.shipped_at.present? %>
-      <%# No message if shipment has been shipped already %>
-    <% elsif shipment.canceled? && shipment.shipped_at.nil? %>
+    <% if shipment.canceled? && shipment.shipped_at.nil? %>
       <div class="alert-warning text-sm uppercase mt-3 px-3 py-2">
         <strong><%= Spree.t(:shipment) %>
           <%= Spree.t("shipment_states.canceled") %></strong>.
         <%= Spree.t(:shipment_refunded_message) %>
       </div>
-    <% elsif !shipment.digital? %>
+    <% elsif (!shipment.tracked? || !shipment.shipped?) && !shipment.digital? %>
       <div class="text-sm uppercase text-center bg-neutral-100 mt-3 px-3 py-2">
         <%= Spree.t(:no_tracking_present) %>
       </div>

@@ -1,26 +1,26 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
-  it_behaves_like 'metadata'
-
-  let(:store) { @default_store }
-  let!(:order) { create(:order, number: 'S12345', store: store) }
-  let(:shipping_method) { create(:shipping_method, name: 'UPS') }
+  let(:inventory_units) { create_list(:inventory_unit, 2) }
+  let(:variant) { line_item.variant }
+  let!(:line_item) { create(:line_item) }
   let(:shipment) do
     create(:shipment, number: 'H21265865494', cost: 1, state: 'pending', stock_location: create(:stock_location)).tap do |shipment|
       allow(shipment).to receive_messages order: order
       allow(shipment).to receive_messages shipping_method: shipping_method
     end
   end
-  let!(:line_item) { create(:line_item) }
-  let(:variant) { line_item.variant }
-  let(:inventory_units) { create_list(:inventory_unit, 2) }
+  let(:shipping_method) { create(:shipping_method, name: 'UPS') }
+  let!(:order) { create(:order, number: 'S12345', store: store) }
+  let(:store) { @default_store }
 
   before do
     allow(order).to receive_messages(backordered?: false, canceled?: false, can_ship?: true, paid?: false, touch_later: false)
     allow(inventory_units.first).to receive_messages backordered?: false
     allow(inventory_units.first).to receive_messages backordered?: true
   end
+
+  it_behaves_like 'metadata'
 
   describe 'precision of pre_tax_amount' do
     before { line_item.update(pre_tax_amount: 4.2051) }
@@ -29,6 +29,22 @@ describe Spree::Shipment, type: :model do
       # prevent it from updating pre_tax_amount
       allow_any_instance_of(Spree::LineItem).to receive(:update_tax_charge)
       expect(line_item.reload.pre_tax_amount).to eq(4.2051)
+    end
+  end
+
+  describe '#digital?' do
+    it 'returns true if shipping method has a digital calculator' do
+      shipment.shipping_method.calculator = Spree::Calculator::Shipping::DigitalDelivery.new
+      expect(shipment.digital?).to eq(true)
+    end
+
+    it 'returns false if shipping method does not have a digital calculator' do
+      expect(shipment.digital?).to eq(false)
+    end
+
+    it 'returns false if shipping method is nil' do
+      shipment.shipping_rates.delete_all
+      expect(shipment.digital?).to eq(false)
     end
   end
 
@@ -91,7 +107,7 @@ describe Spree::Shipment, type: :model do
     expect(shipment).to be_backordered
   end
 
-  context '#determine_state' do
+  describe '#determine_state' do
     let(:inventory_units) { create_list(:inventory_unit, 1) }
 
     before { allow(inventory_units.first).to receive_messages backordered: true }
@@ -157,7 +173,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#item_cost' do
+  describe '#item_cost' do
     def create_shipment(order, stock_location)
       order.shipments.create(stock_location_id: stock_location.id).inventory_units.create(
         order_id: order.id,
@@ -216,7 +232,7 @@ describe Spree::Shipment, type: :model do
     expect(shipment.final_price).to eq(8)
   end
 
-  context '#free?' do
+  describe '#free?' do
     let!(:order) { create(:order) }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
     let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code) }
@@ -251,7 +267,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#store' do
+  describe '#store' do
     let(:store) { @default_store }
     let!(:order) { create(:order, store: store) }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
@@ -261,7 +277,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#currency' do
+  describe '#currency' do
     let!(:order) { create(:order, currency: 'EUR') }
     let!(:shipment) { create(:shipment, cost: 10, order: order) }
 
@@ -358,7 +374,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#update!' do
+  describe '#update!' do
     shared_examples_for 'immutable once shipped' do
       it 'remains in shipped state once shipped' do
         shipment.state = 'shipped'
@@ -391,6 +407,7 @@ describe Spree::Shipment, type: :model do
         expect(shipment).to receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
         shipment.update!(order)
       end
+
       it_behaves_like 'immutable once shipped'
       it_behaves_like 'pending if backordered'
     end
@@ -403,6 +420,7 @@ describe Spree::Shipment, type: :model do
         expect(shipment).to receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
       end
+
       it_behaves_like 'immutable once shipped'
       it_behaves_like 'pending if backordered'
     end
@@ -415,6 +433,7 @@ describe Spree::Shipment, type: :model do
         expect(shipment).to receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
         shipment.update!(order)
       end
+
       it_behaves_like 'immutable once shipped'
       it_behaves_like 'pending if backordered'
     end
@@ -507,7 +526,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#cancel' do
+  describe '#cancel' do
     let(:inventory_unit) { create(:inventory_unit, state: 'on_hand', line_item: line_item, variant: variant, quantity: 1) }
 
     it 'cancels the shipment' do
@@ -555,7 +574,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#resume' do
+  describe '#resume' do
     let(:inventory_unit) { create(:inventory_unit, quantity: 1, line_item: line_item, variant: variant) }
 
     it 'transitions state to ready if the order is ready' do
@@ -587,7 +606,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#ship' do
+  describe '#ship' do
     context 'when the shipment is canceled' do
       let(:shipment_with_inventory_units) { create(:shipment, order: create(:order_with_line_items), state: 'canceled') }
       let(:subject) { shipment_with_inventory_units.ship! }
@@ -635,7 +654,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#ready' do
+  describe '#ready' do
     context 'with Config.auto_capture_on_dispatch == false' do
       # Regression test for #2040
       it 'cannot ready a shipment for an order if the order is unpaid' do
@@ -795,7 +814,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#tracking_url' do
+  describe '#tracking_url' do
     it 'uses shipping method to determine url' do
       expect(shipping_method).to receive(:build_tracking_url).with('1Z12345').and_return(:some_url)
       shipment.tracking = '1Z12345'
@@ -804,7 +823,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  context '#transfer_to_location' do
+  describe '#transfer_to_location' do
     # Order with 2 line items in order to be able to split one shipment into 2
     let(:order) { create(:completed_order_with_totals, line_items_count: 2, store: store) }
     let!(:stock_location) { create(:stock_location, propagate_all_variants: true, backorderable_default: true) }
@@ -867,7 +886,7 @@ describe Spree::Shipment, type: :model do
   end
 
   # Regression test for #3349
-  context '#destroy' do
+  describe '#destroy' do
     it 'destroys linked shipping_rates' do
       reflection = Spree::Shipment.reflect_on_association(:shipping_rates)
       expect(reflection.options[:dependent]).to be(:delete_all)
