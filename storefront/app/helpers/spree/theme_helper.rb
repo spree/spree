@@ -138,6 +138,8 @@ module Spree
           editor_parent_id: "section-#{block.section_id}",
           editor_link: spree.respond_to?(:edit_admin_page_section_block_path) ? spree.edit_admin_page_section_block_path(block.section, block) : nil
         },
+        id: "block-#{block.id}",
+        class: "block-#{block.class.name.demodulize.underscore.dasherize}",
         style: block_styles(block, allowed_styles: allowed_styles),
         width_desktop: has_width_desktop
       }.compact_blank
@@ -167,7 +169,9 @@ module Spree
                                     when :block
                                       spree.edit_admin_page_link_path(link, block_id: link.parent_id)
                                     end
-                      }
+                      },
+                      id: "link-#{link.id}",
+                      class: "link-#{link.class.name.demodulize.underscore.dasherize}"
                     }
                   else
                    {}
