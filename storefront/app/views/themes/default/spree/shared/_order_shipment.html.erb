@@ -55,6 +55,7 @@
           <%= Spree.t("shipment_states.canceled") %></strong>.
         <%= Spree.t(:shipment_refunded_message) %>
       </div>
+    <% elsif shipment.shipped? && shipment.tracked? %>
     <% elsif !shipment.digital? %>
       <div class="text-sm uppercase text-center bg-neutral-100 mt-3 px-3 py-2">
         <%= Spree.t(:no_tracking_present) %>

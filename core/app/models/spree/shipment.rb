@@ -230,7 +230,7 @@ module Spree
     end
 
     def digital?
-      shipping_method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
+      shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
