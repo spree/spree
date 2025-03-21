@@ -55,7 +55,7 @@ export default class extends CheckboxSelectAll {
       this.element.closest('[data-controller*="product-form"]'),
       'product-form'
     )
-    this.currentOptionValues = []
+    this.currentOptionValues = {}
 
     // Set ignoredVariants to all the variants that are not on the server
     const existingVariantsOnServer = Object.keys(this.variantIdsValue)
@@ -707,13 +707,13 @@ export default class extends CheckboxSelectAll {
   // After selecting an option name (eg. "Color"), we fetch the option values for that option name and update the tom select options
   async handleSelectedOptionName(event) {
     const targetInput = event.target
-    const optionNameId = targetInput.value
+    this.lastOptionNameId = targetInput.value
 
-    if (optionNameId) {
-      const response = await get(`/admin/option_types/${optionNameId}/option_values/select_options`)
+    if (this.lastOptionNameId) {
+      const response = await get(`/admin/option_types/${this.lastOptionNameId}/option_values/select_options`)
 
       if (response.ok) {
-        this.currentOptionValues = await response.json
+        this.currentOptionValues[this.lastOptionNameId] = await response.json
 
         const optionsCreatorContainer = targetInput.closest('.options-creator__option')
         const newOptionValuesSelects = optionsCreatorContainer.querySelectorAll('[data-variants-form-target="newOptionValuesSelect"]')
@@ -729,12 +729,13 @@ export default class extends CheckboxSelectAll {
     if (tomSelect) {
       tomSelect.clear()
       tomSelect.clearOptions()
-      tomSelect.addOptions(this.currentOptionValues)
+      tomSelect.addOptions(this.currentOptionValues[this.lastOptionNameId])
     }
   }
 
   newOptionValuesSelectTargetConnected(select) {
-    this.replaceSelectOptions(select)
+    if (this.lastOptionNameId)
+      this.replaceSelectOptions(select)
   }
 
   handleNewOption(_event) {
@@ -775,11 +776,21 @@ export default class extends CheckboxSelectAll {
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
 
     const { name, values } = this.optionsValue[optionId]
-    const availableOptions = this.availableOptionsValue[optionId]
+    const availableOptions = this.availableOptionsValue[optionId] || this.currentOptionValues[optionId]?.map((option) => ({ id: option.id, name: option.name }))
 
     const form = this.optionFormTemplate(name, values, optionId, availableOptions)
 
     option.replaceWith(form)
+
+    // Disable the option name in the select tag that is already picked
+    const optionContainer = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
+    const optionNameSelect = optionContainer.querySelector('select[name="option_name"]')
+    const options = Array.from(optionNameSelect.options)
+
+    const alreadySelectedOptions = Object.keys(this.optionsValue).filter((k) => this.optionsValue[k] !== null)
+    const optionsToDisable = options.filter((option) => option.text != name && alreadySelectedOptions.includes(option.value))
+
+    optionsToDisable.forEach((option) => option.disabled = true)
   }
 
   saveOption(event) {
@@ -896,7 +907,7 @@ export default class extends CheckboxSelectAll {
     const optionValuesSelectContainer = template.querySelector('[data-slot="optionValuesSelectContainer"]')
     const tomSelectOptionValues = optionValues.map((optionValue) => {
       return {
-        id: availableOptions.find((availableOption) => availableOption.name === optionValue).id,
+        id: availableOptions.find((availableOption) => availableOption.name === optionValue)?.id,
         name: optionValue
       }
     })
