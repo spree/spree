@@ -9,7 +9,7 @@ variant_not_available = selected_variant.nil? ||
                         product.discontinued? ||
                         selected_variant.discontinued? ||
                         !selected_variant.purchasable? ||
-                        !selected_variant.price_in(current_currency).amount&.positive?
+                        selected_variant.price_in(current_currency).amount.nil?
 %>
 
 <div class='<%= sticky_button_classes %> bottom-0 flex flex-col gap-4 z-10' data-sticky-button-target='stickyButton'>

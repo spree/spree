@@ -1,7 +1,17 @@
-<% selected_option = product_selected_option_for_option(option_type, product: product, selected_variant: selected_variant, options_param_name: options_param_name) %>
-<% variants_available_arr = product.variants.map { |v| v.purchasable? && v.price_in(current_currency).amount&.positive? } %>
+<% selected_option =
+  product_selected_option_for_option(
+    option_type,
+    product: product,
+    selected_variant: selected_variant,
+    options_param_name: options_param_name,
+  ) %>
+<% variants_available_arr =
+  product.variants.map do |v|
+    v.purchasable? && v.price_in(current_currency).amount.present?
+  end %>
 <% variants_option1_arr = product.variants.map { |v| v.options.first&.dig(:value) } %>
-<% variants_option2_arr = product.variants.map { |v| v.options.second&.dig(:value) } %>
+<% variants_option2_arr =
+  product.variants.map { |v| v.options.second&.dig(:value) } %>
 <% variants_option3_arr = product.variants.map { |v| v.options.third&.dig(:value) } %>
 <% product_option_values_for_option(option_type, product: product).each_with_index do |value, index| %>
   <% option_disabled = true %>
