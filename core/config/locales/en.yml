@@ -1359,7 +1359,7 @@ en:
         message: Please click the button below to pay for your order.
         message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
         pay_for_order: Pay for order
-        subject: "Payment link for order #%{number}"
+        subject: 'Payment link for order #%{number}'
       store_owner_notification_email:
         heading: New Order Received
         instructions: You have received a new order.
