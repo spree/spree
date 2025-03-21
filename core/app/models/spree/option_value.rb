@@ -61,6 +61,15 @@ module Spree
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
+    def self.to_tom_select_json
+      all.pluck(:id, :presentation).map do |id, presentation|
+        {
+          id: id,
+          name: presentation
+        }
+      end
+    end
+
     private
 
     def touch_all_variants

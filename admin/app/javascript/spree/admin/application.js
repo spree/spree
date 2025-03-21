@@ -58,6 +58,7 @@ import FiltersController from 'spree/admin/controllers/filters_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
+import MultiTomSelectController from 'spree/admin/controllers/multi_tom_select_controller'
 import OrderBillingAddressController from 'spree/admin/controllers/order_billing_address_controller'
 import PageBuilderController from 'spree/admin/controllers/page_builder_controller'
 import PasswordToggle from 'spree/admin/controllers/password_toggle_controller'
@@ -103,6 +104,7 @@ application.register('filters', FiltersController)
 application.register('font-picker', FontPickerController)
 application.register('media-form', MediaFormController)
 application.register('multi-input', MultiInputController)
+application.register('multi-tom-select', MultiTomSelectController)
 application.register('nested-form', RailsNestedForm)
 application.register('notification', Notification)
 application.register('order-billing-address', OrderBillingAddressController)

@@ -1,5 +1,6 @@
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import { Sortable } from 'sortablejs'
+import { get } from '@rails/request.js'
 
 export default class extends CheckboxSelectAll {
   static targets = [
@@ -8,7 +9,8 @@ export default class extends CheckboxSelectAll {
     'optionsContainer',
     'optionFormTemplate',
     'newOptionForm',
-    'newOptionValuesInput',
+    'newOptionValuesSelectContainer',
+    'newOptionValuesSelect',
     'newOptionNameInput',
     'newOptionButton',
     'newOptionButtonLabel',
@@ -25,6 +27,7 @@ export default class extends CheckboxSelectAll {
   static values = {
     productId: String,
     options: Object,
+    availableOptions: Object,
     variants: Array,
     stock: Object,
     prices: Object,
@@ -32,7 +35,8 @@ export default class extends CheckboxSelectAll {
     currencies: Array,
     variantIds: Object,
     currentStockLocationId: String,
-    stockLocations: Array
+    stockLocations: Array,
+    optionValuesSelectOptions: Array
   }
 
   connect() {
@@ -51,6 +55,7 @@ export default class extends CheckboxSelectAll {
       this.element.closest('[data-controller*="product-form"]'),
       'product-form'
     )
+    this.currentOptionValues = {}
 
     // Set ignoredVariants to all the variants that are not on the server
     const existingVariantsOnServer = Object.keys(this.variantIdsValue)
@@ -239,7 +244,7 @@ export default class extends CheckboxSelectAll {
         label.textContent = label.dataset.noOptionsText
       }
     }
-    this.refreshTomSelect()
+    this.refreshOptionNameSelect()
     this.variantsValue = this.generateVariants(value)
 
     // We want to clear the ignoredVariants when the options change
@@ -699,10 +704,45 @@ export default class extends CheckboxSelectAll {
     }
   }
 
-  handleNewOption(event) {
+  // After selecting an option name (eg. "Color"), we fetch the option values for that option name and update the tom select options
+  async handleSelectedOptionName(event) {
+    const targetInput = event.target
+    this.lastOptionNameId = targetInput.value
+
+    if (this.lastOptionNameId) {
+      const response = await get(`/admin/option_types/${this.lastOptionNameId}/option_values/select_options`)
+
+      if (response.ok) {
+        this.currentOptionValues[this.lastOptionNameId] = await response.json
+
+        const optionsCreatorContainer = targetInput.closest('.options-creator__option')
+        const newOptionValuesSelects = optionsCreatorContainer.querySelectorAll('[data-variants-form-target="newOptionValuesSelect"]')
+
+        newOptionValuesSelects.forEach((select) => this.replaceSelectOptions(select))
+      }
+    }
+  }
+
+  replaceSelectOptions(select) {
+    const tomSelect = select.tomselect
+
+    if (tomSelect) {
+      tomSelect.clear()
+      tomSelect.clearOptions()
+      tomSelect.addOptions(this.currentOptionValues[this.lastOptionNameId])
+    }
+  }
+
+  newOptionValuesSelectTargetConnected(select) {
+    if (this.lastOptionNameId)
+      this.replaceSelectOptions(select)
+  }
+
+  handleNewOption(_event) {
     const newOptionName = this.newOptionNameInputTarget.options[this.newOptionNameInputTarget.selectedIndex].text
     const newOptionId = String(this.newOptionNameInputTarget.value)
-    const newOptionValues = this.newOptionValuesInputTarget.values()
+    const newOptionValues = this.newOptionValuesSelectContainerTarget.values()
+
     if (
       !newOptionName.length ||
       this.optionsValue[newOptionId] ||
@@ -722,7 +762,7 @@ export default class extends CheckboxSelectAll {
 
   hideNewOptionForm() {
     this.newOptionNameInputTarget.tomselect.clear()
-    this.newOptionValuesInputTarget.reset()
+    this.newOptionValuesSelectContainerTarget.reset()
 
     this.newOptionFormTarget.classList.add('d-none')
 
@@ -736,10 +776,21 @@ export default class extends CheckboxSelectAll {
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
 
     const { name, values } = this.optionsValue[optionId]
+    const availableOptions = this.availableOptionsValue[optionId] || this.currentOptionValues[optionId]?.map((option) => ({ id: option.id, name: option.name }))
 
-    const form = this.optionFormTemplate(name, values, optionId)
+    const form = this.optionFormTemplate(name, values, optionId, availableOptions)
 
     option.replaceWith(form)
+
+    // Disable the option name in the select tag that is already picked
+    const optionContainer = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
+    const optionNameSelect = optionContainer.querySelector('select[name="option_name"]')
+    const options = Array.from(optionNameSelect.options)
+
+    const alreadySelectedOptions = Object.keys(this.optionsValue).filter((k) => this.optionsValue[k] !== null)
+    const optionsToDisable = options.filter((option) => option.text != name && alreadySelectedOptions.includes(option.value))
+
+    optionsToDisable.forEach((option) => option.disabled = true)
   }
 
   saveOption(event) {
@@ -760,7 +811,7 @@ export default class extends CheckboxSelectAll {
     let position = this.optionsValue[optionId].position
     let newOptionsPositions = {}
 
-    const optionValues = option.querySelector('[data-slot="optionValuesInput"]').values()
+    const optionValues = option.querySelector('[data-slot="optionValuesSelectContainer"]').values()
 
     if (optionValues.length === 0) {
       return
@@ -796,6 +847,7 @@ export default class extends CheckboxSelectAll {
     event.preventDefault()
     this.newOptionFormTarget.classList.remove('d-none')
     this.newOptionButtonTarget.classList.add('d-none')
+    this.refreshOptionNameSelect()
   }
 
   optionTemplate(name, values, id, color = false) {
@@ -830,7 +882,7 @@ export default class extends CheckboxSelectAll {
     this.refreshParentInputs()
   }
 
-  optionFormTemplate(optionName, optionValues, id) {
+  optionFormTemplate(optionName, optionValues, id, availableOptions) {
     const template = this.optionFormTemplateTarget.content.cloneNode(true)
 
     const optionNameSelect = template.querySelector('select[name="option_name"]')
@@ -852,8 +904,16 @@ export default class extends CheckboxSelectAll {
       optionNameSelect.appendChild(newOption)
     }
 
-    const optionValuesInput = template.querySelector('[data-slot="optionValuesInput"]')
-    optionValuesInput.dataset.multiInputPreloadedValuesValue = JSON.stringify(optionValues)
+    const optionValuesSelectContainer = template.querySelector('[data-slot="optionValuesSelectContainer"]')
+    const tomSelectOptionValues = optionValues.map((optionValue) => {
+      return {
+        id: availableOptions.find((availableOption) => availableOption.name === optionValue)?.id,
+        name: optionValue
+      }
+    })
+
+    optionValuesSelectContainer.setAttribute('data-multi-tom-select-preloaded-options-value', JSON.stringify(availableOptions))
+    optionValuesSelectContainer.setAttribute('data-multi-tom-select-preloaded-values-value', JSON.stringify(tomSelectOptionValues))
 
     template.querySelectorAll('[data-variants-form-option-id-param]').forEach((el) => {
       el.dataset.variantsFormOptionIdParam = id
@@ -880,24 +940,34 @@ export default class extends CheckboxSelectAll {
     return templates
   }
 
-  refreshTomSelect() {
+  refreshOptionNameSelect() {
     const alreadySelectedOptions = Object.keys(this.optionsValue).filter((k) => this.optionsValue[k] !== null)
 
     Array.from(this.newOptionNameInputTarget.options).forEach((option) => {
-      const tomselectOption = this.newOptionNameInputTarget.tomselect?.getOption(option.value)
+      const tomSelect = this.newOptionNameInputTarget.tomselect
+      if (!tomSelect) return
+
+      const tomselectOption = tomSelect.getOption(option.value)
       if (!tomselectOption) return
+
       const alreadySelected = alreadySelectedOptions.includes(option.value)
       tomselectOption.ariaDisabled = alreadySelected
+
       if (alreadySelected) {
         tomselectOption.removeAttribute('data-selectable')
       } else {
         tomselectOption.setAttribute('data-selectable', '')
       }
+
       tomselectOption.disabled = alreadySelected
     })
 
-    this.newOptionNameInputTarget.tomselect?.sync()
-    this.newOptionNameInputTarget.tomselect?.refreshOptions()
+    const optionNameTomSelect = this.newOptionNameInputTarget.tomselect
+
+    if (optionNameTomSelect) {
+      optionNameTomSelect.sync()
+      optionNameTomSelect.refreshOptions(false)
+    }
   }
 
   generateVariants(optionsValue) {
