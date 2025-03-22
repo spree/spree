@@ -2,11 +2,13 @@
 
 <% if order.order_refunded? || order.partially_refunded? %>
   <div class="alert-warning mb-5 py-2 px-3">
-    <% if order.gift_card %>
-      <% key = "refund_action_required_message.order_#{shipments.shipped_but_canceled.any? ? 'refunded' : 'canceled'}.#{order.partially_refunded? ? 'partially' : 'fully'}" %>
+    <% i18n_key_suffix = "#{shipments.shipped_but_canceled.any? ? 'refunded' : 'canceled'}.#{order.partially_refunded? ? 'partially' : 'fully'}" %>
+
+    <% if order.respond_to?(:gift_card) && order.gift_card.present? %>
+      <% key = "storefront.refund_action_required_message.order_#{i18n_key_suffix}" %>
       <%= Spree.t(key, customer_support_email: order.store.customer_support_email ) %>
     <% else %>
-      <% key = "refund_action_not_required_message.order_#{shipments.shipped_but_canceled.any? ? 'refunded' : 'canceled'}.#{order.partially_refunded? ? 'partially' : 'fully'}" %>
+      <% key = "storefront.refund_action_not_required_message.order_#{i18n_key_suffix}" %>
       <%= Spree.t(key) %>
     <% end %>
   </div>
