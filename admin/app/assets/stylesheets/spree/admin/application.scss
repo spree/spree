@@ -19,6 +19,7 @@
 @import 'components/seo_form';
 @import 'components/line_items_form';
 @import 'components/search_picker';
+@import 'components/sortable_tree';
 
 @import 'plugins/tinymce_custom';
 @import 'plugins/trix_custom';
@@ -34,7 +35,6 @@
 
 @import 'shared/base';
 @import 'shared/forms';
-@import 'shared/sortable_tree';
 
 @import 'views/dashboard';
 @import "views/page_builder";

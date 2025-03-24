@@ -7,7 +7,7 @@
   box-shadow: $dropdown-box-shadow;
 
   animation: fadeIn;
-  animation-duration: 0.2s;
+  animation-duration: 0.5s;
   
   font-weight: 500;
 
@@ -86,7 +86,8 @@
 
   .dropdown-menu {
     background-color: #272727;
-    @extend .border-gray-800;
+    border: 1px solid $gray-800;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
     @extend .text-white;
 
     .dropdown-divider {
@@ -98,7 +99,7 @@
 
       &:hover, &.active {
         color: $white !important;
-        background-color: rgba($gray-800, 0.5) !important;
+        background-color: $gray-800;
 
         i {
           color: $gray-100 !important;

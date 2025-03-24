@@ -52,20 +52,20 @@ export default class extends CheckboxSelectAll {
 
   removeRowBackground() {
     this.element.querySelectorAll('tr').forEach((row) => {
-      row.classList.remove('bg-active')
+      row.classList.remove('active')
     })
   }
 
   toggleRowBackground() {
     this.element.querySelectorAll('tr').forEach((row) => {
-      row.classList.remove('bg-active')
+      row.classList.remove('active')
     })
-    this.element.querySelectorAll('.row.bg-active').forEach((row) => {
-      row.classList.remove('bg-active')
+    this.element.querySelectorAll('.row.active').forEach((row) => {
+      row.classList.remove('active')
     })
     this.checked.forEach((checkbox) => {
-      if (checkbox.closest('tr')) checkbox.closest('tr').classList.add('bg-active')
-      else if (checkbox.closest('.row')) checkbox.closest('.row').classList.add('bg-active')
+      if (checkbox.closest('tr')) checkbox.closest('tr').classList.add('active')
+      else if (checkbox.closest('.row')) checkbox.closest('.row').classList.add('active')
     })
   }
 

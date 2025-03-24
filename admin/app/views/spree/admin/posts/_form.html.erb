@@ -7,6 +7,7 @@
           <%= f.text_field :title,
                 class: "form-control",
                 required: true,
+                autofocus: true,
                 data: {
                   seo_form_target: 'sourceTitleInput',
                   slug_form_target: 'name',
@@ -35,8 +36,8 @@
 
   <div class="col-lg-4">
     <div class="card mb-4">
-      <div class="card-body">
-        <div class="form-group mb-0">
+      <div class="card-body pb-0">
+        <div class="form-group">
           <%= f.label :image, Spree.t(:featured_image) %>
           <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1200, height: 600, crop: true, css: 'flex-col' %>
         </div>

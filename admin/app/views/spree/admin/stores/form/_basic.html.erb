@@ -38,7 +38,7 @@
       </div>
       <div class="card-body">
         <p class="text-muted">
-          Set the timezone, unit system and weight unit for your store.
+          Set the timezone, default unit system and weight unit for your store.
         </p>
         <div class="form-group mb-3">
           <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
@@ -48,10 +48,16 @@
           <div class="form-group mb-3">
             <%= label_tag :preferred_unit_system, raw(Spree.t(:unit_system) + required_span_tag) %>
             <%= select_tag 'store[preferred_unit_system]', options_for_select(unit_systems, @store.preferred_unit_system), {class: 'custom-select', data: {unit_system_target: "body", action: "change->unit-system#unitSystemHandler"}} %>
+            <p class="text-muted form-text mt-2 mb-0">
+              This will be used as the default unit system for your store. You can override this on a per-product basis.
+            </p>
           </div>
           <div class="form-group">
             <%= label_tag :preferred_weight_unit, raw(Spree.t(:weight_unit) + required_span_tag) %>
             <%= select_tag 'store[preferred_weight_unit]', options_for_select(weight_units(@store), @store.preferred_weight_unit), {class: 'custom-select', data: {unit_system_target: "weightUnit"}} %>
+            <p class="text-muted form-text mt-2 mb-0">
+              This will be used as the default weight unit for your store. You can override this on a per-product basis.
+            </p>
           </div>
         </div>
       </div>

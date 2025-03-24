@@ -1,4 +1,4 @@
-<ul class="nav nav-pills nav-fill mb-3" id="vendor" role="tablist">
+<ul class="nav nav-pills mb-3" id="vendor" role="tablist">
   <% if spree.respond_to?(:admin_user_visits_path) %>
     <li class="nav-item" role="presentation">
       <a class="nav-link active" id="pills-overview-tab" data-toggle="pill" data-target="#pills-overview" role="tab" aria-controls="pills-overview" aria-selected="true">Timeline</a>
@@ -23,15 +23,15 @@
   </li>
 </ul>
 
-<div class="tab-content" id="vendorContent" style="min-height: 200px">
+<div class="tab-content" id="vendorContent">
   <% if spree.respond_to?(:admin_user_visits_path) %>
     <div class="tab-pane fade show active pt-3" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview">
       <%= turbo_frame_tag :user_visits, src: spree.admin_user_visits_path(@user), target: '_top' %>
     </div>
   <% end %>
 
-  <div class="tab-pane fade <%= 'show active pt-3' unless spree.respond_to?(:admin_user_visits_path) %>" id="pills-orders2" role="tabpanel" aria-labelledby="pills-orders2">
-    <div class="card-lg p-0" style="min-height: 200px">
+  <div class="tab-pane fade <%= 'show active' unless spree.respond_to?(:admin_user_visits_path) %>" id="pills-orders2" role="tabpanel" aria-labelledby="pills-orders2">
+    <div class="card-lg p-0">
       <%= turbo_frame_tag :orders_list, src: spree.admin_user_orders_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
         <%= render 'spree/admin/shared/spinner' %>
       <% end %>
@@ -39,7 +39,7 @@
   </div>
 
   <div class="tab-pane fade" id="pills-checkouts" role="tabpanel" aria-labelledby="pills-checkouts">
-    <div class="card-lg p-0" style="min-height: 200px">
+    <div class="card-lg p-0">
       <%= turbo_frame_tag :orders_list, src: spree.admin_user_checkouts_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
         <%= render 'spree/admin/shared/spinner' %>
       <% end %>
@@ -48,7 +48,7 @@
 
   <% if spree.respond_to?(:admin_user_gift_cards_path) %>
     <div class="tab-pane fade" id="pills-gift-cards" role="tabpanel" aria-labelledby="pills-gift-cards">
-      <div class="card-lg p-0" style="min-height: 200px">
+      <div class="card-lg p-0">
         <%= turbo_frame_tag :gift_cards_list, src: spree.admin_user_gift_cards_path(@user, frame_name: :gift_cards_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
           <%= render 'spree/admin/shared/spinner' %>
         <% end %>
@@ -57,7 +57,7 @@
   <% end %>
 
   <div class="tab-pane fade" id="pills-store-credits" role="tabpanel" aria-labelledby="pills-store-credits">
-    <div class="card-lg p-0" style="min-height: 200px">
+    <div class="card-lg p-0">
       <%= turbo_frame_tag :store_credits_list, src: spree.admin_user_store_credits_path(@user, frame_name: :store_credits_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
         <%= render 'spree/admin/shared/spinner' %>
       <% end %>

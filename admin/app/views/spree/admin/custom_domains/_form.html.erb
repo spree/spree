@@ -2,9 +2,9 @@
   <div class="card-body">
     <div class="form-group">
       <%= f.label :url, Spree.t(:domain) %>
-      <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue">
+      <div class="form-control d-flex align-items-center py-0 focus-shadow-primary focus-border-primary">
         <span class="text-muted">https://</span>
-        <%= f.text_field :url, class: 'form-control-plaintext pr-0 pl-1', autofocus: true, required: true %>
+        <%= f.text_field :url, class: 'form-control-plaintext pr-0 pl-1', autofocus: f.object.new_record?, required: true %>
       </div>
       <%= f.error_message_on :url %>
     </div>

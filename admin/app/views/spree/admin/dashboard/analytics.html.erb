@@ -9,7 +9,7 @@
     <div class="card-header d-block border-0 h-auto p-2">
       <div class="row">
         <div class="col-6 col-lg-4 pr-2">
-          <div class="rounded cursor-pointer p-2 hover-light h-100 active" data-tabs-target="tab" data-action="click->tabs#change">
+          <div class="analytics-card-tab active" data-tabs-target="tab" data-action="click->tabs#change">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Sales</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1">
@@ -23,7 +23,7 @@
         </div>
 
         <div class="col-6 col-lg-2 pl-0 pr-2">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
+          <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#change">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Avg. Order Value</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_average %></span>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="col-6 col-lg-2 pl-0 pr-2">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
+          <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#change">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Orders</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_total  %></span>
@@ -47,7 +47,7 @@
         </div>
         <% if @visits_total && @visits_growth_rate %>
           <div class="col-6 col-lg-2 pl-0 pr-2">
-            <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
+            <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#change">
               <div class="d-flex justify-content-center flex-column">
                 <span class="font-size-sm text-muted">Visits</span>
                 <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @visits_total %></span>
@@ -61,7 +61,7 @@
 
         <% if @audience_total && @audience_growth_rate %>
           <div class="col-6 col-lg-2 pl-0">
-            <div class="rounded cursor-pointer p-2 hover-light h-100" data-tabs-target="tab" data-action="click->tabs#change">
+            <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#change">
               <div class="d-flex justify-content-center flex-column">
                 <span class="font-size-sm text-muted">Sign-ups</span>
                 <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>

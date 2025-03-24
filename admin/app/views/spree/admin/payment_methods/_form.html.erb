@@ -8,7 +8,7 @@
     <div class="col-12 col-md-6">
       <div class="card mb-4">
         <div class="card-header">
-          <h5 class="mb-0"><%= Spree.t(:payment_provider_settings) %></h5>
+          <h5 class="card-title"><%= Spree.t(:payment_provider_settings) %></h5>
         </div>
         <div class="card-body">
           <%= preference_fields(@object, f) unless preference_fields(@object, f).empty? %>
@@ -24,7 +24,7 @@
   <div class="col-12 col-md-6">
     <div class="card mb-4">
       <div class="card-header">
-        <h5 class="mb-0"><%= Spree.t(:display_settings) %></h5>
+        <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
       </div>
       <div class="card-body">
         <div class="form-group">

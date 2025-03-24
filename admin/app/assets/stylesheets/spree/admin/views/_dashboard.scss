@@ -1,3 +1,16 @@
+.analytics-card-tab {
+  @extend .rounded;
+  @extend .cursor-pointer;
+  @extend .p-2;
+  @extend .h-100;
+
+  transition: background-color 0.2s ease-in-out;
+
+  &.active, &:hover {
+    background-color: $gray-25;
+  }
+}
+
 .store-preview-link {
   transition: background-color 0.2s ease-in-out;
 

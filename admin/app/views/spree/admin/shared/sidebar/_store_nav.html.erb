@@ -175,8 +175,10 @@
 
     <% if can?(:manage, current_store) && !enterprise_edition? %>
       <div class="nav nav-dark flex-column mt-2" id="plan-nav" data-turbo-permanent>
-        <div class="bg-transparent border-top border-dark pt-2 pl-1 d-flex align-items-center justify-content-between">
-          <span class="font-weight-light font-size-sm text-white with-tip" title="Spree v<%= Spree.version %>">Community Edition</span>
+        <div class="bg-transparent border-top border-dark pt-2 pl-2 d-flex align-items-center justify-content-between">
+          <span class="font-weight-light font-size-sm text-white with-tip text-muted" title="Spree v<%= Spree.version %>">
+            Community Edition
+          </span>
           <%= link_to_with_icon 'bolt', 'Upgrade', 'https://spreecommerce.org/pricing/', class: 'btn btn-sm btn-dark with-tip', target: '_blank', title: 'Upgrade to Enterprise Edition to access more features, such as multi-store management, B2B, multi-vendor marketplace, and more.' %>
         </div>
       </div>

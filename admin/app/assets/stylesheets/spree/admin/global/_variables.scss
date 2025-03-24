@@ -155,35 +155,6 @@ $alert-padding-y:                   0.5rem !default;
 $alert-padding-x:                   1rem !default;
 $alert-border-radius: $border-radius-lg;
 
-label {
-  font-size: 100%;
-}
-
-.blurred {
-  filter: opacity(50%);
-
-  .form-actions {
-    display: none;
-  }
-
-  .cm-editor {
-    visibility: hidden;
-  }
-}
-
-.custom-checkbox .custom-control-label::before {
-  border-radius: 0.25rem !important;
-  border-color: $gray-200;
-}
-
-
-// https://github.com/hotwired/turbo/pull/386
-button                  .show-when-disabled { display: none; }
-button[disabled]        .show-when-disabled { display: initial; }
-
-button                  .show-when-enabled { display: initial; }
-button[disabled]        .show-when-enabled { display: none; }
-
 .border.border-2 {
   border-width: 2px !important;
 }

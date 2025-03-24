@@ -17,7 +17,7 @@
     </div>
     <div class="variants-table__body__cell column-price">
       <% supported_currencies.each_with_index do |currency, i| %>
-        <div class="form-control align-items-center py-0 focus-shadow-blue focus-border-blue mr-2 price-input-container <%= current_currency != currency ? 'd-none' : 'd-flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
+        <div class="form-control align-items-center py-0 focus-shadow-primary focus-border-primary mr-2 price-input-container <%= current_currency != currency ? 'd-none' : 'd-flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
           <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'form-control-plaintext px-0', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
           <span><%= currency_symbol(currency) %></span>
         </div>

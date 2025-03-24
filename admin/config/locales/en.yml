@@ -223,6 +223,7 @@ en:
         automatic_info: Automatically match products to this taxon based on the conditions you set.
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
+      upload_new_asset: Upload new asset
       url: URL
       user:
         last_order_placed: Last order placed

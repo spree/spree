@@ -36,7 +36,7 @@
 
       <div class="d-flex flex-column justify-content-center align-items-center h-100 p-5 text-muted rounded-lg <%= css %>" data-active-storage-upload-target="placeholder" <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
         <%= icon('upload', class: 'mr-0 mb-3', style: 'font-size: 2rem;') %>
-        <%= Spree.t(:upload_image) %>
+        <%= Spree.t('admin.upload_new_asset') %>
 
         <% if crop %>
           <span class="text-muted ml-2 text-center small mt-2">

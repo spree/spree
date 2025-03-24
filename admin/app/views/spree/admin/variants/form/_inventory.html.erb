@@ -1,6 +1,6 @@
 <div class="card mb-4">
   <div class="card-header">
-    <h5 class="mb-0">
+    <h5 class="card-title">
       <%= Spree.t(:inventory) %>
     </h5>
   </div>
@@ -38,7 +38,7 @@
         <% end %>
       </tbody>
     </table>
-    <div class="card-footer text-center bg-gray-25 text-muted">
+    <div class="card-footer border-toptext-center bg-gray-25 text-muted">
       <%= Spree.t('admin.variants_form.stock_locations_link', link: spree.admin_stock_locations_path).html_safe %>
     </div>
   </div>
