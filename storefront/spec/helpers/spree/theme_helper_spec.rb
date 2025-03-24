@@ -7,7 +7,7 @@ RSpec.describe Spree::ThemeHelper, type: :helper do
   let(:section) { page.sections.first }
   let(:theme_preview) { theme.create_preview }
   let(:page_preview) { page.create_preview }
-  let(:block) { build_stubbed(:heading_block, section: section, preferred_text_alignment: 'center', preferred_width_desktop: 100, preferred_top_padding: 10, preferred_bottom_padding: 10, preferred_background_color: '#ffffff') }
+  let(:block) { create(:heading_block, section: section, preferred_text_alignment: 'center', preferred_width_desktop: 100, preferred_top_padding: 10, preferred_bottom_padding: 10, preferred_background_color: '#ffffff') }
 
   before do
     allow(helper).to receive(:current_store).and_return(store)
@@ -139,15 +139,11 @@ RSpec.describe Spree::ThemeHelper, type: :helper do
   end
 
   describe '#block_attributes' do
-    before do
-      allow(block).to receive(:id).and_return(99)
-    end
-
     it 'returns the attributes for a block' do
-      expect(helper.block_attributes(block)).to include("data-editor-id=\"block-99\"")
+      expect(helper.block_attributes(block)).to include("data-editor-id=\"block-#{block.id}\"")
       expect(helper.block_attributes(block)).to include("data-editor-name=\"#{block.display_name}\"")
       expect(helper.block_attributes(block)).to include("data-editor-parent-id=\"section-#{block.section_id}\"")
-      expect(helper.block_attributes(block)).to include("id=\"block-99\"")
+      expect(helper.block_attributes(block)).to include("id=\"block-#{block.id}\"")
       expect(helper.block_attributes(block)).to include("class=\"block-heading\"")
     end
   end
