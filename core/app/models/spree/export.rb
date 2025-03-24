@@ -66,15 +66,17 @@ module Spree
 
     def generate_csv
       ::CSV.open(export_tmp_file_path, 'wb', encoding: 'UTF-8', col_sep: ',', row_sep: "\r\n") do |csv|
-        csv << csv_headers
+        headers = csv_headers
+        csv << headers
+
         records_to_export.includes(scope_includes).find_in_batches do |batch|
           batch.each do |record|
             if multi_line_csv?
-              record.to_csv(store).each do |line|
+              record.to_csv(headers, store).each do |line|
                 csv << line
               end
             else
-              csv << record.to_csv(store)
+              csv << record.to_csv(headers, store)
             end
           end
         end
