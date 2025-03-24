@@ -553,7 +553,7 @@ module Spree
       return unless track_inventory_previously_changed?
       return if track_inventory
 
-      stock_items.delete_all
+      stock_items.update_all(backorderable: true, count_on_hand: 0, updated_at: Time.current)
     end
 
     def remove_prices_from_master_variant
