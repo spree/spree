@@ -453,6 +453,8 @@ describe Spree::Order, type: :model do
       let(:digital_shipping_method) { create(:digital_shipping_method) }
       let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
       let(:variant_digital) { create(:variant, product: digital_product) }
+      let(:physical_product_with_digital_asset) { create(:product) }
+      let(:variant_physical_with_digital_asset) { create(:variant, product: physical_product_with_digital_asset, digitals: [create(:digital)]) }
 
       before do
         order.user = FactoryBot.create(:user)
@@ -463,6 +465,7 @@ describe Spree::Order, type: :model do
         # make sure we will actually capture a payment
         allow(order).to receive_messages(payment_required?: true)
         order.line_items << FactoryBot.create(:line_item, variant: variant_digital)
+        order.line_items << FactoryBot.create(:line_item, variant: variant_physical_with_digital_asset)
         Spree::OrderUpdater.new(order).update
 
         order.save!
@@ -477,7 +480,13 @@ describe Spree::Order, type: :model do
       it 'creates a digital_link for the digital line_item' do
         order.next!
         expect(order.state).to eq 'complete'
-        expect(order.line_items.first.digital_links).not_to be_empty
+        expect(order.line_items.find_by(variant: variant_digital).digital_links).not_to be_empty
+      end
+
+      it 'creates a digital_link for the physical line_item if it has a digital asset' do
+        order.next!
+        expect(order.state).to eq 'complete'
+        expect(order.line_items.find_by(variant: variant_physical_with_digital_asset).digital_links).not_to be_empty
       end
 
       it 'does not assign a default credit card if temporary_credit_card is set' do

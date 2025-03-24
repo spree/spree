@@ -85,7 +85,7 @@ module Spree
                 end
 
                 before_transition to: :complete do |order|
-                  order.create_digital_links if order.some_digital?
+                  order.create_digital_links if order.with_digital_assets?
                 end
 
                 after_transition to: :complete, do: :create_user_record

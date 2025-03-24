@@ -178,6 +178,10 @@ module Spree
       @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
     end
 
+    def with_digital_assets?
+      variant.with_digital_assets?
+    end
+
     private
 
     def ensure_valid_quantity
