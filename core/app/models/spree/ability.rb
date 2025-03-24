@@ -58,6 +58,8 @@ module Spree
 
     def apply_admin_permissions(user)
       can :manage, :all
+      cannot :cancel, Spree::Order
+      can :cancel, Spree::Order, &:allow_cancel?
       cannot [:edit, :update], Spree::RefundReason, mutable: false
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
