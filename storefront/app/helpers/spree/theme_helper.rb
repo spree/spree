@@ -50,8 +50,7 @@ module Spree
     rescue StandardError => e
       raise e unless Rails.env.production?
 
-      Rails.logger.error("Error rendering theme: #{e.message}")
-      Sentry.capture_exception(e)
+      Spree::Dependencies.error_handler.constantize.call(exception: e)
       {}
     end
 

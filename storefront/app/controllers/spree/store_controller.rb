@@ -230,7 +230,7 @@ module Spree
     end
 
     def invalid_authenticity_token(exception)
-      Spree::ErrorHandler.call(exception: exception)
+      Spree::Dependencies.error_handler.constantize.call(exception: exception)
 
       flash[:error] = Spree.t(:something_went_wrong)
 

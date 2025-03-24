@@ -15,5 +15,7 @@ FactoryBot.define do
     trait :heading do
       type { 'Spree::PageBlocks::Heading' }
     end
+
+    factory :heading_block, traits: [:heading], class: Spree::PageBlocks::Heading
   end
 end

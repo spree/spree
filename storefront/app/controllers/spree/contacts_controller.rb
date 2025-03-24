@@ -27,7 +27,7 @@ module Spree
     end
 
     def message_not_sent(exception = nil)
-      Spree::ErrorHandler.call(
+      Spree::Dependencies.error_handler.constantize.call(
         exception: exception || StandardError.new('Contact Form Message not sent'),
         opts: {
           report_context: {

@@ -49,8 +49,7 @@ module Spree
     rescue ActionView::MissingTemplate, ActionView::Template::Error => e
       raise e unless Rails.env.production?
 
-      Rails.logger.error("Missing template for section: #{section.type}")
-      Sentry.capture_exception(e, extra: { section: section })
+      Spree::Dependencies.error_handler.constantize.call(exception: e, extra: { section: section })
       ''
     end
 
