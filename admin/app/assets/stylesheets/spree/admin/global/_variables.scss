@@ -102,7 +102,9 @@ $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06
 $box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 
+$tooltip-border-radius: $border-radius-sm !default;
 $tooltip-opacity: 1 !default;
+$tooltip-margin:                    0.25rem 0 !default;
 
 $transition-base:             all .1s ease-in-out !default;
 $transition-fade:             opacity .15s linear !default;
