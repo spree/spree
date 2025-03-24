@@ -45,8 +45,7 @@ RSpec.describe Spree::DigitalLinksController, type: :controller do
           )
           allow_any_instance_of(ActiveStorage::Attachment).to receive(:url).with(
             expires_in: @default_store.preferred_digital_asset_link_expire_time.seconds,
-            disposition: 'attachment',
-            host: anything
+            disposition: 'attachment'
           ).and_return('https://example.com/file.pdf')
         end
 
