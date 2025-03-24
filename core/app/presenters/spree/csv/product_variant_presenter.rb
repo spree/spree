@@ -3,6 +3,7 @@ module Spree
     class ProductVariantPresenter
       CSV_HEADERS = [
         'product_id',
+        'sku',
         'name',
         'slug',
         'status',
@@ -14,8 +15,6 @@ module Spree
         'meta_keywords',
         'tags',
         'labels',
-        'variant_id',
-        'variant_sku',
         'price',
         'compare_at_price',
         'currency',
@@ -27,6 +26,7 @@ module Spree
         'weight_unit',
         'available_on',
         'discontinue_on',
+        'track_inventory',
         'inventory_count',
         'inventory_backorderable',
         'tax_category',
@@ -71,6 +71,7 @@ module Spree
       def call
         csv = [
           product.id,
+          variant.sku,
           index.zero? ? product.name : nil,
           index.zero? ? product.slug : nil,
           index.zero? ? product.status : nil,
@@ -82,8 +83,6 @@ module Spree
           index.zero? ? product.meta_keywords : nil,
           index.zero? ? product.tag_list.to_s : nil,
           index.zero? ? product.label_list.to_s : nil,
-          variant.id,
-          variant.sku,
           variant.amount_in(currency).to_f,
           variant.compare_at_price&.to_f,
           currency,
@@ -94,7 +93,8 @@ module Spree
           variant.weight,
           variant.weight_unit,
           variant.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
-          variant.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S'),
+          (variant.discontinue_on || product.discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
+          variant.track_inventory?,
           variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand,
           variant.backorderable?,
           variant.tax_category&.name,
@@ -102,12 +102,12 @@ module Spree
           variant.images[0]&.original_url,
           variant.images[1]&.original_url,
           variant.images[2]&.original_url,
-          option_type(0)&.name,
-          option_value(option_type(0)),
-          option_type(1)&.name,
-          option_value(option_type(1)),
-          option_type(2)&.name,
-          option_value(option_type(2))
+          index.positive? ? option_type(0)&.presentation : nil,
+          index.positive? ? option_value(option_type(0)) : nil,
+          index.positive? ? option_type(1)&.presentation : nil,
+          index.positive? ? option_value(option_type(1)) : nil,
+          index.positive? ? option_type(2)&.presentation : nil,
+          index.positive? ? option_value(option_type(2)) : nil
         ]
 
         if index.zero?
@@ -123,7 +123,7 @@ module Spree
       end
 
       def option_value(option_type)
-        variant.option_values.find { |ov| ov.option_type == option_type }&.name
+        variant.option_values.find { |ov| ov.option_type == option_type }&.presentation
       end
     end
   end

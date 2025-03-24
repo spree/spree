@@ -650,7 +650,7 @@ module Spree
       csv_lines = []
 
       if has_variants?
-        variants.each_with_index do |variant, index|
+        variants_including_master.each_with_index do |variant, index|
           csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
         end
       else
