@@ -1155,14 +1155,22 @@ describe Spree::Product, type: :model do
       let!(:variant1) { create(:variant, product: product) }
       let!(:variant2) { create(:variant, product: product) }
 
-      it 'returns an array with CSV data for each variant' do
-        csv_lines = product.reload.to_csv(store)
-        expect(csv_lines.size).to eq(2)
+      before do
+        product.master.update!(sku: 'test-product-master-sku')
+      end
 
-        expect(csv_lines.first).to include(product.name)
-        expect(csv_lines.first).to include(variant1.sku)
-        expect(csv_lines.second).not_to include(product.name)
-        expect(csv_lines.second).to include(variant2.sku)
+      it 'returns an array with CSV data for each variant including the master variant' do
+        csv_lines = product.reload.to_csv(store)
+        expect(csv_lines.size).to eq(3)
+
+        expect(csv_lines[0]).to include(product.name)
+        expect(csv_lines[0]).to include('test-product-master-sku')
+
+        expect(csv_lines[1]).not_to include(product.name)
+        expect(csv_lines[1]).to include(variant1.sku)
+
+        expect(csv_lines[2]).not_to include(product.name)
+        expect(csv_lines[2]).to include(variant2.sku)
       end
     end
 
