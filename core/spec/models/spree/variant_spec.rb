@@ -141,8 +141,13 @@ describe Spree::Variant, type: :model do
       let!(:variant) { create(:variant, product: product, track_inventory: true) }
       let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
 
-      it 'deletes stock items' do
-        expect { subject }.to change(variant.stock_items, :count).from(2).to(0)
+      before do
+        stock_item.update!(backorderable: false)
+      end
+
+      it 'updates stock items' do
+        expect { subject }.
+          to change { stock_item.reload.backorderable }.from(false).to(true).and change { stock_item.reload.count_on_hand }.from(110).to(0)
       end
     end
 
@@ -153,7 +158,7 @@ describe Spree::Variant, type: :model do
       let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
 
       it 'keeps stock items' do
-        expect { subject }.to_not change(variant.stock_items, :count)
+        expect { subject }.not_to change(variant.stock_items, :count)
       end
     end
   end
@@ -620,32 +625,32 @@ describe Spree::Variant, type: :model do
   describe '#options' do
     let(:product) { create(:product, option_types: [option_type, option_type2]) }
     let(:variant) { create(:variant, product: product, option_values: [option_value, option_value2]) }
-    let!(:option_type2) { create(:option_type, name: "material") }
-    let!(:option_type) { Spree::OptionType.find_by(name: "size") || create(:option_type, name: "size") }
-    let(:option_value) { create(:option_value, name: "medium", presentation: "M", option_type: option_type) }
-    let(:option_value2) { create(:option_value, name: "wool", presentation: "Wool", option_type: option_type2) }
+    let!(:option_type2) { create(:option_type, name: 'material') }
+    let!(:option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size') }
+    let(:option_value) { create(:option_value, name: 'medium', presentation: 'M', option_type: option_type) }
+    let(:option_value2) { create(:option_value, name: 'wool', presentation: 'Wool', option_type: option_type2) }
 
-    it "returns an array of hashes with option type name, value, and presentation orderd by option type position" do
+    it 'returns an array of hashes with option type name, value, and presentation orderd by option type position' do
       expect(variant.options).to eq([
                                       {
-                                        name: "size",
-                                        value: "medium",
-                                        presentation: "M"
+                                        name: 'size',
+                                        value: 'medium',
+                                        presentation: 'M'
                                       },
                                       {
-                                        name: "material",
-                                        value: "wool",
-                                        presentation: "Wool"
+                                        name: 'material',
+                                        value: 'wool',
+                                        presentation: 'Wool'
                                       }
                                     ])
     end
   end
 
   describe '#options_text' do
+    subject(:options_text) { variant.options_text }
+
     let(:variant) { build :variant }
     let(:fake_presenter) { double :fake_presenter }
-
-    subject(:options_text) { variant.options_text }
 
     before do
       allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)

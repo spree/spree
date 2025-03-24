@@ -866,13 +866,14 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         create(:stock_item, count_on_hand: 20, variant: product.master)
       end
 
-      it 'removes stock items' do
+      it 'updates stock items' do
         expect(product.master.stock_items.reload.count).to be > 0
 
         send_request
 
         expect(product.reload.track_inventory).to be(false)
-        expect(product.master.stock_items.reload.count).to eq(0)
+        expect(product.master.stock_items.reload.first.backorderable).to be(true)
+        expect(product.master.stock_items.reload.first.count_on_hand).to eq(0)
       end
     end
 
