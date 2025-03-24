@@ -318,7 +318,7 @@ module Spree
     end
 
     def rescue_from_spree_gateway_error(exception)
-      Spree::ErrorHandler.new.call(
+      Spree::Dependencies.error_handler.constantize.call(
         exception: exception,
         opts: {
           report_context: {

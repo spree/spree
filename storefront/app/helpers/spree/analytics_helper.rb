@@ -14,7 +14,7 @@ module Spree
         handler.handle_event(event_name, record)
       end
     rescue => e
-      Spree::ErrorHandler.call(
+      Spree::Dependencies.error_handler.constantize.call(
         exception: e,
         opts: { report_context: { event_name: event_name, record: record } }
       )
