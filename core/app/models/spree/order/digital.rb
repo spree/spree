@@ -13,6 +13,10 @@ module Spree
         line_items.any?(&:digital?)
       end
 
+      def with_digital_assets?
+        line_items.any?(&:with_digital_assets?)
+      end
+
       def digital_line_items
         line_items.with_digital_assets.distinct
       end
