@@ -13,8 +13,10 @@ body.modal-open {
   border-bottom: 0;
 
   .modal-title {
-    font-size: $font-size-lg;
-    font-weight: 600;
+    margin-bottom: 0;
+    font-size: $font-size-plus;
+    font-weight: $font-weight-bold;
+    font-family: $font-family-sans-serif;
   }
 
   .btn-close {
@@ -24,27 +26,13 @@ body.modal-open {
 .modal-footer {
   display: flex;
   justify-content: flex-end;
-  padding: 1.5rem;
+  padding: $modal-inner-padding;
   border-top: 0;
 
   .btn {
-    @extend .px-4;
-    @extend .py-2;
-    @extend .m-0;
-  }
-
-  .btn-primary {
     display: inline-flex !important;
     width: auto !important;
   }
-  .btn-light {
-    display: inline-flex !important;
-    width: auto !important;
-  }
-}
-.modal-content {
-  box-shadow: none;
-  border: 0px none;
 }
 
 .bulk-panel-container {

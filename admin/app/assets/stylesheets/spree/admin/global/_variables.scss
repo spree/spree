@@ -25,13 +25,14 @@ $theme-colors: (
   "black": $black,
   "primary": $primary,
   "secondary": rgba($blue, 0.1),
-  "active": #f1faff,
+  "action": #f1faff,
+  "action-border": #e2ecff,
+  "active": $gray-25,
   "partial": #E2E8F0,
   "warning": #ffe17d,
   "danger": #ee4266,
   "info": #44c1ff,
-  "attention": #FF6900,
-  "accent-red": #742400,
+  "blue": $blue,
   "gray-100": $gray-100,
   "gray-200": $gray-200,
   "gray-300": $gray-300,
@@ -146,8 +147,9 @@ $dropdown-box-shadow:    rgba(209, 217, 224, 0.5) 0px 0px 0px 1px, rgba(37, 41, 
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 
-$modal-header-padding: 1rem 1.5rem 0.5rem 1.5rem;
-$modal-inner-padding: 1rem 1.5rem 1rem 1.5rem;
+$modal-content-border-color: $border-color;
+$modal-header-padding: 1rem 1.25rem 0.5rem 1.25rem;
+$modal-inner-padding: 1rem 1.25rem 1rem 1.25rem;
 
 $alert-padding-y:                   0.5rem !default;
 $alert-padding-x:                   1rem !default;

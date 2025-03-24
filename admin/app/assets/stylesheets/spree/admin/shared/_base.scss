@@ -660,10 +660,6 @@ turbo-frame[busy] #turbo-spinner {
   text-decoration: underline;
 }
 
-.search-picker__option:has(input:checked) {
-  @extend .bg-active;
-}
-
 .overflow-auto, .overflow-y-auto, .ts-dropdown-content {
   &::-webkit-scrollbar {
     width: 0.35rem !important;
