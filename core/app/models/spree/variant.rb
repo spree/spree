@@ -482,6 +482,10 @@ module Spree
       product.digital?
     end
 
+    def with_digital_assets?
+      digitals.any?
+    end
+
     def clear_in_stock_cache
       Rails.cache.delete(in_stock_cache_key)
     end
