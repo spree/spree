@@ -49,6 +49,20 @@ en:
         description: Take control of your settings and tailor your experience according to your preferences. Customize your notifications to suit your needs.
         join: Email me about new products, sales, and more. You can unsubscribe at any time.
         status: You are currently %{status} to the newsletters.
+      refund_action_not_required_message:
+        order_canceled:
+          fully: This order has been canceled. No further action is required. You will receive a refund within couple business days.
+          partially: This order has been partially canceled. No further action is required. You will receive a refund within couple business days.
+        order_refunded:
+          fully: This order has been refunded. No further action is required. You will receive a refund within couple business days.
+          partially: This order has been partially refunded. No further action is required. You will receive a refund within couple business days.
+      refund_action_required_message:
+        order_canceled:
+          fully: This order has been canceled. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+          partially: This order has been partially canceled. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+        order_refunded:
+          fully: This order has been refunded. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+          partially: This order has been partially refunded. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
       variant_picker:
         please_choose: Please choose %{option_type}
       wished_items:
