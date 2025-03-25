@@ -19,6 +19,10 @@
       grid-row: 1 / span 1;
       aspect-ratio: 12/1;
     }
+
+    &:not(:only-child) {
+      height: 100% !important;
+    }
   }
 
   &__image {
