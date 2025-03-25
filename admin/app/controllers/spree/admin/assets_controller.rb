@@ -58,6 +58,10 @@ module Spree
         true
       end
 
+      def destroy_turbo_stream_enabled?
+        true
+      end
+
       def asset_type
         permitted_resource_params[:type] || model_class.to_s
       end

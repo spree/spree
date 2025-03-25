@@ -1,0 +1,4 @@
+<%= turbo_render_alerts %>
+<%= turbo_close_modal('modal-lg') %>
+
+<%= turbo_stream.remove "spree_image_#{@asset.id}" %>
