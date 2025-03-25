@@ -28,7 +28,6 @@ module Spree
       preference :address_requires_phone, :boolean, default: false # Determines whether we require phone in address
       preference :allow_checkout_on_gateway_error, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
-      preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
       preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
       preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
       preference :always_put_site_name_in_title, :boolean, deprecated: true
