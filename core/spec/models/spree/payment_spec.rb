@@ -53,7 +53,7 @@ describe Spree::Payment, type: :model do
     it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid void)) }
   end
 
-  describe 'scopes' do
+  describe 'Scopes' do
     describe '.valid' do
       subject { Spree::Payment.valid }
 
@@ -150,7 +150,7 @@ describe Spree::Payment, type: :model do
     end
   end
 
-  context 'validations' do
+  describe 'Validations' do
     context 'when payment source is not required' do
       it 'do not validate source presence' do
         allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
@@ -200,6 +200,24 @@ describe Spree::Payment, type: :model do
           let(:payment_amount) { 99 }
 
           it { is_expected.to be(true) }
+        end
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    describe '#update_order' do
+      let(:payment) { create(:payment, order: order, state: 'completed') }
+
+      context 'when destroying completed payment' do
+        it 'updates the order' do
+          expect { payment.destroy }.to change { order.payment_total }.by(-payment.amount)
+        end
+      end
+
+      context 'when voiding a payment' do
+        it 'updates the order' do
+          expect { payment.void! }.to change { order.payment_total }.by(-payment.amount)
         end
       end
     end

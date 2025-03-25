@@ -39,14 +39,15 @@ module Spree
 
     after_initialize :set_amount, if: -> { new_record? && order.present? && !amount_changed? }
 
+    #
+    # Callbacks
     after_save :create_payment_profile, if: :profiles_supported?
-
     # update the order totals, etc.
-    set_callback :save, :after, :update_order, unless: -> { capture_on_dispatch }
-
+    after_save :update_order, unless: -> { capture_on_dispatch }
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
+    after_destroy :update_order
 
     attr_accessor :source_attributes, :request_env, :capture_on_dispatch
 
