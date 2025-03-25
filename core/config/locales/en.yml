@@ -1220,6 +1220,7 @@ en:
     new_balance: New balance
     new_billing_address: New Billing Address
     new_country: New Country
+    new_custom_domain: New Custom Domain
     new_customer: Create new account
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
