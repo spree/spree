@@ -772,8 +772,6 @@ en:
     copy: Copy
     copy_id: Copy ID
     copy_link: Copy link
-    copy_payment_link: Copy payment link
-    copy_to_clipboard: Copy to clipboard
     cost_currency: Cost Currency
     cost_price: Cost Price
     could_not_create_customer_return: Could not create customer return

@@ -3,7 +3,6 @@ en:
   spree:
     admin:
       active: Active
-      add_tracking_details: Add tracking details
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
@@ -39,6 +38,7 @@ en:
           title:
             add_tags: Add tags
             remove_tags: Remove tags
+      copied: Copied!
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
       coupon_codes:

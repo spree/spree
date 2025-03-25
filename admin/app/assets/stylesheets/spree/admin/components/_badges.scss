@@ -49,6 +49,9 @@
 .badge-rejected,
 .badge-destroy,
 .badge-closed,
+.badge-canceled,
+.badge-partially_canceled,
+.badge-void,
 .badge-danger {
   background-color: #fee2e1 !important;
   color: #8e1f0b !important;
@@ -60,9 +63,6 @@
 .badge-balance_due,
 .badge-backorder,
 .badge-checkout,
-.badge-canceled,
-.badge-partially_canceled,
-.badge-void,
 .badge-suspended,
 .badge-archived,
 .badge-warning,

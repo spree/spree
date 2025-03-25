@@ -1,5 +1,5 @@
 <% cache variant do %>
-  <%= link_to spree.edit_admin_product_variant_path(variant.product, variant), data: { turbo_frame: :_top }, class: 'd-flex align-items-center justify-content-start text-decoration-none' do %>
+  <%= link_to spree.edit_admin_product_variant_path(variant.product, variant), id: spree_dom_id(variant), data: { turbo_permanent: true, turbo_frame: :_top }, class: 'd-flex align-items-center justify-content-start text-decoration-none' do %>
     <%= render 'spree/admin/shared/product_image', object: variant %>
     <div class="ml-3">
       <strong><%= variant.name %></strong>

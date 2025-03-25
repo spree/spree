@@ -2,8 +2,8 @@
   <td class="w-50">
     <div data-controller="clipboard">
       <code data-clipboard-target="source"><%= coupon_code[1].upcase %></code>
-      <button type="button" class="btn btn-link p-1 ml-2 with-tip" data-action="clipboard#copy" title="<%= Spree.t(:copy_to_clipboard) %>">
-        <%= icon('copy', class: 'mr-0 font-size-sm') %>
+      <button type="button" class="btn btn-link p-1 ml-2 with-tip" data-action="clipboard#copy" title="<%= Spree.t('admin.copy_to_clipboard') %>">
+        <%= icon('copy-check', class: 'mr-0 font-size-sm') %>
       </button>
     </div>
   </td>

@@ -5,9 +5,9 @@
     <span><%= @customer_return.number %></span>
 
     <% if @customer_return.fully_reimbursed? %>
-      <span class="badge badge-pill badge-success"><%= Spree.t(:reimbursed) %></span>
+      <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
     <% else %>
-      <span class="badge badge-pill badge-inactive"><%= Spree.t(:incomplete) %></span>
+      <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
     <% end %>
   </div>
 <% end %>

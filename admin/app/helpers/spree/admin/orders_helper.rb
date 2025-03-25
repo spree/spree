@@ -30,7 +30,7 @@ module Spree
           elsif order.payment_state == 'paid'
             icon('check') + Spree.t('payment_states.paid')
           else
-            Spree.t("payment_states.#{order.payment_state}")
+            icon('progress') + Spree.t("payment_states.#{order.payment_state}")
           end
         end
       end

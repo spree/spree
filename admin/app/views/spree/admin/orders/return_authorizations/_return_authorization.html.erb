@@ -17,7 +17,7 @@
     <%= link_to return_authorization.number, edit_link %>
   </td>
   <td data-action="click->row-link#openLink">
-    <small class="badge badge-pill badge-<%= return_authorization.state %>">
+    <small class="badge badge-<%= return_authorization.state %>">
       <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
     </small>
   </td>

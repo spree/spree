@@ -98,6 +98,9 @@ strong {
 .w-30 {
   width: 30%;
 }
+.w-35 {
+  width: 35%;
+}
 .w-40 {
   width: 40%;
 }
@@ -655,16 +658,12 @@ turbo-frame[busy] #turbo-spinner {
 .border-bottom-dashed {
   border-bottom-style: dashed !important;
 }
+.border-top-dashed {
+  border-top-style: dashed !important;
+}
 
 body:has(.lg-container.lg-show) .modal {
   z-index: 1040;
-}
-
-code {
-  @extend .bg-gray-50;
-  @extend .rounded;
-  @extend .px-2;
-  @extend .py-1;
 }
 
 .z-10 {
