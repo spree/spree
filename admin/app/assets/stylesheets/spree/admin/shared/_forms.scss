@@ -1,5 +1,11 @@
+.custom-checkbox .custom-control-label::before {
+  border-radius: 0.25rem !important;
+  border-color: $gray-200;
+}
+
 label {
   font-weight: 500;
+  font-size: 100%;
 
   &:hover {
     cursor: pointer;

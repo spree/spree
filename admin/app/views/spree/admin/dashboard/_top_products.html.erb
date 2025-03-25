@@ -15,10 +15,10 @@
             <th>
               <%= Spree.t(:product) %>
             </th>
-            <% unless @vendor %>
-            <th>
-              <%= Spree.t(:vendor) %>
-            </th>
+            <% if defined?(Spree::Vendor) && !@vendor %>
+              <th>
+                <%= Spree.t(:vendor) %>
+              </th>
             <% end %>
             <th>
               <%= Spree.t(:price) %>

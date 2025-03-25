@@ -13,7 +13,7 @@
     </span>
     <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
   </button>
-  <div class="dropdown-menu w-100 shadow-sm border-gray-900 font-size-plus" style="min-width: 200px">
+  <div class="dropdown-menu w-100 font-size-plus" style="min-width: 200px">
     <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
       <%= icon 'eye' %>
       <%= Spree.t(:view_store) %>

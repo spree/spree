@@ -2,7 +2,7 @@
     <div class="card-header d-block border-0 h-auto p-2">
       <div class="row">
         <div class="col-6 col-lg-4 pr-1">
-          <div class="rounded cursor-pointer p-2 hover-light h-100 active" style="min-height: 82px;">
+          <div class="analytics-card-tab active" style="min-height: 82px;">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Sales</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1">
@@ -16,7 +16,7 @@
         </div>
 
         <div class="col-6 col-lg-2 pl-0 pr-2">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" >
+          <div class="analytics-card-tab" >
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Avg. Order Value</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_average %></span>
@@ -28,7 +28,7 @@
         </div>
 
         <div class="col-6 col-lg-2 pl-0 pr-2">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" >
+          <div class="analytics-card-tab" >
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Orders</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_total  %></span>
@@ -40,7 +40,7 @@
         </div>
         <% if defined?(Ahoy) %>
           <div class="col-6 col-lg-2 pl-0 pr-2">
-            <div class="rounded cursor-pointer p-2 hover-light h-100" >
+            <div class="analytics-card-tab" >
               <div class="d-flex justify-content-center flex-column">
                 <span class="font-size-sm text-muted">Visits</span>
                 <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @visits_total %></span>
@@ -53,7 +53,7 @@
         <% end %>
 
         <div class="col-6 col-lg-2 pl-0">
-          <div class="rounded cursor-pointer p-2 hover-light h-100" >
+          <div class="analytics-card-tab" >
             <div class="d-flex justify-content-center flex-column">
               <span class="font-size-sm text-muted">Sign-ups</span>
               <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>

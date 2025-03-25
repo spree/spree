@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button collection_url %>
-  Edit custom domain
+  <%= @custom_domain.url %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>

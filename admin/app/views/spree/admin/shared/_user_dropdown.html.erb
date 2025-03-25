@@ -12,7 +12,7 @@
       </div>
       <%= icon 'dots-vertical', class: 'mr-0 ml-2 mb-0 d-none d-lg-block' %>
     </button>
-    <div class="dropdown-menu dropdown-menu-right w-100 shadow-sm mb-1 mt-1 mt-lg-0">
+    <div class="dropdown-menu dropdown-menu-dark dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
       <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
 
       <% if enterprise_edition? && try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>

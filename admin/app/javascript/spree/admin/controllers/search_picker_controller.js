@@ -3,13 +3,6 @@ import { Controller } from '@hotwired/stimulus'
 export default class extends Controller {
   static targets = ['checkbox', 'submit', 'search', 'results']
 
-  // hack needed for this to work with Bootstrap modals and turbo frames
-  connect() {
-    setTimeout(() => {
-      this.searchTarget.focus()
-    }, 200)
-  }
-
   toggle(event) {
     if (event.target.type == 'checkbox' || event.target.type == 'radio') {
       this.refresh()

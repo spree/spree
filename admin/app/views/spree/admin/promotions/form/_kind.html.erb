@@ -7,7 +7,7 @@
       <%= f.radio_button :multi_codes, false, data: { toggle: :collapse, target: '#single-code' }, class: 'custom-control-input' %>
       <%= f.label :multi_codes_false, class: 'custom-control-label' do %>
         One code for all customers
-        <span class="form-text text-muted font-weight-normal">
+        <span class="form-text text-muted font-weight-normal mr-1">
           You can limit the number of times this code can be used.
         </span>
       <% end %>
@@ -20,7 +20,7 @@
       <%= f.radio_button :multi_codes, true, data: { toggle: :collapse, target: '#multi-codes' }, class: 'custom-control-input' %>
       <%= f.label :multi_codes_true, class: 'custom-control-label' do %>
         Generate unique codes
-        <span class="form-text text-muted font-weight-normal">
+        <span class="form-text text-muted font-weight-normal mr-1">
           These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
         </span>
       <% end %>

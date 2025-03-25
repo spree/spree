@@ -10,7 +10,7 @@
           <div class="d-flex align-items-center justify-content-between">
             <div class="dropdown h-100">
               <button class="btn btn-light h-100 dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
-                <span class="text-muted font-weight-normal">
+                <span class="text-muted font-weight-normal mr-1">
                   <%= Spree.t(:show) %>
                 </span>
                 <%= Spree.t(:all) if (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>

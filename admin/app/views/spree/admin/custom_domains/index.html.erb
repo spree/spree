@@ -4,6 +4,7 @@
 <%= content_for(:page_title) do %>
   <%= Spree.t(:domains) %>
 <% end %>
+
 <div class="card-lg">
   <h5 class="mb-3">Internal URL</h5>
   <div class="row mb-4">
@@ -14,7 +15,7 @@
     </div>
     <div class="col-lg-7 offset-lg-1">
       <%= form_for current_store, url: spree.admin_store_path(current_store), data: { turbo: false, controller: 'enable-button', 'enable-button-disable-when-not-changed-value': true } do |f| %>
-        <div class="form-control d-flex align-items-center py-0 focus-shadow-blue focus-border-blue mb-3 <% if current_store.custom_domains.any? %>disabled<% end %>">
+        <div class="form-control d-flex align-items-center py-0 focus-shadow-primary focus-border-primary mb-3 <% if current_store.custom_domains.any? %>disabled<% end %>">
           <%= f.text_field :code, class: 'form-control-plaintext pl-0',  data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
           <span>.<%= Spree.root_domain %></span>
         </div>
@@ -29,8 +30,7 @@
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        If you already own a domain name (like yourname.com), you can set your Vendo store up to live at that domain.
-        If you'd prefer, you can also use a subdomain on your site (for example, shop.yourname.com).
+        Connect your domain or subdomain to your store.
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">

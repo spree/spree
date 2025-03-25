@@ -1,3 +1,10 @@
+// https://github.com/hotwired/turbo/pull/386
+button                  .show-when-disabled { display: none; }
+button[disabled]        .show-when-disabled { display: initial; }
+
+button                  .show-when-enabled { display: initial; }
+button[disabled]        .show-when-enabled { display: none; }
+
 .payment-action-save {
   @include button-variant(theme-color('success'), theme-color('success'), theme-color('success') );
 }
@@ -108,12 +115,13 @@
 }
 
 .btn-link {
-  color: $primary !important;
+  color: theme-color('primary') !important;
   border-color: $border-color;
 
   &:hover, &:focus {
     text-decoration: none !important;
-    background-color: rgba($blue, 0.05) !important;
+    background-color: theme-color('action') !important;
+    border-color: theme-color('action-border') !important;
   }
 }
 
@@ -159,13 +167,12 @@
 
 .btn-light {
   background-color: $white;
-  background: linear-gradient(rgb(255, 255, 255) 0%, rgb(252, 249, 245) 100%);
   border-color: $border-color;
   color: $gray-700;
 
   &:hover, &:focus {
     border-color: $gray-100;
-    background: linear-gradient(rgb(255, 255, 255) 0%, rgb(245, 245, 245) 100%);
+    background-color: $gray-25;
     color: $gray-900;
   }
 

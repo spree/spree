@@ -61,13 +61,27 @@ table.table {
           text-decoration: none;
         }
       }
+
+      &.active {
+        td {
+          background-color: theme-color('action');
+          border-color: theme-color('action-border');
+        }
+      }
     }
 
-    tr:hover {
-      background-color: $gray-25;
+    tr:hover:not(.active) {
+      td {
+        background-color: $gray-25;
+      }
+    }
 
-      .btn {
-        visibility: visible !important;
+    tr:last-child {
+      td:first-child {
+        border-bottom-left-radius: $border-radius-lg;
+      }
+      td:last-child {
+        border-bottom-right-radius: $border-radius-lg;
       }
     }
   }

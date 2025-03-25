@@ -26,11 +26,11 @@
     <% end %>
 
     <div class="card-body pt-2">
-      <div class="flex my-2 p-1 w-100 rounded bg-light" data-controller="clipboard" data-clipboard-success-content-value="Copied!">
+      <div class="flex my-2 p-1 w-100 rounded border" data-controller="clipboard" data-clipboard-success-content-value="Copied!">
         <% if current_store.default_custom_domain&.active? %>
-          <%= text_field_tag :custom_domain, current_store.default_custom_domain.url, readonly: true, class: 'form-control-plaintext py-0 text-muted', data: { clipboard_target: 'source' } %>
+          <%= text_field_tag :custom_domain, current_store.default_custom_domain.url, readonly: true, class: 'form-control-plaintext py-0', data: { clipboard_target: 'source' } %>
         <% else %>
-          <%= text_field_tag :domain, current_store.url, readonly: true, class: 'form-control-plaintext py-0 text-muted', data: { clipboard_target: 'source' } %>
+          <%= text_field_tag :domain, current_store.url, readonly: true, class: 'form-control-plaintext py-0', data: { clipboard_target: 'source' } %>
         <% end %>
         <button data-action="clipboard#copy" data-clipboard-target="button" class="btn btn-sm py-1 hover-gray">
           Copy

@@ -33,6 +33,12 @@ const resetDialogModal = () => {
   }
 }
 
+const fixModalAutofocus = () => {
+  $('.modal').on('shown.bs.modal', function (e) {
+    $('[autofocus]', e.target).focus();
+  });
+}
+
 $('.modal').on('show.bs.modal', lockScroll)
 $('.modal').on('hide.bs.modal', unlockScroll)
 $('.modal').on('hidden.bs.modal	', resetDialogModal)
@@ -40,3 +46,4 @@ $('.modal').on('hidden.bs.modal	', resetDialogModal)
 document.addEventListener("turbo:click", removeTooltips)
 document.addEventListener("turbo:load", initTooltips)
 document.addEventListener('turbo:frame-render', initTooltips)
+document.addEventListener('turbo:frame-render', fixModalAutofocus)

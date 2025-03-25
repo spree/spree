@@ -156,12 +156,12 @@ strong {
 .shadow-blue {
   box-shadow: $input-btn-focus-box-shadow;
 }
-.focus-shadow-blue {
+.focus-shadow-primary {
   &:focus, &:focus-within, &:active {
     box-shadow: $input-btn-focus-box-shadow;
   }
 }
-.focus-border-blue {
+.focus-border-primary {
   &:focus, &:focus-within, &:active {
     border-color: $input-focus-border-color;
   }
@@ -176,10 +176,7 @@ strong {
 }
 
 .active {
-  color: theme-color('black');
-  background-color: $gray-25;
-}
-.list-group-item.bg-active {
+  color: theme-color('primary');
   background-color: theme-color('active');
 }
 .tab-pane.active {
@@ -454,56 +451,6 @@ small,
   transform: none;
 }
 
-.card-header .arrow {
-  @extend .w-auto;
-  &:before {
-    transition: .3s transform ease-in-out;
-  }
-}
-.card-header .collapsed .arrow:before {
-  transform: rotate(-90deg);
-}
-
-.collapsable-card {
-  @extend .card;
-  @extend .overflow-hidden;
-
-  .card-header {
-    @extend .p-0;
-  }
-  .card-header a {
-    padding: 0.75rem !important;
-
-    .ti-chevron-down {
-      color: $gray-400;
-    }
-
-    &:hover {
-      text-decoration: none !important;
-
-      .ti-chevron-down {
-        color: $gray-900 !important;
-      }
-    }
-  }
-  &:hover {
-    .card-header a {
-      text-decoration: none !important;
-
-      .ti-chevron-down {
-        color: $gray-500;
-      }
-    }
-  }
-  .card-body {
-    border-top: 1px solid $gray-50;
-  }
-  .card-header {
-    border: 0 none;
-  }
-}
-
-
 .easepick-wrapper .container.inline {
   box-shadow: none !important;
 }
@@ -542,6 +489,18 @@ small,
   -webkit-line-clamp: var(--read-more-line-clamp, 4);
 }
 
+
+.blurred {
+  filter: opacity(50%);
+
+  .form-actions {
+    display: none;
+  }
+
+  .cm-editor {
+    visibility: hidden;
+  }
+}
 
 #turbo-spinner {
   display: none !important;
@@ -658,10 +617,6 @@ turbo-frame[busy] #turbo-spinner {
 
 .text-decoration-underline {
   text-decoration: underline;
-}
-
-.search-picker__option:has(input:checked) {
-  @extend .bg-active;
 }
 
 .overflow-auto, .overflow-y-auto, .ts-dropdown-content {

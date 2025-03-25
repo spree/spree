@@ -1,6 +1,6 @@
 <div class="card mb-4" data-product-form-target="pricesForm">
   <div class="card-header d-flex align-items-center justify-content-between">
-    <h5 class="mb-0">
+    <h5 class="card-title">
       <%= Spree.t(:pricing) %>
     </h5>
 
@@ -29,13 +29,13 @@
           <tr>
             <td><%= price_form.object.currency %></td>
             <td>
-              <div class="form-control align-items-center py-0 focus-shadow-blue focus-border-blue mr-2 price-input-container d-flex">
+              <div class="form-control align-items-center py-0 focus-shadow-primary focus-border-primary mr-2 price-input-container d-flex">
                 <%= price_form.text_field :amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object) %>
                 <span><%= currency_symbol(price_form.object.currency) %></span>
               </div>
             </td>
             <td>
-              <div class="form-control align-items-center py-0 focus-shadow-blue focus-border-blue mr-2 price-input-container d-flex">
+              <div class="form-control align-items-center py-0 focus-shadow-primary focus-border-primary mr-2 price-input-container d-flex">
                 <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object) %>
                 <span><%= currency_symbol(price_form.object.currency) %></span>
               </div>
