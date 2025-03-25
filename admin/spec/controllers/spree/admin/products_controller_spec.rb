@@ -3,11 +3,20 @@ require 'spec_helper'
 RSpec.describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
+  render_views
+
   let(:user) { create(:admin_user) }
   let(:store) { @default_store }
 
   before do
     allow(controller).to receive(:current_ability).and_call_original
+  end
+
+  describe '#GET #new' do
+    it 'renders the new template' do
+      get :new
+      expect(response).to render_template(:new)
+    end
   end
 
   describe 'GET #index' do
@@ -452,6 +461,24 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           product = Spree::Product.last
           expect(product.stores).to eq [store]
         end
+      end
+    end
+  end
+
+  describe '#GET #edit' do
+    let!(:product) { create(:product, stores: [store], status: 'active') }
+
+    it 'renders the edit template' do
+      get :edit, params: { id: product.to_param }
+      expect(response).to render_template(:edit)
+    end
+
+    context 'with variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      it 'renders the edit template' do
+        get :edit, params: { id: product.to_param }
+        expect(response).to render_template(:edit)
       end
     end
   end

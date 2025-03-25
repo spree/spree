@@ -34,6 +34,8 @@ module Spree
           variant.images
         elsif session_uploaded_assets.any?
           Spree::Image.accessible_by(current_ability, :manage).where(id: session_uploaded_assets)
+        else
+          []
         end
       end
 
