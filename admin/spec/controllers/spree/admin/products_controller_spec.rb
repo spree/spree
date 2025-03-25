@@ -622,12 +622,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       let(:variant1) { create(:variant, product: product, option_values: [red_option_value, small_option_value], price: 100) }
       let(:variant2) { create(:variant, product: product, option_values: [blue_option_value, large_option_value], price: 100) }
+      let(:variant3) { create(:variant, product: product, option_values: [red_option_value, large_option_value], price: 100) }
 
       let!(:variant1_price_pln) { create(:price, variant: variant1, currency: 'PLN', amount: 100) }
       let!(:variant2_price_pln) { create(:price, variant: variant2, currency: 'PLN', amount: 200) }
+      let!(:variant3_price_pln) { create(:price, variant: variant3, currency: 'PLN', amount: 300) }
 
       let(:variant1_stock_item) { variant1.stock_items.first }
       let(:variant2_stock_item) { variant2.stock_items.first }
+      let(:variant3_stock_item) { variant3.stock_items.first }
 
       let(:product_params) do
         {
@@ -684,6 +687,32 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   value: 'Large'
                 }
               ]
+            },
+            '2' => {
+              prices_attributes: {
+                '0' => { currency: 'PLN', amount: 30, id: variant3.price_in('PLN')&.id },
+                '1' => { currency: 'USD', amount: 40, id: variant3.price_in('USD')&.id }
+              },
+              id: variant3.id,
+              stock_items_attributes: {
+                '0' => {
+                  id: variant3_stock_item.id,
+                  count_on_hand: 30,
+                  stock_location_id: variant3_stock_item.stock_location_id,
+                }
+              },
+              options: [
+                {
+                  name: 'Color',
+                  position: 1,
+                  value: 'Red'
+                },
+                {
+                  name: 'Size',
+                  position: 2,
+                  value: 'Large'
+                }
+              ]
             }
           }
         }
@@ -691,16 +720,16 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       context 'when price is not present' do
         before do
-          product_params[:variants_attributes]['0'][:prices_attributes]['0'][:amount] = nil
+          product_params[:variants_attributes]['2'][:prices_attributes]['0'][:amount] = nil
         end
 
         it 'removes the price' do
           send_request
 
-          expect(variant1.price_in('PLN').amount).to be_nil
-          expect(variant1.price_in('PLN').id).to be_nil
-          expect(variant1.price_in('USD').amount).to eq 20
-          expect(variant1.price_in('USD').id).to be_present
+          expect(variant3.price_in('PLN').amount).to be_nil
+          expect(variant3.price_in('PLN').id).to be_nil
+          expect(variant3.price_in('USD').amount).to eq 40
+          expect(variant3.price_in('USD').id).to be_present
         end
       end
 
@@ -839,7 +868,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         it 'removes the variant' do
           send_request
 
-          expect(product.reload.variant_ids).to eq([variant2.id])
+          expect(product.reload.variant_ids).to eq([variant2.id, variant3.id])
         end
       end
     end
