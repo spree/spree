@@ -4,11 +4,14 @@ module Spree
       attribute :date, :string
       attribute :order, :string
       attribute :product, :string
+      attribute :quantity, :integer
       attribute :pre_tax_amount, :decimal
       attribute :promo_total, :decimal
       attribute :shipment_total, :decimal
       attribute :tax_total, :decimal
       attribute :total, :decimal
+
+      delegate :quantity, to: :record
 
       def date
         record.order.completed_at.strftime('%Y-%m-%d')

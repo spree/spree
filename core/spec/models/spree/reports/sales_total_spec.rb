@@ -57,6 +57,7 @@ RSpec.describe Spree::Reports::SalesTotal do
       expect(return_line_item.date).to eq(order.completed_at.strftime('%Y-%m-%d'))
       expect(return_line_item.order).to eq(order.number)
       expect(return_line_item.product).to eq(line_item.variant.descriptive_name)
+      expect(return_line_item.quantity).to eq(line_item.quantity)
       expect(return_line_item.tax_total).to eq(line_item.display_tax_total)
       expect(return_line_item.promo_total).to eq(line_item.display_promo_total)
       expect(return_line_item.pre_tax_amount).to eq(line_item.display_pre_tax_amount)
