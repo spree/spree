@@ -35,15 +35,6 @@ body.modal-open {
   }
 }
 
-.bulk-panel-container {
-  display: inline-flex;
-  align-items: center;
-  border-radius: $border-radius-lg;
-  background-color: $white;
-  padding: $dropdown-padding-x $dropdown-padding-y;
-  box-shadow: $dropdown-box-shadow;
-}
-
 #multi-backdrop {
   z-index: 0;
   height: 0;

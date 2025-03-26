@@ -673,29 +673,6 @@ body:has(.lg-container.lg-show) .modal {
   z-index: 1000;
 }
 
-#bulk-panel {
-  position: fixed;
-  width: 100%;
-  text-align: center;
-  bottom: 1rem;
-  left: 0;
-  z-index: 1020;
-}
-
-@include media-breakpoint-up(lg) {
-  #bulk-panel {
-    left: 25%;
-    width: 75%;
-  }
-}
-
-@include media-breakpoint-up(xl) {
-  #bulk-panel {
-    left: 16.66666667%;
-    width: 83.33333333%;
-  }
-}
-
 .turbo-frame-error {
   display: flex;
   width: 100%;
