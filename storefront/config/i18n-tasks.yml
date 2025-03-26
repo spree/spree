@@ -138,7 +138,8 @@ search:
 #   #   Keep in mind the context of all the strings for a more accurate translation.
 
 ## Do not consider these keys missing:
-# ignore_missing:
+ignore_missing:
+  - 'support.array.{last_word_connector,two_words_connector,words_connector}' # rails_i18n default support locales
 # - 'errors.messages.{accepted,blank,invalid,too_short,too_long}'
 # - '{devise,simple_form}.*'
 
