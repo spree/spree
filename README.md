@@ -150,6 +150,22 @@ Spree is developed and maintained by
 > Vendo is an eCommerce platform based on Spree which you can customize to your exact needs (source available).
 Go global on day 1. DTC x B2B x Marketplace. API-first. One or multiple storefronts.
 
+## Guidelines for issue labeling
+
+* admin panel -- has to do with the admin panel for spree customers
+* API - fixing the api endpoint
+* Bug - bug found in any area
+* Documentation - adding documentation to the project
+* Good first issue - something you think would be good for a beginner
+* Improvement - improvement to existing feature
+* International - affects international aspect of project
+* Multi-Store - affects multi store feature
+* New Feature - request for a new feature
+* Question - post a question to the developers
+* Security - issues with site security
+* StoreFront - issues with storefront
+* Verified - verified issue from Spree devs
+
 ## License
 
 Spree Commerce is a free, open-source eCommerce framework giving you full control and customizability.
