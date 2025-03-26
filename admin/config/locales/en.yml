@@ -39,6 +39,12 @@ en:
           title:
             add_tags: Add tags
             remove_tags: Remove tags
+      checkout_settings:
+        checkout_message_description: Visible to your customers on the checkout page in the right sidebar.
+        guest_checkout:
+          description: Allow customers to checkout without creating an account.
+          label: Allow guest checkout
+        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
       coupon_codes:

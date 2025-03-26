@@ -65,8 +65,22 @@ module Spree
     end
 
     def svg_country_icon(country_code)
-      country_code = :us if country_code.to_s.downcase == "en"
+      country_code = :us if country_code.to_s.downcase == 'en'
       tag.span(class: "fi fi-#{country_code.downcase}")
+    end
+
+    def show_account_pane?
+      !try_spree_current_user &&
+        (defined?(spree_login_path) && !paths_equal?(canonical_path, spree_login_path)) &&
+        (defined?(spree_signup_path) && !paths_equal?(canonical_path, spree_signup_path)) &&
+        (defined?(spree_forgot_password_path) && !paths_equal?(canonical_path, spree_forgot_password_path))
+    end
+
+    def paths_equal?(path1, path2)
+      path1 = URI.parse(path1).path.chomp('/')
+      path2 = URI.parse(path2).path.chomp('/')
+
+      path1 == path2
     end
   end
 end
