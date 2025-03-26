@@ -1301,7 +1301,6 @@ en:
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: "%{resource} is not found"
-    not_provided: Not provided
     not_risky: Not risky
     not_subscribed: Not subscribed
     note: Note
@@ -1951,6 +1950,7 @@ en:
       apply: Apply
       authorized: Authorized
       available_amount: You have <strong>%{amount}</strong> in Store Credit available!
+      remaining: Remaining
       captured: Used
       credit: Credit
       errors:

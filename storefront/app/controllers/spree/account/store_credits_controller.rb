@@ -12,7 +12,7 @@ module Spree
       private
 
       def accurate_title
-        Spree.t(:store_credit_name)
+        Spree.t(:store_credits)
       end
 
       def user_store_credits

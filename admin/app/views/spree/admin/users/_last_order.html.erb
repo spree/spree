@@ -5,9 +5,9 @@
         <%= Spree.t('admin.user.last_order_placed') %>
       </h5>
     </div>
-    <div class="card-body">
+    <div class="card-body p-0">
       <% cache spree_base_cache_scope.call(@last_order) do %>
-        <ul class="list-group">
+        <ul class="list-group list-group-flush">
           <li class="list-group-item">
             <div class="row">
               <div class="col-lg-9">
@@ -28,9 +28,6 @@
           <%= render collection: @last_order_line_items, partial: 'spree/admin/users/last_order_line_item', as: :line_item, cached: spree_base_cache_scope %>
         </ul>
       <% end %>
-    </div>
-    <div class="card-footer d-flex justify-content-end pt-0 mb-1">
-      <%= link_to Spree.t('admin.view_all_orders'), spree.admin_orders_path(q: { user_id_eq: @user.id }), class: 'btn btn-light btn-sm' %>
     </div>
   </div>
 <% end %>

@@ -1,8 +1,7 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <div class="d-flex gap-3 align-items-center">
-    <span><%= Spree.t(:customer_return) %></span>
-    <span><%= @customer_return.number %></span>
+    <%= @customer_return.number %>
 
     <% if @customer_return.fully_reimbursed? %>
       <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>

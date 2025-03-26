@@ -2,17 +2,23 @@
   <div class="table-responsive">
     <table class="table">
       <thead class="text-muted">
-        <th><%= Spree.t(:credited) %></th>
-        <th><%= Spree.t(:used) %></th>
+        <th><%= Spree.t(:currency) %></th>
+        <th><%= Spree.t('store_credit.allocated') %></th>
+        <th><%= Spree.t('store_credit.authorized') %></th>
+        <th><%= Spree.t('store_credit.captured') %></th>
+        <th><%= Spree.t('store_credit.remaining') %></th>
         <th><%= Spree.t(:created_by) %></th>
         <th><%= Spree.t(:issued_on) %></th>
-        <th data-hook="admin_store_credits_index_header_actions" class="actions"></th>
-      <thead class="text-muted">
+        <th></th>
+      </thead>
       <tbody>
         <% @store_credits.each do |store_credit| %>
           <tr>
+            <td><%= store_credit.currency %></td>
             <td><%= store_credit.display_amount.to_html %></td>
+            <td><%= store_credit.display_amount_authorized.to_html %></td>
             <td><%= store_credit.display_amount_used.to_html %></td>
+            <td><%= store_credit.display_amount_remaining.to_html %></td>
             <td><%= store_credit.created_by_email %></td>
             <td><%= local_date(store_credit.created_at) %></td>
             <td class="actions">
