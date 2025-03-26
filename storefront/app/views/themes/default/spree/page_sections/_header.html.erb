@@ -1,8 +1,7 @@
 <% layout = section.preferred_layout %>
-<% show_account_pane = !try_spree_current_user && (defined?(spree_login_path) && canonical_path != spree_login_path) && (defined?(spree_signup_path) && canonical_path != spree_signup_path) && (defined?(spree_forgot_password_path) && canonical_path != spree_forgot_password_path) %>
 <header
   class='sticky has-[.currency-and-locale-modal:not(.hidden)]:relative top-0 z-50 has-[.currency-and-locale-modal:not(.hidden)]:z-[unset] header-<%= layout %>'
-  data-controller='header toggle-menu slideover <%= "slideover-account" if show_account_pane %>'
+  data-controller='header toggle-menu slideover <%= "slideover-account" if show_account_pane? %>'
   data-toggle-menu-class='hamburger-visible'
   data-slideover-invisible-class='translate-x-full,opacity-0'
   data-slideover-visible-class='translate-x-0,opacity-100'
@@ -106,7 +105,7 @@
 
           <!-- Desktop Account -->
           <div class='hidden lg:flex'>
-            <% if show_account_pane %>
+            <% if show_account_pane? %>
               <button
                 data-action='click->slideover-account#toggle click@window->slideover-account#hide click->toggle-menu#hide touch->toggle-menu#hide'
               >
@@ -119,7 +118,7 @@
             <% end %>
           </div>
 
-          <% if show_account_pane %>
+          <% if show_account_pane? %>
             <%= form_with url: spree.account_wishlist_path, method: :get, data: { turbo_stream: true } do %>
               <button
                 type="submit"
@@ -159,7 +158,7 @@
     </div>
   </nav>
   <%= render 'spree/shared/cart_pane', section: section %>
-  <% if show_account_pane %>
+  <% if show_account_pane? %>
     <%= render 'spree/shared/account_pane', section: section %>
   <% end %>
 
