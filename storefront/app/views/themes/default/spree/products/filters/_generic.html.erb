@@ -28,10 +28,13 @@
           <li>
             <%= f.label "filter_options_#{filter.name}_#{option.name}", class: "flex items-center gap-2 cursor-pointer group text-sm h-10", data: { searchable_list_target: "item", text: option.name } do %>
               <%= f.check_box "filter[options][#{filter.name}][]",
-                                        { checked: permitted_products_params.dig(:filter, :options, filter.name)&.include?(option.name),
-                                          class: "input-checkbox group-focus-within:outline" },
-                                        option.name,
-                                        nil %>
+                {
+                  id: "filter_options_#{filter.name}_#{option.name}",
+                  checked: permitted_products_params.dig(:filter, :options, filter.name)&.include?(option.name),
+                  class: "input-checkbox group-focus-within:outline"
+                },
+                option.name,
+                nil %>
               <%= option.presentation %>
               <span class="opacity-50">
                 (<%= products_count_for_filter(filter.name, option.id) %>)
@@ -46,10 +49,13 @@
             <li class="px-4 lg:px-10">
               <%= f.label "filter_options_#{filter.name}_#{option.name}", class: "flex items-center gap-2 cursor-pointer group text-sm h-10", data: { searchable_list_target: "item", text: option.name } do %>
                 <%= f.check_box "filter[options][#{filter.name}][]",
-                                          { checked: permitted_products_params.dig(:filter, :options, filter.name)&.include?(option.name),
-                                            class: "input-checkbox group-focus-within:outline" },
-                                          option.name,
-                                          nil %>
+                  {
+                    id: "filter_options_#{filter.name}_#{option.name}",
+                    checked: permitted_products_params.dig(:filter, :options, filter.name)&.include?(option.name),
+                    class: "input-checkbox group-focus-within:outline"
+                  },
+                  option.name,
+                  nil %>
                 <%= option.presentation %>
                 <span class="opacity-50">
                   (<%= products_count_for_filter(filter.name, option.id) %>)
