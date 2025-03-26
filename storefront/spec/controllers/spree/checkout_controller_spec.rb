@@ -67,6 +67,32 @@ describe Spree::CheckoutController, type: :controller do
       get :edit, params: { token: order.token, state: 'address' }
     end
 
+    context 'when user is not signed in' do
+      let(:user) { nil }
+
+      before do
+        allow(store).to receive(:prefers_guest_checkout?).and_return(allow_guest_checkout)
+      end
+
+      context 'when guest checkout is allowed' do
+        let(:allow_guest_checkout) { true }
+
+        it 'allows access to the checkout' do
+          get :edit, params: { token: order.token }
+          expect(response).to redirect_to(spree.checkout_state_path(order.token, 'address'))
+        end
+      end
+
+      context 'when guest checkout is not allowed' do
+        let(:allow_guest_checkout) { false }
+
+        it 'redirects to the login page' do
+          get :edit, params: { token: order.token }
+          expect(response).to redirect_to('/login')
+        end
+      end
+    end
+
     context 'when entering the checkout' do
       context 'when user is signed in' do
         let(:user) { create(:user) }
