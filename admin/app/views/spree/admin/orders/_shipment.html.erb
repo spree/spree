@@ -1,6 +1,6 @@
 <% order ||= shipment.order %>
 <%= turbo_frame_tag dom_id(shipment), class: "card" do %>
-  <div class="card-header stock-location justify-content-between flex-wrap pb-3" data-hook="stock-location" id="shipment">
+  <div class="card-header align-items-center justify-content-between flex-wrap">
     <span class="shipment-number d-none"><%= shipment.number %></span>
     <span class="d-flex align-items-center"><%= shipment_state(shipment.state, class: 'mr-3') %></span>
     <% if shipment.shipped_at.present? %>
@@ -71,8 +71,8 @@
         </div>
 
         <% if can?(:update, shipment) && (!order.canceled? && !shipment.canceled?) %>
-          <% if shipment.tracking_url.present? %>
-            <%= link_to_with_icon 'edit', Spree.t(:edit), shipment.tracking_url, class: 'btn btn-light btn-sm with-tip', no_text: true, title: Spree.t(:edit) %>
+          <% if shipment.tracking.present? %>
+            <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm with-tip', no_text: true, title: Spree.t(:edit) %>
           <% else %>
             <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm with-tip', no_text: true, title: Spree.t(:add_one) %>
           <% end %>

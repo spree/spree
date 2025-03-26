@@ -1,9 +1,5 @@
 <div class="card" id="<%= dom_id(payment) %>">
   <div class="card-header d-flex align-items-center gap-2">
-    <% if payment.payment_method.payment_icon_name.present? %>
-      <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
-    <% end %>
-    <strong><%= payment.number.upcase %></strong>
     <span class="badge badge-<%= payment.state %>">
       <% if payment.completed? %>
         <%= icon('check', class: 'mr-2') %>
@@ -12,6 +8,10 @@
       <% end %>
       <%= Spree.t('payment_states.' + payment.state) %>
     </span>
+    <% if payment.payment_method.payment_icon_name.present? %>
+      <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
+    <% end %>
+    <strong><%= payment.number.upcase %></strong>
     <%= local_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
 
     <div class="dropdown">

@@ -36,11 +36,11 @@ body.modal-open {
 }
 
 .bulk-panel-container {
-  @extend .d-inline-flex;
-  @extend .p-2;
-  @extend .align-items-center;
-  @extend .rounded-lg;
-  @extend .bg-white;
+  display: inline-flex;
+  align-items: center;
+  border-radius: $border-radius-lg;
+  background-color: $white;
+  padding: $dropdown-padding-x $dropdown-padding-y;
   box-shadow: $dropdown-box-shadow;
 }
 
