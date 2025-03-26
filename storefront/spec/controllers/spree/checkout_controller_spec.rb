@@ -71,7 +71,7 @@ describe Spree::CheckoutController, type: :controller do
       let(:user) { nil }
 
       before do
-        store.update!(preferred_guest_checkout: allow_guest_checkout)
+        allow(store).to receive(:prefers_guest_checkout?).and_return(allow_guest_checkout)
       end
 
       context 'when guest checkout is allowed' do
