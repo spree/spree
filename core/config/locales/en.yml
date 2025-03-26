@@ -1396,6 +1396,7 @@ en:
     origin: Origin
     other: Other
     out_of_stock: Out of Stock
+    outstanding_balance: Outstanding Balance
     overview: Overview
     package_from: package from
     page: Page
@@ -1487,6 +1488,7 @@ en:
       processing: Processing
       refunded: Refunded
       void: Void
+    payment_total: Payment Total
     payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
