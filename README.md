@@ -47,8 +47,8 @@ Thank you for supporting Spree open-source :heart:
 ## Enterprise support
 
 [Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
+  * expert delivery of your Spree application,
   * migrations and upgrades,
-  * delivering your Spree application,
   * optimizing your Spree stack.
 
 ## Enterprise Edition 
