@@ -53,6 +53,7 @@ export default class extends Controller {
     }
 
     this.formTarget.addEventListener('submit', this.disableSubmitButton)
+    this.submitTargets.forEach((button) => button.addEventListener('turbo-stream-form:submit-end', this.enableForm))
   }
 
   disconnect() {
