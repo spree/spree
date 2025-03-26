@@ -12,19 +12,27 @@
         <table class="table table-condensed" id='refunds' data-order-id='<%= @order.number %>'>
           <thead class="text-muted">
             <tr data-hook="refunds_header" class="border-bottom">
-              <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
               <th><%= Spree.t(:amount) %></th>
+              <th><%= Spree.t(:status) %></th>
               <th><%= Spree.t(:reason) %></th>
+              <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             <% @refunds.each do |refund| %>
               <tr id="<%= spree_dom_id(refund) %>">
-                <td><%= local_time(refund.created_at) %></td>
                 <td class="amount"><%= refund.display_amount %></td>
+                <td>
+                  <% if refund.transaction_id.present? %>
+                    <span class="badge badge-success"><%= icon('check') %><%= Spree.t(:completed) %></span>
+                  <% else %>
+                    <span class="badge badge-warning"><%= icon('clock') %><%= Spree.t(:pending) %></span>
+                  <% end %>
+                </td>
                 <td><%= truncate(refund.reason.name, length: 100) %></td>
-                <% unless refund.payment.order.canceled? %>
+                <td><%= local_time(refund.created_at) %></td>
+                <% if refund.editable? && can?(:edit, refund) %>
                   <td class="actions">
                     <span data-toggle="modal" data-target="#modal">
                       <%= link_to_with_icon('edit', Spree.t(:edit), spree.edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, data: { turbo_frame: 'dialog_modal' }, class: "btn btn-light btn-sm") if can?(:edit, refund) %>

@@ -752,7 +752,6 @@ en:
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
-    completed_at: Completed at
     conditions: Conditions
     configuration: Configuration
     configurations: Configurations
@@ -1032,9 +1031,6 @@ en:
     free_shipping_amount: "-"
     from: From
     front_end: Front End
-    fulfilled_at: Fulfilled at
-    fulfilled_by: Fulfilled by
-    fulfilled_from: Fulfilled from
     gateway: Gateway
     gateway_error: Gateway Error
     general: General
@@ -1783,7 +1779,7 @@ en:
     send_mails_as: Send Mails As
     send_message: Send message
     send_payment_link: Send payment link
-    send_payment_link_title: Send payment link title
+    send_payment_link_title: Send payment link to the customer by email. They will be able to complete the payment later.
     send_us_a_message: Send us a message
     seo: SEO
     seo_robots: SEO Robots
@@ -1815,9 +1811,9 @@ en:
       backorder: Backorder
       canceled: Canceled
       partial: Partial
-      pending: Unfulfilled
-      ready: Unfulfilled
-      shipped: Fulfilled
+      pending: Pending
+      ready: Ready
+      shipped: Shipped
     shipment_successfully_shipped: Shipment successfully shipped
     shipment_transfer_error: There was an error transferring variants
     shipment_transfer_success: Variants successfully transferred

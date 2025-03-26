@@ -29,7 +29,7 @@
         <% if can?(:update, payment) && (payment.checkout? || payment.pending?) %>
           <%= link_to_with_icon 'check', Spree.t(:capture), spree.capture_admin_order_payment_path(@order, payment), class: 'dropdown-item', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
         <% end %>
-        <% if can?(:refund, @order) && (payment.completed? || payment.pending?) %>
+        <% if can?(:refund, @order) && payment.completed? && payment.can_credit? %>
           <%= link_to_with_icon 'credit-card-refund', Spree.t(:refund), spree.new_admin_order_payment_refund_path(@order, payment), class: 'dropdown-item' %>
         <% end %>
         <% if can?(:cancel, payment) && payment.pending? %>

@@ -1,20 +1,24 @@
 <% order ||= shipment.order %>
 <%= turbo_frame_tag dom_id(shipment), class: "card" do %>
-  <div class="card-header align-items-center justify-content-between flex-wrap">
-    <span class="shipment-number d-none"><%= shipment.number %></span>
-    <span class="d-flex align-items-center"><%= shipment_state(shipment.state, class: 'mr-3') %></span>
-    <% if shipment.shipped_at.present? %>
-      <small class="text-muted text-xs mr-2">
-        <%= Spree.t(:fulfilled_at).downcase %>
-        <%= local_time_ago(shipment.shipped_at, class: 'with-tip') %>
-      </small>
-    <% end %>
+  <div class="card-header align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <span class="d-flex align-items-center"><%= shipment_state(shipment.state) %></span>
+      <strong class="shipment-number"><%= shipment.number %></strong>
+      <% if shipment.shipped_at.present? %>
+        <small class="text-muted">
+          <%= local_time_ago(shipment.shipped_at, class: 'with-tip') %>
+        </small>
+      <% end %>
+    </div>
 
     <span class="d-flex justify-content-between align-items-center gap-2">
-      <strong><%= shipment.number %></strong>
-      <small class="text-muted"><%= Spree.t(:fulfilled_from).downcase %></small>
-      <strong class="stock-location-name" data-hook="stock-location-name">
-        <%= shipment.stock_location.name %>
+      <small class="text-muted"><%= Spree.t(:package_from).downcase %></small>
+      <strong>
+        <% if can?(:edit, shipment.stock_location) %>
+          <%= link_to shipment.stock_location.name, spree.edit_admin_stock_location_path(shipment.stock_location), data: { turbo_frame: '_top' } %>
+        <% else %>
+          <%= shipment.stock_location.name %>
+        <% end %>
       </strong>
     </span>
   </div>
