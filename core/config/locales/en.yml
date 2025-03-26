@@ -1950,7 +1950,6 @@ en:
       apply: Apply
       authorized: Authorized
       available_amount: You have <strong>%{amount}</strong> in Store Credit available!
-      remaining: Remaining
       captured: Used
       credit: Credit
       errors:
@@ -1959,6 +1958,7 @@ en:
         unable_to_delete: Unable to delete store credit
         unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
+      remaining: Remaining
       remaining_amount: You have <strong>%{amount}</strong> remaining in your account's Store Credit.
       remove: Remove
     store_credit_categories: Store Credit Categories
