@@ -2,7 +2,6 @@ module Spree
   class LineItemsController < Spree::StoreController
     include CartMethods
 
-    before_action :require_user, unless: -> { current_store.prefers_guest_checkout? }
     before_action :load_variant, only: :create
     before_action :assign_order_with_lock, except: :create
     before_action :load_line_item, except: :create

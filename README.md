@@ -11,13 +11,17 @@
     Build any eCommerce solution that your business requires.
     <br />
     <br />
-    <a href="https://slack.spreecommerce.org">Slack</a>
+    <a href="https://spreecommerce.org">Website</a>
     ·
     <a href="https://spreecommerce.org/docs/">Documentation</a>
     ·
-    <a href="https://spreecommerce.org">Website</a>
+    <a href="https://slack.spreecommerce.org">Slack</a>
+    ·
+    <a href="https://github.com/spree/spree_starter/">Starter</a>
     ·
     <a href="https://demo.spreecommerce.org">Demo</a>
+    ·
+    <a href="https://spreecommerce.org/pricing/">Pricing</a>
     ·
     <a href="https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open">Roadmap</a>
   </p>
@@ -43,15 +47,25 @@ Thank you for supporting Spree open-source :heart:
 ## Enterprise support
 
 [Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
+  * expert delivery of your Spree application,
   * migrations and upgrades,
-  * delivering your Spree application,
   * optimizing your Spree stack.
 
-## Enterprise Edition - [Vendo](https://getvendo.com)
+## Enterprise Edition 
 
-Besides Enterprise support we also offer an enterprise Spree version called [Vendo](https://getvendo.com) - which is a commercial offering from the Spree team that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
 
 To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
+
+## Spree 5 Demo
+
+Check out this [Spree Commerce demo](https://demo.spreecommerce.org/) for yourself.
+
+This demo runs on the upcoming Spree 5 which is the biggest Spree release ever. 
+
+Stay tuned for the official announcement on all the exciting features and integrations!
+
+![Spree Commerce 5 version](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742985405/docs/github/Spree_Commerce_open-source_eCommerce_myzurl.jpg)
 
 ## Features
 ### Customizable and modular
