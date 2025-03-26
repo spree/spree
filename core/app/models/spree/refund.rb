@@ -58,6 +58,13 @@ module Spree
       reimbursement.customer_return&.return_items || reimbursement.return_items
     end
 
+    # Returns true if the refund is editable.
+    #
+    # @return [Boolean]
+    def editable?
+      !payment.order.canceled?
+    end
+
     private
 
     # attempts to perform the refund.

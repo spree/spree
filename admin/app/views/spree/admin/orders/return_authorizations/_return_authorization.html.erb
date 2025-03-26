@@ -17,13 +17,13 @@
     <%= link_to return_authorization.number, edit_link %>
   </td>
   <td data-action="click->row-link#openLink">
-    <small class="badge badge-pill badge-<%= return_authorization.state %>">
+    <small class="badge badge-<%= return_authorization.state %>">
       <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
     </small>
   </td>
   <td data-action="click->row-link#openLink"><%= return_authorization.display_pre_tax_total.to_html %></td>
   <td data-action="click->row-link#openLink"><%= local_time(return_authorization.created_at) %></td>
-  <td data-action="click->row-link#openLink">
+  <td data-action="click->row-link#openLink" class="text-right">
     <%= link_to_edit(
       return_authorization,
       no_text: true,

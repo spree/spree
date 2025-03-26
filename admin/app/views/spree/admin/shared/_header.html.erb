@@ -17,8 +17,8 @@
       <% end if spree.respond_to?(:admin_search_admin_path) && defined?(current_store) && current_store %>
     </div>
 
-    <%= link_to spree.admin_dashboard_path, class: 'navbar-brand d-flex d-lg-none h-100 align-items-center mx-0' do %>
-      <%= inline_svg_tag 'logo_white.svg', height: 32 %>
+    <%= link_to spree.admin_dashboard_path, class: 'navbar-brand d-flex d-lg-none h-100 align-items-center mx-0 text-white' do %>
+      <%= current_store.name %>
     <% end %>
 
     <div class="text-right d-flex justify-content-end p-0" id="header-user-account" data-turbo-permanent>

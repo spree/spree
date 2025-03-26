@@ -30,15 +30,10 @@
 
     &:hover {
       background-color: $gray-50;
-
-      i {
-        color: $gray-700 !important;
-      }
     }
 
     i {
       margin-right: 0.7rem;
-      color: $gray-500 !important;
     }
 
     .badge {

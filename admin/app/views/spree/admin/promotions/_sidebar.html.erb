@@ -18,7 +18,7 @@
       </div>
       <div class="card-footer d-flex justify-content-between">
         <span class="badge badge-light">
-          Used: <%= used_coupon_codes_count %> / <%= coupon_codes_count %>
+          <%= Spree.t(:used) %>: <%= used_coupon_codes_count %> / <%= coupon_codes_count %>
         </span>
         <span class="badge badge-light">
           Remaining: <%= coupon_codes_count - used_coupon_codes_count %>
@@ -36,8 +36,8 @@
       </h5>
       <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_promotion_path(@promotion), icon: 'pencil', class: 'btn btn-sm btn-light' %>
     </div>
-    <div class="card-body">
-      <ul class="list-group">
+    <div class="card-body p-0">
+      <ul class="list-group list-group-flush">
         <li class="list-group-item d-flex justify-content-between align-items-center">
           <span class="text-muted">
             <%= Spree.t(:name) %>
@@ -57,7 +57,7 @@
         </li>
 
         <% if @promotion.code.present? %>
-          <li class="list-group-item d-flex justify-content-between align-items-center" data-controller="clipboard" data-clipboard-success-content="Copied!">
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2" data-controller="clipboard" data-clipboard-success-content="Copied!">
             <span class="text-muted"><%= Spree.t(:coupon_code) %></span>
             <div class="d-flex align-items-center gap-1">
               <span class="form-control form-control-sm">
@@ -83,8 +83,8 @@
       </h5>
       <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_promotion_path(@promotion), icon: 'pencil', class: 'btn btn-sm btn-light' %>
     </div>
-    <div class="card-body">
-      <ul class="list-group">
+    <div class="card-body p-0">
+      <ul class="list-group list-group-flush">
         <% unless @promotion.multi_codes? %>
           <li class="list-group-item d-flex justify-content-between align-items-center">
             <span class="text-muted"><%= Spree.t(:usage_limit) %></span>

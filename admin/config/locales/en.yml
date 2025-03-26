@@ -3,7 +3,6 @@ en:
   spree:
     admin:
       active: Active
-      add_tracking_details: Add tracking details
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
@@ -45,6 +44,7 @@ en:
           description: Allow customers to checkout without creating an account.
           label: Allow guest checkout
         policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
+      copied: Copied!
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
       coupon_codes:
@@ -249,7 +249,6 @@ en:
         compare_at_price_description: This price is used to show marked down price on the product page.
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
-      view_all_orders: View all orders
       webhooks_subscribers:
         addresses: Addresses
         all_events: All Events

@@ -1,7 +1,7 @@
 <% unless turbo_frame_request? %>
   <% content_for :page_title do %>
     <%= page_header_back_button spree.admin_user_path(@user) %>
-    <%= Spree.t(:store_credit_name) %>
+    <%= Spree.t(:store_credits) %>
   <% end %>
 
   <% content_for :page_actions do %>

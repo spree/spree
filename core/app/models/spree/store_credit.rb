@@ -49,7 +49,7 @@ module Spree
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
     extend Spree::DisplayMoney
-    money_methods :amount, :amount_used, :amount_remaining
+    money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
     self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
     self.whitelisted_ransackable_associations = %w[type user created_by]

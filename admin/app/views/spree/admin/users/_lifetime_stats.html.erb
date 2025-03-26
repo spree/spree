@@ -34,6 +34,15 @@
     <div class="row">
       <div class="col-lg-4">
         <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+          <span class="text-muted"><%= Spree.t(:store_credits) %></span>
+          <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+            <%= Spree::Money.new(@user.total_available_store_credit(current_currency, current_store), currency: current_currency) %>
+          </span>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
           <span class="text-muted"><%= Spree.t('admin.member_since') %></span>
           <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
             <%= local_time(@user.created_at) %>

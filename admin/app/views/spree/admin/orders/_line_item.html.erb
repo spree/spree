@@ -1,74 +1,61 @@
-<%= turbo_frame_tag dom_id(line_item), class: "px-3 order-line-items__form hover-light" do %>
-  <%= render "spree/admin/variants/variant", variant: line_item.variant %>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.single_money.to_html %>
-  </span>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.quantity %>
-  </span>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.display_amount %>
-  </span>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.display_additional_tax_total || line_item.display_included_tax_total %>
-  </span>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.display_promo_total %>
-  </span>
-  <span class="d-flex align-items-center justify-content-center">
-    <%= line_item.display_total %>
-  </span>
-  <span class="d-flex align-items-center justify-content-end">
+<%= turbo_frame_tag dom_id(line_item) do %>
+  <div class="order-line-items__form d-flex align-items-center">
+    <div class="w-35">
+      <%= render "spree/admin/variants/variant", variant: line_item.variant %>
+    </div>
+    <div class="w-10">
+      <%= line_item.single_money.to_html %>
+    </div>
+    <div class="w-10">
+      <%= line_item.quantity %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_amount %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_tax_total %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_promo_total %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_total %>
+    </div>
+    <div class="w-5">
+      <% if can?(:edit, line_item) %>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-light"
+            type="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <%= icon "dots-vertical", class: "mr-0" %>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right w-100">
+            <%= link_to_with_icon "edit",
+              Spree.t(:edit),
+              spree.edit_admin_order_line_item_path(@order, line_item),
+              class: "dropdown-item" %>
+            <% if line_item.digital_links.any? %>
+              <%= link_to_with_icon "refresh",
+              Spree.t("admin.reset_digital_link_download_limits"),
+              spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
+              data: {
+                turbo_method: :post,
+                turbo_confirm: Spree.t(:are_you_sure),
+                turbo_frame: :_top,
+              },
+              class: "dropdown-item" %>
+            <% end %>
 
-    <% if line_item.digital_links.any? && can?(:edit, line_item) %>
-      <div class="dropdown">
-        <button
-          class="btn btn-sm btn-light"
-          type="button"
-          data-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <%= icon "dots-vertical", class: "mr-0" %>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px;">
-          <%= link_to_with_icon "edit",
-          Spree.t(:edit),
-          spree.edit_admin_order_line_item_path(@order, line_item),
-          class: "btn-light dropdown-item",
-          data: {
-            test_id: :edit_line_item,
-          } %>
-          <%= link_to_with_icon "refresh",
-          Spree.t("admin.reset_digital_link_download_limits"),
-          spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
-          data: {
-            turbo_method: :post,
-            turbo_confirm: Spree.t(:are_you_sure),
-            turbo_frame: :_top,
-          },
-          class: "btn-light dropdown-item" %>
+            <% if can?(:destroy, line_item) %>
+              <div class="dropdown-divider"></div>
+              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item btn-danger' %>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% elsif line_item.digital_links.any? %>
-      <%= link_to_with_icon "refresh",
-      Spree.t("admin.reset_digital_link_download_limits"),
-      spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
-      data: {
-        turbo_method: :post,
-        turbo_confirm: Spree.t(:are_you_sure),
-        turbo_frame: :_top,
-      },
-      no_text: true,
-      class: "with-tip btn btn-sm btn-light" %>
-    <% elsif can?(:edit, line_item) %>
-      <%= link_to_with_icon "edit",
-      Spree.t(:edit),
-      spree.edit_admin_order_line_item_path(@order, line_item),
-      class: "with-tip btn btn-sm btn-light",
-      no_text: true,
-      data: {
-        test_id: :edit_line_item,
-      } %>
-    <% end %>
-  </span>
+      <% end %>
+    </div>
+  </div>
 <% end %>

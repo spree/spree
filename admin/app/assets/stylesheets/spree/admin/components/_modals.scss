@@ -35,15 +35,6 @@ body.modal-open {
   }
 }
 
-.bulk-panel-container {
-  @extend .d-inline-flex;
-  @extend .p-2;
-  @extend .align-items-center;
-  @extend .rounded-lg;
-  @extend .bg-white;
-  box-shadow: $dropdown-box-shadow;
-}
-
 #multi-backdrop {
   z-index: 0;
   height: 0;

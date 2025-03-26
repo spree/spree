@@ -1,36 +1,20 @@
 <%= turbo_frame_tag dom_id(@line_item) do %>
-  <%= form_with model: @line_item, url: spree.admin_order_line_item_path(@order, @line_item), class: "order-line-items__form" do |f| %>
-    <%= render 'spree/admin/variants/variant', variant: @line_item.variant %>
-    <span class="d-flex align-items-center justify-content-center">
+  <div class="order-line-items__form d-flex align-items-center">
+    <div class="w-35">
+      <%= render 'spree/admin/variants/variant', variant: @line_item.variant %>
+    </div>
+    <div class="w-10">
       <%= @line_item.single_money.to_html %>
-    </span>
-    <span class="d-flex align-items-center justify-content-center">
-      <%= f.number_field :quantity, class: 'form-control', required: true, max: @line_item.variant.should_track_inventory? && !@line_item.variant.backorderable? ? @line_item.variant.total_on_hand + @line_item.quantity : nil, min: 1 %>
-    </span>
-    <span class="d-flex align-items-center justify-content-center">
-      <%= @line_item.display_amount %>
-    </span>
-    <span class="d-flex align-items-center justify-content-center">
-      <%= @line_item.display_additional_tax_total || @line_item.display_included_tax_total %>
-    </span>
-    <span class="d-flex align-items-center justify-content-center">
-      <%= @line_item.display_promo_total %>
-    </span>
-    <span class="d-flex align-items-center justify-content-center">
-      <%= @line_item.display_total %>
-    </span>
-    <span>
-    </span>
-    <% if can?(:delete, @line_item) %>
-      <span style="grid-column-start: product_description/">
-        <%= link_to Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, @line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'btn btn-danger btn-sm' %>
-      </span>
-    <% end %>
-    <span class="d-flex gap-2 justify-content-center" style="grid-column: discount/-1">
-      <% if can?(:update, @line_item) %>
+    </div>
+
+    <div class="w-40 border rounded p-2 bg-white shadow-xs mx-auto">
+      <%= form_with model: @line_item, url: spree.admin_order_line_item_path(@order, @line_item), class: "d-flex align-items-center gap-2 justify-content-between" do |f| %>
+        <%= f.label :quantity, Spree.t('quantity'), class: 'm-0' %>
+        <%= f.number_field :quantity, class: 'form-control form-control-sm', required: true, max: @line_item.variant.should_track_inventory? && !@line_item.variant.backorderable? ? @line_item.variant.total_on_hand + @line_item.quantity : nil, min: 1, autofocus: true %>
+
         <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: '_top' }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
+        <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
       <% end %>
-      <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
-    </span>
-  <% end %>
+    </div>
+  </div>
 <% end %>

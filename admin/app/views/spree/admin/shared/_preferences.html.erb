@@ -2,8 +2,8 @@
   <p class="mb-0">
   <% object.preferences.each do |key, value| %>
       <% next if value.blank? %>
-      <span><%= Spree.t(key) %></span>
-      <code><%= value %></code>
+      <span><%= Spree.t(key) %>:</span>
+      <strong><%= value %></strong>
     <% end %>
   </p>
 <% end %>

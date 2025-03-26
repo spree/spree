@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :dialog_modal do %>
-  <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund], data: { turbo: false } do |f| %>
+  <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund], data: { turbo_frame: '_top' } do |f| %>
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">

@@ -10,7 +10,7 @@
             <th><%= sort_link @search, :created_at,     Spree.t(:date) %></th>
           <% end %>
           <th class="d-customer"><%= Spree.t(:customer) %></th>
-          <th><%= Spree.t(:fulfilled_from) %></th>
+          <th><%= Spree.t(:package_from) %></th>
           <th><%= I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
           <th><%= I18n.t(:shipment_state, scope: 'activerecord.attributes.spree/order') %></th>
           <th class="text-right"><%= sort_link @search, :item_count, I18n.t(:item_count, scope: 'activerecord.attributes.spree/order') %></th>
