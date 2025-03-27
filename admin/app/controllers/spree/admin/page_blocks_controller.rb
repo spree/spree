@@ -2,7 +2,6 @@ module Spree
   module Admin
     class PageBlocksController < Spree::Admin::ResourceController
       include Spree::Admin::PageBuilderConcern
-      include Spree::Admin::TurboFrameLayoutConcern
 
       belongs_to 'spree/page_section', find_by: :id
 
