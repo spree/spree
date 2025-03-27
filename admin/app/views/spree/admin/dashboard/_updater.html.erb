@@ -1,4 +1,4 @@
-<% if can?(:manage, current_store) && spree_update_available? %>
+<% if Spree::Admin::RuntimeConfig.admin_updater_enabled && can?(:manage, current_store) && spree_update_available? %>
   <div class="alert alert-info">
     <div>
       <p class="mb-1">There's a newer version of Spree available.</p>
