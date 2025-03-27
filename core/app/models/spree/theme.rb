@@ -25,11 +25,6 @@ module Spree
     alias sections layout_sections
 
     #
-    # Attachments
-    #
-    has_one_attached :screenshot, service: Spree.public_storage_service_name
-
-    #
     #
     # Callbacks
     #
@@ -37,13 +32,20 @@ module Spree
     before_save :ensure_default_exists_and_is_unique
     after_create :create_default_pages, :create_layout_sections, unless: :duplicating?
     before_destroy :change_name_to_archived
-    after_commit :take_screenshot, on: [:create, :update]
 
     #
     # Virtual attributes
     #
     attribute :duplicating, :boolean, default: false
-    attribute :skip_screenshot_update, :boolean, default: false
+
+    def screenshot_url
+      @screenshot_url ||= if ENV['SCREENSHOT_API_TOKEN'].present?
+                            "https://shot.screenshotapi.net/v3/screenshot?token=#{ENV['SCREENSHOT_API_TOKEN']}&url=#{current_store.url_or_custom_domain}&fresh=true&output=image&file_type=png&no_cookie_banners=true&retina=true&enable_caching=true&wait_for_event=load&thumbnail_width=700"
+                          else
+                            # default screenshot
+                            "https://s3.eu-central-2.wasabisys.com/w.storage.screenshotapi.net/demo_spreecommerce_org_299a49137b25.png"
+                          end
+    end
 
     #
     # Class methods
@@ -187,16 +189,6 @@ module Spree
 
     def change_name_to_archived
       update_columns(name: "#{name} (Archived)")
-    end
-
-    def take_screenshot
-      return # Return for now, we will enable this after we move to Docker
-      return if Rails.env.test? # skip in tests
-      return if skip_screenshot_update
-      # Skip if screenshot is already attached and was created less than a minute ago
-      return if screenshot.attached? && screenshot.blob.created_at > 1.minute.ago
-
-      Spree::Themes::ScreenshotJob.perform_later(id)
     end
   end
 end

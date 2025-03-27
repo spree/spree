@@ -1,16 +1,12 @@
 <tr id="<%= spree_dom_id theme %>">
   <td class="w-70 p-0">
     <%= link_to theme.ready? ? spree.edit_admin_theme_path(theme) : '#', class: 'd-flex align-items-top p-3' do %>
-      <% if theme.screenshot.attached? && theme.screenshot.variable? %>
+      <% if theme.screenshot_url.present? %>
         <%= image_tag(
-              main_app.cdn_image_url(
-                theme.screenshot.variant(
-                  spree_image_variant_options(resize_to_fill: [240, 144])
-                )
-              ),
-              class: 'img-thumbnail',
-              style: 'width: 120px; height: 72px',
-              loading: :lazy
+          theme.screenshot_url,
+          class: 'img-thumbnail',
+          style: 'width: 120px; height: 72px',
+          loading: :lazy
         ) %>
       <% else %>
         <%= render 'spree/admin/shared/no_image', width: 120, height: 72 %>
