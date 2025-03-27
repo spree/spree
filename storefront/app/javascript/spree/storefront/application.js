@@ -15,6 +15,11 @@ import { Alert, Toggle } from 'tailwindcss-stimulus-components'
 application.register('alert', Alert)
 application.register('toggle', Toggle)
 
+
+// We need to preload the carousel controller, otherwise it causes a huge layout shift when it's loaded.
+import CarouselController from 'spree/storefront/controllers/carousel_controller'
+application.register('carousel', CarouselController)
+
 // We need to make allow list of controllers to be loaded, this is needed because by default Stimulus will try to load all the controllers that it encounters in the DOM.
 // Since Spree Storefront can be extended with custom views/partials, we need to be able to control which controllers can be loaded from our application.
 
@@ -29,6 +34,7 @@ const controllers = [
   'checkout-address-book',
   'checkout-delivery',
   'checkout-promotions',
+  'checkout-summary',
   'clear-input',
   'copy-input',
   'dropdown',
@@ -42,17 +48,15 @@ const controllers = [
   'pdp-desktop-gallery',
   'plp-variant-picker',
   'product-form',
+  'quantity-picker',
   'read-more',
   'reveal',
-  'quantity-picker',
   'scroll-to',
   'search-suggestions',
   'searchable-list',
-  'slideover',
   'slideover-account',
+  'slideover',
   'sticky-button',
-  'checkout-summary',
-  'carousel',
   'toggle-menu',
   'turbo-stream-form',
   'wished-item',
