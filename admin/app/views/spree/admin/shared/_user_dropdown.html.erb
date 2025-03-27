@@ -1,5 +1,5 @@
 <% if try_spree_current_user.present? %>
-  <div class="dropdown bg-gray-25" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+  <div class="dropdown pt-2 bg-gray-25 border-top" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
     <button type="button"
           class="btn d-flex align-items-center justify-content-between text-left w-100"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">

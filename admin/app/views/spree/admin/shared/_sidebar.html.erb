@@ -6,8 +6,10 @@
     <%= render 'spree/admin/shared/sidebar/store_nav' %>
   <% end %>
 
-  <section class="position-sticky d-none d-lg-block w-100 z-index-1000 mt-auto py-2 bottom-0">
-    <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
-    <%= render 'spree/admin/shared/user_dropdown' %>
-  </section>
+  <% unless settings_active? %>
+    <section class="position-sticky d-none d-lg-block w-100 z-index-1000 mt-auto py-2 bottom-0">
+      <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
+      <%= render 'spree/admin/shared/user_dropdown' %>
+    </section>
+  <% end %>
 </aside>

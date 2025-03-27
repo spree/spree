@@ -64,7 +64,6 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     .ti {
       font-size: 1.125rem;
       margin-right: 0.5rem;
-      color: $gray-500;
     }
 
     &:hover {
@@ -138,6 +137,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   padding-left: 1rem;
   border-left: 0;
   border-right: 0;
+  border-bottom: 0;
   border-radius: 0;
   font-size: $font-size-sm;
   margin-bottom: 0;

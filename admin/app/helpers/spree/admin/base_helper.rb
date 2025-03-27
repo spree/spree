@@ -15,6 +15,15 @@ module Spree
         @spree_update_available ||= !Rails.env.test? && spree_updater.update_available?
       end
 
+      def settings_active?
+        %w[stores zones shipping_methods oauth_applications
+           payment_methods refund_reasons reimbursement_types
+           shipping_categories store_credit_categories
+           syncs tax_categories tax_rates webhooks accounts
+           custom_domains audits exports imports return_authorization_reasons
+           documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name)
+      end
+
       def available_countries_iso
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end
