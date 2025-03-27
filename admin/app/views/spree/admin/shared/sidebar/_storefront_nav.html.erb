@@ -1,4 +1,4 @@
-<li class="nav-item">
+<li class="nav-item border-top border-top-dashed pt-2">
   <% storefront_active = %w[themes posts post_categories pages storefront].include?(controller_name) %>
   <%= active_link_to_with_icon('building-store', Spree.t('admin.storefront'), spree.admin_themes_path, class: 'nav-link', active: storefront_active) %>
 

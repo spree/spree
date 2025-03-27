@@ -137,31 +137,15 @@
 
     <%= render 'spree/admin/shared/sidebar/custom_nav' %>
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
+    <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
 
-    <% if spree.respond_to?(:admin_emails_path) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('send', Spree.t(:emails), spree.admin_emails_path, class: 'nav-link') %>
-      </li>
-    <% end %>
-    <% if defined?(Spree::Integration) %>
-      <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
-    <% else %>
-      <li class="nav-item">
-        <span class="nav-link d-flex align-items-center pr-1 cursor-default with-tip" title="Connect your store to third-party services to automate your business processes.">
-          <%= icon 'plug' %>
-          <span><%= Spree.t(:integrations) %></span>
-          <span class="badge ml-auto rounded-pill">Coming soon!</span>
-        </span>
-      </li>
-    <% end %>
-
+    <li class="nav-item border-top border-top-dashed pt-2">
+      <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
+    </li>
     <% if defined?(current_account) && current_account.present? %>
       <li class="nav-item">
         <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link' %>
       </li>
     <% end %>
-    <li class="nav-item border-top border-top-dashed pt-2">
-      <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
-    </li>
   </ul>
 <% end %>
