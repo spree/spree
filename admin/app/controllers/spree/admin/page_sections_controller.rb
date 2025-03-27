@@ -2,7 +2,6 @@ module Spree
   module Admin
     class PageSectionsController < ResourceController
       include Spree::Admin::PageBuilderConcern
-      include Spree::Admin::TurboFrameLayoutConcern
 
       before_action :load_pageable, only: %i[new create index]
 

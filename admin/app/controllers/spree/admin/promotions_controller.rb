@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
-      include Spree::Admin::TurboFrameLayoutConcern
-
       before_action :load_form_data, except: :index
 
       # POST /admin/promotions/:id/clone

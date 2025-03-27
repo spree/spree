@@ -1,13 +1,12 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <div class="d-flex gap-3 align-items-center">
-    <span><%= Spree.t(:customer_return) %></span>
-    <span><%= @customer_return.number %></span>
+    <%= @customer_return.number %>
 
     <% if @customer_return.fully_reimbursed? %>
-      <span class="badge badge-pill badge-success"><%= Spree.t(:reimbursed) %></span>
+      <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
     <% else %>
-      <span class="badge badge-pill badge-inactive"><%= Spree.t(:incomplete) %></span>
+      <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
     <% end %>
   </div>
 <% end %>

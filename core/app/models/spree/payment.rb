@@ -173,6 +173,11 @@ module Spree
       credit_allowed > 0
     end
 
+    # we shouldn't allow deleting payments via admin interface
+    def can_be_deleted?
+      false
+    end
+
     # see https://github.com/spree/spree/issues/981
     def build_source
       return unless new_record?

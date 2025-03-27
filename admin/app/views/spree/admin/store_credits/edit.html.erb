@@ -1,10 +1,10 @@
 <% content_for :title do %>
-  <%= Spree.t(:store_credit_name) %>
+  <%= Spree.t(:store_credits) %>
 <% end %>
 
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_user_path(@user) %>
-  <%= Spree.t(:new_store_credit) %>
+  <%= @user.email %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
@@ -13,7 +13,7 @@
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="card-title">
-        <%= Spree.t(:store_credit_name) %>
+        <%= Spree.t(:store_credits) %>
       </h5>
     </div>
 

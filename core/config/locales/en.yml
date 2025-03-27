@@ -752,7 +752,6 @@ en:
     compare_at_amount: Compare at amount
     compare_at_price: Compare at price
     complete: complete
-    completed_at: Completed at
     conditions: Conditions
     configuration: Configuration
     configurations: Configurations
@@ -772,8 +771,6 @@ en:
     copy: Copy
     copy_id: Copy ID
     copy_link: Copy link
-    copy_payment_link: Copy payment link
-    copy_to_clipboard: Copy to clipboard
     cost_currency: Cost Currency
     cost_price: Cost Price
     could_not_create_customer_return: Could not create customer return
@@ -1034,9 +1031,6 @@ en:
     free_shipping_amount: "-"
     from: From
     front_end: Front End
-    fulfilled_at: Fulfilled at
-    fulfilled_by: Fulfilled by
-    fulfilled_from: Fulfilled from
     gateway: Gateway
     gateway_error: Gateway Error
     general: General
@@ -1303,7 +1297,6 @@ en:
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
     not_found: "%{resource} is not found"
-    not_provided: Not provided
     not_risky: Not risky
     not_subscribed: Not subscribed
     note: Note
@@ -1403,6 +1396,7 @@ en:
     origin: Origin
     other: Other
     out_of_stock: Out of Stock
+    outstanding_balance: Outstanding Balance
     overview: Overview
     package_from: package from
     page: Page
@@ -1494,6 +1488,7 @@ en:
       processing: Processing
       refunded: Refunded
       void: Void
+    payment_total: Payment Total
     payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
@@ -1786,7 +1781,7 @@ en:
     send_mails_as: Send Mails As
     send_message: Send message
     send_payment_link: Send payment link
-    send_payment_link_title: Send payment link title
+    send_payment_link_title: Send payment link to the customer by email. They will be able to complete the payment later.
     send_us_a_message: Send us a message
     seo: SEO
     seo_robots: SEO Robots
@@ -1818,9 +1813,9 @@ en:
       backorder: Backorder
       canceled: Canceled
       partial: Partial
-      pending: Unfulfilled
-      ready: Unfulfilled
-      shipped: Fulfilled
+      pending: Pending
+      ready: Ready
+      shipped: Shipped
     shipment_successfully_shipped: Shipment successfully shipped
     shipment_transfer_error: There was an error transferring variants
     shipment_transfer_success: Variants successfully transferred
@@ -1961,6 +1956,7 @@ en:
         unable_to_delete: Unable to delete store credit
         unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
+      remaining: Remaining
       remaining_amount: You have <strong>%{amount}</strong> remaining in your account's Store Credit.
       remove: Remove
     store_credit_categories: Store Credit Categories

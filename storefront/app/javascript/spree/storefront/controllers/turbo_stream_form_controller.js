@@ -40,8 +40,11 @@ export default class extends Controller {
 
     await request.perform()
 
+    const submitEndEvent = new Event('turbo-stream-form:submit-end')
+
     this.submitElements.forEach((element) => {
       element.disabled = false
+      element.dispatchEvent(submitEndEvent)
     })
     form.ariaBusy = false
   }

@@ -42,7 +42,8 @@ module Spree
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total,
-                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total
+                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total,
+                  :payment_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
