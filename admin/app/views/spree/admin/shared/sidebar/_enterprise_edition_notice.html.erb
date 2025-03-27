@@ -1,0 +1,11 @@
+<% if can?(:manage, current_store) && !enterprise_edition? %>
+  <% unless session[:spree_enterprise_edition_notice_dismissed] %>
+    <div class="alert alert-info border-left-0 border-right-0 rounded-0 w-100 z-10 font-size-sm mb-0" style="background-image: none; padding-left: 1rem;">
+      <button class="btn-close position-absolute" style="right: 0.5rem; top: 0.5rem;">
+      </button>
+      <p class="mb-1">You're using Spree Community Edition. To get access to all features, please upgrade to Enterprise Edition.</p>
+
+      <%= external_link_to 'Upgrade', 'https://spreecommerce.org/pricing', target: '_blank', class: 'btn btn-link btn-sm shadow-xs' %>
+    </div>
+  <% end %>
+<% end %>

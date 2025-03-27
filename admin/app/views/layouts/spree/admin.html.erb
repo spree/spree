@@ -6,25 +6,15 @@
   </head>
 
   <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>">
-    <div class="container-fluid">
-      <div class="row justify-content-center">
-        <div class="col-lg-3 col-xl-2 d-none d-lg-block position-relative px-2">
-          <%= render "spree/admin/shared/sidebar" %>
-        </div>
-        <div class="col-lg-9 col-xl-10 px-0 pt-lg-2">
-          <%= render "spree/admin/shared/header" %>
-
-          <main id="content" class="container h-100 d-flex flex-column">
-            <%= render "spree/admin/shared/content_header" %>
-
-            <%= yield %>
-
-            <%= render "spree/admin/shared/footer" %>
-          </main>
-        </div>
+    <%= render "spree/admin/shared/header" %>
+    <%= render "spree/admin/shared/sidebar" %>
+    <main id="content">
+      <div class="container">
+        <%= render "spree/admin/shared/content_header" %>
+        <%= yield %>
       </div>
-    </div>
-
+      <%= render "spree/admin/shared/footer" %>
+    </main>
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
   </body>

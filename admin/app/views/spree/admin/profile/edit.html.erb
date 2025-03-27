@@ -12,15 +12,15 @@
         <div class="card-body">
           <div class="form-group mb-4">
             <%= f.label :email, class: 'form-label' %>
-            <%= f.email_field :email, class: 'form-control', disabled: true %>
+            <%= f.email_field :email, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-4">
             <%= f.label :first_name, class: 'form-label' %>
-            <%= f.text_field :first_name, class: 'form-control' %>
+            <%= f.text_field :first_name, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-4">
             <%= f.label :last_name, class: 'form-label' %>
-            <%= f.text_field :last_name, class: 'form-control' %>
+            <%= f.text_field :last_name, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-0">
             <div>

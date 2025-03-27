@@ -5,10 +5,10 @@
     <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <% end %>
   <%= @order.number %>
-  <%= order_payment_state(@order, class: "ml-3") %>
-  <%= order_shipment_state(@order, class: "ml-3") %>
+  <%= order_payment_state(@order) %>
+  <%= order_shipment_state(@order) %>
   <% if @order.completed? %>
-    <span class="text-muted font-size-sm font-weight-normal with-tip ml-3">
+    <span class="text-muted font-size-sm font-weight-normal with-tip">
       <%= I18n.t('activerecord.attributes.spree/order.completed_at') %>
       <%= local_time(@order.completed_at) %>
     </span>

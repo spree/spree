@@ -1,7 +1,7 @@
 <% orders_active = %[orders checkouts].include?(controller_name) || @order %>
 <li class="nav-item">
-  <%= active_link_to spree.admin_orders_path, class: 'nav-link  d-flex align-items-center', active: orders_active do %>
-    <%= icon 'inbox', class: 'mr-1' %>
+  <%= active_link_to spree.admin_orders_path, class: 'nav-link', active: orders_active do %>
+    <%= icon 'inbox' %>
     <%= Spree.t(:orders) %>
 
     <% if ready_to_ship_orders_count&.positive? %>
@@ -11,10 +11,10 @@
     <% end %>
   <% end %>
   <% if orders_active && (ready_to_ship_orders_count&.positive? || can?(:manage, :checkouts)) %>
-    <ul class="ml-4 pl-1 mb-2 nav-submenu flex-column mt-1">
+    <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
       <% if ready_to_ship_orders_count&.positive? %>
         <li class="nav-item">
-          <%= active_link_to spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}), class: 'nav-link  d-flex align-items-center', active: params.dig(:q, :shipment_state_not_in).present? do %>
+          <%= active_link_to spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}), class: 'nav-link', active: params.dig(:q, :shipment_state_not_in).present? do %>
             <span><%= Spree.t('admin.orders.orders_to_fulfill') %></span>
             <span class="badge ml-auto">
               <%= ready_to_ship_orders_count %>

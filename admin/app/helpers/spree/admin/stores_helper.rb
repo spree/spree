@@ -8,7 +8,7 @@ module Spree
       DEFAULT_ICON_SIZE = 40
 
       def store_admin_icon(store, opts = {})
-        opts[:class] ||= 'mr-lg-3 rounded-sm bg-white border'
+        opts[:class] ||= 'rounded-sm bg-white border'
         opts[:height] ||= DEFAULT_ICON_SIZE
         opts[:width] ||= DEFAULT_ICON_SIZE
 
@@ -53,7 +53,7 @@ module Spree
         opts[:height] ||= DEFAULT_ICON_SIZE
         opts[:width] ||= DEFAULT_ICON_SIZE
         opts[:class] ||= ''
-        opts[:class] += ' mr-lg-3 rounded text-dark d-flex align-items-center justify-content-center bg-gray-200'
+        opts[:class] += ' rounded text-dark d-flex align-items-center justify-content-center bg-gray-200'
         content_tag(:span, name[0].upcase, class: opts[:class], style: "height: #{opts[:height]}px; width: #{opts[:width]}px;")
       end
 

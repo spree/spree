@@ -11,16 +11,115 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
 }
 
 #page-header {
-  min-height: 74px;
+  height: 74px;
+  display: flex;
+  align-items: center;
 }
 
 .page-header-title {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
 #main-sidebar {
-  .nav-item {
-    margin-bottom: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 250px;
+  background-color: $gray-25;
+  border-right: 1px solid $gray-100;
+  height: 100vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  color: $gray-700;
+  padding-top: 0.5rem;
+
+  @media (max-width: 992px) {
+    display: none;
+  }
+
+  .nav {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .nav {
+    gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nav-link {
+    border-radius: $border-radius;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    font-weight: 500;
+
+    .ti {
+      font-size: 1.125rem;
+      margin-right: 0.5rem;
+      color: $gray-500;
+    }
+
+    &:hover {
+      background-color: $gray-50;
+    }
+    &.active {
+      background-color: $gray-100;
+    }
+
+    .badge {
+      @extend .badge-light;
+    }
+  }
+
+  .nav-submenu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+  
+    margin-left: 1.5rem !important;
+  
+    .nav-link {
+      font-weight: 400;
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+
+      &:hover {
+        background-color: $gray-50;
+      }
+      &.active, &:active, &:focus {
+        font-weight: 600;
+        background-color: transparent !important;
+      }
+    }
+  }
+
+  .dropdown {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+
+    .btn {
+      padding: 0.25rem 0.25rem;
+      border-radius: $border-radius;
+      display: flex;
+      align-items: center;
+
+      &:hover, &:focus, &:active {
+        background-color: $gray-50;
+      }
+    }
+
+    .dropdown-menu {
+      width: calc(100% - 1rem) !important;
+    }
+  }
+}
+
+#content {
+  @media (min-width: 992px) {
+    margin-left: 251px;
   }
 }
