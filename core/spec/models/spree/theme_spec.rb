@@ -36,31 +36,6 @@ describe Spree::Theme, type: :model do
         end
       end
     end
-
-    xdescribe 'after update' do # Enable after installing Chrome
-      before do
-        allow(Rails.env).to receive(:test?).and_return(false)
-      end
-
-      it 'should queue a job to take screenshot' do
-        theme
-        expect { theme.update!(name: 'New Name') }.to have_enqueued_job(Spree::Themes::ScreenshotJob)
-      end
-
-      it 'should not queue job when last screenshot was taken less than minute ago' do
-        theme.screenshot.attach(
-          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
-          filename: 'thinking-cat.jpg'
-        )
-
-        expect { theme.update!(name: 'New Name') }.not_to have_enqueued_job(Spree::Themes::ScreenshotJob)
-      end
-
-      it 'should not queue job when skip_screenshot_update is true' do
-        theme.skip_screenshot_update = true
-        expect { theme.update!(name: 'New Name') }.not_to have_enqueued_job(Spree::Themes::ScreenshotJob)
-      end
-    end
   end
 
   describe '#create_preview' do

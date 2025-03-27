@@ -648,7 +648,7 @@ turbo-frame[busy] #turbo-spinner {
 }
 
 .overlay-background {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba($white, 0.3);
   transition: background-color 0.3s ease-in-out;
 }
 

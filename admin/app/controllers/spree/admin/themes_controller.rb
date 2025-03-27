@@ -68,7 +68,7 @@ module Spree
       end
 
       def collection
-        super.without_previews.order(default: :desc).includes(screenshot_attachment: :blob)
+        super.without_previews.order(default: :desc)
       end
     end
   end
