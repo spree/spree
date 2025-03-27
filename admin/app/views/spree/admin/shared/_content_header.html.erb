@@ -7,8 +7,8 @@
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>
-  <div class="pt-3 pb-4 d-flex align-items-center" id="page-header">
-    <h3 class="page-header-title mb-0 d-flex align-items-center">
+  <header id="page-header">
+    <h3 class="page-header-title mb-0 d-flex align-items-center gap-3">
       <%= yield :page_title %>
     </h3>
     <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
@@ -24,7 +24,7 @@
       <%= yield :page_actions if content_for?(:page_actions) %>
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
         <div class="dropdown ml-2 h-100" id="page_actions_dropdown">
-          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 dropdown-toggle', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
+          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 dropdown-toggle btn-sm', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
             <span class="d-none d-lg-inline mr-2">
               <%= Spree.t(:more_actions) %>
             </span>
@@ -59,8 +59,9 @@
         </div>
       <% end %>
     </div>
-  </div>
+  </header>
 <% end %>
+
 <% if content_for?(:page_tabs) %>
   <ul class="nav nav-bare flex-nowrap overflow-auto w-100 mb-3">
     <%= yield :page_tabs %>

@@ -7,8 +7,12 @@ module Spree
         defined?(Vendo)
       end
 
+      def spree_updater
+        @spree_updater ||= Spree::Admin::Updater
+      end
+
       def spree_update_available?
-        @spree_update_available ||= !Rails.env.test? && Spree::Admin::Updater.update_available?
+        @spree_update_available ||= !Rails.env.test? && spree_updater.update_available?
       end
 
       def available_countries_iso

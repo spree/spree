@@ -76,16 +76,16 @@
     </div>
     <div class="card-body p-2">
       <div class="tab-content">
-        <div data-tabs-target="panel" data-index="1">
+        <div data-tabs-target="panel" data-index="1" class="animate__animated animate__fadeIn">
           <% if currency_money(current_currency).symbol_first? %>
-            <%= line_chart @grouped_orders_scope.sum(:total), prefix: currency_money(current_currency).symbol, zeros: true, library: {
+            <%= line_chart @grouped_orders_scope.sum(:total), prefix: currency_money(current_currency).symbol, zeros: true, points: false, library: {
               animation: {
                 duration: 300,
                 easing: "linear"
               }
             } %>
-                    <% else %>
-                      <%= line_chart @grouped_orders_scope.sum(:total), suffix: currency_money(current_currency).symbol, zeros: true, library: {
+          <% else %>
+            <%= line_chart @grouped_orders_scope.sum(:total), suffix: currency_money(current_currency).symbol, zeros: true, points: false, library: {
               animation: {
                 duration: 300,
                 easing: "linear"
@@ -93,20 +93,20 @@
             } %>
           <% end %>
         </div>
-        <div data-tabs-target="panel" data-index="2">
-          <%= line_chart @grouped_orders_scope.average(:total), suffix: currency_money(current_currency).symbol, zeros: true %>
+        <div data-tabs-target="panel" data-index="2" class="animate__animated animate__fadeIn">
+          <%= line_chart @grouped_orders_scope.average(:total), suffix: currency_money(current_currency).symbol, zeros: true, points: false %>
         </div>
-        <div data-tabs-target="panel" data-index="3">
-          <%= line_chart @grouped_orders_scope.count %>
+        <div data-tabs-target="panel" data-index="3" class="animate__animated animate__fadeIn">
+          <%= line_chart @grouped_orders_scope.count, points: false %>
         </div>
         <% if @visits %>
-          <div  data-tabs-target="panel" data-index="4">
-            <%= line_chart @visits.count %>
+          <div data-tabs-target="panel" data-index="4" class="animate__animated animate__fadeIn">
+            <%= line_chart @visits.count, points: false %>
           </div>
         <% end %>
         <% if @audience %>
-          <div data-tabs-target="panel" data-index="5">
-            <%= line_chart @audience.count %>
+          <div data-tabs-target="panel" data-index="5" class="animate__animated animate__fadeIn">
+            <%= line_chart @audience.count, points: false %>
           </div>
         <% end %>
       </div>

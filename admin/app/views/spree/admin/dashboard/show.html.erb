@@ -26,6 +26,7 @@
     <% if defined?(current_vendor) && current_vendor %>
       <%= render 'spree/admin/shared/vendor_faq' %>
     <% else %>
+      <%= render 'updater' %>
       <%= render 'store_preview' %>
       <%= render 'vendors' if defined?(Spree::Vendor) %>
     <% end %>

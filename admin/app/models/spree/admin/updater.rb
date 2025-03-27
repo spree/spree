@@ -13,6 +13,10 @@ module Spree
         fetch_updates.any?
       end
 
+      def self.latest_version
+        @latest_version ||= fetch_updates.first&.dig('version')
+      end
+
       def self.fetch_updates
         @updates ||= Rails.cache.fetch("spree/admin/updater/fetch_updates/#{Spree.version}", expires_in: 1.day) do
           uri = URI(SPREE_CLOUD_UPDATES_URL)

@@ -2,13 +2,13 @@
 
 <% if can?(:manage, :customer_returns) || can?(:manage, :return_authorizations) %>
   <li class="nav-item">
-    <%= active_link_to spree.admin_customer_returns_path, class: 'nav-link  d-flex align-items-center', active: returns_active do %>
-      <%= icon 'receipt-refund', class: 'mr-1' %>
+    <%= active_link_to spree.admin_customer_returns_path, class: 'nav-link', active: returns_active do %>
+      <%= icon 'receipt-refund' %>
       <%= Spree.t(:returns) %>
     <% end %>
 
     <% if returns_active %>
-      <ul class="ml-4 pl-1 mb-2 nav-submenu flex-column mt-1">
+      <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
         <% if can?(:manage, :return_authorizations) %>
           <li class="nav-item">
             <%= active_link_to Spree.t(:return_authorizations), spree.admin_return_authorizations_path, class: 'nav-link' %>
