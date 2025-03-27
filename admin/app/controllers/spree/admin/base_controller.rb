@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class BaseController < Spree::BaseController
-      layout 'spree/admin'
+      layout :choose_layout
 
       helper 'spree/base'
       helper 'spree/admin/navigation'
@@ -119,6 +119,12 @@ module Spree
             end
           end
         end
+      end
+
+      def choose_layout
+        return 'turbo_rails/frame' if turbo_frame_request?
+
+        'spree/admin'
       end
     end
   end

@@ -7,8 +7,6 @@ module Spree
       before_action :load_vendor
       before_action :clear_return_to, only: %i[show]
 
-      layout :choose_layout
-
       def show; end
 
       def getting_started; end
@@ -135,14 +133,6 @@ module Spree
         @top_devices = @visits_scope.group(:device_type).count.transform_keys do |device|
                         device.nil? ? 'N/A' : device
                       end.map { |series| [series.first, (series.second.to_f / @visits_scope.count) * 100] }
-      end
-
-      def choose_layout
-        if action_name == 'analytics'
-          'turbo_rails/frame'
-        else
-          'spree/admin'
-        end
       end
     end
   end
