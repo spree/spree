@@ -1,9 +1,6 @@
 <aside id="main-sidebar">
   <% if defined?(current_vendor) && current_vendor.present? %>
     <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>
-  <% end %>
-
-  <% if defined?(current_vendor) && current_vendor.present? %>
     <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
   <% else %>
     <%= render 'spree/admin/shared/sidebar/store_nav' %>
