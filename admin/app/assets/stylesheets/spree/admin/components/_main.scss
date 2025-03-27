@@ -55,7 +55,11 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     align-items: center;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
     font-weight: 500;
+    transition: background 0.35s, color 0.1s;
+    will-change: background, color;
 
     .ti {
       font-size: 1.125rem;
@@ -64,7 +68,9 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     }
 
     &:hover {
-      background-color: $gray-50;
+      background-color: $gray-75;
+      transition-duration: 75ms;
+      animation-duration: 75ms;
     }
     &.active {
       background-color: $gray-100;
@@ -121,5 +127,24 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
 #content {
   @media (min-width: 992px) {
     margin-left: 251px;
+  }
+}
+
+#enterprise-edition-notice {
+  @extend .alert;
+  @extend .alert-info;
+
+  background-image: none;
+  padding-left: 1rem;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  font-size: $font-size-sm;
+  margin-bottom: 0;
+
+  .btn-close {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
   }
 }

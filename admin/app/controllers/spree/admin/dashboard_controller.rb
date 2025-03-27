@@ -52,6 +52,12 @@ module Spree
         load_analytics_data
       end
 
+      # PATCH /admin/dashboard/dismiss_enterprise_edition_notice
+      def dismiss_enterprise_edition_notice
+        session[:spree_enterprise_edition_notice_dismissed] = true
+        redirect_back(fallback_location: spree.admin_dashboard_path)
+      end
+
       private
 
       def load_vendor

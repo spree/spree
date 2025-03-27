@@ -7,7 +7,7 @@
 <% if settings_active %>
   <ul class="nav flex-column">
     <li class="nav-item mb-3">
-      <%= active_link_to_with_icon('chevron-left', Spree.t(:settings), spree.admin_dashboard_path, class: 'nav-link') %>
+      <%= active_link_to_with_icon('chevron-left', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'nav-link') %>
     </li>
 
     <li class="nav-item">
@@ -75,6 +75,8 @@
     </li>
   </ul>
 <% else %>
+  <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+
   <ul class="nav flex-column">
     <% unless current_store.setup_completed? %>
       <li class="nav-item">
