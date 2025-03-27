@@ -9,6 +9,7 @@
         data-controller="variants-form"
         class="variants-form"
         data-action="product-form:toggle-quantity-tracked@window->variants-form#toggleQuantityTracked"
+        data-variants-form-locale-value="<%= I18n.locale %>"
         <% if @product.persisted? %> data-variants-form-product-id-value="<%= @product.slug %>" <% end %>
         data-variants-form-current-currency-value="<%= current_currency %>"
         data-variants-form-currencies-value="<%= supported_currencies.map(&:to_s).to_json %>"
