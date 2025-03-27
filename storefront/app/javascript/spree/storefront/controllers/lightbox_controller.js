@@ -128,11 +128,11 @@ export default class extends Controller {
       return
     }
 
-    const style = document.createElement('style')
-    style.id = 'photoswipe-styles'
-    style.innerHTML = `
-      @import url("https://esm.sh/photoswipe@5.4.4/dist/photoswipe.css");
-    `
-    document.head.appendChild(style)
+    const link = document.createElement('link')
+    link.id = 'photoswipe-styles'
+    link.rel = 'stylesheet'
+    link.href = 'https://esm.sh/photoswipe@5.4.4/dist/photoswipe.css'
+    link.onerror = () => console.error('Failed to load PhotoSwipe CSS')
+    document.head.appendChild(link)
   }
 }
