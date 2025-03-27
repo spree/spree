@@ -32,10 +32,12 @@ function lazyLoadNewControllers(controllers, under, application, manifest, eleme
             }
             )
           }
+          break;
         }
 
         case "childList": {
           lazyLoadExistingControllers(controllers, under, application, manifest, target)
+          break;
         }
       }
     }
