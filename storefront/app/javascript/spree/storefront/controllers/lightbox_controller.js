@@ -19,6 +19,8 @@ function isTouchDevice() {
 }
 export default class extends Controller {
   connect() {
+    this.addPhotoSwipeStyles()
+
     const lightbox = new PhotoSwipeLightbox({
       gallery: this.element,
       children: 'a',
@@ -119,5 +121,18 @@ export default class extends Controller {
     }
 
     return pinchToZoom
+  }
+
+  addPhotoSwipeStyles() {
+    if (document.getElementById('photoswipe-styles')) {
+      return
+    }
+
+    const link = document.createElement('link')
+    link.id = 'photoswipe-styles'
+    link.rel = 'stylesheet'
+    link.href = 'https://esm.sh/photoswipe@5.4.4/dist/photoswipe.css'
+    link.onerror = () => console.error('Failed to load PhotoSwipe CSS')
+    document.head.appendChild(link)
   }
 }
