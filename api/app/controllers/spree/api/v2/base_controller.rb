@@ -145,7 +145,7 @@ module Spree
         end
 
         def record_not_found(exception)
-          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree. api')
+          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree.api')
 
           render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
         end
