@@ -36,7 +36,7 @@
             </td>
             <td>
               <div class="form-control align-items-center py-0 focus-shadow-primary focus-border-primary mr-2 price-input-container d-flex">
-                <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: number_to_currency(price_form.object.compare_at_amount, unit: '').strip %>
+                <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: price_form.object.compare_at_amount.present? ? Spree::Money.new(price_form.object.compare_at_amount, currency: price_form.object.currency, symbol: '').to_s : '' %>
                 <span><%= currency_symbol(price_form.object.currency) %></span>
               </div>
             </td>
