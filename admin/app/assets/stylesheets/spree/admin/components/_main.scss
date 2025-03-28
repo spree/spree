@@ -60,6 +60,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     font-weight: 500;
     transition: background 0.35s, color 0.1s;
     will-change: background, color;
+    color: $body-color;
 
     .ti {
       font-size: 1.125rem;
