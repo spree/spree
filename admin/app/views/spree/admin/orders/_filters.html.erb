@@ -36,7 +36,7 @@
       <%= render 'spree/admin/shared/filters_button' %>
     </div>
   </div>
-  <div data-reveal-target="item" class="d-none mt-4" id="table-filter">
+  <div data-reveal-target="item" class="d-none" id="table-filter">
     <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>

@@ -9,12 +9,12 @@
     <%= f.hidden_field :date_from %>
     <%= f.hidden_field :date_to %>
     <%= f.hidden_field :currency %>
-    <button class="btn btn-primary with-tip" title="Download report as CSV file">
-      <%= icon('download') %>
-      <%= Spree.t(:download) %>
+    <button class="btn btn-primary with-tip" title="Export report as CSV file">
+      <%= icon('table-export') %>
+      <%= Spree.t(:export) %>
     </button>
   <% end %>
-<% end %>
+<% end if can?(:create, Spree::Export) %>
 
 <div class="mb-2">
   <%= form_tag spree.new_admin_report_path, method: :get, data: { controller: 'auto-submit' } do %>

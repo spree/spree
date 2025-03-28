@@ -33,7 +33,6 @@
 
     .nav-link {
       font-weight: 500;
-      border: 1px solid transparent;
 
       &:hover {
         color: theme-color('primary') !important;
@@ -42,24 +41,6 @@
       &.active, &:focus, &:active {
         background-color: $gray-50;
         color: theme-color('primary') !important;
-        border: 1px solid $gray-100;
-      }
-    }
-  }
-}
-
-.nav-bare {
-  .nav-item {
-    @extend .mr-4;
-
-    .nav-link {
-      @extend .px-0;
-      color: $gray-600;
-
-      &.active {
-        background-color: transparent;
-        color: theme-color('primary') !important;
-        font-weight: 600;
       }
     }
   }
