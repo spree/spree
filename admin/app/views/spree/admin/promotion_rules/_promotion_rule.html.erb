@@ -3,15 +3,17 @@
     <div class="card-header d-flex justify-content-between align-items-center">
       <h5 class="card-title"><%= promotion_rule.human_name %></h5>
 
-      <div class="dropdown">
-        <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-expanded="false">
-          <%= icon('dots', class: 'mr-0') %>
+      <% if can?(:update, promotion_rule) || can?(:destroy, promotion_rule) %>
+        <div class="dropdown">
+          <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-expanded="false">
+            <%= icon('dots', class: 'mr-0') %>
         </button>
         <div class="dropdown-menu">
-          <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item' %>
-          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item text-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } %>
+          <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item' if can?(:update, promotion_rule) %>
+          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item text-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, promotion_rule) %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </div>
     <div class="card-body">
       <p class="text-muted"><%= promotion_rule.human_description %></p>

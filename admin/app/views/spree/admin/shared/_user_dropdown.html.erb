@@ -13,7 +13,9 @@
       <%= icon 'dots-vertical', class: 'mr-0 ml-2 mb-0 d-none d-lg-block' %>
     </button>
     <div class="dropdown-menu dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
-      <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
+      <% if can?(:update, try_spree_current_user) %>
+        <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
+      <% end %>
 
       <% if enterprise_edition? && try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>
         <div data-toggle="modal" data-target="#modal">
@@ -21,7 +23,7 @@
         </div>
       <% end %>
 
-      <% if enterprise_edition? && defined?(app_domain) %>
+      <% if enterprise_edition? && defined?(app_domain) && defined?(Vendo::Account) && can?(:create, Vendo::Account) %>
         <%= link_to_with_icon 'plus', Spree.t(:create_new_team), main_app.new_account_url(host: app_domain), class: 'dropdown-item', data: { turbo: false } %>
       <% end %>
 

@@ -15,7 +15,7 @@
       <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item' do %>
         <%= icon 'tools' %>
         <%= Spree.t('admin.edit_theme') %>
-      <% end if current_store.default_theme %>
+      <% end if current_store.default_theme && can?(:manage, Spree::Theme) %>
 
       <% if available_stores.count > 1 %>
         <div class="dropdown-header">
@@ -41,17 +41,19 @@
       <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>
         <%= icon 'box' %>
         <%= Spree.t(:new_product) %>
-      <% end %>
+      <% end if can?(:create, Spree::Product) %>
       <%= link_to spree.new_admin_user_path, class: 'dropdown-item' do %>
         <%= icon 'user' %>
         <%= Spree.t(:new_user) %>
+      <% end if can?(:create, Spree.user_class) %>
+
+      <% if can?(:create, Spree::Store) %>
+        <div class="dropdown-divider"></div>
+
+        <span data-toggle="modal" data-target="#modal-lg">
+          <%= link_to_with_icon 'building-store', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal_lg' } %>
+        </span>
       <% end %>
-
-      <div class="dropdown-divider"></div>
-
-      <span data-toggle="modal" data-target="#modal-lg">
-        <%= link_to_with_icon 'building-store', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal_lg' } %>
-      </span>
     </div>
   </div>
 </div>

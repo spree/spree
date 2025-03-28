@@ -5,7 +5,7 @@
     Spree.t(:digital_assets),
     spree.admin_product_digital_assets_path(@product),
     class: "dropdown-item",
-  ) %>
+  ) if can?(:manage, Spree::Digital) %>
   <%= external_page_preview_link(@product) %>
 
   <% if can?(:clone, @product) %>

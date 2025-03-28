@@ -23,7 +23,7 @@
             <td><%= local_date(store_credit.created_at) %></td>
             <td class="actions">
               <% if store_credit.editable? && can?(:edit, store_credit) %>
-                <%= link_to_edit_url spree.edit_admin_user_store_credit_path(@user, store_credit), no_text: true, data: { 'turbo-frame': '_top' } %>
+                <%= link_to_edit store_credit, url: spree.edit_admin_user_store_credit_path(@user, store_credit), no_text: true, data: { 'turbo-frame': '_top' } %>
               <% end %>
             </td>
           </tr>

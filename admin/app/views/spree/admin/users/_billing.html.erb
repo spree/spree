@@ -15,7 +15,7 @@
       <%= link_to_with_icon 'plus', Spree.t(:add),
         spree.new_admin_address_path(user_id: @user.id, default_billing: true, type: 'billing'),
         class: 'btn btn-light btn-sm',
-        data: { turbo_frame: :new_address_billing } %>
+        data: { turbo_frame: :new_address_billing } if can?(:create, Spree::Address) && can?(:update, @user) %>
     <% end %>
   </div>
   <div class="card-body">

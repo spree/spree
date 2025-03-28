@@ -8,11 +8,13 @@
 <% end %>
 
 <% content_for(:page_actions_dropdown) do %>
-  <% if spree.respond_to?(:new_admin_user_gift_card_path) %>
-    <%= link_to_with_icon 'plus.svg', Spree.t(:issue_gift_card), spree.new_admin_user_gift_card_path(@user), class: 'text-left dropdown-item' %>
+  <% if spree.respond_to?(:new_admin_user_gift_card_path) && can?(:create, Spree::GiftCard) %>
+    <%= link_to_with_icon 'plus', Spree.t(:issue_gift_card), spree.new_admin_user_gift_card_path(@user), class: 'text-left dropdown-item' %>
   <% end %>
 
-  <%= link_to_with_icon 'plus.svg', Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: 'text-left dropdown-item' %>
+  <% if can?(:create, Spree::StoreCredit) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: 'text-left dropdown-item' %>
+  <% end %>
 <% end %>
 
 <div class="row">
