@@ -1625,7 +1625,6 @@ en:
     prototypes: Prototypes
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
-    publish: Publish
     published_at: Published at
     purchased_quantity: Purchased Quantity
     qty: Qty
