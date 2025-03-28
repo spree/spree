@@ -5,8 +5,8 @@
 <% content_for :page_actions do %>
   <%= link_to spree.admin_users_path(q: params[:q].to_unsafe_hash, page: params[:page], per_page: params[:per_page], format: :csv), class: 'btn btn-light bg-transparent with-tip mr-2 d-none d-lg-inline-flex', title: 'Export Customers to a CSV file. To filter specific Customers use "Filters" or Customers/Subscribers tabs before clicking this button' do %>
     <%= icon 'table-export', class: 'mr-2' %>
-    Export
-  <% end %>
+    <%= Spree.t(:export) %>
+  <% end if can?(:export, Spree::Export) %>
   <%= render 'extra_actions' %>
   <%= button_link_to Spree.t(:create_customer), spree.new_admin_user_path, class: "btn-primary", icon: 'plus', id: 'admin_new_user_link' %>
 <% end if can? :create, Spree::user_class %>

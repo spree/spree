@@ -12,11 +12,11 @@
       <%= yield :page_title %>
     </h3>
     <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
-      <% if action_name == 'index' && defined?(model_class) && model_class && Spree::Export.available_models.include?(model_class)  %>
+      <% if action_name == 'index' && defined?(model_class) && model_class && Spree::Export.available_models.include?(model_class) && can?(:create, Spree::Export) %>
         <span data-toggle="modal" data-target="#modal">
           <%= link_to spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: Spree::Export.type_for_model(model_class) }), class: 'btn btn-light bg-transparent with-tip', title: 'Download records as CSV file', data: { turbo_frame: :dialog_modal } do %>
-            <%= icon 'download', class: 'mr-0 mr-lg-2' %>
-            <span class="d-none d-lg-inline"><%= Spree.t(:download) %></span>
+            <%= icon 'table-export', class: 'mr-0 mr-lg-2' %>
+            <span class="d-none d-lg-inline"><%= Spree.t(:export) %></span>
           <% end %>
         </span>
       <% end %>
@@ -32,7 +32,7 @@
           <div class="dropdown-menu dropdown-menu-right">
             <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
             <% if record %>
-              <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) %>
+              <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) && defined?(Audited) && can?(:read, Audited.audit_class) %>
                 <a href="<%= spree.admin_audits_path(q: { auditable_id_eq: record.id, auditable_type_eq: record.class.to_s }) %>" target="_blank" class="dropdown-item">
                   <%= icon 'history' %>
                   <%= Spree.t(:audit_log) %>

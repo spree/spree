@@ -1,7 +1,8 @@
 <% products_active =  %w[products external_categories taxons taxonomies option_types option_values properties stock_items stock_transfers].include?(controller_name) || request.path.include?('products') %>
-<li class="nav-item">
-  <%= active_link_to spree.admin_products_path, class: 'nav-link', active: products_active do %>
-    <span class="position-relative">
+<% if can?(:manage, Spree::Product) %>
+  <li class="nav-item">
+    <%= active_link_to spree.admin_products_path, class: 'nav-link', active: products_active do %>
+      <span class="position-relative">
       <%= icon 'box-seam' %>
     </span>
     <%= Spree.t(:products) %>
@@ -13,7 +14,7 @@
           <%= active_link_to Spree.t(:stock), spree.admin_stock_items_path, class: 'nav-link', active: %w[stock_items stock_transfers].include?(controller_name) %>
         </li>
       <% end %>
-      <% if can?(:manage, Spree::Taxonomy) %>
+      <% if can?(:manage, Spree::Taxonomy) && can?(:manage, Spree::Taxon) %>
         <li class="nav-item">
           <%= active_link_to Spree.t(:taxonomies), spree.admin_taxonomies_path, class: 'nav-link' %>
         </li>
@@ -35,5 +36,6 @@
         </li>
       <% end %>
     </ul>
-  <% end %>
-</li>
+    <% end %>
+  </li>
+<% end %>

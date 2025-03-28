@@ -19,7 +19,7 @@
   </table>
 </div>
 
-<% if available_payment_methods.present? %>
+<% if available_payment_methods.present? && can?(:create, Spree::PaymentMethod) %>
   <h5 class="pb-2 pt-3">Available Payment Methods</h5>
   <div class="table-responsive card-lg p-0">
     <table class="table" id='listing_shipping_methods'>
@@ -34,12 +34,5 @@
         <%= render partial: 'spree/admin/payment_methods/available_payment_method', collection: available_payment_methods, as: :payment_method %>
       </tbody>
     </table>
-  </div>
-<% end %>
-
-<% unless defined?(SpreeGateway) %>
-  <div class="text-muted text-center p-5 d-flex align-items-center justify-content-center">
-    More payment methods can be added by installing
-    <%= external_link_to 'Spree Gateway gem', 'https://github.com/spree/spree_gateway', class: 'btn btn-link btn-sm ml-1' %>
   </div>
 <% end %>
