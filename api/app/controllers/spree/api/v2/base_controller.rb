@@ -145,13 +145,13 @@ module Spree
         end
 
         def record_not_found(exception)
-          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree.api')
 
           render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
         end
 
         def access_denied(exception)
-          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree.api')
 
           render_error_payload(exception.message, 403)
         end
@@ -161,19 +161,17 @@ module Spree
         end
 
         def gateway_error(exception)
-          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree.api')
 
           render_error_payload(exception.message)
         end
 
         def error_during_processing(exception)
-          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+          Rails.error.report(exception, context: { user_id: spree_current_user&.id }, source: 'spree.api')
 
-          render_error_payload(result.value[:message], 400)
-        end
+          message = exception.respond_to?(:original_message) ? exception.original_message : exception.message
 
-        def error_handler
-          Spree::Api::Dependencies.error_handler.constantize
+          render_error_payload(message, 400)
         end
       end
     end

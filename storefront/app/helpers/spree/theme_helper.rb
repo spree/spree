@@ -50,7 +50,8 @@ module Spree
     rescue StandardError => e
       raise e unless Rails.env.production?
 
-      Spree::Dependencies.error_handler.constantize.call(exception: e)
+      Rails.error.report(e, context: { theme_id: current_theme_or_preview.id }, source: 'spree.storefront')
+
       {}
     end
 

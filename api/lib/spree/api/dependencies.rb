@@ -86,8 +86,6 @@ module Spree
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
 
-        error_handler: 'Spree::ErrorHandler',
-
         # serializers
         platform_admin_user_serializer: 'Spree::Api::V2::Platform::AdminUserSerializer',
 

@@ -28,12 +28,12 @@ describe 'API v2 Errors spec', type: :request do
     end
 
     it 'calls error handler' do
-      expect_next_instance_of(::Spree::ErrorHandler) do |instance|
-        expect(instance).to receive(:call).with(
-          exception: instance_of(CanCan::AccessDenied),
-          opts: { user: user }
-        )
-      end
+      expect(Rails.error).to receive(:report).with(
+        instance_of(CanCan::AccessDenied),
+        context: { user_id: user.id },
+        source: 'spree.api'
+      )
+
       patch '/api/v2/storefront/cart/empty', headers: headers_bearer
     end
   end
