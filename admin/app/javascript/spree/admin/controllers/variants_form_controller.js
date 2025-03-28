@@ -669,7 +669,7 @@ export default class extends CheckboxSelectAll {
       }
 
       const existingPrice = this.priceForVariant(internalName, currency)
-      priceInput.value = (existingPrice.amount).toLocaleString(this.localeValue)
+      priceInput.value = existingPrice.amount?.toLocaleString(this.localeValue)
       currencyInput.value = currency
       if (existingPrice.id) {
         idInput.value = existingPrice.id
