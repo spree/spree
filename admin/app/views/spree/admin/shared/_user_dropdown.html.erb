@@ -1,18 +1,18 @@
 <% if try_spree_current_user.present? %>
-  <div class="position-relative dropdown dropdown-dark rounded" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+  <div class="dropdown pt-2 bg-gray-25 border-top" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
     <button type="button"
-          class="btn btn-dark d-flex align-items-center justify-content-between text-left w-100 border-transparent"
+          class="btn d-flex align-items-center justify-content-between text-left w-100"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">
       <div class="d-flex align-items-center">
         <%= image_tag(avatar_url_for(try_spree_current_user), width: 34, height: 34, class: 'rounded-circle mr-lg-2') %>
-        <span class="d-none d-lg-inline text-white">
+        <span class="d-none d-lg-inline">
           <%= try_spree_current_user.name&.full&.truncate(15)&.presence || try_spree_current_user.email.truncate(15) %><br />
           <span class="text-muted small"><%= try_spree_current_user.email.truncate(22) %></span>
         </span>
       </div>
       <%= icon 'dots-vertical', class: 'mr-0 ml-2 mb-0 d-none d-lg-block' %>
     </button>
-    <div class="dropdown-menu dropdown-menu-dark dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
+    <div class="dropdown-menu dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
       <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
 
       <% if enterprise_edition? && try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>

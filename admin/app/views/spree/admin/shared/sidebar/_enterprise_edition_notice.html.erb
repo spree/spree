@@ -1,0 +1,10 @@
+<% if can?(:manage, current_store) && !enterprise_edition? %>
+  <% unless session[:spree_enterprise_edition_notice_dismissed] %>
+    <div id="enterprise-edition-notice">
+      <%= link_to '', spree.admin_dismiss_enterprise_edition_notice_path, method: :patch, class: 'btn-close' %>
+      <p class="mb-1">You're using Spree Community Edition. To get access to all features, please upgrade to Enterprise Edition.</p>
+
+      <%= external_link_to 'Upgrade', 'https://spreecommerce.org/pricing', target: '_blank', class: 'btn btn-link btn-sm shadow-xs' %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,13 +1,7 @@
-<% settings_active = %w[stores zones shipping_methods oauth_applications
-                        payment_methods refund_reasons reimbursement_types
-                        shipping_categories store_credit_categories
-                        syncs tax_categories tax_rates webhooks accounts
-                        custom_domains audits exports imports return_authorization_reasons
-                        documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name) %>
-<% if settings_active %>
-  <ul class="nav nav-dark flex-column">
-    <li class="nav-item mb-3">
-      <%= active_link_to_with_icon('chevron-left', Spree.t(:settings), spree.admin_dashboard_path, class: 'nav-link') %>
+<% if settings_active? %>
+  <ul class="nav flex-column">
+    <li class="nav-item mb-1 py-2 border-bottom border-bottom-dashed">
+      <%= active_link_to_with_icon('chevron-left', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'nav-link') %>
     </li>
 
     <li class="nav-item">
@@ -66,7 +60,7 @@
           <%= icon 'history' %>
           <%= Spree.t('admin.audit_log') %>
 
-          <span class="badge badge-dark ml-auto with-tip rounded-pill" title="This feature is part of the Enterprise Edition.">Enterprise</span>
+          <span class="badge ml-auto with-tip rounded-pill" title="This feature is part of the Enterprise Edition.">Enterprise</span>
         <% end %>
       </li>
     <% end %>
@@ -75,7 +69,9 @@
     </li>
   </ul>
 <% else %>
-  <ul class="nav nav-dark flex-column">
+  <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+
+  <ul class="nav flex-column">
     <% unless current_store.setup_completed? %>
       <li class="nav-item">
         <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
@@ -115,9 +111,9 @@
         <% end %>
 
         <% if discounts_active && defined?(Spree::GiftCard) && spree.respond_to?(:admin_gift_cards_path) && can?(:manage, Spree::GiftCard) %>
-          <ul class="ml-4 pl-1 mb-2 nav-submenu flex-column mt-1">
+          <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
             <li class="nav-item">
-              <%= active_link_to Spree.t(:gift_cards), spree.admin_gift_cards_path, class: 'nav-link py-lg-1', active: %w[gift_cards gift_card_batches].include?(controller_name) %>
+              <%= active_link_to Spree.t(:gift_cards), spree.admin_gift_cards_path, class: 'nav-link', active: %w[gift_cards gift_card_batches].include?(controller_name) %>
             </li>
           </ul>
         <% end %>
@@ -134,53 +130,16 @@
     <% end %>
 
     <%= render 'spree/admin/shared/sidebar/custom_nav' %>
-  </ul>
-
-  <ul class="nav nav-dark flex-column mt-4 mb-3">
-    <div class="text-uppercase small ml-2 mb-1 text-muted">Channels & Apps</div>
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
-    <% if spree.respond_to?(:admin_emails_path) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('send', Spree.t(:emails), spree.admin_emails_path, class: 'nav-link') %>
-      </li>
-    <% end %>
-    <% if defined?(Spree::Integration) %>
-      <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
-    <% else %>
-      <li class="nav-item">
-        <span class="nav-link d-flex align-items-center pr-1 cursor-default with-tip" title="Connect your store to third-party services to automate your business processes.">
-          <%= icon 'plug' %>
-          <span><%= Spree.t(:integrations) %></span>
-          <span class="badge badge-dark ml-auto rounded-pill">Coming soon!</span>
-        </span>
-      </li>
-    <% end %>
-  </ul>
+    <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
 
-  <ul class="nav nav-dark flex-column mt-auto mb-3" id="settings-nav" data-turbo-permanent>
-    <div class="text-uppercase small ml-2 mb-1 text-muted"><%= Spree.t(:settings) %></div>
+    <li class="nav-item border-top border-top-dashed pt-2">
+      <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
+    </li>
     <% if defined?(current_account) && current_account.present? %>
       <li class="nav-item">
         <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link' %>
       </li>
     <% end %>
-    <li class="nav-item">
-      <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
-    </li>
   </ul>
-
-   <% if can?(:manage, current_store) && spree_update_available? %>
-      <%= link_to_with_icon 'arrow-up', 'New updates available', 'https://spreecommerce.org/docs/developer/upgrades', class: 'btn btn-dark w-100 py-1', target: '_blank' %>
-    <% end %>
-
-    <% if can?(:manage, current_store) && !enterprise_edition? %>
-      <div class="nav nav-dark flex-column mt-2" id="plan-nav" data-turbo-permanent>
-        <div class="bg-transparent border-top border-dark pt-2 pl-2 d-flex align-items-center justify-content-between">
-          <span class="font-weight-light font-size-sm text-white with-tip text-muted" title="Spree v<%= Spree.version %>">
-            Community Edition
-          </span>
-          <%= link_to_with_icon 'bolt', 'Upgrade', 'https://spreecommerce.org/pricing/', class: 'btn btn-sm btn-dark with-tip', target: '_blank', title: 'Upgrade to Enterprise Edition to access more features, such as multi-store management, B2B, multi-vendor marketplace, and more.' %>
-        </div>
-      </div>
-    <% end %>
 <% end %>

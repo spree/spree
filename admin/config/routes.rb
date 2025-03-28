@@ -231,6 +231,7 @@ Spree::Core::Engine.add_routes do
     resource :dashboard, controller: 'dashboard'
     get '/dashboard/analytics', to: 'dashboard#analytics', as: :dashboard_analytics
     get '/getting-started', to: 'dashboard#getting_started', as: :getting_started
+    get '/dismiss_enterprise_edition_notice', to: 'dashboard#dismiss_enterprise_edition_notice', as: :dismiss_enterprise_edition_notice
 
     root to: 'dashboard#show'
   end

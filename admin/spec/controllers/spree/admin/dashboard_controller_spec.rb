@@ -46,4 +46,12 @@ describe Spree::Admin::DashboardController, type: :controller do
       expect(response).to render_template(:getting_started)
     end
   end
+
+  describe '#dismiss_enterprise_edition_notice' do
+    it 'dismisses the enterprise edition notice' do
+      patch :dismiss_enterprise_edition_notice
+      expect(response).to redirect_to(spree.admin_dashboard_path)
+      expect(session[:spree_enterprise_edition_notice_dismissed]).to be_truthy
+    end
+  end
 end

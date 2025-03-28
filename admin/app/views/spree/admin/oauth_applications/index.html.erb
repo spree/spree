@@ -69,7 +69,7 @@
   </div>
 <% else %>
   <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: 'API keys') %>,
-    <%= link_to_with_icon('plus', Spree.t(:add_one), new_object_url, class: 'btn btn-link') if can? :create, Spree::OauthApplication %>
+    <%= Spree.t(:no_resource_found, resource: 'API keys') %>
+    <%= link_to_with_icon('plus', Spree.t(:add_one), new_object_url, class: 'btn btn-link ml-3') if can? :create, Spree::OauthApplication %>
   </div>
 <% end %>

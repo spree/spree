@@ -1,14 +1,30 @@
 .dropdown .btn .text-muted {
   color: $gray-500 !important;
 }
+
+.dropdown {
+  .arrow {
+    color: $gray-300;
+  }
+
+  &:hover {
+    .arrow {
+      color: $gray-500;
+    }
+  }
+}
+
+.dropdown.show {
+  .arrow {
+    transform: rotate(3.142rad);
+  }
+}
+
 .dropdown-menu {
   overflow: hidden !important;
 
   box-shadow: $dropdown-box-shadow;
 
-  animation: fadeIn;
-  animation-duration: 0.5s;
-  
   font-weight: 500;
 
   .dropdown-item, .dropdown-header {
