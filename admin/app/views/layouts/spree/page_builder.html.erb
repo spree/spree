@@ -10,7 +10,6 @@
         data-controller="page-builder"
         data-page-builder-preview-url-value="<%= page_preview_url %>"
   >
-    <%= render 'spree/admin/shared/alerts' %>
 
   <%= form_for @theme, as: :theme,url: spree.update_with_page_admin_theme_path(@theme), method: :put do |f| %>
     <%= hidden_field_tag :page_id, @page.id %>
