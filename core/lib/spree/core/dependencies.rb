@@ -80,9 +80,6 @@ module Spree
 
         payment_create_service: 'Spree::Payments::Create',
 
-        # errors
-        error_handler: 'Spree::ErrorHandler',
-
         # data feeds
         data_feeds_google_rss_service: 'Spree::DataFeeds::Google::Rss',
         data_feeds_google_optional_attributes_service: 'Spree::DataFeeds::Google::OptionalAttributes',

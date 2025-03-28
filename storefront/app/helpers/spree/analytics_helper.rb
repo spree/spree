@@ -14,9 +14,10 @@ module Spree
         handler.handle_event(event_name, record)
       end
     rescue => e
-      Spree::Dependencies.error_handler.constantize.call(
-        exception: e,
-        opts: { report_context: { event_name: event_name, record: record } }
+      Rails.error.report(
+        e,
+        context: { event_name: event_name, record_id: record&.id, record_type: record&.class&.name },
+        source: 'spree.storefront'
       )
     end
 

@@ -230,7 +230,11 @@ module Spree
     end
 
     def invalid_authenticity_token(exception)
-      Spree::Dependencies.error_handler.constantize.call(exception: exception)
+      Rails.error.report(
+        exception,
+        context: { user_id: spree_current_user&.id },
+        source: 'spree.storefront'
+      )
 
       flash[:error] = Spree.t(:something_went_wrong)
 

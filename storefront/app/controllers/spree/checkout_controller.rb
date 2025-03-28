@@ -319,15 +319,10 @@ module Spree
     end
 
     def rescue_from_spree_gateway_error(exception)
-      Spree::Dependencies.error_handler.constantize.call(
-        exception: exception,
-        opts: {
-          report_context: {
-            order_id: @order&.id,
-            order_number: @order&.number,
-            error_type: 'gateway_error'
-          }
-        }
+      Rails.error.report(
+        exception,
+        context: { order_id: @order&.id, order_number: @order&.number, error_type: 'gateway_error' },
+        source: 'spree.storefront'
       )
 
       flash.now[:error] = Spree.t(:spree_gateway_error_flash_for_checkout)
