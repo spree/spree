@@ -8,12 +8,7 @@
         </button>
       </div>
 
-      <%= image_tag(
-        current_store.default_theme.screenshot_url,
-        class: 'w-100 bg-light rounded',
-        loading: :lazy,
-        height: 172
-      ) %>
+      <%= render 'spree/admin/themes/theme_preview_image', theme: current_store.default_theme, height: 172, width: 330 %>
     <% end %>
 
     <div class="card-body px-2 pt-0 pb-2">

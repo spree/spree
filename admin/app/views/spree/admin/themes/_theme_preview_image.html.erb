@@ -1,0 +1,24 @@
+<% width ||= 120 %>
+<% height ||= 72 %>
+
+<% if theme.screenshot.attached? && theme.screenshot.variable? %>
+  <%= image_tag(
+        main_app.cdn_image_url(
+          theme.screenshot.variant(
+            spree_image_variant_options(resize_to_fill: [width * 2, height * 2])
+          )
+        ),
+        class: 'img-thumbnail',
+        style: "width: #{width}px; height: #{height}px",
+        loading: :lazy
+  ) %>
+<% elsif theme.class.preview_image_url.present? %>
+  <%= image_tag(
+  theme.class.preview_image_url,
+  class: 'img-thumbnail',
+  style: "width: #{width}px; height: #{height}px",
+  loading: :lazy
+) %>
+<% else %>
+  <%= render 'spree/admin/shared/no_image', width: width, height: height %>
+<% end %>
