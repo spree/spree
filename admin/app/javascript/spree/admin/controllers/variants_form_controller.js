@@ -404,7 +404,7 @@ export default class extends CheckboxSelectAll {
     pricesVariation.delete(null)
 
     if (pricesVariation.size === 0) {
-      parentPriceEl.value = this.priceForVariant(variantName, currency).amount?.toLocaleString(this.localeValue)
+      parentPriceEl.value = this.priceForVariant(variantName, currency).amount?.toLocaleString(this.localeValue) || ''
       parentPriceEl.placeholder = ''
       return
     }
