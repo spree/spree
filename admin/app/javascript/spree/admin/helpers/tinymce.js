@@ -14,7 +14,7 @@ function initializeTinmce() {
     plugins: ['image', 'table', 'code', 'link', 'lists'],
     menubar: false,
     inline_boundaries: false,
-    toolbar: 'undo redo | blocks | bold italic link forecolor backcolor | bullist numlist outdent indent | alignleft aligncenter alignright alignjustify | table | code',
+    toolbar: 'undo redo | formatselect | bold italic link forecolor backcolor | bullist numlist outdent indent | alignleft aligncenter alignright alignjustify | table | code',
     // Default styles without heading 1
     style_formats: [
       {
@@ -61,13 +61,5 @@ function initializeTinmce() {
     setup: function (ed) {
       if (document.getElementById(ed.id).hasAttribute('readonly')) ed.mode.set('readonly')
     }
-  })
-
-  tinymce.init({
-    content_style: 'table { width: 100%; }; body { font-family: Inter, sans-serif; font-size: 14px; }',
-    selector: '.spree-rte-table',
-    plugins: ['table paste code'],
-    menubar: false,
-    toolbar: 'table | code | undo redo'
   })
 }

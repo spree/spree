@@ -54,18 +54,18 @@
 
 /* Override TinyMCE UI font size */
 .tox-toolbar__group {
-  font-size: 13px !important; /* Change this value to your desired font size */
+  font-size: $font-size-base !important; /* Change this value to your desired font size */
 }
 .tox-mbtn__select-label {
-  font-size: 13px !important; /* Change this value to your desired font size */
+  font-size: $font-size-base !important; /* Change this value to your desired font size */
 }
 /* Override TinyMCE Content font size */
 .tox-tinymce {
-  font-size: 13px !important; /* Change this value to your desired font size */
+  font-size: $font-size-base !important; /* Change this value to your desired font size */
 }
 .tox .tox-collection__item-label, .tox-tbtn__select-label {
-  font-size: 13px !important; /* Change this value to your desired font size */
-  font-family: 'Inter';
+  font-size: $font-size-base !important; /* Change this value to your desired font size */
+  font-family: $font-family-sans-serif;
 }
 
 .tox.tox-tinymce-aux .tox-toolbar__overflow, .tox .tox-menu {
