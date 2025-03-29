@@ -36,7 +36,8 @@ export default class extends CheckboxSelectAll {
     variantIds: Object,
     currentStockLocationId: String,
     stockLocations: Array,
-    optionValuesSelectOptions: Array
+    optionValuesSelectOptions: Array,
+    locale: String
   }
 
   connect() {
@@ -403,7 +404,7 @@ export default class extends CheckboxSelectAll {
     pricesVariation.delete(null)
 
     if (pricesVariation.size === 0) {
-      parentPriceEl.value = this.priceForVariant(variantName, currency).amount
+      parentPriceEl.value = this.priceForVariant(variantName, currency).amount?.toLocaleString(this.localeValue) || ''
       parentPriceEl.placeholder = ''
       return
     }
@@ -668,7 +669,7 @@ export default class extends CheckboxSelectAll {
       }
 
       const existingPrice = this.priceForVariant(internalName, currency)
-      priceInput.value = existingPrice.amount
+      priceInput.value = existingPrice.amount?.toLocaleString(this.localeValue) || ''
       currencyInput.value = currency
       if (existingPrice.id) {
         idInput.value = existingPrice.id
