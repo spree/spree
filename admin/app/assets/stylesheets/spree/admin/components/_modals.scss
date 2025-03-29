@@ -8,15 +8,15 @@ body.modal-open {
   overflow-x: clip;
 }
 
+.modal-content {
+  box-shadow: $modal-content-box-shadow-xs;
+}
+
 .modal-header {
   @extend .align-items-center;
-  border-bottom: 0;
 
   .modal-title {
     margin-bottom: 0;
-    font-size: $font-size-plus;
-    font-weight: $font-weight-bold;
-    font-family: $font-family-sans-serif;
   }
 
   .btn-close {
@@ -27,19 +27,15 @@ body.modal-open {
   display: flex;
   justify-content: flex-end;
   padding: $modal-inner-padding;
-  border-top: 0;
+  background-color: #FAFAFA;
+  border-top: 1px solid $gray-50;
 
   .btn {
-    display: inline-flex !important;
+    display: inline-flex ;
     width: auto !important;
   }
 }
 
-#multi-backdrop {
-  z-index: 0;
-  height: 0;
-  width: 0;
-}
 .modal-dialog turbo-frame {
   display: block;
   width: 100%;

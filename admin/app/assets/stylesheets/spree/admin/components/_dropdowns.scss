@@ -21,11 +21,9 @@
 }
 
 .dropdown-menu {
+  margin-top: 0.25rem !important;
   overflow: hidden !important;
-
   box-shadow: $dropdown-box-shadow;
-
-  font-weight: 500;
 
   .dropdown-item, .dropdown-header {
     margin-bottom: 0.25rem;
@@ -41,6 +39,8 @@
     align-items: center;
     justify-content: flex-start;
     background: transparent;
+    transition: background 0.15s, color 0.1s;
+    will-change: background, color;
 
     color: $gray-700;
 
@@ -74,15 +74,8 @@
   .button_to {
     width: 100%;
   }
-  .dropdown-divider {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-top: 1px solid $gray-50;
-  }
   .dropdown-header {
-    @extend .font-weight-normal;
-    @extend .text-uppercase;
-    @extend .text-muted;
+    font-weight: $font-weight-base;
   }
 
   .dropdown-item:last-child {

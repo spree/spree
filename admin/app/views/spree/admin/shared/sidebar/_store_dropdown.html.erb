@@ -47,6 +47,13 @@
         <%= Spree.t(:new_user) %>
       <% end if can?(:create, Spree.user_class) %>
 
+      <%= link_to spree.new_admin_promotion_path, class: 'dropdown-item' do %>
+        <%= icon 'discount' %>
+        <%= Spree.t(:new_promotion) %>
+      <% end if can?(:create, Spree::Promotion) %>
+
+      <%= invite_vendor_button(class: 'dropdown-item') if defined?(invite_vendor_button) %>
+
       <% if can?(:create, Spree::Store) %>
         <div class="dropdown-divider"></div>
 

@@ -9,7 +9,9 @@
 
 .nav-link {
   cursor: pointer;
-  @extend .position-relative;
+  position: relative;
+  transition: background 0.15s, color 0.1s;
+  will-change: background, color;
 }
 
 #header {

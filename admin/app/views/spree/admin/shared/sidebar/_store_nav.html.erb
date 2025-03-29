@@ -158,10 +158,13 @@
     <% end %>
 
     <%= render 'spree/admin/shared/sidebar/custom_nav' %>
+
+    <li class="nav-item border-top border-top-dashed my-1"></li>
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
     <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
 
-    <li class="nav-item border-top border-top-dashed pt-2">
+    <li class="nav-item border-top border-top-dashed my-1"></li>
+    <li class="nav-item">
       <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
     </li>
     <% if defined?(current_account) && current_account.present? && can?(:manage, current_account) %>
