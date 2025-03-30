@@ -5,56 +5,39 @@
     <%= render "spree/admin/shared/custom_head" %>
   </head>
 
-  <body class="admin bg-light theme_editor page-builder"
+  <body class="admin page-builder"
         id="page-builder"
         data-controller="page-builder"
         data-page-builder-preview-url-value="<%= page_preview_url %>"
   >
 
-  <%= form_for @theme, as: :theme,url: spree.update_with_page_admin_theme_path(@theme), method: :put do |f| %>
-    <%= hidden_field_tag :page_id, @page.id %>
-    <%= hidden_field_tag :theme_preview_id, @theme_preview.id %>
-    <%= hidden_field_tag :page_preview_id, @page_preview.id %>
-    <%= render 'spree/admin/page_builder/header' %>
-  <% end %>
+    <%= form_for @theme, as: :theme,url: spree.update_with_page_admin_theme_path(@theme), method: :put do |f| %>
+      <%= hidden_field_tag :page_id, @page.id %>
+      <%= hidden_field_tag :theme_preview_id, @theme_preview.id %>
+      <%= hidden_field_tag :page_preview_id, @page_preview.id %>
+      <%= render 'spree/admin/page_builder/header' %>
+    <% end %>
 
-    <%#-------------------------------------------------%>
-    <%# Main content                                    %>
-    <%#-------------------------------------------------%>
-    <main id="content" style="margin-top: 53px">
-      <%#-------------------------------------------------%>
-      <%# Sidebar                                         %>
-      <%#-------------------------------------------------%>
-      <div class="sidebar">
-        <%= render 'spree/admin/page_builder/sidebar' %>
-      </div>
-
-      <%#-------------------------------------------------%>
-      <%# Content                                         %>
-      <%#-------------------------------------------------%>
-      <main id="main-part" class="flex-grow-1 pt-2">
-        <%#-------------------------------------------------%>
-        <%# Main content                                    %>
-        <%#-------------------------------------------------%>
-        <div class="col bg-transparent">
-          <div id="liveViewCont" class="desktopLiveView" data-page-builder-target="previewContainer">
-            <div class="embed-responsive embed-responsive-4by3 bg-transparent">
-              <iframe class="embed-responsive-item border border-gray-300 p-1 bg-white rounded"
-                      data-page-builder-target="iframe"
-                      data-action="load->page-builder#initializeVisualEditor"
-                      id="pageLivePreview"
-                      sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-modals">
-              </iframe>
-              <button class="editor-add-section btn btn-mint shadow" data-action="click->page-builder#addSection">
-                <%= icon("add", height: 22, class: "mr-2") %> Add Section
-              </button>
-            </div>
+    <main id="content">
+      <%= render 'spree/admin/page_builder/sidebar' %>
+      <main id="main-part">
+        <div class="desktopLiveView" data-page-builder-target="previewContainer">
+          <div class="embed-responsive embed-responsive-4by3">
+            <iframe class="embed-responsive-item"
+                    data-page-builder-target="iframe"
+                    data-action="load->page-builder#initializeVisualEditor"
+                    id="page-builder-preview"
+                    sandbox="allow-same-origin allow-forms allow-popups allow-scripts allow-modals">
+            </iframe>
+            <button class="editor-add-section btn btn-mint shadow" data-action="click->page-builder#addSection">
+              <%= icon("add", height: 22, class: "mr-2") %> Add Section
+            </button>
           </div>
         </div>
 
         <%= turbo_frame_tag :iframe_preview_scripts %>
       </main>
-    </div>
+    </main>
 
     <%= render 'spree/admin/shared/modal' %>
     <%= render 'spree/admin/shared/alerts' %>

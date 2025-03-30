@@ -109,7 +109,7 @@ module Spree
           turbo_frame_tag :iframe_preview_scripts do
             javascript_tag do
               raw <<~JS
-                document.getElementById('pageLivePreview').contentWindow.window.Turbo.visit(
+                document.getElementById('page-builder-preview').contentWindow.window.Turbo.visit(
                   document.getElementById('page-builder').dataset.pageBuilderPreviewUrlValue + '&editor_id=#{editor_id}',
                   #{reload_params}
                 )
