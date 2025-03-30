@@ -12,6 +12,12 @@
   position: relative;
   transition: background 0.15s, color 0.1s;
   will-change: background, color;
+  font-weight: 400;
+  color: $gray-700;
+
+  &:hover {
+    color: theme-color('primary');
+  }
 }
 
 #header {
@@ -34,8 +40,6 @@
     }
 
     .nav-link {
-      font-weight: 500;
-
       &:hover {
         color: theme-color('primary') !important;
         background-color: theme-color('active');

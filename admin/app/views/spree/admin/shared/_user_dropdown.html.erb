@@ -1,5 +1,5 @@
 <% if try_spree_current_user.present? %>
-  <div class="dropdown pt-2 bg-gray-25 border-top" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+  <div class="dropdown py-2 bg-gray-25 border-top" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
     <button type="button"
           class="btn d-flex align-items-center justify-content-between text-left w-100"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">
@@ -10,7 +10,6 @@
           <span class="text-muted small"><%= try_spree_current_user.email.truncate(22) %></span>
         </span>
       </div>
-      <%= icon 'dots-vertical', class: 'mr-0 ml-2 mb-0 d-none d-lg-block' %>
     </button>
     <div class="dropdown-menu dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
       <% if can?(:update, try_spree_current_user) %>

@@ -12,23 +12,22 @@
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
       </div>
-      <div class="card-body pb-0">
+      <div class="card-body">
         <p class="text-muted">
           This is the name of your store. It will be displayed in the header and in the footer.
         </p>
         <div class="form-group">
           <%= f.label :name, Spree.t(:name) %>
-          <%= f.text_field :name, class: 'form-control', required: true %>
+          <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
           <%= f.error_message_on :name %>
         </div>
-
-          <div class="form-group mb-0">
-            <%= f.label :logo do %>
-              <%= Spree.t(:logo) %>
-              <%= help_bubble("Used in the admin dashboard") %>
-            <% end %>
-            <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
-          </div>
+        <div class="form-group mb-0">
+          <%= f.label :logo do %>
+            <%= Spree.t(:logo) %>
+            <%= help_bubble("Used in the admin dashboard") %>
+          <% end %>
+          <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
+        </div>
       </div>
     </div>
 

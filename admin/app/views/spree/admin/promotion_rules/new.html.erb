@@ -19,7 +19,7 @@
             <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
               <% key = rule_type.demodulize.underscore %>
               <li class="list-group-item p-0 overflow-hidden">
-                <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-3 hover-light', data: { turbo_prefetch: false } do %>
+                <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-3 hover-light text-primary', data: { turbo_prefetch: false } do %>
                   <%= radio_button_tag :type, rule_type %>
                   <div class="ml-3">
                     <h6><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>

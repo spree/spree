@@ -17,9 +17,9 @@
           <%= f.select :source_location_id_eq,
                   available_stock_locations_list,
                   { include_blank: true },
-                  class: "custom-select",
                   data: {
                     filters_target: :input,
+                    controller: 'autocomplete-select'
                   } %>
         </div>
       </div>
@@ -29,9 +29,9 @@
           <%= f.select :destination_location_id_eq,
                   available_stock_locations_list,
                   { include_blank: true },
-                  class: "custom-select",
                   data: {
                     filters_target: :input,
+                    controller: 'autocomplete-select'
                   } %>
         </div>
       </div>

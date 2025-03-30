@@ -156,17 +156,14 @@ strong {
 .shadow-xs {
   box-shadow: $box-shadow-xs;
 }
-.shadow-blue {
-  box-shadow: $input-btn-focus-box-shadow;
-}
-.focus-shadow-primary {
+.focus-shadow {
   &:focus, &:focus-within, &:active {
     box-shadow: $input-btn-focus-box-shadow;
   }
 }
-.focus-border-primary {
-  &:focus, &:focus-within, &:active {
-    border-color: $input-focus-border-color;
+.focus-border {
+  &:focus, &:focus-within {
+    border-color: theme-color('blue') !important;
   }
 }
 
@@ -670,4 +667,8 @@ div.uppy-Root {
 
 .turbo-progress-bar {
   background-color: theme-color('blue');
+}
+
+.tooltip-inner {
+  box-shadow: $dropdown-box-shadow;
 }

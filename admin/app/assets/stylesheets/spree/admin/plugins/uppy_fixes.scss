@@ -1,0 +1,25 @@
+.uppy-Dashboard--modal .uppy-Dashboard-overlay {
+  background-color: $modal-backdrop-bg !important;
+  opacity: $modal-backdrop-opacity !important;
+}
+
+.uppy-Dashboard--modal .uppy-Dashboard-inner {
+  box-shadow: $modal-content-box-shadow-xs !important;
+  border-color: $modal-content-border-color !important;
+}
+
+.uppy-Dashboard-browse {
+  color: $blue !important;
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
+.uppy-Dashboard-close {
+  @extend .btn-close;
+  background-color: $white !important;
+
+  span {
+    display: none;
+  }
+}
+

@@ -100,12 +100,12 @@
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:images) %></h5>
       </div>
-      <div class="card-body pb-0">
+      <div class="card-body">
         <%= f.label :image, Spree.t(:image) %>
         <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1920, height: 1080 %>
         <%= f.error_message_on :image %>
       </div>
-      <div class="card-body pb-0">
+      <div class="card-body">
         <%= f.label :square_image, Spree.t(:square_image) %>
         <p class="text-muted form-text">
           Used for the featured image on the homepage.
