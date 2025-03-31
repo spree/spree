@@ -27,12 +27,12 @@
 @import 'plugins/tom-select.bootstrap4';
 @import 'plugins/flatfile';
 
-@import url('https://unpkg.com/trix@2.1.12/dist/trix.css');
-@import url('https://esm.sh/@uppy/core@4.2.0/dist/style.min.css');
-@import url('https://esm.sh/@uppy/dashboard@4.1.0/dist/style.min.css');
-@import url('https://esm.sh/@uppy/image-editor@3.1.0/dist/style.min.css');
-@import url('https://esm.sh/animate.css@4.1.1/animate.min.css');
-@import url('https://esm.sh/@simonwep/pickr@1.8.2/dist/themes/classic.min.css');
+@import url('trix.css');
+@import url('uppy/core.css');
+@import url('uppy/dashboard.css');
+@import url('uppy/image-editor.css');
+@import url('animate.css');
+@import url('pickr.css');
 
 @import 'plugins/uppy_fixes';
 
