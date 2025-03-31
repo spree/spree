@@ -9,7 +9,7 @@
         <a
           href="<%= spree.bulk_modal_admin_products_path(kind: :set_status, status: :active) %>"
           data-turbo-frame="bulk_modal"
-          class="btn btn-primary mr-2 d-vendor"
+          class="btn btn-light mr-2 d-vendor"
           data-action="click->bulk-operation#setBulkAction"
           data-url="<%= spree.bulk_status_update_admin_products_path(status: :active) %>"
         >

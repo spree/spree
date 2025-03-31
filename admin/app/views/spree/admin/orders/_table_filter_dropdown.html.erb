@@ -12,7 +12,7 @@
                   class: "dropdown-item d-flex align-items-center justify-content-between #{'active' if params[:q][:shipment_state_not_in] == ['shipped', 'canceled']}" do %>
           <%= Spree.t('admin.orders.unfulfilled') %>
           <% if ready_to_ship_orders_count&.positive? %>
-            <span class="badge  badge-primary ml-2">
+            <span class="badge badge-light ml-2">
               <%= ready_to_ship_orders_count %>
             </span>
           <% end %>

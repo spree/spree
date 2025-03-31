@@ -9,7 +9,7 @@
 <%= turbo_stream.replace :iframe_preview_scripts do %>%
   <%= turbo_frame_tag :iframe_preview_scripts do %>
     <script>
-      document.getElementById('pageLivePreview').contentDocument.body.querySelector('turbo-frame[id="section-<%= @page_section.id %>"]').remove()
+      document.getElementById('page-builder-preview').contentDocument.body.querySelector('turbo-frame[id="section-<%= @page_section.id %>"]').remove()
       document.getElementById('delete-callback').click()
     </script>
   <% end %>

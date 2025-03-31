@@ -175,7 +175,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
+        opts[:class] ||= "d-inline-flex align-items-center text-blue"
 
         if block_given?
           link_to url, opts, &block
@@ -187,8 +187,8 @@ module Spree
       end
 
       def help_bubble(text = '', placement = 'bottom', css: nil)
-        css ||= 'text-muted font-size-base'
-        content_tag :small, icon('help', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+        css ||= 'text-muted'
+        content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
       end
     end
   end
