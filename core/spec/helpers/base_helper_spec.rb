@@ -136,8 +136,6 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       Spree::Image.prepend(ImageDecorator)
-
-      allow_any_instance_of(described_class).to receive(:inline_svg_tag).and_return('<svg></svg>')
     end
 
     it 'does not raise errors when style exists' do
