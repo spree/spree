@@ -5,8 +5,8 @@
 <% content_for :page_actions do %>
   <%= link_to spree.admin_users_path(q: params[:q].to_unsafe_hash, page: params[:page], per_page: params[:per_page], format: :csv), class: 'btn btn-light bg-transparent with-tip mr-2 d-none d-lg-inline-flex', title: 'Export Customers to a CSV file. To filter specific Customers use "Filters" or Customers/Subscribers tabs before clicking this button' do %>
     <%= icon 'table-export', class: 'mr-2' %>
-    Export
-  <% end %>
+    <%= Spree.t(:export) %>
+  <% end if can?(:export, Spree::Export) %>
   <%= render 'extra_actions' %>
   <%= button_link_to Spree.t(:create_customer), spree.new_admin_user_path, class: "btn-primary", icon: 'plus', id: 'admin_new_user_link' %>
 <% end if can? :create, Spree::user_class %>
@@ -29,11 +29,11 @@
                 <a
                   href="<%= spree.bulk_modal_admin_users_path(kind: :add_tags) %>"
                   data-turbo-frame="bulk_modal"
-                  class="btn btn-primary mr-2"
+                  class="btn btn-light mr-2"
                   data-action="click->bulk-operation#setBulkAction"
                   data-url="<%= spree.bulk_add_tags_admin_users_path %>"
                 >
-                  <%= icon("plus") %>
+                  <%= icon("tag-plus") %>
                   <%= Spree.t("admin.bulk_ops.users.title.add_tags") %>
                 </a>
 
@@ -44,6 +44,7 @@
                   data-action="click->bulk-operation#setBulkAction"
                   data-url="<%= spree.bulk_remove_tags_admin_users_path %>"
                 >
+                  <%= icon("tag-minus") %>
                   <%= Spree.t("admin.bulk_ops.users.title.remove_tags") %>
                 </a>
               <% end %>

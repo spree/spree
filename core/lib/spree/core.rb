@@ -39,7 +39,8 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :root_domain, :searcher_class, :queues
+                 :cdn_host, :root_domain, :searcher_class, :queues,
+                 :google_places_api_key
 
   def self.base_class(constantize: true)
     @@base_class ||= 'Spree::Base'
@@ -115,6 +116,10 @@ module Spree
     elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
       constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
     end
+  end
+
+  def self.google_places_api_key
+    @@google_places_api_key
   end
 
   def self.always_use_translations?

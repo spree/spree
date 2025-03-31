@@ -34,21 +34,16 @@ RSpec.describe Spree::Addresses::GeocodeAddressJob do
 
   context 'when the address cannot be geocoded' do
     let(:geocoder_coordinates) { nil }
-    let(:error_handler) { instance_double(Spree::ErrorHandler, call: nil) }
-
-    before do
-      allow(Spree::ErrorHandler).to receive(:new).and_return(error_handler)
-      allow(error_handler).to receive(:call)
-    end
 
     it 'handles the error' do
-      geocode_address
+      expect(Rails.error).to receive(:report).with(
+        Spree::Addresses::GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
+        handled: false,
+        context: { address_id: address.id },
+        source: 'spree.core'
+      )
 
-      expect(error_handler).to have_received(:call).
-        with(
-          exception: Spree::Addresses::GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
-          opts: { report_context: { address_id: address.id } }
-        )
+      geocode_address
 
       expect(address.reload.latitude).to be_nil
       expect(address.longitude).to be_nil

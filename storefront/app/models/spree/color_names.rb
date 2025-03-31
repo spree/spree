@@ -5,7 +5,7 @@ module Spree
     class << self
       def colors
         @colors ||= Rails.cache.fetch('color_names', expires_in: 1.day) do
-          file_path = File.join(Rails.root, 'lib', 'assets', 'colornames.json')
+          file_path = File.join(Spree::Storefront::Engine.root, 'vendor', 'colornames.json')
 
           if File.exist?(file_path)
             JSON.parse(File.read(file_path))

@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :page_sidebar do %>
 <div class="d-none d-md-block">
-  <h6 class="p-3 bg-light border-bottom sticky-top border-bottom text-uppercase text-muted">Page sections</h6>
+  <h6 class="sidebar-header">Page sections</h6>
   <% if @page_preview.layout_sections? %>
     <div class="list-group-flush border-bottom mb-1 pb-2">
       <%= render collection: @theme_preview.sections.find_all { |s| s.role == 'header' }, partial: 'spree/admin/page_builder/sidebar_section', as: :section  %>

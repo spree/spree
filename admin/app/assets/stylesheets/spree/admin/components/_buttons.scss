@@ -98,21 +98,6 @@ button[disabled]        .show-when-enabled { display: none; }
     text-decoration: none !important;
   }
 }
-.focus-border-primary {
-  &:focus, &:focus-within {
-    border-color: theme-color('black') !important;
-  }
-}
-.focus-border-blue {
-  &:focus, &:focus-within {
-    border-color: theme-color('blue') !important;
-  }
-}
-.focus-bg-white {
-  &:focus, &:focus-within {
-    background-color: white !important;
-  }
-}
 
 .btn-link {
   color: theme-color('primary') !important;
@@ -150,7 +135,7 @@ button[disabled]        .show-when-enabled { display: none; }
   height: 0.85em;
   opacity: 0.5;
   padding: 12px;
-  border-radius: 100%;
+  border-radius: $border-radius;
 
   &:hover {
     opacity: 0.8 !important;

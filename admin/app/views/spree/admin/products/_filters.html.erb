@@ -7,7 +7,7 @@
       <%= render 'spree/admin/shared/filters_button' %>
     </div>
   </div>
-  <div data-reveal-target="item" class="d-none mt-4" id="table-filter">
+  <div data-reveal-target="item" class="d-none" id="table-filter">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
     <div class="row">
       <div class="col-12 col-lg-6">

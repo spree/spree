@@ -7,7 +7,7 @@ module Spree
           Spree.t(:translations),
           spree.edit_admin_translation_path(resource, resource_type: resource.class.to_s),
           class: classes
-        )
+        ) if can?(:update, resource)
       end
     end
   end

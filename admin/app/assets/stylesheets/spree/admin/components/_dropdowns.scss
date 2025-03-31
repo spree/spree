@@ -21,11 +21,9 @@
 }
 
 .dropdown-menu {
+  margin-top: 0.25rem !important;
   overflow: hidden !important;
-
   box-shadow: $dropdown-box-shadow;
-
-  font-weight: 500;
 
   .dropdown-item, .dropdown-header {
     margin-bottom: 0.25rem;
@@ -45,7 +43,8 @@
     color: $gray-700;
 
     &:hover {
-      background-color: $gray-50;
+      background-color: $blue;
+      color: $white;
     }
 
     i {
@@ -60,11 +59,21 @@
       font-weight: $font-weight-base !important;
     }
   }
-  .dropdown-item.active, .dropdown-item:active, .dropdown-item:focus {
+  .dropdown-item.active {
     color: theme-color('black') !important;
 
     i {
       color: theme-color('black') !important;
+    }
+
+    &::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      right: 0.5rem;
+      width: 1rem;
+      height: 1rem;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-primary"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
     }
   }
   .dropdown-item.active {
@@ -74,15 +83,8 @@
   .button_to {
     width: 100%;
   }
-  .dropdown-divider {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-top: 1px solid $gray-50;
-  }
   .dropdown-header {
-    @extend .font-weight-normal;
-    @extend .text-uppercase;
-    @extend .text-muted;
+    font-weight: $font-weight-base;
   }
 
   .dropdown-item:last-child {

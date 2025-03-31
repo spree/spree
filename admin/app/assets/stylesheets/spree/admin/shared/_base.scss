@@ -156,17 +156,14 @@ strong {
 .shadow-xs {
   box-shadow: $box-shadow-xs;
 }
-.shadow-blue {
-  box-shadow: $input-btn-focus-box-shadow;
-}
-.focus-shadow-primary {
+.focus-shadow {
   &:focus, &:focus-within, &:active {
     box-shadow: $input-btn-focus-box-shadow;
   }
 }
-.focus-border-primary {
-  &:focus, &:focus-within, &:active {
-    border-color: $input-focus-border-color;
+.focus-border {
+  &:focus, &:focus-within {
+    border-color: theme-color('blue') !important;
   }
 }
 
@@ -467,31 +464,6 @@ small,
 .opacity-0 {
   opacity: 0;
 }
-.translate-x-6 {
-  transform: translateX(6px);
-}
-.translate-x-0 {
-  transform: translateX(0);
-}
-.transition {
-  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-.duration-200 {
-  transition-duration: 200ms;
-}
-
-
-.my-content {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--read-more-line-clamp, 4);
-}
-
 
 .blurred {
   filter: opacity(50%);
@@ -695,4 +667,8 @@ div.uppy-Root {
 
 .turbo-progress-bar {
   background-color: theme-color('blue');
+}
+
+.tooltip-inner {
+  box-shadow: $dropdown-box-shadow;
 }

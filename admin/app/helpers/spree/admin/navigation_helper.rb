@@ -4,17 +4,20 @@ module Spree
       # the per_page_dropdown is used on index pages like orders, products, promotions etc.
       # this method generates the select_tag
       def per_page_dropdown
-        # there is a config setting for admin_products_per_page, only for the orders page
-        if @products && per_page_default = ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          per_page_options = []
-          5.times do |amount|
-            per_page_options << (amount + 1) * ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          end
-          per_page_options << 250
-        else
-          per_page_default = ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          per_page_options = %w{25 50 75 100 125 250}
-        end
+        per_page_default = if @products
+                             Spree::Admin::RuntimeConfig.admin_products_per_page
+                           elsif @orders
+                             Spree::Admin::RuntimeConfig.admin_orders_per_page
+                           else
+                             Spree::Admin::RuntimeConfig.admin_records_per_page
+                           end
+
+        per_page_options = [
+          per_page_default,
+          per_page_default * 2,
+          per_page_default * 4,
+          per_page_default * 8
+        ]
 
         selected_option = (params[:per_page].try(:to_i) || per_page_default).to_s
 
@@ -45,13 +48,7 @@ module Spree
         options[:data] ||= {}
         options[:data][:action] ||= 'edit'
         options[:class] ||= 'btn btn-light btn-sm'
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
-      end
-
-      def link_to_edit_url(url, options = {})
-        options[:data] ||= { action: 'edit' }
-        options[:class] ||= 'btn btn-light btn-sm'
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
+        link_to_with_icon('pencil', Spree.t(:edit), url, options) if can?(:update, resource)
       end
 
       def link_to_delete(resource, options = {})
@@ -60,6 +57,8 @@ module Spree
         options[:class] ||= 'btn btn-danger btn-sm'
         options[:data] ||= { turbo_confirm: Spree.t(:are_you_sure), turbo_method: :delete }
 
+        return unless can?(:destroy, resource)
+
         if options[:no_text]
           link_to_with_icon 'trash', name, url, options
         elsif options[:icon]
@@ -67,12 +66,6 @@ module Spree
         else
           link_to name, url, options
         end
-      end
-
-      def link_to_delete_url(url, options = {})
-        options[:data] = { turbo_confirm: Spree.t(:are_you_sure), turbo_method: :delete }
-        options[:class] = 'btn btn-danger btn-sm'
-        link_to_with_icon('trash', Spree.t('actions.destroy'), url, options)
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
@@ -143,24 +136,6 @@ module Spree
         end
       end
 
-      def turbo_link_to(text, url, **options)
-        icon = options[:icon]
-
-        text_components = []
-        text_components << icon(icon) if icon.present?
-        text_components << text
-
-        link_text = text_components.compact.join
-
-        options[:data] ||= {}
-        options[:data][:turbo_method] = options[:method] || :get
-        options[:data][:turbo_confirm] = Spree.t(:are_you_sure) if options[:confirm].present?
-
-        html_options = options.except(:icon, :method, :confirm)
-
-        link_to(link_text.html_safe, url, html_options)
-      end
-
       def active_badge(condition, options = {})
         label = options[:label]
         label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
@@ -200,7 +175,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
+        opts[:class] ||= "d-inline-flex align-items-center text-blue"
 
         if block_given?
           link_to url, opts, &block
@@ -212,8 +187,8 @@ module Spree
       end
 
       def help_bubble(text = '', placement = 'bottom', css: nil)
-        css ||= 'text-muted font-size-base'
-        content_tag :small, icon('help', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+        css ||= 'text-muted'
+        content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
       end
     end
   end

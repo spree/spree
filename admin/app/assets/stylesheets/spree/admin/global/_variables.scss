@@ -46,7 +46,7 @@ $theme-colors: (
   "mint": #C7E15A
 );
 
-$body-color: #303030 !default;
+$body-color: #333 !default;
 $body-bg: #FCFCFC !default;
 $enable-shadows: false;
 $enable-responsive-font-sizes: true;
@@ -57,7 +57,7 @@ $font-size-sm:    0.75rem !default;
 $font-size-lg:    1rem !default;
 $font-weight-normal: 400 !default;
 $font-weight-bold:            600 !default;
-$headings-font-family: Inter, sans-serif !default;
+$headings-font-family: $font-family-sans-serif;
 $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
 $border-radius-sm: 0.4rem !default;
@@ -71,23 +71,17 @@ $thumbnail-border-color: $gray-100 !default;
 $hr-border-color: $border-color !default;
 $table-border-color: $gray-50 !default;
 $card-border-color: $border-color !default;
+$input-btn-focus-width: 0.15rem !default;
 
 $card-spacer-y:                     .75rem !default;
 $card-spacer-x:                     1rem !default;
 
-$custom-control-indicator-checked-bg:           $primary !default;
-$custom-control-indicator-checked-disabled-bg:  rgba($primary, .5) !default;
-$custom-control-indicator-checked-border-color: $primary !default;
-
-$input-focus-border-color:              $primary !default;
-$input-btn-focus-color:        $primary !default;
-$input-btn-focus-box-shadow: 0 0 0 1px $primary !default;
+$component-active-bg:         $blue !default;
 
 $input-placeholder-color: $gray-500;
 $input-padding-y:         .5rem !default;
 $input-disabled-bg: $gray-50 !default;
 $custom-select-disabled-bg: $gray-50 !default;
-$custom-select-focus-width: 1px !default;
 
 $text-muted: $gray-400 !default;
 
@@ -95,10 +89,10 @@ $link-color: $primary !default;
 $link-hover-decoration:                   underline !default;
 
 $btn-active-box-shadow:       inset 0 3px 5px rgba($black, .025) !default;
-$btn-font-weight: 500 !default;
 $btn-disabled-opacity: 0.3 !default;
 
-$navbar-brand-height: 3.625rem;
+$nav-link-padding-y:                .5rem !default;
+$nav-link-padding-x:                .6rem !default;
 
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
 $box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
@@ -107,6 +101,12 @@ $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 $tooltip-border-radius: $border-radius-sm !default;
 $tooltip-opacity: 1 !default;
 $tooltip-margin:                    0.25rem 0 !default;
+$tooltip-padding-y:                 .5rem !default;
+$tooltip-padding-x:                 .75rem !default;
+$tooltip-bg: $white !default;
+$tooltip-color: $body-color !default;
+$tooltip-arrow-color: transparent !default;
+$tooltip-max-width: 210px !default;
 
 $transition-base:             all .1s ease-in-out !default;
 $transition-fade:             opacity .15s linear !default;
@@ -143,22 +143,33 @@ $display4-weight:             400 !default;
 
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
-$dropdown-link-hover-bg: $gray-50 !default;
+$dropdown-link-hover-bg: $blue !default;
+$dropdown-link-hover-color: $white !default;
 $dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
+$dropdown-divider-bg: $gray-25 !default;
+$dropdown-divider-margin-y: 0.25rem !default;
+$dropdown-header-color: $gray-500 !default;
 
-$modal-content-border-color: $border-color;
-$modal-header-padding: 1rem 1.25rem 0.5rem 1.25rem;
-$modal-inner-padding: 1rem 1.25rem 1rem 1.25rem;
+$modal-backdrop-bg:                 $white !default;
+$modal-backdrop-opacity:            0.8 !default;
+$modal-content-border-color: $border-color !default;
+$modal-header-padding: 1rem 1.25rem 1rem 1.25rem !default;
+$modal-inner-padding: 1rem 1.25rem 1rem 1.25rem !default;
+$modal-fade-transform:              translate(0, 0) !default;
+$modal-show-transform:              none !default;
+$modal-transition:                  transform .2s ease-out !default;
+$modal-scale-transform:             scale(1.02) !default;
+$modal-content-border-width: 0px !default;
+$modal-header-border-width: 1px !default;
+$modal-content-box-shadow-xs: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(0, 0, 0, 0.04) 0px 8px 16px -4px, rgba(0, 0, 0, 0.06) 0px 24px 32px -8px !default;
+$modal-content-box-shadow-sm-up: $modal-content-box-shadow-xs !default;
+$modal-footer-margin-between: 0 !default;
 
 $alert-padding-y:                   0.5rem !default;
 $alert-padding-x:                   1rem !default;
 $alert-border-radius: $border-radius-lg;
-
-.border.border-2 {
-  border-width: 2px !important;
-}
 
 $embed-responsive-aspect-ratios: (
     (21 9),
@@ -168,7 +179,6 @@ $embed-responsive-aspect-ratios: (
     (1 1)
 ) !default;
 
-
 // tables
 $table-cell-padding: .75rem .50rem !default;
 
@@ -176,3 +186,5 @@ $code-color: $gray-600 !default;
 
 $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
+
+$sidebar-width: 220px !default;

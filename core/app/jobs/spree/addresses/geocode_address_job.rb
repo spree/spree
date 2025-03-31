@@ -18,9 +18,11 @@ module Spree
         else
           # Unfortunately there is no way to get the error message from Geocoder,
           # but the request is fully displayed in the server logs
-          Spree::Dependencies.error_handler.constantize.call(
-            exception: GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
-            opts: { report_context: { address_id: address_id } }
+          Rails.error.report(
+            GeocodeAddressError.new("Cannot geocode address ID: #{address.id}"),
+            handled: false,
+            context: { address_id: address_id },
+            source: 'spree.core'
           )
         end
       end

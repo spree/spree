@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "mint",
+  "theme": "maple",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
@@ -42,6 +42,19 @@
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/configuration",
+                  {
+                    "group": "Storefront",
+                    "icon": "store",
+                    "pages": [
+                      "developer/storefront/storefront",
+                      "developer/storefront/themes",
+                      "developer/storefront/pages",
+                      "developer/storefront/sections-blocks",
+                      "developer/storefront/links",
+                      "developer/storefront/custom-javascript",
+                      "developer/storefront/custom-css"
+                    ]
+                  },
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
@@ -923,13 +936,6 @@
                   "developer/customization/dependencies",
                   "developer/customization/decorators",
                   "developer/customization/routes"
-                ]
-              },
-              {
-                "group": "Extending Spree",
-                "pages": [
-                  "developer/extending-spree/promotions",
-                  "developer/customization/extensions"
                 ]
               },
               {

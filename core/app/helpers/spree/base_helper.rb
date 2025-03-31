@@ -264,7 +264,9 @@ module Spree
         img = if image_path.present?
                 create_product_image_tag image_path, product, options, style
               else
-                inline_svg_tag 'noimage/backend-missing-image.svg', class: 'noimage', size: '60%*60%'
+                width = style.to_s.split('x').first.to_i
+                height = style.to_s.split('x').last.to_i
+                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
               end
 
         content_tag(:div, img, class: "admin-product-image-container #{style}-img")

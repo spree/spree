@@ -2,6 +2,10 @@
   <%= Spree.t(:settings) %>
 <% end %>
 
+<% content_for :title do %>
+  <%= Spree.t(:settings) %>
+<% end %>
+
 <%= content_for(:page_actions) do %>
   <%= link_to_edit_translations(@store, classes: 'btn btn-light') %>
 <% end %>
@@ -92,7 +96,7 @@
             <%= Spree.t(:images) %>
           </h5>
         </div>
-        <div class="card-body pb-0">
+        <div class="card-body">
           <div class="form-group">
             <%= f.label :favicon_image do %>
               Favicon image

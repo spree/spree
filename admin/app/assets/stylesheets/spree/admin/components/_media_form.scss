@@ -1,3 +1,24 @@
+.upload-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px dashed $gray-50;
+  background-color: rgba($gray-25, 0.5);
+  padding: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+
+  &:hover {
+    background-color: $gray-25;
+    border-color: $gray-100;
+    color: $gray-700;
+  }
+}
+
 .media-form {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -8,16 +29,13 @@
 
   &__add-button {
     aspect-ratio: 1/1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
 
     &:only-child {
       grid-column: 1 / span 6;
       grid-row: 1 / span 1;
       aspect-ratio: 12/1;
+      max-width: 200px;
+      height: 200px;
     }
 
     &:not(:only-child) {

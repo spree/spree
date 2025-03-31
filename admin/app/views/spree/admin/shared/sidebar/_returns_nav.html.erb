@@ -1,6 +1,6 @@
 <% returns_active = %[customer_returns return_authorizations].include?(controller_name) %>
 
-<% if can?(:manage, :customer_returns) || can?(:manage, :return_authorizations) %>
+<% if can?(:manage, Spree::CustomerReturn) || can?(:manage, Spree::ReturnAuthorization) %>
   <li class="nav-item">
     <%= active_link_to spree.admin_customer_returns_path, class: 'nav-link', active: returns_active do %>
       <%= icon 'receipt-refund' %>
@@ -9,7 +9,7 @@
 
     <% if returns_active %>
       <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
-        <% if can?(:manage, :return_authorizations) %>
+        <% if can?(:manage, Spree::ReturnAuthorization) %>
           <li class="nav-item">
             <%= active_link_to Spree.t(:return_authorizations), spree.admin_return_authorizations_path, class: 'nav-link' %>
           </li>

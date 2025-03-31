@@ -27,13 +27,10 @@ module Spree
     end
 
     def message_not_sent(exception = nil)
-      Spree::Dependencies.error_handler.constantize.call(
-        exception: exception || StandardError.new('Contact Form Message not sent'),
-        opts: {
-          report_context: {
-            contact: @contact&.id
-          }
-        }
+      Rails.error.report(
+        exception || StandardError.new('Contact Form Message not sent'),
+        context: { contact_id: @contact&.id },
+        source: 'spree.storefront'
       )
 
       flash[:error] = Spree.t('storefront.contacts.message_not_sent')

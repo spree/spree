@@ -15,7 +15,7 @@
     </div>
     <div class="col-lg-7 offset-lg-1">
       <%= form_for current_store, url: spree.admin_store_path(current_store), data: { turbo: false, controller: 'enable-button', 'enable-button-disable-when-not-changed-value': true } do |f| %>
-        <div class="form-control d-flex align-items-center py-0 focus-shadow-primary focus-border-primary mb-3 <% if current_store.custom_domains.any? %>disabled<% end %>">
+        <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border mb-3 <% if current_store.custom_domains.any? %>disabled<% end %>">
           <%= f.text_field :code, class: 'form-control-plaintext pl-0',  data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
           <span>.<%= Spree.root_domain %></span>
         </div>

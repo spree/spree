@@ -47,6 +47,14 @@
       <div class="w-50">
         <p class="mb-2"><%= Spree.t(:payment_method) %>:</p>
         <strong><%= link_to payment.payment_method.name, spree.admin_payment_method_path(payment.payment_method) %></strong>
+
+        <% if payment.transaction_id.present? %>
+          <p class="mb-2 mt-3">
+            <%= Spree.t(:transaction_id) %>
+            <%= help_bubble(Spree.t(:transaction_id_help)) %>
+          </p>
+          <strong><%= payment.transaction_id %></strong>
+        <% end %>
       </div>
       <% if payment.source.present? %>
         <div class="w-50">

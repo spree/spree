@@ -15,8 +15,8 @@
 <% end %>
 
 <div class="d-flex gap-3">
-  <%= link_to_with_icon 'plus', Spree.t(:add_product), spree.new_admin_product_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } %>
+  <%= link_to_with_icon 'plus', Spree.t(:add_product), spree.new_admin_product_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } if can?(:create, Spree::Product) %>
 
   <%= render 'spree/admin/products/import_button' %>
-  <%= invite_vendor_button(class: 'btn-light') if defined?(invite_vendor_button) %>
+  <%= invite_vendor_button(class: 'btn btn-light') if defined?(invite_vendor_button) %>
 </div>

@@ -811,8 +811,11 @@ module Spree
 
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
     def touch_taxons
-      Spree::Taxon.where(id: taxon_and_ancestors.map(&:id)).update_all(updated_at: Time.current)
-      Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
+      if taxons.any?
+        Spree::Products::TouchTaxonsJob.
+          set(wait: 5.seconds).
+          perform_later(taxon_and_ancestors.map(&:id), taxonomy_ids.uniq)
+      end
     end
 
     def ensure_not_in_complete_orders

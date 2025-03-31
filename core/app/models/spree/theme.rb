@@ -40,7 +40,7 @@ module Spree
 
     def screenshot_url
       @screenshot_url ||= if ENV['SCREENSHOT_API_TOKEN'].present?
-                            "https://shot.screenshotapi.net/v3/screenshot?token=#{ENV['SCREENSHOT_API_TOKEN']}&url=#{current_store.url_or_custom_domain}&fresh=true&output=image&file_type=png&no_cookie_banners=true&retina=true&enable_caching=true&wait_for_event=load&thumbnail_width=700"
+                            "https://shot.screenshotapi.net/v3/screenshot?token=#{ENV['SCREENSHOT_API_TOKEN']}&url=#{store.url_or_custom_domain}&fresh=true&output=image&file_type=png&no_cookie_banners=true&retina=true&enable_caching=true&wait_for_event=load&thumbnail_width=700"
                           else
                             # default screenshot
                             "https://s3.eu-central-2.wasabisys.com/w.storage.screenshotapi.net/demo_spreecommerce_org_299a49137b25.png"

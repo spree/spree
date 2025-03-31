@@ -13,7 +13,7 @@ export default class extends Controller {
   validateCard(event) {
     let value = event.target.value.replace(/\D/g, '')
     const validation = valid.number(value)
-    
+
     // Format the card number with spaces
     if (validation.card) {
       const gaps = validation.card.gaps
@@ -44,10 +44,10 @@ export default class extends Controller {
     if (validation.card) {
       // Update CVV validation length based on card type
       this.cvvTarget.setAttribute('maxlength', validation.card.code.size)
-      
+
       // Update card type field and icon
       const cardType = validation.card.type
-      this.ccTypeTarget.value = cardType
+      this.ccTypeTarget.value = cardType.replace(/-/g, '_')
       this.updateCardIcon(cardType)
     } else {
       this.ccTypeTarget.value = ''
@@ -66,12 +66,12 @@ export default class extends Controller {
 
   validateExpiry(event) {
     let input = event.target.value.replace(/\D/g, '').substring(0, 6)
-    
+
     // Format as MM/YYYY
     if (input.length > 2) {
       input = input.substring(0, 2) + '/' + input.substring(2)
     }
-    
+
     // Validate month
     const monthValue = parseInt(input.substring(0, 2))
     if (monthValue > 12) {
@@ -82,7 +82,7 @@ export default class extends Controller {
 
     const [month, year] = input.split('/')
     const validation = valid.expirationDate({ month, year })
-    
+
     if (validation.isPotentiallyValid) {
       event.target.classList.remove('invalid')
     } else {
@@ -93,11 +93,11 @@ export default class extends Controller {
   validateCVV(event) {
     const cvv = event.target.value
     const validation = valid.cvv(cvv)
-    
+
     if (validation.isPotentiallyValid) {
       event.target.classList.remove('invalid')
     } else {
       event.target.classList.add('invalid')
     }
   }
-} 
+}

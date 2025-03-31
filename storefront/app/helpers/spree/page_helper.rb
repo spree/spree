@@ -49,7 +49,8 @@ module Spree
     rescue ActionView::MissingTemplate, ActionView::Template::Error => e
       raise e unless Rails.env.production?
 
-      Spree::Dependencies.error_handler.constantize.call(exception: e, extra: { section: section })
+      Rails.error.report(e, context: { section_id: section.id }, source: 'spree.storefront')
+
       ''
     end
 

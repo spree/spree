@@ -2,7 +2,7 @@
   <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-100 d-flex justify-content-between align-items-center" do |f| %>
     <div>
       <%= f.select :selected_shipping_rate_id, options_for_select(@shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, @shipment.selected_shipping_rate_id),
-        {},  class: 'custom-select' %>
+        {},  class: 'custom-select', autofocus: true %>
     </div>
     <div class="d-flex h-100 align-items-center">
       <% if can? :update, @shipment %>

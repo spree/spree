@@ -25,11 +25,12 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 250px;
+  width: $sidebar-width;
   background-color: $gray-25;
   border-right: 1px solid $gray-100;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   position: fixed;
   top: 0;
   color: $gray-700;
@@ -44,7 +45,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     padding-right: 0.75rem;
   }
   .nav {
-    gap: 0.25rem;
+    gap: 0.125rem;
     display: flex;
     flex-direction: column;
   }
@@ -57,22 +58,19 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     padding-right: 0.5rem;
     padding-top: 0.35rem;
     padding-bottom: 0.35rem;
-    font-weight: 500;
-    transition: background 0.35s, color 0.1s;
-    will-change: background, color;
 
     .ti {
-      font-size: 1.125rem;
+      font-size: 1rem;
       margin-right: 0.5rem;
     }
 
     &:hover {
       background-color: $gray-75;
-      transition-duration: 75ms;
-      animation-duration: 75ms;
     }
     &.active {
+      color: theme-color('primary');
       background-color: $gray-100;
+      font-weight: 500;
     }
 
     .badge {
@@ -125,7 +123,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
 
 #content {
   @media (min-width: 992px) {
-    margin-left: 251px;
+    margin-left: $sidebar-width + 1px;
   }
 }
 

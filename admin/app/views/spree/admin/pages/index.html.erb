@@ -2,7 +2,7 @@
   <%= Spree.t(:pages) %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= link_to Spree.t(:add_new_page), spree.new_admin_page_path, class: "btn btn-primary" if can?(:create, Spree::Page.new) %>
+  <%= link_to_with_icon 'plus', Spree.t(:add_new_page), spree.new_admin_page_path, class: "btn btn-primary" if can?(:create, Spree::Page.new) %>
 <% end %>
 
 <div class="card-lg p-0">
@@ -23,8 +23,6 @@
       <%= render partial: "spree/admin/shared/index_table_options", locals: { collection: @pages } %>
     </div>
   <% else %>
-    <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-      No pages found
-    </div>
+    <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>
 </div>
