@@ -5,7 +5,6 @@ require 'sprockets/railtie'
 
 require 'active_link_to'
 require 'chartkick'
-require 'country_select'
 require 'currency_select'
 require 'groupdate'
 require 'hightop'
