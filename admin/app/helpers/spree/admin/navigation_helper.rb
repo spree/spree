@@ -175,7 +175,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] ||= "d-inline-flex align-items-center text-blue #{opts[:class]}"
+        opts[:class] ||= "d-inline-flex align-items-center text-blue"
 
         if block_given?
           link_to url, opts, &block
