@@ -33,7 +33,7 @@
                   data-action="click->bulk-operation#setBulkAction"
                   data-url="<%= spree.bulk_add_tags_admin_users_path %>"
                 >
-                  <%= icon("plus") %>
+                  <%= icon("tag-plus") %>
                   <%= Spree.t("admin.bulk_ops.users.title.add_tags") %>
                 </a>
 
@@ -44,6 +44,7 @@
                   data-action="click->bulk-operation#setBulkAction"
                   data-url="<%= spree.bulk_remove_tags_admin_users_path %>"
                 >
+                  <%= icon("tag-minus") %>
                   <%= Spree.t("admin.bulk_ops.users.title.remove_tags") %>
                 </a>
               <% end %>
