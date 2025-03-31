@@ -266,7 +266,7 @@ module Spree
               else
                 width = style.to_s.split('x').first.to_i
                 height = style.to_s.split('x').last.to_i
-                render 'spree/admin/shared/no_image', width: width, height: height
+                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
               end
 
         content_tag(:div, img, class: "admin-product-image-container #{style}-img")
