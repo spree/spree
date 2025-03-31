@@ -6,6 +6,6 @@
 //= link_tree ../../javascript/spree/admin/controllers .js
 //= link_tree ../../javascript/spree/admin/helpers .js
 //= link_tree ../../../vendor/javascript .js
-//= link_tree ../../../vendor/css .css
+//= link_tree ../../../vendor/stylesheets .css
 //= link spree/admin/application.js
 
