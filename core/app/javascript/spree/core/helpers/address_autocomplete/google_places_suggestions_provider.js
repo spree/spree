@@ -1,7 +1,7 @@
 export default class {
   async connect() {
     if (typeof google?.maps === 'undefined') {
-      console.error('Google Maps API is not loaded')
+      console.error('Google Places API is not loaded')
       return
     }
     this.placesApi = await google.maps.importLibrary('places')
