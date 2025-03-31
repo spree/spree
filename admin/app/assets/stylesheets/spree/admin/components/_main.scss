@@ -25,7 +25,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  width: 220px;
+  width: $sidebar-width;
   background-color: $gray-25;
   border-right: 1px solid $gray-100;
   height: 100vh;
@@ -123,7 +123,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
 
 #content {
   @media (min-width: 992px) {
-    margin-left: 251px;
+    margin-left: $sidebar-width + 1px;
   }
 }
 
