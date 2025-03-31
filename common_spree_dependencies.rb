@@ -54,6 +54,7 @@ group :test, :development do
 end
 
 group :development do
+  gem 'importmap-rails'
   # gem 'github_fast_changelog'
   gem 'solargraph'
   gem 'ruby-lsp'
