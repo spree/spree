@@ -30,6 +30,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   border-right: 1px solid $gray-100;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   position: fixed;
   top: 0;
   color: $gray-700;
