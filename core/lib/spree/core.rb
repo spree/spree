@@ -40,7 +40,7 @@ module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
                  :cdn_host, :root_domain, :searcher_class, :queues,
-                 :google_places_api_key
+                 :google_places_api_key, :screenshot_api_token
 
   def self.base_class(constantize: true)
     @@base_class ||= 'Spree::Base'
@@ -120,6 +120,10 @@ module Spree
 
   def self.google_places_api_key
     @@google_places_api_key
+  end
+
+  def self.screenshot_api_token
+    @@screenshot_api_token
   end
 
   def self.always_use_translations?

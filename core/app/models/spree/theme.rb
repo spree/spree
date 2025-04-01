@@ -25,6 +25,11 @@ module Spree
     alias sections layout_sections
 
     #
+    # Attachments
+    #
+    has_one_attached :screenshot, service: Spree.public_storage_service_name
+
+    #
     #
     # Callbacks
     #
@@ -37,15 +42,6 @@ module Spree
     # Virtual attributes
     #
     attribute :duplicating, :boolean, default: false
-
-    def screenshot_url
-      @screenshot_url ||= if ENV['SCREENSHOT_API_TOKEN'].present?
-                            "https://shot.screenshotapi.net/v3/screenshot?token=#{ENV['SCREENSHOT_API_TOKEN']}&url=#{store.url_or_custom_domain}&fresh=true&output=image&file_type=png&no_cookie_banners=true&retina=true&enable_caching=true&wait_for_event=load&thumbnail_width=700"
-                          else
-                            # default screenshot
-                            "https://s3.eu-central-2.wasabisys.com/w.storage.screenshotapi.net/demo_spreecommerce_org_299a49137b25.png"
-                          end
-    end
 
     #
     # Class methods
@@ -151,6 +147,8 @@ module Spree
 
         # destroy the old theme with their other previews, etc.
         store.themes.find(old_theme.id).destroy
+
+        take_screenshot # update the screenshot
       end
     end
 
@@ -169,6 +167,14 @@ module Spree
     def restore_defaults!
       self.preferences = {}
       save!
+    end
+
+    def take_screenshot
+      return if Spree.screenshot_api_token.blank?
+      return if preview? # we don't want to take screenshots of previews, they aren't surfaced in the UI
+      return if screenshot.attached?
+
+      Spree::Themes::ScreenshotJob.perform_later(id)
     end
 
     protected

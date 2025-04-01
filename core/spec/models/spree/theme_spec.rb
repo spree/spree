@@ -65,5 +65,29 @@ describe Spree::Theme, type: :model do
 
       expect(theme_preview.page_ids).to contain_exactly(*page_ids)
     end
+
+    context 'when screenshot_api_token is not set' do
+      before do
+        Spree.screenshot_api_token = nil
+      end
+
+      it 'does not take a screenshot' do
+        expect { theme.take_screenshot }.not_to have_enqueued_job(Spree::Themes::ScreenshotJob)
+      end
+    end
+
+    context 'when screenshot_api_token is set' do
+      before do
+        Spree.screenshot_api_token = 'test_token'
+      end
+
+      after do
+        Spree.screenshot_api_token = nil
+      end
+
+      it 'takes a screenshot' do
+        expect { theme.take_screenshot }.to have_enqueued_job(Spree::Themes::ScreenshotJob)
+      end
+    end
   end
 end

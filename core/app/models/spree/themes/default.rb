@@ -4,7 +4,8 @@ module Spree
       def self.metadata
         {
           authors: ['Spree Commerce'],
-          license: 'MIT'
+          license: 'MIT',
+          preview_image_url: 'https://s3.eu-central-2.wasabisys.com/w.storage.screenshotapi.net/demo_spreecommerce_org_299a49137b25.png'
         }
       end
 
