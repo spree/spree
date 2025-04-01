@@ -58,6 +58,12 @@ module Spree
           content_type: "image/#{SCREENSHOT_FILE_TYPE}"
         )
         theme.save!
+
+        # Close the file before attempting to delete it
+        file.close
+
+        # Remove the temporary file
+        File.delete(temp_file_path) if File.exist?(temp_file_path)
       end
     end
   end
