@@ -1,3 +1,6 @@
+require 'uri'
+require 'net/http'
+
 module Spree
   module Themes
     class ScreenshotJob < Spree::BaseJob
@@ -15,7 +18,15 @@ module Spree
         return if theme.screenshot.attached?
 
         url = URI.encode_www_form_component("#{theme.store.url_or_custom_domain}?theme_id=#{theme_id}")
-        query = "#{BASE_SCREENSHOT_API_URL}?token=#{screenshot_api_token}&url=#{url}&output=#{SCREENSHOT_OUTPUT}&file_type=#{SCREENSHOT_FILE_TYPE}&retina=true&enable_caching=true"
+        query_params = {
+          token: screenshot_api_token,
+          url: url,
+          output: SCREENSHOT_OUTPUT,
+          file_type: SCREENSHOT_FILE_TYPE,
+          retina: true,
+          enable_caching: true
+        }
+        query = "#{BASE_SCREENSHOT_API_URL}?#{query_params.to_query}"
 
         # Send a GET request to the API
         uri = URI.parse(query)
