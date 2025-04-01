@@ -18,33 +18,5 @@
     <% end %>
   </div>
   <div class="col-lg-4">
-    <% unless current_vendor %>
-      <div class="card">
-        <div class="card-header">
-          <h3 class="card-title">Latest from Spree Blog</h3>
-        </div>
-        <div class="card-body">
-          <% posts = ::SpreeBlogFeedService.fetch_posts(1) %>
-          <% if posts.any? %>
-            <% posts.each do |post| %>
-              <div>
-                <h4 class="h6 mb-1">
-                  <%= link_to post[:title], post[:link], target: "_blank", class: "text-primary" %>
-                </h4>
-                <small class="text-muted">
-                  <%= post[:pub_date].strftime("%B %d, %Y") %>
-                </small>
-                <p class="mt-2 small text-muted mb-0">
-                  <%= raw(post[:description]) %>
-                </p>
-              </div>
-              <% unless post == posts.last %>
-                <hr>
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
   </div>
 </div>
