@@ -170,7 +170,7 @@ module Spree
     end
 
     def take_screenshot
-      return if screenshot_api_token.blank?
+      return if Spree.screenshot_api_token.blank?
       return if preview? # we don't want to take screenshots of previews, they aren't surfaced in the UI
       return if screenshot.attached?
 
@@ -195,11 +195,6 @@ module Spree
 
     def change_name_to_archived
       update_columns(name: "#{name} (Archived)")
-    end
-
-    # TODO: potentially move this into Spree::Core::Configuration
-    def screenshot_api_token
-      @screenshot_api_token ||= Rails.application.credentials.screenshot_api_token || ENV['SCREENSHOT_API_TOKEN']
     end
   end
 end

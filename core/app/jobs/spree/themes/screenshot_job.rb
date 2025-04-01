@@ -36,9 +36,8 @@ module Spree
 
       private
 
-      # TODO: potentially move this into Spree::Core::Configuration
       def screenshot_api_token
-        @screenshot_api_token ||= Rails.application.credentials.screenshot_api_token || ENV['SCREENSHOT_API_TOKEN']
+        @screenshot_api_token ||= Spree.screenshot_api_token
       end
 
       def save_screenshot(theme, response)
