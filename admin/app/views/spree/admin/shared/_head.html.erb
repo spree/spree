@@ -35,7 +35,7 @@
 <%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
 
 <%= tinymce_assets %>
-<%= stylesheet_link_tag 'spree/admin/trix', media: :all, data: { turbo_track: "reload" } %>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.12/dist/trix.css">
 
 <%= javascript_importmap_tags 'application-spree-admin', importmap: Rails.application.config.spree_admin.importmap %>
 
