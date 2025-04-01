@@ -22,7 +22,6 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   options.add_argument '--disable-gpu'
   options.add_argument '--window-size=1400,900'
   options.add_argument '--disable-search-engine-choice-screen'
-  options.add_argument '--disable-backgrounding-occluded-windows'
 
   # Disable timers being throttled in background pages/tabs. Useful for parallel test runs.
   options.add_argument '--disable-background-timer-throttling'
