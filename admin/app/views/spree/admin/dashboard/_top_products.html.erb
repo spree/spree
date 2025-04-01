@@ -32,40 +32,50 @@
           </tr>
         </thead>
         <tbody>
-        <% @top_products.each do |list_item| %>
-          <% product = list_item[:product] %>
-          <tr>
-            <% cache_unless @vendor, spree_base_cache_scope.call(product) do %>
-              <td>
-                <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center font-weight-bold', data: { 'turbo-frame': '_top' } do %>
-                  <div class="mr-3">
-                    <%= render 'spree/admin/shared/product_image', object: product %>
-                  </div>
-                  <%= product.name %>
-                <% end %>
-              </td>
-              <% if enterprise_edition? && defined?(vendor_logo_link) && !@vendor %>
+        <% if @top_products.any? %>
+          <% @top_products.each do |list_item| %>
+            <% product = list_item[:product] %>
+            <tr>
+              <% cache_unless @vendor, spree_base_cache_scope.call(product) do %>
                 <td>
-                  <%= vendor_logo_link(product.vendor) if product.vendor.present? %>
+                  <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center font-weight-bold', data: { 'turbo-frame': '_top' } do %>
+                    <div class="mr-3">
+                      <%= render 'spree/admin/shared/product_image', object: product %>
+                    </div>
+                    <%= product.name %>
+                  <% end %>
+                </td>
+                <% if enterprise_edition? && defined?(vendor_logo_link) && !@vendor %>
+                  <td>
+                    <%= vendor_logo_link(product.vendor) if product.vendor.present? %>
+                  </td>
+                <% end %>
+                <td>
+                  <%= display_admin_price(product) %>
                 </td>
               <% end %>
-              <td>
-                <%= display_admin_price(product) %>
+              <td class="text-center">
+                <%= list_item[:quantity] %>
               </td>
-            <% end %>
-            <td class="text-center">
-              <%= list_item[:quantity] %>
-            </td>
-            <td class="text-right">
-              <%= list_item[:amount] %>
+              <td class="text-right">
+                <%= list_item[:amount] %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="5" class="text-center text-muted py-5">
+              <%= Spree.t(:no_resource_found, resource: Spree::Product.name.demodulize.underscore.humanize) %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
   </div>
-  <p class="text-center mt-0 border-top py-2 mb-0">
-    <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-50 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
-  </p>
+  <% if @top_products.any? %>
+    <p class="text-center mt-0 border-top py-2 mb-0">
+      <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-50 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
+    </p>
+  <% end %>
   </div>
 </div>
