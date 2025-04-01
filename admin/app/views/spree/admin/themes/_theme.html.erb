@@ -7,7 +7,7 @@
         <strong><%= theme.name %></strong>
         <p class="mb-0 mt-1">
           <span class="text-muted">
-            <%= I18n.t('activerecord.attributes.updated_at') %>: 
+            <%= Spree.t(:updated) %>: 
             <%= local_time_ago(theme.updated_at, class: 'with-tip') %>
           </span>
         </p>
