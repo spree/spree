@@ -31,7 +31,7 @@ RSpec.describe Spree::Themes::ScreenshotJob do
     it 'takes a screenshot' do
       subject
 
-      expect(Net::HTTP).to have_received(:get_response).with(URI("https://shot.screenshotapi.net/v3/screenshot?token=test_token&url=demo.spreecommerce.org%3Ftheme_id%3D#{theme.id}&output=image&file_type=png&retina=true&enable_caching=true"))
+      expect(Net::HTTP).to have_received(:get_response).with(URI("https://shot.screenshotapi.net/v3/screenshot?enable_caching=true&file_type=png&output=image&retina=true&token=test_token&url=demo.spreecommerce.org%253Ftheme_id%253D#{theme.id}"))
       theme.reload
 
       expect(theme.screenshot.attached?).to be_truthy
