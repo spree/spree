@@ -83,7 +83,10 @@ module Spree
 
         product_ids = line_items_grouped.map(&:variant_product_id).uniq.compact
 
-        return if product_ids.empty?
+        if product_ids.empty?
+          @top_products = []
+          return
+        end
 
         products = current_store.products.with_deleted.includes(:master, :variants).where(id: product_ids)
 
