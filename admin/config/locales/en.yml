@@ -251,54 +251,11 @@ en:
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
       webhooks_subscribers:
-        addresses: Addresses
         all_events: All Events
-        assets: Assets
-        credit_cards: Credit Cards
-        customer_returns: Customer Returns
-        digital_links: Digital Links
-        digitals: Digitals
-        inventory_units: Inventory Units
-        line_items: Line Items
         new_webhooks_subscriber: New Webhooks Subscriber
         no_events: No Events
-        option_types: Option Types
-        option_values: Option Values
-        orders: Orders
-        payment_capture_events: Payment Capture Events
-        payments: Payments
-        prices: Prices
-        products: Products
-        promotions: Promotions
-        properties: Properties
-        prototypes: Prototypes
-        refunds: Refunds
-        reimbursements: Reimbursements
-        return_authorizations: Return Authorizations
-        return_items: Return Items
-        roles: Roles
         select_events: Select events
-        shipment_transfer:
-          wrong_destination: Selected location is not a valid destination
-        shipments: Shipments
-        shipping_categories: Shipping Categories
-        shipping_methods: Shipping Methods
-        shipping_rates: Shipping Rates
-        stock_items: Stock Items
-        stock_locations: Stock Locations
-        stock_movements: Stock Movements
-        stock_transfers: Stock Transfers
-        store_credits: Store Credits
-        stores: Stores
         subscribe_to_all_events: Subscribe to all events
         subscriptions: Subscriptions
-        tax_rates: Tax Rates
-        taxonomies: Taxonomies
-        taxons: Taxons
         time_of_last_event: Time of Last Event
-        variants: Variants
         webhooks_events: Webhooks Events
-        webhooks_subscribers: Webhooks Subscribers
-        wished_items: Wished Items
-        wishlists: Wishlists
-        zones: Zones

@@ -5,79 +5,51 @@
     </li>
 
     <% if can?(:manage, current_store) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('building-store', Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
-      </li>
+      <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>
     <% end %>
 
     <% if defined?(current_account) && current_account.present? && can?(:manage, current_account) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon 'receipt', Spree.t(:account), main_app.edit_account_path(current_account), class: 'nav-link' %>
-      </li>
-      <li class="nav-item">
-        <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link rounded-lg ' %>
-      </li>
+      <%= nav_item(Spree.t(:account), main_app.edit_account_path(current_account), icon: 'receipt') %>
+      <%= nav_item(Spree.t(:account_members), main_app.account_members_path(current_account), icon: 'users') %>
     <% end %>
 
     <% if can?(:manage, current_store) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('send', Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), class: 'nav-link', active: params[:section] == 'emails') %>
-      </li>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('list-check', Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), class: 'nav-link', active: params[:section] == 'policies') %>
-      </li>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('shopping-cart', Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), class: 'nav-link', active: params[:section] == 'checkout') %>
-      </li>
+      <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
+      <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
+      <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
     <% end %>
 
     <% if can?(:manage, Spree::CustomDomain) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('world-www', Spree.t(:domains), spree.admin_custom_domains_path, class: 'nav-link') %>
-      </li>
+      <%= nav_item(Spree.t(:domains), spree.admin_custom_domains_path, icon: 'world-www') %>
     <% end %>
 
     <% if can?(:manage, Spree::PaymentMethod) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('credit-card', Spree.t(:payments), spree.admin_payment_methods_path, class: 'nav-link') %>
-      </li>
+      <%= nav_item(Spree.t(:payments), spree.admin_payment_methods_path, icon: 'credit-card') %>
     <% end %>
 
     <% if can?(:manage, Spree::Zone) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('world', Spree.t(:zones), spree.admin_zones_path, { active: %w[zones countries states].include?(controller_name), class: 'nav-link' }) %>
-      </li>
+      <%= nav_item(Spree.t(:zones), spree.admin_zones_path, icon: 'world', active: %w[zones countries states].include?(controller_name)) %>
     <% end %>
 
     <% if can?(:manage, Spree::ShippingMethod) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('truck', Spree.t(:shipping), spree.admin_shipping_methods_path, { active: %w[shipping_methods shipping_categories].include?(controller_name), class: 'nav-link' }) %>
-      </li>
+      <%= nav_item(Spree.t(:shipping), spree.admin_shipping_methods_path, icon: 'truck', active: %w[shipping_methods shipping_categories].include?(controller_name)) %>
     <% end %>
 
     <% if can?(:manage, Spree::TaxRate) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('receipt-tax', Spree.t(:tax), spree.admin_tax_rates_path, active: %w[tax_rates tax_categories stripe_tax_registrations].include?(controller_name), class: 'nav-link')  %>
-      </li>
+      <%= nav_item(Spree.t(:tax), spree.admin_tax_rates_path, icon: 'receipt-tax', active: %w[tax_rates tax_categories stripe_tax_registrations].include?(controller_name)) %>
     <% end %>
 
     <% if can?(:manage, Spree::ReturnAuthorizationReason) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('receipt-refund', Spree.t(:returns), spree.admin_return_authorization_reasons_path, active: %w[refund_reasons reimbursement_types return_authorization_reasons].include?(controller_name), class: 'nav-link')  %>
-      </li>
+      <%= nav_item(Spree.t(:returns), spree.admin_return_authorization_reasons_path, icon: 'receipt-refund', active: %w[refund_reasons reimbursement_types return_authorization_reasons].include?(controller_name)) %>
     <% end %>
 
     <% if can?(:manage, Spree::StockLocation) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('map-pin', Spree.t(:stock_locations), spree.admin_stock_locations_path, class: 'nav-link')  %>
-      </li>
+      <%= nav_item(Spree.t(:stock_locations), spree.admin_stock_locations_path, icon: 'map-pin') %>
     <% end %>
 
     <% if can?(:manage, Spree::Store) %>
       <% if enterprise_edition? %>
-        <li class="nav-item">
-          <%= active_link_to_with_icon('history', Spree.t('admin.audit_log'), spree.admin_audits_path, class: 'nav-link w-auto', active: %w[audits exports imports].include?(controller_name)) %>
-        </li>
+        <%= nav_item(Spree.t('admin.audit_log'), spree.admin_audits_path, icon: 'history', active: %w[audits exports imports].include?(controller_name)) %>
       <% else %>
         <li class="nav-item">
           <%= external_link_to nil, 'https://spreecommerce.org/pricing', class: 'nav-link d-flex align-items-center w-100' do %>
@@ -91,9 +63,7 @@
     <% end %>
 
     <% if can?(:manage, Spree::OauthApplication) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon('terminal', Spree.t(:developers), spree.admin_oauth_applications_path, class: 'nav-link', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
-      </li>
+      <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     <% end %>
   </ul>
 <% else %>
@@ -163,14 +133,12 @@
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
     <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
 
-    <li class="nav-item border-top border-top-dashed my-1"></li>
-    <li class="nav-item">
-      <%= active_link_to_with_icon('settings', Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), class: 'nav-link', active: params[:section] == 'general-settings') %>
-    </li>
+    <% if can?(:manage, current_store) %>
+      <li class="nav-item border-top border-top-dashed my-1"></li>
+      <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
+    <% end %>
     <% if defined?(current_account) && current_account.present? && can?(:manage, current_account) %>
-      <li class="nav-item">
-        <%= active_link_to_with_icon 'users', Spree.t(:account_members), main_app.account_members_path(current_account), class: 'nav-link' %>
-      </li>
+      <%= nav_item(Spree.t(:account_members), main_app.account_members_path(current_account), icon: 'users') %>
     <% end %>
   </ul>
 <% end %>

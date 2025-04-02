@@ -5,7 +5,7 @@ module Spree
         content_tag :div, class: 'col-xs-12 col-sm-6 col-md-4 col-lg-4 form-group' do
           content_tag :div, class: 'custom-control custom-switch' do
             (form.check_box resource_name, event_checkbox_opts(resource_name), true, nil) + ' ' +
-              form.label(resource_name, Spree.t("admin.webhooks_subscribers.#{resource_name.to_s.pluralize}"), class: 'custom-control-label')
+              form.label(resource_name, Spree.t("#{resource_name.to_s.pluralize}"), class: 'custom-control-label')
           end
         end
       end

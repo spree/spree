@@ -3,6 +3,6 @@
 <% end %>
 
 <% content_for(:page_tabs) do %>
-  <%= nav_pill_list_item(:posts) if can?(:manage, Spree::Post) %>
-  <%= nav_pill_list_item(:post_categories, label: Spree.t(:categories)) if can?(:manage, Spree::PostCategory) %>
+  <%= nav_item(Spree.t(:posts), spree.admin_posts_path) if can?(:manage, Spree::Post) %>
+  <%= nav_item(Spree.t(:categories), spree.admin_post_categories_path) if can?(:manage, Spree::PostCategory) %>
 <% end %>
