@@ -104,7 +104,7 @@ module Spree
       coupon_codes: :default,
       webhooks: :default,
       themes: :default,
-      addresses: :addresses
+      addresses: :default
     )
   end
 
