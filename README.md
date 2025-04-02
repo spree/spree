@@ -11,6 +11,8 @@
     Build any eCommerce solution that your business requires.
     <br />
     <br />
+    <a href="https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/">Spree 5</a>
+    ·
     <a href="https://spreecommerce.org">Website</a>
     ·
     <a href="https://spreecommerce.org/docs/">Documentation</a>
@@ -40,22 +42,11 @@
 
 Visit the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart) to set up Spree in 5 minutes.
 
+Make sure to check out the latest [Spree 5 release announcement](https://github.com/spree/spree#spree-5-announcement--demo) and demo.
+
 If you like what you see, consider giving Spree a GitHub star :star:
 
 Thank you for supporting Spree open-source :heart:
-
-## Enterprise support
-
-[Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
-  * expert delivery of your Spree application,
-  * migrations and upgrades,
-  * optimizing your Spree stack.
-
-## Enterprise Edition 
-
-Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
-
-To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
 
 ## Spree 5 Announcement & Demo
 
@@ -71,6 +62,20 @@ We’re thrilled to unveil [Spree 5](https://spreecommerce.org/announcing-spree-
 Read the [full Spree 5 announcement here](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/).
 
 Check out the [Spree 5 demo](https://demo.spreecommerce.org/) for yourself.
+
+
+## Enterprise support
+
+[Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
+  * expert delivery of your Spree application,
+  * migrations and upgrades,
+  * optimizing your Spree stack.
+
+## Enterprise Edition 
+
+Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+
+To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
 
 ## Features
 ### Customizable and modular
