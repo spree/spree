@@ -1369,6 +1369,7 @@ en:
       store_team: "%{store_name} Team"
       subtotal: 'Subtotal:'
       total: 'Order Total:'
+    order_already_completed: Order already completed
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully

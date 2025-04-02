@@ -24,6 +24,7 @@ en:
         calculated_at_next_step: Calculated at next step
         continue_to_cart: Continue to cart
         continue_to_checkout: Continue to checkout
+        or_continue_below: or continue below
         delivery_method: Delivery method
         errors:
           invalid_line_items:
