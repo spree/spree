@@ -147,6 +147,7 @@ ignore_missing:
 ignore_unused:
 - 'spree.storefront.refund_action_not_required_message.*'
 - 'spree.storefront.refund_action_required_message.*'
+- 'spree.storefront.checkout.or_continue_below'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:
