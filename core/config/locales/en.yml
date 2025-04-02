@@ -1334,6 +1334,7 @@ en:
     order: Order
     order_adjustments: Order adjustments
     order_again: Order again
+    order_already_completed: Order already completed
     order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
