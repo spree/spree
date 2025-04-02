@@ -1,6 +1,12 @@
 module Spree
   module Admin
     module NavigationHelper
+      # Creates a navigation item with optional icon
+      # @param [String, SafeBuffer] label The text or HTML to use as the link content
+      # @param [String] url The URL for the link
+      # @param [String, nil] icon Optional icon name to prepend to the label
+      # @param [Boolean, nil] active Whether the link should be marked as active
+      # @return [SafeBuffer] The navigation item HTML
       def nav_item(label, url, icon: nil, active: nil)
         content_tag :li, class: 'nav-item', role: 'presentation' do
           label = icon(icon) + label if icon.present?
