@@ -212,6 +212,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     base_scope = model_class.try(:for_store, current_store) || model_class
     if defined?(current_vendor) && current_vendor.present? && model_class.respond_to?(:with_vendor)
       base_scope = base_scope.with_vendor(current_vendor)
+    elsif vendor_from_admin_perspective? && self.class.private_method_defined?(:load_vendor)
+      base_scope = model_class.try(:with_vendor, load_vendor)
     end
 
     if model_class.respond_to?(:accessible_by) &&
@@ -220,6 +222,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     else
       base_scope
     end
+  end
+
+  def vendor_from_admin_perspective?
+    try_spree_current_user.spree_admin? && params['vendor_id'].present?
   end
 
   def location_after_destroy
