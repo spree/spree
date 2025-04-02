@@ -27,10 +27,6 @@ Supply the repository name and click on "Create repository from template" button
 
 ![Create repository from template](/images/developer/deployment/github_setup_private_repo.png)
 
-<Warning>
-Make sure to set your repository visibility to "Private" so no one can see your code. This is crucial for your application security.
-</Warning>
-
 Now clone the repository to your local machine.
 
 ```bash
@@ -39,36 +35,11 @@ git clone https://github.com/your-username/my_spree_app.git
 
 Now you can start working on your application. Make sure your environment is set up correctly (follow the [Getting Started](/developer/getting-started/quickstart) guide).
 
-Running the `bin/setup` script should set your credentials correctly.
-
-![Setup credentials](/images/developer/deployment/setup_credentials.png)
+Running the `bin/setup` script should set your `SECRET_KEY_BASE` environment variable correctly in the `.env` file.
 
 <Warning>
-Don't loose your `config/master.key` file or share it with anyone. It's crucial for your application to work. We recommend to add it to 1password or other password manager.
+Don't share your `.env` file with anyone!
 </Warning>
-
-Now add your `config/credentials.yml.enc` file to the repository.
-
-```bash
-git add config/credentials.yml.enc
-```
-
-Commit the changes.
-
-```bash
-git commit -m "Add credentials"
-git push
-```
-
-This file is encrypted and cannot be seen by anyone without the `master.key` file.
-
-<Warning>
-Don't commit your `master.key` file to the repository!
-</Warning>
-
-<Info>
-You can learn more about credentials in the [Ruby on Rails Security Guide](https://guides.rubyonrails.org/security.html#custom-credentials).
-</Info>
 
 ## Create Render account and connect your repository
 
@@ -80,7 +51,7 @@ Go to [render.com](https://render.com) and create an account. We recommend to us
 
 In the Render dashboard select "New blueprint" from the "+New" button.
 
-<img src="/images/developer/deployment/render_new_blueprint.png" width="200" />
+<img src="/images/developer/deployment/render_new_blueprint.png" />
 
 Now select your repository from the list of repositories.
 
@@ -91,13 +62,13 @@ You should see the the new blueprint form.
 ![Render services](/images/developer/deployment/render_deploy_blueprint.png)
 
 1. Set your blueprint name - eg. `Spree App`
-2. Copy your `config/master.key` file to the clipboard.
+2. Generate a new `SECRET_KEY_BASE` value.
 
     ```bash
-    cat config/master.key | pbcopy
+    bin/rails secret
     ```
 
-3. Paste it to the `RAILS_MASTER_KEY` environment variable.
+3. Paste it to the `SECRET_KEY_BASE` environment variable for both `web` and `worker` services (it needs to be the same value for both).
 
 After that is done click the "Deploy Blueprint" button. Now wait a few minutes for Render to setup your application.
 

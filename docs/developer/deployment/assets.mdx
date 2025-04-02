@@ -14,10 +14,10 @@ To use Amazon S3 as your storage service, you need to configure the storage in t
 ```yaml
 amazon:
   service: S3
-  access_key_id: <%= Rails.application.credentials.dig(:aws, :access_key_id) %>
-  secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
-  region: "" # e.g. 'us-east-1'
-  bucket: your_own_bucket-<%= Rails.env %>
+  access_key_id: <%= ENV.fetch("AWS_ACCESS_KEY_ID", "") %>
+  secret_access_key: <%= ENV.fetch("AWS_SECRET_ACCESS_KEY", "") %>
+  region: <%= ENV.fetch("AWS_REGION", "") %>
+  bucket: <%= ENV.fetch("AWS_BUCKET", "spree-#{Rails.env}") %>
 ```
 
 You will also need to add the `aws-sdk-s3` gem to your Gemfile.
@@ -34,23 +34,9 @@ Now you need to switch the storage service in your `config/environments/producti
 config.active_storage.service = :amazon
 ```
 
-Now you will need to grab the credentials from your AWS S3 bucket and add them to rails credentials by running the following command:
+Now you will need to grab the credentials from your AWS S3 bucket and set them as environment variables used in the `config/storage.yml` file on your hosting provider.
 
-```bash
-EDITOR="code --wait" bin/rails credentials:edit
-```
-
-Add the following credentials:
-
-```yaml
-aws:
-  access_key_id: <your_access_key_id>
-  secret_access_key: <your_secret_access_key>
-  region: <your_region>
-  bucket: <your_bucket>
-```
-
-Save and exit the editor. Remember to commit the changes to your repository.
+To test them locally you can put them in the `.env` file.
 
 ### CORS Configuration
 
@@ -85,11 +71,11 @@ To use Cloudflare R2 as your storage service, you need to configure the storage 
 ```yaml
 cloudflare:
   service: S3
-  endpoint: <%= Rails.application.credentials.dig(:cloudflare, :endpoint) %>
-  access_key_id: <%= Rails.application.credentials.dig(:cloudflare, :access_key_id) %>
-  secret_access_key: <%= Rails.application.credentials.dig(:cloudflare, :secret_access_key) %>
+  endpoint: <%= ENV.fetch("CLOUDFLARE_ENDPOINT", "") %>
+  access_key_id: <%= ENV.fetch("CLOUDFLARE_ACCESS_KEY_ID", "") %>
+  secret_access_key: <%= ENV.fetch("CLOUDFLARE_SECRET_ACCESS_KEY", "") %>
   region: auto
-  bucket: <%= Rails.application.credentials.dig(:cloudflare, :bucket) %>
+  bucket: <%= ENV.fetch("CLOUDFLARE_BUCKET", "spree-#{Rails.env}") %>
 ```
 
 You will also need to add the `aws-sdk-s3` gem to your Gemfile.
@@ -106,23 +92,8 @@ Now you need to switch the storage service in your `config/environments/producti
 config.active_storage.service = :cloudflare
 ```
 
-Now you will need to grab the credentials from your Cloudflare R2 bucket and add them to rails credentials by running the following command:
-
-```bash
-EDITOR="code --wait" bin/rails credentials:edit
-```
-
-Add the following credentials:
-
-```yaml
-cloudflare:
-  endpoint: <your_endpoint>
-  access_key_id: <your_access_key_id>
-  secret_access_key: <your_secret_access_key>
-  bucket: <your_bucket>
-```
-
-Save and exit the editor. Remember to commit the changes to your repository.
+Now you will need to grab the credentials from your Cloudflare R2 bucket and set them as environment variables used in the `config/storage.yml` file on your hosting provider.
+To test them locally you can put them in the `.env` file.
 
 ### CORS Configuration
 

@@ -8,9 +8,9 @@ icon: "database"
 
 Caching is a great way to improve the performance of your Spree application. In all modern web applications, usually the most time consuming operations are database queries and rendering templates. Caching allows you to store the results of these operations in memory and serve them from there.
 
-We recommend using a distributed cache storage engine such as [Solid Cache](https://github.com/rails/solid_cache), Memcached or Redis. Spree Starter uses Solid Cache by default as it doesn't require any additional setup or services to be installed.
+We recommend using a distributed cache storage engine such as Memcached or Redis. Spree Starter uses Redis by default.
 
-## Setting up `solid_cache` as a cache storage engine
+## Setting up Redis as a cache storage engine
 
 <Info>
 If you're using Spree Starter, you don't need to do anything as it's already pre-configured for you.
@@ -19,13 +19,7 @@ If you're using Spree Starter, you don't need to do anything as it's already pre
 Firstly add `solid_cache` to your project
 
 ```bash
-bundle add solid_cache
-```
-
-And run the installation script:
-
-```bash
-bin/rails solid_cache:install
+bundle add redis
 ```
 
 Now, you will need to change the `config/environments/production.rb` from:
@@ -37,8 +31,10 @@ Now, you will need to change the `config/environments/production.rb` from:
 to:
 
 ```ruby
-config.cache_store = :solid_cache_store
+config.cache_store = :redis_cache_store
 ```
+
+For more advanced configuration options, please refer to the [Spree Starter repository](https://github.com/spree/spree_starter/blob/main/config/environments/production.rb#L72).
 
 ## Testing locally
 
