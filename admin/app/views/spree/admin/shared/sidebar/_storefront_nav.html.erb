@@ -1,29 +1,22 @@
 <% if can?(:manage, Spree::Theme) %>
-  <li class="nav-item">
-    <% storefront_active = %w[themes posts post_categories pages storefront].include?(controller_name) %>
-    <%= active_link_to_with_icon('building-store', Spree.t('admin.storefront'), spree.admin_themes_path, class: 'nav-link', active: storefront_active) %>
+  <% storefront_active = %w[themes posts post_categories pages storefront].include?(controller_name) %>
+  <%= nav_item(Spree.t('admin.storefront'), spree.admin_themes_path, icon: 'building-store', active: storefront_active) %>
 
-    <% if storefront_active %>
-      <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
-        <li class="nav-item">
-          <%= active_link_to Spree.t(:themes), spree.admin_themes_path, class: 'nav-link' %>
-        </li>
-        <% if can?(:manage, Spree::Page) %>
-          <li class="nav-item">
-            <%= active_link_to Spree.t(:pages), spree.admin_pages_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        <% if can?(:manage, Spree::Post) %>
-          <li class="nav-item">
-          <%= active_link_to Spree.t(:posts), spree.admin_posts_path, class: 'nav-link', active: %w[posts post_categories].include?(controller_name) %>
-          </li>
-        <% end %>
-        <% if can?(:manage, current_store) %>
-          <li class="nav-item">
-            <%= active_link_to Spree.t(:settings), spree.edit_admin_storefront_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-      </ul>
-    <% end %>
-  </li>
+  <% if storefront_active %>
+    <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
+      <%= nav_item(Spree.t(:themes), spree.admin_themes_path) %>
+      
+      <% if can?(:manage, Spree::Page) %>
+        <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
+      <% end %>
+      
+      <% if can?(:manage, Spree::Post) %>
+        <%= nav_item(Spree.t(:posts), spree.admin_posts_path, active: %w[posts post_categories].include?(controller_name)) %>
+      <% end %>
+      
+      <% if can?(:manage, current_store) %>
+        <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
+      <% end %>
+    </ul>
+  <% end %>
 <% end %>

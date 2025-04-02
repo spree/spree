@@ -2,6 +2,6 @@
   <%= Spree.t(:developers) %>
 <% end %>
 <%= content_for :page_tabs do %>
-  <%= nav_pill_list_item(:api_keys, label: Spree.t(:api_keys), url: spree.admin_oauth_applications_path) if can?(:manage, Spree::OauthApplication) %>
-  <%= nav_pill_list_item(:webhooks, label: Spree.t(:webhooks), url: spree.admin_webhooks_subscribers_path) if can?(:manage, Spree::Webhooks::Subscriber) %>
+  <%= nav_item(Spree.t(:api_keys), spree.admin_oauth_applications_path) if can?(:manage, Spree::OauthApplication) %>
+  <%= nav_item(Spree.t(:webhooks), spree.admin_webhooks_subscribers_path) if can?(:manage, Spree::Webhooks::Subscriber) %>
 <% end %>

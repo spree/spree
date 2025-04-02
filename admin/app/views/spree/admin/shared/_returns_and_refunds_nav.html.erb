@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for(:page_tabs) do %>
-  <%= nav_pill_list_item(:return_authorization_reasons, url: spree.admin_return_authorization_reasons_path) if can?(:manage, Spree::ReturnAuthorizationReason) %>
-  <%= nav_pill_list_item(:refund_reasons, url: spree.admin_refund_reasons_path) if can?(:manage, Spree::RefundReason) %>
-  <%= nav_pill_list_item(:reimbursement_types, url: spree.admin_reimbursement_types_path) if can?(:manage, Spree::ReimbursementType) %>
+  <%= nav_item(Spree.t(:return_authorization_reasons), spree.admin_return_authorization_reasons_path) if can?(:manage, Spree::ReturnAuthorizationReason) %>
+  <%= nav_item(Spree.t(:refund_reasons), spree.admin_refund_reasons_path) if can?(:manage, Spree::RefundReason) %>
+  <%= nav_item(Spree.t(:reimbursement_types), spree.admin_reimbursement_types_path) if can?(:manage, Spree::ReimbursementType) %>
 <% end %>

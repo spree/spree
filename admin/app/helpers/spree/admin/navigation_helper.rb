@@ -1,6 +1,13 @@
 module Spree
   module Admin
     module NavigationHelper
+      def nav_item(label, url, icon: nil, active: nil)
+        content_tag :li, class: 'nav-item', role: 'presentation' do
+          label = icon(icon) + label if icon.present?
+          active_link_to label, url, class: 'nav-link', active: active
+        end
+      end
+
       # the per_page_dropdown is used on index pages like orders, products, promotions etc.
       # this method generates the select_tag
       def per_page_dropdown
@@ -159,16 +166,6 @@ module Spree
         link_to url, class: 'd-flex align-items-center text-decoration-none' do
           content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray px-2 d-flex align-items-center') +
             content_tag(:span, label, class: 'font-size-base text-black')
-        end
-      end
-
-      def nav_pill_list_item(resource, url: nil, label: Spree.t(resource), active: nil, link_class: 'nav-link')
-        url = spree.send("admin_#{resource.to_s.pluralize}_path") if url.nil?
-        active = request.url.starts_with?(url) || request.fullpath.starts_with?(url) || controller_name == resource.to_s if active.nil?
-        link_class = "#{link_class} active" if active
-
-        content_tag :li, class: 'nav-item', role: 'presentation' do
-          link_to label, url, role: 'tab', 'aria-controls': 'pills-general', class: link_class, 'aria-selected': active
         end
       end
 
