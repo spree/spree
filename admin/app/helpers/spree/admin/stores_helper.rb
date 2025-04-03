@@ -77,8 +77,9 @@ module Spree
           )
         else
           initials = store.name.split.map(&:first).join.upcase
-          image_tag("https://eu.ui-avatars.com/api/?name=#{initials}&background=random", width: opts[:height], height: opts[:height],
-                                                                                        class: 'rounded with-tip', title: store.name)
+          content_tag(:div, initials, class: "avatar rounded with-tip bg-light",
+                     style: "width: #{opts[:height]}px; height: #{opts[:height]}px;",
+                     title: store.name)
         end
       end
     end
