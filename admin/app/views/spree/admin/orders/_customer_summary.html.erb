@@ -1,8 +1,6 @@
 <% if order %>
   <% if order.user %>
     <span class="d-flex">
-      <%#= image_tag(avatar_url_for( order.user), width: 24, height: 24, class: 'mr-2 rounded') %>
-
       <% if can?(:manage, order.user) %>
         <%= link_to order.full_name, spree.admin_user_path(order.user), class: 'text-dark', data: { 'turbo-frame': '_top' } %>
       <% else %>

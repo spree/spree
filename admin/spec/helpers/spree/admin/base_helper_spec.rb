@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Admin::BaseHelper do
-  describe '#avatar_url_for' do
+  describe '#render_avatar' do
     let(:user) { create(:admin_user) }
 
     context 'when user has an avatar' do
@@ -9,14 +9,14 @@ describe Spree::Admin::BaseHelper do
 
       it 'returns the avatar url' do
         ActiveStorage::Current.url_options = { host: 'localhost', port: 3000 }
-        expect(avatar_url_for(user)).to match(/rails\/active_storage/)
-        expect(avatar_url_for(user)).to match(/thinking-cat\.jpg/)
+        expect(render_avatar(user)).to match(/rails\/active_storage/)
+        expect(render_avatar(user)).to match(/thinking-cat\.jpg/)
       end
     end
 
     context 'when user does not have an avatar' do
       it 'returns initials' do
-        expect(avatar_url_for(user)).to match(/eu\.ui-avatars\.com/)
+        expect(render_avatar(user)).to match(/avatar/)
       end
     end
   end

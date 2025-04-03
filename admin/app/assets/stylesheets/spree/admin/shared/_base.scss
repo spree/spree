@@ -672,3 +672,14 @@ div.uppy-Root {
 .tooltip-inner {
   box-shadow: $dropdown-box-shadow;
 }
+
+.avatar {
+  border-radius: 50%;
+  background-color: $gray-200;
+  color: $gray-500;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
