@@ -54,7 +54,7 @@ Thank you for supporting Spree open-source :heart:
 
 We’re thrilled to unveil [Spree 5](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/
 ) — the most powerful and feature-packed open-source release in Spree Commerce’s history, including:
-- A completly revamped Admin Dashboard experience: boost your team's productivity 
+- A completely revamped Admin Dashboard experience: boost your team's productivity 
 - A Mobile-First, No-code Customizable Storefront: raise conversions and loyalty
 - New integrations: a native [Stripe integration](https://github.com/spree/spree_stripe), and also Stripe Connect, Klaviyo integrations available with the Enterprise Edition
 - Enterprise Edition Admin Features: Audit Log, [Multi-Vendor Marketplace](https://spreecommerce.org/marketplace-ecommerce/), [Multi-tenant / White-label SaaS eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/)
