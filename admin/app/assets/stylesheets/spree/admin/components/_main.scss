@@ -54,23 +54,32 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     border-radius: $border-radius;
     display: flex;
     align-items: center;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
     padding-top: 0.35rem;
     padding-bottom: 0.35rem;
 
     .ti {
       font-size: 1rem;
       margin-right: 0.5rem;
+      border-radius: $border-radius-sm;
+      padding: 0.2rem 0.2rem;
     }
 
     &:hover {
-      background-color: $gray-75;
+      background-color: $gray-50;
     }
     &.active {
       color: theme-color('primary');
-      background-color: $gray-100;
+      background-color: $white;
+      box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
       font-weight: 500;
+
+      .ti {
+        background-color: theme-color('primary');
+        color: $white;
+        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
+      }
     }
 
     .badge {
@@ -96,6 +105,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
       &.active, &:active, &:focus {
         font-weight: 600;
         background-color: transparent !important;
+        box-shadow: none;
       }
     }
   }
