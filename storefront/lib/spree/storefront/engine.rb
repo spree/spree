@@ -14,12 +14,16 @@ module Spree
         :quick_checkout_partials
       )
 
+      # accessible via Rails.application.config.spree_storefront
+      initializer 'spree.storefront.environment', before: :load_config_initializers do |app|
+        app.config.spree_storefront = Environment.new
+      end
+
       initializer 'spree.storefront.configuration', before: :load_config_initializers do |_app|
         Spree::Storefront::Config = Spree::Storefront::Configuration.new
       end
 
       initializer 'spree.storefront.assets' do |app|
-        app.config.spree_storefront = Environment.new
         app.config.assets.paths << root.join('app/javascript')
         app.config.assets.paths << root.join('vendor/javascript')
         app.config.assets.precompile += %w[spree_storefront_manifest]

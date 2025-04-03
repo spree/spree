@@ -18,6 +18,8 @@
       <% if can?(:manage, :checkouts) %>
         <%= nav_item(Spree.t(:draft_orders), spree.admin_checkouts_path, active: params[:controller] == 'checkouts') %>
       <% end %>
+
+      <%= render_admin_partials(:store_orders_nav_partials) %>
     </ul>
   <% end %>
 <% end %>

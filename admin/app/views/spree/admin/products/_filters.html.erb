@@ -43,7 +43,7 @@
           } %>
         </div>
       </div>
-      <%= render partial: "spree/admin/products/form/extra_filters", locals: { f: f } %>
+      <%= render_admin_partials(:products_filters_partials, f: f) %>
     </div>
 
     <div class="form-actions">

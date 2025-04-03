@@ -3,6 +3,12 @@ module Spree
     module BaseHelper
       include Spree::ImagesHelper
 
+      def render_admin_partials(section, options = {})
+        Rails.application.config.spree_admin.send(section).map do |partial|
+          render partial, options
+        end.join.html_safe
+      end
+
       def enterprise_edition?
         defined?(Vendo)
       end
@@ -16,12 +22,12 @@ module Spree
       end
 
       def settings_active?
-        %w[stores zones shipping_methods oauth_applications
-           payment_methods refund_reasons reimbursement_types
-           shipping_categories store_credit_categories
-           syncs tax_categories tax_rates webhooks accounts
-           custom_domains audits exports imports return_authorization_reasons
-           documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name)
+        @settings_active || %w[stores zones shipping_methods oauth_applications
+                               payment_methods refund_reasons reimbursement_types
+                               shipping_categories store_credit_categories
+                               syncs tax_categories tax_rates webhooks accounts
+                               custom_domains audits exports imports return_authorization_reasons
+                               documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name)
       end
 
       def available_countries_iso

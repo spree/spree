@@ -63,6 +63,8 @@
     <% end %>
   <% end %>
 
+  <%= render_admin_partials(:order_page_dropdown_partials, order: @order) %>
+
   <% if can?(:cancel, @order) %>
     <div class="dropdown-divider"></div>
     <%= link_to spree.cancel_admin_order_path(@order),
