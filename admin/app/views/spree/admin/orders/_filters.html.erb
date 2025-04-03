@@ -43,6 +43,7 @@
     <%= f.hidden_field :partially_refunded, value: params.dig(:q, :partially_refunded) %>
     <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
     <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>
+    <%= f.hidden_field :vendor_id_eq, value: @vendor.try(:id) %>
 
     <% unless @user %>
       <div class="row">

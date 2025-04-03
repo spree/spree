@@ -19,6 +19,7 @@
   </div>
   <div data-reveal-target="item" class="d-none" id="table-filter">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
+    <%= f.hidden_field :vendor_id_eq, value: @vendor.try(:id) %>
     <div class="row">
       <div class="col-12 col-lg-6">
         <div class="form-group">
