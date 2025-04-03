@@ -189,7 +189,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
                    parent.send(controller_name)
                  else
                    model_class.try(:for_store, current_store) || model_class
-                 end
+                end
 
     if model_class.try(:friendly)
       base_scope.friendly.find(params[:id])
@@ -210,12 +210,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     return parent.send(controller_name) if parent_data.present?
 
     base_scope = model_class.try(:for_store, current_store) || model_class
-    if model_class.respond_to?(:with_vendor)
-      if defined?(current_vendor) && current_vendor.present?
-        base_scope = base_scope.with_vendor(current_vendor)
-      elsif vendor_from_admin_perspective? && @vendor.present?
-        base_scope = base_scope.with_vendor(@vendor)
-      end
+    if defined?(current_vendor) && current_vendor.present? && model_class.respond_to?(:with_vendor)
+      base_scope = base_scope.with_vendor(current_vendor)
     end
 
     if model_class.respond_to?(:accessible_by) &&
@@ -224,10 +220,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     else
       base_scope
     end
-  end
-
-  def vendor_from_admin_perspective?
-    try_spree_current_user.spree_admin? && params['vendor_id'].present?
   end
 
   def location_after_destroy
