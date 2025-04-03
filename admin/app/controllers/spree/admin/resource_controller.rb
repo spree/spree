@@ -213,7 +213,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     if defined?(current_vendor) && current_vendor.present? && model_class.respond_to?(:with_vendor)
       base_scope = base_scope.with_vendor(current_vendor)
     elsif vendor_from_admin_perspective? && self.class.private_method_defined?(:load_vendor)
-      base_scope = model_class.try(:with_vendor, load_vendor)
+      base_scope = base_scope.try(:with_vendor, load_vendor)
     end
 
     if model_class.respond_to?(:accessible_by) &&
