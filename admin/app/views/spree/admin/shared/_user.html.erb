@@ -1,8 +1,8 @@
 <%= link_to spree.admin_user_path(user), class: 'rounded hover-light p-2 d-flex justify-content-start align-items-center', data: {turbo_frame: :_top} do %>
   <% if user.name.present? %>
-    <%= image_tag(avatar_url_for(user), width: 48, height: 48, class: 'mr-3 rounded-lg') %>
+    <%= render_avatar(user, width: 48, height: 48, class: 'mr-3 avatar') %>
   <% else %>
-    <div style="width: 48px; height: 48px" class="mr-3 rounded-lg bg-light"></div>
+    <div style="width: 48px; height: 48px" class="mr-3 avatar bg-light"></div>
   <% end %>
   <div class="text-left">
     <% if customer_full_name(user) %>

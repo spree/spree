@@ -4,8 +4,8 @@
           class="btn d-flex align-items-center justify-content-between text-left w-100"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">
       <div class="d-flex align-items-center">
-        <%= image_tag(avatar_url_for(try_spree_current_user), width: 34, height: 34, class: 'rounded-circle mr-lg-2') %>
-        <span class="d-none d-lg-inline">
+        <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
+        <span class="d-none d-lg-inline ml-lg-2">
           <%= try_spree_current_user.name&.full&.truncate(15)&.presence || try_spree_current_user.email.truncate(15) %><br />
           <span class="text-muted small"><%= try_spree_current_user.email.truncate(22) %></span>
         </span>

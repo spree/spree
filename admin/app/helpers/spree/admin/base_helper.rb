@@ -28,15 +28,23 @@ module Spree
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end
 
-      def avatar_url_for(user)
+      def render_avatar(user, options = {})
         return unless user.present?
 
+        options[:width] ||= 128
+        options[:height] ||= 128
+        options[:class] ||= 'avatar'
+
         if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
-          main_app.cdn_image_url(
-            user.avatar.variant(spree_image_variant_options(resize_to_fill: [128, 128]))
+          image_tag(
+            main_app.cdn_image_url(
+              user.avatar.variant(spree_image_variant_options(resize_to_fill: [options[:width] * 2, options[:height] * 2]))
+            ),
+            class: options[:class],
+            style: "width: #{options[:width]}px; height: #{options[:height]}px;"
           )
         else
-          "https://eu.ui-avatars.com/api/?name=#{user.name&.initials}&background=random"
+          content_tag(:div, user.name&.initials, class: options[:class], style: "width: #{options[:width]}px; height: #{options[:height]}px;")
         end
       end
 
