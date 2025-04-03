@@ -4,7 +4,6 @@ module Spree
       include Spree::Admin::AnalyticsConcern
 
       before_action :set_analytics_defaults, only: %i[analytics]
-      before_action :load_vendor
       before_action :clear_return_to, only: %i[show]
 
       def show; end
@@ -59,12 +58,6 @@ module Spree
       end
 
       private
-
-      def load_vendor
-        return unless defined?(Spree::Vendor)
-
-        @vendor = current_vendor || (Spree::Vendor.find(params[:vendor_id]) if params[:vendor_id].present?)
-      end
 
       def load_top_products
         line_items_grouped = Spree::LineItem.
@@ -140,8 +133,8 @@ module Spree
         )
         @top_locations = @visits_scope.top(:country, 10)
         @top_devices = @visits_scope.group(:device_type).count.transform_keys do |device|
-                        device.nil? ? 'N/A' : device
-                      end.map { |series| [series.first, (series.second.to_f / @visits_scope.count) * 100] }
+                         device.nil? ? 'N/A' : device
+                       end.map { |series| [series.first, (series.second.to_f / @visits_scope.count) * 100] }
       end
     end
   end
