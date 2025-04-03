@@ -65,6 +65,8 @@
     <% if can?(:manage, Spree::OauthApplication) %>
       <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     <% end %>
+
+    <%= render_admin_partials(:store_settings_nav_partials) %>
   </ul>
 <% else %>
   <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
@@ -128,6 +130,8 @@
     <% end %>
 
     <%= render 'spree/admin/shared/sidebar/custom_nav' %>
+
+    <%= render_admin_partials(:store_nav_partials) %>
 
     <li class="nav-item border-top border-top-dashed my-1"></li>
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>

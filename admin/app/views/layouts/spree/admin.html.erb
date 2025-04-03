@@ -6,6 +6,8 @@
   </head>
 
   <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>">
+    <%= render_admin_partials(:body_start_partials) %>
+
     <%= render "spree/admin/shared/header" %>
     <%= render "spree/admin/shared/sidebar" %>
     <main id="content">
@@ -17,5 +19,7 @@
     </main>
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
+
+    <%= render_admin_partials(:body_end_partials) %>
   </body>
 </html>

@@ -16,9 +16,7 @@
         <%= nav_item(Spree.t(:properties), spree.admin_properties_path) %>
       <% end %>
 
-      <% if defined?(Spree::ExternalCategory) && can?(:manage, Spree::ExternalCategory) %>
-        <%= nav_item('Category mapper', spree.admin_external_categories_path) %>
-      <% end %>
+      <%= render_admin_partials(:store_products_nav_partials) %>
     </ul>
     <% end %>
 <% end %>

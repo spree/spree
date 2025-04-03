@@ -3,6 +3,33 @@ require_relative 'runtime_configuration'
 module Spree
   module Admin
     class Engine < ::Rails::Engine
+      Environment = Struct.new(
+        :head_partials,
+        :body_start_partials,
+        :body_end_partials,
+        :dashboard_analytics_partials,
+        :dashboard_sidebar_partials,
+        :product_dropdown_partials,
+        :product_form_partials,
+        :product_form_sidebar_partials,
+        :products_filters_partials,
+        :order_page_header_partials,
+        :order_page_body_partials,
+        :order_page_summary_partials,
+        :order_page_sidebar_partials,
+        :order_page_dropdown_partials,
+        :orders_filters_partials,
+        :store_form_partials,
+        :store_nav_partials,
+        :store_settings_nav_partials,
+        :store_orders_nav_partials,
+        :store_products_nav_partials
+      )
+
+      # accessible via Rails.application.config.spree_admin
+      initializer 'spree.admin.environment', before: :load_config_initializers do |app|
+        app.config.spree_admin = Environment.new
+      end
 
       initializer 'spree.admin.configuration', before: :load_config_initializers do |_app|
         Spree::Admin::RuntimeConfig = Spree::Admin::RuntimeConfiguration.new
@@ -45,6 +72,29 @@ module Spree
             before_action { app.config.spree_admin.importmap.cache_sweeper.execute_if_updated }
           end
         end
+      end
+
+      config.after_initialize do
+        Rails.application.config.spree_admin.head_partials = []
+        Rails.application.config.spree_admin.body_start_partials = []
+        Rails.application.config.spree_admin.body_end_partials = []
+        Rails.application.config.spree_admin.dashboard_analytics_partials = []
+        Rails.application.config.spree_admin.dashboard_sidebar_partials = []
+        Rails.application.config.spree_admin.product_form_partials = []
+        Rails.application.config.spree_admin.product_form_sidebar_partials = []
+        Rails.application.config.spree_admin.product_dropdown_partials = []
+        Rails.application.config.spree_admin.products_filters_partials = []
+        Rails.application.config.spree_admin.order_page_header_partials = []
+        Rails.application.config.spree_admin.order_page_body_partials = []
+        Rails.application.config.spree_admin.order_page_sidebar_partials = []
+        Rails.application.config.spree_admin.order_page_summary_partials = []
+        Rails.application.config.spree_admin.order_page_dropdown_partials = []
+        Rails.application.config.spree_admin.orders_filters_partials = []
+        Rails.application.config.spree_admin.store_form_partials = []
+        Rails.application.config.spree_admin.store_nav_partials = []
+        Rails.application.config.spree_admin.store_settings_nav_partials = []
+        Rails.application.config.spree_admin.store_orders_nav_partials = []
+        Rails.application.config.spree_admin.store_products_nav_partials = []
       end
     end
   end

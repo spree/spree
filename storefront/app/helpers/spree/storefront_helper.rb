@@ -3,9 +3,9 @@ module Spree
     include BaseHelper
     include Heroicon::Engine.helpers
 
-    def render_storefront_partials(section)
+    def render_storefront_partials(section, options = {})
       Rails.application.config.spree_storefront.send(section).map do |partial|
-        render partial: partial
+        render partial, options
       end.join.html_safe
     end
 

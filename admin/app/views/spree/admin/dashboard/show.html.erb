@@ -23,11 +23,7 @@
     <%= render 'analytics' %>
   </div>
   <div class="col-lg-4">
-    <% if defined?(current_vendor) && current_vendor %>
-      <%= render 'spree/admin/shared/vendor_faq' %>
-    <% else %>
-      <%= render 'updater' %>
-      <%= render 'store_preview' %>
-      <%= render 'vendors' if defined?(Spree::Vendor) %>
-    <% end %>
+    <%= render 'sidebar' %>
+    <%= render_admin_partials(:dashboard_sidebar_partials) %>
+  </div>
 </div>

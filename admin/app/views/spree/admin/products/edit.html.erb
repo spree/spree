@@ -6,6 +6,9 @@
     spree.admin_product_digital_assets_path(@product),
     class: "dropdown-item",
   ) if can?(:manage, Spree::Digital) %>
+
+  <%= render_admin_partials(:product_dropdown_partials, product: @product) %>
+
   <div class="dropdown-divider"></div>
 
   <%= external_page_preview_link(@product) %>
