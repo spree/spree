@@ -105,6 +105,22 @@ describe Spree::Checkout::Update, type: :service do
         expect(order.state).to eq 'address'
         expect(order.ship_address.state.id).to eq state.id
       end
+
+      it 'should not set order back to address state if do_not_change_state is true' do
+        expect(order.state).not_to eq 'address'
+        order_params[:do_not_change_state] = true
+        update_service
+
+        expect(order.state).not_to eq 'address'
+      end
+
+      it 'should set order back to address state if quick checkout cancelled' do
+        expect(order.state).not_to eq 'address'
+        order_params[:order][:ship_address_id] = 'CLEAR'
+        update_service
+
+        expect(order.state).to eq 'address'
+      end
     end
 
     context 'at address state' do
