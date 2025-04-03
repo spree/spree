@@ -140,8 +140,8 @@ module Spree
         )
         @top_locations = @visits_scope.top(:country, 10)
         @top_devices = @visits_scope.group(:device_type).count.transform_keys do |device|
-                         device.nil? ? 'N/A' : device
-                       end.map { |series| [series.first, (series.second.to_f / @visits_scope.count) * 100] }
+                        device.nil? ? 'N/A' : device
+                      end.map { |series| [series.first, (series.second.to_f / @visits_scope.count) * 100] }
       end
     end
   end
