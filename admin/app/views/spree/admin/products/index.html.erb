@@ -3,7 +3,7 @@
 <div class="card-lg p-0">
   <% if params[:frame_name].present? %>
     <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
-      <%= render 'filters' %>
+      <%= render 'filters', frame_name: params[:frame_name] %>
       <%= render 'list' %>
     <% end %>
   <% else %>
