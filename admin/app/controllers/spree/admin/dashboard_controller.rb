@@ -4,6 +4,7 @@ module Spree
       include Spree::Admin::AnalyticsConcern
 
       before_action :set_analytics_defaults, only: %i[analytics]
+      before_action :load_vendor
       before_action :clear_return_to, only: %i[show]
 
       def show; end
@@ -58,6 +59,12 @@ module Spree
       end
 
       private
+
+      def load_vendor
+        return unless defined?(Spree::Vendor)
+
+        @vendor = current_vendor || (Spree::Vendor.find(params[:vendor_id]) if params[:vendor_id].present?)
+      end
 
       def load_top_products
         line_items_grouped = Spree::LineItem.
