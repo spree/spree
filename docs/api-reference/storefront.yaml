@@ -1573,6 +1573,7 @@ paths:
           $ref: '#/components/responses/422UnprocessableEntity'
       security:
         - orderToken: []
+  "/api/v2/storefront/stripe/payment_intents/{id}":
     get:
       summary: Return a Stripe Payment Intent
       description: 'Returns the Payment Intent information'
@@ -1623,6 +1624,24 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         '404':
           $ref: '#/components/responses/404NotFound'
+  "/api/v2/storefront/stripe/payment_intents/{id}/confirm":
+    patch:
+      summary: Mark the payment intent as confirmed, and move the order to the complete state
+      description: This endpoint is used to complete the order with succeeded payment intent. First it will check if the payment intent has `status` `succeeded`, if yes, then it will move the order to the complete state.
+      tags:
+        - Stripe
+      operationId: confirm-stripe-payment-intent
+      security:
+        - orderToken: []
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
   /api/v2/storefront/stripe/setup_intents:
     post:
       summary: Create a Stripe Setup Intent
