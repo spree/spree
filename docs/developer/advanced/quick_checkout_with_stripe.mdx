@@ -1,0 +1,157 @@
+---
+title: Completing the checkout via quick checkout with Stripe and Spree API
+description: This guide will show you how to add quick checkout to your custom storefront using Stripe and Spreee API
+---
+
+<Warning>
+  This guide is aimed at advanced users who have some experience with Spree API and Stripe.
+  You also need [spree_stripe](https://github.com/spree/spree_stripe) gem in your Spree application
+</Warning>
+
+Let's assume that you have a cart made with line items in it already.
+
+Quick checkout works by handling 3 different events:
+- Address change
+- Shipping Method/Rate change
+- Confirmation
+
+How you should handle them depends on your platform/language:
+- When using Web and JS, you should look at the Express Checkout Element:
+  - https://docs.stripe.com/elements/express-checkout-element
+  - https://docs.stripe.com/js/element/express_checkout_element
+  - You can also check out the `spree_stripe` implementation here https://github.com/spree/spree_stripe/blob/main/app/javascript/spree_stripe/controllers/stripe_button_controller.js
+- On IOS, you should probably check out:
+  - `StripeApplePay` https://docs.stripe.com/apple-pay
+  - `STPApplePayContext` https://stripe.dev/stripe-ios/stripeapplepay/documentation/stripeapplepay/stpapplepaycontext#instance-methods
+
+After you have a code which will handle those events, here's what you should do in each event:
+
+#### Address change
+Here we need to send some basic information about the customer's shipping address, and we should move the order to the delivery step (don't forget to replace the placeholders with customer's data):
+
+```sh
+curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "order": {
+      "ship_address_attributes": {
+        "quick_checkout": true,
+        "firstname": <First name>,
+        "lastname": <Last name>,
+        "city": <City>,
+        "zipcode": <Zip>,
+        "country_iso": <Country>,
+        "state_name": <State>
+      },
+      "bill_address_id": "CLEAR"
+    }
+  }'
+```
+Spree documentation https://spreecommerce.org/docs/api-reference/storefront/checkout/update-checkout
+
+Then you have to move the order to the delivery step:
+```sh
+curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=delivery&include=shipments.shipping_rates' \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "quick_checkout": true,
+    "shipping_method_id": <Shipping Method ID>
+  }'
+```
+Spree documentation https://spreecommerce.org/docs/api-reference/storefront/checkout-state/advance-checkout
+
+You don't have to send `shipping_method_id` if you don't have it yet, but if you received `Shipping Method/Rate changed` event, and you already have the selected shipping method then you can send it
+
+This will return you an order response, and you can update the payment element with new total and shipping rates
+
+#### Shipping Method/Rate change
+
+Here we need to send the selected shipping method to the backend and update the total in the payment element
+```sh
+curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/select_shipping_method' \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "shipping_method_id": <Shipping Method ID>
+  }'
+```
+Spree documentation https://spreecommerce.org/docs/api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments
+
+Subsequently, update the payment element with a new total taken from the response
+
+#### Confirming the payment
+
+Now you should make several more calls to the backend
+
+1. Confirm that the order is ready for the payment
+```sh
+curl -X POST '<SHOP URL>/api/v2/storefront/checkout/validate_order_for_payment?skip_state=true' \
+  -H 'Authorization: Bearer <Token>'
+```
+Spree documentation https://spreecommerce.org/docs/api-reference/storefront/checkout/validate-order-payment
+
+2. You should have a lot more information about the customer (in previous events, Stripe probably will not provide you information such as customer address), so send them to backend:
+```sh
+curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "order": {
+      "email": <EMAIL>,
+      "ship_address_attributes": {
+        "quick_checkout": true,
+        "firstname": <First name>,
+        "lastname": <Last name>,
+        "address1": <Address>,
+        "address2": <Address 2>,
+        "city": <City>,
+        "zipcode": <Zip>,
+        "country_iso": <Country>,
+        "state_name": <State>,
+        "phone": <Phone>
+      }
+    },
+    "do_not_change_state": true
+  }'
+```
+
+3. Move the order to the payment step
+```sh
+curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=payment' \
+  -H 'Authorization: Bearer <Token>' \
+  -d '{
+    "shipping_method_id": <Shipping Method ID>
+  }'
+```
+
+Thereafter, you should confirm the payment intent using the Stripe library, this depends on your platform/language.
+
+If you like to redirect the user to the Spree's order summary page, then set the `return_url` when confirming the payment intent to `<SHOP URL>/stripe/payment_intents/<PAYMENT INTENT ID>`. This will check if the payment intent is confirmed, move the order to the complete state, and redirect the user to the order summary.
+
+If you like to make the order summary page by yourself, then after confirming the payment intent in Stripe, make this request:
+
+```sh
+curl -X POST <SHOP URL>/api/v2/storefront/stripe/payment_intents/<PAYMENT INTENT ID>/confirm \
+  -H 'Authorization: Bearer <Token>'
+```
+TODO: ADD documentation about this enpoint when PR is merged
+
+This will also check if the payment intent is confirmed, and it will move the order to the complete state
+
+#### User cancels the payment
+
+If at any point user cancels the payment (closes the quick checkout sheet/modal) then clear the shipping and billing address from the order
+
+```sh
+curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "order": {
+      "ship_address_id": "CLEAR",
+      "bill_address_id": "CLEAR"
+    }
+  }'
+```
