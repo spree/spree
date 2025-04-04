@@ -1590,8 +1590,8 @@ paths:
       security:
         - orderToken: []
     patch:
-      summary: Create a Stripe Payment Intent
-      description: Create a Stripe Payment Intent using provided payment method. It creates a Stripe customer if not exists.
+      summary: Updates Stripe Payment Intent
+      description: Updates the payment intent with new `amount` and `stripe_payment_method_id`
       tags:
         - Stripe
       operationId: update-stripe-payment-intent
@@ -1612,9 +1612,6 @@ paths:
                     stripe_payment_method_id:
                       type: string
                       description: A new Stripe Payment Method ID
-                    off_session:
-                      type: boolean
-                      description: If the payment is off-session (eq. payment method from setup intent)
               required:
                 - payment_intent
       responses:
