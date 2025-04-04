@@ -71,11 +71,11 @@ curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
 </ParamField>
 
 <ParamField body="zipcode" type="string" required>
-  Customer's zipcode
+  Customer's zip code
 </ParamField>
 
 <ParamField body="country_iso" type="string" required>
-  Customer's country iso
+  Customer's country ISO
 </ParamField>
 
 <ParamField body="state_name" type="string">
@@ -83,13 +83,13 @@ curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
 </ParamField>
 
 <ParamField body="bill_address_id" type="string" required>
-  Set it to `CLEAR` to clear existing billing address (this prevents order to accidentaly advance to the `payment` step)
+  Set it to `CLEAR` to clear existing billing address (this prevents order to accidentally advancing to the `payment` step)
 </ParamField>
 </Accordion>
 <Accordion title="Move the order to the delivery step">
 [Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout-state/advance-checkout)
 
-```sh
+```sh Advance order to the delivery step
 curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=delivery&include=shipments.shipping_rates' \
   -H 'Authorization: Bearer <Token>' \
   -H 'Content-Type: application/json' \
@@ -119,7 +119,7 @@ Here we need to send the selected shipping method to the backend and update the 
 
 [Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments)
 
-```sh
+```sh Select shipping method
 curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/select_shipping_method' \
   -H 'Authorization: Bearer <Token>' \
   -H 'Content-Type: application/json' \
@@ -129,7 +129,7 @@ curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/select_shipping_method' \
 ```
 
 <ParamField body="shipping_method_id" type="string" required>
-  Shipping method id of the selected shipping rate
+  Shipping method ID of the selected shipping rate
 </ParamField>
 
 Subsequently, update the payment element with a new total taken from the response's `total_minus_store_credits`
@@ -141,12 +141,12 @@ Now you should make several more calls to the backend
 <AccordionGroup>
 <Accordion title="Confirm that the order is ready for the payment">
 [Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout/validate-order-payment)
-```sh
+```sh Validate order for payment
 curl -X POST '<SHOP URL>/api/v2/storefront/checkout/validate_order_for_payment?skip_state=true' \
   -H 'Authorization: Bearer <Token>'
 ```
 
-If you receive response code other than `200` then something changed in the order and it can't be moved to the payment state yet
+If you receive a response code other than `200` then something changed in the order, and it can't be moved to the payment state yet.
 </Accordion>
 
 
@@ -154,7 +154,9 @@ If you receive response code other than `200` then something changed in the orde
 
 You should have a lot more information about the customer (in previous events, Stripe probably will not provide you information such as customer address), so send them to the backend:
 
-```sh
+[Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout/update-checkout)
+
+```sh Update the order [expandable]
 curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
   -H 'Authorization: Bearer <Token>' \
   -H 'Content-Type: application/json' \
@@ -177,12 +179,47 @@ curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
     "do_not_change_state": true
   }'
 ```
+<ParamField body="email" type="string" required>
+    Customer's email
+</ParamField>
 
+<ParamField body="quick_checkout" type="bool" required>
+    `true` indicating that the order is from quick checkout
+</ParamField>
+
+<ParamField body="firstname" type="string" required>
+  Customer's first name
+</ParamField>
+
+<ParamField body="lastname" type="string" required>
+  Customer's last name
+</ParamField>
+
+<ParamField body="zipcode" type="string" required>
+  Customer's zip code
+</ParamField>
+
+<ParamField body="country_iso" type="string" required>
+  Customer's country ISO
+</ParamField>
+
+<ParamField body="state_name" type="string">
+  Customer's address state
+</ParamField>
+
+<ParamField body="phone" type="string">
+  Customer's phone number
+</ParamField>
+
+<ParamField body="do_not_change_state" type="bool" required>
+  Set it to `true` so the order does not advance to the next state
+</ParamField>
 </Accordion>
 
 
 <Accordion title="Move the order to the payment step">
-```sh
+[Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout-state/advance-checkout)
+```sh Move the order to the payment step
 curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=payment' \
   -H 'Authorization: Bearer <Token>' \
   -d '{
@@ -190,7 +227,7 @@ curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=payment' \
   }'
 ```
 <ParamField body="shipping_method_id" type="string" required>
-  Shipping method id of the selected shipping rate
+  Shipping method ID of the selected shipping rate
 </ParamField>
 </Accordion>
 </AccordionGroup>
@@ -202,21 +239,21 @@ If you like to redirect the user to Spree's order summary page, then set the `re
 
 If you like to make the order summary page by yourself, then after confirming the payment intent in Stripe, make this request:
 
-```sh
+
+
+```sh Confirm payment intent
 curl -X POST <SHOP URL>/api/v2/storefront/stripe/payment_intents/<PAYMENT INTENT ID>/confirm \
   -H 'Authorization: Bearer <Token>'
 ```
-Spree documentation: https://spreecommerce.org/docs/api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state
+[Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state)
 
 This will also check if the payment intent is confirmed, and it will move the order to the complete state
-
-
 
 #### User cancels the payment
 
 If at any point, the user cancels the payment (closes the quick checkout sheet/modal), then clear the shipping and billing address from the order.
 
-```sh
+```sh Reset order addresses
 curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
   -H 'Authorization: Bearer <Token>' \
   -H 'Content-Type: application/json' \
@@ -227,6 +264,8 @@ curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
     }
   }'
 ```
+
+[Endpoint documentation](https://spreecommerce.org/docs/api-reference/storefront/checkout/update-checkout)
 
 ### All Done!
 
