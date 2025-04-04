@@ -798,6 +798,12 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "Guides",
+                "pages": [
+                  "developer/guides/quick-checkout-with-stripe"
+                ]
               }
             ]
           },
