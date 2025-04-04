@@ -1625,7 +1625,7 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
   "/api/v2/storefront/stripe/payment_intents/{id}/confirm":
-    post:
+    patch:
       summary: Mark the payment intent as confirmed, and move the order to the complete state
       description: This endpoint is used to complete the order with succeeded payment intent. First it will check if the payment intent has `status` `succeeded`, if yes, then it will move the order to the complete state.
       tags:
