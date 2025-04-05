@@ -3,7 +3,7 @@
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "<%= post.title %>",
-    "image": <%= post.image.attached? ? [main_app.cdn_image_url(post.image.variant(spree_image_variant_options(resize_to_limit: [1200, 675])))].to_json.html_safe : [].to_json.html_safe %>,
+    "image": <%= post.image.attached? ? [spree_image_url(post.image, width: 1200, height: 675)].to_json.html_safe : [].to_json.html_safe %>,
     "datePublished": "<%= post.published_at&.iso8601 %>",
     "dateModified": "<%= post.updated_at&.iso8601 %>",
     "author": [

@@ -1,6 +1,8 @@
 module Spree
   module Admin
     module StoresHelper
+      include Spree::ImagesHelper
+
       def available_stores
         @available_stores ||= Spree::Store.accessible_by(current_ability)
       end
@@ -18,31 +20,9 @@ module Spree
 
         Rails.cache.fetch(["#{store.cache_key_with_version}/admin_icon", opts.to_param]) do
           if store.logo&.attached? && store.logo&.variable?
-            image_tag(
-              main_app.cdn_image_url(
-                store.logo.variant(
-                  spree_image_variant_options(
-                    resize_to_fill: [opts[:width] * 2, opts[:height] * 2]
-                  )
-                )
-              ),
-              class: opts[:class],
-              width: opts[:width],
-              height: opts[:height]
-            )
+            spree_image_tag(store.logo, class: opts[:class], width: opts[:width], height: opts[:height])
           elsif store.favicon_image&.attached? && store.favicon_image&.variable?
-            image_tag(
-              main_app.cdn_image_url(
-                store.favicon_image.variant(
-                  spree_image_variant_options(
-                    resize_to_fill: [opts[:width] * 2, opts[:height] * 2]
-                  )
-                )
-              ),
-              class: opts[:class],
-              width: opts[:width],
-              height: opts[:height]
-            )
+            spree_image_tag(store.favicon_image, class: opts[:class], width: opts[:width], height: opts[:height])
           else
             first_letter_icon(store.name, opts)
           end
@@ -65,16 +45,7 @@ module Spree
         opts.merge!(options)
 
         if store.is_a?(Spree::Store) && store.logo&.attached? && store.logo&.variable?
-          image_tag(
-            main_app.cdn_image_url(
-              store.logo.variant(
-                spree_image_variant_options(
-                  resize_to_fill: [opts[:width] * 2, opts[:height] * 2]
-                )
-              )
-            ),
-            opts
-          )
+          spree_image_tag(store.logo, class: opts[:class], width: opts[:width], height: opts[:height])
         else
           initials = store.name.split.map(&:first).join.upcase
           content_tag(:div, initials, class: "avatar rounded with-tip bg-light",

@@ -18,14 +18,10 @@
          data-action="click->active-storage-upload#open"
     >
       <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>
-        <%= image_tag(
-          main_app.cdn_image_url(
-            form.object.send(field_name).variant(
-              spree_image_variant_options(
-                resize_to_fill: [width, (crop ? height : nil)]
-              )
-            )
-          ),
+        <%= spree_image_tag(
+          form.object.send(field_name),
+          width: width,
+          height: height,
           class: 'img-fluid rounded-lg',
           data: { active_storage_upload_target: 'thumb' },
           loading: :lazy

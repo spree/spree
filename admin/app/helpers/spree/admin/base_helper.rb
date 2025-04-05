@@ -42,10 +42,10 @@ module Spree
         options[:class] ||= 'avatar'
 
         if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
-          image_tag(
-            main_app.cdn_image_url(
-              user.avatar.variant(spree_image_variant_options(resize_to_fill: [options[:width] * 2, options[:height] * 2]))
-            ),
+          spree_image_tag(
+            user.avatar,
+            width: options[:width],
+            height: options[:height],
             class: options[:class],
             style: "width: #{options[:width]}px; height: #{options[:height]}px;"
           )
