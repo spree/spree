@@ -6,7 +6,7 @@
       "url": <%= current_store.formatted_url_or_custom_domain.to_json.html_safe %>,
       "sameAs": <%= current_store.social_links.to_json.html_safe %>,
     <% if current_store.logo && current_store.logo&.attached? && current_store.logo&.variable? %>
-      "logo": <%= main_app.cdn_image_url(current_store.logo.variant(spree_image_variant_options(resize_to_fill: [500, 500]))).to_json.html_safe %>,
+      "logo": <%= spree_image_url(current_store.logo, width: 250, height: 250).to_json.html_safe %>,
     <% end %>
       "name": <%= current_store.name.to_json.html_safe %>,
       "email": <%= current_store.customer_support_email.to_json.html_safe %>

@@ -3,13 +3,13 @@
     <div class="w-full absolute left-0 image-banner--image-wrapper" style="height: <%= section.preferred_height %>px; opacity: <%= section.preferred_overlay_transparency %>%;">
       <% if section.image.attached? && section.image.variable? %>
         <picture>
-          <source media="(max-width: 640px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [640, nil]))) %>">
-          <source media="(max-width: 750px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [750, nil]))) %>">
-          <source media="(max-width: 828px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [828, nil]))) %>">
-          <source media="(max-width: 1080px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [1080, nil]))) %>">
-          <source media="(max-width: 1200px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [1200, nil]))) %>">
-          <source media="(min-width: 1201px)" srcset="<%= main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [2000, nil]))) %>">
-          <%= image_tag main_app.cdn_image_url(section.image.variant(spree_image_variant_options(resize_to_limit: [2000, nil]))), class: "w-full h-full object-cover", loading: "lazy" %>
+          <source media="(max-width: 640px)" srcset="<%= spree_image_url(section.image, width: 320, height: nil) %>">
+          <source media="(max-width: 750px)" srcset="<%= spree_image_url(section.image, width: 375, height: nil) %>">
+          <source media="(max-width: 828px)" srcset="<%= spree_image_url(section.image, width: 414, height: nil) %>">
+          <source media="(max-width: 1080px)" srcset="<%= spree_image_url(section.image, width: 540, height: nil) %>">
+          <source media="(max-width: 1200px)" srcset="<%= spree_image_url(section.image, width: 620, height: nil) %>">
+          <source media="(min-width: 1201px)" srcset="<%= spree_image_url(section.image, width: 1000, height: nil) %>">
+          <%= spree_image_tag(section.image, width: 1000, class: "w-full h-full object-cover", loading: "lazy") %>
         </picture>
       <% end %>
     </div>

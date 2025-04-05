@@ -22,7 +22,7 @@
 <meta property="og:description" content="<%= h(og_description) %>">
 
 <% if page_image.present? && page_image.attached? && page_image.variable? %>
-  <% image_url = main_app.cdn_image_url(page_image.variant(spree_image_variant_options(resize_to_fill: [1200, 630]))) %>
+  <% image_url = spree_image_url(page_image, width: 600, height: 315) %>
 
   <meta property="og:image" content="<%= image_url %>">
   <meta property="og:image:secure_url" content="<%= image_url %>">

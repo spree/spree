@@ -5,7 +5,7 @@
     <img
       class="w-full h-full absolute top-0 object-cover z-0"
       style="opacity: <%= section.preferred_overlay_transparency %>%"
-      src="<%= main_app.cdn_image_url(img.variant(spree_image_variant_options(resize_to_limit: [2000, nil]))) %>" />
+      src="<%= spree_image_url(img, width: 2000, height: nil) %>" />
   <% end %>
   <div class="w-full page-container flex flex-col text-center py-5 px-5 z-10">
     <% section.blocks.includes(:rich_text_text).each do |block| %>
@@ -37,8 +37,8 @@
         <% when 'Spree::PageBlocks::Image' %>
           <div <%= block_attributes(block) %> class="flex justify-center w-full">
             <% if block.image.attached? && block.image.variable? %>
-              <% image_style = "aspect-ratio: #{as_aspect_ratio(block.image)}; --desktop-height: #{block.preferred_height}px; --mobile-height: #{block.preferred_mobile_height}px;" %>
-              <%= image_tag main_app.cdn_image_url(block.image.variant(spree_image_variant_options(resize_to_fill: [1000, 1000]))), height: block.preferred_height, width: block.preferred_width, class: "custom-desktop-height custom-mobile-height", style: image_style %>
+              <% image_style = "aspect-ratio: #{spree_asset_aspect_ratio(block.image)}; --desktop-height: #{block.preferred_height}px; --mobile-height: #{block.preferred_mobile_height}px;" %>
+              <%= image_tag spree_image_url(block.image, width: 1000, height: 1000), height: block.preferred_height, width: block.preferred_width, class: "custom-desktop-height custom-mobile-height", style: image_style %>
             <% end %>
           </div>
       <% end %>

@@ -6,7 +6,7 @@
 
 <% cache current_store do %>
   <% if current_store.favicon_image.attached? && current_store.favicon_image.variable? %>
-    <link rel="icon" href="<%= main_app.cdn_image_url(current_store.favicon_image.variant(spree_image_variant_options(resize_to_fill: [256, 256]))) %>">
+    <link rel="icon" href="<%= spree_image_url(current_store.favicon_image, width: 256, height: 256) %>">
   <% end %>
 <% end %>
 

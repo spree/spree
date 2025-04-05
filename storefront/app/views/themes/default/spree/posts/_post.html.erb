@@ -2,7 +2,7 @@
   <%= link_to spree.post_path(post), class: 'block hover:opacity-70 transition-opacity' do %>
     <div class="h-[200px] w-full bg-gray-100">
       <% if post.image.attached? && post.image.variable? %>
-        <%= image_tag main_app.cdn_image_url(post.image.variant(spree_image_variant_options(resize_to_fit: [nil, 800]))), height: 400, class: 'h-full w-full object-cover object-center', loading: :lazy, alt: post.title %>
+        <%= spree_image_tag(post.image, width: 400, height: 200, class: 'h-full w-full object-cover object-center', loading: :lazy, alt: post.title) %>
       <% end %>
     </div>
 

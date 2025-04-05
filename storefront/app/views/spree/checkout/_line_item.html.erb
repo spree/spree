@@ -5,7 +5,7 @@
     </span>
     <% image = line_item.variant.default_image %>
     <% if image.present? && image.attached? && image.variable? %>
-      <%= image_tag main_app.cdn_image_url(image.variant(spree_image_variant_options(resize_to_fill: [128, 128]))), class: 'rounded border border-default bg-transparent object-cover object-center', loading: :lazy, width: 60, height: 60 %>
+      <%= spree_image_tag(image, class: 'rounded border border-default bg-transparent object-cover object-center', loading: :lazy, width: 60, height: 60) %>
     <% end %>
   </div>
   <div class="flex-1 pr-3 text-sm">

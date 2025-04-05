@@ -14,7 +14,7 @@
         <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
           <% if link.linkable.image&.attached? && link.linkable.image&.variable? %>
             <div class="flex space-y-2 flex-col">
-              <%= image_tag main_app.cdn_image_url(link.linkable.image.variant(spree_image_variant_options(resize_to_fill: [600, 600]))), height: 300, width: 300, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label %>
+              <%= spree_image_tag(link.linkable.image, height: 300, width: 300, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
               <span><%= link.label %></span>
             </div>
           <% else %>
@@ -49,7 +49,7 @@
               <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
                 <% if link.linkable.image&.attached? && link.linkable.image&.variable? %>
                   <div class="flex space-y-2 flex-col">
-                    <%= image_tag main_app.cdn_image_url(link.linkable.image.variant(spree_image_variant_options(resize_to_fill: [400, 400]))), height: 200, width: 200, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label %>
+                    <%= spree_image_tag(link.linkable.image, height: 200, width: 200, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
                     <span><%= link.label %></span>
                   </div>
                 <% else %>

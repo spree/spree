@@ -5,7 +5,7 @@
 <%= link_to current_store.url_or_custom_domain, id: 'site-logo', style: "text-decoration: none;" do %>
   <span style="display: none;"><%= current_store.name %></span>
   <% if logo.present? && logo.attached? && logo.variable? %>
-    <% aspect_ratio = as_aspect_ratio(logo) %>
+    <% aspect_ratio = spree_asset_aspect_ratio(logo) %>
     <% logo_style = "aspect-ratio: #{aspect_ratio};" %>
 
     <% if aspect_ratio.to_f > 10 %>
