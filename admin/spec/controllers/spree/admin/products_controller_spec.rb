@@ -229,11 +229,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Red'
                 },
                 {
+                  id: nil,
                   name: 'Not existing option',
                   position: 2,
                   value: 'Not existing value'
@@ -253,11 +255,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Blue'
                 },
                 {
+                  id: nil,
                   name: 'Not existing option',
                   position: 2,
                   value: 'Not existing value2'
@@ -562,6 +566,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     context 'adding variants to existing product' do
       let(:stock_location) { create(:stock_location) }
       let(:other_stock_location) { create(:stock_location) }
+      let(:new_option_type) { create(:option_type, name: 'Material', presentation: 'Fabric') }
+
       let(:product_params) do
         {
           name: 'Product',
@@ -579,14 +585,22 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Red'
                 },
                 {
+                  id: nil,
                   name: 'Not existing option',
                   position: 2,
                   value: 'Not existing value'
+                },
+                {
+                  id: new_option_type.id,
+                  name: 'Fabric',
+                  position: 3,
+                  value: 'Silk'
                 }
               ]
             },
@@ -603,14 +617,22 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Blue'
                 },
                 {
+                  id: nil,
                   name: 'Not existing option',
                   position: 2,
                   value: 'Not existing value2'
+                },
+                {
+                  id: new_option_type.id,
+                  name: 'Fabric',
+                  position: 3,
+                  value: 'Cotton'
                 }
               ]
             }
@@ -626,16 +648,56 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         variant = product.variants.first
         expect(variant.price_in('PLN').amount).to eq 10
         expect(variant.price_in('USD').amount).to eq 20
-        expect(variant.options_text).to eq 'Color: Red, Not existing option: Not existing value'
+        expect(variant.options_text).to eq 'Color: Red, Not existing option: Not existing value, and Fabric: Silk'
         expect(variant.stock_items.first.count_on_hand).to eq 10
         expect(variant.stock_items.first.stock_location).to eq stock_location
 
         other_variant = product.variants.last
         expect(other_variant.price_in('PLN').amount).to eq 44
         expect(other_variant.price_in('USD').amount).to eq 55
-        expect(other_variant.options_text).to eq 'Color: Blue, Not existing option: Not existing value2'
+        expect(other_variant.options_text).to eq 'Color: Blue, Not existing option: Not existing value2, and Fabric: Cotton'
         expect(other_variant.stock_items.first.count_on_hand).to eq 200
         expect(other_variant.stock_items.first.stock_location).to eq other_stock_location
+      end
+
+      context "when option is missing id attribute" do
+        let(:product_params) do
+          {
+            name: 'Product',
+            variants_attributes: {
+              '0' => {
+                prices_attributes: {
+                  '0': { currency: 'PLN', amount: 10 },
+                  '1': { currency: 'USD', amount: 20 }
+                },
+                stock_items_attributes: {
+                  '0' => {
+                    count_on_hand: 10,
+                    stock_location_id: stock_location.id,
+                  }
+                },
+                options: [
+                  option_without_id_attribute
+                ]
+              }
+            }
+          }
+        end
+
+        let(:option_without_id_attribute) do
+          {
+            id: nil,
+            name: 'Color',
+            position: 1,
+            value: 'Red'
+          }.except(:id)
+        end
+
+        it 'raises an error' do
+          expect {
+            send_request
+          }.to raise_error(ActionController::ParameterMissing, 'param is missing or the value is empty: id')
+        end
       end
     end
 
@@ -678,11 +740,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Red'
                 },
                 {
+                  id: nil,
                   name: 'Size',
                   position: 2,
                   value: 'Small'
@@ -704,11 +768,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Blue'
                 },
                 {
+                  id: nil,
                   name: 'Size',
                   position: 2,
                   value: 'Large'
@@ -730,11 +796,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
               },
               options: [
                 {
+                  id: nil,
                   name: 'Color',
                   position: 1,
                   value: 'Red'
                 },
                 {
+                  id: nil,
                   name: 'Size',
                   position: 2,
                   value: 'Large'
@@ -784,11 +852,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 },
                 options: [
                   {
+                    id: nil,
                     name: 'Size',
                     position: 1,
                     value: 'S'
                   },
                   {
+                    id: nil,
                     name: 'Color',
                     position: 2,
                     value: 'Red'
@@ -803,11 +873,13 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 },
                 options: [
                   {
+                    id: nil,
                     name: 'Size',
                     position: 1,
                     value: 'M'
                   },
                   {
+                    id: nil,
                     name: 'Color',
                     position: 2,
                     value: 'Blue'
@@ -845,6 +917,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 price: { 'PLN' => 10, 'USD' => 20 },
                 options: [
                   {
+                    id: nil,
                     name: 'Size',
                     position: 1,
                     value: 'S'
@@ -870,6 +943,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                 },
                 options: [
                   {
+                    id: nil,
                     name: 'Size',
                     position: 1,
                     value: 'M'
