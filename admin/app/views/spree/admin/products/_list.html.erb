@@ -9,15 +9,7 @@
             <thead class="text-muted">
               <tr>
                 <th scope="col" class="pr-0 w-5">
-                  <div class="custom-control custom-checkbox ml-1">
-                    <input
-                      type="checkbox"
-                      class="custom-control-input"
-                      id="checkAllMasterCheckbox"
-                      data-bulk-operation-target="checkboxAll"
-                    >
-                    <label class="custom-control-label" for="checkAllMasterCheckbox"><span></span></label>
-                  </div>
+                  <%= bulk_operations_select_all_checkbox %>
                 </th>
                 <th scope="col">
                   <%= sort_link @search,

@@ -1,9 +1,6 @@
 <tr id="<%= spree_dom_id user %>">
   <td class="pr-0 w-5">
-    <div class="custom-control custom-checkbox ml-1">
-      <%= check_box_tag "ids[]", user.id, false, class: "custom-control-input", id: "ids_#{user.id}", data: { bulk_operation_target: "checkbox" } %>
-      <label class="custom-control-label" for="ids_<%= user.id %>"><span></span></label>
-    </div>
+    <%= bulk_operations_checkbox(user) %>
   </td>
   <td class='user_name w-50 no-wrap py-0 pl-1 pr-0'>
     <%= render 'spree/admin/shared/user', user: user %>
