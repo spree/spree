@@ -165,6 +165,9 @@ Spree::Core::Engine.add_routes do
     end
     resources :custom_domains, except: :show
 
+    # integrations
+    resources :integrations
+
     # storefront / page builder
     resource :storefront, only: [:edit, :update], controller: :storefront
     resources :themes, except: [:new, :show] do

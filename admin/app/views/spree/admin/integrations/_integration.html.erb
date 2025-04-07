@@ -1,0 +1,34 @@
+<% integration_name = integration_class.integration_name %>
+<% integration = store_integration(integration_name.downcase) %>
+
+<% integration_description ||= Spree.t("admin.integrations.#{integration_name.downcase}.description") %>
+
+<div class="col mb-4 d-flex align-items-stretch">
+  <div class="card">
+    <div class="card-header border-bottom d-flex align-items-center justify-content-between h-auto pr-3 <% if integration.present? %>bg-success<% end %>">
+      <%= image_tag integration_class.icon_path, alt: integration_name, height: 36 %>
+
+      <% if integration.present? %>
+        <span class="badge badge-success small">
+          <%= icon('check', class: 'mr-1') %>
+          <%= Spree.t(:active) %>
+        </span>
+      <% end %>
+    </div>
+
+    <div class="card-body">
+      <p><%= integration_description %></p>
+    </div>
+
+    <div class="card-footer d-flex <% if integration.present? %>align-items-baseline justify-content-between<% else %>flex-column<% end %>">
+      <% if integration.present? %>
+        <%= link_to spree.edit_admin_integration_path(integration), class: 'card-link btn btn-sm btn-light' do %>
+          <%= icon 'settings' %>
+          <%= Spree.t(:settings) %>
+        <% end %>
+      <% else %>
+        <%= link_to_with_icon 'plus', "#{Spree.t(:connect)} #{integration_class.integration_name}", spree.new_admin_integration_path(integration: { type: integration_class.name }), class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>

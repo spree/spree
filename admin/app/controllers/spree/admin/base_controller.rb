@@ -8,6 +8,7 @@ module Spree
       helper 'spree/locale'
       helper 'spree/currency'
       helper 'spree/addresses'
+      helper 'spree/integrations'
 
       before_action :authorize_admin
 

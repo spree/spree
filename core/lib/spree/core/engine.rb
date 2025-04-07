@@ -22,7 +22,8 @@ module Spree
                                :page_blocks,
                                :reports,
                                :analytics_events,
-                               :analytics_event_handlers)
+                               :analytics_event_handlers,
+                               :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -267,6 +268,8 @@ module Spree
           gift_card_issued: 'Gift Card Issued'
         }
         Rails.application.config.spree.analytics_event_handlers = []
+
+        Rails.application.config.spree.integrations = {}
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
