@@ -1,20 +1,12 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <%= form_for :digital_asset, url: spree.admin_product_digital_asset_path(@product, @digital_asset), method: :put do |f| %>
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel"><%= @digital_asset.attachment.filename %></h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-dismiss="modal"
-          aria-label="<%= Spree.t(:close) %>"
-        />
-      </div>
+      <%= modal_header(@digital_asset.attachment.filename) %>
       <div class="modal-body">
         <%= render "spree/admin/digital_assets/form", f: f %>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t("actions.discard") %></button>
+      <div class="modal-footer">
+        <%= modal_discard_button %>
         <%= turbo_save_button_tag Spree.t("actions.save"), data: { turbo_frame: :_top } %>
       </div>
     </div>
