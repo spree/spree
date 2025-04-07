@@ -262,7 +262,7 @@
                     "pages": [
                       "api-reference/storefront/stripe/return-a-stripe-payment-intent",
                       "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent-1",
+                      "api-reference/storefront/stripe/updates-stripe-payment-intent",
                       "api-reference/storefront/stripe/create-a-stripe-setup-intent"
                     ]
                   },
@@ -1132,7 +1132,7 @@
                     "pages": [
                       "api-reference/storefront/stripe/return-a-stripe-payment-intent",
                       "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent-1",
+                      "api-reference/storefront/stripe/updates-stripe-payment-intent",
                       "api-reference/storefront/stripe/create-a-stripe-setup-intent"
                     ]
                   },
