@@ -2,8 +2,8 @@
 
 <div class="row">
   <div class="col-12 col-lg-8">
-    <div class="card-lg p-0">
-      <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap border-bottom" do |f| %>
+    <div class="card-lg">
+      <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap" do |f| %>
         <div class="d-flex flex-column flex-lg-row gap-2">
           <%= render 'spree/admin/shared/filters_search_bar', param: :code_eq %>
 

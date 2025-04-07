@@ -2,7 +2,6 @@
 en:
   spree:
     admin:
-      active: Active
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
@@ -231,7 +230,6 @@ en:
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
       upload_new_asset: Upload new asset
-      url: URL
       user:
         last_order_placed: Last order placed
         no_store_credit: Customer has no Store Credit available

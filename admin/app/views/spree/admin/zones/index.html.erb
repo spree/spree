@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_zone), new_object_url, class: "btn-primary", icon: 'plus' %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_zone), new_object_url, class: "btn btn-primary" %>
 <% end if can? :create, Spree::Zone %>
 
 <% content_for :page_alerts do %>
@@ -12,34 +12,36 @@
   </div>
 <% end %>
 
-<% if @zones.any? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_zones'>
-      <thead class="text-muted">
-      <tr>
-        <th><%= sort_link @search,:name, Spree.t(:name), title: 'zones_order_by_name_title' %></th>
-        <th>
-          <%= sort_link @search,:description, Spree.t(:description), {}, {title: 'zones_order_by_description_title'} %>
-        </th>
-        <th><%= Spree.t(:default_tax_zone) %></th>
-        <th class="actions"></th>
-      </tr>
-      </thead>
-      <tbody>
-        <% @zones.each do |zone| %>
-          <tr id="<%= spree_dom_id zone %>" class="cursor-pointer" data-controller="row-link">
-            <td class="w-25" data-action="click->row-link#openLink"><%= zone.name %></td>
-            <td class="w-40 text-muted text-wrap" data-action="click->row-link#openLink"><%= zone.description %></td>
-            <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(zone.default_tax?) %></td>
-            <td class="w-10 actions">
-              <%= link_to_edit(zone, data: { row_link_target: :link }) if can? :edit, zone %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    <%= render 'spree/admin/shared/index_table_options', collection: @zones, simple: true %>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+        <tr>
+          <th><%= sort_link @search,:name, Spree.t(:name) %></th>
+          <th>
+            <%= sort_link @search,:description, Spree.t(:description) %>
+          </th>
+          <th><%= Spree.t(:default_tax_zone) %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |zone| %>
+            <tr id="<%= spree_dom_id zone %>" class="cursor-pointer" data-controller="row-link">
+              <td class="w-25" data-action="click->row-link#openLink"><%= zone.name %></td>
+              <td class="w-40 text-muted text-wrap" data-action="click->row-link#openLink"><%= zone.description %></td>
+              <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(zone.default_tax?) %></td>
+              <td class="w-10 actions">
+                <%= link_to_edit(zone, data: { row_link_target: :link }) if can? :edit, zone %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

@@ -1,7 +1,7 @@
 <% frame_name ||= nil %>
 
 <%= search_form_for product_list_filters_search_form_path,
-  class: "filter-wrap border-bottom",
+  class: "filter-wrap",
   data: {
     controller: "filters reveal",
     reveal_hidden_class: "d-none",
@@ -56,12 +56,7 @@
       <%= render_admin_partials(:products_filters_partials, f: f) %>
     </div>
 
-    <div class="form-actions">
-      <%= turbo_save_button_tag Spree.t(:filter_results) do %>
-        <%= icon("search") %>
-        <%= Spree.t(:filter_results) %>
-      <% end %>
-    </div>
+    <%= render 'spree/admin/shared/filter_submit' %>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>

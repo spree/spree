@@ -3,30 +3,32 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_role), new_object_url, class: "btn-primary", icon: 'plus', id: 'admin_new_role_link' %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_role), new_object_url, class: "btn btn-primary" %>
 <% end if can? :create, Spree::Role %>
 
-<% if @roles.any? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table">
-      <thead class="text-muted">
-        <tr>
-          <th><%= Spree.t(:role_id) %></th>
-          <th class="actions"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @roles.each do |role| %>
-          <tr id="<%= spree_dom_id role %>">
-            <td><%= role.name %></td>
-            <td class="actions">
-              <%= link_to_edit(role, no_text: true) if can? :edit, role %>
-            </td>
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:role_id) %></th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+        </thead>
+        <tbody>
+          <% @roles.each do |role| %>
+            <tr id="<%= spree_dom_id role %>">
+              <td><%= role.name %></td>
+              <td class="actions">
+                <%= link_to_edit(role, no_text: true) if can? :edit, role %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

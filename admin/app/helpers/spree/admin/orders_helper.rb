@@ -69,25 +69,6 @@ module Spree
         end
       end
 
-      # Renders all the extension partials that may have been specified in the extensions
-      def event_links(order, events)
-        links = []
-        events.each do |event|
-          next unless order.send("can_#{event}?")
-
-          label = Spree.t(event, scope: 'admin.order.events', default: Spree.t(event))
-          links << button_link_to(
-            label.capitalize,
-            [event.to_sym, :admin, order],
-            method: :put,
-            icon: event.to_s + '.svg',
-            data: { turbo_confirm: Spree.t(:order_sure_want_to, event: label) },
-            class: 'btn-light'
-          )
-        end
-        safe_join(links, ''.html_safe)
-      end
-
       def line_item_shipment_price(line_item, quantity)
         Spree::Money.new(line_item.price * quantity, currency: line_item.currency)
       end

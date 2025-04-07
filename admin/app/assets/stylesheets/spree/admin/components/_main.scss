@@ -156,3 +156,10 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     top: 0.5rem;
   }
 }
+
+.documentation-link-container {
+  font-size: $font-size-sm;
+  text-align: center;
+  margin-top: 2rem;
+  color: $gray-400;
+}

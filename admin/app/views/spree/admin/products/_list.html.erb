@@ -46,5 +46,5 @@
     </div>
     <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
   <% else %>
-    <%= render partial: 'spree/admin/products/empty_list' %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>

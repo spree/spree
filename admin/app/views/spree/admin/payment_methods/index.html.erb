@@ -2,15 +2,16 @@
   <%= Spree.t(:payment_methods) %>
 <% end %>
 
-<div class="table-responsive card-lg p-0 mb-4">
-  <table class="table" id='listing_shipping_methods'>
-    <thead class="text-muted">
+<div class="card-lg">
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="text-muted">
       <tr>
         <th></th>
         <th><%= Spree.t(:payment_method) %></th>
         <th><%= Spree.t(:visibility) %></th>
         <th class="text-center"><%= Spree.t(:active) %></th>
-        <th class="actions"></th>
+        <th></th>
       </tr>
     </thead>
     <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="payment_method" data-sortable-response-kind-value="turbo-stream">
@@ -21,13 +22,14 @@
 
 <% if available_payment_methods.present? && can?(:create, Spree::PaymentMethod) %>
   <h5 class="pb-2 pt-3">Available Payment Methods</h5>
-  <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_shipping_methods'>
-      <thead class="text-muted">
+  <div class="card-lg">
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
         <tr>
           <th><%= Spree.t(:name) %></th>
           <th><%= Spree.t(:description) %></th>
-          <th class="actions"></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
