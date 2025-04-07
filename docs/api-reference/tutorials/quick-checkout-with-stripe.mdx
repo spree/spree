@@ -64,28 +64,28 @@ Here we need to send some basic information about the customer's shipping addres
         `true` indicating that the order is from quick checkout. It is required as the address details you will receive from Apple Pay or Google Pay are not complete and wouldn't be valid for the standard checkout.
     </ParamField>
 
-    <ParamField body="firstname" type="string" required>
-      Customer's first name
+    <ParamField body="firstname" type="string">
+      John
     </ParamField>
 
-    <ParamField body="lastname" type="string" required>
-      Customer's last name
+    <ParamField body="lastname" type="string">
+      Doe
     </ParamField>
 
     <ParamField body="city" type="string" required>
-      Customer's city
+      Mountain View
     </ParamField>
 
-    <ParamField body="zipcode" type="string" required>
-      Customer's zip code
+    <ParamField body="zipcode" type="string">
+      94043
     </ParamField>
 
     <ParamField body="country_iso" type="string" required>
-      Customer's country ISO
+      US
     </ParamField>
 
     <ParamField body="state_name" type="string">
-      Customer's address state
+      CA
     </ParamField>
 
     <ParamField body="bill_address_id" type="string" required>
@@ -157,7 +157,7 @@ Now you should make several more calls to the backend
     </Info>
 
     [Endpoint documentation](/api-reference/storefront/checkout/validate-order-payment)
-    
+
   </Accordion>
   <Accordion title="Update the address with more data">
 
@@ -189,35 +189,43 @@ Now you should make several more calls to the backend
     }'
   ```
   <ParamField body="email" type="string" required>
-      Customer's email
+      email@example.com
   </ParamField>
 
   <ParamField body="quick_checkout" type="bool" required>
       `true` indicating that the order is from quick checkout
   </ParamField>
 
-  <ParamField body="firstname" type="string" required>
-    Customer's first name
+  <ParamField body="firstname" type="string">
+    John
   </ParamField>
 
-  <ParamField body="lastname" type="string" required>
-    Customer's last name
+  <ParamField body="lastname" type="string">
+    Doe
   </ParamField>
 
-  <ParamField body="zipcode" type="string" required>
-    Customer's zip code
+  <ParamField body="address1" type="string">
+    123 Main St
   </ParamField>
 
-  <ParamField body="country_iso" type="string" required>
-    Customer's country ISO
+  <ParamField body="address2" type="string">
+    Apt 1
+  </ParamField>
+
+  <ParamField body="zipcode" type="string">
+    94043
+  </ParamField>
+
+  <ParamField body="country_iso" type="string">
+    US
   </ParamField>
 
   <ParamField body="state_name" type="string">
-    Customer's address state
+    CA
   </ParamField>
 
   <ParamField body="phone" type="string">
-    Customer's phone number
+    +1234567890
   </ParamField>
 
   <ParamField body="do_not_change_state" type="bool" required>
