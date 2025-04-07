@@ -121,10 +121,7 @@ export default class extends Controller {
 
   async fillAddress(placeID) {
     const placeDetails =
-      await this.googlePlacesSuggestionsProvider.getPlaceDetails(
-        placeID,
-        this.address1Target
-      )
+      await this.googlePlacesSuggestionsProvider.getPlaceDetails(placeID)
 
     if (placeDetails) {
       this.address1Target.value = placeDetails.fullAddress
