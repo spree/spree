@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @roles.each do |role| %>
+          <% @collection.each do |role| %>
             <tr id="<%= spree_dom_id role %>">
               <td><%= role.name %></td>
               <td class="actions">
