@@ -23,6 +23,7 @@ describe Spree::Admin::StorefrontController do
       {
         name: 'New Store Name',
         meta_description: 'This is a cool store',
+        storefront_password: 'password'
       }
     end
 
@@ -33,6 +34,7 @@ describe Spree::Admin::StorefrontController do
 
       expect(store.reload.name).to eq('New Store Name')
       expect(store.meta_description).to eq('This is a cool store')
+      expect(store.storefront_password).to eq('password')
     end
 
     context 'when removing assets' do
