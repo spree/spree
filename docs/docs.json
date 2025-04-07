@@ -147,6 +147,12 @@
                 ]
               },
               {
+                "group": "Tutorials",
+                "pages": [
+                  "api-reference/tutorials/quick-checkout-with-stripe"
+                ]
+              },
+              {
                 "group": "Storefront API",
                 "pages": [
                   "api-reference/storefront/authentication",
