@@ -1,6 +1,6 @@
 <% content_for :page_actions do %>
   <%= link_to_with_icon 'plus', Spree.t(:new_rma_reason), new_object_url, class: "btn btn-primary" %>
-<% end if can? :create, Spree::RefundReason %>
+<% end if can? :create, Spree::ReturnAuthorizationReason %>
 
 <%= render"spree/admin/shared/returns_and_refunds_nav" %>
 
