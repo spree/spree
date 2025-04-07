@@ -47,21 +47,8 @@ module Spree
     end
 
     def as_aspect_ratio(attachment)
-      return unless attachment.present?
-      return unless attachment.analyzed?
-
-      metadata = attachment.metadata
-      aspect_ratio = metadata['aspect_ratio'].presence
-
-      return aspect_ratio if aspect_ratio
-
-      width = metadata['width']&.to_f
-      return unless width
-
-      height = metadata['height']&.to_f
-      return unless height
-
-      width / height
+      Spree::Deprecation.warn('as_aspect_ratio is deprecated. Please use spree_asset_aspect_ratio instead.')
+      spree_asset_aspect_ratio(attachment)
     end
 
     def svg_country_icon(country_code)

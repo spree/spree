@@ -10,29 +10,9 @@
   <div class="flex-grow-1 cursor-pointer" data-action="click->row-link#openLink">
     <div class="d-flex align-items-center overflow-hidden w-100 <% if taxon.square_image&.attached? || taxon.image&.attached? %>py-2<% else %>py-3<% end %>">
       <% if taxon.square_image&.attached? && taxon.square_image.variable? %>
-        <%= image_tag(
-              main_app.cdn_image_url(
-                taxon.square_image.variant(
-                  spree_image_variant_options(resize_to_fill: [96, 96])
-                )
-              ),
-              class: 'rounded mr-3',
-              width: 48,
-              height: 48,
-              loading: :lazy
-        ) %>
+        <%= spree_image_tag(taxon.square_image, class: 'rounded mr-3', width: 48, height: 48, loading: :lazy) %>
       <% elsif taxon.image&.attached? && taxon.image.variable? %>
-        <%= image_tag(
-              main_app.cdn_image_url(
-                taxon.image.variant(
-                  spree_image_variant_options(resize_to_fill: [96, 96])
-                )
-              ),
-              class: 'rounded mr-3',
-              width: 48,
-              height: 48,
-              loading: :lazy
-        ) %>
+        <%= spree_image_tag(taxon.image, class: 'rounded mr-3', width: 48, height: 48, loading: :lazy) %>
       <% end %>
       <div class="overflow-hidden">
         <%= taxon.name %>

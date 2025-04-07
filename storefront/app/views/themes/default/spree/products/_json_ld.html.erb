@@ -7,7 +7,7 @@
     "url": <%= spree.product_url(product).to_json.html_safe %>,
   <% if product.featured_image %>
     "image": [
-      <%= main_app.cdn_image_url(product.featured_image.variant(spree_image_variant_options(resize_to_limit: [1260, 1260]))).to_json.html_safe %>
+      <%= spree_image_url(product.featured_image, width: 630, height: 630).to_json.html_safe %>
     ],
   <% end %>
   <% if product.description.present? %>

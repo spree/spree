@@ -9,13 +9,7 @@
 
   <div data-toggle="modal" data-target="#modal-lg">
     <%= link_to spree.edit_admin_asset_path(asset), data: { turbo_frame: 'dialog_modal_lg' } do %>
-      <%= image_tag(
-            main_app.cdn_image_url(
-              asset.attachment.variant(spree_image_variant_options(resize_to_fill: [400, 400]))
-            ),
-            alt: asset.alt,
-            class: 'w-100 d-block h-100 position-absolute'
-          ) %>
+      <%= spree_image_tag(asset.attachment, width: 200, height: 200, alt: asset.alt, class: 'w-100 d-block h-100 position-absolute') %>
     <% end %>
   </div>
 </div>
