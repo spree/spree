@@ -84,8 +84,8 @@ Here we need to send some basic information about the customer's shipping addres
       US
     </ParamField>
 
-    <ParamField body="state_name" type="string">
-      CA
+    <ParamField body="state_name" type="string" required>
+      CA (empty string is also accepted)
     </ParamField>
 
     <ParamField body="bill_address_id" type="string" required>
@@ -221,7 +221,7 @@ Now you should make several more calls to the backend
   </ParamField>
 
   <ParamField body="state_name" type="string" required>
-    CA
+    CA (empty string is also accepted)
   </ParamField>
 
   <ParamField body="phone" type="string">
