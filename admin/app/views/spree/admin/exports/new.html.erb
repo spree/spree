@@ -3,13 +3,7 @@
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">
-          <%= Spree.t(:export) %>
-          <%= plural_resource_name(@export.model_class) %>
-        </h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-      </div>
+      <%= modal_header(Spree.t(:export) + ' ' + plural_resource_name(@export.model_class)) %>
       <div class="modal-body">
         <%= render 'spree/admin/shared/error_messages', target: @export %>
         <div class="custom-control custom-radio">
@@ -33,8 +27,8 @@
           <% end %>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+      <div class="modal-footer">
+        <%= modal_discard_button %>
         <%= turbo_save_button_tag Spree.t(:export), class: 'btn btn-primary' %>
       </div>
     </div>

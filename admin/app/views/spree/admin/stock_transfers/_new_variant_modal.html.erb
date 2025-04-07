@@ -1,10 +1,7 @@
 <div class="modal fade" id="stock_transfer_modal" tabindex="-1" aria-labelledby="stock_transfer_modal_label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" data-controller="search-picker">
-      <div class="modal-header">
-        <h5 class="modal-title" id="stock_transfer_modal_label"><%= Spree.t(:add_variant) %></h5>
-        <button type="button" class="btn-close" data-action="search-picker#closeAndClear" data-dismiss="modal" aria-label="Close" />
-      </div>
+      <%= modal_header(Spree.t(:add_variant)) %>
       <div class="modal-body">
         <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
           <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
@@ -22,7 +19,8 @@
           </p>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
+      <div class="modal-footer">
+        <%= modal_discard_button %>
         <%= button_tag Spree.t(:add_selected_variant), class: "btn btn-primary text-center", disabled: true, data: { search_picker_target: :submit, action: 'stock-transfer#add search-picker#closeAndClear', dismiss: 'modal' } %>
       </div>
     </div>

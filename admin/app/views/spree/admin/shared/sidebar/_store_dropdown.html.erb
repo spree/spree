@@ -2,13 +2,7 @@
   <div class="modal fade" id="switch-store-modal" tabindex="-1" role="dialog" aria-labelledby="switchStoreModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="switchStoreModalLabel">
-            <%= icon 'switch-horizontal', class: 'mr-2' %>
-            <%= Spree.t(:switch_store) %>
-          </h5>
-          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-        </div>
+        <%= modal_header(icon('switch-horizontal', class: 'mr-2') + Spree.t(:switch_store)) %>
         <div class="modal-body">
           <div class="list-group">
             <% available_stores.each do |store| %>
