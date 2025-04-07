@@ -70,7 +70,6 @@ export default class extends CheckboxSelectAll {
   }
 
   setBulkAction(e) {
-    console.log(e.target)
     this.formTarget.action = e.target.dataset.url
     if (e.target.dataset.method) {
       this.formTarget.method = e.target.dataset.method
