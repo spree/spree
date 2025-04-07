@@ -65,31 +65,31 @@ Here we need to send some basic information about the customer's shipping addres
     </ParamField>
 
     <ParamField body="firstname" type="string">
-      John
+      Customer's first name, e.g. John
     </ParamField>
 
     <ParamField body="lastname" type="string">
-      Doe
+      Customer's last name, e.g. Doe
     </ParamField>
 
     <ParamField body="city" type="string" required>
-      Mountain View
+      Customer's city, e.g. Mountain View
     </ParamField>
 
     <ParamField body="zipcode" type="string">
-      94043
+      Customer's zip code, e.g. 94043
     </ParamField>
 
     <ParamField body="country_iso" type="string" required>
-      US
+      Customer's country ISO, e.g. US
     </ParamField>
 
     <ParamField body="state_name" type="string" required>
-      CA (empty string is also accepted)
+      Customer's address state, e.g. CA (empty string is also accepted)
     </ParamField>
 
     <ParamField body="bill_address_id" type="string" required>
-      Set it to `CLEAR` to clear existing billing address (this prevents order to accidentally advancing to the `payment` step)
+      Set it to `CLEAR` to clear the existing billing address (this prevents the order from accidentally advancing to the `payment` step).
     </ParamField>
 
     [Full documentation](/api-reference/storefront/checkout/update-checkout)
@@ -189,7 +189,7 @@ Now you should make several more calls to the backend
     }'
   ```
   <ParamField body="email" type="string" required>
-      email@example.com
+      Customer's email, e.g. email@example.com
   </ParamField>
 
   <ParamField body="quick_checkout" type="bool" required>
@@ -197,35 +197,35 @@ Now you should make several more calls to the backend
   </ParamField>
 
   <ParamField body="firstname" type="string">
-    John
+    Customer's first name, e.g. John
   </ParamField>
 
   <ParamField body="lastname" type="string">
-    Doe
+    Customer's last name, e.g. Doe
   </ParamField>
 
   <ParamField body="address1" type="string">
-    123 Main St
+    Customer's address, e.g. 123 Main St
   </ParamField>
 
   <ParamField body="address2" type="string">
-    Apt 1
+    Customer's address 2, e.g., Apt. 1
   </ParamField>
 
   <ParamField body="zipcode" type="string">
-    94043
+    Customer's zip code, e.g. 94043
   </ParamField>
 
   <ParamField body="country_iso" type="string" required>
-    US
+    Customer's country ISO, e.g. US
   </ParamField>
 
   <ParamField body="state_name" type="string" required>
-    CA (empty string is also accepted)
+    Customer's address state, e.g. CA (empty string is also accepted)
   </ParamField>
 
   <ParamField body="phone" type="string">
-    +1234567890
+    Customer's phone number, e.g. +1234567890
   </ParamField>
 
   <ParamField body="do_not_change_state" type="bool" required>
