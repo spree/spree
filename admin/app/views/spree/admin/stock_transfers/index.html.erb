@@ -12,7 +12,7 @@
 
 <div class="card-lg">
   <%= render "filters" %>
-  <% if @stock_transfers.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table" id="listing_products">
         <thead class="text-muted">
@@ -27,12 +27,12 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'stock_transfer', collection: @stock_transfers %>
+          <%= render collection: @collection, partial: 'stock_transfer' %>
         </tbody>
       </table>
     </div>
+    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
   <% else %>
     <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>
-  <%= render 'spree/admin/shared/index_table_options', collection: @stock_transfers, simple: true if @stock_transfers.any? %>
 </div>

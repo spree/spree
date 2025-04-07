@@ -9,7 +9,7 @@
 <div class="card-lg">
   <%= render "filters" %>
 
-  <% if @stock_items.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table" id="listing_products">
         <thead class="text-muted">
@@ -24,15 +24,12 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: "stock_item", collection: @stock_items %>
+          <%= render collection: @collection, partial: "stock_item" %>
         </tbody>
       </table>
     </div>
+    <%= render "spree/admin/shared/index_table_options", collection: @collection %>
   <% else %>
-    <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-      <%= Spree.t(:no_resource_found, resource: Spree.t(:stock)) %>
-    </div>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
   <% end %>
-
-  <%= render "spree/admin/shared/index_table_options", collection: @stock_items, simple: true if @stock_items.any? %>
 </div>

@@ -5,8 +5,8 @@
 <% content_for :page_title do %>
   <%= Spree.t(:customer_returns) %>
 <% end %>
-<div class="card-lg">
 
+<div class="card-lg">
   <%= search_form_for [:admin, @search], url: spree.admin_customer_returns_path, class: "filter-wrap", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
     <%= render "spree/admin/shared/filters_search_bar",
     param: :number_cont,
@@ -37,21 +37,8 @@
         </tbody>
       </table>
     </div>
+    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
   <% else %>
-    <div
-      class="
-        text-muted p-5 d-flex align-items-center w-100 justify-content-center
-      "
-    >
-      <%= Spree.t(
-        :no_resource_found,
-        resource: plural_resource_name(Spree::CustomerReturn),
-      ) %>
-    </div>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
   <% end %>
-
-  <%= render partial: "spree/admin/shared/index_table_options",
-  locals: {
-    collection: @collection,
-  } %>
 </div>
