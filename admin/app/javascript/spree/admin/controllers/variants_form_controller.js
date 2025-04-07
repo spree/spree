@@ -587,6 +587,12 @@ export default class extends CheckboxSelectAll {
     }
 
     keys.forEach((key) => {
+      const idInput = document.createElement('input')
+      idInput.type = 'hidden'
+      idInput.name = `product[variants_attributes][${i}][options][][id]`
+      idInput.value = Object.entries(this.optionsValue).find((option) => option[1].name === key)?.[0]
+      inputs.push(idInput)
+
       const nameInput = document.createElement('input')
       nameInput.type = 'hidden'
       nameInput.name = `product[variants_attributes][${i}][options][][name]`
