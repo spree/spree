@@ -1129,16 +1129,6 @@
                     ]
                   },
                   {
-                    "group": "Stripe",
-                    "pages": [
-                      "api-reference/storefront/stripe/return-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/updates-stripe-payment-intent",
-                      "api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state",
-                      "api-reference/storefront/stripe/create-a-stripe-setup-intent"
-                    ]
-                  },
-                  {
                     "group": "Products",
                     "pages": [
                       "api-reference/storefront/products/list-all-products",
