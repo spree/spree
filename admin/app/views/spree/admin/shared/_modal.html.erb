@@ -2,10 +2,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <%= turbo_frame_tag :dialog_modal do %>
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:loading) %>...</h5>
-          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-        </div>
+        <%= modal_header(Spree.t(:loading)) %>
         <div class="modal-body text-center">
           <div class="spinner-border text-light mx-auto my-5" role="status">
             <span class="sr-only"><%= Spree.t(:loading) %>...</span>
@@ -20,10 +17,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <%= turbo_frame_tag :dialog_modal_lg do %>
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:loading) %>...</h5>
-          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-        </div>
+        <%= modal_header(Spree.t(:loading)) %>
         <div class="modal-body text-center" style="min-height: 200px">
           <div class="spinner-border text-light" role="status">
             <span class="sr-only"><%= Spree.t(:loading) %>...</span>

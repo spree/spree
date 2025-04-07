@@ -248,10 +248,6 @@ module Spree
         )
       end
 
-      def path_from_url(url)
-        url.to_s.gsub('https://', '').gsub('http://', '')
-      end
-
       def allowed_file_types_for_upload
         Rails.application.config.active_storage.web_image_content_types
       end
