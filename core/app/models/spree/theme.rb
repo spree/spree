@@ -98,7 +98,7 @@ module Spree
     end
 
     def create_default_pages
-      Rails.application.config.spree.pages.each do |page_class|
+      Rails.application.config.spree.pages.map(&:to_s).map(&:constantize).each do |page_class|
         next if page_class == Spree::Pages::Custom
 
         page_class.where(pageable: self).first_or_create!
@@ -107,7 +107,7 @@ module Spree
 
     def create_layout_sections
       ApplicationRecord.transaction do
-        available_layout_sections.each do |section_class|
+        available_layout_sections.map(&:to_s).map(&:constantize).each do |section_class|
           section_class.where(pageable: self).first_or_create!
         end
       end

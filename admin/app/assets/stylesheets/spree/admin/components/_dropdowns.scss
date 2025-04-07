@@ -26,7 +26,6 @@
   box-shadow: $dropdown-box-shadow;
 
   .dropdown-item, .dropdown-header {
-    margin-bottom: 0.25rem;
     padding-left: $input-btn-padding-x;
     padding-right: $input-btn-padding-x;
     padding-top: $input-btn-padding-y;
@@ -34,6 +33,7 @@
   }
 
   .dropdown-item {
+    margin-bottom: 0.25rem;
     border-radius: $border-radius;
     display: flex;
     align-items: center;

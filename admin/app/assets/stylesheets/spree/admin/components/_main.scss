@@ -82,7 +82,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
       }
     }
 
-    .badge {
+    .badge:not(.badge-info) {
       @extend .badge-light;
     }
   }
