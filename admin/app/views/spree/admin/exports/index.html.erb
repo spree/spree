@@ -1,7 +1,7 @@
 <%= render 'spree/admin/shared/audit_nav' %>
 
 <div class="card-lg">
-  <% if @collection.present? %>>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead class="text-muted">
@@ -22,8 +22,7 @@
       </table>
       <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
     </div>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
-<% end %>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+  <% end %>
 </div>
