@@ -54,13 +54,11 @@
             </tbody>
           </table>
         <% else %>
-          <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CouponCode)) %>
-          </div>
+          <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
         <% end %>
       </div>
 
-      <%= render 'spree/admin/shared/index_table_options', collection: @coupon_codes, simple: true if @coupon_codes.any? %>
+      <%= render 'spree/admin/shared/index_table_options', collection: @coupon_codes if @coupon_codes.any? %>
     </div>
   </div>
 
