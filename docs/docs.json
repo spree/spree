@@ -147,6 +147,12 @@
                 ]
               },
               {
+                "group": "Tutorials",
+                "pages": [
+                  "api-reference/tutorials/quick-checkout-with-stripe"
+                ]
+              },
+              {
                 "group": "Storefront API",
                 "pages": [
                   "api-reference/storefront/authentication",
@@ -798,12 +804,6 @@
                       "api-reference/platform/zones/update-a-zone"
                     ]
                   }
-                ]
-              },
-              {
-                "group": "Guides",
-                "pages": [
-                  "developer/guides/quick-checkout-with-stripe"
                 ]
               }
             ]
