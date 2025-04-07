@@ -2,12 +2,14 @@
   <div class="card-body">
     <div class="mb-3">
       Your overall setup progress
-      <span class="float-right badge badge-<%= current_store.setup_completed? ? 'success' : 'light' %>">
+      <span class="float-right badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %>">
         <% if current_store.setup_completed? %>
           <%= icon('check', class: 'text-success') %>
         <% end %>
 
-        <%= current_store.setup_tasks_done %> of <%= current_store.setup_tasks_total %> steps done
+        <span>
+          <strong><%= current_store.setup_tasks_done %></strong> of <%= current_store.setup_tasks_total %> steps done
+        </span>
       </span>
     </div>
     <div class="progress">

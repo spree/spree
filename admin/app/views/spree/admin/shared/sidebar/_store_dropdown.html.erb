@@ -1,3 +1,42 @@
+<% if available_stores.count > 1 %>
+  <div class="modal fade" id="switch-store-modal" tabindex="-1" role="dialog" aria-labelledby="switchStoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="switchStoreModalLabel">
+            <%= icon 'switch-horizontal', class: 'mr-2' %>
+            <%= Spree.t(:switch_store) %>
+          </h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
+        </div>
+        <div class="modal-body">
+          <div class="list-group">
+            <% available_stores.each do |store| %>
+              <% if store.id != current_store.id %>
+                <%= link_to spree.admin_dashboard_url(host: store.url), class: 'list-group-item hover-light d-flex text-dark w-100 align-items-center text-primary' do %>
+                  <%= store_admin_icon(current_store, height: 32, width: 32) %>
+                  <span class="ml-3">
+                    <%= store.name %>
+                  </span>
+                <% end %>
+              <% else %>
+                <div class="list-group-item d-flex text-dark w-100 align-items-center cursor-disabled active">
+                  <%= store_admin_icon(current_store, height: 32, width: 32) %>
+                  <span class="ml-3">
+                    <%= store.name %>
+                  </span>
+
+                  <%= icon('check', class: 'ml-auto') %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <div class="border-bottom border-bottom-dashed pb-2 d-flex align-items-center justify-content-between pr-1" id="store-menu" data-turbo-permanent>
   <div class="dropdown">
     <button type="button" class="btn d-flex align-items-center justify-content-between text-left dropdown-toggle d-flex align-items-center gap-2"
@@ -18,15 +57,11 @@
       <% end if current_store.default_theme && can?(:manage, Spree::Theme) %>
 
       <% if available_stores.count > 1 %>
-        <div class="dropdown-header">
-          <%= Spree.t(:switch_store) %>
-        </div>
-        <% available_stores.each do |store| %>
-          <% next if store.id == current_store.id %>
-          <%= link_to store.name, spree.admin_dashboard_url(host: store.url), class: 'dropdown-item' %>
-        <% end %>
-
         <div class="dropdown-divider"></div>
+        <%= link_to "#", class: 'dropdown-item mb-0', data: { toggle: 'modal', target: '#switch-store-modal' } do %>
+          <%= icon 'switch-horizontal' %>
+          <%= Spree.t(:switch_store) %>
+        <% end %>
       <% end %>
     </div>
   </div>
