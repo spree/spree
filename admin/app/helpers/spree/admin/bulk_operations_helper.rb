@@ -46,7 +46,16 @@ module Spree
       end
 
       def bulk_operations_close_button
-        button_tag('', type: 'button', class: 'btn-close', data: { dismiss: 'modal', aria_label: Spree.t(:close), action: 'bulk-operation#cancel' }).html_safe
+        button_tag(
+          '', 
+          type: 'button', 
+          class: 'btn-close', 
+          data: { 
+            dismiss: 'modal', 
+            aria_label: Spree.t(:close), 
+            action: 'bulk-operation#cancel' 
+          }
+        )
       end
 
       def bulk_operations_counter
