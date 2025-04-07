@@ -21,45 +21,23 @@
       <%= form_tag spree.admin_users_path, data: { 'bulk-operation-target': 'form' } do %>
         <%= render 'spree/admin/shared/bulk_modal' %>
         <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
-          <div class="bulk-panel-container animate__animated animate__bounceInUp animate__faster">
-            <div data-toggle="modal" data-target="#bulk-modal">
-              <% if can?(:manage_tags, Spree.user_class) %>
-                <a
-                  href="<%= spree.bulk_modal_admin_users_path(kind: :add_tags) %>"
-                  data-turbo-frame="bulk_modal"
-                  class="btn btn-light mr-2"
-                  data-action="click->bulk-operation#setBulkAction"
-                  data-url="<%= spree.bulk_add_tags_admin_users_path %>"
-                >
-                  <%= icon("tag-plus") %>
-                  <%= Spree.t("admin.bulk_ops.users.title.add_tags") %>
-                </a>
-
-                <a
-                  href="<%= spree.bulk_modal_admin_users_path(kind: :remove_tags) %>"
-                  data-turbo-frame="bulk_modal"
-                  class="btn btn-light mr-3"
-                  data-action="click->bulk-operation#setBulkAction"
-                  data-url="<%= spree.bulk_remove_tags_admin_users_path %>"
-                >
-                  <%= icon("tag-minus") %>
-                  <%= Spree.t("admin.bulk_ops.users.title.remove_tags") %>
-                </a>
-              <% end %>
-            </div>
-
-            <span>
-              <strong data-bulk-operation-target="counter"></strong>
-              customers selected
-            </span>
-
-            <button
-              type="button"
-              class="btn-close ml-2"
-              data-dismiss="modal"
-              aria-label="<%= Spree.t(:close) %>"
-              data-action="bulk-operation#cancel"
-            />
+          <div class="bulk-panel-container">
+            <% if can?(:manage_tags, Spree.user_class) %>
+              <%= bulk_action_link(
+                Spree.t("admin.bulk_ops.users.title.add_tags"),
+                spree.bulk_modal_admin_users_path(kind: :add_tags),
+                icon: "tag-plus",
+                url: spree.bulk_add_tags_admin_users_path
+              ) %>
+              <%= bulk_action_link(
+                Spree.t("admin.bulk_ops.users.title.remove_tags"),
+                spree.bulk_modal_admin_users_path(kind: :remove_tags),
+                icon: "tag-minus",
+                url: spree.bulk_remove_tags_admin_users_path
+              ) %>
+            <% end %>
+            <%= bulk_operations_counter %>
+            <%= bulk_operations_close_button %>
           </div>
         </div>
 
@@ -68,15 +46,7 @@
             <thead class="text-muted">
               <tr data-hook="admin_users_index_headers">
                 <th scope="col" class="pr-0 w-5">
-                  <div class="custom-control custom-checkbox ml-1">
-                    <input
-                      type="checkbox"
-                      class="custom-control-input"
-                      id="checkAllMasterCheckbox"
-                      data-bulk-operation-target="checkboxAll"
-                    >
-                    <label class="custom-control-label" for="checkAllMasterCheckbox"><span></span></label>
-                  </div>
+                  <%= bulk_operations_select_all_checkbox %>
                 </th>
                 <th><%= Spree.t(:name) %></th>
                 <th><%= Spree.t(:email_marketing) %></th>

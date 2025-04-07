@@ -1,9 +1,6 @@
 <tr id="<%= dom_id product %>" data-controller="row-link">
   <td class="pr-0 w-5">
-    <div class="custom-control custom-checkbox ml-1">
-      <%= check_box_tag "ids[]", product.id, false, class: "custom-control-input", id: "ids_#{product.id}", data: { bulk_operation_target: "checkbox" } %>
-      <label class="custom-control-label" for="ids_<%= product.id %>"><span></span></label>
-    </div>
+    <%= bulk_operations_checkbox(product) %>
   </td>
   <td scope="row" class="w-40 py-0 text-wrap" data-action="click->row-link#openLink">
     <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center w-100 text-decoration-none h-100 py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
