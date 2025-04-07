@@ -60,12 +60,11 @@
 }
 
 .card-lg {
-  @extend .mb-3;
-  @extend .bg-white;
-
+  margin-bottom: 1rem;
+  background-color: $white;
   border-radius: $border-radius-lg;
   border: 1px solid $card-border-color;
-  padding: 1rem;
+  padding: 0;
 }
 
 .card-text {

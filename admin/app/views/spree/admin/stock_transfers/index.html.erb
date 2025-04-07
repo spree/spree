@@ -5,12 +5,12 @@
   <%= render "spree/admin/shared/stock_nav" %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= if can?(:create, Spree::StockTransfer.new)
-    link_to Spree.t(:new_stock_transfer), spree.new_admin_stock_transfer_path, class: "btn btn-primary"
+  <%= if can?(:create, Spree::StockTransfer)
+    link_to_with_icon 'plus', Spree.t(:new_stock_transfer), new_object_url, class: "btn btn-primary"
   end %>
 <% end %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <%= render "filters" %>
   <% if @stock_transfers.any? %>
     <div class="table-responsive">

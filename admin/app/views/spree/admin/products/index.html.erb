@@ -1,6 +1,6 @@
 <%= render 'index_header' %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <% if params[:frame_name].present? %>
     <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
       <%= render 'filters', frame_name: params[:frame_name] %>
@@ -12,7 +12,7 @@
   <% end %>
 </div>
 
-<p class="text-muted small text-center py-2 px-3 mt-4 rounded-pill mx-auto d-flex-inline">
-  Learn more about 
-  <%= external_link_to 'managing products', 'https://spreecommerce.org/docs/user/manage-products', class: 'text-decoration-none' %>
+<p class="documentation-link-container">
+  Learn more about
+  <%= external_link_to 'managing products', 'https://spreecommerce.org/docs/user/manage-products' %>
 </p>

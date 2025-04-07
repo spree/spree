@@ -5,11 +5,11 @@
 <fieldset class="card mb-4">
   <table class="table card-body pb-0">
     <tr>
-      <td><strong class="text-uppercase"><%= Spree.t('admin.url') %></strong></td>
+      <td><strong class="text-uppercase"><%= Spree.t(:url) %></strong></td>
       <td><%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url %></td>
     </tr>
     <tr>
-      <td><strong><%= Spree.t('admin.active') %></strong></td>
+      <td><strong><%= Spree.t(:active) %></strong></td>
       <td><%= active_badge(@webhooks_subscriber.active) %></td>
     </tr>
     <tr>
@@ -45,7 +45,7 @@
         <%= render partial: 'spree/admin/webhook_events/webhook_event', collection: @events, cached: spree_base_cache_scope %>
       </tbody>
     </table>
-    <%= render 'spree/admin/shared/index_table_options', collection: @events, simple: true %>
+    <%= render 'spree/admin/shared/index_table_options', collection: @events %>
   </div>
 <% else %>
   <div class="text-center no-objects-found m-5">

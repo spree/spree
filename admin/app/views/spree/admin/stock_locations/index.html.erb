@@ -2,25 +2,28 @@
   <%= Spree.t(:stock_locations) %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_location), new_object_url, class: "btn-primary", icon: 'plus' %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_stock_location), new_object_url, class: "btn btn-primary" %> 
 <% end if can? :create, Spree::StockLocation %>
-<% if @stock_locations.any? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_tax_rates'>
-      <thead class="text-muted">
-        <tr>
-          <th><%= Spree.t(:name) %></th>
-          <th><%= Spree.t(:country) %></th>
-          <th><%= Spree.t(:status) %></th>
-          <th><%= Spree.t(:default) %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'spree/admin/stock_locations/stock_location', collection: @stock_locations, cached: spree_base_cache_scope %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:country) %></th>
+            <th><%= Spree.t(:active) %>?</th>
+            <th><%= Spree.t(:default) %>?</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/stock_locations/stock_location', collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

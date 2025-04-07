@@ -128,6 +128,8 @@ module Spree
       end
 
       def button_link_to(text, url, html_options = {})
+        Spree::Deprecation.warn("button_link_to is deprecated. Use standard link_to instead.")
+
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
@@ -178,7 +180,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] ||= "d-inline-flex align-items-center text-blue"
+        opts[:class] ||= "d-inline-flex align-items-center text-blue text-decoration-none"
 
         if block_given?
           link_to url, opts, &block

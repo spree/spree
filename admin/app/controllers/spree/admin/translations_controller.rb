@@ -66,7 +66,7 @@ module Spree
           @back_path = spree.edit_admin_taxonomy_path(@resource)
         when Spree::Store
           @resource_name = @resource.name
-          @back_path = spree.edit_admin_store_path(@resource, section: "general-settings")
+          @back_path = spree.edit_admin_store_path(section: "general-settings")
         end
       end
     end

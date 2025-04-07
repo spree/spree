@@ -3,11 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <span id="new_ot_link">
-    <%= button_link_to Spree.t(:new_option_type),
-    new_object_url,
-    { class: "btn-primary", icon: "plus", id: "new_option_type_link" } %>
-  </span>
+  <%= link_to_with_icon 'plus', Spree.t(:new_option_type), new_object_url, class: 'btn btn-primary' %>
 <% end if can?(:create, Spree::OptionType) %>
 
 <%= content_for(:page_alerts) do %>
@@ -17,12 +13,8 @@
   </div>
 <% end %>
 
-<div id="new_option_type"></div>
-
-<div class="card-lg p-0">
-
+<div class="card-lg">
   <%= render partial: "spree/admin/option_types/filter" %>
-
   <% if @option_types.any? %>
     <div class="table-responsive">
       <table class="table" id="listing_option_types">
@@ -44,7 +36,7 @@
             <th>
               <%= Spree.t(:products) %>
             </th>
-            <th class="actions"></th>
+            <th></th>
           </tr>
         </thead>
         <tbody
@@ -61,3 +53,7 @@
     <%= render "spree/admin/shared/no_resource_found" %>
   <% end %>
 </div>
+
+<p class="documentation-link-container">
+  <%= external_link_to "Learn more about options", "https://spreecommerce.org/docs/user/manage-products/product-options" %>
+</p>

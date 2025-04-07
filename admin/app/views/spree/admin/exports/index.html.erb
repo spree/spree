@@ -1,30 +1,29 @@
 <%= render 'spree/admin/shared/audit_nav' %>
 
-<% if @collection.present? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table">
-      <thead class="text-muted">
-        <tr>
-          <th><%= Spree.t(:number) %></th>
-          <th class="text-center"><%= Spree.t(:kind) %></th>
-          <th class="text-center"><%= Spree.t(:status) %></th>
-          <th><%= Spree.t(:user) %></th>
-          <th><%= Spree.t(:filename) %></th>
-          <th><%= Spree.t(:date) %></th>
-          <th><%= Spree.t(:size) %></th>
-          <th class="text-center"><%= Spree.t(:download) %></th>
-        </tr>
-      </thead>
+<div class="card-lg">
+  <% if @collection.present? %>>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:number) %></th>
+            <th class="text-center"><%= Spree.t(:kind) %></th>
+            <th class="text-center"><%= Spree.t(:status) %></th>
+            <th><%= Spree.t(:user) %></th>
+            <th><%= Spree.t(:filename) %></th>
+            <th><%= Spree.t(:date) %></th>
+            <th><%= Spree.t(:size) %></th>
+            <th class="text-center"><%= Spree.t(:download) %></th>
+          </tr>
+        </thead>
         <tbody>
-          <%= render partial: 'export', collection: @exports, cached: true %>
+          <%= render partial: 'export', collection: @collection, cached: true %>
         </tbody>
       </table>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
     </div>
   </div>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: plural_resource_name(model_class)) %>
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
 <% end %>
-
-<%= render 'spree/admin/shared/index_table_options', collection: @imports, simple: true if @imports.present? %>
+</div>

@@ -7,15 +7,17 @@
     <%= icon 'table-export', class: 'mr-2' %>
     <%= Spree.t(:export) %>
   <% end if can?(:export, Spree::Export) %>
+  
   <%= render 'extra_actions' %>
-  <%= button_link_to Spree.t(:create_customer), spree.new_admin_user_path, class: "btn-primary", icon: 'plus', id: 'admin_new_user_link' %>
+
+  <%= link_to_with_icon 'plus', Spree.t(:create_customer), spree.new_admin_user_path, class: "btn btn-primary" %>
 <% end if can? :create, Spree::user_class %>
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
 <% end %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <%= render "spree/admin/users/filters" %>
 
   <% if @users.any? %>

@@ -11,24 +11,26 @@
   </div>
 <% end %>
 
-<% if @shipping_methods.any? %>
-  <div class="table-responsive card-lg p-0">
-    <table class="table" id='listing_shipping_methods'>
-      <thead class="text-muted">
-        <tr>
-          <th><%= Spree.t(:name) %></th>
-          <th><%= Spree.t(:zone) %></th>
-          <th><%= Spree.t(:estimated_delivery_time) %></th>
-          <th><%= Spree.t(:amount) %></th>
-          <th><%= Spree.t(:visibility) %></th>
-          <th class="actions"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'spree/admin/shipping_methods/shipping_method', collection: @shipping_methods.includes(:zones, :calculator), as: :shipping_method %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:zone) %></th>
+            <th><%= Spree.t(:estimated_delivery_time) %></th>
+            <th><%= Spree.t(:amount) %></th>
+            <th><%= Spree.t(:visibility) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/shipping_methods/shipping_method', collection: @collection.includes(:zones, :calculator), as: :shipping_method %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

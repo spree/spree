@@ -3,30 +3,34 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_store_credit_category), new_object_url, class: "btn-primary", icon: 'plus', id: 'admin_new_store_credit_category_link' %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_store_credit_category), new_object_url, class: "btn btn-primary" %>
 <% end if can? :create, Spree::StoreCreditCategory %>
 
-<% if @store_credit_categories.any? %>
-<div class="table-responsive card-lg p-0">
-  <table class="table">
-    <thead class="text-muted">
-      <tr>
-        <th><%= Spree.t(:name) %></th>
-        <th class="actions"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @store_credit_categories.each do |store_credit_category| %>
-        <tr id="<%= spree_dom_id store_credit_category %>">
-          <td><%= store_credit_category.name %></td>
-          <td class="actions">
-            <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
-          </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead class="text-muted">
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |store_credit_category| %>
+            <tr id="<%= spree_dom_id store_credit_category %>">
+              <td>
+                <%= store_credit_category.name %>
+              </td>
+              <td class="actions">
+                <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
 </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
