@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_integrations_path %>
-  <%= Spree.t(:connect) %> <%= @integration.name %>
+  <%= Spree.t('actions.connect') %> <%= @integration.name %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @integration } %>

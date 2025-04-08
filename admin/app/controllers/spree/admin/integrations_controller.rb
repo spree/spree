@@ -13,7 +13,7 @@ module Spree
       private
 
       def allowed_integration_types
-        Rails.application.config.spree.integrations.map(&:to_s)
+        @allowed_integration_types ||= Rails.application.config.spree.integrations.map { |klass| [klass.to_s, klass] }.to_h
       end
 
       def require_integration_type
@@ -23,7 +23,7 @@ module Spree
       def prevent_from_creating_more_integrations
         type = params.dig(:integration, :type)
 
-        if type.in?(allowed_integration_types) && type.constantize.for_store(current_store).exists?
+        if allowed_integration_types.key?(type) && allowed_integration_types[type].for_store(current_store).exists?
           redirect_to spree.admin_integrations_path
         end
       end
@@ -33,8 +33,8 @@ module Spree
 
         type = params[:integration].delete(:type)
 
-        if type.in?(allowed_integration_types)
-          @object = type.constantize.new
+        if allowed_integration_types.key?(type)
+          @object = allowed_integration_types[type].new
         else
           flash[:error] = Spree.t('admin.integrations.invalid_integration_type')
           redirect_to spree.admin_integrations_path
