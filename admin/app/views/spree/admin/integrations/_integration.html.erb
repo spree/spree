@@ -27,7 +27,7 @@
           <%= Spree.t(:settings) %>
         <% end %>
       <% else %>
-        <%= link_to_with_icon 'plus', "#{Spree.t(:connect)} #{integration_class.integration_name}", spree.new_admin_integration_path(integration: { type: integration_class.name }), class: 'btn btn-primary' %>
+        <%= link_to_with_icon 'plus', "#{Spree.t('actions.connect')} #{integration_class.integration_name}", spree.new_admin_integration_path(integration: { type: integration_class.name }), class: 'btn btn-primary' %>
       <% end %>
     </div>
   </div>

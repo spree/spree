@@ -1,0 +1,11 @@
+<% if @integration.form_partial_name.present? %>
+  <%= render "spree/admin/integrations/forms/#{@integration.form_partial_name}", form: form %>
+<% else %>
+  <div class="col-12 col-md-6 p-0">
+    <div class="card mb-4">
+      <div class="card-body">
+        <%= preference_fields(@integration, form, i18n_scope: 'admin.integrations.algolia') unless preference_fields(@integration, form).empty? %>
+      </div>
+    </div>
+  </div>
+<% end %>

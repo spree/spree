@@ -18,9 +18,9 @@ module Spree
     #
     scope :active, -> { where(active: true) }
 
-    # Associates the integration to a group
-    # The name here will be used as Spree.t key to display the group name
-    # Leave blank to leave the integration ungrouped
+    # Associates the integration to a group.
+    # The name here will be used as Spree.t key to display the group name.
+    # Leave blank to leave the integration ungrouped.
     def self.integration_group
       nil
     end
@@ -37,8 +37,11 @@ module Spree
       self.class.integration_name
     end
 
+    # Provide a partial name to render a custom form for the integration.
+    # The partial should be located in `app/views/spree/admin/integrations/forms`.
+    # Leave blank to use the default form.
     def form_partial_name
-      name.underscore
+      nil
     end
 
     def can_connect?

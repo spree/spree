@@ -1,8 +1,12 @@
 module Spree
   module Admin
     class IntegrationsController < ResourceController
+      include Spree::Admin::PreferencesConcern
+
       prepend_before_action :require_integration_type, only: %i[new create]
       prepend_before_action :prevent_from_creating_more_integrations, only: %i[new create]
+
+      before_action -> { clear_empty_password_preferences(:integration) }, only: :update
 
       before_action :check_if_can_connect, only: %i[create update]
 

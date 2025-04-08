@@ -9,6 +9,6 @@
   <%= form.hidden_field :type %>
   <%= form.hidden_field :active, value: true %>
 
-  <%= render partial: "spree/admin/integrations/forms/#{@integration.form_partial_name}", locals: { form: form } %>
+  <%= render 'spree/admin/integrations/form', form: form %>
   <%= render 'spree/admin/integrations/form_actions', integration: @integration %>
 <% end %>

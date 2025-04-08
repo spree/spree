@@ -1,9 +1,9 @@
-<% submit_text ||= integration.persisted? ? Spree.t(:update) : Spree.t(:connect) %>
+<% submit_text ||= integration.persisted? ? Spree.t(:update) : Spree.t('actions.connect') %>
 
 <div class="form-actions w-100 d-flex justify-content-between">
   <%= turbo_save_button_tag(submit_text, class: 'btn btn-primary') %>
 
-  <%= link_to Spree.t(:disconnect), spree.admin_integration_path(integration),
+  <%= link_to Spree.t('actions.disconnect'), spree.admin_integration_path(integration),
     class: 'btn btn-danger',
     data: { turbo_confirm: Spree.t(:are_you_sure), turbo_method: :delete } if integration.persisted? %>
 </div>
