@@ -8,8 +8,8 @@ module Spree
       store_integrations.find { |integration| integration.type.to_s.demodulize.underscore == name }
     end
 
-    def available_store_integrations
-      Rails.application.config.spree.integrations
+    def grouped_available_store_integrations
+      Rails.application.config.spree.integrations.group_by(&:integration_group)
     end
   end
 end

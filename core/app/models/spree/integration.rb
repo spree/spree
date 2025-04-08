@@ -18,8 +18,11 @@ module Spree
     #
     scope :active, -> { where(active: true) }
 
-    def can_connect?
-      true
+    # Associates the integration to a group
+    # The name here will be used as Spree.t key to display the group name
+    # Leave blank to leave the integration ungrouped
+    def self.integration_group
+      nil
     end
 
     def self.integration_name
@@ -36,6 +39,10 @@ module Spree
 
     def form_partial_name
       name.underscore
+    end
+
+    def can_connect?
+      true
     end
   end
 end

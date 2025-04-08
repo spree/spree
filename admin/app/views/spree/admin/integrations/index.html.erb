@@ -9,8 +9,11 @@
 <% end %>
 
 <div class="container px-lg-0 mt-2">
-  <% available_store_integrations.each do |key, integrations| %>
-    <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(key) %></div>
+  <% grouped_available_store_integrations.each do |group, integrations| %>
+    <% if group.present? %>
+      <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(group) %></div>
+    <% end %>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 mb-4">
       <% integrations.each do |integration| %>
         <%= render 'spree/admin/integrations/integration', integration_class: integration %>

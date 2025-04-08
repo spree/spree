@@ -750,6 +750,7 @@ en:
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
     code: Code
+    connect: Connect
     colors: Colors
     company: Company
     compare_at_amount: Compare at amount
@@ -890,6 +891,7 @@ en:
     discontinue_on: Discontinue On
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
+    disconnect: Disconnect
     discount: Discount
     discount_amount: Discount Amount
     discounts: Discounts

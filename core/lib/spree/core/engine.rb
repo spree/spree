@@ -269,7 +269,7 @@ module Spree
         }
         Rails.application.config.spree.analytics_event_handlers = []
 
-        Rails.application.config.spree.integrations = {}
+        Rails.application.config.spree.integrations = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
