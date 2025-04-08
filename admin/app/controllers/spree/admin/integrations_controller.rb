@@ -45,7 +45,7 @@ module Spree
         @integration.attributes = permitted_resource_params
 
         unless @integration.can_connect?
-          @integration.errors.add(:base, :unable_to_connect)
+          @integration.errors.add(:base, :unable_to_connect, error_message: @integration.connection_error_message)
           render action == :create ? :new : :edit, status: :unprocessable_entity
         end
       end
