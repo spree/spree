@@ -310,6 +310,9 @@ en:
       spree/address:
         one: Address
         other: Addresses
+      spree/classification:
+        one: Classification
+        other: Classifications
       spree/cms_page:
         one: Page
         other: Pages
@@ -328,6 +331,9 @@ en:
       spree/digital:
         one: Digital asset
         other: Digital assets
+      spree/export:
+        one: Export
+        other: Exports
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units
@@ -349,6 +355,9 @@ en:
       spree/payment_method:
         one: Payment Method
         other: Payment Methods
+      spree/price:
+        one: Price
+        other: Prices
       spree/product:
         one: Product
         other: Products
@@ -397,6 +406,9 @@ en:
       spree/state_change:
         one: State Change
         other: State Changes
+      spree/stock_item:
+        one: Stock Item
+        other: Stock Items
       spree/stock_location:
         one: Stock Location
         other: Stock Locations
@@ -406,6 +418,9 @@ en:
       spree/stock_transfer:
         one: Stock Transfer
         other: Stock Transfers
+      spree/store:
+        one: Store
+        other: Stores
       spree/store_credit:
         one: Store Credit
         other: Store Credits
@@ -424,6 +439,9 @@ en:
       spree/taxonomy:
         one: Taxonomy
         other: Taxonomies
+      spree/theme:
+        one: Theme
+        other: Themes
       spree/tracker:
         one: Tracker
         other: Trackers
