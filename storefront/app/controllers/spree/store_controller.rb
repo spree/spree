@@ -8,6 +8,7 @@ module Spree
     include Spree::PasswordProtected
     include Spree::WishlistHelper
     include Spree::AnalyticsHelper
+    include Spree::IntegrationsHelper
 
     layout :choose_layout
 
@@ -17,6 +18,7 @@ module Spree
     helper 'spree/currency'
     helper 'spree/addresses'
     helper 'spree/wishlist'
+    helper 'spree/integrations'
 
     helper_method :title
     helper_method :title=
