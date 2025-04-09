@@ -9,7 +9,11 @@ module Spree
     private
 
     def default_url_options
-      locale = current_locale == current_store.default_locale ? nil : current_locale
+      locale = if current_store.default_locale.nil? || current_locale == current_store.default_locale
+                 nil
+               else
+                 current_locale
+               end
 
       super.merge(locale: locale, currency: currency_param)
     end
