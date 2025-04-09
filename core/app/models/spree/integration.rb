@@ -31,12 +31,24 @@ module Spree
       name.demodulize.titleize.strip
     end
 
+    def self.integration_key
+      name.demodulize.underscore
+    end
+
     def self.icon_path
       nil
     end
 
+    def self.icon_sizing_options
+      { height: 36 }
+    end
+
     def name
       self.class.integration_name
+    end
+
+    def key
+      self.class.integration_key
     end
 
     # Provide a partial name to render a custom form for the integration.
@@ -50,11 +62,11 @@ module Spree
       nil
     end
 
-    def field_guide_partials
-      nil
+    def field_help_text_partials
+      []
     end
 
-    def field_help_text_partials
+    def field_guide_partials
       []
     end
 
