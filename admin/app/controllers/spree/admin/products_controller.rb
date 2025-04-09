@@ -68,10 +68,7 @@ module Spree
           # update the product again
           @product.slug = @product.slug_was if @product.slug.blank?
           invoke_callbacks(:update, :fails)
-          respond_to do |format|
-            format.html { render :edit, status: :unprocessable_entity }
-            format.turbo_stream
-          end
+          render :edit, status: :unprocessable_entity
         end
       end
 
@@ -293,10 +290,6 @@ module Spree
       end
 
       private
-
-      def update_turbo_stream_enabled?
-        true
-      end
 
       def variant_stock_includes
         [:images, { stock_items: :stock_location, option_values: :option_type }]

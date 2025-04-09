@@ -1,16 +1,11 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <%= form_with model: @promotion_rule, url: spree.admin_promotion_rules_path(@promotion), method: :post, scope: :promotion_rule do |f| %>
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <% if @promotion_rule.type.nil? %>
-            <%= Spree.t(:add_rule_of_type) %>
-          <% else %>
-            <%= @promotion_rule.human_name %>
-          <% end %>
-        </h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-      </div>
+      <% if @promotion_rule.type.nil? %>
+        <%= modal_header(Spree.t(:add_rule_of_type)) %>
+      <% else %>
+        <%= modal_header(@promotion_rule.human_name) %>
+      <% end %>
       <div class="modal-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
         <% if @promotion_rule.type.nil? %>
@@ -38,8 +33,8 @@
         <% end %>
       </div>
       <% if @promotion_rule.type.present? %>
-        <div class="modal-footer d-flex justify-content-between">
-          <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+        <div class="modal-footer">
+          <%= modal_discard_button %>
           <%= turbo_save_button_tag Spree.t('actions.create'), data: { turbo_frame: '_top' } %>
         </div>
       <% end %>

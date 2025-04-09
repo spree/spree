@@ -3,7 +3,25 @@ require 'spec_helper'
 describe Spree::Admin::ExportsController, type: :controller do
   stub_authorization!
 
+  render_views
+
   let(:store) { @default_store }
+
+  describe '#index' do
+    let!(:export) { create(:product_export, store: store) }
+
+    subject { get :index }
+
+    it 'renders the index template' do
+      subject
+      expect(response).to render_template(:index)
+    end
+
+    it 'assigns the exports' do
+      subject
+      expect(assigns(:exports)).to eq([export])
+    end
+  end
 
   describe '#new' do
     subject { get :new, params: { export: { type: 'Spree::Exports::Products', search_params: { name_cont: 'Product' }.as_json } } }

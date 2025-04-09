@@ -2,7 +2,7 @@
 
 <%= search_form_for [:admin, @vendor || @user, @search],
   url: controller_name == 'checkouts' ? spree.admin_checkouts_path : nil,
-  class: "filter-wrap border-bottom",
+  class: "filter-wrap",
   data: {
     controller: "filters reveal",
     reveal_hidden_class: "d-none",
@@ -92,12 +92,7 @@
       <%= render_admin_partials(:orders_filters_partials, f: f) %>
     </div>
 
-    <div class="form-actions">
-      <%= turbo_save_button_tag Spree.t(:filter_results) do %>
-        <%= icon("search") %>
-        <%= Spree.t(:filter_results) %>
-      <% end %>
-    </div>
+    <%= render 'spree/admin/shared/filter_submit' %>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>

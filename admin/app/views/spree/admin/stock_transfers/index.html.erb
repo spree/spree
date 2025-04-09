@@ -5,14 +5,14 @@
   <%= render "spree/admin/shared/stock_nav" %>
 <% end %>
 <% content_for :page_actions do %>
-  <%= if can?(:create, Spree::StockTransfer.new)
-    link_to Spree.t(:new_stock_transfer), spree.new_admin_stock_transfer_path, class: "btn btn-primary"
+  <%= if can?(:create, Spree::StockTransfer)
+    link_to_with_icon 'plus', Spree.t(:new_stock_transfer), new_object_url, class: "btn btn-primary"
   end %>
 <% end %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <%= render "filters" %>
-  <% if @stock_transfers.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table" id="listing_products">
         <thead class="text-muted">
@@ -27,12 +27,12 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'stock_transfer', collection: @stock_transfers %>
+          <%= render collection: @collection, partial: 'stock_transfer' %>
         </tbody>
       </table>
     </div>
+    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
   <% else %>
     <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>
-  <%= render 'spree/admin/shared/index_table_options', collection: @stock_transfers, simple: true if @stock_transfers.any? %>
 </div>

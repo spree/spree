@@ -21,13 +21,16 @@ $black: #000000 !default;
 $blue: #0077ff !default;
 $white: #FFFFFF !default;
 
+$action: #f1faff !default;
+$action-border: #e2ecff !default;
+
 $theme-colors: (
   "white": $white,
   "black": $black,
   "primary": $primary,
   "secondary": rgba($blue, 0.1),
-  "action": #f1faff,
-  "action-border": #e2ecff,
+  "action": $action,
+  "action-border": $action-border,
   "active": $gray-25,
   "partial": #E2E8F0,
   "warning": #ffe17d,
@@ -67,6 +70,9 @@ $border-color: $gray-100 !default;
 $input-border-color: $gray-100 !default;
 $list-group-border-color: $border-color !default;
 $list-group-hover-bg: $gray-25 !default;
+$list-group-active-bg: $action !default;
+$list-group-active-border-color: $action-border !default;
+
 $thumbnail-border-color: $gray-100 !default;
 $hr-border-color: $border-color !default;
 $table-border-color: $gray-50 !default;

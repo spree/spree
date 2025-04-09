@@ -46,21 +46,19 @@
             <%= Spree.t(:security) %>
           </h5>
         </div>
-        <div class="card-body">
+        <div class="card-body" data-controller="reveal" data-reveal-hidden-class="d-none">
           <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :preferred_password_protected, class: 'custom-control-input' %>
+            <%= f.check_box :preferred_password_protected, class: 'custom-control-input', data: { action: 'reveal#toggle' } %>
             <%= f.label :preferred_password_protected, Spree.t(:password_protected), class: 'custom-control-label' %>
           </div>
           <p class="text-muted small pl-4">
             Checking this box will put your storefront behind a password.
           </p>
-
-          <% if @store.prefers_password_protected? %>
-            <div class="form-group">
-              <%= f.label :storefront_password, Spree.t(:password) %>
-              <%= f.text_field :storefront_password, class: 'form-control' %>
-            </div>
-          <% end %>
+          
+          <div class="form-group <%= @store.prefers_password_protected? ? '' : 'd-none' %>" data-reveal-target="item">
+            <%= f.label :storefront_password, Spree.t(:password) %>
+            <%= f.text_field :storefront_password, class: 'form-control' %>
+          </div>
         </div>
       </div>
 

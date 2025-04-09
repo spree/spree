@@ -1,9 +1,6 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <div class="modal-content" data-controller="search-picker">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:add_products) %></h5>
-      <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-    </div>
+    <%= modal_header(Spree.t(:add_products)) %>
     <div class="modal-body border-bottom">
       <%= form_with url: spree.search_admin_products_path, method: :post, data: { controller: 'auto-submit'} do |form| %>
         <%= form.hidden_field :omit_ids, value: parent.product_ids.join(',') %>
@@ -19,6 +16,7 @@
         </div>
       </div>
       <div class="modal-footer border-top">
+        <%= modal_discard_button %>
         <%= turbo_save_button_tag Spree.t(:add_selected_products), class: 'btn btn-primary', disabled: true, data: { search_picker_target: :submit } %>
       </div>
     <% end %>

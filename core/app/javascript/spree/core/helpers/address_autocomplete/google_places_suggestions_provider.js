@@ -6,139 +6,115 @@ export default class {
     }
     this.placesApi = await google.maps.importLibrary('places')
     this.googleSessionToken = new this.placesApi.AutocompleteSessionToken()
-    this.autocompleteSevice = new this.placesApi.AutocompleteService()
   }
 
   async getSuggestions(input, country) {
-    return new Promise((resolve, reject) => {
-      if (this.placesApi === undefined) {
-        reject('You must call connect() before getSuggestions()')
-        return
-      }
+    if (this.placesApi === undefined) {
+      throw new Error('You must call connect() before getSuggestions()')
+    }
 
-      this.autocompleteSevice.getPlacePredictions(
-        {
-          input,
-          // We can use `address`, `street_address`
-          // `street_address` is the most accurate and specific, but sometimes it returns no results, even if the address is valid
-          // Since we are validating the address on the server, we can use `address`
-          types: [],
-          componentRestrictions: {
-            country
-          },
-          sessionToken: this.googleSessionToken
-        },
-        (predictions, status) => {
-          if (status !== this.placesApi.PlacesServiceStatus.OK) {
-            resolve([])
-          } else {
-            resolve(predictions.map(this.parsePrediction.bind(this)))
-          }
-        }
-      )
-    })
+    const request = {
+      input,
+      // We can use `address`, `street_address`
+      // `street_address` is the most accurate and specific, but sometimes it returns no results, even if the address is valid
+      // Since we are validating the address on the server, we can use `address`
+      includedRegionCodes: [country],
+      sessionToken: this.googleSessionToken
+    }
+
+    try {
+      const response = await this.placesApi.AutocompleteSuggestion.fetchAutocompleteSuggestions(request)
+      return response.suggestions.map((element, index) => this.parsePrediction(element.placePrediction, index))
+    } catch (error) {
+      console.error('Error fetching autocomplete suggestions', error)
+      return []
+    }
   }
 
-  async getPlaceDetails(placeID, target) {
-    return new Promise((resolve, reject) => {
-      if (this.placesApi === undefined) {
-        reject('You must call connect() before getPlaceDetails()')
-        return
+  async getPlaceDetails(placeID) {
+    if (this.placesApi === undefined) {
+      throw new Error('You must call connect() before getPlaceDetails()')
+    }
+
+    try {
+      const service = new this.placesApi.Place({ id: placeID })
+
+      const { place } = await service.fetchFields({ fields: ["addressComponents"] })
+
+      const fullAddress = []
+      let hasStreetNumber = false
+
+      const details = {
+        fullAddress: '',
+        city: '',
+        stateAbbr: '',
+        zipcode: '',
+        hasStreetNumber: false
       }
 
-      const service = new this.placesApi.PlacesService(target)
-      service.getDetails(
-        {
-          placeId: placeID,
-          fields: ['address_components'],
-          sessionToken: this.googleSessionToken
-        },
-        (place, status) => {
-          if (status !== this.placesApi.PlacesServiceStatus.OK) {
-            resolve(null)
-            return
-          }
+      let locality, postal_town, sublocality, administrative_area_level_3, premise, subpremise
 
-          this.sessionToken = new this.placesApi.AutocompleteSessionToken()
-
-          const fullAddress = []
-          let hasStreetNumber = false
-
-          const details = {
-            fullAddress: '',
-            city: '',
-            stateAbbr: '',
-            zipcode: '',
-            hasStreetNumber: false
-          }
-
-          let locality = undefined
-          let postal_town = undefined
-          let sublocality = undefined
-          let administrative_area_level_3 = undefined
-          let premise = undefined
-          let subpremise = undefined
-
-          place.address_components.forEach((component) => {
-            if (component.types.includes('street_number')) {
-              fullAddress.push(component.long_name)
-              hasStreetNumber = true
-            }
-            if (component.types.includes('subpremise')) {
-              subpremise = component.long_name
-            }
-            if (component.types.includes('premise')) {
-              premise = component.long_name
-            }
-            if (component.types.includes('route')) {
-              fullAddress.push(component.long_name)
-            }
-            if (component.types.includes('locality')) {
-              locality = component.long_name
-            }
-            if (component.types.includes('postal_town')) {
-              postal_town = component.long_name
-            }
-            if (component.types.includes('sublocality')) {
-              sublocality = component.long_name
-            }
-            if (component.types.includes('administrative_area_level_1')) {
-              details.stateAbbr = component.short_name
-            }
-            if (component.types.includes('postal_code')) {
-              details.zipcode = component.long_name
-            }
-            if (component.types.includes('administrative_area_level_3')) {
-              administrative_area_level_3 = component.long_name
-            }
-          })
-          // City is tricky, because it can be in different fields
-          details.city =
-            locality ||
-            postal_town ||
-            sublocality ||
-            administrative_area_level_3 ||
-            ''
-          if (premise && !hasStreetNumber) {
-            fullAddress.unshift(premise)
-            hasStreetNumber = true
-          }
-          if (subpremise) {
-            fullAddress.push(subpremise)
-          }
-          details.hasStreetNumber = hasStreetNumber
-          details.fullAddress = fullAddress.join(' ')
-          resolve(details)
+      place.addressComponents.forEach((component) => {
+        if (component.types.includes('street_number')) {
+          fullAddress.push(component.longText)
+          hasStreetNumber = true
         }
-      )
-    })
+        if (component.types.includes('subpremise')) {
+          subpremise = component.longText
+        }
+        if (component.types.includes('premise')) {
+          premise = component.longText
+        }
+        if (component.types.includes('route')) {
+          fullAddress.push(component.longText)
+        }
+        if (component.types.includes('locality')) {
+          locality = component.longText
+        }
+        if (component.types.includes('postal_town')) {
+          postal_town = component.longText
+        }
+        if (component.types.includes('sublocality')) {
+          sublocality = component.longText
+        }
+        if (component.types.includes('administrative_area_level_1')) {
+          details.stateAbbr = component.shortText
+        }
+        if (component.types.includes('postal_code')) {
+          details.zipcode = component.longText
+        }
+        if (component.types.includes('administrative_area_level_3')) {
+          administrative_area_level_3 = component.longText
+        }
+      })
+      // City is tricky, because it can be in different fields
+      details.city =
+        locality ||
+        postal_town ||
+        sublocality ||
+        administrative_area_level_3 ||
+        ''
+      if (premise && !hasStreetNumber) {
+        fullAddress.unshift(premise)
+        hasStreetNumber = true
+      }
+      if (subpremise) {
+        fullAddress.push(subpremise)
+      }
+      details.hasStreetNumber = hasStreetNumber
+      details.fullAddress = fullAddress.join(' ')
+      return details
+    } catch (error) {
+      console.error('Error fetching autocomplete details', error)
+      return null
+    }
   }
 
   parsePrediction(prediction, index) {
     const suggestion = {
       index: index,
-      placeID: prediction.place_id,
-      description: prediction.description
+      placeID: prediction.placeId,
+      description: prediction.text.text
     }
 
     const splittedText = this.splitTextForMarks(prediction)
@@ -155,12 +131,18 @@ export default class {
 
   // This function takes the prediction and splits the description into an array of objects with the text and a boolean indicating if it should be highlighted
   splitTextForMarks(prediction) {
-    let markedAreas = [...prediction.matched_substrings.sort((m) => m.offset)]
+    const description = prediction.text.text;
+    let markedAreas = prediction.text.matches
+      .map(({ startOffset, endOffset }) => ({
+        offset: startOffset,
+        length: endOffset - startOffset
+      }))
+      .sort((a, b) => a.offset - b.offset);
     const textAreas = []
-    for (let i = 0; i < prediction.description.length; i++) {
+    for (let i = 0; i < description.length; i++) {
       if (markedAreas[0]?.offset === i) {
         textAreas.push({
-          text: prediction.description.substring(i, i + markedAreas[0].length),
+          text: description.substring(i, i + markedAreas[0].length),
           marked: true
         })
         i += markedAreas[0].length - 1
@@ -168,7 +150,7 @@ export default class {
         markedAreas = [...markedAreas.sort((m) => m.offset)]
       } else {
         textAreas.push({
-          text: prediction.description.charAt(i),
+          text: description.charAt(i),
           marked: false
         })
       }

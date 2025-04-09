@@ -9,6 +9,8 @@ RSpec.describe Spree::Admin::PagesController, type: :controller do
   let(:page) { create(:custom_page, pageable: store) }
 
   describe 'GET #index' do
+    let!(:page) { create(:custom_page, pageable: store) }
+
     it 'renders the index template' do
       get :index
       expect(response).to render_template(:index)

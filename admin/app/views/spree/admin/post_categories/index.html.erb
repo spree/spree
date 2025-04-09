@@ -4,8 +4,8 @@
 
 <%= render 'spree/admin/shared/posts_tabs' %>
 
-<% if @post_categories.any? %>
-  <div class="card-lg p-0">
+<% if @collection.any? %>
+  <div class="card-lg">
     <div class="table-responsive rounded-lg">
       <table class="table">
         <thead class="text-muted">
@@ -15,13 +15,11 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'spree/admin/post_categories/post_category', collection: @post_categories, cached: spree_base_cache_scope %>
+          <%= render collection: @collection, partial: 'spree/admin/post_categories/post_category', cached: spree_base_cache_scope %>
         </tbody>
       </table>
     </div>
   </div>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: Spree.t(:post_categories)) %>
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found' %>
 <% end %>

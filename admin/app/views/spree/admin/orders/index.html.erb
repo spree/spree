@@ -10,7 +10,7 @@
   <%= link_to_with_icon 'plus', Spree.t(:new_order), spree.admin_orders_path, class: "btn btn-primary", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
 <% end %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <% if params[:frame_name].present? %>
     <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
       <%= render 'spree/admin/orders/filters', frame_name: params[:frame_name] %>

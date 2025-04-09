@@ -5,9 +5,9 @@
   <%= link_to_with_icon 'plus', Spree.t(:add_new_page), spree.new_admin_page_path, class: "btn btn-primary" if can?(:create, Spree::Page.new) %>
 <% end %>
 
-<div class="card-lg p-0">
+<div class="card-lg">
   <%= render "spree/admin/pages/filters" %>
-  <% if @pages.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead class="text-muted">
@@ -17,10 +17,10 @@
           </tr>
         </thead>
         <tbody>
-          <%= render collection: @pages, partial: "spree/admin/pages/page", cached: spree_base_cache_scope %>
+          <%= render collection: @collection, partial: "spree/admin/pages/page", cached: spree_base_cache_scope %>
         </tbody>
       </table>
-      <%= render partial: "spree/admin/shared/index_table_options", locals: { collection: @pages } %>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
     </div>
   <% else %>
     <%= render 'spree/admin/shared/no_resource_found' %>

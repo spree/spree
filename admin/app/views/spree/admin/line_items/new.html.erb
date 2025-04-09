@@ -1,9 +1,6 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <div class="modal-content" data-controller="search-picker">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t(:add_variant) %></h5>
-      <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-    </div>
+    <%= modal_header(Spree.t(:add_variant)) %>
     <div class="modal-body border-bottom">
       <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
@@ -20,7 +17,7 @@
           </p>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between border-top">
+      <div class="modal-footer border-top">
         <div class="d-flex gap-2 m-0 align-items-center">
           <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
           <%= form.number_field :quantity, class: "form-control", min: 1 %>

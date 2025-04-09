@@ -77,6 +77,10 @@
         <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
           <%= icon 'map' %>
           <%= Spree.t('admin.getting_started') %>
+
+          <span class="badge ml-auto badge-info">
+            <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
+          </span>
         <% end %>
       </li>
     <% end %>

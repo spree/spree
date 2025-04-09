@@ -18,7 +18,8 @@ describe Spree::Admin::StoresController do
       {
         name: 'New UK Store',
         default_currency: 'GBR',
-        default_country_iso: 'GB'
+        default_country_iso: 'GB',
+        default_locale: 'en'
       }
     end
 
@@ -31,6 +32,7 @@ describe Spree::Admin::StoresController do
       expect(store.name).to eq('New UK Store')
       expect(store.default_currency).to eq('GBR')
       expect(store.default_country).to eq(uk_country)
+      expect(store.default_locale).to eq('en')
     end
   end
 
@@ -41,7 +43,8 @@ describe Spree::Admin::StoresController do
       {
         name: 'New Store Name',
         default_currency: 'GBR',
-        default_country_iso: 'GB'
+        default_country_iso: 'GB',
+        default_locale: 'pl'
       }
     end
 
@@ -57,6 +60,7 @@ describe Spree::Admin::StoresController do
       expect(store.reload.name).to eq('New Store Name')
       expect(store.default_currency).to eq('GBR')
       expect(store.default_country).to eq(uk_country)
+      expect(store.default_locale).to eq('pl')
     end
 
     context 'when removing assets' do

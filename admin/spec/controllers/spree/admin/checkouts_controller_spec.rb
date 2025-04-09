@@ -7,27 +7,36 @@ describe Spree::Admin::CheckoutsController, type: :controller do
   let(:store) { @default_store }
 
   describe '#index' do
-    let!(:order) { create(:order_with_totals, store: store) }
-    let!(:completed_order) { create(:completed_order_with_totals, store: store) }
-    let(:line_item) { order.line_items.first }
+    context 'with orders' do
+      let!(:order) { create(:order_with_totals, store: store) }
+      let!(:completed_order) { create(:completed_order_with_totals, store: store) }
+      let(:line_item) { order.line_items.first }
 
-    it 'renders index' do
-      get :index
-      expect(response).to have_http_status(:ok)
-    end
+      it 'renders index' do
+        get :index
+        expect(response).to have_http_status(:ok)
+      end
 
-    it 'return all checkouts' do
-      get :index
-      expect(assigns(:orders).to_a).to include(order)
-      expect(assigns(:orders).to_a).not_to include(completed_order)
-    end
-
-    context 'filtering by number' do
-      let(:order) { create(:order, number: 'R123456789') }
-
-      it 'returns orders with matching number' do
-        get :index, params: { q: { number_cont: 'R123456789-10' } }
+      it 'return all checkouts' do
+        get :index
         expect(assigns(:orders).to_a).to include(order)
+        expect(assigns(:orders).to_a).not_to include(completed_order)
+      end
+
+      context 'filtering by number' do
+        let(:order) { create(:order, number: 'R123456789') }
+
+        it 'returns orders with matching number' do
+          get :index, params: { q: { number_cont: 'R123456789-10' } }
+          expect(assigns(:orders).to_a).to include(order)
+        end
+      end
+    end
+
+    context 'without orders' do
+      it 'renders index' do
+        get :index
+        expect(response).to have_http_status(:ok)
       end
     end
   end

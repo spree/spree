@@ -82,7 +82,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
       }
     }
 
-    .badge {
+    .badge:not(.badge-info) {
       @extend .badge-light;
     }
   }
@@ -155,4 +155,11 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     right: 0.5rem;
     top: 0.5rem;
   }
+}
+
+.documentation-link-container {
+  font-size: $font-size-sm;
+  text-align: center;
+  margin-top: 2rem;
+  color: $gray-400;
 }

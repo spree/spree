@@ -2,8 +2,8 @@
 
 <div class="row">
   <div class="col-12 col-lg-8">
-    <div class="card-lg p-0">
-      <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap border-bottom" do |f| %>
+    <div class="card-lg">
+      <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap" do |f| %>
         <div class="d-flex flex-column flex-lg-row gap-2">
           <%= render 'spree/admin/shared/filters_search_bar', param: :code_eq %>
 
@@ -54,13 +54,11 @@
             </tbody>
           </table>
         <% else %>
-          <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CouponCode)) %>
-          </div>
+          <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
         <% end %>
       </div>
 
-      <%= render 'spree/admin/shared/index_table_options', collection: @coupon_codes, simple: true if @coupon_codes.any? %>
+      <%= render 'spree/admin/shared/index_table_options', collection: @coupon_codes if @coupon_codes.any? %>
     </div>
   </div>
 

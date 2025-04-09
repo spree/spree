@@ -3,10 +3,7 @@
     <%= turbo_frame_tag :dialog_modal_lg do %>
       <%= form_for @store, url: spree.admin_stores_path, data: { turbo_frame: '_top', controller: 'store-form enable-button' } do |f| %>
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="newStoreModalLabel"><%= Spree.t(:new_store) %></h5>
-            <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>"></button>
-          </div>
+          <%= modal_header(Spree.t(:new_store)) %>
           <div class="modal-body">
             <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
             <div class="row">
@@ -25,6 +22,11 @@
                   <div class="form-group">
                     <%= f.label :default_country_iso, Spree.t(:country) %>
                     <%= f.collection_select :default_country_iso, Spree::Country.order(:name), :iso, :name, { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
+                  </div>
+
+                  <div class="form-group">
+                    <%= f.label :default_locale %>
+                    <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, current_store.default_locale || I18n.locale), { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
                   </div>
 
                   <div class="form-group">
@@ -123,8 +125,8 @@
                 </div>
               </div>
             </div>
-            <div class="modal-footer justify-content-between">
-              <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+            <div class="modal-footer">
+              <%= modal_discard_button %>
               <%= turbo_save_button_tag Spree.t('actions.create') %>
             </div>
           </div>

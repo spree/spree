@@ -147,6 +147,12 @@
                 ]
               },
               {
+                "group": "Tutorials",
+                "pages": [
+                  "api-reference/tutorials/quick-checkout-with-stripe"
+                ]
+              },
+              {
                 "group": "Storefront API",
                 "pages": [
                   "api-reference/storefront/authentication",
@@ -262,7 +268,8 @@
                     "pages": [
                       "api-reference/storefront/stripe/return-a-stripe-payment-intent",
                       "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent-1",
+                      "api-reference/storefront/stripe/updates-stripe-payment-intent",
+                      "api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state",
                       "api-reference/storefront/stripe/create-a-stripe-setup-intent"
                     ]
                   },
@@ -1125,15 +1132,6 @@
                     "pages": [
                       "api-reference/storefront/checkout-store-credit/add-store-credit",
                       "api-reference/storefront/checkout-store-credit/remove-store-credit"
-                    ]
-                  },
-                  {
-                    "group": "Stripe",
-                    "pages": [
-                      "api-reference/storefront/stripe/return-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent-1",
-                      "api-reference/storefront/stripe/create-a-stripe-setup-intent"
                     ]
                   },
                   {
