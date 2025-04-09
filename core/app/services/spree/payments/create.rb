@@ -14,7 +14,7 @@ module Spree
       protected
 
       def prepare_payment_attributes(order:, params:)
-        payment_method = order.available_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
+        payment_method = order.collect_frontend_payment_methods.find { |pm| pm.id.to_s == params[:payment_method_id]&.to_s }
 
         payment_attributes = {
           amount: params[:amount] || order.order_total_after_store_credit,

@@ -503,14 +503,6 @@ module Spree
       payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
     end
 
-    def available_payment_methods(store = nil)
-      if store.present?
-        Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
-      end
-
-      @available_payment_methods ||= collect_payment_methods(store)
-    end
-
     def insufficient_stock_lines
       line_items.select(&:insufficient_stock?)
     end
@@ -754,7 +746,11 @@ module Spree
     end
 
     def collect_backend_payment_methods
-      PaymentMethod.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
+      store.payment_methods.active.available_on_back_end.select { |pm| pm.available_for_order?(self) }
+    end
+
+    def collect_frontend_payment_methods
+      store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     # determines whether the inventory is fully discounted
@@ -769,19 +765,6 @@ module Spree
 
     def promo_code
       Spree::CouponCode.find_by(order: self, promotion: promotions).try(:code) || promotions.pluck(:code).compact.first
-    end
-
-    def validate_payments_attributes(attributes)
-      Spree::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 5')
-
-      # Ensure the payment methods specified are allowed for this user
-      payment_method_ids = available_payment_methods.map(&:id).map(&:to_s)
-
-      attributes.each do |payment_attributes|
-        payment_method_id = payment_attributes[:payment_method_id].to_s
-
-        raise ActiveRecord::RecordNotFound unless payment_method_ids.include?(payment_method_id)
-      end
     end
 
     def valid_promotions
@@ -884,15 +867,6 @@ module Spree
 
     def ensure_currency_presence
       self.currency ||= store.default_currency
-    end
-
-    def collect_payment_methods(store = nil)
-      if store.present?
-        Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
-      end
-      store ||= self.store
-
-      store.payment_methods.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def credit_card_nil_payment?(attributes)
