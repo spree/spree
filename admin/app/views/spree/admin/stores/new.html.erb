@@ -25,6 +25,11 @@
                   </div>
 
                   <div class="form-group">
+                    <%= f.label :default_locale, Spree.t(:locale) %>
+                    <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, current_store.default_locale || I18n.locale), { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
+                  </div>
+
+                  <div class="form-group">
                     <%= f.label :default_currency, Spree.t(:currency) %>
                     <%= f.currency_select :default_currency, preferred_currencies, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
                   </div>
