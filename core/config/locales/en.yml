@@ -331,12 +331,12 @@ en:
       spree/digital:
         one: Digital asset
         other: Digital assets
-      spree/integration:
-        one: Integration
-        other: Integrations
       spree/export:
         one: Export
         other: Exports
+      spree/integration:
+        one: Integration
+        other: Integrations
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units
