@@ -163,6 +163,15 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    # returns the URL of an object on the storefront
+    # @param resource [Spree::Product, Spree::Post, Spree::Taxon, Spree::Page] the resource to get the URL for
+    # @param options [Hash] the options for the URL
+    # @option options [String] :locale the locale of the resource, defaults to I18n.locale
+    # @option options [String] :store the store of the resource, defaults to current_store
+    # @option options [String] :relative whether to use the relative URL, defaults to false
+    # @option options [String] :preview_id the preview ID of the resource, usually the ID of the resource
+    # @option options [String] :variant_id the variant ID of the resource, usually the ID of the variant (only used for products)
+    # @return [String] the URL of the resource
     def spree_storefront_resource_url(resource, options = {})
       options.merge!(locale: locale_param) if defined?(locale_param) && locale_param.present?
 

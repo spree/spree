@@ -1,6 +1,8 @@
 module Spree
   module Admin
     module BulkOperationsHelper
+      # render a checkbox to select all items for bulk operations
+      # @return [String]
       def bulk_operations_select_all_checkbox
         content_tag :div, class: "custom-control custom-checkbox ml-1" do
           check_box_tag(
@@ -15,6 +17,9 @@ module Spree
         end
       end
 
+      # render a checkbox to select an item for bulk operations
+      # @param object [Spree::Product, Spree::User, Spree::Order]
+      # @return [String]
       def bulk_operations_checkbox(object)
         content_tag :div, class: "custom-control custom-checkbox ml-1" do
           check_box_tag(
@@ -29,6 +34,15 @@ module Spree
         end
       end
 
+      # render a link to perform a bulk action
+      # @param text [String] the text of the link
+      # @param path [String] the path of the link
+      # @param options [Hash] the options of the link
+      # @option options [String] :icon the icon of the link
+      # @option options [String] :url the url to perform the bulk action to be set for the form in bulk modal
+      # @option options [String] :class the class of the link
+      # @option options [String] :data the data of the link
+      # @return [String]
       def bulk_action_link(text, path, options = {})
         options[:data] ||= {}
         options[:data][:action] ||= 'click->bulk-operation#setBulkAction'
@@ -45,19 +59,22 @@ module Spree
         end
       end
 
+      # render a close button for the bulk modal
       def bulk_operations_close_button
         button_tag(
-          '', 
-          type: 'button', 
-          class: 'btn-close', 
-          data: { 
-            dismiss: 'modal', 
-            aria_label: Spree.t(:close), 
-            action: 'bulk-operation#cancel' 
+          '',
+          type: 'button',
+          class: 'btn-close',
+          data: {
+            dismiss: 'modal',
+            aria_label: Spree.t(:close),
+            action: 'bulk-operation#cancel'
           }
         )
       end
 
+      # render a counter for the bulk operations
+      # @return [String]
       def bulk_operations_counter
         content_tag(:span, class: 'bulk-operations-counter ml-1') do
           content_tag(:strong, '', data: { bulk_operation_target: 'counter' }) +

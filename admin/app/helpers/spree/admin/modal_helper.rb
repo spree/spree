@@ -1,6 +1,9 @@
 module Spree
   module Admin
     module ModalHelper
+      # render a header for the modal
+      # @param title [String, Proc] the title of the modal
+      # @return [String]
       def modal_header(title)
         title = capture(&title) if block_given?
         content_tag(:div, class: 'modal-header') do
@@ -8,10 +11,14 @@ module Spree
         end.html_safe
       end
 
+      # render a close button for the modal
+      # @return [String]
       def modal_close_button
         button_tag('', type: 'button', class: 'btn-close', data: { dismiss: 'modal', aria_label: Spree.t(:close) }).html_safe
       end
 
+      # render a discard button for the modal
+      # @return [String]
       def modal_discard_button
         button_tag(type: 'button', class: 'btn btn-light', data: { dismiss: 'modal' }) do
           Spree.t('actions.discard')
