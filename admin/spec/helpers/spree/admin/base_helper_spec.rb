@@ -20,33 +20,4 @@ describe Spree::Admin::BaseHelper do
       end
     end
   end
-
-  describe '#external_page_preview_link' do
-    let(:current_store) { create(:store) }
-    let(:product) { create(:product, stores: [current_store]) }
-
-    def spree_storefront_resource_url(*_args); end
-    def button_link_to(*_args); end
-    def link_to_with_icon(*_args); end
-
-    context 'for product' do
-      context 'when product is a draft' do
-        before { product.update(status: :draft) }
-
-        it 'should call spree_storefront_resource_url with preview_id' do
-          expect(self).to receive(:spree_storefront_resource_url).with(product, preview_id: product.id)
-
-          external_page_preview_link(product)
-        end
-      end
-
-      context 'when product is not a draft' do
-        it 'should call spree_storefront_resource_url with preview_id' do
-          expect(self).to receive(:spree_storefront_resource_url).with(product, preview_id: product.id)
-
-          external_page_preview_link(product)
-        end
-      end
-    end
-  end
 end

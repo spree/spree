@@ -16,6 +16,7 @@ module Spree
 
       # the per_page_dropdown is used on index pages like orders, products, promotions etc.
       # this method generates the select_tag
+      # @return [String]
       def per_page_dropdown
         per_page_default = if @products
                              Spree::Admin::RuntimeConfig.admin_products_per_page
@@ -48,6 +49,8 @@ module Spree
 
       # helper method to create proper url to apply per page ing
       # fixes https://github.com/spree/spree/issues/6888
+      # @param per_page [Integer] the number of items per page
+      # @return [Hash] the params to apply per page
       def per_page_dropdown_params(per_page)
         args = params.permit!.to_h.clone
         args.delete(:page)
@@ -56,6 +59,12 @@ module Spree
         args
       end
 
+      # render a button link to edit a resource
+      # if the current user doesn't have permission to update the resource, the button will not be rendered
+      # @param resource [Spree::Product, Spree::User, Spree::Order] the resource to edit
+      # @param options [Hash] the options for the link
+      # @option options [String] :url the url to edit the resource (optional)
+      # @return [String] the link to edit the resource
       def link_to_edit(resource, options = {})
         url = options[:url] || edit_object_url(resource)
         options[:data] ||= {}
@@ -64,6 +73,12 @@ module Spree
         link_to_with_icon('pencil', Spree.t(:edit), url, options) if can?(:update, resource)
       end
 
+      # render a button to delete a resource with a confirmation modal
+      # if the current user doesn't have permission to destroy the resource, the button will not be rendered
+      # @param resource [Spree::Product, Spree::User, Spree::Order] the resource to delete
+      # @param options [Hash] the options for the link
+      # @option options [String] :url the url to delete the resource (optional)
+      # @return [String] the link to delete the resource
       def link_to_delete(resource, options = {})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t('actions.destroy')
@@ -81,6 +96,12 @@ module Spree
         end
       end
 
+      # renders a link with an icon
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param text [String] the text of the link
+      # @param url [String] the url of the link
+      # @param options [Hash] the options for the link
+      # @return [String] the link with the icon
       def link_to_with_icon(icon_name, text, url, options = {})
         options[:class] ||= (options[:class].to_s + " with-tip").strip
         options[:title] ||= text if options[:no_text]
@@ -95,6 +116,12 @@ module Spree
         link_to(text.html_safe, url, options)
       end
 
+      # renders an active link with an icon, using the active_link_to method from https://github.com/comfy/active_link_to gem
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param text [String] the text of the link
+      # @param url [String] the url of the link
+      # @param options [Hash] the options for the link
+      # @return [String] the active link with the icon
       def active_link_to_with_icon(icon_name, text, url, options = {})
         options[:class] = (options[:class].to_s + " with-tip").strip
         options[:title] = text if options[:no_text]
@@ -109,7 +136,13 @@ module Spree
         active_link_to(text.html_safe, url, options)
       end
 
+      # renders a button with an icon (optional)
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
+      # @param text [String] the text of the button
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param button_type [String] the type of the button, eg: 'submit', 'button'
+      # @param options [Hash] the options for the button
+      # @return [String] the button with the icon
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
           text = "#{icon(icon_name, class: "icon icon-#{icon_name}")} #{text}"
@@ -151,6 +184,10 @@ module Spree
         end
       end
 
+      # renders a badge (active/inactive)
+      # @param condition [Boolean] the condition to check
+      # @param options [Hash] the options for the badge
+      # @return [String] the badge with the icon
       def active_badge(condition, options = {})
         label = options[:label]
         label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
@@ -163,6 +200,11 @@ module Spree
         end
       end
 
+      # renders a back button to the previous page
+      # @param default_url [String] the default url to go back to
+      # @param object [Spree::Product, Spree::User, Spree::Order] the object list to go back to
+      # @param label [String] the label of the back button (optional)
+      # @return [String] the back button
       def page_header_back_button(default_url, object = nil, label = nil)
         url = default_url
 
@@ -177,6 +219,11 @@ module Spree
         end
       end
 
+      # renders an external link with an icon (eg. spree documentation website)
+      # @param label [String] the label of the link
+      # @param url [String] the url of the link
+      # @param opts [Hash] the options for the link
+      # @return [String] the external link with the icon
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
@@ -191,6 +238,32 @@ module Spree
         end
       end
 
+      # renders a link to preview a resource on the storefront using the spree_storefront_resource_url helper
+      # @param resource [Spree::Product, Spree::Post] the resource to preview
+      # @param options [Hash] the options for the link
+      # @return [String] the link to preview the resource
+      def external_page_preview_link(resource, options = {})
+        resource_name = options[:name] || resource.class.name.demodulize
+
+        url = if [Spree::Product, Spree::Post].include?(resource.class)
+                spree_storefront_resource_url(resource, preview_id: resource.id)
+              else
+                spree_storefront_resource_url(resource)
+              end
+
+        link_to_with_icon(
+          'eye',
+          Spree.t('admin.utilities.preview', name: resource_name),
+          url,
+          class: 'text-left dropdown-item', id: "adminPreview#{resource_name}", target: :blank, data: { turbo: false }
+        )
+      end
+
+      # renders a help bubble with an icon
+      # @param text [String] the text of the help bubble
+      # @param placement [String] the placement of the help bubble
+      # @param css [String] the css class of the help bubble
+      # @return [String] the help bubble with the icon
       def help_bubble(text = '', placement = 'bottom', css: nil)
         css ||= 'text-muted'
         content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
