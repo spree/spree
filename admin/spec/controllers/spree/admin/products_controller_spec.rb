@@ -1068,6 +1068,32 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(Spree::Product.find(product.id).label_list).to be_empty
       end
     end
+
+    describe 'failing to update product' do
+      let!(:existing_product) { create(:product, name: 'Existing Product', slug: 'existing-product', stores: [store]) }
+
+      let(:product_params) do
+        {
+          name: 'Existing Product',
+          slug: 'existing-product'
+        }
+      end
+
+      context 'using the same slug' do
+        before do
+          send_request
+        end
+
+        it 'renders the edit page' do
+          expect(response).to render_template(:edit)
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'should render the error' do
+          expect(response.body).to include('Slug has already been taken')
+        end
+      end
+    end
   end
 
   describe 'PUT #clone' do
