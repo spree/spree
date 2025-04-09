@@ -91,7 +91,7 @@ module Spree
           end
 
           def payment_methods
-            render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
+            render_serialized_payload { serialize_payment_methods(spree_current_order.collect_frontend_payment_methods) }
           end
 
           def validate_order_for_payment

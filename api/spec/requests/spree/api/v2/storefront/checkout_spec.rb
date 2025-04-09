@@ -586,7 +586,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
     let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
-    let(:payment_methods) { order.available_payment_methods }
+    let(:payment_methods) { order.collect_frontend_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
       before { execute }
