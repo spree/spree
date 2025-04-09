@@ -84,7 +84,7 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[refunded partially_refunded multi_search]
 
     attr_reader :coupon_code
-    attr_accessor :temporary_address, :temporary_credit_card, :use_billing, :use_shipping
+    attr_accessor :temporary_address, :temporary_credit_card
 
     attribute :state_machine_resumed, :boolean
 
@@ -151,6 +151,7 @@ module Spree
 
     before_validation :clone_billing_address, if: :use_billing?
     before_validation :clone_shipping_address, if: :use_shipping?
+    attr_accessor :use_billing, :use_shipping
 
     before_create :link_by_email
     before_update :ensure_updated_shipments, :homogenize_line_item_currencies, if: :currency_changed?
@@ -195,8 +196,8 @@ module Spree
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
     scope :partially_refunded, lambda {
-                                 joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
-                               }
+                                joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
+                              }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
@@ -503,7 +504,7 @@ module Spree
     end
 
     def available_payment_methods(store = nil)
-      Spree::Deprecation.warn('`Order#validate_payments_attributes` is deprecated and will be removed in Spree 6. Use `collect_frontend_payment_methods` instead.')
+      Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 6. Use `collect_frontend_payment_methods` instead.')
       if store.present?
         Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
       end
@@ -843,7 +844,7 @@ module Spree
           errors.add(:base, Spree.t(:items_cannot_be_shipped))
         end
 
-        false
+        return false
       end
     end
 
