@@ -8,7 +8,7 @@
           <%= render "spree/admin/integrations/form_guides/#{@integration.form_guide_partial_name}", form: form %>
         <% end %>
 
-        <% @integration.preferences.keys.each do |key| %>
+        <% (@integration.try(:preferences)&.keys || []).each do |key| %>
           <%= preference_field(@integration, form, key, i18n_scope: "admin.integrations.#{@integration.key}") %>
 
           <% if @integration.field_help_text_partials.map(&:to_s).include?(key.to_s) %>
