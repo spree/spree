@@ -144,7 +144,7 @@ describe Spree::Order, type: :model do
         create(:shipment, order: order, state: 'ready')
       end
 
-      it 'should return true' do
+      it 'returns true' do
         expect(order.reload.allow_cancel?).to eq true
       end
     end
@@ -592,7 +592,7 @@ describe Spree::Order, type: :model do
   end
 
   # Regression test for #4199
-  describe '#available_payment_methods' do
+  describe '#collect_frontend_payment_methods' do
     let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
@@ -603,45 +603,42 @@ describe Spree::Order, type: :model do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'front_end',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods).to include(payment_method)
+                                                    stores: [store])
+      expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'both',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods).to include(payment_method)
+                                                    stores: [store])
+      expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
-    it 'does not include a payment method twice if display_on is blank' do
-      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
-                                                    active: true,
-                                                    display_on: 'both',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods.count).to eq(1)
-      expect(order.available_payment_methods).to include(payment_method)
+    it 'does not include backend payment method ' do
+      Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end', stores: [store])
+      expect(order.collect_frontend_payment_methods.count).to eq(0)
+    end
+
+    it 'does not include inactive payment methods' do
+      Spree::PaymentMethod.create!(name: 'Fake', active: false, display_on: 'front_end', stores: [store])
+      expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
     it 'does not include a payment method that is not suitable for this order' do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
 
-      expect(order.available_payment_methods).to match_array [ok_method]
+      expect(order.collect_frontend_payment_methods).to match_array [ok_method]
     end
 
     it 'does not include a payment method from different stores' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'both',
-                                                    stores: [store_2]
-                                                   )
-      expect(order.available_payment_methods).not_to include(payment_method)
+                                                    stores: [store_2])
+      expect(order.collect_frontend_payment_methods).not_to include(payment_method)
 
-      expect(order_from_different_store.available_payment_methods).to include(payment_method)
+      expect(order_from_different_store.collect_frontend_payment_methods).to include(payment_method)
     end
   end
 
@@ -939,6 +936,7 @@ describe Spree::Order, type: :model do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(true)
       expect(order.checkout_allowed?).to be true
     end
+
     it 'is false if there are no line_items in the order' do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(false)
       expect(order.checkout_allowed?).to be false
@@ -1231,6 +1229,7 @@ describe Spree::Order, type: :model do
   describe '#promo_code' do
     context 'without promo code' do
       let(:order) { build_stubbed(:order, user: nil, email: nil) }
+
       it 'returns nil' do
         expect(order.promo_code).to be_nil
       end
@@ -1271,27 +1270,6 @@ describe Spree::Order, type: :model do
           Spree::Cart::RemoveLineItem.call(order: order, line_item: order.line_items.first)
           expect(order.reload.promo_code).to eq(coupon_code.code)
         end
-      end
-    end
-  end
-
-  describe '#validate_payments_attributes' do
-    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
-    let(:attributes) do
-      [{ amount: 50, payment_method_id: payment_method.id }]
-    end
-
-    context 'with existing payment method' do
-      it "doesn't raise error and returns collection" do
-        expect(order.validate_payments_attributes(attributes)).to eq attributes
-      end
-    end
-
-    context 'not existing payment method' do
-      let(:payment_method) { create(:credit_card_payment_method, display_on: 'backend', stores: [store]) }
-
-      it 'raises RecordNotFound' do
-        expect { order.validate_payments_attributes(attributes) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -1466,9 +1444,9 @@ describe Spree::Order, type: :model do
   end
 
   describe '#cart_promo_total' do
-    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
-
     subject { order.reload.cart_promo_total }
+
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
 
     context 'without promotions' do
       it 'returns 0' do
@@ -1595,11 +1573,11 @@ describe Spree::Order, type: :model do
   end
 
   describe 'bill_address_id=' do
+    subject { order.bill_address_id = address.id }
+
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
-
-    subject { order.bill_address_id = address.id }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1618,10 +1596,10 @@ describe Spree::Order, type: :model do
   end
 
   describe '#bill_address_attributes=' do
+    subject { order.bill_address_attributes = address_attributes }
+
     let(:order) { create(:order, user: user) }
     let(:address_attributes) { attributes_for(:address) }
-
-    subject { order.bill_address_attributes = address_attributes }
 
     context 'when user has default bill address' do
       let!(:user) { create(:user_with_addresses) }
@@ -1671,11 +1649,11 @@ describe Spree::Order, type: :model do
   end
 
   describe 'ship_address_id=' do
+    subject { order.ship_address_id = address.id }
+
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
-
-    subject { order.ship_address_id = address.id }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1694,10 +1672,10 @@ describe Spree::Order, type: :model do
   end
 
   describe '#ship_address_attributes=' do
+    subject { order.ship_address_attributes = address_attributes }
+
     let(:order) { create(:order, user: user) }
     let(:address_attributes) { attributes_for(:address) }
-
-    subject { order.ship_address_attributes = address_attributes }
 
     context 'when user has default ship address' do
       let!(:user) { create(:user_with_addresses) }
