@@ -1,7 +1,7 @@
 <% if settings_active? %>
   <ul class="nav flex-column">
     <li class="nav-item mb-1 py-2 border-bottom border-bottom-dashed">
-      <%= active_link_to_with_icon('chevron-left', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'nav-link') %>
+      <%= link_to_with_icon('chevron-left', Spree.t('admin.back_to_dashboard'), current_store.present? ? spree.admin_dashboard_path : main_app.root_path, class: 'nav-link') %>
     </li>
 
     <% if can?(:manage, current_store) %>
@@ -69,10 +69,10 @@
     <%= render_admin_partials(:store_settings_nav_partials) %>
   </ul>
 <% else %>
-  <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+  <%= render 'spree/admin/shared/sidebar/store_dropdown' if current_store %>
 
   <ul class="nav flex-column">
-    <% unless current_store.setup_completed? %>
+    <% if current_store && !current_store.setup_completed? %>
       <li class="nav-item">
         <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
           <%= icon 'map' %>
@@ -85,12 +85,14 @@
       </li>
     <% end %>
 
-    <li class="nav-item">
-      <%= active_link_to spree.admin_path, class: 'nav-link', active: controller_name == 'dashboard' && action_name == 'show' do %>
-        <%= icon 'home' %>
-        <%= Spree.t(:home) %>
-      <% end %>
-    </li>
+    <% if current_store %>
+      <li class="nav-item">
+        <%= active_link_to spree.admin_path, class: 'nav-link', active: controller_name == 'dashboard' && action_name == 'show' do %>
+          <%= icon 'home' %>
+          <%= Spree.t(:home) %>
+        <% end %>
+      </li>
+    <% end %>
 
     <%= render 'spree/admin/shared/sidebar/orders_nav' %>
     <%= render 'spree/admin/shared/sidebar/returns_nav' %>
