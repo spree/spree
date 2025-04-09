@@ -16,6 +16,53 @@ describe Spree::ProductsController, type: :controller do
       expect(response).to render_template(:index)
       expect(assigns(:current_page)).to be_a(Spree::Pages::ShopAll)
     end
+
+    context 'when filtering' do
+      let(:taxon) { create(:taxon) }
+
+      context 'by one taxon' do
+        let(:product) { create(:product, stores: [store], taxons: [taxon]) }
+
+        before do
+          product
+          get :index, params: { filter: { taxon_ids: [taxon.id] } }
+        end
+
+        it 'returns one product' do
+          expect(assigns(:storefront_products).records).to eq([product])
+        end
+      end
+
+      context 'by multiple taxons' do
+        let(:taxon2) { create(:taxon) }
+
+        context 'and product is associated with both taxons' do
+          let(:product) { create(:product, stores: [store], taxons: [taxon, taxon2]) }
+
+          before do
+            product
+            get :index, params: { filter: { taxon_ids: [taxon.id, taxon2.id] } }
+          end
+
+          it 'returns the product' do
+            expect(assigns(:storefront_products).records).to eq([product])
+          end
+        end
+
+        context 'and product is associated with only one of the taxons' do
+          let(:product) { create(:product, stores: [store], taxons: [taxon]) }
+
+          before do
+            product
+            get :index, params: { filter: { taxon_ids: [taxon.id, taxon2.id] } }
+          end
+
+          it 'does not return the product' do
+            expect(assigns(:storefront_products).records).to be_empty
+          end
+        end
+      end
+    end
   end
 
   describe '#show' do
