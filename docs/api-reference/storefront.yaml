@@ -149,6 +149,12 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/SparseFieldsAddress'
+        - in: query
+          name: 'filter[exclude_quick_checkout]'
+          schema:
+            type: boolean
+          example: true
+          description: 'Exclude addresses that were created during quick checkout'
       tags:
         - Account / Address
     post:

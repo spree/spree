@@ -128,7 +128,6 @@ module Spree
 
       filter[:taxon_ids] ||= [taxon&.id.to_s].compact
       filter[:taxons] = filter[:taxon_ids].join(',')
-      filter[:concat_taxons] = filter[:taxons] if filter[:taxon_ids].size > 1
 
       if filter.key?(:min_price) || filter.key?(:max_price)
         min_price = filter[:min_price].presence || 0
