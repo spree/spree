@@ -10,5 +10,5 @@
   <%= form.hidden_field :active, value: true %>
 
   <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
-  <%= render 'spree/admin/integrations/form_actions', integration: @integration %>
+  <%= render 'spree/admin/shared/new_resource_links' %>
 <% end %>

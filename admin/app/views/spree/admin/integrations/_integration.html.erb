@@ -27,9 +27,9 @@
         <%= link_to spree.edit_admin_integration_path(integration), class: 'card-link btn btn-sm btn-light' do %>
           <%= icon 'settings' %>
           <%= Spree.t(:settings) %>
-        <% end %>
+        <% end if can?(:update, integration) %>
       <% else %>
-        <%= link_to_with_icon 'plus', "#{Spree.t('actions.connect')} #{integration_class.integration_name}", spree.new_admin_integration_path(integration: { type: integration_class.name }), class: 'btn btn-primary' %>
+        <%= link_to_with_icon 'plus', "#{Spree.t('actions.connect')} #{integration_class.integration_name}", spree.new_admin_integration_path(integration: { type: integration_class.name }), class: 'btn btn-primary' if can?(:create, Spree::Integration) %>
       <% end %>
     </div>
   </div>
