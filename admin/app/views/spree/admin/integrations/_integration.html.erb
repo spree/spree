@@ -7,7 +7,7 @@
   <div class="card w-full">
     <div class="card-header border-bottom d-flex align-items-center justify-content-between h-auto pr-3 <% if integration.present? %>bg-success<% end %>">
       <div style="height: 36px" class="d-flex align-items-center">
-        <%= image_tag integration_class.icon_path, alt: integration_name, **integration_class.icon_sizing_options if integration_class.icon_path.present? %>
+        <%= image_tag integration_class.icon_path, alt: integration_name, height: 36 if integration_class.icon_path.present? %>
       </div>
 
       <% if integration.present? %>

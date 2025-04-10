@@ -27,6 +27,10 @@ module Spree
       nil
     end
 
+    def self.icon_path
+      nil
+    end
+
     def self.integration_name
       name.demodulize.titleize.strip
     end
@@ -35,39 +39,12 @@ module Spree
       name.demodulize.underscore
     end
 
-    def self.icon_path
-      nil
-    end
-
-    def self.icon_sizing_options
-      { height: 36 }
-    end
-
     def name
       self.class.integration_name
     end
 
     def key
       self.class.integration_key
-    end
-
-    # Provide a partial name to render a custom form for the integration.
-    # The partial should be located in `app/views/spree/admin/integrations/forms`.
-    # Leave blank to use the default form.
-    def form_partial_name
-      nil
-    end
-
-    def form_guide_partial_name
-      nil
-    end
-
-    def field_help_text_partials
-      []
-    end
-
-    def field_guide_partials
-      []
     end
 
     def can_connect?
