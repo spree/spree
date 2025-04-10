@@ -27,10 +27,10 @@
         <% first_taxons.each do |taxon| %>
           <li>
             <%= f.label "filter_taxon_#{taxon.id}", class: "flex items-center gap-2 cursor-pointer group text-sm h-10", data: { searchable_list_target: "item", text: taxon.name } do %>
-              <%= f.check_box "filter[taxon_ids][]",
+              <%= f.check_box "filter[taxonomy_ids][#{taxonomy.id}][taxon_ids][]",
                 {
                   id: "filter_taxon_#{taxon.id}",
-                  checked: permitted_products_params.dig(:filter, :taxon_ids)&.include?(taxon.id.to_s),
+                  checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id, :taxon_ids)&.include?(taxon.id.to_s),
                   class: "input-checkbox group-focus-within:outline"
                 },
                 taxon.id,
@@ -49,10 +49,10 @@
           <% rest_of_the_taxons.each do |taxon| %>
             <li class="px-4 lg:px-10">
               <%= f.label "filter_taxon_#{taxon.id}", class: "flex items-center gap-2 cursor-pointer group text-sm h-10", data: { searchable_list_target: "item", text: taxon.name } do %>
-                <%= f.check_box "filter[taxon_ids][]",
+                <%= f.check_box "filter[taxonomy_ids][#{taxonomy.id}][taxon_ids][]",
                   {
                     id: "filter_taxon_#{taxon.id}",
-                    checked: permitted_products_params.dig(:filter, :taxon_ids)&.include?(taxon.id.to_s),
+                    checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id, :taxon_ids)&.include?(taxon.id.to_s),
                     class: "input-checkbox group-focus-within:outline"
                   },
                   taxon.id,

@@ -11,6 +11,7 @@ module Spree
         @currency         = params.dig(:filter, :currency) || params[:currency] || Spree::Store.default.default_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
+        @taxonomies       = params.dig(:filter, :taxonomy_ids).to_h if params.dig(:filter, :taxonomy_ids).present?
         @name             = params.dig(:filter, :name)
         @slug             = params.dig(:filter, :slug)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
@@ -41,6 +42,7 @@ module Spree
         products = by_currency(products)
         products = by_taxons(products)
         products = by_concat_taxons(products)
+        products = by_taxonomies(products)
         products = by_name(products)
         products = by_slug(products)
         products = by_options(products)
@@ -62,7 +64,7 @@ module Spree
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
                   :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags,
-                  :query, :vendor_ids, :out_of_stock, :slug
+                  :query, :vendor_ids, :out_of_stock, :slug, :taxonomies
 
       def query?
         query.present?
@@ -167,6 +169,37 @@ module Spree
                       ids
 
         products.where(id: product_ids)
+      end
+
+      def by_taxonomies(products)
+        return products unless taxonomies.present?
+
+        products_arrays = taxonomies.values.map do |taxonomy|
+          taxons = taxon_ids(taxonomy[:taxon_ids].join(','))
+
+          products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+        end
+
+        return products_arrays.first if products_arrays.size == 1
+
+        final_products = []
+
+        products_arrays.each_with_index do |product_array, index|
+          # TODO: Refactor maybe?
+          other_taxons_ids = taxonomies.values
+                                        .each_with_index
+                                        .reject { |_, i| i == index }
+                                        .flat_map { |v, _| v[:taxon_ids] }
+                                        .map(&:to_i)
+          
+          matching_products = product_array.select do |product|
+            product.taxons.map(&:id).any? { |taxon_id| other_taxons_ids.include?(taxon_id) }
+          end
+  
+          final_products.concat(matching_products)
+        end
+
+        products.where(id: final_products.map(&:id))
       end
 
       def by_name(products)
