@@ -199,37 +199,40 @@ module Spree
       # renders all the preference fields for an object
       # @param object [Spree::TaxRate, Spree::Calculator, Spree::PaymentMethod, Spree::ShippingMethod, Spree::Store] the object to render the preference fields for
       # @param form [ActionView::Helpers::FormBuilder] the form builder
+      # @param i18n_scope [String] the i18n scope for the preference fields
       # @return [String] the preference fields
-      def preference_fields(object, form)
+      def preference_fields(object, form, i18n_scope: '')
         return unless object.respond_to?(:preferences)
 
-        fields = object.preferences.keys.map do |key|
-          if object.has_preference?(key)
-            case key
-            when :currency
-              content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
-                form.currency_select("preferred_#{key}", current_store.supported_currencies.split(','), {}, { class: 'custom-select', disabled: current_store.supported_currencies.split(',').count == 1 }),
-                          class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
-            else
-              if object.preference_type(key).to_sym == :boolean
-                content_tag(:div, class: 'form-group custom-control custom-checkbox') do
-                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
-                    form.label(
-                      "preferred_#{key}",
-                      Spree.t(key),
-                      class: 'custom-control-label',
-                      id: [object.class.to_s.parameterize, 'preference', key].join('-')
-                    )
-                end
-              else
-                content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
-                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)),
-                            class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
-              end
+        fields = object.preferences.keys.map { |key| preference_field(object, form, key, i18n_scope: i18n_scope) }
+        safe_join(fields)
+      end
+
+      def preference_field(object, form, key, i18n_scope: '')
+        return unless object.has_preference?(key)
+
+        case key
+        when :currency
+          content_tag(:div, form.label("preferred_#{key}", Spree.t(key, scope: i18n_scope)) +
+            form.currency_select("preferred_#{key}", current_store.supported_currencies.split(','), {}, { class: 'custom-select', disabled: current_store.supported_currencies.split(',').count == 1 }),
+                      class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+        else
+          if object.preference_type(key).to_sym == :boolean
+            content_tag(:div, class: 'form-group custom-control custom-checkbox') do
+              preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
+                form.label(
+                  "preferred_#{key}",
+                  Spree.t(key, scope: i18n_scope),
+                  class: 'custom-control-label',
+                  id: [object.class.to_s.parameterize, 'preference', key].join('-')
+                )
             end
+          else
+            content_tag(:div, form.label("preferred_#{key}", Spree.t(key, scope: i18n_scope)) +
+              preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)),
+                        class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
           end
         end
-        safe_join(fields)
       end
 
       def spree_dom_id(record)

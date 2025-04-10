@@ -334,6 +334,9 @@ en:
       spree/export:
         one: Export
         other: Exports
+      spree/integration:
+        one: Integration
+        other: Integrations
       spree/inventory_unit:
         one: Inventory Unit
         other: Inventory Units

@@ -75,6 +75,9 @@ en:
       export_only_filtered_records: Export only filtered records, matching the search criteria
       filters: Filters
       getting_started: Getting started
+      integrations:
+        invalid_integration_type: This integration is not allowed
+        page_subtitle: Connect your store to third-party services to enhance customer experience.
       manage_currencies: Manage Currencies
       manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations
