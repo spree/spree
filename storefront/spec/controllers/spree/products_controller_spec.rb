@@ -17,6 +17,7 @@ describe Spree::ProductsController, type: :controller do
       expect(assigns(:current_page)).to be_a(Spree::Pages::ShopAll)
     end
 
+    # TODO: ADD taxonomies
     context 'when filtering' do
       let(:taxon) { create(:taxon) }
 
