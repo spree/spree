@@ -7,3 +7,20 @@
   <%= @admin_user.name %>
 <% end %>
 
+<%= turbo_frame_tag :edit_user do %>
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+    <%= link_to Spree.t('actions.discard'), spree.admin_admin_user_path(@admin_user), class: 'btn btn-light btn-sm' %>
+  </div>
+  <%= form_for [:admin, @admin_user], as: :admin_user, url: spree.admin_admin_user_path(@admin_user), method: :put do |f| %>
+    <div class="card-body pb-0">    
+      <%= render'spree/admin/shared/error_messages', target: @admin_user %>
+      <%= render 'form', f: f %>
+    </div>
+    <div class="card-footer">
+      <%= turbo_save_button_tag Spree.t('actions.update') %>
+    </div>
+  <% end %>
+<% end%>

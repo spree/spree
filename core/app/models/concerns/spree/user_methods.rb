@@ -116,6 +116,10 @@ module Spree
       orders.complete.none?
     end
 
+    def invited_by
+      invitations.first&.inviter
+    end
+
     private
 
     def check_completed_orders

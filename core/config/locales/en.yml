@@ -52,6 +52,9 @@ en:
         year: Year
       spree/inventory_unit:
         state: State
+      spree/invitation:
+        inviter: Inviter
+        expires_at: Expires at
       spree/line_item:
         price: Price
         quantity: Quantity
@@ -529,7 +532,6 @@ en:
     accepts_email_marketing: Accepts email marketing
     account: Account
     account_info: Account info
-    account_members: Team
     action: Action
     actions:
       approve: Approve
@@ -549,7 +551,9 @@ en:
       receive: Mark as received
       refund: Refund
       reject: Reject
+      resend: Resend
       resolve: Mark as resolved
+      revoke: Revoke
       save: Save
       select_file: Select file
       send_invitation: Send invitation
@@ -1143,6 +1147,7 @@ en:
       thanks: Thank you,
     invitation_resent: Invitation resent!
     invitation_revoked: Invitation revoked!
+    invitations: Invitations
     is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
@@ -1530,6 +1535,7 @@ en:
     pending_sale: Pending Sale
     percent: Percent
     percent_per_item: Percent Per Item
+    permissions: Permissions
     permalink: Permalink
     personal_details: Personal details
     phone: Phone
