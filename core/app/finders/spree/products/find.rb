@@ -360,7 +360,7 @@ module Spree
           other_groups = taxonomies.values.reject.with_index { |_, i| i == index }.map { |h| h['taxon_ids'].map(&:to_i) }
 
           product_array.select do |product|
-            other_groups.all? { |group| group.any? { |id| product.taxons.map(&:id).include?(id) } }
+            other_groups.all? { |group| group.any? { |id| product.classifications.exists?(taxon_id: id) } }
           end
         end.flatten.map(&:id)
       end
