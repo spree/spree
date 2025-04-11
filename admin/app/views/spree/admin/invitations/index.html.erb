@@ -1,0 +1,21 @@
+<%= render 'spree/admin/shared/team_nav' %>
+
+<div class="card-lg">
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="text-muted">
+      <tr>
+        <th><%= Spree.t(:email) %></th>
+        <th><%= Spree.t(:inviter) %></th>
+        <th><%= Spree.t(:roles) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody id="invitations">
+        <%= render collection: @collection, partial: 'spree/admin/invitations/invitation', as: :invitation %>
+      </tbody>
+    </table>
+  </div>
+</div>

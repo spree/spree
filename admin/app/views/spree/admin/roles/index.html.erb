@@ -1,6 +1,4 @@
-<% content_for :page_title do %>
-  <%= Spree.t(:roles) %>
-<% end %>
+<%= render 'spree/admin/shared/team_nav' %>
 
 <% content_for :page_actions do %>
   <%= link_to_with_icon 'plus', Spree.t(:new_role), new_object_url, class: "btn btn-primary" %>
@@ -12,16 +10,22 @@
       <table class="table">
         <thead class="text-muted">
           <tr>
-            <th><%= Spree.t(:role_id) %></th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:permissions) %></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <% @collection.each do |role| %>
             <tr id="<%= spree_dom_id role %>">
-              <td><%= role.name %></td>
+              <td class="w-20">
+                <code><%= role.name %></code>
+              </td>
+              <td class="w-80">
+                <%= Spree.t(:all) %>
+              </td>
               <td class="actions">
-                <%= link_to_edit(role, no_text: true) if can? :edit, role %>
+                <%= link_to_edit(role) %>
               </td>
             </tr>
           <% end %>

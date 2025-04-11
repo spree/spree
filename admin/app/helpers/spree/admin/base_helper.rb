@@ -25,12 +25,10 @@ module Spree
       # this is used to display different sidebar navigation for settings pages
       # @return [Boolean]
       def settings_active?
-        @settings_active || %w[stores zones shipping_methods oauth_applications
-                               payment_methods refund_reasons reimbursement_types
-                               shipping_categories store_credit_categories
-                               syncs tax_categories tax_rates webhooks accounts
-                               custom_domains audits exports imports return_authorization_reasons
-                               documents stripe_tax_registrations members subscriptions stock_locations webhooks_subscribers].include?(controller_name)
+        @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
+                               payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
+                               shipping_categories shipping_methods stock_locations store_credit_categories
+                               stores tax_categories tax_rates webhooks webhooks_subscribers zones].include?(controller_name)
       end
 
       # @return [Array<String>] the available countries for checkout

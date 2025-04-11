@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render "spree/admin/shared/head" %>
+  </head>
+  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>">
+    <div class="container">
+      <%= yield %>
+    </div>
+    <%= render "spree/admin/shared/modal" %>
+    <%= render "spree/admin/shared/alerts" %>
+  </body>
+</html>

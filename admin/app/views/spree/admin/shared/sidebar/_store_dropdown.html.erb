@@ -73,7 +73,7 @@
       <% end if can?(:create, Spree::Product) %>
       <%= link_to spree.new_admin_user_path, class: 'dropdown-item' do %>
         <%= icon 'user' %>
-        <%= Spree.t(:new_user) %>
+        <%= Spree.t(:new_customer) %>
       <% end if can?(:create, Spree.user_class) %>
 
       <%= link_to spree.new_admin_promotion_path, class: 'dropdown-item' do %>

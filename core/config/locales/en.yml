@@ -823,7 +823,6 @@ en:
     coupon_codes: Coupon codes
     create: Create
     create_a_new_account: Create a new account
-    create_account: Create account
     create_customer: Create customer
     create_new: Create new
     create_new_order: Create new order
@@ -1131,6 +1130,18 @@ en:
     inventory_adjustment: Inventory Adjustment
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
+    invitation_accepted: Invitation accepted!
+    invitation_revoked: Invitation revoked!
+    invitation_mailer:
+      greeting: Hi %{user_name},
+      thanks: Thank you,
+      invitation_email:
+        subject: Invitation to join %{resource_name}
+        body: "%{inviter_name} has invited you to join %{resource_name}"
+        link_description: "To accept this invitation, please click the link below:"
+      invitation_accepted:
+        subject: "%{invitee_name} has accepted your invitation to join %{resource_name}"
+        body: "%{invitee_name} has accepted your invitation to join %{resource_name}"
     is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
@@ -1235,7 +1246,7 @@ en:
     new_billing_address: New Billing Address
     new_country: New Country
     new_custom_domain: New Custom Domain
-    new_customer: Create new account
+    new_customer: New Customer
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
     new_domain: New domain

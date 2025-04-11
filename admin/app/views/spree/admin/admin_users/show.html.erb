@@ -1,0 +1,8 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_admin_users_path, @admin_user %>
+  <%= @admin_user.name %>
+<% end %>
+
+<%= content_for :title do %>
+  <%= @admin_user.name %>
+<% end %>
