@@ -3,6 +3,7 @@ module Spree
     class AdminUsersController < BaseController
       skip_before_action :authorize_admin, only: [:new, :create]
 
+      before_action :load_resource
       before_action :load_invitation, only: [:new, :create]
       before_action :load_admin_user, only: [:edit, :update, :destroy]
 
@@ -40,7 +41,6 @@ module Spree
           if defined?(sign_in)
             sign_in(Spree.admin_user_class.model_name.singular_route_key, @admin_user)
           end
-          flash[:success] = Spree.t(:welcome_to_spree_admin)
           redirect_to spree.admin_path
         else
           render :new, status: :unprocessable_entity
@@ -49,6 +49,7 @@ module Spree
 
       # GET /admin/admin_users/:id/edit
       def edit
+        authorize! :update, @admin_user
       end
 
       # PUT /admin/admin_users/:id
@@ -68,6 +69,12 @@ module Spree
         params.require(:admin_user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
       end
 
+      # load the resource to be used for authorization
+      # this can be extended to load different resources, eg vendor users
+      def load_resource
+        @resource = current_store
+      end
+
       def load_invitation
         raise ActiveRecord::RecordNotFound if params[:token].blank?
 
@@ -75,7 +82,7 @@ module Spree
       end
 
       def scope
-        Spree.admin_user_class.accessible_by(current_ability, :manage)
+        @resource.admin_users.accessible_by(current_ability, :manage)
       end
 
       def choose_layout

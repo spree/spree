@@ -19,7 +19,11 @@ module Spree
 
       # GET /admin/invitations/new
       def new
+        authorize! :manage, @resource
+
         @invitation = Spree::Invitation.new
+        @invitation.resource = @resource
+        @invitation.inviter = try_spree_current_user
       end
 
       # POST /admin/invitations
@@ -33,7 +37,7 @@ module Spree
 
         if @invitation.save
           respond_to do |format|
-            format.html { redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_created') }
+            format.html { redirect_to spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_created) }
             format.turbo_stream
           end
         else
