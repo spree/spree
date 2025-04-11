@@ -174,32 +174,16 @@ module Spree
       def by_taxonomies(products)
         return products unless taxonomies.present?
 
-        products_arrays = taxonomies.values.map do |taxonomy|
+        taxonomies_products = taxonomies.values.map do |taxonomy|
           taxons = taxon_ids(taxonomy[:taxon_ids].join(','))
 
-          products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+          products.joins(:classifications).includes(:taxons).where(Classification.table_name => { taxon_id: taxons })
         end
 
-        return products_arrays.first if products_arrays.size == 1
+        # No need to filter if there is only one taxonomy
+        return taxonomies_products.first if taxonomies_products.size == 1
 
-        final_products = []
-
-        products_arrays.each_with_index do |product_array, index|
-          # TODO: Refactor maybe?
-          other_taxons_ids = taxonomies.values
-                                        .each_with_index
-                                        .reject { |_, i| i == index }
-                                        .flat_map { |v, _| v[:taxon_ids] }
-                                        .map(&:to_i)
-          
-          matching_products = product_array.select do |product|
-            product.taxons.map(&:id).any? { |taxon_id| other_taxons_ids.include?(taxon_id) }
-          end
-  
-          final_products.concat(matching_products)
-        end
-
-        products.where(id: final_products.map(&:id))
+        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products, taxonomies))
       end
 
       def by_name(products)
@@ -368,6 +352,17 @@ module Spree
 
       def order_by_best_selling(scope)
         scope.by_best_selling(:desc)
+      end
+
+      # This method is used to filter products that match all the taxonomies
+      def products_matching_all_taxonomies_ids(taxonomies_products, taxonomies)
+        taxonomies_products.map.with_index do |product_array, index|
+          other_groups = taxonomies.values.reject.with_index { |_, i| i == index }.map { |h| h['taxon_ids'].map(&:to_i) }
+
+          product_array.select do |product|
+            other_groups.all? { |group| group.any? { |id| product.taxons.map(&:id).include?(id) } }
+          end
+        end.flatten.map(&:id)
       end
     end
   end
