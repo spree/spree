@@ -40,13 +40,14 @@ table.table {
   }
 
   thead {
+    background-color: rgba($gray-25, 0.5);
     th {
       @extend .text-muted;
       font-size: $font-size-sm;
+      font-weight: $font-weight-normal;
       vertical-align: middle;
-      font-weight: 400;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      padding-top: 0.3rem;
+      padding-bottom: 0.3rem;
     }
   }
 

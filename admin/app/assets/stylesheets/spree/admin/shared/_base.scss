@@ -665,6 +665,27 @@ div.uppy-Root {
   border-radius: $border-radius-lg;
 }
 
+.rounded-lg-top {
+  border-top-left-radius: $border-radius-lg;
+  border-top-right-radius: $border-radius-lg;
+}
+
+.rounded-lg-bottom {
+  border-bottom-left-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
+}
+
+.rounded-lg-left {
+  border-top-left-radius: $border-radius-lg;
+  border-bottom-left-radius: $border-radius-lg;
+}
+
+.rounded-lg-right {
+  border-top-right-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
+}
+
+
 .turbo-progress-bar {
   background-color: theme-color('blue');
 }
