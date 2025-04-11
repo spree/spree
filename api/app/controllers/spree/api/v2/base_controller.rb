@@ -96,7 +96,12 @@ module Spree
 
         # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user)
+          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user, ability_options)
+        end
+
+        # this method can be extended in extensions or developer applications
+        def ability_options
+          { store: current_store }
         end
 
         def request_includes
