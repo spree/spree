@@ -65,14 +65,14 @@
       <%= icon 'plus', class: 'mr-0' %>
     </button>
     <div class="dropdown-menu">
-      <%= link_to_with_icon 'shopping-cart', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
+      <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
 
       <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>
-        <%= icon 'box' %>
+        <%= icon 'cube-plus' %>
         <%= Spree.t(:new_product) %>
       <% end if can?(:create, Spree::Product) %>
       <%= link_to spree.new_admin_user_path, class: 'dropdown-item' do %>
-        <%= icon 'user' %>
+        <%= icon 'user-plus' %>
         <%= Spree.t(:new_customer) %>
       <% end if can?(:create, Spree.user_class) %>
 
