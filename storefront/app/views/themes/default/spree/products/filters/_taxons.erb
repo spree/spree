@@ -5,7 +5,7 @@
     class="st-accordion"
     data-controller='accordion'
     data-accordion-close-others-value="false">
-    <%= link_to "#taxonomy_filter_#{taxonomy.id}", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if params[:filter].nil? || current_taxon.present? || permitted_products_params.dig(:filter, :taxon_ids)&.present?}", data: { action: 'accordion#toggle:prevent' } do %>
+    <%= link_to "#taxonomy_filter_#{taxonomy.id}", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if params[:filter].nil? || current_taxon.present? || permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id.to_s, :taxon_ids).present?}", data: { action: 'accordion#toggle:prevent' } do %>
       <%= taxonomy.name.singularize %>
       <%= render 'spree/shared/icons/chevron_down' %>
     <% end %>
@@ -30,7 +30,7 @@
               <%= f.check_box "filter[taxonomy_ids][#{taxonomy.id}][taxon_ids][]",
                 {
                   id: "filter_taxon_#{taxon.id}",
-                  checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id, :taxon_ids)&.include?(taxon.id.to_s),
+                  checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id.to_s, :taxon_ids)&.include?(taxon.id.to_s),
                   class: "input-checkbox group-focus-within:outline"
                 },
                 taxon.id,
@@ -52,7 +52,7 @@
                 <%= f.check_box "filter[taxonomy_ids][#{taxonomy.id}][taxon_ids][]",
                   {
                     id: "filter_taxon_#{taxon.id}",
-                    checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id, :taxon_ids)&.include?(taxon.id.to_s),
+                    checked: permitted_products_params.dig(:filter, :taxonomy_ids, taxonomy.id.to_s, :taxon_ids)&.include?(taxon.id.to_s),
                     class: "input-checkbox group-focus-within:outline"
                   },
                   taxon.id,

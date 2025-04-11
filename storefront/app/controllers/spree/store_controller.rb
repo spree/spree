@@ -73,7 +73,7 @@ module Spree
           :out_of_stock,
           {
             options: [store_filter_names_hash],
-            taxons_ids: [],
+            taxon_ids: [],
             taxonomy_ids: [
               taxon_ids: []
             ]
@@ -131,10 +131,8 @@ module Spree
 
       filter = permitted_products_params.fetch(:filter, {}).dup
 
-      current_taxonomy_id = taxon&.taxonomy&.id
-
-      # TODO: FIX
-      filter[:taxonomy_ids] ||= current_taxonomy_id ? ActionController::Parameters.new(current_taxonomy_id.to_s => { taxon_ids: [taxon&.id.to_s].compact }).permit! : {}
+      filter[:taxon_ids] ||= [taxon&.id.to_s].compact
+      filter[:taxons] = filter[:taxon_ids].join(',')
 
       if filter.key?(:min_price) || filter.key?(:max_price)
         min_price = filter[:min_price].presence || 0

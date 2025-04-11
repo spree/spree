@@ -92,7 +92,7 @@ module Spree
     end
 
     def storefront_products_for_taxon_filters
-      @storefront_products_for_taxon_filters ||= products_for_filters_scope(except_filters: [:taxons])
+      @storefront_products_for_taxon_filters ||= products_for_filters_scope(except_filters: [:taxons, :taxonomy_ids])
     end
 
     def filter_taxon_ids

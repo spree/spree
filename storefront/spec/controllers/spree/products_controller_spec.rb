@@ -17,7 +17,6 @@ describe Spree::ProductsController, type: :controller do
       expect(assigns(:current_page)).to be_a(Spree::Pages::ShopAll)
     end
 
-    # TODO: ADD taxonomies
     context 'when filtering' do
       let(:taxon) { create(:taxon) }
 
@@ -34,32 +33,110 @@ describe Spree::ProductsController, type: :controller do
         end
       end
 
-      context 'by multiple taxons' do
-        let(:taxon2) { create(:taxon) }
+      context 'by taxonomies' do
+        let(:taxonomy) { create(:taxonomy) }
+        let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+        let(:taxon2) { create(:taxon, taxonomy: taxonomy) }
+        let(:product) { create(:product, stores: [store], taxons: [taxon]) }
+        let(:product2) { create(:product, stores: [store], taxons: [taxon2]) }
 
-        context 'and product is associated with both taxons' do
-          let(:product) { create(:product, stores: [store], taxons: [taxon, taxon2]) }
+        before do
+          product
+          product2
+          get :index, params: { filter: { taxonomy_ids: taxonomy_ids } }
+        end
 
-          before do
-            product
-            get :index, params: { filter: { taxon_ids: [taxon.id, taxon2.id] } }
+        context 'when one taxonomy is selected' do
+          context 'and both taxons are selected' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id, taxon2.id] } } }
+
+            it 'returns both products' do
+              expect(assigns(:storefront_products).records).to eq([product, product2])
+            end
           end
 
-          it 'returns the product' do
-            expect(assigns(:storefront_products).records).to eq([product])
+          context 'and only one taxon is selected' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id] } } }
+
+            it 'returns only the product associated with the selected taxon' do
+              expect(assigns(:storefront_products).records).to eq([product])
+            end
+          end
+
+          context 'when no taxons are selected' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [] } } }
+
+            it 'returns all products' do
+              expect(assigns(:storefront_products).records).to eq([product, product2])
+            end
           end
         end
 
-        context 'and product is associated with only one of the taxons' do
-          let(:product) { create(:product, stores: [store], taxons: [taxon]) }
+        context 'when multiple taxonomies are selected' do
+          let(:taxonomy2) { create(:taxonomy) }
+          let(:taxon3) { create(:taxon, taxonomy: taxonomy2) }
+          let(:product3) { create(:product, stores: [store], taxons: [taxon3, taxon]) }
 
           before do
-            product
-            get :index, params: { filter: { taxon_ids: [taxon.id, taxon2.id] } }
+            product3
+            get :index, params: { filter: { taxonomy_ids: taxonomy_ids } }
           end
 
-          it 'does not return the product' do
-            expect(assigns(:storefront_products).records).to be_empty
+          context 'and product matches both taxons from both taxonomies exactly' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id] }, taxonomy2.id => { taxon_ids: [taxon3.id] } } }
+
+            it 'returns products associated with the selected taxons' do
+              expect(assigns(:storefront_products).records).to eq([product3])
+            end
+          end
+
+          context 'and product matches only one taxonomy completely' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id] }, taxonomy2.id => { taxon_ids: [taxon3.id] } } }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon3]) }
+
+            it 'returns no products' do
+              expect(assigns(:storefront_products).records).to eq([])
+            end
+          end
+
+          context 'and product matches none of the taxons' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id] }, taxonomy2.id => { taxon_ids: [taxon3.id] } } }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon2]) }
+
+            it 'returns no products' do
+              expect(assigns(:storefront_products).records).to eq([])
+            end
+          end
+
+          context 'and product matches all taxons from one taxonomy and partially from another' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id] }, taxonomy2.id => { taxon_ids: [taxon2.id, taxon3.id] } } }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon, taxon2]) }
+
+            it 'returns products associated with the selected taxons' do
+              expect(assigns(:storefront_products).records).to eq([product3])
+            end
+          end
+
+          context 'and product matches one taxon from each taxonomy' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id, taxon2.id] }, taxonomy2.id => { taxon_ids: [taxon3.id, taxon4.id] } } }
+            let(:taxon4) { create(:taxon, taxonomy: taxonomy2) }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon, taxon3]) }
+
+            it 'returns products associated with the selected taxons' do
+              expect(assigns(:storefront_products).records).to eq([product3])
+            end
+          end
+
+          context 'and product matches three taxons from three taxonomies' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id, taxon2.id] }, taxonomy2.id => { taxon_ids: [taxon3.id, taxon4.id] }, taxonomy3.id => { taxon_ids: [taxon5.id] } } }
+            let(:taxonomy3) { create(:taxonomy) }
+            let(:taxon4) { create(:taxon, taxonomy: taxonomy2) }
+            let(:taxon5) { create(:taxon, taxonomy: taxonomy3) }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon, taxon3, taxon5]) }
+
+            it 'returns products associated with the selected taxons' do
+              expect(assigns(:storefront_products).records).to eq([product3])
+            end
           end
         end
       end
