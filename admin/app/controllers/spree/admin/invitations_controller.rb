@@ -47,7 +47,16 @@ module Spree
 
       # GET /admin/invitations/:id?token=:token
       def show
-        @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
+        begin
+          @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
+
+          if try_spree_current_user != @invitation.invitee
+            raise ActiveRecord::RecordNotFound
+          end
+        rescue ActiveRecord::RecordNotFound
+          redirect_to spree.root_path, alert: Spree.t('invalid_or_expired_invitation')
+          return
+        end
 
         # if there's no current user, redirect to the new admin user path so they can sign up
         unless try_spree_current_user

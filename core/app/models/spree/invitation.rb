@@ -22,8 +22,7 @@ module Spree
     #
     validates :email, email: true, presence: true
     validates :token, presence: true, uniqueness: true
-    validates :inviter, presence: true
-    validates :roles, presence: true
+    validates :inviter, :resource, :roles, presence: true
     validate :invitee_is_not_inviter, on: :create
     validate :invitee_already_exists, on: :create
 
