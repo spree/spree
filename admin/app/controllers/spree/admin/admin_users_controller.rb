@@ -13,7 +13,7 @@ module Spree
       def index
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at asc'
-        @search = scope.ransack(params[:q])
+        @search = scope.includes(:spree_roles, avatar_attachment: :blob).ransack(params[:q])
         @collection = @search.result
       end
 
