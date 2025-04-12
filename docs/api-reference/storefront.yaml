@@ -4481,11 +4481,11 @@ components:
         Specify what related resources (relationships) you would like to receive in the response body. Eg.
 
         ```
-        default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor
+        default_variant,variants,option_types,product_properties,taxons,images,primary_variant
         ```
 
         [More information](https://jsonapi.org/format/#fetching-includes)
-      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant,vendor'
+      example: 'default_variant,variants,option_types,product_properties,taxons,images,primary_variant'
     StoreIncludeParam:
       name: include
       in: query
@@ -5666,7 +5666,7 @@ components:
                   total_count: 1
                   total_pages: 1
                 links:
-                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions,vendors'
+                  self: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
                   next: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   prev: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/orders?include=line_items%2Cvariants%2Cvariants.images%2Cbilling_address%2Cshipping_address%2Cuser%2Cpayments%2Cshipments%2Cpromotions&page=1'
