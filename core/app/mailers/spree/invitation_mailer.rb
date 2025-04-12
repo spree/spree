@@ -8,7 +8,7 @@ module Spree
                             resource_name: invitation.resource&.name))
     end
 
-    # accept/reject, sending email to the invited to let them know the status of their invitation
+    # sending email to the inviter to let them know the invitee has accepted the invitation
     def invitation_accepted(invitation)
       @invitation = invitation
       mail(to: invitation.inviter.email,
