@@ -65,7 +65,7 @@ module Spree
 
       # PUT /admin/invitations/:id/resend
       def resend
-        @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
+        @invitation = scope.find(params[:id])
         @invitation.resend!
         redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_resent')
       end
