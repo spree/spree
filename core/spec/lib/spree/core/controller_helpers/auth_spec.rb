@@ -12,6 +12,12 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   controller(FakesController) {}
   include Spree::TestingSupport::UrlHelpers
 
+  let(:store) { @default_store }
+
+  before do
+    allow(controller).to receive(:current_store).and_return(store)
+  end
+
   describe '#current_ability' do
     it 'returns Spree::Ability instance' do
       expect(controller.current_ability.class).to eq Spree::Ability

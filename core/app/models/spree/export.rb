@@ -124,7 +124,7 @@ module Spree
     end
 
     def current_ability
-      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user)
+      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user, { store: store })
     end
 
     # eg. Spree::Exports::Products => products-store-my-store-code-20241030133348.csv

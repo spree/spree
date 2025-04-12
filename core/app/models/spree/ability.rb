@@ -23,15 +23,15 @@ module Spree
       abilities.delete(ability)
     end
 
-    def initialize(user)
+    def initialize(user, options = {})
       alias_cancan_delete_action
 
       user ||= Spree.user_class.new
 
       if user.persisted? && user.try(:spree_admin?)
-        apply_admin_permissions(user)
+        apply_admin_permissions(user, options)
       else
-        apply_user_permissions(user)
+        apply_user_permissions(user, options)
       end
 
       # Include any abilities registered by extensions, etc.
@@ -56,7 +56,7 @@ module Spree
       alias_action :create, :update, :destroy, to: :modify
     end
 
-    def apply_admin_permissions(user)
+    def apply_admin_permissions(user, options)
       can :manage, :all
       cannot :cancel, Spree::Order
       can :cancel, Spree::Order, &:allow_cancel?
@@ -64,7 +64,7 @@ module Spree
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
 
-    def apply_user_permissions(user)
+    def apply_user_permissions(user, options)
       can :read, ::Spree::Country
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
