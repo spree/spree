@@ -21,5 +21,21 @@
       </div>
     <% end %>
     <%= render "devise/shared/links" %>
+
+    <% if current_order.present? &&
+          current_store.prefers_guest_checkout? &&
+          stored_location&.include?(spree.checkout_path(current_order.token))
+    %>
+      <div class="relative my-5 flex items-center">
+        <div class="flex-grow border-t border-gray-200"></div>
+        <span class="mx-4 text-sm text-gray-500 uppercase"><%= Spree.t(:or) %></span>
+        <div class="flex-grow border-t border-gray-200"></div>
+      </div>
+
+      <div class="flex flex-col items-center gap-4">
+        <p class="text-sm text-gray-600"><%= Spree.t(:continue_without_logging_in) %></p>
+        <%= link_to Spree.t(:continue_as_guest), spree.checkout_path(current_order.token, guest: true), class: 'btn btn-secondary w-full max-w-sm', data: { turbo: false } %>
+      </div>
+    <% end %>
   </div>
 <% end %>
