@@ -27,7 +27,7 @@ module Spree
 
       def update
         if @user.update(user_params)
-          flash[:success] = Spree.t(:account_updated)
+          flash[:success] = flash_message_for(@user, :successfully_updated)
           redirect_to spree.admin_user_path(@user)
         else
           render :edit, status: :unprocessable_entity
