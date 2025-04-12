@@ -1,5 +1,5 @@
 <h1>
-  <%= Spree.t('invitation_mailer.greeting', user_name: @invitation.invitee&.name || @invitation.email) %>
+  <%= Spree.t('invitation_mailer.greeting', user_name: @invitation.invitee&.first_name || @invitation.email) %>
 </h1>
 <p>
   <%= Spree.t('invitation_mailer.invitation_email.body', inviter_name: @invitation.inviter.name, resource_name: @invitation.resource.name) %>
