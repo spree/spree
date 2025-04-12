@@ -527,7 +527,6 @@ en:
     account: Account
     account_info: Account info
     account_members: Team
-    account_updated: Account updated
     action: Action
     actions:
       approve: Approve
@@ -1519,7 +1518,6 @@ en:
     permalink: Permalink
     personal_details: Personal details
     phone: Phone
-    place_now: Place now
     place_order: Place Order
     please_check_back_soon: Please check back soon.
     please_define_payment_methods: Please define some payment methods first.

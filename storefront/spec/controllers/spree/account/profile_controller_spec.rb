@@ -37,7 +37,7 @@ RSpec.describe Spree::Account::ProfileController, type: :controller do
         expect(user.email).to eq('new@example.com')
         expect(user.phone).to eq('0987654321')
         expect(response).to redirect_to(spree.edit_account_profile_path)
-        expect(flash[:notice]).to eq(Spree.t(:account_updated))
+        expect(flash[:notice]).to eq('Account has been successfully updated!')
       end
     end
 

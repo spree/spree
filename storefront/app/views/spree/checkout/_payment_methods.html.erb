@@ -12,7 +12,7 @@
       </p>
     </div>
     <div class="flex justify-end w-full">
-      <%= button_tag Spree.t(:place_now),
+      <%= button_tag Spree.t(:place_order),
                       class: 'btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4',
                       data: { 'turbo-submits-with': (render 'spree/checkout/button_processing', is_hidden: false) } %>
     </div>
