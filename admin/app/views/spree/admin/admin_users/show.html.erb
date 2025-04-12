@@ -55,7 +55,7 @@
             </li>
             <% if @admin_user.respond_to?(:sign_in_count) %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                <%= Spree.t(:sign_in_count) %>
+                <%= I18n.t('activerecord.attributes.user.sign_in_count') %>
                 <span>
                   <%= @admin_user.sign_in_count %>
                 </span>
@@ -63,7 +63,7 @@
             <% end %>
             <% if @admin_user.respond_to?(:last_sign_in_at) %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                <%= Spree.t(:last_sign_in) %>
+                <%= I18n.t('activerecord.attributes.user.last_sign_in') %>
                 <span>
                   <% if @admin_user.last_sign_in_at %>
                     <%= local_time(@admin_user.last_sign_in_at) %>
@@ -75,7 +75,7 @@
             <% end %>
             <% if @admin_user.respond_to?(:current_sign_in_at) %>
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                <%= Spree.t(:current_sign_in) %>
+                <%= I18n.t('activerecord.attributes.user.current_sign_in') %>
                 <span>
                   <% if @admin_user.current_sign_in_at %>
                     <%= local_time(@admin_user.current_sign_in_at) %>

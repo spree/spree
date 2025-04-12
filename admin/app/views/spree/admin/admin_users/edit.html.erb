@@ -15,7 +15,7 @@
     <%= link_to Spree.t('actions.discard'), spree.admin_admin_user_path(@admin_user), class: 'btn btn-light btn-sm' %>
   </div>
   <%= form_for [:admin, @admin_user], as: :admin_user, url: spree.admin_admin_user_path(@admin_user), method: :put do |f| %>
-    <div class="card-body pb-0">    
+    <div class="card-body">    
       <%= render'spree/admin/shared/error_messages', target: @admin_user %>
       <%= render 'form', f: f %>
       <% if can?(:manage, Spree::Role) %>
