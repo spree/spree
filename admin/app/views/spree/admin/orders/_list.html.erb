@@ -1,7 +1,7 @@
 <% if @orders.any? %>
   <div class="table-responsive">
     <table class="table position-relative" id="listing_orders">
-      <thead class="text-muted">
+      <thead>
         <tr>
           <th><%= I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
           <% if controller_name == 'orders' %>

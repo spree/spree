@@ -15,7 +15,7 @@
     <%= turbo_frame_tag :translations_table, class: "table-responsive border rounded bg-white my-3", refresh: "morph" do %>
       <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
       <table class="table">
-        <thead class="text-muted">
+        <thead>
           <tr>
             <th scope="col" class="text-center"><%= Spree.t(:field) %></th>
             <th scope="col" class="text-center" style="width: 40%;"><%= Spree.t('i18n.this_file_language', locale: :en) %> (<%= Spree.t(:default) %>)</th>

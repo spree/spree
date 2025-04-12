@@ -40,6 +40,16 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     display: none;
   }
 
+  .store-dropdown {
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 0.5rem;
+    background-color: $gray-25;
+  }
+
   .nav {
     padding-left: 0.75rem;
     padding-right: 0.75rem;

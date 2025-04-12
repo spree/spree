@@ -31,7 +31,7 @@
   </div>
 <% end %>
 
-<div class="border-bottom border-bottom-dashed pb-2 d-flex align-items-center justify-content-between pr-1" id="store-menu" data-turbo-permanent>
+<div class="store-dropdown sticky-top" id="store-menu" data-turbo-permanent>
   <div class="dropdown">
     <button type="button" class="btn d-flex align-items-center justify-content-between text-left dropdown-toggle d-flex align-items-center gap-2"
             data-toggle="dropdown" aria-expanded="false">
@@ -65,15 +65,15 @@
       <%= icon 'plus', class: 'mr-0' %>
     </button>
     <div class="dropdown-menu">
-      <%= link_to_with_icon 'shopping-cart', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
+      <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:create, Spree::Order)  %>
 
       <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>
-        <%= icon 'box' %>
+        <%= icon 'cube-plus' %>
         <%= Spree.t(:new_product) %>
       <% end if can?(:create, Spree::Product) %>
       <%= link_to spree.new_admin_user_path, class: 'dropdown-item' do %>
-        <%= icon 'user' %>
-        <%= Spree.t(:new_user) %>
+        <%= icon 'user-plus' %>
+        <%= Spree.t(:new_customer) %>
       <% end if can?(:create, Spree.user_class) %>
 
       <%= link_to spree.new_admin_promotion_path, class: 'dropdown-item' do %>

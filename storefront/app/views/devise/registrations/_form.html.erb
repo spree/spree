@@ -1,6 +1,6 @@
 <div class="card-dialog mx-auto lg:w-1/3">
   <% unless params[:checkout] %>
-    <h3 class="mb-5 font-semibold"><%= Spree.t(:create_account) %></h3>
+    <h3 class="mb-5 font-semibold"><%= Spree.t(:create_a_new_account) %></h3>
   <% end %>
   <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
   <%= form_for resource, as: :spree_user, url: spree.registration_path(checkout: params[:checkout]), data: { turbo: false } do |f| %>
@@ -16,6 +16,6 @@
         </div>
       </div>
     </div>
-    <%= f.submit Spree.t(:create_account), class: 'btn-primary block w-full  lg:w-48  text-center mx-auto' %>
+    <%= f.submit Spree.t(:create_a_new_account), class: 'btn-primary block w-full  lg:w-48  text-center mx-auto' %>
   <% end %>
 </div>

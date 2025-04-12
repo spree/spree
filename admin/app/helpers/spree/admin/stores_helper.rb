@@ -36,23 +36,6 @@ module Spree
         opts[:class] += ' rounded text-dark d-flex align-items-center justify-content-center bg-gray-200'
         content_tag(:span, name[0].upcase, class: opts[:class], style: "height: #{opts[:height]}px; width: #{opts[:width]}px;")
       end
-
-      def store_logo(store = nil, options = {})
-        store ||= current_store
-        return unless store
-
-        opts = { width: 30, height: 30, crop: :fit, quality: :auto, fetch_format: :auto, alt: store.name, title: store.name, class: 'with-tip' }
-        opts.merge!(options)
-
-        if store.is_a?(Spree::Store) && store.logo&.attached? && store.logo&.variable?
-          spree_image_tag(store.logo, class: opts[:class], width: opts[:width], height: opts[:height])
-        else
-          initials = store.name.split.map(&:first).join.upcase
-          content_tag(:div, initials, class: "avatar rounded with-tip bg-light",
-                     style: "width: #{opts[:height]}px; height: #{opts[:height]}px;",
-                     title: store.name)
-        end
-      end
     end
   end
 end

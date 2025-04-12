@@ -8,16 +8,20 @@ i.js-delete-filter {
 }
 
 .sort_link {
-  color: $gray-600 !important;
+  color: $gray-600;
+  padding: 0.25rem;
+  border-radius: $border-radius-sm;
 
   &:hover {
-    color: $gray-700 !important;
+    color: theme-color('primary') !important;
     text-decoration: none !important;
+    background-color: $gray-50;
   }
 
   &.asc, &.desc {
+    font-weight: $font-weight-bold;
     svg {
-      color: $gray-900 !important;
+      color: $gray-600 !important;
     }
   }
 

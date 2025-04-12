@@ -47,7 +47,7 @@ module Spree
       end
 
       def try_spree_current_user
-        if Spree.admin_user_class
+        if Spree.admin_user_class && Spree.admin_user_class != Spree.user_class
           send("current_#{Spree.admin_user_class.model_name.singular_route_key}")
         else
           # use Spree::Core::ControllerHelpers::Auth#try_spree_current_user

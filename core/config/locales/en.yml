@@ -52,6 +52,9 @@ en:
         year: Year
       spree/inventory_unit:
         state: State
+      spree/invitation:
+        expires_at: Expires at
+        inviter: Inviter
       spree/line_item:
         price: Price
         quantity: Quantity
@@ -194,6 +197,10 @@ en:
       spree/zone:
         description: Description
         name: Name
+      user:
+        current_sign_in: Current sign in at
+        last_sign_in: Last sign in at
+        sign_in_count: Sign in count
     errors:
       messages:
         blank: can't be blank
@@ -529,7 +536,6 @@ en:
     accepts_email_marketing: Accepts email marketing
     account: Account
     account_info: Account info
-    account_members: Team
     action: Action
     actions:
       approve: Approve
@@ -549,6 +555,7 @@ en:
       receive: Mark as received
       refund: Refund
       reject: Reject
+      resend: Resend
       resolve: Mark as resolved
       save: Save
       select_file: Select file
@@ -823,14 +830,13 @@ en:
     coupon_codes: Coupon codes
     create: Create
     create_a_new_account: Create a new account
-    create_account: Create account
     create_customer: Create customer
     create_new: Create new
     create_new_order: Create new order
     create_new_team: Create new team
     create_reimbursement: Create reimbursement
-    created_at: Created At
-    created_by: Created By
+    created_at: Created at
+    created_by: Created by
     credit: Credit
     credit_allowed: Credit allowed
     credit_card: Credit Card
@@ -1124,6 +1130,7 @@ en:
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
+    invalid_or_expired_invitation: Invalid or expired invitation
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
@@ -1131,6 +1138,20 @@ en:
     inventory_adjustment: Inventory Adjustment
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
+    invitation_accepted: Invitation accepted!
+    invitation_mailer:
+      greeting: Hi %{user_name},
+      invitation_accepted:
+        body: "%{invitee_name} has accepted your invitation to join %{resource_name}"
+        subject: "%{invitee_name} has accepted your invitation to join %{resource_name}"
+      invitation_email:
+        body: "%{inviter_name} has invited you to join %{resource_name}"
+        link_description: 'To accept this invitation, please click the link below:'
+        subject: Invitation to join %{resource_name}
+      thanks: Thank you,
+    invitation_resent: Invitation resent!
+    invitations: Invitations
+    invited_by: Invited by
     is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
@@ -1235,7 +1256,7 @@ en:
     new_billing_address: New Billing Address
     new_country: New Country
     new_custom_domain: New Custom Domain
-    new_customer: Create new account
+    new_customer: New Customer
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
     new_domain: New domain
@@ -1519,6 +1540,7 @@ en:
     percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
+    permissions: Permissions
     personal_details: Personal details
     phone: Phone
     place_order: Place Order
@@ -2141,7 +2163,7 @@ en:
     update_billing_address: Update billing address
     update_contact_information: Update contact information
     update_shipping_address: Update shipping address
-    updated: Updated
+    updated_at: Updated at
     updating: Updating
     upload_image: Upload image
     url: URL

@@ -1,19 +1,12 @@
 <% if settings_active? %>
   <ul class="nav flex-column">
     <li class="nav-item mb-1 py-2 border-bottom border-bottom-dashed">
-      <%= active_link_to_with_icon('chevron-left', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'nav-link') %>
+      <%= active_link_to_with_icon('arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'nav-link') %>
     </li>
 
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>
-    <% end %>
-
-    <% if defined?(current_account) && current_account.present? && can?(:manage, current_account) %>
-      <%= nav_item(Spree.t(:account), main_app.edit_account_path(current_account), icon: 'receipt') %>
-      <%= nav_item(Spree.t(:account_members), main_app.account_members_path(current_account), icon: 'users') %>
-    <% end %>
-
-    <% if can?(:manage, current_store) %>
+      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users', active: %w[admin_users invitations roles].include?(controller_name)) if can?(:manage, Spree.admin_user_class) %>
       <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
       <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
       <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
@@ -144,9 +137,7 @@
     <% if can?(:manage, current_store) %>
       <li class="nav-item border-top border-top-dashed my-1"></li>
       <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
-    <% end %>
-    <% if defined?(current_account) && current_account.present? && can?(:manage, current_account) %>
-      <%= nav_item(Spree.t(:account_members), main_app.account_members_path(current_account), icon: 'users') %>
+      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
     <% end %>
   </ul>
 <% end %>

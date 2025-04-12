@@ -217,6 +217,13 @@ Spree::Core::Engine.add_routes do
 
     # account management
     resources :roles, except: :show
+    resources :invitations do
+      member do
+        put :accept
+        put :resend
+      end
+    end
+    resources :admin_users
 
     # Action Text
     namespace :action_text do

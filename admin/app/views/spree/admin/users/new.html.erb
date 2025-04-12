@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_users_path %>
-  <%= Spree.t(:new_user) %>
+  <%= Spree.t(:new_customer) %>
 <% end %>
 
 <%= form_for [:admin, @user], url: spree.admin_users_path, method: :post do |f| %>

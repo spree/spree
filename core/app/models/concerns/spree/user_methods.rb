@@ -31,6 +31,7 @@ module Spree
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
       has_many :wished_items, through: :wishlists, source: :wished_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
+      has_many :invitations, class_name: 'Spree::Invitation', foreign_key: :invitee_id, dependent: :destroy
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -113,6 +114,10 @@ module Spree
 
     def can_be_deleted?
       orders.complete.none?
+    end
+
+    def invited_by
+      invitations.first&.inviter
     end
 
     private

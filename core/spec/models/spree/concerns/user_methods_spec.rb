@@ -172,6 +172,13 @@ describe Spree::UserMethods do
     end
   end
 
+  describe '#invited_by' do
+    it 'returns the user who invited the current user' do
+      invitation = create(:invitation, invitee: test_user)
+      expect(test_user.invited_by).to eq(invitation.inviter)
+    end
+  end
+
   describe '.multi_search' do
     let!(:user_1) { create(:user, email: 'john.doe@example.com', first_name: 'John', last_name: 'Doe') }
     let!(:user_2) { create(:user, email: 'jane.doe@example.com', first_name: 'Jane', last_name: 'Gone') }
