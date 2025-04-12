@@ -557,7 +557,6 @@ en:
       reject: Reject
       resend: Resend
       resolve: Mark as resolved
-      revoke: Revoke
       save: Save
       select_file: Select file
       send_invitation: Send invitation

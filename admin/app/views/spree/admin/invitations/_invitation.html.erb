@@ -13,8 +13,8 @@
   <td class="w-20">
     <% if invitation.accepted? %>
       <span class="badge badge-success"><%= Spree.t(:accepted) %></span>
-    <% elsif invitation.revoked? %>
-      <span class="badge badge-danger"><%= Spree.t(:revoked) %></span>
+    <% elsif invitation.deleted? %>
+      <span class="badge badge-danger"><%= Spree.t(:deleted) %></span>
     <% elsif invitation.expired? %>
       <span class="badge badge-warning"><%= Spree.t(:expired) %></span>
     <% else %>
@@ -40,9 +40,9 @@
           <%= link_to_with_icon 'send', Spree.t('actions.resend'), spree.resend_admin_invitation_path(invitation), 
               class: "dropdown-item", 
               data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
-          <%= link_to_with_icon 'trash', Spree.t('actions.revoke'), spree.revoke_admin_invitation_path(invitation), 
+          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation), 
               class: "dropdown-item btn-danger", 
-              data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
+              data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } if can?(:destroy, invitation) %>
         </div>
       </div>
     <% end %>

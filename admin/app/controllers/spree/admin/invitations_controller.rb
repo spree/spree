@@ -4,7 +4,7 @@ module Spree
       skip_before_action :authorize_admin, only: [:show]
 
       before_action :load_invitation_resource
-      before_action :load_invitation, only: [:accept, :revoke, :destroy]
+      before_action :load_invitation, only: [:accept, :destroy]
       before_action :load_roles, only: [:new, :create]
 
       layout :choose_layout
@@ -61,14 +61,6 @@ module Spree
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
         @invitation.accept!
         redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_accepted')
-      end
-
-      # PUT /admin/invitations/:id/revoke
-      def revoke
-        authorize! :update, @invitation
-
-        @invitation.revoke!
-        redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_revoked')
       end
 
       # PUT /admin/invitations/:id/resend

@@ -66,17 +66,6 @@ RSpec.describe Spree::Invitation, type: :model do
         expect { invitation.accept }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
     end
-
-    context 'when revoking an invitation' do
-      it 'changes status to revoked' do
-        invitation.revoke
-        expect(invitation.status).to eq('revoked')
-      end
-
-      it 'sets revoked_at timestamp' do
-        expect { invitation.revoke }.to change { invitation.revoked_at }.from(nil)
-      end
-    end
   end
 
   describe '#expired?' do
@@ -100,12 +89,6 @@ RSpec.describe Spree::Invitation, type: :model do
 
     it 'does not send invitation email if invitation is expired' do
       allow(invitation).to receive(:expired?).and_return(true)
-      expect(invitation).not_to receive(:send_invitation_email)
-      invitation.resend!
-    end
-
-    it 'does not send invitation email if invitation is revoked' do
-      invitation.revoke
       expect(invitation).not_to receive(:send_invitation_email)
       invitation.resend!
     end

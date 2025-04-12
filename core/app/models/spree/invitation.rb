@@ -1,6 +1,7 @@
 module Spree
   class Invitation < Base
     has_secure_token
+    acts_as_paranoid
 
     #
     # Virtual Attributes
@@ -31,7 +32,6 @@ module Spree
     #
     scope :pending, -> { where(status: 'pending') }
     scope :accepted, -> { where(status: 'accepted') }
-    scope :revoked, -> { where(status: 'revoked') }
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
 
     #
@@ -42,11 +42,6 @@ module Spree
         transition :pending => :accepted
       end
       after_transition to: :accepted, do: [:set_accepted_at, :send_acceptance_notification]
-
-      event :revoke do
-        transition :pending => :revoked
-      end
-      after_transition to: :revoked, do: [:set_revoked_at]
     end
 
     #
@@ -77,7 +72,7 @@ module Spree
     end
 
     def resend!
-      return if expired? || revoked? || accepted?
+      return if expired? || deleted? || accepted?
 
       send_invitation_email
     end
@@ -116,10 +111,6 @@ module Spree
 
     def set_accepted_at
       update!(accepted_at: Time.current)
-    end
-
-    def set_revoked_at
-      update!(revoked_at: Time.current)
     end
   end
 end
