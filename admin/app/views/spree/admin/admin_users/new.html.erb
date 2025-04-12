@@ -19,6 +19,14 @@
         </div>
 
         <%= render 'form', f: f %>
+        <div class="form-group">
+          <%= f.label :password %>
+          <%= f.password_field :password, class: 'form-control', required: true %>
+        </div>
+        <div class="form-group">
+          <%= f.label :password_confirmation %>
+          <%= f.password_field :password_confirmation, class: 'form-control', required: true %>
+        </div>
       </div>
       <div class="card-footer">
         <%= turbo_save_button_tag(Spree.t('create_a_new_account')) %>
