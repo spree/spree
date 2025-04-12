@@ -33,7 +33,6 @@ module Spree
     scope :accepted, -> { where(status: 'accepted') }
     scope :revoked, -> { where(status: 'revoked') }
     scope :not_expired, -> { where('expires_at > ?', Time.current) }
-    scope :for_resource, ->(resource) { where(resource_id: resource.id, resource_type: resource.class.name) }
 
     #
     # State Machine
