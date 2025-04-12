@@ -56,7 +56,7 @@ module Spree
       alias_action :create, :update, :destroy, to: :modify
     end
 
-    def apply_admin_permissions(user, store)
+    def apply_admin_permissions(user, options)
       can :manage, :all
       cannot :cancel, Spree::Order
       can :cancel, Spree::Order, &:allow_cancel?
@@ -64,7 +64,7 @@ module Spree
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
 
-    def apply_user_permissions(user, store)
+    def apply_user_permissions(user, options)
       can :read, ::Spree::Country
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
