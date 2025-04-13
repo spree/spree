@@ -838,6 +838,28 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#disassociate_user!' do
+    let(:order) { create(:order_with_line_items) }
+    let(:expected_order_attributes) {
+      {
+        user: nil,
+        user_id: nil,
+        email: nil,
+        created_by: nil,
+        created_by_id: nil,
+        bill_address: nil,
+        bill_address_id: nil,
+        ship_address: nil,
+        ship_address_id: nil
+      }
+    }
+
+    it 'disassociates a user from an order' do
+      order.disassociate_user!
+      expect(order).to have_attributes(expected_order_attributes)
+    end
+  end
+
   describe '#can_ship?' do
     let(:order) { Spree::Order.create }
 

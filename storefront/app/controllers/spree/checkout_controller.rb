@@ -192,14 +192,14 @@ module Spree
                        .orders
                        .create!(current_order_params.except(:token, :user_id))
                        .tap do |order|
-              order.merge!(@order)
+              order.merge!(@order, discard_merged: false)
               order.disassociate_user!
             end
 
             reset_session
             cookies.permanent.signed[:token] = @order.token
 
-            redirect_to spree.cart_path(order_token: @order.token)
+            redirect_to spree.checkout_path(@order.token)
           else
             store_location
             redirect_to spree_login_path

@@ -23,7 +23,7 @@
     <%= render "devise/shared/links" %>
 
     <% if current_order.present? &&
-          current_store.prefers_guest_checkout? &&
+          current_store&.prefers_guest_checkout? &&
           stored_location&.include?(spree.checkout_path(current_order.token))
     %>
       <div class="relative my-5 flex items-center">
