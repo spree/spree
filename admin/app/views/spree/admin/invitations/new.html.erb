@@ -21,7 +21,7 @@
           <%= f.date_field :expires_at, class: 'form-control', required: true, data: { 'enable-button-target': 'input' } %>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
+      <div class="modal-footer">
         <%= turbo_save_button_tag nil, class: 'btn btn-primary', data: { 'enable-button-target': 'button' } do %>
           <%= icon 'send' %>
           <%= Spree.t('actions.send_invitation') %>

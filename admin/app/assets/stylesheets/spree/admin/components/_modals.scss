@@ -25,7 +25,7 @@ body.modal-open {
 }
 .modal-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   padding: $modal-inner-padding;
   background-color: #FAFAFA;
   border-top: 1px solid $gray-50;

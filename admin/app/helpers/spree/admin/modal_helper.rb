@@ -20,7 +20,7 @@ module Spree
       # render a discard button for the modal
       # @return [String]
       def modal_discard_button
-        button_tag(type: 'button', class: 'btn btn-light', data: { dismiss: 'modal' }) do
+        button_tag(type: 'button', class: 'btn btn-light mr-auto', data: { dismiss: 'modal' }) do
           Spree.t('actions.discard')
         end.html_safe
       end
