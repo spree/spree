@@ -77,7 +77,7 @@ $thumbnail-border-color: $gray-100 !default;
 $hr-border-color: $border-color !default;
 $table-border-color: $gray-50 !default;
 $card-border-color: $border-color !default;
-$input-btn-focus-width: 0.15rem !default;
+$input-btn-focus-width: 0.18rem !default;
 
 $card-spacer-y:                     .75rem !default;
 $card-spacer-x:                     1rem !default;
@@ -87,6 +87,7 @@ $component-active-bg:         $blue !default;
 $input-placeholder-color: $gray-500;
 $input-padding-y:         .5rem !default;
 $input-disabled-bg: $gray-50 !default;
+$input-focus-border-color: $blue !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-400 !default;

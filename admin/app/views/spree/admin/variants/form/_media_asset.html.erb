@@ -1,4 +1,4 @@
-<div id="<%= spree_dom_id(asset) %>" class="media-form__image border border-gray-200" data-sortable-update-url="<%= spree.admin_asset_path(asset) %>">
+<div id="<%= spree_dom_id(asset) %>" class="media-form__image" data-sortable-update-url="<%= spree.admin_asset_path(asset) %>">
   <div class="custom-control custom-checkbox d-none">
     <%= check_box_tag "ids[]", asset.id, false, class: "custom-control-input", id: "#{asset.id}-checkbox", data: { media_form_target: "checkbox", action: 'media-form#showDeleteButton' } %>
     <label class="custom-control-label" for="<%= asset.id %>-checkbox"><span></span></label>

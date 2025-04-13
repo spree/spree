@@ -27,6 +27,9 @@ label {
 }
 
 .form-control, .text-input, .trix-container, .ts-control, trix-toolbar .trix-dialog .trix-input, .custom-select, .input-group-text, .custom-file-label {
+  transition-property: box-shadow;
+  transition-duration: 0.2s;
+
   &:disabled, &[readonly] {
     @extend .shadow-none;
     @extend .text-muted;

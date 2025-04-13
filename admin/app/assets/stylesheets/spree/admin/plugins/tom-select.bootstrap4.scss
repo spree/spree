@@ -29,9 +29,9 @@ $select-color-optgroup-text: $dropdown-header-color !default;
 $select-color-optgroup-border: $dropdown-divider-bg !default;
 $select-color-dropdown: $dropdown-bg !default;
 $select-color-dropdown-border-top: mix($input-border-color, $input-bg, 0.8) !default;
-$select-color-dropdown-item-active: $dropdown-link-hover-bg !default;
-$select-color-dropdown-item-active-text: $dropdown-link-hover-color !default;
-$select-color-dropdown-item-create-active-text: $dropdown-link-hover-color !default;
+$select-color-dropdown-item-active: $gray-50 !default;
+$select-color-dropdown-item-active-text: $gray-900 !default;
+$select-color-dropdown-item-create-active-text: $gray-900 !default;
 $select-opacity-disabled: 0.5 !default;
 
 $select-border: 1px solid $input-border-color !default;
@@ -67,8 +67,9 @@ $select-arrow-offset: calc(#{$select-padding-x} + 5px) !default;
 	z-index: $zindex-dropdown;
 	background: $select-color-dropdown;
 	border: 1px solid $dropdown-border-color; //$dropdown-fallback-border
-	border-radius: $border-radius;
+	border-radius: $border-radius-lg;
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	top: 110%;
 }
 
 .#{$select-ns}-dropdown {
