@@ -86,7 +86,7 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :product_properties, -> { sort_by_property_position }, dependent: :destroy, inverse_of: :product
+    has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
 
     has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
