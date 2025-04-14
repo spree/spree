@@ -152,4 +152,28 @@ describe Spree::Property, type: :model do
       it { expect { property.update(name: 'test') }.not_to change { product_property.reload.filter_param }.from(nil) }
     end
   end
+
+  describe '#after_touch callback' do
+    let!(:product_property) { create(:product_property) }
+
+    it 'touches the product' do
+      expect { product_property.property.touch }.to change { product_property.product.reload.updated_at }
+    end
+  end
+
+  describe '#after_update callback' do
+    let!(:product_property) { create(:product_property) }
+
+    context 'with DEPENDENCY_UPDATE_FIELDS' do
+      it 'touches the product' do
+        expect { product_property.property.update(name: 'test') }.to change { product_property.product.reload.updated_at }
+      end
+    end
+
+    context 'without DEPENDENCY_UPDATE_FIELDS' do
+      it 'does not touch the product' do
+        expect { product_property.property.update(updated_at: Time.now) }.not_to change { product_property.product.reload.updated_at }
+      end
+    end
+  end
 end
