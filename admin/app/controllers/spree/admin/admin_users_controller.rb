@@ -3,7 +3,7 @@ module Spree
     class AdminUsersController < BaseController
       skip_before_action :authorize_admin, only: [:new, :create]
 
-      before_action :load_resource
+      before_action :load_resource, except: [:new, :create]
       before_action :load_invitation, only: [:new, :create]
       before_action :load_admin_user, only: [:edit, :update, :destroy]
 
@@ -32,10 +32,8 @@ module Spree
       # this is a self signup flow for admin users from the invitation email
       def create
         @admin_user = Spree.admin_user_class.new(permitted_params)
-        @admin_user.spree_role_ids = @invitation.role_ids
+        @invitation.invitee = @admin_user
         if @admin_user.save && @invitation.accept!
-          @invitation.update!(invitee: @admin_user)
-
           # Automatically log in the user after successful signup
           # if Devise is installed
           if defined?(sign_in)
@@ -63,6 +61,15 @@ module Spree
         end
       end
 
+      # DELETE /admin/admin_users/:id
+      def destroy
+        authorize! :destroy, @admin_user
+
+        # we're actually removing the resource_user record, not the user itself
+        @resource.resource_users.find_by(user: @admin_user).destroy
+        redirect_to spree.admin_admin_users_path, status: :see_other, notice: flash_message_for(@admin_user, :successfully_deleted)
+      end
+
       private
 
       def permitted_params
@@ -82,7 +89,7 @@ module Spree
       end
 
       def scope
-        @resource.admin_users.accessible_by(current_ability, :manage)
+        @resource.users.accessible_by(current_ability, :manage)
       end
 
       def choose_layout
