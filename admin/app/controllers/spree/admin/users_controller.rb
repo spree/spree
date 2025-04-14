@@ -52,7 +52,7 @@ module Spree
         params[:q][:s] ||= 'created_at desc'
         params[:q][:created_at_not_null] ||= 1
 
-        @collection = Spree.user_class.accessible_by(current_ability, :index)
+        @collection = model_class.accessible_by(current_ability, :index)
         @search = @collection.ransack(params[:q])
         @collection = @search.result(distinct: true).
                       includes(
