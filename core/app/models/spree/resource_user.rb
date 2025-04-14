@@ -1,5 +1,5 @@
 module Spree
-  class ResourceUser < Base
+  class ResourceUser < Spree.base_class
     #
     # Associations
     #
