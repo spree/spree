@@ -17,7 +17,7 @@ RSpec.describe 'Checkout page', type: :feature do
       it 'displays the example payment method' do
         visit spree.checkout_state_path(order.token, state: 'payment', payment_method_id: payment_method.id)
 
-        expect(page).to have_selector('div.test-payment', text: 'This is a test payment method!')
+        expect(page).to have_selector('div.test-payment', text: 'This is a custom payment form for Spree::Gateway::Test.')
       end
     end
   end
