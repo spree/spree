@@ -181,7 +181,7 @@ module Spree
         # No need to filter if there is only one taxonomy
         return taxonomies_products if taxonomies.size == 1
 
-        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products.map(&:id), taxonomies))
+        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products.ids, taxonomies))
       end
 
       def by_name(products)
