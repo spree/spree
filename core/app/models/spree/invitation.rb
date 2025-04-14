@@ -1,5 +1,5 @@
 module Spree
-  class Invitation < Base
+  class Invitation < Spree.base_class
     has_secure_token
     acts_as_paranoid
 
