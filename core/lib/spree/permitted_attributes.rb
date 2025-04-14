@@ -94,6 +94,7 @@ module Spree
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
       :cost_currency, :cost_price, :compare_at_price,
+      :slug,
       {
         tag_list: [],
         option_type_ids: [],
