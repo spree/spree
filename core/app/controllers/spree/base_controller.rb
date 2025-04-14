@@ -8,4 +8,14 @@ class Spree::BaseController < ApplicationController
   include Spree::Core::ControllerHelpers::Locale
   include Spree::Core::ControllerHelpers::Currency
   include Spree::Core::ControllerHelpers::Turbo
+
+  helper_method :render_with_default
+
+  private
+
+  def render_with_default(...)
+    render(...)
+  rescue ActionView::MissingTemplate
+    yield if block_given?
+  end
 end

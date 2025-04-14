@@ -56,7 +56,16 @@ module Spree
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
+
+      test_dummy_views
     end
+
+      def test_dummy_views
+        Dir['templates/app/views/**/*.html.erb', base: __dir__].each do |path|
+          path.delete_prefix!('templates/')
+          template path, "#{dummy_path}/#{path}", force: true
+        end
+      end
 
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements

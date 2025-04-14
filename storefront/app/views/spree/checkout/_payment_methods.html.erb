@@ -42,7 +42,9 @@
 
             <% if selected_method == method %>
               <div class="px-5 py-4">
-                <%= render partial: "spree/checkout/payment/#{method.method_type}", locals: { payment_method: method } %>
+                <%= render_with_default partial: "spree/checkout/payment/#{method.type.demodulize.downcase}", locals: { payment_method: method } do %>
+                  <%= render partial: "spree/checkout/payment/#{method.method_type}", locals: { payment_method: method } %>
+                <% end %>
               </div>
             <% end %>
           </li>
@@ -50,7 +52,9 @@
       </ul>
     <% elsif checkout_available_payment_methods.any? %>
       <%= hidden_field_tag "order[payments_attributes][][payment_method_id]", checkout_available_payment_methods.first&.id %>
-      <%= render partial: "spree/checkout/payment/#{checkout_available_payment_methods.first.method_type}", locals: { payment_method: checkout_available_payment_methods.first } %>
+      <%= render_with_default partial: "spree/checkout/payment/#{checkout_available_payment_methods.first.type.demodulize.downcase}", locals: { payment_method: checkout_available_payment_methods.first } do %>
+        <%= render partial: "spree/checkout/payment/#{checkout_available_payment_methods.first.method_type}", locals: { payment_method: checkout_available_payment_methods.first } %>
+      <% end %>
     <% end %>
   <% end %>
 

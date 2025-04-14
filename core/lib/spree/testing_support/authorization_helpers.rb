@@ -32,6 +32,10 @@ module Spree
       module Request
         include CustomAbility
 
+        def self.extended(base)
+          base.include(ClassMethods)
+        end
+
         def stub_authorization!
           ability = build_ability
           ability_class = Spree::Dependencies.ability_class.constantize
@@ -63,6 +67,16 @@ module Spree
           end
           before(:all) do
             ability_class.register_ability(ability)
+          end
+        end
+
+        module ClassMethods
+          def stub_authentication!(user)
+            allow(Spree.user_class).to receive(:find_by).and_return(user)
+
+            if defined?(Spree::BaseController)
+              allow_any_instance_of(Spree::BaseController).to receive(:try_spree_current_user).and_return(user)
+            end
           end
         end
       end
