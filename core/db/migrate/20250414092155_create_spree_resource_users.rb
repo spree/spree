@@ -9,14 +9,5 @@ class CreateSpreeResourceUsers < ActiveRecord::Migration[7.2]
     end
 
     add_index :spree_resource_users, [:resource_id, :resource_type, :user_id, :user_type], unique: true
-
-    # migrate existing admin users to resource_users
-    unless Rails.env.test?
-      Spree.admin_user_class.all.each do |admin_user|
-        Spree::Store.all.each do |store|
-          store.resource_users.find_or_create_by!(user: admin_user)
-        end
-      end
-    end
   end
 end
