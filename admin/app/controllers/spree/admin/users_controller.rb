@@ -65,7 +65,7 @@ module Spree
       end
 
       def find_resource
-        Spree.user_class.accessible_by(current_ability, :show).find(params[:id])
+        model_class.accessible_by(current_ability, :show).find(params[:id])
       end
 
       private
