@@ -103,6 +103,10 @@ module Spree
     has_many :posts
     has_many :post_categories
 
+    # Store Staff
+    has_many :resource_users, class_name: 'Spree::ResourceUser', as: :resource
+    has_many :users, through: :resource_users, source: :user, source_type: Spree.admin_user_class.to_s
+
     #
     # Page Builder associations
     #
@@ -348,10 +352,10 @@ module Spree
     end
 
     def admin_users
-      @admin_users ||= Spree.admin_user_class.joins(:spree_roles).where(spree_roles: { name: :admin })
-    end
+      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 6.0. Please use Store#users instead.')
 
-    alias_method :users, :admin_users
+      users
+    end
 
     def favicon
       return unless favicon_image.attached? && favicon_image.variable?

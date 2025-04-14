@@ -16,6 +16,7 @@ module Spree
     belongs_to :invitee, polymorphic: true # User or AdminUser
     has_many :invitation_roles, dependent: :destroy
     has_many :roles, through: :invitation_roles
+    has_one :resource_user, dependent: :destroy
 
     #
     # Validations
@@ -37,10 +38,14 @@ module Spree
     # State Machine
     #
     state_machine initial: :pending, attribute: :status do
-      event :accept do
-        transition :pending => :accepted
+      state :accepted do
+        validates :invitee, presence: true
       end
-      after_transition to: :accepted, do: [:set_accepted_at, :send_acceptance_notification]
+
+      event :accept do
+        transition pending: :accepted
+      end
+      after_transition to: :accepted, do: [:create_resource_user, :set_accepted_at, :send_acceptance_notification]
     end
 
     #
@@ -98,9 +103,9 @@ module Spree
 
     def invitee_already_exists
       exists = if invitee.present?
-                store.admin_users.include?(invitee)
+                resource.users.include?(invitee)
               else
-                store.admin_users.exists?(email: email)
+                resource.users.exists?(email: email)
               end
 
       if exists
@@ -110,6 +115,15 @@ module Spree
 
     def set_accepted_at
       update!(accepted_at: Time.current)
+    end
+
+    def create_resource_user
+      return if invitee.blank?
+
+      resource.resource_users.find_or_create_by!(user: invitee) do |resource_user|
+        resource_user.invitation = self
+        resource_user.user.spree_roles = roles
+      end
     end
   end
 end

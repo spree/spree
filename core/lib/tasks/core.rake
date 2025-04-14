@@ -184,6 +184,14 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       end
     end
   end
+
+  task migrate_admin_users_to_resource_users: :environment do |_t, _args|
+    Spree::AdminUser.all.each do |admin_user|
+      Spree::Store.all.each do |store|
+        store.resource_users.find_or_create_by!(user: admin_user)
+      end
+    end
+  end
 end
 
 namespace :core do
