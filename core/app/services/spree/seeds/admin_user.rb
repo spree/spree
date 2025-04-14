@@ -15,6 +15,10 @@ module Spree
 
           user.spree_roles << Spree::Role.find_or_create_by(name: :admin)
           user.save!
+
+          Spree::Store.all.each do |store|
+            store.resource_users.find_or_create_by!(user: user)
+          end
         end
       end
     end
