@@ -33,7 +33,7 @@ module Spree
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
       has_many :invitations, class_name: 'Spree::Invitation', foreign_key: :invitee_id, dependent: :destroy
       has_many :resource_users, class_name: 'Spree::ResourceUser', foreign_key: :user_id, dependent: :destroy, as: :user
-      has_many :resources, through: :resource_users, source: :resource
+      has_many :stores, through: :resource_users, source: :resource, source_type: 'Spree::Store'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 

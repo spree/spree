@@ -52,7 +52,7 @@ module Spree
         params[:q][:s] ||= 'created_at desc'
         params[:q][:created_at_not_null] ||= 1
 
-        @collection = super
+        @collection = model_class.accessible_by(current_ability, :index)
         @search = @collection.ransack(params[:q])
         @collection = @search.result(distinct: true).
                       includes(
@@ -62,6 +62,10 @@ module Spree
                         avatar_attachment: :blob
                       ).
                       page(params[:page]).per(params[:per_page])
+      end
+
+      def find_resource
+        model_class.accessible_by(current_ability, :show).find(params[:id])
       end
 
       private
