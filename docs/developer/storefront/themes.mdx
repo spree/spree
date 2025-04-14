@@ -11,10 +11,10 @@ Spree comes with a default theme called `default`. It is used as a base for all 
 
 ## Creating a New Theme
 
-You can create your own custom themes by following the steps below.
+You can create your custom themes by following the steps below.
 
 ```bash
-rails g spree:theme MyTheme
+bin/rails g spree:storefront:theme MyTheme
 ```
 
 This command will create a new theme called `my_theme` in the `app/views/themes` directory and copy the default theme files to the new theme.
@@ -53,9 +53,9 @@ Theme has the following template structure:
 
 Each directory contains standard [Ruby on Rails ERB templates](https://guides.rubyonrails.org/action_view_overview.html) for the corresponding page.
 
-`page_sections` directory contains sections that are used globally across the storefront.
+The `page_sections` directory contains sections that are used globally across the storefront.
 
-`shared` directory contains shared components that are used across the storefront.
+The `shared` directory contains shared components that are used across the storefront.
 
 ### Theme Settings
 
