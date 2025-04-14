@@ -138,6 +138,17 @@ describe Spree::ProductsController, type: :controller do
               expect(assigns(:storefront_products).records).to eq([product3])
             end
           end
+
+          context 'and product matches taxon from parent' do
+            let(:taxonomy_ids) { { taxonomy.id => { taxon_ids: [taxon.id, taxon2.id] }, taxonomy2.id => { taxon_ids: [taxon4.id] } } }
+            let(:taxon3) { create(:taxon, taxonomy: taxonomy2, parent_id: taxon4.id) }
+            let(:taxon4) { create(:taxon, taxonomy: taxonomy2) }
+            let(:product3) { create(:product, stores: [store], taxons: [taxon, taxon3]) }
+
+            it 'returns products associated with the selected taxons' do
+              expect(assigns(:storefront_products).records).to eq([product3])
+            end
+          end
         end
       end
     end

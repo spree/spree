@@ -174,14 +174,14 @@ module Spree
       def by_taxonomies(products)
         return products unless taxonomies.present?
 
-        taxons = taxon_ids(taxonomies.values.map { |taxonomy| taxonomy[:taxon_ids] }.flatten.join(','))
+        taxon_groups = taxonomies.values.map { |taxonomy| taxon_ids(taxonomy[:taxon_ids].join(',')) }
 
-        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxon_groups.flatten.uniq })
 
         # No need to filter if there is only one taxonomy
         return taxonomies_products if taxonomies.size == 1
 
-        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products.ids, taxonomies))
+        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products.ids, taxon_groups))
       end
 
       def by_name(products)
@@ -352,9 +352,7 @@ module Spree
         scope.by_best_selling(:desc)
       end
 
-      def products_matching_all_taxonomies_ids(products_ids, taxonomies)
-        taxon_groups = taxonomies.values.map { |v| v['taxon_ids'] }
-
+      def products_matching_all_taxonomies_ids(products_ids, taxon_groups)
         classifications = Spree::Classification.
                           where(product_id: products_ids, taxon_id: taxon_groups.flatten).
                           pluck(:product_id, :taxon_id)
