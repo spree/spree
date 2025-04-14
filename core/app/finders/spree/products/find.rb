@@ -359,6 +359,7 @@ module Spree
                           where(product_id: products_ids, taxon_id: taxon_groups.flatten).
                           pluck(:product_id, :taxon_id)
 
+        # Find products ids that match all taxonomies to tighten filter results
         products_ids.select do |product_id|
           product_taxon_ids = classifications.select { |product, _| product == product_id }.map { |_, taxon_id| taxon_id.to_s }
           taxon_groups.all? { |group| (group & product_taxon_ids).any? }
