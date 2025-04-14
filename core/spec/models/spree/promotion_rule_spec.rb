@@ -16,6 +16,10 @@ module Spree
       expect { BadTestRule.new.eligible? }.to raise_error(ArgumentError)
     end
 
+    it 'forces developer to implement applicable? method' do
+      expect { BadTestRule.new.applicable? }.to raise_error(ArgumentError)
+    end
+
     it 'validates unique rules for a promotion' do
       TestRule.create!(promotion: promotion)
 
