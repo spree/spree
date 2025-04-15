@@ -174,7 +174,9 @@ module Spree
       def by_taxonomies(products)
         return products unless taxonomies.present?
 
-        taxon_groups = taxonomies.values.map { |taxonomy| taxon_ids(taxonomy[:taxon_ids].join(',')) }
+        taxon_groups = taxonomies.values.map { |taxonomy| taxon_ids(taxonomy[:taxon_ids].join(',')) }.compact_blank
+
+        return products if taxon_groups.empty?
 
         taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxon_groups.flatten.uniq })
 
