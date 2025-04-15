@@ -30,6 +30,8 @@ module Spree
                   :storefront_products_scope, :storefront_products,
                   :default_products_sort, :default_products_finder_params
 
+    helper_method :stored_location
+
     before_action :redirect_to_default_locale
     before_action :render_404_if_store_not_exists
     rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_authenticity_token
@@ -217,6 +219,13 @@ module Spree
       location ||= request.fullpath
 
       store_location_for(Devise.mappings.keys.first, location)
+    end
+
+    def stored_location
+      return unless defined?(after_sign_in_path_for)
+      return unless defined?(Devise)
+
+      after_sign_in_path_for(Devise.mappings.keys.first)
     end
 
     def redirect_to_cart

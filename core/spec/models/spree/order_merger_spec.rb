@@ -14,6 +14,19 @@ module Spree
       expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    context 'when `discard_merged` is false' do
+      it 'keeps the other order' do
+        subject.merge!(order_2, discard_merged: false)
+        expect { order_2.reload }.not_to raise_error
+      end
+
+      it 'does not change the other order' do
+        expect {
+          subject.merge!(order_2, discard_merged: false)
+        }.not_to change(order_2, :attributes)
+      end
+    end
+
     it 'persist the merge' do
       expect(subject).to receive(:persist_merge)
       subject.merge!(order_2)

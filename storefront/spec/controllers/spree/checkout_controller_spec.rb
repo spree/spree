@@ -130,6 +130,20 @@ describe Spree::CheckoutController, type: :controller do
             get :edit, params: { token: order.token }
             expect(response).to redirect_to('/login')
           end
+
+          context 'when guest checkout is allowed' do
+            let(:allow_guest_checkout) { true }
+
+            it 'creates a new order and allows access to the checkout' do
+              expect {
+                get :edit, params: { token: order.token, guest: true }
+              }.to change(Spree::Order, :count).by(1)
+
+              new_order = Spree::Order.last
+
+              expect(response).to redirect_to(spree.checkout_path(new_order.token))
+            end
+          end
         end
 
         context 'when user is logged in' do

@@ -91,6 +91,8 @@ module Spree
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
 
+    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id]
+
     belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
     belongs_to :approver, class_name: "::#{Spree.admin_user_class}", optional: true
@@ -355,13 +357,19 @@ module Spree
       self.bill_address ||= user.bill_address
       self.ship_address ||= user.ship_address
 
-      changes = slice(:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id)
+      changes = slice(*ASSOCIATED_USER_ATTRIBUTES)
 
       # immediately persist the changes we just made, but don't use save
       # since we might have an invalid address associated
       ActiveRecord::Base.connected_to(role: :writing) do
         self.class.unscoped.where(id: self).update_all(changes)
       end
+    end
+
+    def disassociate_user!
+      nullified_attributes = ASSOCIATED_USER_ATTRIBUTES.index_with(nil)
+
+      update!(nullified_attributes)
     end
 
     def quantity_of(variant, options = {})

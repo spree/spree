@@ -7,7 +7,7 @@ module Spree
       @order = order
     end
 
-    def merge!(other_order, user = nil)
+    def merge!(other_order, user = nil, discard_merged: true)
       other_order.line_items.each do |other_order_line_item|
         next unless other_order_line_item.currency == order.currency
 
@@ -16,12 +16,14 @@ module Spree
       end
 
       set_user(user)
-      clear_addresses(other_order)
+      clear_addresses(other_order) if discard_merged
       persist_merge
 
-      # So that the destroy doesn't take out line items which may have been re-assigned
-      other_order.line_items.reload
-      other_order.destroy
+      if discard_merged
+        # So that the destroy doesn't take out line items which may have been re-assigned
+        other_order.line_items.reload
+        other_order.destroy
+      end
     end
 
     # Compare the line item of the other order with mine.
