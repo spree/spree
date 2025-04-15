@@ -42,7 +42,6 @@ module Spree
         products = by_currency(products)
         products = by_taxons(products)
         products = by_concat_taxons(products)
-        products = by_taxonomies(products)
         products = by_name(products)
         products = by_slug(products)
         products = by_options(products)
@@ -54,6 +53,7 @@ module Spree
         products = show_only_backorderable(products)
         products = show_only_purchasable(products)
         products = show_only_out_of_stock(products)
+        products = by_taxonomies(products)
         products = ordered(products)
         products = by_vendor_ids(products)
 
