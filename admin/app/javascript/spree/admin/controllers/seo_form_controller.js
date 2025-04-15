@@ -22,6 +22,7 @@ export default class extends Controller {
 
   connect() {
     this.sourceTitleInputTarget.addEventListener('input', this.updatePreviews)
+    this.element.addEventListener('slug-form:slugFinalized', this.updatePreviews)
 
     if (this.editorValue == 'tinymce') {
       this.connectTinymceEditor()

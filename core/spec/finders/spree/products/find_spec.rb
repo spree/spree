@@ -547,5 +547,35 @@ module Spree
         expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
       end
     end
+
+    describe 'filter by slug' do
+      subject(:products) { described_class.new(scope: Spree::Product.all, params: params).execute }
+
+      let(:params) { { filter: { slug: 'slug-1' } } }
+
+      before { product.update(slug: 'slug-1') }
+
+      context 'when product with given slug is present' do
+        it 'returns products with the given slug' do
+          expect(products).to contain_exactly(product)
+        end
+      end
+
+      context 'when product with given slug is not present' do
+        let(:params) { { filter: { slug: 'slug-2' } } }
+
+        it 'returns all products' do
+          expect(products).to be_empty
+        end
+      end
+
+      context 'when slug is not present' do
+        let(:params) { { filter: { slug: '' } } }
+
+        it 'returns all products' do
+          expect(products).to contain_exactly(product, product_2, product_3, in_stock_product, not_backorderable_product)
+        end
+      end
+    end
   end
 end

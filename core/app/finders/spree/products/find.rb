@@ -12,6 +12,7 @@ module Spree
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
+        @slug             = params.dig(:filter, :slug)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
         @option_value_ids = params.dig(:filter, :option_value_ids)
         @sort_by          = params.dig(:sort_by)
@@ -41,6 +42,7 @@ module Spree
         products = by_taxons(products)
         products = by_concat_taxons(products)
         products = by_name(products)
+        products = by_slug(products)
         products = by_options(products)
         products = by_option_value_ids(products)
         products = by_properties(products)
@@ -60,7 +62,7 @@ module Spree
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
                   :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags,
-                  :query, :vendor_ids, :out_of_stock
+                  :query, :vendor_ids, :out_of_stock, :slug
 
       def query?
         query.present?
@@ -92,6 +94,10 @@ module Spree
 
       def name?
         name.present?
+      end
+
+      def slug?
+        slug.present?
       end
 
       def options?
@@ -170,6 +176,12 @@ module Spree
 
         # i18n mobility scope doesn't automatically get set for query blocks (Mobility issue #599) - set it explicitly
         products.i18n { name.matches("%#{product_name}%") }
+      end
+
+      def by_slug(products)
+        return products unless slug.present?
+
+        products.i18n.where(slug: slug)
       end
 
       def by_options(products)
