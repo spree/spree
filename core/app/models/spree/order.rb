@@ -369,13 +369,7 @@ module Spree
     def disassociate_user!
       nullified_attributes = ASSOCIATED_USER_ATTRIBUTES.index_with(nil)
 
-      self.assign_attributes(nullified_attributes)
-
-      changes = slice(*ASSOCIATED_USER_ATTRIBUTES)
-
-      ActiveRecord::Base.connected_to(role: :writing) do
-        self.class.unscoped.where(id: self).update_all(changes)
-      end
+      update!(nullified_attributes)
     end
 
     def quantity_of(variant, options = {})
