@@ -147,7 +147,9 @@ Spree::Core::Engine.add_routes do
       end
     end
     # setting up a new store
-    resources :stores, only: [:new, :create]
+    resources :stores, only: [:new, :create] do
+      resources :invitations, except: [:show, :destroy]
+    end
     resources :payment_methods, except: :show
     resources :shipping_methods, except: :show
     resources :shipping_categories, except: :show
@@ -217,7 +219,7 @@ Spree::Core::Engine.add_routes do
 
     # account management
     resources :roles, except: :show
-    resources :invitations do
+    resources :invitations, only: [:show, :destroy] do
       member do
         put :accept
         put :resend
