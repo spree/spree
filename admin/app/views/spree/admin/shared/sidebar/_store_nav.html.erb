@@ -6,7 +6,13 @@
 
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>
-      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users', active: %w[admin_users invitations roles].include?(controller_name)) if can?(:manage, Spree.admin_user_class) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::ResourceUser) %>
+      <%= nav_item(Spree.t(:users), [:admin, current_store, :resource_users], icon: 'users', active: %w[resource_users invitations roles].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
       <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
       <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
@@ -137,7 +143,7 @@
     <% if can?(:manage, current_store) %>
       <li class="nav-item border-top border-top-dashed my-1"></li>
       <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
-      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
+      <%= nav_item(Spree.t(:users), [:admin, current_store, :resource_users], icon: 'users') %>
     <% end %>
   </ul>
 <% end %>

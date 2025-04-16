@@ -149,6 +149,7 @@ Spree::Core::Engine.add_routes do
     # setting up a new store
     resources :stores, only: [:new, :create] do
       resources :invitations, except: [:show, :destroy]
+      resources :resource_users, except: [:new, :create]
     end
     resources :payment_methods, except: :show
     resources :shipping_methods, except: :show
@@ -225,7 +226,7 @@ Spree::Core::Engine.add_routes do
         put :resend
       end
     end
-    resources :admin_users
+    resources :admin_users, only: [:new, :create]
 
     # Action Text
     namespace :action_text do

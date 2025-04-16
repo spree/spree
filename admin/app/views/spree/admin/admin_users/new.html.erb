@@ -18,7 +18,18 @@
           <%= @invitation.inviter.name %> has invited you to join <strong><%= @invitation.resource.name %></strong>
         </div>
 
-        <%= render 'form', f: f %>
+        <div class="form-group">
+          <%= f.label :email %>
+          <%= f.email_field :email, class: 'form-control', required: true, autofocus: true %>
+        </div>
+        <div class="form-group">
+          <%= f.label :first_name %>
+          <%= f.text_field :first_name, class: 'form-control', required: true %>
+        </div>
+        <div class="form-group">
+          <%= f.label :last_name %>
+          <%= f.text_field :last_name, class: 'form-control', required: true %>
+        </div>
         <div class="form-group">
           <%= f.label :password %>
           <%= f.password_field :password, class: 'form-control', required: true %>
