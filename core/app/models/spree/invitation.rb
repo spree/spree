@@ -45,7 +45,7 @@ module Spree
       event :accept do
         transition pending: :accepted
       end
-      after_transition to: :accepted, do: [:create_resource_user, :set_accepted_at, :send_acceptance_notification]
+      after_transition to: :accepted, do: :after_accept
     end
 
     #
@@ -82,6 +82,13 @@ module Spree
     end
 
     private
+
+    # this method can be extended by developers now
+    def after_accept
+      create_resource_user
+      set_accepted_at
+      send_acceptance_notification
+    end
 
     def send_invitation_email
       Spree::InvitationMailer.invitation_email(self).deliver_later
