@@ -71,7 +71,7 @@ module Spree
       def accept
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
         @invitation.accept!
-        redirect_back fallback_location: spree.admin_invitations_path, notice: Spree.t('invitation_accepted')
+        redirect_to spree.admin_path, notice: Spree.t('invitation_accepted')
       end
 
       # PUT /admin/invitations/:id/resend

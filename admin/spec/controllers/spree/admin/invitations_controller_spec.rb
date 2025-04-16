@@ -214,8 +214,8 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       expect(invitation.accepted_at).to be_present
     end
 
-    it 'redirects to invitations path' do
-      expect(response).to redirect_to(spree.admin_invitations_path)
+    it 'redirects to admin path' do
+      expect(response).to redirect_to(spree.admin_path)
     end
 
     it 'sets a notice flash message' do
