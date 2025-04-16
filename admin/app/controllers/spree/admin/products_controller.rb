@@ -15,6 +15,7 @@ module Spree
       before_action :prepare_product_params, only: [:create, :update]
       before_action :strip_stock_items_param, only: [:create, :update]
       before_action :ensure_session_uploaded_assets_uuid, only: :new
+      before_action :check_slug_availability, only: [:create, :update]
 
       new_action.before :build_master_prices
       new_action.before :build_master_stock_items
@@ -27,7 +28,6 @@ module Spree
       update.before :update_status
       update.before :remove_empty_params
       helper_method :clone_object_url
-      update.before :check_slug_availability
 
       # https://blog.corsego.com/hotwire-turbo-streams-autocomplete-search
       def search
