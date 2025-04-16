@@ -11,7 +11,7 @@ module Spree
         @currency         = params.dig(:filter, :currency) || params[:currency] || Spree::Store.default.default_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
-        @taxonomies       = params.dig(:filter, :taxonomy_ids).to_h if params.dig(:filter, :taxonomy_ids).present?
+        @taxonomies       = params.dig(:filter, :taxonomy_ids).to_h
         @name             = params.dig(:filter, :name)
         @slug             = params.dig(:filter, :slug)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
@@ -172,7 +172,7 @@ module Spree
       end
 
       def by_taxonomies(products)
-        return products unless taxonomies.present?
+        return products if taxonomies.none?
 
         taxon_groups = taxonomies.values.map { |taxonomy| taxon_ids(taxonomy[:taxon_ids].join(',')) }.compact_blank
 
@@ -355,14 +355,12 @@ module Spree
       end
 
       def products_matching_all_taxonomies_ids(products_ids, taxon_groups)
-        classifications = Spree::Classification.
-                          where(product_id: products_ids, taxon_id: taxon_groups.flatten).
-                          pluck(:product_id, :taxon_id)
+        classifications = Spree::Classification.grouped_taxon_ids_for_products(products_ids, taxon_groups.flatten)
+        classifications_hash = classifications.to_h.transform_values { |taxon_ids| taxon_ids.split(',') }
 
         # Find products ids that match all taxonomies to tighten filter results
-        products_ids.select do |product_id|
-          product_taxon_ids = classifications.select { |product, _| product == product_id }.map { |_, taxon_id| taxon_id.to_s }
-          taxon_groups.all? { |group| (group & product_taxon_ids).any? }
+        classifications_hash.filter_map do |product_id, product_taxon_ids|
+          product_id if taxon_groups.all? { |group| (group & product_taxon_ids).any? }
         end
       end
     end
