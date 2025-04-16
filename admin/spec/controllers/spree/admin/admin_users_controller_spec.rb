@@ -7,6 +7,28 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   let(:admin_user) { create(:admin_user) }
   let(:role) { Spree::Role.find_or_create_by!(name: 'admin') }
 
+  describe 'GET #index' do
+    stub_authorization!
+
+    before do
+      admin_user
+      get :index
+    end
+
+    it 'returns a successful response' do
+      expect(response).to be_successful
+    end
+
+    it 'assigns @search' do
+      expect(assigns(:search)).to be_a(Ransack::Search)
+    end
+
+    it 'assigns @collection' do
+      expect(assigns(:collection)).to be_a(ActiveRecord::Relation)
+      expect(assigns(:collection)).to include(admin_user)
+    end
+  end
+
   describe 'GET #show' do
     stub_authorization!
 
