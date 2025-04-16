@@ -1,10 +1,26 @@
 module Spree
   module Admin
     class AdminUsersController < BaseController
-      skip_before_action :authorize_admin
-      before_action :load_invitation
+      skip_before_action :authorize_admin, only: [:new, :create]
+      before_action :load_parent, except: [:new, :create]
+      before_action :load_roles, except: [:index]
+      before_action :load_invitation, only: [:new, :create]
+      before_action :load_admin_user, only: [:show, :edit, :update]
 
-      layout 'spree/minimal'
+      layout :choose_layout
+
+      # GET /admin/admin_users
+      def index
+        params[:q] ||= {}
+        params[:q][:s] ||= 'created_at asc'
+        @search = scope.includes(:spree_roles, avatar_attachment: :blob).ransack(params[:q])
+        @collection = @search.result
+      end
+
+      # GET /admin/admin_users/:id
+      def show
+        authorize! :read, @admin_user
+      end
 
       # GET /admin/admin_users/new?token=<token>
       # this is a self signup flow for admin users from the invitation email
@@ -30,6 +46,22 @@ module Spree
         end
       end
 
+      # GET /admin/admin_users/:id/edit
+      def edit
+        authorize! :update, @admin_user
+      end
+
+      # PUT /admin/admin_users/:id
+      def update
+        authorize! :update, @admin_user
+
+        if @admin_user.update(permitted_params.merge(spree_role_ids: []))
+          redirect_to spree.edit_admin_admin_user_path(@admin_user), status: :see_other, notice: flash_message_for(@admin_user, :successfully_updated)
+        else
+          render :edit, status: :unprocessable_entity
+        end
+      end
+
       private
 
       def permitted_params
@@ -40,7 +72,27 @@ module Spree
         raise ActiveRecord::RecordNotFound if params[:token].blank?
 
         @invitation = Spree::Invitation.pending.not_expired.find_by!(token: params[:token])
-        @resource = @invitation.resource
+      end
+
+      def load_parent
+        @parent = current_store
+      end
+
+      def scope
+        @parent.users.accessible_by(current_ability, :manage)
+      end
+
+      def load_admin_user
+        @admin_user = scope.find(params[:id])
+      end
+
+      # for self signup flow, we use the minimal layout
+      def choose_layout
+        @invitation.present? ? 'spree/minimal' : 'spree/admin'
+      end
+
+      def load_roles
+        @roles = Spree::Role.accessible_by(current_ability)
       end
     end
   end

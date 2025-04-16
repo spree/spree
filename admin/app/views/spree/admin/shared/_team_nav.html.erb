@@ -1,7 +1,7 @@
 <% content_for :page_title, Spree.t(:users) %>
 
 <%= content_for(:page_tabs) do %>
-  <%= nav_item(Spree.t(:users), [:admin, @parent, :resource_users]) if can?(:manage, Spree::ResourceUser) %>
+  <%= nav_item(Spree.t(:users), spree.admin_admin_users_path) if can?(:manage, Spree.admin_user_class) %>
   <%= nav_item(Spree.t(:invitations), [:admin, @parent, :invitations]) if can?(:manage, Spree::Invitation) %>
   <%= nav_item(Spree.t(:roles), spree.admin_roles_path) if can?(:manage, Spree::Role) %>
 <% end %>

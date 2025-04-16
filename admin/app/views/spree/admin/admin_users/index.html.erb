@@ -14,7 +14,7 @@
         <% @collection.each do |user| %>
           <tr id="<%= spree_dom_id user %>" class="cursor-pointer" data-controller="row-link">
             <td class="w-50" data-action="click->row-link#openLink">
-              <%= link_to [:admin, @parent, user], data: { row_link_target: :link }, class: 'd-flex align-items-center' do %>
+              <%= link_to spree.admin_admin_user_path(user), data: { row_link_target: :link }, class: 'd-flex align-items-center' do %>
                 <%= render_avatar(user, width: 48, height: 48, class: 'mr-3 avatar') %>
                 <div class="d-flex flex-column">
                   <%= user.name %>
