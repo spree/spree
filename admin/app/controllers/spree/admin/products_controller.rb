@@ -358,7 +358,7 @@ module Spree
 
       def check_slug_availability
         new_slug = permitted_resource_params[:slug]
-        permitted_resource_params[:slug] = @product.resolved_slug(new_slug)
+        permitted_resource_params[:slug] = @product.ensure_slug_is_unique(new_slug)
       end
     end
   end

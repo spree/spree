@@ -516,7 +516,7 @@ module Spree
       !where(slug: slug).where.not(id: id).exists?
     end
 
-    def resolved_slug(candidate_slug)
+    def ensure_slug_is_unique(candidate_slug)
       return slug if candidate_slug.blank? || slug.blank?
       return candidate_slug if self.class.slug_available?(candidate_slug, id)
 
