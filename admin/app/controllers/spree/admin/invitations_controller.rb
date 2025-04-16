@@ -38,7 +38,7 @@ module Spree
 
         if @invitation.save
           respond_to do |format|
-            format.html { redirect_back fallback_location: spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_created) }
+            format.html { redirect_to spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_created) }
             format.turbo_stream
           end
         else
