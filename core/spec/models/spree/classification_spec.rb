@@ -111,7 +111,7 @@ module Spree
       context 'when empty taxon groups' do
         let(:taxon_groups) { [] }
 
-        it 'returns an empty hash' do
+        it 'returns an empty array' do
           expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
@@ -119,7 +119,7 @@ module Spree
       context 'when empty product ids' do
         let(:product_ids) { [] }
 
-        it 'returns an empty hash' do
+        it 'returns an empty array' do
           expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
         end
       end
