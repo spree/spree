@@ -32,7 +32,7 @@ module Spree
         when 'PostgreSQL'
           query.pluck(:product_id, Arel.sql("STRING_AGG(taxon_id::text, ',')"))
         when 'Mysql2', 'SQLite'
-          query.pluck(:product_id, Arel.sql("GROUP_CONCAT(taxon_id, ',')"))
+          query.pluck(:product_id, Arel.sql('GROUP_CONCAT(taxon_id)'))
         end
       end
     }
