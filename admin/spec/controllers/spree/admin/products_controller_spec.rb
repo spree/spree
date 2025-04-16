@@ -1070,28 +1070,34 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     describe 'failing to update product' do
-      let!(:existing_product) { create(:product, name: 'Existing Product', slug: 'existing-product', stores: [store]) }
+      let(:product_params) { { name: '' } }
 
-      let(:product_params) do
-        {
-          name: 'Existing Product',
-          slug: 'existing-product'
-        }
-      end
-
-      context 'using the same slug' do
-        before do
-          send_request
-        end
+      context 'using empty name' do
+        before { send_request }
 
         it 'renders the edit page' do
           expect(response).to render_template(:edit)
           expect(response).to have_http_status(:unprocessable_entity)
         end
 
-        it 'should render the error' do
-          expect(response.body).to include('Slug has already been taken')
+        it 'renders the error' do
+          expect(response.body).to include('Name can&#39;t be blank')
         end
+      end
+    end
+
+    describe 'using same slug' do
+      let!(:product) { create(:product, name: 'Existing Product', slug: 'existing-product', stores: [store]) }
+      let!(:product_2) { create(:product, name: 'Existing Product', slug: 'existing-product-2', stores: [store]) }
+      let(:product_params) { { slug: 'existing-product-2' } }
+
+      before do
+        allow(SecureRandom).to receive(:uuid).and_return('2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
+        send_request
+      end
+
+      it 'updates the slug with uuid' do
+        expect(product.reload.slug).to eq('existing-product-2-2dc1cfdf-81fe-4983-8709-ef6ee843c41d')
       end
     end
   end
