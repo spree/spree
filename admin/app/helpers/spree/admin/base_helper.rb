@@ -25,8 +25,8 @@ module Spree
       # this is used to display different sidebar navigation for settings pages
       # @return [Boolean]
       def settings_active?
-        @settings_active || %w[audits custom_domains exports imports invitations oauth_applications
-                               payment_methods refund_reasons reimbursement_types return_authorization_reasons roles resource_users
+        @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
+                               payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories
                                stores tax_categories tax_rates webhooks webhooks_subscribers zones].include?(controller_name)
       end
