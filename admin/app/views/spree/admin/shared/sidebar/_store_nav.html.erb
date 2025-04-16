@@ -9,7 +9,7 @@
     <% end %>
 
     <% if can?(:manage, Spree.admin_user_class) %>
-      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users', active: %w[resource_users invitations roles].include?(controller_name)) %>
+      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users', active: %w[admin_users invitations roles].include?(controller_name)) %>
     <% end %>
 
     <% if can?(:manage, current_store) %>
