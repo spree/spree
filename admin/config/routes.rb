@@ -219,7 +219,7 @@ Spree::Core::Engine.add_routes do
 
     # account management
     resources :roles, except: :show
-    resources :invitations, only: [:show, :destroy] do
+    resources :invitations, except: [:edit, :update] do
       member do
         put :accept
         put :resend

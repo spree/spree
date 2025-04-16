@@ -9,7 +9,6 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
   let(:role) { Spree::Role.find_or_create_by!(name: 'admin') }
 
   before do
-    allow(controller).to receive(:current_store).and_return(store)
     allow(spree).to receive(:root_path).and_return('/')
   end
 
@@ -18,7 +17,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
     before do
       invitation
-      get :index, params: { store_id: store.id }
+      get :index
     end
 
     it 'returns a successful response' do
@@ -38,7 +37,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
   describe 'GET #new' do
     stub_authorization!
 
-    before { get :new, params: { store_id: store.id } }
+    before { get :new }
 
     it 'returns a successful response' do
       expect(response).to be_successful
@@ -59,7 +58,6 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
     let(:valid_params) do
       {
-        store_id: store.id,
         invitation: {
           email: 'new@example.com',
           expires_at: 1.week.from_now,
@@ -77,7 +75,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
       it 'redirects to invitations path' do
         post :create, params: valid_params
-        expect(response).to redirect_to(spree.admin_store_invitations_path(store))
+        expect(response).to redirect_to(spree.admin_invitations_path)
       end
 
       it 'sets a flash message' do
@@ -89,7 +87,6 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     context 'with invalid parameters' do
       let(:invalid_params) do
         {
-          store_id: store.id,
           invitation: {
             email: ''
           }
@@ -218,7 +215,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     end
 
     it 'redirects to invitations path' do
-      expect(response).to redirect_to(spree.admin_store_invitations_path(store))
+      expect(response).to redirect_to(spree.admin_invitations_path)
     end
 
     it 'sets a notice flash message' do
@@ -237,7 +234,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
     it 'redirects to invitations path' do
       put :resend, params: { id: invitation.id }
-      expect(response).to redirect_to(spree.admin_store_invitations_path(store))
+      expect(response).to redirect_to(spree.admin_invitations_path)
       expect(flash[:notice]).to eq(Spree.t('invitation_resent'))
     end
   end
@@ -254,7 +251,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
     it 'redirects to invitations path' do
       delete :destroy, params: { id: invitation.id }
-      expect(response).to redirect_to(spree.admin_store_invitations_path(store))
+      expect(response).to redirect_to(spree.admin_invitations_path)
     end
 
     it 'sets a notice flash message' do

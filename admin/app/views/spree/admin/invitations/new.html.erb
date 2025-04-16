@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :dialog_modal do %>
   <%= form_for @invitation,
-    url: [:admin, @parent, :invitations],
+    url: spree.admin_invitations_path,
     data: { controller: "enable-button" } do |f| %>
     <div class="modal-content">
       <%= modal_header Spree.t('actions.send_invitation') %>

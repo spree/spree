@@ -38,7 +38,7 @@ module Spree
 
         if @invitation.save
           respond_to do |format|
-            format.html { redirect_back fallback_location: [:admin, @parent, :invitations], notice: flash_message_for(@invitation, :successfully_created) }
+            format.html { redirect_back fallback_location: spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_created) }
             format.turbo_stream
           end
         else
@@ -71,14 +71,14 @@ module Spree
       def accept
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
         @invitation.accept!
-        redirect_back fallback_location: [:admin, @parent, :invitations], notice: Spree.t('invitation_accepted')
+        redirect_back fallback_location: spree.admin_invitations_path, notice: Spree.t('invitation_accepted')
       end
 
       # PUT /admin/invitations/:id/resend
       def resend
         @invitation = scope.find(params[:id])
         @invitation.resend!
-        redirect_back fallback_location: [:admin, @parent, :invitations], notice: Spree.t('invitation_resent')
+        redirect_back fallback_location: spree.admin_invitations_path, notice: Spree.t('invitation_resent')
       end
 
       # DELETE /admin/invitations/:id
@@ -86,7 +86,7 @@ module Spree
         authorize! :destroy, @invitation
 
         @invitation.destroy
-        redirect_back fallback_location: [:admin, @parent, :invitations], notice: flash_message_for(@invitation, :successfully_removed)
+        redirect_back fallback_location: spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_removed)
       end
 
       private
