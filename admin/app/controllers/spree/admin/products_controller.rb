@@ -27,6 +27,7 @@ module Spree
       update.before :update_status
       update.before :remove_empty_params
       helper_method :clone_object_url
+      update.before :check_slug_availability
 
       # https://blog.corsego.com/hotwire-turbo-streams-autocomplete-search
       def search
@@ -353,6 +354,11 @@ module Spree
           variants: [:prices, :images, :stock_items, :stock_locations],
           variant_images: [],
         }
+      end
+
+      def check_slug_availability
+        new_slug = permitted_resource_params[:slug]
+        permitted_resource_params[:slug] = @product.resolved_slug(new_slug)
       end
     end
   end
