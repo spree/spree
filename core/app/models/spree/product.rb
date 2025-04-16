@@ -512,6 +512,17 @@ module Spree
       where conditions.inject(:or)
     end
 
+    def self.slug_available?(slug, id)
+      !where(slug: slug).where.not(id: id).exists?
+    end
+
+    def ensure_slug_is_unique(candidate_slug)
+      return slug if candidate_slug.blank? || slug.blank?
+      return candidate_slug if self.class.slug_available?(candidate_slug, id)
+
+      normalize_friendly_id([candidate_slug, uuid_for_friendly_id])
+    end
+
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it
     # all option values. At that point all variants associated with only those
