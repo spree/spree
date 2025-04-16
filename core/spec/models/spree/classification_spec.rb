@@ -107,6 +107,22 @@ module Spree
       it 'returns the correct taxon ids' do
         expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq(expected_result)
       end
+
+      context 'when empty taxon groups' do
+        let(:taxon_groups) { [] }
+
+        it 'returns an empty hash' do
+          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+        end
+      end
+
+      context 'when empty product ids' do
+        let(:product_ids) { [] }
+
+        it 'returns an empty hash' do
+          expect(described_class.grouped_taxon_ids_for_products(product_ids, taxon_groups)).to eq([])
+        end
+      end
     end
   end
 end
