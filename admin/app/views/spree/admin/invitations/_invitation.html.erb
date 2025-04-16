@@ -3,7 +3,11 @@
     <%= invitation.email %>
   </td>
   <td class="w-10">
-    <%= link_to invitation.inviter.name, spree.admin_admin_user_path(invitation.inviter) %>
+    <% if can?(:read, invitation.inviter) %>
+      <%= link_to invitation.inviter.name, spree.admin_admin_user_path(invitation.inviter) %>
+    <% else %>
+      <%= invitation.inviter.name %>
+    <% end %>
   </td>
   <td class="w-20">
     <% invitation.roles.each do |role| %>

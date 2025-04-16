@@ -1,5 +1,5 @@
 <% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_admin_users_path, @admin_user %>
+  <%= page_header_back_button spree.admin_admin_users_path %>
   <%= @admin_user.name %>
 <% end %>
 
@@ -18,11 +18,11 @@
     <div class="card-body">    
       <%= render'spree/admin/shared/error_messages', target: @admin_user %>
       <%= render 'form', f: f %>
-      <% if can?(:manage, Spree::Role) %>
+      <% if can?(:manage, Spree::Role) && @roles.any? %>
         <div class="form-group">
           <%= f.label :spree_role_ids, Spree.t(:roles) %>
           <%= f.select :spree_role_ids,
-                  options_from_collection_for_select(Spree::Role.all, 'id', 'name', @admin_user.spree_roles.pluck(:id)),
+                  options_from_collection_for_select(@roles, 'id', 'name', @admin_user.spree_roles.pluck(:id)),
                   { prompt: false },
                   { multiple: true,  data: { controller: 'autocomplete-select' } } %>          
         </div>

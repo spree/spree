@@ -10,4 +10,4 @@
   <span data-toggle="modal" data-target="#modal">
     <%= link_to_with_icon 'send', Spree.t('actions.send_invitation'), spree.new_admin_invitation_path, class: "btn btn-primary", data: { turbo_frame: 'dialog_modal' } %>
   </span>
-<% end if can? :create, Spree.admin_user_class %>
+<% end if can? :create, Spree::Invitation %>
