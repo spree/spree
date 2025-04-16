@@ -10,7 +10,7 @@
           <%= f.label :email, Spree.t(:email) %>
           <%= f.email_field :email, class: 'form-control', required: :required, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com' %>
         </div>
-        <% if can?(:manage, Spree::Role) %>
+        <% if @roles.any? %>
           <div class="form-group">
             <%= f.label :role, Spree.t(:roles) %>
             <%= f.select :role_ids, @roles.map { |role| [role.name, role.id] }, {}, { data: { controller: 'autocomplete-select', 'enable-button-target': 'input' }, multiple: true, required: true } %>

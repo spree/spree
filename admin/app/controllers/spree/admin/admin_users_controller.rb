@@ -94,6 +94,10 @@ module Spree
       def load_roles
         @roles = Spree::Role.accessible_by(current_ability)
       end
+
+      def model_class
+        Spree.admin_user_class
+      end
     end
   end
 end
