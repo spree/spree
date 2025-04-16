@@ -1422,6 +1422,4 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       expect(assigns(:products).to_a).to eq([out_of_stock_product])
     end
   end
-
-  describe 
 end
