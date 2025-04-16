@@ -25,11 +25,6 @@ module Spree
     after_create :set_roles
     after_destroy :revoke_roles
 
-    #
-    # Delegations
-    #
-    delegate :email, :first_name, :last_name, :name, :spree_roles, to: :user
-
     private
 
     def set_roles
