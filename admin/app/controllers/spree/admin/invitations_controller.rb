@@ -3,7 +3,7 @@ module Spree
     class InvitationsController < BaseController
       skip_before_action :authorize_admin, only: [:show]
 
-      before_action :load_invitation_resource
+      before_action :load_parent, except: [:show]
       before_action :load_invitation, only: [:accept, :destroy]
       before_action :load_roles, only: [:new, :create]
 
@@ -19,25 +19,26 @@ module Spree
 
       # GET /admin/invitations/new
       def new
-        authorize! :manage, @resource
+        authorize! :create, Spree::Invitation
+        authorize! :manage, @parent
 
         @invitation = Spree::Invitation.new
-        @invitation.resource = @resource
+        @invitation.resource = @parent
         @invitation.inviter = try_spree_current_user
       end
 
       # POST /admin/invitations
       def create
         authorize! :create, Spree::Invitation
-        authorize! :manage, @resource
+        authorize! :manage, @parent
 
         @invitation = Spree::Invitation.new(permitted_params)
-        @invitation.resource = @resource
+        @invitation.resource = @parent
         @invitation.inviter = try_spree_current_user
 
         if @invitation.save
           respond_to do |format|
-            format.html { redirect_to spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_created) }
+            format.html { redirect_to [:admin, @parent, :invitations], notice: flash_message_for(@invitation, :successfully_created) }
             format.turbo_stream
           end
         else
@@ -49,6 +50,7 @@ module Spree
       def show
         begin
           @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
+          @parent = @invitation.resource
 
           if try_spree_current_user != @invitation.invitee
             raise ActiveRecord::RecordNotFound
@@ -69,14 +71,14 @@ module Spree
       def accept
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
         @invitation.accept!
-        redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_accepted')
+        redirect_back fallback_location: [:admin, @parent, :invitations], notice: Spree.t('invitation_accepted')
       end
 
       # PUT /admin/invitations/:id/resend
       def resend
         @invitation = scope.find(params[:id])
         @invitation.resend!
-        redirect_to spree.admin_invitations_path, notice: Spree.t('invitation_resent')
+        redirect_back fallback_location: [:admin, @parent, :invitations], notice: Spree.t('invitation_resent')
       end
 
       # DELETE /admin/invitations/:id
@@ -84,7 +86,7 @@ module Spree
         authorize! :destroy, @invitation
 
         @invitation.destroy
-        redirect_to spree.admin_invitations_path, notice: flash_message_for(@invitation, :successfully_removed)
+        redirect_back fallback_location: [:admin, @parent, :invitations], notice: flash_message_for(@invitation, :successfully_removed)
       end
 
       private
@@ -93,12 +95,12 @@ module Spree
         @invitation = scope.find(params[:id])
       end
 
-      def load_invitation_resource
-        @resource = current_store
+      def load_parent
+        @parent = current_store
       end
 
       def scope
-        Spree::Invitation.accessible_by(current_ability).where(resource: @resource)
+        Spree::Invitation.accessible_by(current_ability).where(resource: @parent)
       end
 
       def load_roles
@@ -111,6 +113,10 @@ module Spree
 
       def choose_layout
         action_name == 'show' ? 'spree/minimal' : 'spree/admin'
+      end
+
+      def model_class
+        Spree::Invitation
       end
     end
   end
