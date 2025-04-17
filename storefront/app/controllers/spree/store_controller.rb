@@ -73,7 +73,10 @@ module Spree
           :out_of_stock,
           {
             options: [store_filter_names_hash],
-            taxon_ids: []
+            taxon_ids: [],
+            taxonomy_ids: [
+              taxon_ids: []
+            ]
           }
         ]
       )

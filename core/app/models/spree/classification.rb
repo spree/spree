@@ -23,5 +23,18 @@ module Spree
         group("#{Spree::Classification.table_name}.id").
         reorder(completed_orders_count: order_direction, completed_orders_total: order_direction)
     }
+
+    scope :grouped_taxon_ids_for_products, lambda { |product_ids, taxon_groups|
+      where(product_id: product_ids, taxon_id: taxon_groups).
+        group(:product_id).
+        then do |query|
+        case ActiveRecord::Base.connection.adapter_name
+        when 'PostgreSQL'
+          query.pluck(:product_id, Arel.sql("STRING_AGG(taxon_id::text, ',')"))
+        when 'Mysql2', 'SQLite'
+          query.pluck(:product_id, Arel.sql('GROUP_CONCAT(taxon_id)'))
+        end
+      end
+    }
   end
 end

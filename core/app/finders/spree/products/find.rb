@@ -11,6 +11,7 @@ module Spree
         @currency         = params.dig(:filter, :currency) || params[:currency] || Spree::Store.default.default_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
+        @taxonomies       = params.dig(:filter, :taxonomy_ids).to_h
         @name             = params.dig(:filter, :name)
         @slug             = params.dig(:filter, :slug)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
@@ -52,6 +53,7 @@ module Spree
         products = show_only_backorderable(products)
         products = show_only_purchasable(products)
         products = show_only_out_of_stock(products)
+        products = by_taxonomies(products)
         products = ordered(products)
         products = by_vendor_ids(products)
 
@@ -62,7 +64,7 @@ module Spree
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
                   :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags,
-                  :query, :vendor_ids, :out_of_stock, :slug
+                  :query, :vendor_ids, :out_of_stock, :slug, :taxonomies
 
       def query?
         query.present?
@@ -167,6 +169,21 @@ module Spree
                       ids
 
         products.where(id: product_ids)
+      end
+
+      def by_taxonomies(products)
+        return products if taxonomies.none?
+
+        taxon_groups = taxonomies.values.map { |taxonomy| taxon_ids(taxonomy[:taxon_ids].join(',')) }.compact_blank
+
+        return products if taxon_groups.empty?
+
+        taxonomies_products = products.joins(:classifications).where(Classification.table_name => { taxon_id: taxon_groups.flatten.uniq })
+
+        # No need to filter if there is only one taxonomy
+        return taxonomies_products if taxonomies.size == 1
+
+        products.where(id: products_matching_all_taxonomies_ids(taxonomies_products.ids, taxon_groups))
       end
 
       def by_name(products)
@@ -335,6 +352,16 @@ module Spree
 
       def order_by_best_selling(scope)
         scope.by_best_selling(:desc)
+      end
+
+      def products_matching_all_taxonomies_ids(products_ids, taxon_groups)
+        classifications = Spree::Classification.grouped_taxon_ids_for_products(products_ids, taxon_groups.flatten)
+        classifications_hash = classifications.to_h.transform_values { |taxon_ids| taxon_ids.split(',') }
+
+        # Find products ids that match all taxonomies to tighten filter results
+        classifications_hash.filter_map do |product_id, product_taxon_ids|
+          product_id if taxon_groups.all? { |group| group.intersect?(product_taxon_ids) }
+        end
       end
     end
   end
