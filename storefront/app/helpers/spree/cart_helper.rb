@@ -46,7 +46,9 @@ module Spree
     end
 
     def cart_id(order)
-      @cart_id ||= "cart_contents#{order.present? ? "_#{order.id}_#{order.updated_at.to_i}" : ''}"
+      return 'cart_contents' if order.blank? || order.id.blank? || order.updated_at.blank?
+
+      "cart_contents_#{order.id}_#{order.updated_at.to_i}"
     end
   end
 end
