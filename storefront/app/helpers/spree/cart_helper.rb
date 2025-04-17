@@ -44,5 +44,11 @@ module Spree
         Spree::ColorsPreviewStylesPresenter.new(colors).to_s
       end
     end
+
+    def cart_id(order)
+      return 'cart_contents' if order.blank? || order.id.blank? || order.updated_at.blank?
+
+      "cart_contents_#{order.id}_#{order.updated_at.to_i}"
+    end
   end
 end
