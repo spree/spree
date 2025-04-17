@@ -1052,6 +1052,7 @@ en:
     font_size_scale: Font size scale
     fonts: Fonts
     footer: Footer
+    forbidden: Access denied
     forgot_password: Forgot password?
     free: Free
     free_shipping: Free Shipping
