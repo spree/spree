@@ -360,7 +360,7 @@ module Spree
 
         # Find products ids that match all taxonomies to tighten filter results
         classifications_hash.filter_map do |product_id, product_taxon_ids|
-          product_id if taxon_groups.all? { |group| (group & product_taxon_ids).any? }
+          product_id if taxon_groups.all? { |group| group.intersect?(product_taxon_ids) }
         end
       end
     end
