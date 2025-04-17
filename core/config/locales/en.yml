@@ -1053,6 +1053,7 @@ en:
     fonts: Fonts
     footer: Footer
     forbidden: Access denied
+    forbidden_message: You are not authorized to access this page.
     forgot_password: Forgot password?
     free: Free
     free_shipping: Free Shipping

@@ -7,7 +7,7 @@
 <% end %>
 
 <p class="text-danger">
-  You are not authorized to access this page.
+  <%= Spree.t(:forbidden_message) %>
 </p>
 
 <%= link_to Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'btn btn-primary' %>
