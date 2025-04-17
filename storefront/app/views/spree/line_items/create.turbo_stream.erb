@@ -4,8 +4,7 @@
   <%= spree_turbo_update_cart(@order) %>
 
   <%= turbo_stream.replace_all '.cart-contents' do %>
-    <% cart_id = "cart-contents#{@order.present? ? "-#{@order.id}-#{@order.updated_at.to_i}" : ""}" %>
-    <%= turbo_frame_tag cart_id, class: 'cart-contents' do %>
+    <%= turbo_frame_tag cart_id(@order), class: 'cart-contents' do %>
       <%= render 'spree/orders/cart' %>
     <% end %>
   <% end %>

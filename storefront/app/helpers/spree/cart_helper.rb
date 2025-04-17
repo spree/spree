@@ -44,5 +44,9 @@ module Spree
         Spree::ColorsPreviewStylesPresenter.new(colors).to_s
       end
     end
+
+    def cart_id(order)
+      @cart_id ||= "cart_contents#{order.present? ? "_#{order.id}_#{order.updated_at.to_i}" : ''}"
+    end
   end
 end

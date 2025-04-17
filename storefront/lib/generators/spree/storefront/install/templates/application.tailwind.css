@@ -1146,7 +1146,7 @@ html[aria-busy="true"] .hide-on-load {
   display: none;
 }
 
-#slideover-cart #cart-contents {
+#slideover-cart .cart-contents {
   display: flex;
   flex-direction: column;
   height: 100%;
