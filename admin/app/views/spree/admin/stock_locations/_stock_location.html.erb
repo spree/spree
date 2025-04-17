@@ -4,12 +4,12 @@
     <%= flag_emoji(stock_location.country_iso) %>
     <%= stock_location.country_name %>
   </td>
+  <td data-action="click->row-link#openLink">
+    <%= active_badge(stock_location.active?) %>
+  </td>
   <% if can?(:mark_as_default, Spree::StockLocation) %>
-    <td data-action="click->row-link#openLink">
-      <%= active_badge(stock_location.active?) %>
-    </td>
+    <td data-action="click->row-link#openLink"><%= active_badge(stock_location.default?) %></td>
   <% end %>
-  <td data-action="click->row-link#openLink"><%= active_badge(stock_location.default?) %></td>
   <td class="actions">
     <% if can? :edit, stock_location %>
       <div class="d-flex justify-content-end align-items-center">
