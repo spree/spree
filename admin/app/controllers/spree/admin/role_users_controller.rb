@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class RoleUsersControllers < BaseController
+    class RoleUsersController < BaseController
       before_action :load_parent
       before_action :load_role_user, only: [:edit, :update, :destroy]
 

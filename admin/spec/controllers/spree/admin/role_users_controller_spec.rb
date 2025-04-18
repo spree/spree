@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Admin::RoleUsersControllers, type: :controller do
+RSpec.describe Spree::Admin::RoleUsersController, type: :controller do
   render_views
 
   stub_authorization!
