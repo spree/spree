@@ -23,6 +23,14 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
       expect(mail.to).to eq([invitation.email])
     end
 
+    it 'sends from the store mail from address' do
+      expect(mail.from).to eq([store.mail_from_address])
+    end
+
+    it 'sets reply-to as the store mail from address' do
+      expect(mail.reply_to).to eq([store.mail_from_address])
+    end
+
     it 'includes the invitation link in the body' do
       expect(mail.body.encoded).to include("http://test.com/admin/invitations/#{invitation.id}?token=#{invitation.token}")
     end
@@ -49,6 +57,14 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
 
     it 'sends to the correct recipient' do
       expect(mail.to).to eq([inviter.email])
+    end
+
+    it 'sends from the store mail from address' do
+      expect(mail.from).to eq([store.mail_from_address])
+    end
+
+    it 'sets reply-to as the store mail from address' do
+      expect(mail.reply_to).to eq([store.mail_from_address])
     end
   end
 end
