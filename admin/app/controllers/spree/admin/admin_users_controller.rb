@@ -83,7 +83,7 @@ module Spree
       end
 
       def load_admin_user
-        @admin_user = scope.find(params[:id])
+        @admin_user = Spree.admin_user_class.accessible_by(current_ability).find(params[:id])
       end
 
       # for self signup flow, we use the minimal layout
