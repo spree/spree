@@ -30,23 +30,6 @@ FactoryBot.define do
     first_name { FFaker::Name.first_name }
     last_name  { FFaker::Name.last_name }
 
-    spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
-
-    trait :no_resource_user do
-      transient do
-        skip_resource_user { true }
-      end
-    end
-
-    transient do
-      skip_resource_user { false }
-    end
-
-    after(:create) do |user, evaluator|
-      unless evaluator.skip_resource_user
-        resource = Spree::Store.default
-        resource.resource_users.find_by(user: user) || create(:resource_user, user: user, resource: resource)
-      end
-    end
+    spree_roles { [Spree::Role.default_admin_role] }
   end
 end

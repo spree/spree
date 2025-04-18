@@ -6,6 +6,7 @@ describe Spree::Admin::StoresController do
 
   let(:store) { create(:store) }
   let(:user) { create(:admin_user) }
+  let(:user2) { create(:admin_user) }
   let!(:uk_country) { create(:country, iso: 'GB', iso3: 'GBR', name: 'United Kingdom') }
 
   before do
@@ -37,11 +38,12 @@ describe Spree::Admin::StoresController do
       expect(new_store.default_locale).to eq('en')
     end
 
-    it 'adds the current user to the store' do
-      expect { subject }.to change(Spree::ResourceUser, :count).by(1)
+    it 'adds all existing store users to the new store' do
+      user2
+      expect { subject }.to change(Spree::RoleUser, :count).by(2)
 
       new_store = Spree::Store.last
-      expect(new_store.users).to include(user)
+      expect(new_store.users).to include(user, user2)
     end
   end
 

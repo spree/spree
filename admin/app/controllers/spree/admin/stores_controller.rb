@@ -19,7 +19,14 @@ module Spree
         @store.mail_from_address = current_store.mail_from_address
 
         if @store.save
-          @store.users << try_spree_current_user
+          # Move/copy all existing users (staff) to the new store
+          current_store.role_users.each do |role_user|
+            Spree::RoleUser.create!(
+              resource: @store,
+              user: role_user.user,
+              role: role_user.role
+            )
+          end
           @store.save!
 
           flash[:success] = flash_message_for(@store, :successfully_created)

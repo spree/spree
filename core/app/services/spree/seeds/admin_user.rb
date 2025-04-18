@@ -12,12 +12,10 @@ module Spree
             first_name: 'Spree',
             last_name: 'Admin'
           )
-
-          user.spree_roles << Spree::Role.find_or_create_by(name: :admin)
           user.save!
 
           Spree::Store.all.each do |store|
-            store.resource_users.find_or_create_by!(user: user)
+            store.add_user(user)
           end
         end
       end

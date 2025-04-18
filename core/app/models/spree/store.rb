@@ -13,6 +13,7 @@ module Spree
     include Spree::Stores::Socials
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
+    include Spree::UserManagement
 
     #
     # Magic methods
@@ -102,10 +103,6 @@ module Spree
 
     has_many :posts
     has_many :post_categories
-
-    # Store Staff
-    has_many :resource_users, class_name: 'Spree::ResourceUser', as: :resource
-    has_many :users, through: :resource_users, source: :user, source_type: Spree.admin_user_class.to_s
 
     #
     # Page Builder associations

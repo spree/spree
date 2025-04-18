@@ -5,38 +5,66 @@ module Spree
     included do
       has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, as: :user, dependent: :destroy
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
+      has_many :stores, through: :role_users, source: :resource, source_type: 'Spree::Store'
+      has_many :invitations, class_name: 'Spree::Invitation', foreign_key: :invitee_id, dependent: :destroy
 
-      scope :spree_admin, -> { joins(:spree_roles).where(Spree::Role.table_name => { name: 'admin' }) }
+      scope :spree_admin, -> { joins(:spree_roles).where(Spree::Role.table_name => { name: Spree::Role::ADMIN_ROLE }) }
+
+      # Adds a role to a resource
+      #
+      # @param role_name [String] The name of the role to add, eg. 'admin'
+      # @param resource [Spree::Base] The resource to add the role to
+      # @return [Spree::RoleUser] The role user created
+      def add_role(role_name, resource)
+        role = Spree::Role.find_by(name: role_name)
+        role_users.find_or_create_by!(role: role, resource: resource)
+      end
+
+      # Removes a role from a resource
+      #
+      # @param role_name [String] The name of the role to remove, eg. 'admin'
+      # @param resource [Spree::Base] The resource to remove the role from
+      def remove_role(role_name, resource)
+        role_users.find_by(role: role, resource: resource).destroy
+      end
+
+      # Returns all roles for a given resource
+      #
+      # @param resource [Spree::Base] The resource to get roles for
+      # @return [ActiveRecord::Relation] The roles for the resource
+      def spree_roles_for(resource)
+        spree_roles.joins(:role_users).where(Spree::RoleUser.table_name => { resource: resource })
+      end
 
       # has_spree_role? simply needs to return true or false whether a user has a role or not.
-      def has_spree_role?(role_name)
-        spree_roles.exists?(name: role_name)
-      end
+      #
+      # @param role_name [String] The name of the role to check for
+      # @param options [Hash] The options to pass to the method
+      # @option options [Spree::Store] :resource The resource to get roles for
+      # @return [Boolean] Whether the user has the role for the resource
+      def has_spree_role?(role_name, options = {})
+        resource = options[:resource] || Spree::Store.current
 
-      def self.admin
-        Spree::Deprecation.warn('`User#admin` is deprecated and will be removed in Spree 5. Please use `User#spree_admin`')
-
-        spree_admin
-      end
-
-      def self.admin_created?
-        Spree::Deprecation.warn('`User#admin_created?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin_created?`')
-
-        spree_admin_created?
-      end
-
-      def admin?
-        Spree::Deprecation.warn('`User#admin?` is deprecated and will be removed in Spree 5. Please use `User#spree_admin?`')
-
-        spree_admin?
+        spree_roles_for(resource).where(Role.table_name => { name: role_name }).exists?
       end
 
       def self.spree_admin_created?
         spree_admin.exists?
       end
 
-      def spree_admin?
-        has_spree_role?('admin')
+      # Returns true if the user has the admin role for a given resource
+      #
+      # @param options [Hash] The options to pass to the method
+      # @option options [Spree::Store] :resource The resource to get roles for
+      # @return [Boolean] Whether the user has the admin role for the resource
+      def spree_admin?(options = {})
+        has_spree_role?(Spree::Role::ADMIN_ROLE, options)
+      end
+
+      # Returns the user who invited the current user
+      # @return [Spree.admin_user_class]
+      def invited_by
+        invitations.first&.inviter
       end
     end
   end
