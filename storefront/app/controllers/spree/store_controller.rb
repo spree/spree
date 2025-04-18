@@ -228,7 +228,11 @@ module Spree
       return unless defined?(after_sign_in_path_for)
       return unless defined?(Devise)
 
-      after_sign_in_path_for(Devise.mappings.keys.first)
+      path = after_sign_in_path_for(Devise.mappings.keys.first)
+
+      store_location(path)
+
+      path
     end
 
     def redirect_to_cart

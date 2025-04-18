@@ -81,6 +81,20 @@ describe Spree::CheckoutController, type: :controller do
           get :edit, params: { token: order.token }
           expect(response).to redirect_to(spree.checkout_state_path(order.token, 'address'))
         end
+
+        context 'when Devise is installed' do
+          before do
+            allow(controller).to receive(:store_location_for)
+
+            stub_const('Devise', double(mappings: { user: nil }))
+          end
+
+          it 'saves the location so that we can redirect back after login' do
+            get :edit, params: { state: 'address', token: order.token }
+
+            expect(controller).to have_received(:store_location_for).with(:user, spree.checkout_state_path(order.token, 'address'))
+          end
+        end
       end
 
       context 'when guest checkout is not allowed' do

@@ -22,7 +22,7 @@ module Spree
 
     before_action :remove_expired_gift_card, only: :edit
 
-    before_action :store_user_location, only: :edit
+    before_action :store_location, only: :edit
 
     after_action :clean_analytics_session, only: :edit
     after_action :clear_checkout_completed_session, only: [:complete]
@@ -152,14 +152,6 @@ module Spree
 
     private
 
-    def store_user_location
-      if try_spree_current_user
-        store_location
-      else
-        store_location(spree.cart_path)
-      end
-    end
-
     # rather then using cookies like in old Spree we're going to fetch the order based on the
     # token passed in the parameters, this allows us to share carts, send payment links, etc
     def load_order
@@ -188,10 +180,10 @@ module Spree
           redirect_to_cart
         elsif try_spree_current_user.nil? && !@order.completed?
           if params[:guest] && current_store.prefers_guest_checkout?
-            @order = current_store
-                       .orders
-                       .create!(current_order_params.except(:token, :user_id))
-                       .tap do |order|
+            @order = current_store.
+                       orders.
+                       create!(current_order_params.except(:token, :user_id)).
+                       tap do |order|
               order.merge!(@order, discard_merged: false)
               order.disassociate_user!
             end
