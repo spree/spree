@@ -16,21 +16,24 @@
         <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
       <% end %>
 
-      <% if enterprise_edition? && try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>
-        <div data-toggle="modal" data-target="#modal">
-          <%= link_to_with_icon 'switch-3', Spree.t(:switch_team), main_app.accounts_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal' } %>
-        </div>
+      <% if enterprise_edition? %>
+        <% if try_spree_current_user.respond_to?(:accounts) && try_spree_current_user.accounts.count > 1 %>
+          <div data-toggle="modal" data-target="#modal">
+            <%= link_to_with_icon 'switch-3', Spree.t(:switch_team), main_app.accounts_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal' } %>
+          </div>
+        <% end %>
+
+        <% if defined?(app_domain) && defined?(Vendo::Account) && can?(:create, Vendo::Account) %>
+          <%= link_to_with_icon 'plus', Spree.t(:create_new_team), main_app.new_account_url(host: app_domain), class: 'dropdown-item', data: { turbo: false } %>
+        <% end %>
+        <div class="dropdown-divider"></div>
       <% end %>
 
-      <% if enterprise_edition? && defined?(app_domain) && defined?(Vendo::Account) && can?(:create, Vendo::Account) %>
-        <%= link_to_with_icon 'plus', Spree.t(:create_new_team), main_app.new_account_url(host: app_domain), class: 'dropdown-item', data: { turbo: false } %>
+      <% if can?(:manage, current_store) %>
+        <%= link_to_with_icon 'book', 'Help center', 'https://spreecommerce.org/docs/user', class: 'dropdown-item', target: '_blank' %>
+        <%= link_to_with_icon 'message-circle', 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item', target: '_blank' %>
+        <div class="dropdown-divider"></div>
       <% end %>
-
-      <div class="dropdown-divider"></div>
-
-      <%= link_to_with_icon 'book', 'Help center', 'https://spreecommerce.org/docs/user', class: 'dropdown-item', target: '_blank' %>
-      <%= link_to_with_icon 'message-circle', 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item', target: '_blank' %>
-      <div class="dropdown-divider"></div>
 
       <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
         <%= icon('logout', class: "icon icon-logout")  %>

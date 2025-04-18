@@ -5,7 +5,9 @@
     <h5 class="card-title">
       <%= Spree.t('admin.dashboard.top_products') %>
     </h5>
-    <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' } %>
+    <% if can?(:manage, Spree::Report) %>
+      <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' } %>
+    <% end %>
   </div>
   <div class="card-body m-0 p-0">
     <div class="table-responsive">
@@ -72,7 +74,7 @@
       </tbody>
     </table>
   </div>
-  <% if @top_products.any? %>
+  <% if @top_products.any? && can?(:manage, Spree::Report) %>
     <p class="text-center mt-0 border-top py-2 mb-0">
       <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-50 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
     </p>

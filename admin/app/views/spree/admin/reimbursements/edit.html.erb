@@ -117,7 +117,7 @@ locals: {
   </div>
 <% end %>
 
-<div class="form-actions fixed-form-actions">
+<div class="form-actions">
   <% if !@reimbursement.reimbursed? %>
     <%= button_to [:perform, :admin, @order, @reimbursement], { class: 'btn btn-primary', method: 'post' } do %>
       <%= icon "money" %>
