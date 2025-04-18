@@ -21,13 +21,12 @@ module Spree
         if @store.save
           # Move/copy all existing users (staff) to the new store
           current_store.role_users.each do |role_user|
-            Spree::RoleUser.create!(
+            Spree::RoleUser.find_or_create_by!(
               resource: @store,
               user: role_user.user,
               role: role_user.role
             )
           end
-          @store.save!
 
           flash[:success] = flash_message_for(@store, :successfully_created)
           # redirect in view, Turbo doesn't support redirecting to a different host

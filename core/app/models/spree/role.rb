@@ -10,7 +10,7 @@ module Spree
     has_many :invitations, class_name: 'Spree::Invitation', dependent: :destroy
 
     def self.default_admin_role
-      @default_admin_role ||= find_or_create_by(name: ADMIN_ROLE)
+      find_or_create_by(name: ADMIN_ROLE)
     end
   end
 end

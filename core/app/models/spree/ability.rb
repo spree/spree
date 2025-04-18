@@ -27,10 +27,12 @@ module Spree
       alias_cancan_delete_action
 
       user ||= Spree.user_class.new
+      store ||= options[:store] || Spree::Current.store
 
-      if user.persisted? && user.try(:spree_admin?)
+      if user.persisted? && user.is_a?(Spree.admin_user_class) && user.try(:spree_admin?)
         apply_admin_permissions(user, options)
       else
+        binding.pry
         apply_user_permissions(user, options)
       end
 

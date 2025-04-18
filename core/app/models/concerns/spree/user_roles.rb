@@ -28,24 +28,15 @@ module Spree
         role_users.find_by(role: role, resource: resource).destroy
       end
 
-      # Returns all roles for a given resource
-      #
-      # @param resource [Spree::Base] The resource to get roles for
-      # @return [ActiveRecord::Relation] The roles for the resource
-      def spree_roles_for(resource)
-        spree_roles.joins(:role_users).where(Spree::RoleUser.table_name => { resource: resource })
-      end
-
       # has_spree_role? simply needs to return true or false whether a user has a role or not.
       #
       # @param role_name [String] The name of the role to check for
-      # @param options [Hash] The options to pass to the method
-      # @option options [Spree::Store] :resource The resource to get roles for
+      # @param resource [Spree::Base] The resource to get roles for
       # @return [Boolean] Whether the user has the role for the resource
-      def has_spree_role?(role_name, options = {})
-        resource = options[:resource] || Spree::Store.current
+      def has_spree_role?(role_name, resource = nil)
+        resource ||= Spree::Store.current
 
-        spree_roles_for(resource).where(Role.table_name => { name: role_name }).exists?
+        role_users.where(resource: resource).joins(:role).where(Role.table_name => { name: role_name }).exists?
       end
 
       def self.spree_admin_created?
@@ -54,11 +45,9 @@ module Spree
 
       # Returns true if the user has the admin role for a given resource
       #
-      # @param options [Hash] The options to pass to the method
-      # @option options [Spree::Store] :resource The resource to get roles for
-      # @return [Boolean] Whether the user has the admin role for the resource
-      def spree_admin?(options = {})
-        has_spree_role?(Spree::Role::ADMIN_ROLE, options)
+      # @return [Boolean] Whether the user has the admin role for the current store§
+      def spree_admin?
+        has_spree_role?(Spree::Role::ADMIN_ROLE)
       end
 
       # Returns the user who invited the current user
