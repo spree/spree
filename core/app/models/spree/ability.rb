@@ -32,7 +32,6 @@ module Spree
       if user.persisted? && user.is_a?(Spree.admin_user_class) && user.try(:spree_admin?)
         apply_admin_permissions(user, options)
       else
-        binding.pry
         apply_user_permissions(user, options)
       end
 

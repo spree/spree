@@ -74,7 +74,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   end
 
   describe 'POST #create' do
-    let!(:invitation) { create(:invitation, inviter: admin_user, email: 'new@example.com', resource: store, role_ids: [role.id]) }
+    let!(:invitation) { create(:invitation, inviter: admin_user, email: 'new@example.com', resource: store, role_id: role.id) }
     let(:valid_params) do
       {
         token: invitation.token,
