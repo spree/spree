@@ -15,7 +15,8 @@ module Spree
       # @param role_name [String] The name of the role to add, eg. 'admin'
       # @param resource [Spree::Base] The resource to add the role to
       # @return [Spree::RoleUser] The role user created
-      def add_role(role_name, resource)
+      def add_role(role_name, resource = nil)
+        resource ||= Spree::Store.current
         role = Spree::Role.find_by(name: role_name)
         role_users.find_or_create_by!(role: role, resource: resource)
       end

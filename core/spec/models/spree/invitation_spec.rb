@@ -34,6 +34,8 @@ RSpec.describe Spree::Invitation, type: :model do
     it 'sets defaults on initialization' do
       invitation = build(:invitation)
       expect(invitation.expires_at).to be_present
+      expect(invitation.resource).to eq(Spree::Store.current)
+      expect(invitation.role).to eq(Spree::Role.default_admin_role)
     end
 
     it 'sends invitation email after create' do
