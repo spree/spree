@@ -108,7 +108,7 @@ module Spree
       end
 
       def permitted_params
-        params.require(:invitation).permit(:email, :expires_at, role_ids: [])
+        params.require(:invitation).permit(:email, :expires_at, :role_id)
       end
 
       def choose_layout

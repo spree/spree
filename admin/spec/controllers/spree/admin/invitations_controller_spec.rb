@@ -61,7 +61,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
         invitation: {
           email: 'new@example.com',
           expires_at: 1.week.from_now,
-          role_ids: [role.id]
+          role_id: role.id
         }
       }
     end
