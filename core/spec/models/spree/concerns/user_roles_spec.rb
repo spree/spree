@@ -1,8 +1,9 @@
 require 'spec_helper'
 
-describe Spree::UserMethods do
+describe Spree::UserRoles do
   let(:test_user) { create :user }
   let(:current_store) { @default_store }
+  let!(:role) { create(:role, name: 'test') }
 
   describe '#add_role' do
     it 'adds a role to the user' do
@@ -26,6 +27,8 @@ describe Spree::UserMethods do
     it 'removes a role from the user' do
       test_user.add_role('test')
 
+      expect(test_user.has_spree_role?('test')).to be_truthy
+
       test_user.remove_role('test')
 
       expect(test_user.has_spree_role?('test')).to be_falsy
@@ -45,10 +48,7 @@ describe Spree::UserMethods do
   end
 
   describe '#has_spree_role?' do
-    subject { test_user.has_spree_role? name }
-
-    let(:role) { Spree::Role.create(name: name) }
-    let(:name) { 'test' }
+    subject { test_user.has_spree_role?('test') }
 
     context 'with a role' do
       before { test_user.spree_roles << role }
@@ -64,9 +64,11 @@ describe Spree::UserMethods do
       let(:resource) { create(:store) }
 
       context 'when the user has the role for the resource' do
-        before { test_user.add_role(name, resource) }
+        before { test_user.add_role('test', resource) }
 
-        it { is_expected.to be_truthy }
+        it 'returns true' do
+          expect(test_user.has_spree_role?('test', resource)).to be_truthy
+        end
       end
 
       context 'when the user does not have the role for the resource' do

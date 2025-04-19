@@ -169,12 +169,15 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   describe 'PUT #update' do
     stub_authorization!
 
+    let(:new_role) { create(:role, name: 'new_role') }
+
     let(:valid_params) do
       {
         id: admin_user.id,
         admin_user: {
           first_name: 'Updated',
-          last_name: 'Name'
+          last_name: 'Name',
+          spree_role_ids: [role.id, new_role.id]
         }
       }
     end
@@ -194,6 +197,11 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
       it 'sets a flash message' do
         expect(flash[:notice]).not_to be_nil
+      end
+
+      it 'updates the admin user roles' do
+        admin_user.reload
+        expect(admin_user.spree_roles).to contain_exactly(role, new_role)
       end
     end
 

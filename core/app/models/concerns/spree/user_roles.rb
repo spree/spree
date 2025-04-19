@@ -25,7 +25,9 @@ module Spree
       #
       # @param role_name [String] The name of the role to remove, eg. 'admin'
       # @param resource [Spree::Base] The resource to remove the role from
-      def remove_role(role_name, resource)
+      def remove_role(role_name, resource = nil)
+        resource ||= Spree::Store.current
+        role = Spree::Role.find_by(name: role_name)
         role_users.find_by(role: role, resource: resource).destroy
       end
 
