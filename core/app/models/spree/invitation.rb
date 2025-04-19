@@ -13,17 +13,16 @@ module Spree
     #
     belongs_to :resource, polymorphic: true # eg. Store, Vendor, Account
     belongs_to :inviter, polymorphic: true # User or AdminUser
-    belongs_to :invitee, polymorphic: true # User or AdminUser
-    has_many :invitation_roles, dependent: :destroy
-    has_many :roles, through: :invitation_roles
-    has_one :resource_user, dependent: :destroy
+    belongs_to :invitee, polymorphic: true, optional: true # User or AdminUser
+    belongs_to :role, class_name: 'Spree::Role'
+    has_one :role_user, dependent: :destroy, class_name: 'Spree::RoleUser'
 
     #
     # Validations
     #
     validates :email, email: true, presence: true
     validates :token, presence: true, uniqueness: true
-    validates :inviter, :resource, :roles, presence: true
+    validates :inviter, :resource, :role, presence: true
     validate :invitee_is_not_inviter, on: :create
     validate :invitee_already_exists, on: :create
 
@@ -75,6 +74,7 @@ module Spree
       expires_at < Time.current
     end
 
+    # Resends the invitation email if the invitation is pending and not expired
     def resend!
       return if expired? || deleted? || accepted?
 
@@ -85,7 +85,7 @@ module Spree
 
     # this method can be extended by developers now
     def after_accept
-      create_resource_user
+      create_role_user
       set_accepted_at
       send_acceptance_notification
     end
@@ -100,6 +100,8 @@ module Spree
 
     def set_defaults
       self.expires_at ||= 2.weeks.from_now
+      self.resource ||= Spree::Store.current
+      self.role ||= Spree::Role.default_admin_role
     end
 
     def invitee_is_not_inviter
@@ -109,6 +111,8 @@ module Spree
     end
 
     def invitee_already_exists
+      return if resource.blank?
+
       exists = if invitee.present?
                 resource.users.include?(invitee)
               else
@@ -124,13 +128,12 @@ module Spree
       update!(accepted_at: Time.current)
     end
 
-    def create_resource_user
+    def create_role_user
       return if invitee.blank?
 
-      resource.resource_users.find_or_create_by!(user: invitee) do |resource_user|
-        resource_user.invitation = self
-        resource_user.user.spree_roles = roles
-      end
+      role_user = resource.add_user(invitee, role)
+      self.role_user = role_user
+      save!
     end
   end
 end

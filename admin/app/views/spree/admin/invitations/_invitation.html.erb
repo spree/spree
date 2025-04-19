@@ -10,9 +10,7 @@
     <% end %>
   </td>
   <td class="w-20">
-    <% invitation.roles.each do |role| %>
-      <span class="badge badge-light"><%= role.name %></span>
-    <% end %>
+    <span class="badge badge-light"><%= invitation.role.name %></span>
   </td>
   <td class="w-20">
     <% if invitation.accepted? %>

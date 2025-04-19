@@ -4,61 +4,6 @@ describe Spree::UserMethods do
   let(:test_user) { create :user }
   let(:current_store) { @default_store }
 
-  describe '#has_spree_role?' do
-    subject { test_user.has_spree_role? name }
-
-    let(:role) { Spree::Role.create(name: name) }
-    let(:name) { 'test' }
-
-    context 'with a role' do
-      before { test_user.spree_roles << role }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context 'without a role' do
-      it { is_expected.to be_falsy }
-    end
-  end
-
-  describe '#admin?' do
-    it do
-      expect(create(:admin_user).admin?).to be true
-      expect(create(:user).admin?).to be false
-    end
-  end
-
-  describe '#spree_admin?' do
-    it do
-      expect(create(:admin_user).spree_admin?).to be true
-      expect(create(:user).spree_admin?).to be false
-    end
-  end
-
-  describe '.admin_created?' do
-    it 'returns true when admin exists' do
-      create(:admin_user)
-
-      expect(Spree.user_class).to be_admin_created
-    end
-
-    it 'returns false when admin does not exist' do
-      expect(Spree.user_class).to_not be_admin_created
-    end
-  end
-
-  describe '.spree_admin_created?' do
-    it 'returns true when admin exists' do
-      create(:admin_user)
-
-      expect(Spree.user_class).to be_admin_created
-    end
-
-    it 'returns false when admin does not exist' do
-      expect(Spree.user_class).to_not be_admin_created
-    end
-  end
-
   describe '#last_incomplete_spree_order' do
     subject { test_user.last_incomplete_spree_order(current_store) }
 

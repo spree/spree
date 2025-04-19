@@ -31,9 +31,6 @@ module Spree
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
       has_many :wished_items, through: :wishlists, source: :wished_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
-      has_many :invitations, class_name: 'Spree::Invitation', foreign_key: :invitee_id, dependent: :destroy
-      has_many :resource_users, class_name: 'Spree::ResourceUser', foreign_key: :user_id, dependent: :destroy, as: :user
-      has_many :stores, through: :resource_users, source: :resource, source_type: 'Spree::Store'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -87,6 +84,11 @@ module Spree
       end
     end
 
+    # Returns the last incomplete spree order for the current store
+    # @param [Spree::Store] store
+    # @param [Hash] options
+    # @option options [Array<Symbol>] :includes
+    # @return [Spree::Order]
     def last_incomplete_spree_order(store, options = {})
       orders.where(store: store).incomplete.not_canceled.
         includes(options[:includes]).
@@ -94,12 +96,19 @@ module Spree
         first
     end
 
+    # Returns the total available store credit for the current store per currency
+    # @param [Spree::Store] store
+    # @param [String] currency
+    # @return [Float]
     def total_available_store_credit(currency = nil, store = nil)
       store ||= Store.default
       currency ||= store.default_currency
       store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
     end
 
+    # Returns the available store credits for the current store per currency
+    # @param [Spree::Store] store
+    # @return [Array<Spree::Money>]
     def available_store_credits(store)
       store ||= Store.default
 
@@ -108,18 +117,20 @@ module Spree
       end
     end
 
+    # Returns the default wishlist for the current store
+    # if no default wishlist exists, it creates one
+    # @param [Spree::Store] current_store
+    # @return [Spree::Wishlist]
     def default_wishlist_for_store(current_store)
       wishlists.find_by(is_default: true, store_id: current_store.id) || ActiveRecord::Base.connected_to(role: :writing) do
         wishlists.create!(store: current_store, is_default: true, name: Spree.t(:default_wishlist_name))
       end
     end
 
+    # Returns true if the user can be deleted
+    # @return [Boolean]
     def can_be_deleted?
       orders.complete.none?
-    end
-
-    def invited_by
-      invitations.first&.inviter
     end
 
     private
@@ -147,6 +158,7 @@ module Spree
       use_billing.in?([true, 'true', '1'])
     end
 
+    # Scrambles the email and names of the user
     def scramble_email_and_names
       self.email = "#{SecureRandom.uuid}@example.net"
       self.first_name = 'Deleted'

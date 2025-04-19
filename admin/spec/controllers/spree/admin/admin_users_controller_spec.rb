@@ -74,7 +74,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   end
 
   describe 'POST #create' do
-    let!(:invitation) { create(:invitation, inviter: admin_user, email: 'new@example.com', resource: store, role_ids: [role.id]) }
+    let!(:invitation) { create(:invitation, inviter: admin_user, email: 'new@example.com', resource: store, role_id: role.id) }
     let(:valid_params) do
       {
         token: invitation.token,
@@ -169,12 +169,15 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   describe 'PUT #update' do
     stub_authorization!
 
+    let(:new_role) { create(:role, name: 'new_role') }
+
     let(:valid_params) do
       {
         id: admin_user.id,
         admin_user: {
           first_name: 'Updated',
-          last_name: 'Name'
+          last_name: 'Name',
+          spree_role_ids: [role.id, new_role.id]
         }
       }
     end
@@ -189,11 +192,16 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       end
 
       it 'redirects to edit admin user path' do
-        expect(response).to redirect_to(spree.edit_admin_admin_user_path(admin_user))
+        expect(response).to redirect_to(spree.admin_admin_user_path(admin_user))
       end
 
       it 'sets a flash message' do
         expect(flash[:notice]).not_to be_nil
+      end
+
+      it 'updates the admin user roles' do
+        admin_user.reload
+        expect(admin_user.spree_roles).to contain_exactly(role, new_role)
       end
     end
 
