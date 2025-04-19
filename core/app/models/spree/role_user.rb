@@ -9,6 +9,14 @@ module Spree
     belongs_to :invitation, class_name: 'Spree::Invitation', optional: true
 
     #
+    # Validations
+    #
+    validates :role, presence: true
+    validates :user, presence: true
+    validates :resource, presence: true
+    validates :role_id, uniqueness: { scope: [:user_id, :resource_id, :user_type, :resource_type] }
+
+    #
     # Delegations
     #
     delegate :name, to: :user
