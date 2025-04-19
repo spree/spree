@@ -12,6 +12,9 @@ describe Spree::Admin::StoresController do
   before do
     allow(controller).to receive(:current_store).and_return(store)
     allow(controller).to receive(:try_spree_current_user).and_return(user)
+
+    store.add_user(user)
+    store.add_user(user2)
   end
 
   describe 'POST #create' do
@@ -27,7 +30,8 @@ describe Spree::Admin::StoresController do
     end
 
     it 'creates a new store' do
-      expect { subject }.to change(Spree::Store, :count).by(1)
+      expect(store.users).to contain_exactly(user, user2)
+      expect { subject }.to change(Spree::Store, :count).by(1).and change(Spree::RoleUser, :count).by(2)
 
       expect(flash[:success]).to match('has been successfully created')
 
@@ -36,14 +40,7 @@ describe Spree::Admin::StoresController do
       expect(new_store.default_currency).to eq('GBR')
       expect(new_store.default_country).to eq(uk_country)
       expect(new_store.default_locale).to eq('en')
-    end
-
-    it 'adds all existing store users to the new store' do
-      user2
-      expect { subject }.to change(Spree::RoleUser, :count).by(2)
-
-      new_store = Spree::Store.last
-      expect(new_store.users).to include(user, user2)
+      expect(new_store.users).to contain_exactly(user, user2)
     end
   end
 

@@ -21,11 +21,7 @@ module Spree
         if @store.save
           # Move/copy all existing users (staff) to the new store
           current_store.role_users.each do |role_user|
-            Spree::RoleUser.find_or_create_by!(
-              resource: @store,
-              user: role_user.user,
-              role: role_user.role
-            )
+            @store.add_user(role_user.user, role_user.role)
           end
 
           flash[:success] = flash_message_for(@store, :successfully_created)
