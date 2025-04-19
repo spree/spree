@@ -72,7 +72,9 @@ describe Spree::UserRoles do
       end
 
       context 'when the user does not have the role for the resource' do
-        it { is_expected.to be_falsy }
+        it 'returns false' do
+          expect(test_user.has_spree_role?('test', resource)).to be_falsy
+        end
       end
     end
   end
@@ -81,6 +83,18 @@ describe Spree::UserRoles do
     it do
       expect(create(:admin_user).spree_admin?).to be true
       expect(create(:user).spree_admin?).to be false
+    end
+
+    context 'when a resource parameter is provided' do
+      let(:resource) { create(:store) }
+
+      it 'checks against the resource' do
+        admin_user = create(:admin_user)
+        expect(admin_user.spree_admin?(resource)).to be false
+
+        admin_user.add_role('admin', resource)
+        expect(admin_user.spree_admin?(resource)).to be true
+      end
     end
   end
 

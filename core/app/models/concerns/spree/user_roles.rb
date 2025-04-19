@@ -48,9 +48,11 @@ module Spree
 
       # Returns true if the user has the admin role for a given resource
       #
-      # @return [Boolean] Whether the user has the admin role for the current store§
-      def spree_admin?
-        has_spree_role?(Spree::Role::ADMIN_ROLE)
+      # @param resource [Spree::Base] The resource to check the admin role for
+      # @return [Boolean] Whether the user has the admin role for the resource
+      def spree_admin?(resource = nil)
+        resource ||= Spree::Store.current
+        has_spree_role?(Spree::Role::ADMIN_ROLE, resource)
       end
 
       # Returns the user who invited the current user
