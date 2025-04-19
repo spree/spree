@@ -192,7 +192,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       end
 
       it 'redirects to edit admin user path' do
-        expect(response).to redirect_to(spree.edit_admin_admin_user_path(admin_user))
+        expect(response).to redirect_to(spree.admin_admin_user_path(admin_user))
       end
 
       it 'sets a flash message' do
