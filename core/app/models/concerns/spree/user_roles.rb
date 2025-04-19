@@ -18,6 +18,8 @@ module Spree
       def add_role(role_name, resource = nil)
         resource ||= Spree::Store.current
         role = Spree::Role.find_by(name: role_name)
+        return if role.nil?
+
         role_users.find_or_create_by!(role: role, resource: resource)
       end
 
@@ -28,7 +30,9 @@ module Spree
       def remove_role(role_name, resource = nil)
         resource ||= Spree::Store.current
         role = Spree::Role.find_by(name: role_name)
-        role_users.find_by(role: role, resource: resource).destroy
+        return if role.nil?
+
+        role_users.where(role: role, resource: resource).destroy_all
       end
 
       # has_spree_role? simply needs to return true or false whether a user has a role or not.
@@ -39,7 +43,7 @@ module Spree
       def has_spree_role?(role_name, resource = nil)
         resource ||= Spree::Store.current
 
-        role_users.where(resource: resource).joins(:role).where(Role.table_name => { name: role_name }).exists?
+        role_users.where(resource: resource).joins(:role).where(Spree::Role.table_name => { name: role_name }).exists?
       end
 
       def self.spree_admin_created?

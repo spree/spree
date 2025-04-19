@@ -188,7 +188,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       end
 
       context 'with already accepted invitation' do
-        let(:invitation) { create(:invitation, inviter: admin_user, resource: store, status: 'accepted', invitee: create(:admin_user, spree_roles: [])) }
+        let(:invitation) { create(:invitation, inviter: admin_user, resource: store, status: 'accepted', invitee: create(:admin_user, :without_admin_role)) }
 
         it 'redirects to root path' do
           expect(response).to redirect_to(spree.root_path)

@@ -50,26 +50,26 @@ RSpec.describe Spree::Invitation, type: :model do
 
     context 'when accepting an invitation' do
       it 'changes status to accepted' do
-        invitation.invitee = create(:admin_user, spree_roles: [])
+        invitation.invitee = create(:admin_user, :without_admin_role)
         invitation.accept
         expect(invitation.status).to eq('accepted')
       end
 
       it 'sets accepted_at timestamp' do
         expect(invitation.accepted_at).to be_nil
-        invitation.invitee = create(:admin_user, spree_roles: [])
+        invitation.invitee = create(:admin_user, :without_admin_role)
         invitation.accept
         expect(invitation.accepted_at).to be_present
       end
 
       it 'sends acceptance notification' do
-        invitation.invitee = create(:admin_user, spree_roles: [])
+        invitation.invitee = create(:admin_user, :without_admin_role)
         clear_enqueued_jobs
         expect { invitation.accept }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
 
       it 'creates a resource user' do
-        invitation.invitee = create(:admin_user, spree_roles: [])
+        invitation.invitee = create(:admin_user, :without_admin_role)
         expect { invitation.accept }.to change(invitation, :role_user).from(nil).to(Spree::RoleUser)
         expect(invitation.role_user.user).to eq(invitation.invitee)
         expect(invitation.role_user.resource).to eq(invitation.resource)
