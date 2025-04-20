@@ -1,5 +1,5 @@
 Chartkick.options = {
-  colors: ["#007bff"],
+  colors: ["#0090FE"],
   zeros: true,
   points: false
 }
