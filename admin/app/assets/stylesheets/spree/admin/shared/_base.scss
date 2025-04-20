@@ -1,10 +1,7 @@
 // https://twitter.com/NatalieMarleny/status/1662402066365526016
 html {
   min-height: 100%;
-  font-feature-settings: "kern";
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-variation-settings: "slnt" 0;
+  letter-spacing: normal;
 }
 body {
   @extend .h-100;
@@ -670,7 +667,8 @@ div.uppy-Root {
 }
 
 .tooltip-inner {
-  box-shadow: $dropdown-box-shadow;
+  border: 1px solid $gray-100;
+  box-shadow: $box-shadow-xs;
 }
 
 .avatar {
