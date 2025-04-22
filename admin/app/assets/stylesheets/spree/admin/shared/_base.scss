@@ -224,19 +224,6 @@ strong {
   z-index: 99999999;
 }
 
-figure.admin-img-holder {
-  max-width: 275px;
-  border: 2px dashed grey;
-  border-radius: $border-radius;
-  overflow: hidden;
-  display: inline-block;
-
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
 .image-container {
   .img-fluid {
     transition: transform .5s ease;
@@ -388,8 +375,8 @@ small,
 }
 
 .sortable-chosen {
-  border: 2px dashed theme-color('primary') !important;
-  border-radius: 5px !important;
+  background-color: theme-color('action') !important;
+  border: 2px dashed $blue !important;
 }
 
 .handle {

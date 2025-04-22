@@ -35,8 +35,12 @@
   }
 
   .sortable-chosen {
-    border: 1px dashed var(--gray);
-    border-radius: 5px;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    .sortable-tree-item-row {
+      background-color: $action !important;
+      border: 1px dashed rgba($blue, 0.5) !important;
+    }
   }
 
   .item_image_holder {

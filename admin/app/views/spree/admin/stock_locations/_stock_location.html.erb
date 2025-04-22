@@ -18,7 +18,7 @@
         <% if !stock_location.default? && can?(:mark_as_default, Spree::StockLocation) %>
           <div class="dropdown">
             <button class="btn btn-sm btn-light h-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <%= icon('dots', class: 'mr-0') %>
+              <%= icon('dots-vertical', class: 'mr-0') %>
             </button>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
               <%= link_to_with_icon 'check',

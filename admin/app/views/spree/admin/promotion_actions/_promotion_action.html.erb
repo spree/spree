@@ -6,7 +6,7 @@
       <% if can?(:update, promotion_action) || can?(:destroy, promotion_action) %>
         <div class="dropdown">
           <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-expanded="false">
-            <%= icon('dots', class: 'mr-0') %>
+            <%= icon('dots-vertical', class: 'mr-0') %>
         </button>
         <div class="dropdown-menu">
             <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item' if can?(:update, promotion_action) %> 
