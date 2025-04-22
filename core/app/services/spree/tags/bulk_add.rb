@@ -16,13 +16,16 @@ module Spree
 
         record_class = records.first.class
 
+        tenant = defined?(ActsAsTenant) ? ActsAsTenant.current_tenant.id : nil
+
         taggings_to_upsert = records.pluck(:id).map do |record_id|
           tags.map do |tag|
             {
               taggable_id: record_id,
               taggable_type: record_class.to_s,
               context: context,
-              tag_id: tag.id
+              tag_id: tag.id,
+              tenant: tenant
             }
           end
         end.flatten.compact
@@ -30,6 +33,8 @@ module Spree
         return if taggings_to_upsert.empty?
 
         ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
+
+        ActsAsTaggableOn::Tag.update_counters(taggings_to_upsert.pluck(:tag_id), taggings_count: records.size)
 
         record_class.where(id: records.pluck(:id)).touch_all
       end

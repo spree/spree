@@ -17,6 +17,8 @@ module Spree
           tag_id: tag_ids
         ).delete_all
 
+        ActsAsTaggableOn::Tag.update_counters(tag_ids, taggings_count: -records.size)
+
         record_class.where(id: records.pluck(:id)).touch_all
       end
     end

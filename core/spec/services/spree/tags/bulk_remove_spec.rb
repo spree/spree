@@ -18,6 +18,14 @@ module Spree
         expect { subject }.to change { ActsAsTaggableOn::Tagging.count }.by(-(products.size * tag_names.size))
       end
 
+      it 'updates the taggings_count for each tag' do
+        subject
+        taggings = ActsAsTaggableOn::Tagging.last(products.size * tag_names.size)
+        taggings.each do |tagging|
+          expect(tagging.tag.taggings_count).to eq(0)
+        end
+      end
+
       it 'does not remove tags' do
         expect { subject }.not_to change { ActsAsTaggableOn::Tag.count }
       end

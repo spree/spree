@@ -29,8 +29,30 @@ module Spree
         end
       end
 
+      context 'when ActsAsTenant is defined' do
+        before do
+          stub_const('ActsAsTenant', double(current_tenant: double(id: '123')))
+        end
+
+        it 'assigns correct tenant to the taggings' do
+          subject
+          taggings = ActsAsTaggableOn::Tagging.last(products.size * tag_names.size)
+          taggings.each do |tagging|
+            expect(tagging.tenant).to eq('123')
+          end
+        end
+      end
+
       it 'touches all products' do
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
+      end
+
+      it 'updates the taggings_count for each tag' do
+        subject
+        taggings = ActsAsTaggableOn::Tagging.last(products.size * tag_names.size)
+        taggings.each do |tagging|
+          expect(tagging.tag.taggings_count).to eq(products.size)
+        end
       end
 
       context 'when tag names are duplicated or have extra spaces' do
