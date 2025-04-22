@@ -1,0 +1,36 @@
+<div class="card-dialog mx-auto lg:w-1/3 bg-white">
+  <div class="px-8 py-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl lg:text-2xl font-medium lg:font-semibold capitalize">
+        <%= Spree.t(:add_address) %>
+      </h3>
+      <button data-action="click->modal#close" class="ml-4">
+        <%= render 'spree/shared/icons/close' %>
+        <span class="sr-only"><%= Spree.t(:close) %></span>
+      </button>
+    </div>
+    <%= render 'spree/shared/error_messages', target: @address %>
+    <%= form_for @address do |f| %>
+      <div class="border-t border-default py-4 text-left">
+        <%= render 'spree/addresses/form',
+          address_name: 'address',
+          address_form: f,
+          address_type: 'shipping',
+          address: @address %>
+      </div>
+      <%= label_tag "default_shipping", class: 'flex items-center gap-2 text-sm mb-4' do %>
+        <%= check_box_tag "default_shipping", "true", true, class: 'input-checkbox' %>
+        <%= Spree.t('address_book.set_as_default_delivery_address') %>
+      <% end %>
+      <%= label_tag "default_billing", class: 'flex items-center gap-2 text-sm mb-4' do %>
+        <%= check_box_tag "default_billing", "true", true, class: 'input-checkbox' %>
+        <%= Spree.t('address_book.set_as_default_billing_address') %>
+      <% end %>
+      <div class="border-t border-default pt-4 flex justify-end gap-8 ">
+        <%= button_tag Spree.t(:cancel), class: 'uppercase text-sm font-semibold', data: { action: 'click->modal#close' } %>
+        <%= f.submit Spree.t(:add_address), class: 'btn-primary w-48' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
