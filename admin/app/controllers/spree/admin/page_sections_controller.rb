@@ -7,7 +7,7 @@ module Spree
 
       def create
         page_section_type = params.dig(:page_section, :type)
-        allowed_types = Rails.application.config.spree.page_sections.map(&:to_s)
+        allowed_types = @pageable.theme.available_page_sections.map(&:to_s)
 
         if allowed_types.include?(page_section_type) && page_section_type.safe_constantize.present?
           @page_section = page_section_type.constantize.new(permitted_resource_params)
