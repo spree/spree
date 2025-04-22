@@ -10,10 +10,12 @@
   <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table">
-        <thead class="text-muted">
+        <thead>
           <tr>
-            <th><%= Spree.t(:name) %></th>
-            <th><%= Spree.t(:updated) %></th>
+            <th><%= sort_link @search, :name, Spree.t(:name) %></th>
+            <th><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+            <th><%= sort_link @search, :updated_at, Spree.t(:updated_at) %></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>

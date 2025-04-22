@@ -20,9 +20,9 @@
         <div class="form-group">
           <%= f.label :post_category_id_eq, Spree.t(:category) %>
           <%= f.select :post_category_id_eq,
-                   options_for_select(Spree::PostCategory.all.pluck(:title, :id), params.dig(:q, :post_category_id_eq)),
+                   options_for_select(@post_categories.pluck(:title, :id), params.dig(:q, :post_category_id_eq)),
                    { include_blank: true },
-                   { class: "custom-select", data: { filters_target: :input } } %>
+                   { data: { filters_target: :input, controller: 'autocomplete-select' } } %>
         </div>
       </div>
     </div>
