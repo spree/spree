@@ -3,8 +3,9 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :role_users, class_name: 'Spree::RoleUser', as: :resource
+      has_many :role_users, class_name: 'Spree::RoleUser', as: :resource, dependent: :destroy
       has_many :users, through: :role_users, source: :user, source_type: Spree.admin_user_class.to_s
+      has_many :invitations, class_name: 'Spree::Invitation', as: :resource, dependent: :destroy
     end
 
     # Adds a user to the resource with the default user role

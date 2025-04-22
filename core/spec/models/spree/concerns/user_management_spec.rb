@@ -58,5 +58,11 @@ describe Spree::UserManagement do
       expect(association.options[:source]).to eq :user
       expect(association.options[:source_type]).to eq Spree.admin_user_class.to_s
     end
+
+    it 'has many invitations' do
+      association = test_store.class.reflect_on_association(:invitations)
+      expect(association.macro).to eq :has_many
+      expect(association.options[:class_name]).to eq 'Spree::Invitation'
+    end
   end
 end
