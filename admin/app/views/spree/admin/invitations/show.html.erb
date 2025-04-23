@@ -1,17 +1,9 @@
-<div class="col-lg-4 offset-lg-4 mt-5">
-  <div class="card mb-5">
-    <div class="card-body">
-      <div class="d-flex align-items-center gap-2">
-        <div>
-          <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
-        </div>
-        <div>
-          <strong><%= @invitation.inviter.name %></strong> has invited you to join <strong><%= @invitation.resource.name %></strong>
-        </div>
-      </div>
-    </div>
-    <div class="card-footer border-top">
-      <%= link_to Spree.t(:accept), spree.accept_admin_invitation_path(@invitation), class: 'btn btn-primary w-100', data: { turbo_method: :put } %>
-    </div>
+<div class="d-flex align-items-center gap-2">
+  <div>
+    <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
+  </div>
+  <div>
+    <strong><%= @invitation.inviter.name %></strong> has invited you to join <strong><%= @invitation.resource.name %></strong>
   </div>
 </div>
+<%= link_to Spree.t(:accept), spree.accept_admin_invitation_path(@invitation), class: 'btn btn-primary w-100', data: { turbo_method: :put } %>
