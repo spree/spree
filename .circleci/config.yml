@@ -146,7 +146,7 @@ jobs:
     environment:
       <<: *mysql_environment
       PROJECTS: emails,sample
-      
+
 workflows:
   main:
     jobs:

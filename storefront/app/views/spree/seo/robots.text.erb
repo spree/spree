@@ -27,5 +27,5 @@ Disallow: /shipment_trackings
 Disallow: /locale
 Disallow: /currency
 
-Sitemap: <%= sitemap_url(host: store.formatted_url_or_custom_domain, format: :xml) %>
+Sitemap: <%= spree.sitemap_url(host: store.formatted_url_or_custom_domain, format: :xml) %>
 <% end %>
