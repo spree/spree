@@ -113,6 +113,9 @@ module Spree
       end
     end
 
+    # Creates a new preview for the theme
+    #
+    # @return [Spree::Theme]
     def create_preview
       ActiveRecord::Base.connected_to(role: :writing) do
         ApplicationRecord.transaction do
@@ -152,16 +155,46 @@ module Spree
       end
     end
 
+    # Returns an array of available layout section classes for the theme
+    #
+    # @return [Array<Class>]
     def available_layout_sections
-      Rails.application.config.spree.theme_layout_sections
+      [
+        *Rails.application.config.spree.theme_layout_sections,
+        *custom_layout_sections
+      ]
     end
 
+    # Returns an array of custom layout section classes for the theme
+    #
+    # @return [Array<Class>]
+    def custom_layout_sections
+      # you can override this method in your theme to return a list of custom layout sections for your theme
+      # [Spree::PageSections::Custom, Spree::PageSections::Custom2]
+      []
+    end
+
+    # Returns an array of available page section classes for the theme
+    #
+    # @return [Array<Class>]
     def available_page_sections
       return @available_page_sections if @available_page_sections
 
-      @available_page_sections ||= Rails.application.config.spree.page_sections.find_all do |section_class|
-        section_class.role == 'content'
-      end.sort_by(&:name)
+      @available_page_sections ||= [
+        *Rails.application.config.spree.page_sections.find_all do |section_class|
+          section_class.role == 'content'
+        end,
+        *custom_page_sections
+      ].sort_by(&:name)
+    end
+
+    # Returns an array of custom page section classes for the theme
+    #
+    # @return [Array<Class>]
+    def custom_page_sections
+      # you can override this method in your theme to return a list of custom page sections for your theme
+      # [Spree::PageSections::Custom, Spree::PageSections::Custom2]
+      []
     end
 
     def restore_defaults!
