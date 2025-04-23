@@ -79,6 +79,19 @@ describe Spree::AddressesController, type: :controller do
           end
         end
       end
+
+      context 'and turbo frame request' do
+        before do
+          allow(controller).to receive(:turbo_frame_request?).and_return(true)
+          post_create
+        end
+
+        it 'responds with Turbo Stream and sets a success flash message' do
+          expect(flash[:notice]).to eq Spree.t('address_book.successfully_created')
+          expect(response.status).to eq(200)
+          expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        end
+      end
     end
 
     context 'when data is not valid' do
@@ -99,6 +112,19 @@ describe Spree::AddressesController, type: :controller do
 
       it 'renders address form template' do
         expect(post_create).to render_template(:new)
+      end
+
+      context 'and new_address_modal frame request' do
+        before do
+          allow(controller).to receive(:turbo_frame_request?).and_return(true)
+          request.headers['Turbo-Frame'] = 'new_address_modal'
+          post_create
+        end
+
+        it 'responds with Turbo Stream and sets a unprocessable_entity status' do
+          expect(response.status).to eq(422)
+          expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        end
       end
     end
   end
@@ -141,6 +167,19 @@ describe Spree::AddressesController, type: :controller do
 
           expect(response).to redirect_to(spree.account_addresses_path)
         end
+
+        context 'turbo frame request' do
+          before do
+            allow(controller).to receive(:turbo_frame_request?).and_return(true)
+            put_update
+          end
+
+          it 'responds with Turbo Stream and sets a success flash message' do
+            expect(flash[:notice]).to eq Spree.t('address_book.successfully_updated')
+            expect(response.status).to eq(200)
+            expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+          end
+        end
       end
 
       context 'when data is not valid' do
@@ -152,6 +191,19 @@ describe Spree::AddressesController, type: :controller do
 
         it 'renders address form template' do
           expect(put_update).to render_template(:edit)
+        end
+
+        context 'and edit_address_modal frame request' do
+          before do
+            allow(controller).to receive(:turbo_frame_request?).and_return(true)
+            request.headers['Turbo-Frame'] = "edit_address_modal_#{address.id}"
+            put_update
+          end
+
+          it 'responds with Turbo Stream and sets a unprocessable_entity status' do
+            expect(response.status).to eq(422)
+            expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+          end
         end
       end
     end

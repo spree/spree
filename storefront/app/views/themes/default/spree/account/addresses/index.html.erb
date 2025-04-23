@@ -8,9 +8,9 @@
         <%= Spree.t(:addresses) %>
       </div>
       <% if @addresses.any? %>
-          <ul>
-            <%= render partial: 'spree/account/addresses/address', collection: @addresses, cached: ->a {[*spree_base_cache_scope.call(a), try_spree_current_user.ship_address_id, try_spree_current_user.bill_address_id]}, as: :address %>
-          </ul>
+        <ul>
+          <%= render partial: 'spree/account/addresses/address', collection: @addresses, cached: ->a {[*spree_base_cache_scope.call(a), try_spree_current_user.ship_address_id, try_spree_current_user.bill_address_id]}, as: :address %>
+        </ul>
         <div class="flex">
           <div data-controller="modal" data-modal-allow-background-close="true">
             <%= button_tag Spree.t(:add_address), type: "button", class: "btn-primary block w-full lg:w-auto", data: { action: "click->modal#open" } %>

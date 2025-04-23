@@ -77,7 +77,7 @@ module Spree
         else
           redirect_back_or_default(spree.account_addresses_path)
         end
-      elsif request.headers['Turbo-Frame'].include?('edit_address_modal')
+      elsif request.headers['Turbo-Frame']&.include?('edit_address_modal')
         render turbo_stream: turbo_stream.update("edit_address_modal_#{@address.id}", partial: 'spree/account/addresses/edit_address_modal', locals: { address: @address }), status: :unprocessable_entity
       else
         render :edit, status: :unprocessable_entity
