@@ -89,6 +89,8 @@ Spree::Core::Engine.add_routes do
     root to: 'home#index'
   end
 
+  get '/forbidden', to: 'errors#show', code: 403, as: :forbidden
+
   get 'robots.txt' => 'seo#robots'
   get 'sitemap' => 'seo#sitemap'
   get 'sitemap.xml.gz' => 'seo#sitemap'
