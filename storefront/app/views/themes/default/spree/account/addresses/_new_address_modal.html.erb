@@ -32,7 +32,7 @@
     <div class="border-t border-default px-8 py-4 flex justify-end gap-8 shrink-0">
       <%= button_tag Spree.t(:cancel), class: 'uppercase text-sm font-semibold', data: { action: 'click->modal#close' } %>
       <%= hidden_field_tag :from_modal, "true" %>
-      <%= f.submit Spree.t(:add), class: 'btn-primary w-48' %>
+      <%= f.submit Spree.t(:add), class: 'btn-primary w-48', data: { test_id: 'add-address-button' } %>
     </div>
   <% end %>
 </div>
