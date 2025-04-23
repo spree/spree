@@ -49,7 +49,7 @@
               <%= Spree.t(:roles) %>
               <span>
                 <% @admin_user.spree_roles.each do |role| %>
-                  <span class="tag small"><%= role.name %></span>
+                  <span class="badge badge-light"><%= role.name %></span>
                 <% end %>
               </span>
             </li>

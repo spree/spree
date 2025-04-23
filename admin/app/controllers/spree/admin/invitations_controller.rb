@@ -13,7 +13,7 @@ module Spree
       def index
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at desc'
-        @search = scope.includes(:inviter, :roles).ransack(params[:q])
+        @search = scope.includes(:inviter, :role).ransack(params[:q])
         @collection = @search.result
       end
 
@@ -108,7 +108,7 @@ module Spree
       end
 
       def permitted_params
-        params.require(:invitation).permit(:email, :expires_at, role_ids: [])
+        params.require(:invitation).permit(:email, :expires_at, :role_id)
       end
 
       def choose_layout

@@ -55,8 +55,10 @@ module Spree
       def update
         authorize! :update, @admin_user
 
-        if @admin_user.update(permitted_params.merge(spree_role_ids: []))
-          redirect_to spree.edit_admin_admin_user_path(@admin_user), status: :see_other, notice: flash_message_for(@admin_user, :successfully_updated)
+        permitted_params = params.require(:admin_user).permit(permitted_user_attributes | [spree_role_ids: []])
+
+        if @admin_user.update(permitted_params)
+          redirect_to spree.admin_admin_user_path(@admin_user), status: :see_other, notice: flash_message_for(@admin_user, :successfully_updated)
         else
           render :edit, status: :unprocessable_entity
         end

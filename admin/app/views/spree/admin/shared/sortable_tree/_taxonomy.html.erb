@@ -31,7 +31,7 @@
 
     <div class="dropdown ml-2 h-100">
       <button class="btn btn-light btn-sm px-1 h-100" type="button" id="dropdownMenuButton-<%= taxon.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <%= icon('dots', class: 'mr-0') %>
+        <%= icon('dots-vertical', class: 'mr-0') %>
       </button>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-<%= taxon.id %>">
         <% if can?(:create, Spree::Taxon) %>

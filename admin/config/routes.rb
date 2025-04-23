@@ -148,7 +148,7 @@ Spree::Core::Engine.add_routes do
     end
     # setting up a new store
     resources :stores, only: [:new, :create] do
-      resources :resource_users, only: [:destroy]
+      resources :role_users, only: [:destroy]
     end
     resources :payment_methods, except: :show
     resources :shipping_methods, except: :show

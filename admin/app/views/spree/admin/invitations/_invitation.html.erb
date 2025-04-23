@@ -10,9 +10,7 @@
     <% end %>
   </td>
   <td class="w-20">
-    <% invitation.roles.each do |role| %>
-      <span class="badge badge-light"><%= role.name %></span>
-    <% end %>
+    <span class="badge badge-light"><%= invitation.role.name %></span>
   </td>
   <td class="w-20">
     <% if invitation.accepted? %>
@@ -35,7 +33,7 @@
         <%= hidden_field_tag nil, spree.admin_invitation_url(invitation, token: invitation.token),  data: { clipboard_target: "source" } %>
 
         <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton-<%= invitation.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <%= icon('dots', class: 'mr-0') %>
+          <%= icon('dots-vertical', class: 'mr-0') %>
         </button>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-<%= invitation.id %>">
           <%= link_to_with_icon 'copy', Spree.t(:copy_link), '#', 

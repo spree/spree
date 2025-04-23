@@ -8,6 +8,7 @@ class CreateSpreeInvitations < ActiveRecord::Migration[7.2]
       t.references :resource, polymorphic: true, index: true, null: false # eg. Store, Vendor, Account
       t.references :inviter, polymorphic: true, index: true, null: false
       t.references :invitee, polymorphic: true, index: true
+      t.references :role, null: false
 
       t.datetime :accepted_at
       t.datetime :expires_at, index: true
@@ -15,14 +16,5 @@ class CreateSpreeInvitations < ActiveRecord::Migration[7.2]
 
       t.timestamps
     end
-
-    # attach roles to invitations
-    create_table :spree_invitation_roles do |t|
-      t.references :invitation, null: false
-      t.references :role, null: false
-
-      t.timestamps
-    end
-    add_index :spree_invitation_roles, [:invitation_id, :role_id], unique: true
   end
 end

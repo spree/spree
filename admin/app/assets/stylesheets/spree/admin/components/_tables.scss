@@ -79,7 +79,7 @@ table.table {
       }
     }
 
-    tr:hover:not(.active) {
+    tr:hover:not(.active):not(.sortable-chosen) {
       td {
         background-color: $gray-25;
       }

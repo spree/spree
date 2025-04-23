@@ -51,7 +51,13 @@ module Spree
         options[:class] ||= 'btn btn-light'
 
         if options[:icon]
-          text = icon(options[:icon]) + ' ' + text
+          if options[:only_icon]
+            options[:title] = text
+            text = icon(options[:icon], class: 'mr-0')
+            options[:class] += ' with-tip'
+          else
+            text = icon(options[:icon]) + ' ' + text
+          end
         end
 
         content_tag :span, data: { toggle: 'modal', target: '#bulk-modal' } do
@@ -76,7 +82,7 @@ module Spree
       # render a counter for the bulk operations
       # @return [String]
       def bulk_operations_counter
-        content_tag(:span, class: 'bulk-operations-counter ml-1') do
+        content_tag(:span, class: 'bulk-operations-counter') do
           content_tag(:strong, '', data: { bulk_operation_target: 'counter' }) +
           Spree.t("admin.selected")
         end

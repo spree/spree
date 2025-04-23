@@ -1,10 +1,7 @@
 // https://twitter.com/NatalieMarleny/status/1662402066365526016
 html {
   min-height: 100%;
-  font-feature-settings: "kern";
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-variation-settings: "slnt" 0;
+  letter-spacing: normal;
 }
 body {
   @extend .h-100;
@@ -227,19 +224,6 @@ strong {
   z-index: 99999999;
 }
 
-figure.admin-img-holder {
-  max-width: 275px;
-  border: 2px dashed grey;
-  border-radius: $border-radius;
-  overflow: hidden;
-  display: inline-block;
-
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-}
-
 .image-container {
   .img-fluid {
     transition: transform .5s ease;
@@ -391,8 +375,8 @@ small,
 }
 
 .sortable-chosen {
-  border: 2px dashed theme-color('primary') !important;
-  border-radius: 5px !important;
+  background-color: theme-color('action') !important;
+  border: 2px dashed $blue !important;
 }
 
 .handle {
@@ -691,7 +675,8 @@ div.uppy-Root {
 }
 
 .tooltip-inner {
-  box-shadow: $dropdown-box-shadow;
+  border: 1px solid $gray-100;
+  box-shadow: $box-shadow-xs;
 }
 
 .avatar {

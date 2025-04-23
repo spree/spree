@@ -68,4 +68,42 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
       end
     end
   end
+
+  describe '#allowed_types' do
+    subject { controller.send(:allowed_types) }
+
+    let(:page_section) { create(:featured_taxon_page_section) }
+
+    before do
+      allow(controller).to receive(:parent).and_return(page_section)
+    end
+
+    it 'returns the section allowed types' do
+      expect(subject).to include(
+        Spree::PageBlocks::Buttons,
+        Spree::PageBlocks::Image,
+        Spree::PageBlocks::Text
+      )
+    end
+
+    context 'with custom page section class' do
+      class CustomPageBlock < Spree::PageBlock
+        def self.name
+          'Spree::PageBlocks::Custom'
+        end
+      end
+
+      class CustomPageSection < Spree::PageSections::FeaturedTaxon
+        def available_blocks_to_add
+          [CustomPageBlock]
+        end
+      end
+
+      let(:page_section) { CustomPageSection.new }
+
+      it 'returns the section allowed types' do
+        expect(subject).to include(CustomPageBlock)
+      end
+    end
+  end
 end
