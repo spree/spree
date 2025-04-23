@@ -15,7 +15,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= f.fields_for :product_properties, f.object.product_properties.sort_by_property_position do |product_property_form| %>
+        <%= f.fields_for :product_properties, sorted_product_properties(f.object) do |product_property_form| %>
           <% property = product_property_form.object.property %>
           <%= product_property_form.hidden_field :id %>
           <%= product_property_form.hidden_field :property_id %>
