@@ -1,0 +1,14 @@
+<%= content_for :title do %>
+  <%= Spree.t(:forbidden) %>
+<% end %>
+
+<div class="page-container py-12">
+  <div class="not-found-page text-center pt-5">
+    <h1 class="display-1 text-primary">403</h1>
+    <p><strong><%= Spree.t(:forbidden) %></strong></p>
+    <p><%= Spree.t(:forbidden_message) %></p>
+    <%= link_to Spree.t("admin.back_to_dashboard"),
+    spree.admin_dashboard_path,
+    class: "btn btn-primary" %>
+  </div>
+</div>
