@@ -116,7 +116,6 @@ describe Spree::AddressesController, type: :controller do
 
       context 'and new_address_modal frame request' do
         before do
-          allow(controller).to receive(:turbo_frame_request?).and_return(true)
           request.headers['Turbo-Frame'] = 'new_address_modal'
           post_create
         end
@@ -195,7 +194,6 @@ describe Spree::AddressesController, type: :controller do
 
         context 'and edit_address_modal frame request' do
           before do
-            allow(controller).to receive(:turbo_frame_request?).and_return(true)
             request.headers['Turbo-Frame'] = "edit_address_modal_#{address.id}"
             put_update
           end
