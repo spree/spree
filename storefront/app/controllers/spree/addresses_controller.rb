@@ -23,13 +23,10 @@ module Spree
               render turbo_stream: turbo_stream.update('checkout_content', partial: 'spree/checkout/address', locals: { order: @order })
             end
           end
-        elsif turbo_frame_request?
-          flash[:notice] = Spree.t('address_book.successfully_created')
-          render_with_refresh
         else
           redirect_to spree.account_addresses_path, notice: Spree.t('address_book.successfully_created')
         end
-      elsif request.headers['Turbo-Frame'] == 'new_address_modal'
+      elsif params[:from_modal].present?
         render turbo_stream: turbo_stream.update(:new_address_modal, partial: 'spree/account/addresses/new_address_modal', locals: { address: @address }), status: :unprocessable_entity
       else
         render action: 'new', status: :unprocessable_entity
@@ -71,13 +68,10 @@ module Spree
             end
             format.html { redirect_to spree.checkout_state_path(@order.token, 'address') }
           end
-        elsif turbo_frame_request?
-          flash[:notice] = Spree.t('address_book.successfully_updated')
-          render_with_refresh
         else
           redirect_back_or_default(spree.account_addresses_path)
         end
-      elsif request.headers['Turbo-Frame']&.include?('edit_address_modal')
+      elsif params[:from_modal].present?
         render turbo_stream: turbo_stream.update("edit_address_modal_#{@address.id}", partial: 'spree/account/addresses/edit_address_modal', locals: { address: @address }), status: :unprocessable_entity
       else
         render :edit, status: :unprocessable_entity
@@ -106,11 +100,6 @@ module Spree
 
     def address_changes_except
       []
-    end
-
-    # https://github.com/hotwired/turbo/issues/257#issuecomment-2157835110
-    def render_with_refresh
-      render turbo_stream: turbo_stream.action(:refresh, '')
     end
   end
 end

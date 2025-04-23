@@ -13,7 +13,7 @@
         </ul>
         <div class="flex">
           <div data-controller="modal" data-modal-allow-background-close="true">
-            <%= button_tag Spree.t(:add_address), type: "button", class: "btn-primary block w-full lg:w-auto", data: { action: "click->modal#open" } %>
+            <%= button_tag Spree.t(:add), type: "button", class: "btn-primary block w-full lg:w-auto", data: { action: "click->modal#open" } %>
             <%= turbo_frame_tag :new_address_modal, 
                   src: spree.new_address_path,
                   loading: :lazy,
@@ -30,7 +30,7 @@
           <p><%= Spree.t('storefront.account.no_addresses_description') %></p>
           <div class="flex mt-8 justify-center">
             <div data-controller="modal" data-modal-allow-background-close="true">
-              <%= button_tag Spree.t(:add_address), type: "button", class: "btn-primary block", data: { action: "click->modal#open" } %>
+              <%= button_tag Spree.t(:add), type: "button", class: "btn-primary block", data: { action: "click->modal#open" } %>
               <%= turbo_frame_tag :new_address_modal,
                     src: spree.new_address_path,
                     loading: :lazy,

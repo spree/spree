@@ -4,7 +4,7 @@
     <div data-controller="modal" data-modal-allow-background-close="true">
       <%= button_tag type: "button", class: 'flex gap-2 lg:p-2', data: { action: "click->modal#open" } do %>
         <%= render 'spree/shared/icons/edit' %>
-        <span class="uppercase text-sm font-semibold tracking-widest"><%= Spree.t(:edit_address) %></span>
+        <span class="uppercase text-sm font-semibold tracking-widest"><%= Spree.t(:edit) %></span>
       <% end %>
       <%= turbo_frame_tag "edit_address_modal_#{address.id}",
             src: spree.edit_address_path(address),
