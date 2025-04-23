@@ -15,6 +15,10 @@
       </div>
     <% end %>
   <% end %>
+<% elsif turbo_frame_request? %>
+  <%= turbo_frame_tag "edit_address_modal_#{@address.id}" do %>
+    <%= render partial: 'spree/account/addresses/edit_address_modal', locals: { address: @address } %>
+  <% end %>
 <% else %>
   <div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
     <div class="lg:col-span-2">

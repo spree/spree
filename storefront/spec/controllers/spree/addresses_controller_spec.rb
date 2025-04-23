@@ -20,9 +20,9 @@ describe Spree::AddressesController, type: :controller do
   end
 
   describe '#create' do
-    subject :post_create do
-      post :create, params: { address: address_params, default_billing: default_billing, default_shipping: default_shipping }
-    end
+    subject(:post_create) { post :create, params: params }
+
+    let(:params) { { address: address_params, default_billing: default_billing, default_shipping: default_shipping } }
 
     context 'when data is valid' do
       let(:address_params) do
@@ -100,13 +100,24 @@ describe Spree::AddressesController, type: :controller do
       it 'renders address form template' do
         expect(post_create).to render_template(:new)
       end
+
+      context 'and new_address_modal frame request' do
+        let(:params) { { address: address_params, default_billing: default_billing, default_shipping: default_shipping, from_modal: 'true' } }
+
+        before { post_create }
+
+        it 'responds with Turbo Stream and sets a unprocessable_entity status' do
+          expect(response.status).to eq(422)
+          expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+        end
+      end
     end
   end
 
   describe '#update' do
-    subject :put_update do
-      put :update, params: { address: address_params, id: address.id }
-    end
+    subject(:put_update) { put :update, params: params }
+
+    let(:params) { { address: address_params, id: address.id } }
 
     before { controller.instance_variable_set(:@address, address) }
 
@@ -152,6 +163,17 @@ describe Spree::AddressesController, type: :controller do
 
         it 'renders address form template' do
           expect(put_update).to render_template(:edit)
+        end
+
+        context 'and edit_address_modal frame request' do
+          let(:params) { { address: address_params, id: address.id, from_modal: 'true' } }
+
+          before { put_update }
+
+          it 'responds with Turbo Stream and sets a unprocessable_entity status' do
+            expect(response.status).to eq(422)
+            expect(response.media_type).to eq("text/vnd.turbo-stream.html")
+          end
         end
       end
     end

@@ -1,10 +1,20 @@
 <li class="p-4 my-4 border border-accent lg:flex justify-between relative" id="<%= dom_id(address) %>">
   <%= render 'spree/shared/address', address: address %>
   <div class="flex gap-6 h-6 lg:h-10 mt-6 lg:mt-0">
-    <%= link_to spree.edit_address_path(address), class: 'flex gap-2 lg:p-2' do %>
-      <%= render 'spree/shared/icons/edit' %>
-      <span class="uppercase text-sm font-semibold tracking-widest"><%= Spree.t(:edit_address) %></span>
-    <% end %>
+    <div data-controller="modal" data-modal-allow-background-close="true">
+      <%= button_tag type: "button", class: 'flex gap-2 lg:p-2', data: { action: "click->modal#open" } do %>
+        <%= render 'spree/shared/icons/edit' %>
+        <span class="uppercase text-sm font-semibold tracking-widest"><%= Spree.t(:edit) %></span>
+      <% end %>
+      <%= turbo_frame_tag "edit_address_modal_#{address.id}",
+            src: spree.edit_address_path(address),
+            loading: :lazy,
+            data: {
+              modal_target: "container", 
+              action: "click->modal#closeBackground keyup@window->modal#closeWithKeyboard"
+            },
+            class: "hidden animated fadeIn fixed inset-0 overflow-y-auto flex items-center justify-center z-[9999]" %>
+    </div>
     <div
                   data-controller="modal"
                   data-modal-allow-background-close="true"

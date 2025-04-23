@@ -26,6 +26,8 @@ module Spree
         else
           redirect_to spree.account_addresses_path, notice: Spree.t('address_book.successfully_created')
         end
+      elsif params[:from_modal].present?
+        render turbo_stream: turbo_stream.update(:new_address_modal, partial: 'spree/account/addresses/new_address_modal', locals: { address: @address }), status: :unprocessable_entity
       else
         render action: 'new', status: :unprocessable_entity
       end
@@ -69,6 +71,8 @@ module Spree
         else
           redirect_back_or_default(spree.account_addresses_path)
         end
+      elsif params[:from_modal].present?
+        render turbo_stream: turbo_stream.update("edit_address_modal_#{@address.id}", partial: 'spree/account/addresses/edit_address_modal', locals: { address: @address }), status: :unprocessable_entity
       else
         render :edit, status: :unprocessable_entity
       end

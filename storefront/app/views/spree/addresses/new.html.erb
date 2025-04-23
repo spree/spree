@@ -15,6 +15,9 @@
       <% end %>
     </div>
   <% end %>
+  <%= turbo_frame_tag :new_address_modal do %>
+    <%= render partial: 'spree/account/addresses/new_address_modal', locals: { address: @address } %>
+  <% end %>
 <% else %>
   <% if params[:checkout].present? %>
     <div class="card-dialog mx-auto lg:w-1/3">
