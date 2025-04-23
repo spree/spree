@@ -2,14 +2,16 @@
   <%= render 'spree/shared/address', address: address %>
   <div class="flex gap-6 h-6 lg:h-10 mt-6 lg:mt-0">
     <div data-controller="modal" data-modal-allow-background-close="true">
-      <%= link_to spree.edit_address_path(address), class: 'flex gap-2 lg:p-2', data: { action: "click->modal#open", turbo_frame: :edit_address_modal } do %>
+      <%= button_tag type: "button", class: 'flex gap-2 lg:p-2', data: { action: "click->modal#open" } do %>
         <%= render 'spree/shared/icons/edit' %>
         <span class="uppercase text-sm font-semibold tracking-widest"><%= Spree.t(:edit_address) %></span>
       <% end %>
-      <%= turbo_frame_tag "edit_address_modal_#{address.id}", 
+      <%= turbo_frame_tag "edit_address_modal_#{address.id}",
+            src: spree.edit_address_path(address),
+            loading: :lazy,
             data: {
               modal_target: "container", 
-              action: "click->modal#closeBackground keyup@window->modal#closeWithKeyboard" 
+              action: "click->modal#closeBackground keyup@window->modal#closeWithKeyboard"
             },
             class: "hidden animated fadeIn fixed inset-0 overflow-y-auto flex items-center justify-center z-[9999]" %>
     </div>
