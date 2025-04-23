@@ -122,6 +122,10 @@ module Spree
       def product_list_filters_search_form_path
         [:admin, @search]
       end
+
+      def sorted_product_properties(product)
+        product.product_properties.sort_by { |product_property| product_property.property.position }
+      end
     end
   end
 end
