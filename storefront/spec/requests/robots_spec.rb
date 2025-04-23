@@ -27,7 +27,7 @@ describe 'Robots.txt', type: :request do
       expect(response).to have_http_status(:success)
       expect(response.body).to include('User-agent: *')
       expect(response.body).not_to include(/^Disallow: \/$/)
-      expect(response.body).to include("Sitemap: #{spree.sitemap_url(host: store.formatted_url_or_custom_domain, format: :xml)}")
+      expect(response.body).to include("Sitemap: #{spree.sitemap_url(host: store.formatted_url_or_custom_domain, format: :xml, port: nil)}")
     end
   end
 end

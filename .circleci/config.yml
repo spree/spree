@@ -10,7 +10,6 @@ defaults: &defaults
     DB_HOST: localhost
     DB: postgres # default value, this will speed up bundle install for all postgres builds
     DB_USERNAME: postgres
-    PORT: 3000
   working_directory: ~/spree
   docker:
     - image: &ruby_image cimg/ruby:3.3.0-browsers
