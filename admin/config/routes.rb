@@ -263,6 +263,10 @@ Spree::Core::Engine.add_routes do
 
     # errors
     get '/forbidden', to: 'errors#show', code: 403, as: :forbidden
+    if Rails.env.test?
+      get '/errors', to: 'errors#show'
+      get '/errors/:path', to: 'errors#show', as: :pathed_errors
+    end
 
     # dashboard
     resource :dashboard, controller: 'dashboard'
