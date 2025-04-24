@@ -47,6 +47,22 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
       put :update, params: { taxonomy_id: taxonomy.id, id: taxon.id, taxon: { name: 'New Name' } }
       expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
     end
+
+    context 'when permalink_part is present' do
+      context 'and no parent taxon' do
+        it 'sets the permalink from permalink_part param' do
+          put :update, params: { taxonomy_id: taxonomy.id, id: taxonomy.root.id, permalink_part: 'new-permalink' }
+          expect(taxonomy.root.reload.permalink).to eq('new-permalink')
+        end
+      end
+
+      context 'and parent taxon is present' do
+        it 'sets the permalink from root permalink and permalink_part param' do
+          put :update, params: { taxonomy_id: taxonomy.id, id: taxon.id, permalink_part: 'new-permalink' }
+          expect(taxon.reload.permalink).to eq("#{taxonomy.root.permalink}/new-permalink")
+        end
+      end
+    end
   end
 
   describe 'PUT #reposition' do
