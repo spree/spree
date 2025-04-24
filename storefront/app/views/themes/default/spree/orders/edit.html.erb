@@ -11,6 +11,8 @@
     <% else %>
       <%= render 'spree/orders/cart' %>
     <% end %>
+
+    <%= render_storefront_partials(:cart_partials) %>
   <% end %>
 
 <% if !turbo_frame_request? && !turbo_stream_request? %>

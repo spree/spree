@@ -5,6 +5,8 @@
     <% else %>
       <%= render 'spree/orders/cart' %>
     <% end %>
+
+    <%= render_storefront_partials(:remove_from_cart_partials) %>
   <% end %>
 <% end %>
 

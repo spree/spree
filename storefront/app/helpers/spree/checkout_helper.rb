@@ -33,7 +33,7 @@ module Spree
     end
 
     def checkout_started?
-      @order.state == 'address' && @order.state_was == 'cart'
+      (@order.state == 'address' && @order.state_was == 'cart') || (@order.state == 'cart' && correct_state == 'address')
     end
 
     def already_have_an_account?

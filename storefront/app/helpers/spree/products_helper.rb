@@ -25,7 +25,7 @@ module Spree
     end
 
     def brand_name(product)
-      product.brand&.name || product.vendor&.display_name
+      product.brand&.name || product.try(:vendor)&.display_name
     end
 
     def product_not_selected_options(product, selected_variant, options_param_name: :options)

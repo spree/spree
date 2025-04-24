@@ -7,11 +7,14 @@ module Spree
         :head_partials,
         :body_start_partials,
         :body_end_partials,
+        :cart_partials,
         :add_to_cart_partials,
         :remove_from_cart_partials,
         :checkout_partials,
         :checkout_complete_partials,
-        :quick_checkout_partials
+        :quick_checkout_partials,
+        :product_partials,
+        :add_to_wishlist_partials
       )
 
       # accessible via Rails.application.config.spree_storefront
@@ -44,11 +47,14 @@ module Spree
         Rails.application.config.spree_storefront.head_partials = []
         Rails.application.config.spree_storefront.body_start_partials = []
         Rails.application.config.spree_storefront.body_end_partials = []
+        Rails.application.config.spree_storefront.cart_partials = []
         Rails.application.config.spree_storefront.add_to_cart_partials = []
         Rails.application.config.spree_storefront.remove_from_cart_partials = []
         Rails.application.config.spree_storefront.checkout_partials = []
         Rails.application.config.spree_storefront.checkout_complete_partials = []
         Rails.application.config.spree_storefront.quick_checkout_partials = []
+        Rails.application.config.spree_storefront.product_partials = []
+        Rails.application.config.spree_storefront.add_to_wishlist_partials = []
       end
     end
   end
