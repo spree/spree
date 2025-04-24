@@ -18,7 +18,6 @@ module Spree
         ].each do |name|
           Spree::ReturnAuthorizationReason.find_or_create_by!(name: name)
         end
-        Spree::RefundReason.find_or_create_by!(name: 'Return processing', mutable: false)
         Spree::ReimbursementType.find_or_create_by!(name: 'Store Credit', type: 'Spree::ReimbursementType::StoreCredit')
         Spree::ReimbursementType.find_or_create_by!(name: 'Exchange', type: 'Spree::ReimbursementType::Exchange')
         Spree::ReimbursementType.find_or_create_by!(name: 'Original payment', type: 'Spree::ReimbursementType::OriginalPayment')
