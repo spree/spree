@@ -205,6 +205,15 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
+    describe '#create_default_theme' do
+      let(:store) { build(:store) }
+
+      it 'creates a default theme' do
+        expect(store).to receive(:create_default_theme)
+        store.save!
+      end
+    end
+
     describe '#import_products_from_store' do
       let(:store) { build(:store, import_products_from_store_id: other_store.id) }
       let(:other_store) { create(:store) }

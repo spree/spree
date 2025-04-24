@@ -101,8 +101,10 @@ module Spree
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
-    has_many :posts
-    has_many :post_categories
+    has_many :posts, class_name: 'Spree::Post'
+    has_many :post_categories, class_name: 'Spree::PostCategory'
+
+    has_many :integrations, class_name: 'Spree::Integration'
 
     #
     # Page Builder associations
@@ -341,7 +343,7 @@ module Spree
 
     def default_stock_location
       @default_stock_location ||= begin
-        stock_location_scope = Spree::StockLocation.order_default
+        stock_location_scope = Spree::StockLocation.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
           stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
         end
