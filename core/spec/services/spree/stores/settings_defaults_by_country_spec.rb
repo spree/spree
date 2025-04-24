@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Spree::Stores::SettingsDefaultsByCountry do
   subject { described_class.call(code: code) }
