@@ -1,0 +1,18 @@
+<div class="mb-2 d-flex justify-content-between">
+  <div>
+    <% if defined?(devise_mapping) && devise_mapping.rememberable? && controller_name == 'user_sessions' %>
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :remember_me, class: "custom-control-input" %>
+        <%= f.label :remember_me, Spree.t(:remember_me), class: "custom-control-label" %>
+      </div>
+    <% end %>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <% if controller_name != 'user_sessions' %>
+      <p><%= link_to Spree.t(:log_in), new_session_path(resource_name) %></p>
+    <% end %>
+    <% if defined?(devise_mapping) && devise_mapping.recoverable? && controller_name != 'user_passwords' && controller_name != 'user_registrations' %>
+      <p><%= link_to Spree.t(:forgot_password), new_password_path(resource_name) %></p>
+    <% end %>
+  </div>
+</div>
