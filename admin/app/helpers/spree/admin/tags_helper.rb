@@ -13,7 +13,7 @@ module Spree
         @post_tags_scope ||= ActsAsTaggableOn::Tag.
                              joins(:taggings).
                              where("#{ActsAsTaggableOn.taggings_table}.taggable_type = ?", 'Spree::Post').
-                             for_context(:tags)
+                             for_context(:tags).for_tenant(current_store.id)
       end
 
       def post_tags_json_array
