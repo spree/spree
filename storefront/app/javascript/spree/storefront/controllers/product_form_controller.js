@@ -50,7 +50,7 @@ export default class extends Controller {
         this.productDetailsTarget.style.top = `${navHeight}px`
       }
     }
-  
+
     this.formTarget.addEventListener('submit', this.disableSubmitButton)
     this.submitTargets.forEach((button) => button.addEventListener('turbo-stream-form:submit-end', this.enableForm))
   }
@@ -62,14 +62,14 @@ export default class extends Controller {
         selectedOptions.add(option.dataset.optionId)
       }
     })
-  
+
     const requiredOptions = new Set(this.requiredOptionsValue)
     const notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
-  
+
     if (!notSelectedOptions.length) return
-  
+
     e.preventDefault()
-  
+
     notSelectedOptions.forEach((option, index) => {
       const fieldSetElement = this.element.querySelector(`[data-option-id="${option}"]`)
       if (index === 0) {
@@ -81,7 +81,7 @@ export default class extends Controller {
         fieldSetElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
       }
     })
-  
+
     this.keepOptionsOpenValue = true
   }
 
