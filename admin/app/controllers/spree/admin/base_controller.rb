@@ -55,6 +55,10 @@ module Spree
         end
       end
 
+      def store_location_session_key
+        "#{Spree.admin_user_class.model_name.singular_route_key.to_sym}_return_to"
+      end
+
       def flash_message_for(object, event_sym)
         if object.is_a?(ActiveRecord::Relation)
           resource_desc = object.model.model_name.human.pluralize

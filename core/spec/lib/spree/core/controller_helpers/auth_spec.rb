@@ -74,7 +74,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     it 'sets session return url' do
       allow(controller).to receive_messages(request: double(fullpath: '/redirect'))
       controller.store_location
-      expect(session[:spree_user_return_to]).to eq '/redirect'
+      expect(session[:legacy_user_return_to]).to eq '/redirect'
     end
   end
 

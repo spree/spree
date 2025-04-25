@@ -43,18 +43,19 @@ module Spree
           @current_oauth_token ||= get_last_access_token.call(user) || create_access_token.call(user)
         end
 
-        def store_location
-          # disallow return to login, logout, signup pages
-          authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
-          disallowed_urls = []
-          authentication_routes.each do |route|
-            disallowed_urls << send(route) if respond_to?(route)
-          end
+        # this will work for devise out of the box
+        # for other auth systems you will need to override this method
+        def store_location(location = nil)
+          return if try_spree_current_user
 
-          disallowed_urls.map! { |url| url[/\/\w+$/] }
-          unless disallowed_urls.include?(request.fullpath)
-            session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
-          end
+          location ||= request.fullpath
+          session_key = store_location_session_key
+
+          session[session_key] = location
+        end
+
+        def store_location_session_key
+          "#{Spree.user_class.model_name.singular_route_key.to_sym}_return_to"
         end
 
         # proxy method to *possible* spree_current_user method

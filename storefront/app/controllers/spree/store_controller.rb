@@ -212,18 +212,6 @@ module Spree
       end
     end
 
-    # this will work for devise out of the box
-    # for other auth systems you will need to override this method
-    def store_location(location = nil)
-      return if try_spree_current_user
-      return unless defined?(store_location_for)
-      return unless defined?(Devise)
-
-      location ||= request.fullpath
-
-      store_location_for(Devise.mappings.keys.first, location)
-    end
-
     def stored_location
       return unless defined?(after_sign_in_path_for)
       return unless defined?(Devise)
