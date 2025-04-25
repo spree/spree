@@ -23,7 +23,8 @@ module Spree
         :store_nav_partials,
         :store_settings_nav_partials,
         :store_orders_nav_partials,
-        :store_products_nav_partials
+        :store_products_nav_partials,
+        :user_dropdown_partials
       )
 
       # accessible via Rails.application.config.spree_admin

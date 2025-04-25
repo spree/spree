@@ -27,6 +27,8 @@
         <div class="dropdown-divider"></div>
       <% end %>
 
+      <%= render_admin_partials(:user_dropdown_partials) %>
+
       <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
         <%= icon('logout', class: "icon icon-logout")  %>
         <%= Spree.t(:logout) %>
