@@ -1192,6 +1192,8 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_server_error: Internal Server Error
+    internal_server_error_message: The server encountered an internal error and was unable to complete your request.
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
@@ -1537,6 +1539,7 @@ en:
         buy_buttons:
           display_name: Add To Cart
     page_not_found: Sorry! Page you are looking can’t be found.
+    page_not_found_message: This page just doesn't exist.
     page_sections:
       announcement_bar:
         default_text: Welcome to my Store!
@@ -1913,9 +1916,6 @@ en:
     seo_title: SEO Title
     server: Server
     server_error: The server returned an error
-    internal_server_error: Internal Server Error
-    internal_server_error_message: The server encountered an internal error and was unable to complete your request.
-    page_not_found_message: This page just doesn't exist.
     settings: Settings
     ship: Ship
     ship_address: Ship Address
