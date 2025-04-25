@@ -28,22 +28,21 @@ export default class extends Controller {
   }
 
   connect() {
-    const selectedOptions = new Set()
-    this.optionTargets.forEach((option) => {
-      if (option.checked) {
-        selectedOptions.add(option.dataset.optionId)
+    if (this.hasAddToWishlistTarget && this.variantFromOptionsDisabledValue) {
+      const selectedOptions = new Set()
+      this.optionTargets.forEach((option) => {
+        if (option.checked) {
+          selectedOptions.add(option.dataset.optionId)
+        }
+      })
+      const requiredOptions = new Set(this.requiredOptionsValue)
+      const notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
+  
+      if (notSelectedOptions.length === 0) {
+        this.addToWishlistTarget.disabled = true
       }
-    })
-    const requiredOptions = new Set(this.requiredOptionsValue)
-
-    this.notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
-    if (this.notSelectedOptions.length) {
-      this.submitTargets.forEach((button) => button.addEventListener('click', this.showNotSelectedOptions))
     }
-    if (this.hasAddToWishlistTarget && this.variantFromOptionsDisabledValue && this.notSelectedOptions.length === 0) {
-      this.addToWishlistTarget.disabled = true
-    }
-
+  
     if (this.hasDesktopMediaGalleryTarget && this.hasProductDetailsTarget) {
       if (this.desktopMediaGalleryTarget.offsetHeight > 800) {
         this.productDetailsTarget.classList.add('sticky')
@@ -51,19 +50,27 @@ export default class extends Controller {
         this.productDetailsTarget.style.top = `${navHeight}px`
       }
     }
-
+  
     this.formTarget.addEventListener('submit', this.disableSubmitButton)
     this.submitTargets.forEach((button) => button.addEventListener('turbo-stream-form:submit-end', this.enableForm))
   }
 
-  disconnect() {
-    this.submitTargets.forEach((button) => button.removeEventListener('click', this.showNotSelectedOptions))
-  }
-
   showNotSelectedOptions = (e) => {
+    const selectedOptions = new Set()
+    this.optionTargets.forEach((option) => {
+      if (option.checked) {
+        selectedOptions.add(option.dataset.optionId)
+      }
+    })
+  
+    const requiredOptions = new Set(this.requiredOptionsValue)
+    const notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
+  
+    if (!notSelectedOptions.length) return
+  
     e.preventDefault()
-
-    this.notSelectedOptions.forEach((option, index) => {
+  
+    notSelectedOptions.forEach((option, index) => {
       const fieldSetElement = this.element.querySelector(`[data-option-id="${option}"]`)
       if (index === 0) {
         const toggleElement = fieldSetElement.querySelector('[data-controller="dropdown"]')
@@ -74,7 +81,7 @@ export default class extends Controller {
         fieldSetElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
       }
     })
-
+  
     this.keepOptionsOpenValue = true
   }
 

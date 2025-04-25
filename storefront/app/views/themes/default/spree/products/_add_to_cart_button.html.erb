@@ -16,7 +16,10 @@ variant_not_available = selected_variant.nil? ||
   <%= button_tag type: (variant_not_available || not_all_options_selected ? 'button' : 'submit'),
                   class: 'btn-primary btn-icon w-full h-12 add-to-cart-button',
                   data: {
-                    action: ('modal#open' if variant_not_available),
+                    action: [
+                      'click->product-form#showNotSelectedOptions',
+                      ('click->modal#open' if variant_not_available)
+                    ].compact.join(' '),
                     product_form_target: 'submit'
                   },
                   disabled: product.price_in(current_currency).zero? do %>
@@ -38,7 +41,10 @@ variant_not_available = selected_variant.nil? ||
     <%= button_tag type: (variant_not_available || not_all_options_selected ? 'button' : 'submit'),
                   class: 'btn-primary btn-icon w-full h-12 add-to-cart-button',
                   data: {
-                    action: ('modal#open' if variant_not_available),
+                    action: [
+                      'click->product-form#showNotSelectedOptions',
+                      ('click->modal#open' if variant_not_available)
+                    ].compact.join(' '),
                     product_form_target: 'submit'
                   },
                   disabled: product.price_in(current_currency).zero? do %>
