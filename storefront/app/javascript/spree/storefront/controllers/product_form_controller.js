@@ -42,7 +42,7 @@ export default class extends Controller {
         this.addToWishlistTarget.disabled = true
       }
     }
-  
+
     if (this.hasDesktopMediaGalleryTarget && this.hasProductDetailsTarget) {
       if (this.desktopMediaGalleryTarget.offsetHeight > 800) {
         this.productDetailsTarget.classList.add('sticky')
