@@ -65,6 +65,9 @@ describe Spree::CheckoutController, type: :controller do
       expect(controller).to receive(:track_event).with('checkout_started', { order: order })
       expect(controller).to receive(:track_event).with('checkout_step_viewed', { order: order, step: 'address' })
       get :edit, params: { token: order.token, state: 'address' }
+
+      expect(assigns(:order).accept_marketing).to be(true)
+      expect(assigns(:order).signup_for_an_account).to be(true)
     end
 
     context 'when user is not signed in' do

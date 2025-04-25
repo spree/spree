@@ -14,6 +14,7 @@ module Spree
 
     before_action :ensure_order_not_completed, only: [:edit, :update]
     before_action :ensure_checkout_allowed
+    before_action :check_if_checkout_started, only: :edit
     before_action :ensure_valid_state, only: [:edit, :update]
 
     before_action :restart_checkout, only: :edit, if: :should_restart_checkout?
@@ -33,13 +34,6 @@ module Spree
 
     # GET /checkout/<token>
     def edit
-      if checkout_started?
-        track_checkout_started
-
-        @order.accept_marketing = true # TODO: move this to store preferences
-        @order.signup_for_an_account = true # TODO: move this to store preferences
-      end
-
       track_checkout_step_viewed
     end
 
@@ -239,6 +233,15 @@ module Spree
         'address'
       else
         @order.state
+      end
+    end
+
+    def check_if_checkout_started
+      if checkout_started?
+        track_checkout_started
+
+        @order.accept_marketing = true # TODO: move this to store preferences
+        @order.signup_for_an_account = true # TODO: move this to store preferences
       end
     end
 

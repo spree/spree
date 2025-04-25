@@ -27,6 +27,8 @@ export default class extends Slideover {
 
     // Don't scroll the background when slideover is open
     lockScroll()
+
+    window.dispatchEvent(new Event('slideover:open'))
   }
 
   _hide() {
