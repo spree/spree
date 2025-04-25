@@ -96,6 +96,7 @@ module Spree
         Rails.application.config.spree_admin.store_settings_nav_partials = []
         Rails.application.config.spree_admin.store_orders_nav_partials = []
         Rails.application.config.spree_admin.store_products_nav_partials = []
+        Rails.application.config.spree_admin.user_dropdown_partials = []
       end
     end
   end
