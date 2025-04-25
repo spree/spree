@@ -237,7 +237,12 @@ module Spree
     end
 
     def check_if_checkout_started
-      track_checkout_started if checkout_started?
+      if checkout_started?
+        track_checkout_started
+
+        @order.accept_marketing = true # TODO: move this to store preferences
+        @order.signup_for_an_account = true # TODO: move this to store preferences
+      end
     end
 
     def ensure_valid_state
