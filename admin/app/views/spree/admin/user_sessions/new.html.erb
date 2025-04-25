@@ -1,4 +1,4 @@
-<% content_for(:title, Spree.t(:sign_in)) %>
+<% content_for(:title, Spree.t(:login)) %>
 
 <h1 class="mb-3 font-weight-light">Welcome back</h1>
 <%= form_for resource, as: resource_name, url: session_path(resource_name), data: { controller: 'enable-button', turbo: false } do |f| %>
@@ -11,6 +11,6 @@
     <%= f.password_field :password, required: true, class: 'form-control form-control-lg rounded-sm', placeholder: '********', autocomplete: 'current-password' %>
   </div>
   <%= render 'spree/admin/shared/devise/links', f: f %>
-  <%= turbo_save_button_tag Spree.t(:sign_in), class: 'btn btn-primary btn-lg w-100' %>
+  <%= turbo_save_button_tag Spree.t(:login), class: 'btn btn-primary btn-lg w-100' %>
 <% end %>
 
