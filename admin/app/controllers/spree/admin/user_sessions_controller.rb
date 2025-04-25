@@ -1,8 +1,6 @@
 module Spree
   module Admin
     class UserSessionsController < defined?(Devise::SessionsController) ? Devise::SessionsController : Spree::Admin::BaseController
-      skip_before_action :verify_authenticity_token
-
       layout 'spree/minimal'
 
       # We need to overwrite this action because `return_to` url may be in a different domain
