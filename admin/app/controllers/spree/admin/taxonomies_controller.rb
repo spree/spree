@@ -6,6 +6,11 @@ module Spree
 
       before_action :add_breadcrumbs
 
+      def edit
+        super
+        redirect_to spree.admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id)
+      end
+
       private
 
       def collection
