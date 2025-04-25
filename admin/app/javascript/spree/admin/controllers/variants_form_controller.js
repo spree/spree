@@ -773,7 +773,7 @@ export default class extends CheckboxSelectAll {
 
     this.hideNewOptionForm()
 
-    this.toggleInventoryForm('hide')
+    this.toggleInventoryForm()
   }
 
   hideNewOptionForm() {
@@ -1065,7 +1065,7 @@ export default class extends CheckboxSelectAll {
   toggleInventoryForm(value) {
     if (!this.inventoryFormTarget) return
 
-    if (value == 'show') {
+    if (value) {
       this.inventoryFormTarget.classList.remove('d-none')
     } else {
       this.inventoryFormTarget.classList.add('d-none')
