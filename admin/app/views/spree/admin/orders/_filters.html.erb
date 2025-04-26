@@ -13,28 +13,24 @@
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search %>
 
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="mr-2 h-100">
-        <% if controller_name == 'checkouts' %>
-          <%= render "spree/admin/shared/calendar_range_picker",
-          date_from_input_name: "q[created_at_gt]",
-          date_to_input_name: "q[created_at_lt]",
-          date_from_value: params.dig(:q, :created_at_gt),
-          date_to_value: params.dig(:q, :created_at_lt),
-          dropdown_direction: "right" %>
-        <% else %>
-          <%= render "spree/admin/shared/calendar_range_picker",
-          date_from_input_name: "q[completed_at_gt]",
-          date_to_input_name: "q[completed_at_lt]",
-          date_from_value: params.dig(:q, :completed_at_gt),
-          date_to_value: params.dig(:q, :completed_at_lt),
-          dropdown_direction: "right" %>
-        <% end %>
-      </div>
+    <% if controller_name == 'checkouts' %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[created_at_gt]",
+      date_to_input_name: "q[created_at_lt]",
+      date_from_value: params.dig(:q, :created_at_gt),
+      date_to_value: params.dig(:q, :created_at_lt),
+      dropdown_direction: "right" %>
+    <% else %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[completed_at_gt]",
+      date_to_input_name: "q[completed_at_lt]",
+      date_from_value: params.dig(:q, :completed_at_gt),
+      date_to_value: params.dig(:q, :completed_at_lt),
+      dropdown_direction: "right" %>
+    <% end %>
 
-      <%= render "spree/admin/orders/table_filter_dropdown" %>
-      <%= render 'spree/admin/shared/filters_button' %>
-    </div>
+    <%= render "spree/admin/orders/table_filter_dropdown" %>
+    <%= render 'spree/admin/shared/filters_button' %>
   </div>
   <div data-reveal-target="item" class="d-none" id="table-filter">
     <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>

@@ -26,10 +26,14 @@
   box-shadow: $dropdown-box-shadow;
 
   .dropdown-item, .dropdown-header {
-    padding-left: $input-btn-padding-x;
-    padding-right: $input-btn-padding-x;
     padding-top: $input-btn-padding-y;
     padding-bottom: $input-btn-padding-y;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .dropdown-header {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 
   .dropdown-item {
@@ -43,12 +47,12 @@
     color: $gray-700;
 
     &:hover {
-      background-color: $blue;
-      color: $white;
+      background-color: $dropdown-link-hover-bg;
+      color: $dropdown-link-hover-color;
     }
 
     i {
-      margin-right: 0.7rem;
+      margin-right: 0.5rem;
     }
 
     .badge {
@@ -89,40 +93,6 @@
 
   .dropdown-item:last-child {
     margin-bottom: 0px;
-  }
-}
-
-.dropdown-dark {
-  &:hover {
-    background-color: #272727;
-  }
-
-  .dropdown-menu {
-    background-color: #272727;
-    border: 1px solid $gray-800;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-    @extend .text-white;
-
-    .dropdown-divider {
-      border-top-color: $gray-800;
-    }
-
-    .dropdown-item {
-      color: $gray-300;
-
-      &:hover, &.active {
-        color: $white !important;
-        background-color: $gray-800;
-
-        i {
-          color: $gray-100 !important;
-        }
-      }
-    }
-  }
-
-  .dropdown-divider {
-    border-top-color: $gray-800;
   }
 }
 

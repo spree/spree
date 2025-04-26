@@ -3,6 +3,7 @@
 
   #content {
     margin-left: 0;
+    padding-top: 0;
   }
 
   #main-part {
@@ -39,7 +40,7 @@
 
 #page-builder-header {
   z-index: 1031;
-  border-bottom: 1px solid $gray-150;
+  border-bottom: 1px solid $border-color;
 
   nav {
     width: 100%;
@@ -54,7 +55,7 @@
   top: 43px;
   left: 0px;
   background-color: $body-bg;
-  border-right: 1px solid $gray-150;
+  border-right: 1px solid $border-color;
 
   .sidebar-header {
     height: 48px;
@@ -137,10 +138,6 @@
     min-width: 375px;
     overflow: auto;
   }
-}
-
-main#content {
-  padding-top: 0 !important;
 }
 
 .editor-add-section {

@@ -683,9 +683,28 @@ div.uppy-Root {
   border-radius: 50%;
   background-color: $gray-200;
   color: $gray-500;
-  font-size: 1rem;
+  font-size: $font-size-base;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+.breadcrumb {
+  gap: 0.5rem;
+  align-items: center;
+  color: $gray-600;
+  
+  li {
+    a {
+      color: $gray-600;
+      text-decoration: none;
+
+      &:hover {
+        color: $primary;
+        text-decoration: none;
+      }
+    }
+  }
+}
+

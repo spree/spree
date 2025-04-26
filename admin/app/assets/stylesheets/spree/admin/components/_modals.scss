@@ -27,12 +27,13 @@ body.modal-open {
   display: flex;
   justify-content: end;
   padding: $modal-inner-padding;
-  background-color: #FAFAFA;
-  border-top: 1px solid $gray-50;
+  background-color: $gray-25;
+  border-top: 1px solid $border-color;
 
   .btn {
     display: inline-flex ;
     width: auto !important;
+    height: 2.5rem;
   }
 }
 

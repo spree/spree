@@ -1,3 +1,28 @@
+.filter-wrap {
+  padding: 0.5rem;
+  border-bottom: 1px solid $border-color;
+  gap: 0.5rem;
+
+  .btn {
+    height: 2.125rem;
+  }
+}
+
+#filters-search-bar {
+  max-width: 300px;
+  margin-right: auto;
+  height: 2.125rem;
+}
+
+#table-filter {
+  padding: 0.75rem;
+  border-radius: $border-radius;
+  border: 1px solid $gray-50;
+  background-color: $gray-25;
+  margin-top: 0.5rem;
+}
+
+
 .collapsed .arrow {
   transform: rotate(-90deg);
   transition: .3s ease-in-out;

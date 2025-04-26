@@ -11,11 +11,8 @@
 
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search %>
-
-    <div class="d-flex align-items-center justify-content-between">
-      <%= render "spree/admin/products/table_filter_dropdown" %>
-      <%= render 'spree/admin/shared/filters_button' %>
-    </div>
+    <%= render "spree/admin/products/table_filter_dropdown" %>
+    <%= render 'spree/admin/shared/filters_button' %>
   </div>
   <div data-reveal-target="item" class="d-none" id="table-filter">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>

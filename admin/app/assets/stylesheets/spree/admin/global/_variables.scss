@@ -2,9 +2,7 @@
 
 $gray-25: #F9F9F9;
 $gray-50: #F3F3F3;
-$gray-75: #F0F0F0;
-$gray-100: #EAEAEA !default;
-$gray-150: #E0E0E0 !default;
+$gray-100: #E4E4E4 !default;
 $gray-200: #D5D5D5 !default;
 $gray-300: #B3B3B3 !default;
 $gray-400: #999999 !default;
@@ -67,15 +65,15 @@ $border-radius-sm: 0.4rem !default;
 $border-radius-lg: 0.75rem !default;
 $card-border-radius: $border-radius-lg !default;
 $border-color: $gray-100 !default;
-$input-border-color: $gray-100 !default;
+$input-border-color: $border-color !default;
 $list-group-border-color: $border-color !default;
 $list-group-hover-bg: $gray-25 !default;
 $list-group-active-bg: $action !default;
 $list-group-active-border-color: $action-border !default;
 
-$thumbnail-border-color: $gray-100 !default;
+$thumbnail-border-color: $border-color !default;
 $hr-border-color: $border-color !default;
-$table-border-color: $gray-50 !default;
+$table-border-color: $border-color !default;
 $card-border-color: $border-color !default;
 $input-btn-focus-width: 0.18rem !default;
 
@@ -155,14 +153,14 @@ $dropdown-link-hover-color: $white !default;
 $dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
-$dropdown-divider-bg: $gray-25 !default;
-$dropdown-divider-margin-y: 0.25rem !default;
+$dropdown-divider-bg: $gray-50 !default;
+$dropdown-divider-margin-y: 0.5rem !default;
 $dropdown-header-color: $gray-500 !default;
 
 $modal-backdrop-bg:                 $white !default;
 $modal-backdrop-opacity:            0.8 !default;
-$modal-content-border-color:        $gray-50 !default;
-$modal-content-border-width:        3px !default;
+$modal-content-border-color:        $border-color !default;
+$modal-content-border-width:        0px !default;
 $modal-header-padding: 1rem 1.25rem 1rem 1.25rem !default;
 $modal-inner-padding: 1rem 1.25rem 1rem 1.25rem !default;
 $modal-fade-transform:              translate(0, 0) !default;
@@ -170,13 +168,18 @@ $modal-show-transform:              none !default;
 $modal-transition:                  transform .2s ease-out !default;
 $modal-scale-transform:             scale(1.02) !default;
 $modal-header-border-width: 1px !default;
-$modal-content-box-shadow-xs: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(0, 0, 0, 0.04) 0px 8px 16px -4px, rgba(0, 0, 0, 0.06) 0px 24px 32px -8px !default;
+$modal-content-box-shadow-xs: $border-color 0px 0px 0px 1px, rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(0, 0, 0, 0.04) 0px 8px 16px -4px, rgba(0, 0, 0, 0.06) 0px 24px 32px -8px !default;
 $modal-content-box-shadow-sm-up: $modal-content-box-shadow-xs !default;
 $modal-footer-margin-between: 0 !default;
 
 $alert-padding-y:                   0.5rem !default;
 $alert-padding-x:                   1rem !default;
 $alert-border-radius: $border-radius-lg;
+
+$breadcrumb-bg: transparent !default;
+$breadcrumb-padding-y: 0 !default;
+$breadcrumb-padding-x: 1rem !default;
+$breadcrumb-margin-bottom: 0 !default;
 
 $embed-responsive-aspect-ratios: (
     (21 9),
@@ -194,4 +197,5 @@ $code-color: $gray-600 !default;
 $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
 
+$header-height: 52px !default;
 $sidebar-width: 220px !default;

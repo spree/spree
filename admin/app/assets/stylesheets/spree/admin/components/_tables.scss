@@ -4,7 +4,17 @@
 
 .filter-wrap {
   padding: 0.5rem;
-  border-bottom: 1px solid $gray-50;
+  border-bottom: 1px solid $border-color;
+  gap: 0.5rem;
+
+  .btn {
+    height: 2.375rem;
+  }
+}
+
+#filters-search-bar {
+  max-width: 300px;
+  margin-right: auto;
 }
 
 #table-filter {
