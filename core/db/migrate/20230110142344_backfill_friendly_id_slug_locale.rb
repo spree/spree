@@ -1,6 +1,8 @@
 class BackfillFriendlyIdSlugLocale < ActiveRecord::Migration[6.1]
   def up
-    FriendlyId::Slug.unscoped.update_all(locale: Spree::Store.default.default_locale)
+    if Spree::Store.default.present? && Spree::Store.default.default_locale.present?
+      FriendlyId::Slug.unscoped.update_all(locale: Spree::Store.default.default_locale)
+    end
   end
 
   def down
