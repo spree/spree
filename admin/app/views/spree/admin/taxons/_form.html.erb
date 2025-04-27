@@ -44,7 +44,7 @@
           </div>
         </div>
         <div class="card-body border-top pt-4 d-none" data-reveal-target="item">
-          <h6><%= Spree.t(:conditions) %></h6>
+          <h6><%= Spree.t(:rules) %></h6>
           <%= render 'spree/admin/taxons/rules_form', f: f %>
         </div>
       </div>
@@ -52,7 +52,7 @@
       <% if @taxon.automatic? %>
         <div class="card mb-4">
           <div class="card-header">
-            <h5 class="card-title"><%= Spree.t(:conditions) %></h5>
+            <h5 class="card-title"><%= Spree.t(:rules) %></h5>
           </div>
           <div class="card-body">
             <div class="alert alert-info mb-3"><%= Spree.t('admin.taxon_types.automatic_info') %></div>

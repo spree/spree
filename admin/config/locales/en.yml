@@ -227,7 +227,7 @@ en:
       taxon_type: Taxon type
       taxon_types:
         automatic: Automatic
-        automatic_info: Automatically match products to this taxon based on the conditions you set.
+        automatic_info: Automatically add products to this taxon if they match the rules you set.
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
       upload_new_asset: Upload new asset
