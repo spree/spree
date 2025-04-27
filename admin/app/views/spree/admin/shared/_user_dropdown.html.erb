@@ -22,17 +22,17 @@
 
       <% if can?(:update, try_spree_current_user) %>
         <h6 class="dropdown-header mt-2">
-          <%= Spree.t('admin.account') %>
+          <%= Spree.t(:account) %>
         </h6>
         <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
       <% end %>
 
       <% if can?(:manage, current_store) %>
         <h6 class="dropdown-header mt-2">
-          <%= Spree.t('admin.support') %>
+          <%= Spree.t(:support) %>
         </h6>
-        <%= external_link_to 'Help center', 'https://spreecommerce.org/docs/user', class: 'dropdown-item justify-content-between', target: '_blank' %>
-        <%= external_link_to 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item justify-content-between', target: '_blank' %>
+        <%= external_link_to Spree.t(:help_center), 'https://spreecommerce.org/docs/user', class: 'dropdown-item justify-content-between', target: '_blank' %>
+        <%= external_link_to Spree.t(:contact_us), 'https://spreecommerce.org/contact/', class: 'dropdown-item justify-content-between', target: '_blank' %>
       <% end %>
 
       <div class="dropdown-divider"></div>

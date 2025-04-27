@@ -14,7 +14,7 @@ module Spree
 
       def getting_started
         @breadcrumb_icon = 'map'
-        add_breadcrumb Spree.t(:getting_started), spree.admin_getting_started_path
+        add_breadcrumb Spree.t('admin.getting_started'), spree.admin_getting_started_path
       end
 
       def analytics
