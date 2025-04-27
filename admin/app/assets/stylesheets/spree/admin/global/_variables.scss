@@ -22,6 +22,15 @@ $white: #FFFFFF !default;
 $action: #F4F9FF !default;
 $action-border: #e2ecff !default;
 
+// Override Bootstrap 4.6 breakpoints
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1240px
+) !default;
+
+
 $theme-colors: (
   "white": $white,
   "black": $black,

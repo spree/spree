@@ -2,12 +2,11 @@
 <% height ||= 72 %>
 
 <% if theme.screenshot.attached? && theme.screenshot.variable? %>
-  <%= spree_image_tag(theme.screenshot, width: width, height: height, class: 'img-thumbnail', style: "width: #{width}px; height: #{height}px", loading: :lazy) %>
+  <%= spree_image_tag(theme.screenshot, width: width, height: height, class: 'img-thumbnail border-0', loading: :lazy) %>
 <% elsif theme.class.preview_image_url.present? %>
   <%= image_tag(
   theme.class.preview_image_url,
-  class: 'img-thumbnail',
-  style: "width: #{width}px; height: #{height}px",
+  class: 'img-thumbnail border-0',
   loading: :lazy
 ) %>
 <% else %>

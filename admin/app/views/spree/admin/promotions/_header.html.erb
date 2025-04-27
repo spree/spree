@@ -1,9 +1,7 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_promotions_path, @promotion %>
   <%= @promotion.name %>
-  <div class="ml-3">
-    <%= render 'spree/admin/promotions/status', promotion: @promotion %>
-  </div>
+  <%= render 'spree/admin/promotions/status', promotion: @promotion %>
 <% end %>
 
 <% content_for :page_tabs do %>
