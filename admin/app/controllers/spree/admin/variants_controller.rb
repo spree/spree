@@ -3,9 +3,12 @@ module Spree
     class VariantsController < ResourceController
       include StockLocationsHelper
 
+      include ProductsBreadcrumbConcern
+
       belongs_to 'spree/product', find_by: :slug
       before_action :load_data, only: [:edit, :update]
       before_action :strip_attributes, only: [:update]
+      before_action :add_breadcrumbs
 
       edit_action.before :build_prices
       edit_action.before :build_stock_items
@@ -84,6 +87,12 @@ module Spree
       def strip_attributes
         params[:variant].delete(:prices_attributes) unless can?(:manage, @variant.prices.first)
         params[:variant].delete(:stock_items_attributes) unless can?(:manage, @variant.stock_items.first)
+      end
+
+      def add_breadcrumbs
+        if @variant.present? && @variant.persisted?
+          add_breadcrumb @variant.human_name, spree.edit_admin_product_variant_path(@product, @variant)
+        end
       end
     end
   end

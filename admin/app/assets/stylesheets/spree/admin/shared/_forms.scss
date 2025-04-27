@@ -34,7 +34,7 @@ label {
     @extend .shadow-none;
     @extend .text-muted;
     background-color: $gray-50 !important;
-    border: 1px solid $gray-100 !important;
+    border: 1px solid $border-color !important;
     cursor: not-allowed;
   }
 }

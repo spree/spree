@@ -479,6 +479,9 @@ turbo-frame[busy] #turbo-spinner {
     height: 2rem;
   }
 }
+turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
+  display: block !important;
+}
 
 .fill-primary {
   & > * {
@@ -675,7 +678,7 @@ div.uppy-Root {
 }
 
 .tooltip-inner {
-  border: 1px solid $gray-100;
+  border: 1px solid $border-color;
   box-shadow: $box-shadow-xs;
 }
 
@@ -693,16 +696,20 @@ div.uppy-Root {
 .breadcrumb {
   gap: 0.5rem;
   align-items: center;
-  color: $gray-600;
+  color: $gray-500;
+  font-size: $font-size-sm;
   
+  i {
+    opacity: 0.5;
+  }
+
   li {
     a {
-      color: $gray-600;
+      color: $gray-500;
       text-decoration: none;
 
       &:hover {
         color: $primary;
-        text-decoration: none;
       }
     }
   }

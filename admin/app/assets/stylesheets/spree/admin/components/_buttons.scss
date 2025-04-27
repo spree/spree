@@ -62,27 +62,15 @@ button[disabled]        .show-when-enabled { display: none; }
   }
 }
 
-.btn-hover {
-  &:hover, &:focus {
-    text-decoration: none;
-    background-color: $gray-50;
-  }
-}
 .hover-light {
   &:hover, &:focus {
-    background-color: $gray-25;
+    background-color: $dropdown-link-hover-bg;
     text-decoration: none;
   }
 }
 .hover-gray {
   &:hover, &:focus {
     background-color: $gray-100;
-    text-decoration: none;
-  }
-}
-.hover-gray-50 {
-  &:hover, &:focus {
-    background-color: $gray-50;
     text-decoration: none;
   }
 }

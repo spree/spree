@@ -1,9 +1,12 @@
 <% if try_spree_current_user.present? %>
-  <div class="dropdown py-2 bg-gray-25 border-top" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+  <div class="dropdown" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
     <button type="button"
           class="btn d-flex align-items-center justify-content-between text-left w-100 pr-0"
           data-toggle="dropdown" aria-expanded="false" id="accountNav">
-      <div class="d-flex align-items-center">
+      <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" style="min-width: 250px;">
+      <div class="d-flex align-items-center p-2 bg-gray-25 rounded-lg">
         <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
         <span class="d-none d-lg-inline ml-lg-2">
           <% if try_spree_current_user.name.present? %>
@@ -14,20 +17,25 @@
           <% end %>
         </span>
       </div>
-      <%= icon('dots-vertical', class: 'ml-auto text-muted') %>
-    </button>
-    <div class="dropdown-menu dropdown-menu-right w-100 mb-1 mt-1 mt-lg-0">
+
+      <%= render_admin_partials(:user_dropdown_partials) %>
+
       <% if can?(:update, try_spree_current_user) %>
+        <h6 class="dropdown-header mt-2">
+          <%= Spree.t('admin.account') %>
+        </h6>
         <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
       <% end %>
 
       <% if can?(:manage, current_store) %>
-        <%= link_to_with_icon 'book', 'Help center', 'https://spreecommerce.org/docs/user', class: 'dropdown-item', target: '_blank' %>
-        <%= link_to_with_icon 'message-circle', 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item', target: '_blank' %>
-        <div class="dropdown-divider"></div>
+        <h6 class="dropdown-header mt-2">
+          <%= Spree.t('admin.support') %>
+        </h6>
+        <%= external_link_to 'Help center', 'https://spreecommerce.org/docs/user', class: 'dropdown-item justify-content-between', target: '_blank' %>
+        <%= external_link_to 'Contact us', 'https://spreecommerce.org/contact/', class: 'dropdown-item justify-content-between', target: '_blank' %>
       <% end %>
 
-      <%= render_admin_partials(:user_dropdown_partials) %>
+      <div class="dropdown-divider"></div>
 
       <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
         <%= icon('logout', class: "icon icon-logout")  %>

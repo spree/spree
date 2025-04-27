@@ -3,6 +3,9 @@ module Spree
     class ThemesController < ResourceController
       layout :choose_layout
 
+      include StorefrontBreadcrumbConcern
+      add_breadcrumb Spree.t(:themes), :admin_themes_path
+
       def edit
         @theme_preview = params[:theme_preview_id].present? ? @theme.previews.find(params[:theme_preview_id]) : @theme.create_preview
         @page = if params[:page_id].present?

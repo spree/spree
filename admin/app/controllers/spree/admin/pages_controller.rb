@@ -6,6 +6,9 @@ module Spree
       destroy.after :remove_preview_from_session
       create.after :remove_preview_from_session
 
+      include StorefrontBreadcrumbConcern
+      add_breadcrumb Spree.t(:pages), :admin_pages_path
+
       private
 
       def remove_preview_from_session

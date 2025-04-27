@@ -73,6 +73,10 @@ module Spree
           flash[:error] = Spree.t(:user_not_found)
           redirect_to spree.admin_path
         end
+
+        @breadcrumb_icon = 'users'
+        add_breadcrumb Spree.t(:customers), :admin_users_path
+        add_breadcrumb @user.name, spree.admin_user_path(@user)
       end
 
       def load_store_credit

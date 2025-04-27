@@ -3,6 +3,8 @@ module Spree
     class CouponCodesController < ResourceController
       belongs_to 'spree/promotion', find_by: :id
 
+      include PromotionsBreadcrumbConcern
+
       def collection
         return @collection if @collection.present?
 

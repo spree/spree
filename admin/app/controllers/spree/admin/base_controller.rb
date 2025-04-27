@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class BaseController < Spree::BaseController
+      include Spree::Admin::BreadcrumbConcern
+
       layout :choose_layout
 
       helper 'spree/base'

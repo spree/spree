@@ -268,6 +268,14 @@ module Spree
         css ||= 'text-muted'
         content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
       end
+
+      def render_breadcrumb_icon
+        if settings_active?
+          icon('settings')
+        elsif @breadcrumb_icon
+          icon(@breadcrumb_icon)
+        end
+      end
     end
   end
 end

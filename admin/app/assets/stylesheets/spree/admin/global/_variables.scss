@@ -2,7 +2,7 @@
 
 $gray-25: #F9F9F9;
 $gray-50: #F3F3F3;
-$gray-100: #E4E4E4 !default;
+$gray-100: #E6E6E6 !default;
 $gray-200: #D5D5D5 !default;
 $gray-300: #B3B3B3 !default;
 $gray-400: #999999 !default;
@@ -148,8 +148,7 @@ $display4-weight:             400 !default;
 
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
-$dropdown-link-hover-bg: $blue !default;
-$dropdown-link-hover-color: $white !default;
+$dropdown-link-hover-bg: $gray-50 !default;
 $dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
@@ -199,3 +198,4 @@ $list-group-item-padding-x:         1rem !default;
 
 $header-height: 52px !default;
 $sidebar-width: 220px !default;
+$sidebar-bg: $gray-25 !default;

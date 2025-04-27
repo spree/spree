@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
+      include PromotionsBreadcrumbConcern
+
       before_action :load_form_data, except: :index
 
       # POST /admin/promotions/:id/clone

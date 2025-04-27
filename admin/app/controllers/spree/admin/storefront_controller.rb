@@ -1,6 +1,9 @@
 module Spree
   module Admin
     class StorefrontController < BaseController
+      include StorefrontBreadcrumbConcern
+      add_breadcrumb Spree.t(:settings), :edit_admin_storefront_path
+
       def edit
         @store = current_store
       end
