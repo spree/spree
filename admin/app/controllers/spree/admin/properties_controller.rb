@@ -1,6 +1,11 @@
 module Spree
   module Admin
     class PropertiesController < ResourceController
+      include ProductsBreadcrumbConcern
+      add_breadcrumb Spree.t(:properties), :admin_properties_path
+
+      before_action :add_breadcrumbs
+
       protected
 
       def update_turbo_stream_enabled?
@@ -17,6 +22,12 @@ module Spree
         @search = @collection.ransack(params[:q])
         @collection = @search.result.
                       page(params[:page])
+      end
+
+      def add_breadcrumbs
+        if @property.present? && @property.persisted?
+          add_breadcrumb @property.presentation, spree.edit_admin_property_path(@property)
+        end
       end
     end
   end

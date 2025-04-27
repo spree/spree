@@ -4,6 +4,7 @@ module Spree
       include Spree::Admin::StockLocationsHelper
       include Spree::Admin::BulkOperationsConcern
       include Spree::Admin::SessionAssetsHelper
+      include Spree::Admin::ProductsBreadcrumbConcern
 
       helper 'spree/admin/products'
       helper 'spree/admin/taxons'

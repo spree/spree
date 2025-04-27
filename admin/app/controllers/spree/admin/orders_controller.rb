@@ -11,10 +11,21 @@ module Spree
 
       helper_method :model_class
 
+      add_breadcrumb Spree.t(:orders), :admin_orders_path
+      add_breadcrumb_icon 'inbox'
+
       def create
         @order = Spree::Order.create(created_by: try_spree_current_user, store: current_store)
 
         redirect_to spree.edit_admin_order_path(@order)
+      end
+
+      def edit
+        unless @order.completed?
+          add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
+        end
+
+        add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
       end
 
       def index

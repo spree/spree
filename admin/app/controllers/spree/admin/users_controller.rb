@@ -10,7 +10,12 @@ module Spree
       before_action :load_last_order_data, only: :show
       before_action :remove_empty_params, only: :update
 
-      def show; end
+      add_breadcrumb_icon 'users'
+      add_breadcrumb Spree.t(:customers), :admin_users_path
+
+      def show
+        add_breadcrumb @user.name, spree.admin_user_path(@user)
+      end
 
       def create
         @user = Spree.user_class.new(user_params)

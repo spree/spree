@@ -16,7 +16,7 @@
   }
 
   .nav-pills {
-    border: 1px solid $gray-100;
+    border: 1px solid $border-color;
     border-radius: $border-radius;
     background-color: $gray-50;
     padding: 0.1rem;
@@ -29,7 +29,7 @@
 
       &.active {
         background-color: $white;
-        border: 1px solid $gray-100;
+        border: 1px solid $border-color;
       }
     }
   }

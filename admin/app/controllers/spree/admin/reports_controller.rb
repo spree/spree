@@ -3,6 +3,9 @@ module Spree
     class ReportsController < ResourceController
       include ActiveStorage::SetCurrent
 
+      add_breadcrumb_icon 'chart-bar'
+      add_breadcrumb Spree.t(:reports), :admin_reports_path
+
       before_action :set_user, only: [:new, :create]
 
       def show

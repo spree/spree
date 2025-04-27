@@ -7,9 +7,15 @@ module Spree
       before_action :load_vendor
       before_action :clear_return_to, only: %i[show]
 
-      def show; end
+      def show
+        @breadcrumb_icon = 'home'
+        add_breadcrumb Spree.t(:home), spree.admin_dashboard_path
+      end
 
-      def getting_started; end
+      def getting_started
+        @breadcrumb_icon = 'map'
+        add_breadcrumb Spree.t('admin.getting_started'), spree.admin_getting_started_path
+      end
 
       def analytics
         @orders_scope = current_store.orders.complete.where(currency: params[:analytics_currency])

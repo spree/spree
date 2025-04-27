@@ -3,6 +3,10 @@ module Spree
     class DigitalAssetsController < ResourceController
       belongs_to 'spree/product', find_by: :slug
 
+      include ProductsBreadcrumbConcern
+
+      before_action :add_breadcrumbs
+
       private
 
       def model_class
@@ -39,6 +43,10 @@ module Spree
 
       def permitted_resource_params
         params.require(:digital_asset).permit(permitted_digital_attributes)
+      end
+
+      def add_breadcrumbs
+        add_breadcrumb Spree.t(:digital_assets), spree.admin_product_digital_assets_path(@product)
       end
     end
   end

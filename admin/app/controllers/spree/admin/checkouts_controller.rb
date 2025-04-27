@@ -5,6 +5,10 @@ module Spree
 
       before_action :load_user, only: [:index]
 
+      add_breadcrumb Spree.t(:orders), :admin_orders_path
+      add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
+      add_breadcrumb_icon 'inbox'
+
       def index
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at desc'

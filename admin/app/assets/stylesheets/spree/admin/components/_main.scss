@@ -1,24 +1,75 @@
-turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
-  display: block !important;
-}
-
 .sort-handle {
   cursor: grab;
 }
 
-.no-wrap {
-  white-space: nowrap;
-}
-
 #page-header {
-  height: 74px;
+  height: 60px;
   display: flex;
   align-items: center;
 }
 
 .page-header-title {
   font-size: 1.25rem;
-  font-weight: 700;
+}
+
+#header {
+  height: $header-height;
+  background-color: $body-bg;
+}
+
+.store-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  background-color: $sidebar-bg;
+  width: $sidebar-width;
+  border-right: 1px solid $border-color;
+  height: $header-height;
+}
+
+.store-dropdown-button {
+  background-color: $sidebar-bg;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  gap: 0.5rem;
+
+  &:hover {
+    background-color: $gray-50;
+  }
+}
+
+.store-chooser {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  margin: 0.25rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+
+  .store-chooser-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: $border-radius;
+    padding: 0.25rem;
+    text-wrap: nowrap;
+
+    &:hover {
+      text-decoration: none;
+      background-color: $dropdown-link-hover-bg;
+    }
+
+    &.active {
+      cursor: not-allowed;
+      background-color: $action;
+    }
+  }
 }
 
 #main-sidebar {
@@ -26,28 +77,18 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   flex-direction: column;
   gap: 0.5rem;
   width: $sidebar-width;
-  background-color: $gray-25;
-  border-right: 1px solid $gray-100;
+  background-color: $sidebar-bg;
+  border-right: 1px solid $border-color;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
-  top: 0;
+  top: $header-height;
   color: $gray-700;
-  padding-top: 0.5rem;
+  padding-top: 0.8rem;
 
   @media (max-width: 992px) {
     display: none;
-  }
-
-  .store-dropdown {
-    border-bottom: 1px solid $border-color;
-    padding-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 0.5rem;
-    background-color: $gray-25;
   }
 
   .nav {
@@ -142,6 +183,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
 }
 
 #content {
+  padding-top: 0.5rem;
   @media (min-width: 992px) {
     margin-left: $sidebar-width + 1px;
   }

@@ -1,6 +1,10 @@
 module Spree
   module Admin
     class StockItemsController < ResourceController
+      include ProductsBreadcrumbConcern
+
+      before_action :add_breadcrumbs
+
       private
 
       def update_turbo_stream_enabled?
@@ -19,6 +23,11 @@ module Spree
                        includes(:stock_location, [variant: [product: [variants: [:images], master: [:images]], images: []]]).
                        page(params[:page]).
                        per(params[:per_page])
+      end
+
+      def add_breadcrumbs
+        add_breadcrumb Spree.t(:stock), spree.admin_stock_items_path
+        add_breadcrumb Spree.t(:stock_items), spree.admin_stock_items_path
       end
     end
   end

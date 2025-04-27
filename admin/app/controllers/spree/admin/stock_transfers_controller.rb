@@ -3,7 +3,11 @@ module Spree
     class StockTransfersController < ResourceController
       before_action :prepare_params, only: :create
 
+      include ProductsBreadcrumbConcern
+
       create.fails :load_variant_omit_ids
+
+      before_action :add_breadcrumbs
 
       private
 
@@ -42,6 +46,15 @@ module Spree
 
       def load_variant_omit_ids
         @variant_omit_ids = @stock_transfer.stock_movements.map(&:variant_id)
+      end
+
+      def add_breadcrumbs
+        add_breadcrumb Spree.t(:stock), spree.admin_stock_items_path
+        add_breadcrumb Spree.t(:stock_transfers), spree.admin_stock_transfers_path
+
+        if @stock_transfer.present? && @stock_transfer.persisted?
+          add_breadcrumb @stock_transfer.number, spree.admin_stock_transfer_path(@stock_transfer)
+        end
       end
     end
   end

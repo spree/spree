@@ -4,6 +4,7 @@ require 'spree_api'
 require 'sprockets/railtie'
 
 require 'active_link_to'
+require 'breadcrumbs_on_rails'
 require 'chartkick'
 require 'currency_select'
 require 'groupdate'
