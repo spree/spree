@@ -77,7 +77,10 @@ module Spree
       end
 
       def set_permalink_params
-        params[:taxon][:permalink] = "#{@parent_permalink}/" + params[:permalink_part] if params.key? 'permalink_part'
+        return unless params[:permalink_part]
+
+        params[:taxon] ||= {}
+        params[:taxon][:permalink] = [@parent_permalink.presence, params[:permalink_part]].compact_blank.join('/')
       end
 
       def collection_url
