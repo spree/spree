@@ -98,9 +98,9 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
     context 'with invalid token' do
       it 'raises RecordNotFound' do
-        expect {
+        expect do
           get :new, params: { token: 'invalid' }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -122,17 +122,17 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
     context 'with invalid token' do
       it 'raises RecordNotFound' do
-        expect {
+        expect do
           post :create, params: { token: 'invalid' }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'with valid parameters' do
       it 'creates a new admin user' do
-        expect {
+        expect do
           post :create, params: valid_params
-        }.to change(Spree.admin_user_class, :count).by(1)
+        end.to change(Spree.admin_user_class, :count).by(1)
       end
 
       it 'accepts the invitation' do
@@ -154,6 +154,36 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
         post :create, params: valid_params
         expect(Spree.admin_user_class.last.spree_roles).to include(role)
       end
+
+      context 'when the user already exists' do
+        let!(:existing_user) { create(:admin_user, email: 'new@example.com') }
+
+        it 'does not create a new admin user' do
+          expect do
+            post :create, params: valid_params
+          end.not_to change(Spree.admin_user_class, :count)
+        end
+
+        it 'accepts the invitation' do
+          post :create, params: valid_params
+          expect(invitation.reload.accepted?).to be true
+        end
+
+        it 'sets the invitee' do
+          post :create, params: valid_params
+          expect(invitation.reload.invitee).to eq(existing_user)
+        end
+
+        it 'adds the user to the store' do
+          post :create, params: valid_params
+          expect(existing_user.stores).to include(store)
+        end
+
+        it 'redirects to admin path' do
+          post :create, params: valid_params
+          expect(response).to redirect_to(spree.admin_path)
+        end
+      end
     end
 
     context 'with invalid parameters' do
@@ -167,9 +197,9 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       end
 
       it 'does not create a new admin user' do
-        expect {
+        expect do
           post :create, params: invalid_params
-        }.not_to change(Spree.admin_user_class, :count)
+        end.not_to change(Spree.admin_user_class, :count)
       end
 
       it 'renders the new template' do

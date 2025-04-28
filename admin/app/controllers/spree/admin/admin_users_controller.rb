@@ -35,7 +35,7 @@ module Spree
       # POST /admin/admin_users
       # this is a self signup flow for admin users from the invitation email
       def create
-        @admin_user = Spree.admin_user_class.new(permitted_params)
+        @admin_user = check_for_existing_user || Spree.admin_user_class.new(permitted_params)
         @invitation.invitee = @admin_user
         if @admin_user.save && @invitation.accept!
           # Automatically log in the user after successful signup
@@ -68,6 +68,12 @@ module Spree
       end
 
       private
+
+      def check_for_existing_user
+        return nil if params[:admin_user][:email] != @invitation.email
+
+        Spree.admin_user_class.find_by(email: params[:admin_user][:email])
+      end
 
       def permitted_params
         params.require(:admin_user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
