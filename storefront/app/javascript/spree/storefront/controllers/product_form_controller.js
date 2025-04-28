@@ -29,15 +29,8 @@ export default class extends Controller {
 
   connect() {
     if (this.hasAddToWishlistTarget && this.variantFromOptionsDisabledValue) {
-      const selectedOptions = new Set()
-      this.optionTargets.forEach((option) => {
-        if (option.checked) {
-          selectedOptions.add(option.dataset.optionId)
-        }
-      })
-      const requiredOptions = new Set(this.requiredOptionsValue)
-      const notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
-  
+      const notSelectedOptions = this.getNotSelectedOptions()
+
       if (notSelectedOptions.length === 0) {
         this.addToWishlistTarget.disabled = true
       }
@@ -56,15 +49,7 @@ export default class extends Controller {
   }
 
   showNotSelectedOptions = (e) => {
-    const selectedOptions = new Set()
-    this.optionTargets.forEach((option) => {
-      if (option.checked) {
-        selectedOptions.add(option.dataset.optionId)
-      }
-    })
-
-    const requiredOptions = new Set(this.requiredOptionsValue)
-    const notSelectedOptions = [...requiredOptions].filter((x) => !selectedOptions.has(x))
+    const notSelectedOptions = this.getNotSelectedOptions()
 
     if (!notSelectedOptions.length) return
 
@@ -139,5 +124,16 @@ export default class extends Controller {
 
   enableForm = () => {
     this.disabledValue = false
+  }
+
+  getNotSelectedOptions() {
+    const selectedOptions = new Set()
+    this.optionTargets.forEach((option) => {
+      if (option.checked) {
+        selectedOptions.add(option.dataset.optionId)
+      }
+    })
+    const requiredOptions = new Set(this.requiredOptionsValue)
+    return [...requiredOptions].filter((x) => !selectedOptions.has(x))
   }
 }
