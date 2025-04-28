@@ -249,6 +249,10 @@ module Spree
       pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
+    def analytics_subtotal
+      (item_total + line_items.sum(:promo_total)).to_f
+    end
+
     def shipping_discount
       shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end
