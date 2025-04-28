@@ -249,6 +249,13 @@ module Spree
       pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
+    # Returns the subtotal used for analytics integrations
+    # It's a sum of the item total and the promo total
+    # @return [Float]
+    def analytics_subtotal
+      (item_total + line_items.sum(:promo_total)).to_f
+    end
+
     def shipping_discount
       shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end

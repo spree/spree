@@ -1070,6 +1070,20 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#analytics_subtotal' do
+    let(:order) { create(:order_with_line_items, line_items_count: 2) }
+
+    before do
+      order.update_column(:item_total, 100)
+      order.line_items[0].update_column(:promo_total, 10)
+      order.line_items[1].update_column(:promo_total, 5)
+    end
+
+    it 'returns the subtotal used for analytics integrations' do
+      expect(order.analytics_subtotal).to eq(115)
+    end
+  end
+
   describe '#quantity' do
     # Uses a persisted record, as the quantity is retrieved via a DB count
     let(:order) { create :order_with_line_items, line_items_count: 3 }
