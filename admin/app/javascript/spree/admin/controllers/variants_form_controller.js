@@ -67,6 +67,8 @@ export default class extends CheckboxSelectAll {
           .filter((internalName) => !existingVariantsOnServer.includes(internalName))
       )
     }
+
+    this.inventoryFormTarget = document.querySelector('.inventory-form');
   }
 
   toggleQuantityTracked() {
@@ -236,17 +238,22 @@ export default class extends CheckboxSelectAll {
   }
 
   optionsValueChanged(value, previousValue) {
+    let hasNoOptions = true
+
     if (this.hasNewOptionButtonTarget) {
       const label = this.newOptionButtonLabelTarget
 
       if (Object.values(value).filter(Boolean).length) {
         label.textContent = label.dataset.hasOptionsText
+        hasNoOptions = false
       } else {
         label.textContent = label.dataset.noOptionsText
       }
     }
     this.refreshOptionNameSelect()
     this.variantsValue = this.generateVariants(value)
+
+    this.toggleInventoryForm(hasNoOptions)
 
     // We want to clear the ignoredVariants when the options change
     if (previousValue && Object.keys(previousValue).length === 0) return
@@ -765,6 +772,8 @@ export default class extends CheckboxSelectAll {
     this.addOption(newOptionName, newOptionValues, newOptionId)
 
     this.hideNewOptionForm()
+
+    this.toggleInventoryForm(false)
   }
 
   hideNewOptionForm() {
@@ -1050,6 +1059,16 @@ export default class extends CheckboxSelectAll {
           amount: parseFloat(newPrice)
         }
       }
+    }
+  }
+
+  toggleInventoryForm(value) {
+    if (!this.inventoryFormTarget) return
+
+    if (value) {
+      this.inventoryFormTarget.classList.remove('d-none')
+    } else {
+      this.inventoryFormTarget.classList.add('d-none')
     }
   }
 }
