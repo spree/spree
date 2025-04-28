@@ -10,22 +10,37 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   describe 'GET #index' do
     stub_authorization!
 
-    before do
-      admin_user
-      get :index
-    end
+    before { admin_user }
 
     it 'returns a successful response' do
+      get :index
       expect(response).to be_successful
     end
 
     it 'assigns @search' do
+      get :index
       expect(assigns(:search)).to be_a(Ransack::Search)
     end
 
     it 'assigns @collection' do
+      get :index
       expect(assigns(:collection)).to be_a(ActiveRecord::Relation)
       expect(assigns(:collection)).to include(admin_user)
+    end
+
+    context 'when users has roles from different resources' do
+      let(:second_store) { create(:store) }
+      let(:second_store_role) { create(:role_user, resource: second_store, user: admin_user) }
+
+      before do
+        second_store_role
+        get :index
+      end
+
+      it 'assigns @collection with roles from the current resource' do
+        expect(assigns(:collection).first.role_users.first).not_to eq(second_store_role)
+        expect(assigns(:collection).first.role_users.size).to eq(1)
+      end
     end
   end
 
@@ -35,11 +50,28 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
     before { get :show, params: { id: admin_user.id } }
 
     it 'returns a successful response' do
+      get :show, params: { id: admin_user.id }
       expect(response).to be_successful
     end
 
     it 'assigns @admin_user' do
+      get :show, params: { id: admin_user.id }
       expect(assigns(:admin_user)).to eq(admin_user)
+    end
+
+    context 'when user has roles from different resources' do
+      let(:second_store) { create(:store) }
+      let(:second_store_role) { create(:role_user, resource: second_store, user: admin_user) }
+
+      before do
+        second_store_role
+        get :show, params: { id: admin_user.id }
+      end
+
+      it 'assigns @role_users with roles from the current resource' do
+        expect(assigns(:role_users).first).not_to eq(second_store_role)
+        expect(assigns(:role_users).size).to eq(1)
+      end
     end
   end
 

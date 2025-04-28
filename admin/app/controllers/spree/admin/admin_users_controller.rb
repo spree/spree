@@ -13,13 +13,16 @@ module Spree
       def index
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at asc'
-        @search = scope.includes(:spree_roles, avatar_attachment: :blob).ransack(params[:q])
+        @search = scope.includes(role_users: :role, avatar_attachment: :blob).
+                        where(role_users: { resource: @parent }).
+                        ransack(params[:q])
         @collection = @search.result
       end
 
       # GET /admin/admin_users/:id
       def show
         authorize! :read, @admin_user
+        @role_users = @admin_user.role_users.includes(:role).where(resource: @parent)
       end
 
       # GET /admin/admin_users/new?token=<token>
