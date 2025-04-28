@@ -10,10 +10,10 @@
         <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
         <span class="d-none d-lg-inline ml-lg-2">
           <% if try_spree_current_user.name.present? %>
-            <%= try_spree_current_user.name&.full&.truncate(12)&.presence %><br />
-            <span class="small"><%= try_spree_current_user.email.truncate(17) %></span>
+            <%= try_spree_current_user.name&.full %><br />
+            <span class="small"><%= try_spree_current_user.email %></span>
           <% else %>
-            <%= try_spree_current_user.email.truncate(12) %><br />
+            <%= try_spree_current_user.email %><br />
           <% end %>
         </span>
       </div>
