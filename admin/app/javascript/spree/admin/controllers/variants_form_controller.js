@@ -253,7 +253,7 @@ export default class extends CheckboxSelectAll {
     this.refreshOptionNameSelect()
     this.variantsValue = this.generateVariants(value)
 
-    hasNoOptions && this.toggleInventoryForm('show')
+    this.toggleInventoryForm(hasNoOptions)
 
     // We want to clear the ignoredVariants when the options change
     if (previousValue && Object.keys(previousValue).length === 0) return
@@ -773,7 +773,7 @@ export default class extends CheckboxSelectAll {
 
     this.hideNewOptionForm()
 
-    this.toggleInventoryForm()
+    this.toggleInventoryForm(false)
   }
 
   hideNewOptionForm() {
