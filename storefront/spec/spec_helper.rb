@@ -97,7 +97,6 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand config.seed
 
-  Capybara.app_host = 'http://app.' + Spree.root_domain
   Capybara.server_port = 3000
   Capybara.test_id = 'data-test-id'
 
