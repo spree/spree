@@ -96,7 +96,7 @@ module Spree
       can [:create, :update, :destroy], ::Spree::WishedItem do |wished_item|
         wished_item.wishlist.user == user
       end
-      can :accept, Spree::Invitation, invitee_id: [user.id, nil], status: 'pending'
+      can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
     end
 
     def protect_admin_role
