@@ -6,6 +6,7 @@ export default class extends Controller {
   static targets = ['add', 'remove']
   static values = {
     variantId: String,
+    storeUrl: String
   }
 
   connect() {
@@ -27,7 +28,7 @@ export default class extends Controller {
 
     const headers = {}
 
-    const response = await post('/account/wishlist/wished_items', { 
+    const response = await post(`${this.storeUrlValue}/account/wishlist/wished_items`, { 
       body: body,
       headers: headers,
       responseKind: 'turbo-stream'
@@ -45,7 +46,7 @@ export default class extends Controller {
 
     const headers = {}
 
-    const response = await destroy(`/account/wishlist/wished_items/${this.variantIdValue}`, { 
+    const response = await destroy(`${this.storeUrlValue}/account/wishlist/wished_items/${this.variantIdValue}`, { 
       headers: headers,
       responseKind: 'turbo-stream'
     })

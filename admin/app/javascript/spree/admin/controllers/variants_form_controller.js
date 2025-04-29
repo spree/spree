@@ -37,7 +37,8 @@ export default class extends CheckboxSelectAll {
     currentStockLocationId: String,
     stockLocations: Array,
     optionValuesSelectOptions: Array,
-    locale: String
+    locale: String,
+    storeUrl: String
   }
 
   connect() {
@@ -724,7 +725,7 @@ export default class extends CheckboxSelectAll {
     this.lastOptionNameId = targetInput.value
 
     if (this.lastOptionNameId) {
-      const response = await get(`/admin/option_types/${this.lastOptionNameId}/option_values/select_options`)
+      const response = await get(`${this.storeUrlValue}/admin/option_types/${this.lastOptionNameId}/option_values/select_options`)
 
       if (response.ok) {
         this.currentOptionValues[this.lastOptionNameId] = await response.json
