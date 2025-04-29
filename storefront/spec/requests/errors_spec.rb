@@ -22,6 +22,20 @@ describe 'Errors', type: :request do
       expect(response.status).to eq(403)
       expect(response).to render_template('spree/errors/403')
     end
+
+    it 'renders 422 template for code 422' do
+      get '/errors?code=422'
+
+      expect(response.status).to eq(422)
+      expect(response).to render_template('spree/errors/422')
+    end
+
+    it 'renders 503 template for code 503' do
+      get '/errors?code=503'
+
+      expect(response.status).to eq(503)
+      expect(response).to render_template('spree/errors/503')
+    end
   end
 
   context 'with path-based code' do

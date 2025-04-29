@@ -1916,6 +1916,8 @@ en:
     seo_title: SEO Title
     server: Server
     server_error: The server returned an error
+    service_unavailable: Service Unavailable
+    service_unavailable_message: The server is temporarily unable to service your request due to maintenance downtime or capacity problems. Please try again later.
     settings: Settings
     ship: Ship
     ship_address: Ship Address
@@ -2252,6 +2254,8 @@ en:
       metric: metric
       metric_system: Metric system
     unlock: Unlock
+    unprocessable_entity: Unprocessable Entity
+    unprocessable_entity_message: Your request could not be processed. Please check the form for errors and try again.
     unrecognized_card_type: Unrecognized card type
     unshippable_items: Unshippable Items
     update: Update
