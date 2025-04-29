@@ -82,6 +82,7 @@ import WebhooksSubscriberEventsController from 'spree/admin/controllers/webhook_
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
+import DisableSubmitButtonController from 'spree/core/controllers/disable_submit_button_controller'
 
 application.register('active-storage-upload', ActiveStorageUpload)
 application.register('address-autocomplete', AddressAutocompleteController)
@@ -132,6 +133,7 @@ application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)
 application.register('webhooks-subscriber-events', WebhooksSubscriberEventsController)
+application.register('disable-submit-button', DisableSubmitButtonController)
 
 LocalTime.start()
 
