@@ -38,6 +38,7 @@ module Spree
     #
     state_machine initial: :pending, attribute: :status do
       state :accepted do
+        validate :accept_invitation_within_time_limit
         validates :invitee, presence: true
       end
 
@@ -141,6 +142,12 @@ module Spree
       return if invitee.present?
 
       self.invitee = Spree.admin_user_class.find_by(email: email)
+    end
+
+    def accept_invitation_within_time_limit
+      if Time.current > expires_at
+        errors.add(:base, 'Invitation expired')
+      end
     end
   end
 end

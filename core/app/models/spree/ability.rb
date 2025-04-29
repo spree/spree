@@ -57,7 +57,7 @@ module Spree
       alias_action :create, :update, :destroy, to: :modify
     end
 
-    def apply_admin_permissions(user, options)
+    def apply_admin_permissions(_user, _options)
       can :manage, :all
       cannot :cancel, Spree::Order
       can :cancel, Spree::Order, &:allow_cancel?
@@ -65,7 +65,7 @@ module Spree
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
 
-    def apply_user_permissions(user, options)
+    def apply_user_permissions(user, _options)
       can :read, ::Spree::Country
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
@@ -96,6 +96,7 @@ module Spree
       can [:create, :update, :destroy], ::Spree::WishedItem do |wished_item|
         wished_item.wishlist.user == user
       end
+      can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
     end
 
     def protect_admin_role
