@@ -81,6 +81,7 @@ import VariantsFormController from 'spree/admin/controllers/variants_form_contro
 import WebhooksSubscriberEventsController from 'spree/admin/controllers/webhook_subscriber_events_controller'
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
+import DisableSubmitButtonController from 'spree/core/controllers/disable_submit_button_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
 
 application.register('active-storage-upload', ActiveStorageUpload)
@@ -99,6 +100,7 @@ application.register('checkbox-select-all', CheckboxSelectAll)
 application.register('clipboard', Clipboard)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
+application.register('disable-submit-button', DisableSubmitButtonController)
 application.register('enable-button', EnableButtonController)
 application.register('filters', FiltersController)
 application.register('font-picker', FontPickerController)
