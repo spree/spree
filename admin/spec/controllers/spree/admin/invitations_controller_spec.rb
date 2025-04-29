@@ -9,6 +9,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
   let(:role) { Spree::Role.find_or_create_by!(name: 'admin') }
 
   before do
+    allow(controller).to receive(:spree_admin_login_path).and_return('/admin/login')
     allow(spree).to receive(:root_path).and_return('/')
   end
 
@@ -82,6 +83,19 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
         post :create, params: valid_params
         expect(flash[:notice]).not_to be_nil
       end
+
+      context 'when the invitee already exists' do
+        let(:invitee) { create(:admin_user, email: valid_params[:invitation][:email]) }
+
+        before do
+          invitee
+          post :create, params: valid_params
+        end
+
+        it 'sets the invitee' do
+          expect(assigns(:invitation).invitee).to eq(invitee)
+        end
+      end
     end
 
     context 'with invalid parameters' do
@@ -115,7 +129,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     let(:token) { invitation.token }
 
     context 'when user is logged in' do
-      let(:another_user) { create(:user) }
+      let(:another_user) { create(:admin_user, :without_admin_role) }
 
       before do
         allow(controller).to receive(:try_spree_current_user).and_return(another_user)
@@ -187,12 +201,25 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
         end
       end
 
-      context 'with already accepted invitation' do
-        let(:invitation) { create(:invitation, inviter: admin_user, resource: store, status: 'accepted', invitee: create(:admin_user, :without_admin_role)) }
+      context 'when invitation has invitee' do
+        let(:invitation) { create(:invitation, inviter: admin_user, resource: store, invitee: invitee, email: invitee.email) }
+        let(:invitee) { create(:admin_user, :without_admin_role) }
 
-        it 'redirects to root path' do
-          expect(response).to redirect_to(spree.root_path)
-          expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+        it 'redirects to login path' do
+          expect(response).to redirect_to(controller.spree_admin_login_path)
+        end
+
+        it 'stores the return to path' do
+          expect(session["#{Spree.admin_user_class.model_name.singular_route_key.to_sym}_return_to"]).to eq(spree.admin_invitation_path(invitation, token: invitation.token))
+        end
+
+        context 'with already accepted invitation' do
+          let(:invitation) { create(:invitation, inviter: admin_user, resource: store, status: 'accepted', invitee: invitee, email: invitee.email) }
+
+          it 'redirects to root path' do
+            expect(response).to redirect_to(spree.root_path)
+            expect(flash[:alert]).to eq(Spree.t('invalid_or_expired_invitation'))
+          end
         end
       end
     end
