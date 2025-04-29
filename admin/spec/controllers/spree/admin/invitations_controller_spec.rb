@@ -85,15 +85,15 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       end
 
       context 'when the invitee already exists' do
-        let(:invitee) { create(:admin_user, email: valid_params[:invitation][:email]) }
+        let!(:invitee) { create(:admin_user, :without_admin_role, email: valid_params[:invitation][:email]) }
 
         before do
-          invitee
           post :create, params: valid_params
         end
 
         it 'sets the invitee' do
           expect(assigns(:invitation).invitee).to eq(invitee)
+          expect(assigns(:invitation)).to be_persisted
         end
       end
     end

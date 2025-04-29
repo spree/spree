@@ -35,7 +35,6 @@ module Spree
         @invitation = Spree::Invitation.new(permitted_params)
         @invitation.resource = @parent
         @invitation.inviter = try_spree_current_user
-        @invitation.invitee = Spree.admin_user_class.find_by(email: @invitation.email)
 
         if @invitation.save
           respond_to do |format|
@@ -70,6 +69,9 @@ module Spree
       # PUT /admin/invitations/:id/accept
       def accept
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
+
+        authorize! :accept, @invitation
+
         @invitation.accept!
         redirect_to spree.admin_path, notice: Spree.t('invitation_accepted')
       end
