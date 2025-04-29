@@ -19,6 +19,17 @@ RSpec.describe Spree::Invitation, type: :model do
       end
     end
 
+    context 'when invitation is accepted after expiration' do
+      it 'is invalid' do
+        invitation.expires_at = 1.day.ago
+        expect(invitation.accept).to be_falsey
+
+        expect(invitation.accepted_at).not_to be_present
+        expect(invitation.status).to eq('pending')
+        expect(invitation.errors[:base]).to include('Invitation expired')
+      end
+    end
+
     context 'when invitee already exists in the store' do
       it 'is invalid' do
         create(:admin_user, email: 'existing@example.com')
