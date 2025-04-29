@@ -51,6 +51,7 @@ module Spree
     # Callbacks
     #
     after_initialize :set_defaults, if: :new_record?
+    before_validation :set_invitee_from_email, on: :create
     after_create :send_invitation_email, unless: :skip_email
 
     # returns the store for the invitation
@@ -134,6 +135,12 @@ module Spree
       role_user = resource.add_user(invitee, role)
       self.role_user = role_user
       save!
+    end
+
+    def set_invitee_from_email
+      return if invitee.present?
+
+      self.invitee = Spree.admin_user_class.find_by(email: email)
     end
   end
 end

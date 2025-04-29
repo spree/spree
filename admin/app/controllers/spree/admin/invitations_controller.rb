@@ -1,10 +1,10 @@
 module Spree
   module Admin
     class InvitationsController < BaseController
-      skip_before_action :authorize_admin, only: [:show]
+      skip_before_action :authorize_admin, only: [:show, :accept]
 
       before_action :load_parent, except: [:show]
-      before_action :load_invitation, only: [:accept, :destroy]
+      before_action :load_invitation, only: [:destroy]
       before_action :load_roles, only: [:new, :create]
 
       layout :choose_layout
@@ -48,28 +48,30 @@ module Spree
 
       # GET /admin/invitations/:id?token=:token
       def show
-        begin
-          @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
-          @parent = @invitation.resource
+        @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
+        @parent = @invitation.resource
 
-          if try_spree_current_user != @invitation.invitee
+        if try_spree_current_user.present?
+          unless @invitation.invitee == try_spree_current_user
             raise ActiveRecord::RecordNotFound
           end
-        rescue ActiveRecord::RecordNotFound
-          redirect_to spree.root_path, alert: Spree.t('invalid_or_expired_invitation')
-          return
-        end
-
-        # if there's no current user, redirect to the new admin user path so they can sign up
-        unless try_spree_current_user
+        elsif @invitation.invitee.present?
+          store_location
+          try_to_redirect_to_login_path
+        else
           redirect_to spree.new_admin_admin_user_path(token: @invitation.token), status: :see_other
-          return
         end
+      rescue ActiveRecord::RecordNotFound
+        redirect_to spree.root_path, alert: Spree.t('invalid_or_expired_invitation')
+        nil
       end
 
       # PUT /admin/invitations/:id/accept
       def accept
         @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
+
+        authorize! :accept, @invitation
+
         @invitation.accept!
         redirect_to spree.admin_path, notice: Spree.t('invitation_accepted')
       end

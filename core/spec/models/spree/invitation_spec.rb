@@ -41,6 +41,15 @@ RSpec.describe Spree::Invitation, type: :model do
     it 'sends invitation email after create' do
       expect { invitation.save }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
     end
+
+    it 'sets invitee from email before validation' do
+      create(:admin_user, :without_admin_role, email: 'test@example.com')
+
+      invitation = build(:invitation, email: 'test@example.com')
+      expect(invitation.invitee).to be_nil
+      invitation.save
+      expect(invitation.invitee).to be_present
+    end
   end
 
   describe 'State Machine' do
