@@ -51,7 +51,7 @@ module Spree
     # Callbacks
     #
     after_initialize :set_defaults, if: :new_record?
-    before_save :set_invitee_from_email
+    before_validation :set_invitee_from_email, on: :create
     after_create :send_invitation_email, unless: :skip_email
 
     # returns the store for the invitation
