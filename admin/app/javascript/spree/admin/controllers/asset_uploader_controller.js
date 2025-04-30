@@ -12,7 +12,7 @@ export default class extends Controller {
     multiple: { type: Boolean, default: false },
     type: { type: String, default: 'image' },
     allowedFileTypes: { type: Array, default: [] },
-    storeUrl: String
+    adminAssetsPath: String
   }
 
   connect() {
@@ -44,7 +44,7 @@ export default class extends Controller {
   }
 
   handleSuccessResult(response) {
-    post(`${this.storeUrlValue}/admin/assets`, {
+    post(`${this.adminAssetsPathValue}`, {
       body: JSON.stringify({
         asset: {
           type: this.assetClassValue,
