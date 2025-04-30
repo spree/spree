@@ -42,6 +42,13 @@ describe Spree::Admin::StoresController do
       expect(new_store.default_locale).to eq('en')
       expect(new_store.users).to contain_exactly(user, user2)
     end
+
+    it 'adds the current user as an admin for the store' do
+      expect { subject }.to change(Spree::RoleUser, :count).by(1)
+
+      new_store = Spree::Store.last
+      expect(new_store.admin_users).to include(user)
+    end
   end
 
   describe 'PUT #update' do

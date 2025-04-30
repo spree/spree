@@ -24,6 +24,12 @@ module Spree
             @store.add_user(role_user.user, role_user.role)
           end
 
+          # Assigns the current user as an admin for the new store
+          Spree::Role
+            .find_by(name: Spree::Role::ADMIN_ROLE)
+            .role_users
+            .create!(user: try_spree_current_user, resource: @store)
+
           flash[:success] = flash_message_for(@store, :successfully_created)
           # redirect in view, Turbo doesn't support redirecting to a different host
         else
