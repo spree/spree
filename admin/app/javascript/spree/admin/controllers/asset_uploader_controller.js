@@ -44,7 +44,7 @@ export default class extends Controller {
   }
 
   handleSuccessResult(response) {
-    post(`${this.adminAssetsPathValue}`, {
+    post(this.adminAssetsPathValue, {
       body: JSON.stringify({
         asset: {
           type: this.assetClassValue,

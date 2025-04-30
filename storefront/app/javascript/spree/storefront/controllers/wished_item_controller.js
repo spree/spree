@@ -29,7 +29,7 @@ export default class extends Controller {
 
     const headers = {}
 
-    const response = await post(`${this.createWishlistPathValue}`, { 
+    const response = await post(this.createWishlistPathValue, { 
       body: body,
       headers: headers,
       responseKind: 'turbo-stream'
@@ -47,7 +47,7 @@ export default class extends Controller {
 
     const headers = {}
 
-    const response = await destroy(`${this.destroyWishlistPathValue}`, { 
+    const response = await destroy(this.destroyWishlistPathValue, { 
       headers: headers,
       responseKind: 'turbo-stream'
     })
