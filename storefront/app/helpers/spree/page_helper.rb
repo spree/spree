@@ -1,5 +1,13 @@
 module Spree
   module PageHelper
+    # Renders the page with the current theme (or theme preview) and page preview if it exists.
+    # It fetches all page sections and renders them one by one in the order they are set in the page builder by store staff.
+    # It also handles lazy loading of sections.
+    #
+    # @param page [Spree::Page] the page to render
+    # @param variables [Hash] variables to pass to the page sections
+    # @option variables [Array] :pickup_locations ([]) the pickup locations to pass to the page sections
+    # @return [String] the rendered page
     def render_page(page = nil, variables = {})
       page ||= current_page
 
@@ -11,6 +19,12 @@ module Spree
       "<main class='page-contents'>#{sections_html}</main>".html_safe
     end
 
+    # Renders a single section of the page.
+    #
+    # @param section [Spree::PageSection] the section to render
+    # @param variables [Hash] variables to pass to the section
+    # @option variables [Boolean] :lazy_allowed (true) whether lazy loading is allowed for the section (if it supports it)
+    # @return [String] the rendered section
     def render_section(section, variables = {}, lazy_allowed: true)
       return '' if section.blank?
 
@@ -54,6 +68,7 @@ module Spree
       ''
     end
 
+    # Renders a link to the page builder for the given link.
     def page_builder_link_to(link, options = {}, &block)
       if link.present?
         link_to(spree_storefront_resource_url(link.linkable || link), options.except(:label)) do
