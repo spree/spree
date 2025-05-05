@@ -2145,6 +2145,7 @@ en:
     translations_for: "%{resource_name} translations"
     tree: Tree
     true_label: 'TRUE'
+    try_removing_filters: Try removing some filters to see more products
     twitter: Twitter
     type: Type
     type_to_search: Type to search
