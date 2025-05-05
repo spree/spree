@@ -90,7 +90,7 @@ document.addEventListener("trix-attachment-remove", async function(event) {
   const { attachment } = event
   const { sgid } = attachment.attachment.attributes.values
 
-  destroy(`/admin/action_text/video_embeds/${sgid}`, { responseKind: 'json' })
+  destroy(`${Spree.adminPath}/action_text/video_embeds/${sgid}`, { responseKind: 'json' })
 })
 
 function initializeTrixEditor(editor) {
@@ -129,7 +129,7 @@ function initializeTrixEditor(editor) {
 
       errorMessage.innerHTML = ''
 
-      const response = await post('/admin/action_text/video_embeds', { body: JSON.stringify({ url: input.value }), responseKind: 'json' })
+      const response = await post(`${Spree.adminPath}/action_text/video_embeds`, { body: JSON.stringify({ url: input.value }), responseKind: 'json' })
 
       if (response.ok) {
         const { sgid, content } = await response.json
