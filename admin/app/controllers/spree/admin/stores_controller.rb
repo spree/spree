@@ -39,7 +39,7 @@ module Spree
         elsif params[:section] == 'checkout'
           add_breadcrumb Spree.t(:checkout), spree.edit_admin_store_path(section: params[:section])
         else
-          add_breadcrumb Spree.t(:store_settings), spree.edit_admin_store_path(section: params[:section])
+          add_breadcrumb Spree.t(:store_details), spree.edit_admin_store_path(section: params[:section])
         end
       end
 
