@@ -1,12 +1,13 @@
 <% width ||= 120 %>
 <% height ||= 72 %>
+<% css_class ||= 'img-thumbnail border-0' %>
 
 <% if theme.screenshot.attached? && theme.screenshot.variable? %>
-  <%= image_tag(spree_image_url(theme.screenshot, width: width, height: height), class: 'img-thumbnail border-0', loading: :lazy) %>
+  <%= image_tag(spree_image_url(theme.screenshot, width: width, height: height), class: css_class, loading: :lazy) %>
 <% elsif theme.class.preview_image_url.present? %>
   <%= image_tag(
   theme.class.preview_image_url,
-  class: 'img-thumbnail border-0',
+  class: css_class,
   loading: :lazy
 ) %>
 <% else %>
