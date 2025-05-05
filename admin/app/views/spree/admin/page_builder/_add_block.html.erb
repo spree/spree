@@ -1,4 +1,4 @@
-<%= form_for section.blocks.new, url: spree.admin_page_section_blocks_path(section), html: { class: 'list-group-item sidebar-page-block px-0 py-0 border-0 rounded'}, data: { controller: 'block-form', block_form_target: :form } do |f| %>
+<%= form_for section.blocks.new, url: spree.admin_page_section_blocks_path(section), html: { class: 'list-group-item sidebar-page-block px-0 py-1 border-0 rounded'}, data: { controller: 'block-form', block_form_target: :form } do |f| %>
   <%= f.hidden_field :type, data: { block_form_target: 'type' } %>
 
   <button class="btn btn-sm btn-link d-flex-inline" data-toggle="dropdown">

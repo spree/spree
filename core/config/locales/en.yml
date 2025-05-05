@@ -359,6 +359,18 @@ en:
       spree/order:
         one: Order
         other: Orders
+      spree/page:
+        one: Page
+        other: Pages
+      spree/page_block:
+        one: Page Block
+        other: Page Blocks
+      spree/page_link:
+        one: Page Link
+        other: Page Links
+      spree/page_section:
+        one: Page Section
+        other: Page Sections
       spree/payment:
         one: Payment
         other: Payments
@@ -1484,7 +1496,6 @@ en:
       video:
         heading_1_default: Why I recommend it?
         heading_2_default: There's nothing like a soft hint of blush to add dimension and color to your look.
-    page_settings: Page settings
     pages: Pages
     pages_defaults:
       homepage:
