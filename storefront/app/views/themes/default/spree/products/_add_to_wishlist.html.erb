@@ -6,6 +6,8 @@
     <div class="wished-item-<%= variant.id %> h-full"
       data-controller="wished-item"
       data-wished-item-variant-id-value="<%= variant.id %>"
+      data-wished-item-create-wishlist-path-value="<%= spree.account_wishlist_wished_items_path %>"
+      data-wished-item-destroy-wishlist-path-value="<%= spree.account_wishlist_wished_item_path(variant.id) %>"
     >
       <%= button_tag type: 'submit',
           class: "#{css_classes} disabled:animate-pulse",
