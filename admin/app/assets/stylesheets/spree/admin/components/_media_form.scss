@@ -5,7 +5,7 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  border-radius: 0.5rem;
+  border-radius: $border-radius-lg;
   border: 1px dashed $gray-100;
   background-color: rgba($gray-25, 0.5);
   padding: 0.5rem;
@@ -57,7 +57,7 @@
     width: 100%;
     height: 100%;
     aspect-ratio: 1/1;
-    border-radius: 0.5rem;
+    border-radius: $border-radius;
     position: relative;
     justify-content: space-between;
     align-items: flex-start;
