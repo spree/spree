@@ -17,7 +17,6 @@
             <% end %>
           </div>
           <% if can?(:update_customer, @order) %>
-            <div class="dropdown-divider"></div>
             <% if @order.user.present? %>
               <%= link_to Spree.t('admin.orders.remove_user_from_this_order'), spree.admin_order_user_path(@order), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: :_top } %>
             <% else %>

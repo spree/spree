@@ -59,11 +59,14 @@
   border-color: $gray-50 !important;
 }
 
-.card-lg {
-  margin-bottom: 1rem;
+.card, .card-lg {
+  border: 0;
+  box-shadow: 0 0 0 1px $card-border-color;
   background-color: $white;
   border-radius: $border-radius-lg;
-  border: 1px solid $card-border-color;
+}
+.card-lg {
+  margin-bottom: 1rem;
   padding: 0;
 }
 

@@ -2,14 +2,16 @@
 
 <%= render 'spree/admin/shared/offcanvas_nav' %>
 
-<header id="header" class="sticky-top">
-  <nav class="navbar navbar-expand-lg border-bottom p-0 d-flex align-items-center pr-3">
-    <button type="button" class="btn btn-light pull-bs-canvas-left d-lg-none px-2 ml-3 text-decoration-none">
-      <%= icon('menu-2', class: 'mr-0') %>
-    </button>
+<header id="header" class="sticky-top py-0">
+  <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center pr-3">
+    <div class="d-lg-none pr-3 border-right">
+      <button type="button" class="btn btn-light pull-bs-canvas-left px-2 ml-3 text-decoration-none">
+        <%= icon('menu-2', class: 'mr-0') %>
+      </button>
+    </div>
 
     <% if settings_active? %>
-      <div class="store-dropdown p-2">
+      <div class="store-dropdown pr-2">
         <%= active_link_to_with_icon('arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'btn store-dropdown-button w-100 justify-content-start mr-1') %>
       </div>
     <% else %>
@@ -20,10 +22,16 @@
       <% end %>
     <% end %>
 
-    <%= render 'spree/admin/shared/breadcrumbs' %>
+    <div class="d-none d-lg-block">
+      <%= render 'spree/admin/shared/breadcrumbs' %>
+    </div>
 
     <div class="ml-auto d-flex align-items-center">
       <%= render 'spree/admin/shared/user_dropdown' %>
     </div>
   </nav>
 </header>
+
+<div class="d-lg-none py-3 border-bottom">
+  <%= render 'spree/admin/shared/breadcrumbs' %>
+</div>

@@ -11,7 +11,7 @@
         <span class="d-none d-lg-inline ml-lg-2">
           <% if try_spree_current_user.name.present? %>
             <%= try_spree_current_user.name&.full %><br />
-            <span class="small"><%= try_spree_current_user.email %></span>
+            <span class="small text-muted"><%= try_spree_current_user.email %></span>
           <% else %>
             <%= try_spree_current_user.email %><br />
           <% end %>
@@ -37,7 +37,7 @@
 
       <div class="dropdown-divider"></div>
 
-      <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0', method: :delete do %>
+      <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0 btn-danger', method: :delete do %>
         <%= icon('logout', class: "icon icon-logout")  %>
         <%= Spree.t(:logout) %>
       <% end if defined?(spree_admin_logout_path) %>

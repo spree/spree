@@ -1201,7 +1201,6 @@ en:
     list: List
     live: Live
     loading: Loading
-    loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location
     lock: Lock
@@ -1216,7 +1215,6 @@ en:
     login_failed: Login authentication failed.
     login_name: Login
     logo: Logo
-    logo_alt: Brand logo
     logout: Logout
     logs: Logs
     look_for_similar_items: Look for similar items

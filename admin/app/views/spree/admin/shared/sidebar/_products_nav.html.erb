@@ -2,7 +2,7 @@
 <% if can?(:manage, Spree::Product) %>
   <%= nav_item(Spree.t(:products), spree.admin_products_path, icon: 'package', active: products_active) %>
   <% if products_active %>
-    <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
+    <ul class="nav-submenu">
       <% if can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) %>
         <%= nav_item(Spree.t(:stock), spree.admin_stock_items_path, active: %w[stock_items stock_transfers].include?(controller_name)) %>
       <% end %>

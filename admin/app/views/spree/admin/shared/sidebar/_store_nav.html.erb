@@ -117,9 +117,10 @@
     <li class="nav-item border-top border-top-dashed my-1"></li>
     <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
     <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
+  </ul>
 
+  <ul class="nav flex-column mt-auto mb-2">
     <% if can?(:manage, current_store) %>
-      <li class="nav-item border-top border-top-dashed my-1"></li>
       <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
       <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
     <% end %>
