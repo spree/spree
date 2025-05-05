@@ -505,7 +505,7 @@ describe Spree::CheckoutController, type: :controller do
 
         before do
           order.create_proposed_shipments
-          order.ensure_available_shipping_rates
+          order.send(:ensure_available_shipping_rates)
           order.set_shipments_cost
           order.reload
         end
