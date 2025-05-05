@@ -10,6 +10,9 @@ module Spree
 
       before_action :check_if_can_connect, only: %i[create update]
 
+      add_breadcrumb Spree.t(:integrations), :admin_integrations_path
+      add_breadcrumb_icon 'plug-connected'
+
       private
 
       def allowed_integration_types

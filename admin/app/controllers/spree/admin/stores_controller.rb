@@ -31,7 +31,17 @@ module Spree
         end
       end
 
-      def edit; end
+      def edit
+        if params[:section] == 'emails'
+          add_breadcrumb Spree.t(:emails), spree.edit_admin_store_path(section: params[:section])
+        elsif params[:section] == 'policies'
+          add_breadcrumb Spree.t(:policies), spree.edit_admin_store_path(section: params[:section])
+        elsif params[:section] == 'checkout'
+          add_breadcrumb Spree.t(:checkout), spree.edit_admin_store_path(section: params[:section])
+        else
+          add_breadcrumb Spree.t(:store_settings), spree.edit_admin_store_path(section: params[:section])
+        end
+      end
 
       def edit_emails; end
 

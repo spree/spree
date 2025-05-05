@@ -3,6 +3,8 @@ module Spree
     class StockLocationsController < ResourceController
       before_action :set_country, only: :new
 
+      add_breadcrumb Spree.t(:stock_locations), :admin_stock_locations_path
+
       def mark_as_default
         @stock_location.update(default: true)
 

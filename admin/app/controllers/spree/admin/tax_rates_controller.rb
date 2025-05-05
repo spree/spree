@@ -4,6 +4,8 @@ module Spree
       before_action :load_data
       before_action :set_defaults, only: :new
 
+      add_breadcrumb Spree.t(:tax_rates), :admin_tax_rates_path
+
       private
 
       def set_defaults

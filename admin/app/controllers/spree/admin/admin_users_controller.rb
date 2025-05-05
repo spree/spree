@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class AdminUsersController < BaseController
+      add_breadcrumb Spree.t(:users), :admin_admin_users_path
+
       skip_before_action :authorize_admin, only: [:new, :create]
       before_action :load_parent, except: [:new, :create]
       before_action :load_roles, except: [:index]
@@ -23,6 +25,8 @@ module Spree
       def show
         authorize! :read, @admin_user
         @role_users = @admin_user.role_users.includes(:role).where(resource: @parent)
+
+        add_breadcrumb @admin_user.email, spree.admin_admin_user_path(@admin_user)
       end
 
       # GET /admin/admin_users/new?token=<token>
