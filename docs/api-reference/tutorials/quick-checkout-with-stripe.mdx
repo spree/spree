@@ -251,6 +251,10 @@ Now you should make several more calls to the backend
 
 Thereafter, you should confirm the payment intent using the Stripe library; this depends on your platform/language.
 
+<Warning>
+`<PAYMENT INTENT ID>` should be Spree's internal payment intent ID, which you will receive when you create the payment intent. Do not confuse it with Stripe's payment intent ID.
+</Warning>
+
 If you like to redirect the user to Spree's order summary page, then set the `return_url` when confirming the payment intent to `<SHOP URL>/stripe/payment_intents/<PAYMENT INTENT ID>`. This will check if the payment intent is confirmed, move the order to the complete state, and redirect the user to the order summary.
 
 If you like to make the order summary page by yourself, then after confirming the payment intent in Stripe, make this request:
