@@ -1,3 +1,5 @@
+plugins: rubocop-rails
+
 AllCops:
   DisplayCopNames: true
   TargetRubyVersion: 3.3
@@ -9,10 +11,7 @@ AllCops:
     - 'spec/dummy/**/*'
     - 'lib/generators/**/*'
 
-Rails:
-  Enabled: true
-
-Metrics/LineLength:
+Layout/LineLength:
   Max: 150
 
 # DISABLED
