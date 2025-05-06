@@ -109,6 +109,8 @@ module Spree
 
     has_many :integrations, class_name: 'Spree::Integration'
 
+    has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
+
     #
     # Page Builder associations
     #
