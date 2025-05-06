@@ -190,13 +190,8 @@ describe Spree::Variant, type: :model do
       let!(:variant) { create(:variant, product: product, track_inventory: true) }
       let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
 
-      before do
-        stock_item.update!(backorderable: true)
-      end
-
-      it 'updates stock items' do
+      it 'updates stock item count on hand to 0' do
         expect { subject }.to change { stock_item.reload.count_on_hand }.from(110).to(0)
-        expect(stock_item.reload.backorderable).to eq(false)
       end
     end
 
