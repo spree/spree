@@ -26,6 +26,11 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
+    add_column :spree_store_credits, :gift_card_id, :bigint, if_not_exists: true
+    add_column :spree_store_credits, :expires_at, :datetime, if_not_exists: true
+    add_column :spree_store_credits, :state, :integer, default: 0, index: true, if_not_exists: true
+
     add_index :spree_gift_cards, :code, unique: true
+    add_index :spree_store_credits, :gift_card_id, if_not_exists: true
   end
 end
