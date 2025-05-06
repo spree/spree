@@ -23,6 +23,7 @@ module Spree
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", foreign_key: 'created_by_id', optional: true
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
     belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :gift_card, class_name: 'Spree::GiftCard', optional: true
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     has_many :payments, as: :source, class_name: 'Spree::Payment'
@@ -42,6 +43,7 @@ module Spree
     scope :not_authorized, -> { where(amount_authorized: 0) }
     scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
     scope :available, -> { not_authorized.not_used }
+    scope :without_gift_card, -> { where(gift_card: nil) }
 
     after_save :store_event
     before_destroy :validate_no_amount_used
