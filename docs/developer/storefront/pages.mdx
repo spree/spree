@@ -1,5 +1,6 @@
 ---
-title: "Pages"
+title: "Storefront Pages"
+sidebarTitle: "Pages"
 description: "Learn how to create and use pages in your Spree storefront"
 ---
 
@@ -95,7 +96,9 @@ end
 You will need to register the new page in the `config/initializers/spree.rb` file:
 
 ```ruby
-
+Rails.application.config.after_initialize do
+  Rails.application.config.spree.pages << Spree::Pages::PickupLocations
+end
 ```
 
 Now, the controller:
