@@ -993,7 +993,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       before do
         product.update(track_inventory: true)
-        create(:stock_item, count_on_hand: 20, variant: product.master)
+        create(:stock_item, count_on_hand: 20, backorderable: true, variant: product.master)
       end
 
       it 'updates stock items' do
@@ -1002,7 +1002,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         send_request
 
         expect(product.reload.track_inventory).to be(false)
-        expect(product.master.stock_items.reload.first.backorderable).to be(true)
+        expect(product.master.stock_items.reload.first.backorderable).to be(false)
         expect(product.master.stock_items.reload.first.count_on_hand).to eq(0)
       end
     end
