@@ -430,7 +430,7 @@ module Spree
     end
 
     def manifest_unstock(item)
-      stock_location.unstock item.variant, item.quantity, self
+      stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
     def recalculate_adjustments

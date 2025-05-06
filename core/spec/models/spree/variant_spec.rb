@@ -130,6 +130,55 @@ describe Spree::Variant, type: :model do
         it { expect(product.master).not_to be_in_stock }
       end
     end
+
+    describe 'create_default_stock_item' do
+      let(:new_variant) { product.variants.create(track_inventory: track_inventory, is_master: true) }
+
+      context 'when not tracking inventory' do
+        let(:track_inventory) { false }
+
+        it 'creates a default stock item' do
+          new_variant
+
+          expect(new_variant.reload.stock_items.count).to eq(1)
+          expect(new_variant.stock_items[0].count_on_hand).to eq(0)
+          expect(new_variant.stock_items[0].backorderable).to eq(false)
+        end
+
+        context 'when variant is created along with a stock item' do
+          let(:new_variant) do
+            product.variants.create(
+              track_inventory: track_inventory,
+              is_master: true,
+              stock_items_attributes: {
+                '0' => {
+                  stock_location_id: create(:stock_location).id,
+                  count_on_hand: 10,
+                  backorderable: true
+                }
+              }
+            )
+          end
+
+          it 'does not create an another stock item' do
+            new_variant
+
+            expect(new_variant.reload.stock_items.count).to eq(1)
+            expect(new_variant.stock_items[0].count_on_hand).to eq(10)
+            expect(new_variant.stock_items[0].backorderable).to eq(true)
+          end
+        end
+      end
+
+      context 'when tracking inventory' do
+        let(:track_inventory) { true }
+
+        it 'does not create a default stock item' do
+          new_variant
+          expect(new_variant.reload.stock_items.count).to eq(0)
+        end
+      end
+    end
   end
 
   describe 'after_update_commit :handle_track_inventory_change' do
@@ -142,12 +191,12 @@ describe Spree::Variant, type: :model do
       let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
 
       before do
-        stock_item.update!(backorderable: false)
+        stock_item.update!(backorderable: true)
       end
 
       it 'updates stock items' do
-        expect { subject }.
-          to change { stock_item.reload.backorderable }.from(false).to(true).and change { stock_item.reload.count_on_hand }.from(110).to(0)
+        expect { subject }.to change { stock_item.reload.count_on_hand }.from(110).to(0)
+        expect(stock_item.reload.backorderable).to eq(false)
       end
     end
 
