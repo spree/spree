@@ -4,12 +4,15 @@ require_dependency 'spree/order/digital'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
 require_dependency 'spree/order/emails'
+require_dependency 'spree/order/gift_card'
 
 module Spree
   class Order < Spree.base_class
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
+
+    extend Spree::DisplayMoney
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
@@ -20,6 +23,7 @@ module Spree
     include Spree::Order::Emails
     include Spree::Order::Webhooks
     include Spree::Core::NumberGenerator.new(prefix: 'R')
+    include Spree::Order::GiftCard
 
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
@@ -38,7 +42,6 @@ module Spree
 
     MEMOIZED_METHODS = %w(tax_zone)
 
-    extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total,
@@ -898,6 +901,14 @@ module Spree
       # Free up authorized store credits
       payments.store_credits.pending.each(&:void!)
 
+      # payments fully covered by gift card won't be refunded
+      # we want to only void the payment
+      if (parent || self).gift_card.present? && covered_by_store_credit?
+        payments.completed.store_credits.each(&:void!)
+      else
+        payments.completed.not_for_shipping.each(&:cancel!)
+      end
+
       send_cancel_email
       update_with_updater!
       send_order_canceled_webhook
@@ -933,6 +944,16 @@ module Spree
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
+    end
+
+    def recalculate_store_credit_payment
+      updater.update_adjustment_total if using_store_credit?
+
+      if gift_card.present?
+        recalculate_gift_card
+      elsif using_store_credit?
+        Spree::Checkout::AddStoreCredit.call(order: self)
+      end
     end
   end
 end

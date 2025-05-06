@@ -314,6 +314,10 @@ en:
           attributes:
             variant:
               taken: You already added this item to your wishlist
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: "Can't delete a used gift card"
     models:
       spree/address:
         one: Address
@@ -1090,6 +1094,12 @@ en:
     get_back_to_the: Get back to the
     gift_card: Gift card
     gift_cards: Gift cards
+    gift_card_applied: The gift card was successfully applied to your order!
+    gift_card_removed: The gift card was successfully removed from your order
+    gift_card_using_store_credit_error: You can't apply the gift card after you applied the store credit.
+    gift_card_minimum_order_value_error: You can't apply the gift card. The order total must be at least %{minimum_order_amount}, excluding shipping cost.
+    gift_card_no_amount_remaining: You can't apply the gift card with no balance on it.
+    remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
@@ -1180,7 +1190,7 @@ en:
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
-    issue_gift_card: Issue Gift Card
+    issue_gift_card: Issue a Gift Card
     issued_on: Issued On
     item: Item
     item_description: Item Description

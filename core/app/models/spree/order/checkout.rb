@@ -92,6 +92,7 @@ module Spree
                 after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
+                before_transition to: :payment, do: :recalculate_store_credit_payment
               end
 
               before_transition from: :cart, do: :ensure_line_items_present
@@ -118,6 +119,7 @@ module Spree
 
               after_transition to: :complete, do: :finalize!
               after_transition to: :complete, do: :use_all_coupon_codes
+              after_transition to: :complete, do: :redeem_gift_card
               after_transition to: :resumed, do: :after_resume
               after_transition to: :canceled, do: :after_cancel
 

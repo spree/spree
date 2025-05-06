@@ -1,0 +1,64 @@
+<% content_for :page_title do %>
+  <% if @user.present? %>
+    <%= page_header_back_button spree.admin_user_path(@user) %>
+  <% else %>
+    <%= page_header_back_button spree.admin_gift_cards_path %>
+  <% end %>
+
+  <%= @object.code.upcase %>
+  <span class="badge ml-4">
+    <%= active_badge(@object.active?, label: @object.state) %>
+  </span>
+<% end %>
+
+<% if @object.redeemed? || @object.redeemed_by_order? || @object.partialy_redeemed? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        Gift card usage details
+        <span class="text-muted small">
+          <%= @object.display_amount %>
+          (<%= @object.display_amount_remaining %> left)
+        </span>
+      </h5>
+    </div>
+    <div class="card-body">
+      <ul class="list-group pb-4">
+        <% @object.orders.each do |order| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <% if order %>
+              <%= link_to order.number, spree.edit_admin_order_path(order), class: 'text-dark font-weight-bold d-block w-20' %>
+            <% end %>
+            <div class="w-40 align-items-center">
+              <% if order.user %>
+                <%= order.user.email %>
+              <% end %>
+            </div>
+            <span class="text-right w-20">
+              <%= order.display_total_applicable_store_credit %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>
+
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+<%= form_for [:admin, @user, @object] do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+
+    <% if can? :update, @object %>
+      <div class="form-actions">
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+
+        <% if f.object.can_be_deleted? && can?(:delete, f.object) %>
+          <% gift_card_delete_url = @user.present? ? admin_user_gift_card_path(@object, user_id: @user.id) : object_url(f.object) %>
+          <%= link_to Spree.t('actions.destroy'), gift_card_delete_url , data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: defined?(turbo_frame) ? turbo_frame : nil }, class: 'btn btn-danger ml-auto' %>
+        <% end %>
+      </div>
+    <% end %>
+  </fieldset>
+<% end %>

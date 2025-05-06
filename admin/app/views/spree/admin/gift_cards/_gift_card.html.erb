@@ -1,0 +1,31 @@
+<tr id="<%= spree_dom_id gift_card %>" data-hook="gift_cards_row">
+  <td data-controller="clipboard">
+    <%= hidden_field_tag :code, gift_card.code.upcase, data: { clipboard_target: 'source' } %>
+    <%= link_to gift_card.code.upcase, spree.edit_admin_gift_card_path(gift_card), class: 'font-weight-bold', data: { 'turbo-frame': '_top' } %>
+    <button class="btn btn-sm text-muted with-tip mx-1" title="Copy" data-action="clipboard#copy" data-clipboard-target="button">
+      <%= icon 'files', class: 'mr-0' %>
+    </button>
+  </td>
+  <td><%= gift_card.display_amount %></td>
+  <td><%= gift_card.display_minimum_order_amount %></td>
+  <td>
+    <%= gift_card.display_used_amount %>
+  </td>
+  <td><%= active_badge(gift_card.active?, label: gift_card.display_state) %></td>
+  <td><%= local_date(gift_card.expires_at) if gift_card.expires_at.present? %></td>
+
+  <% if params[:user_id].blank? %>
+    <td><%= gift_card.user_email %></td>
+
+    <td class="actions">
+      <%= link_to_edit(gift_card, data: { 'turbo-frame': '_top' }) if can? :edit, gift_card %>
+    </td>
+  <% else %>
+    <td class="actions">
+      <%= link_to_edit_url(
+        spree.edit_admin_user_gift_card_path(gift_card, user_id: params[:user_id]),
+        data: { 'turbo-frame': '_top' }
+      ) if can? :edit, gift_card %>
+    </td>
+  <% end %>
+</tr>
