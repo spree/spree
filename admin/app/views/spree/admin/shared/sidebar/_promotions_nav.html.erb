@@ -7,7 +7,7 @@
     <% end %>
 
     <% if discounts_active && defined?(Spree::GiftCard) && spree.respond_to?(:admin_gift_cards_path) && can?(:manage, Spree::GiftCard) %>
-      <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
+      <ul class="nav-submenu">
         <li class="nav-item">
           <%= active_link_to Spree.t(:gift_cards), spree.admin_gift_cards_path, class: 'nav-link', active: %w[gift_cards gift_card_batches].include?(controller_name) %>
         </li>

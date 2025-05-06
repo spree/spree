@@ -1,6 +1,7 @@
 module Spree
   module Admin
     class ZonesController < ResourceController
+      add_breadcrumb Spree.t(:zones), :admin_zones_path
       before_action :load_data, except: :index
 
       def new

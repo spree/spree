@@ -1,31 +1,38 @@
 <header id="page-builder-header" class="fixed-top">
   <nav class="navbar navbar-expand-lg">
-    <%= link_to spree.admin_themes_path, class: 'btn btn-light with-tip px-2', title: 'Go back to dashboard' do %>
+    <%= link_to spree.admin_themes_path, class: 'btn hover-gray with-tip px-2', title: Spree.t('admin.back_to_dashboard') do %>
       <%= icon('x', class: 'mr-0') %>
     <% end %>
-    <div class="px-3">
-      <span class="text-muted mr-1"><%= Spree.t(:theme) %>:</span>
-      <strong class="mr-1"><%= @theme.name %></strong>
-      &nbsp;
-      <% if @theme.default? %>
-        <span class="badge badge-success">
-          <%= icon('check') %>
-          Live
-        </span>
-      <% else %>
-        <span class="badge badge-warning">Draft</span>
-      <% end %>
-    </div>
-    <%= render 'spree/admin/page_builder/pages_dropdown' %>
+    <% if @page.custom? %>
+      <div class="px-3">
+        <span class="text-muted mr-1"><%= I18n.t('activerecord.models.spree/page.one') %>:</span>
+        <strong><%= @page.display_name %></strong>
+      </div>
 
-    <ul class="nav nav-pills" role="tablist">
-      <% if @page.custom? %>
-        <li class="nav-item" role="presentation" data-toggle="modal" data-target="#modal">
-          <%= link_to_with_icon 'settings', Spree.t(:page_settings), spree.edit_admin_page_path(@page.id), class: 'btn btn-light', data: { turbo_frame: 'dialog_modal' } %>
-        </li>
-      <% else %>
+      <span data-toggle="modal" data-target="#modal">
+        <%= link_to_with_icon 'settings', Spree.t(:settings), spree.edit_admin_page_path(@page.id), class: 'btn btn-light', data: { turbo_frame: 'dialog_modal' } %>
+      </span>
+    <% else %>
+      <div class="px-3">
+        <span class="text-muted mr-1"><%= Spree.t(:theme) %>:</span>
+        <strong class="mr-1"><%= @theme.name %></strong>
+        &nbsp;
+        <% if @theme.default? %>
+          <span class="badge badge-success">
+            <%= icon('check') %>
+            <%= Spree.t(:live) %>
+          </span>
+        <% else %>
+          <span class="badge badge-warning">
+            <%= Spree.t(:draft) %>
+          </span>
+        <% end %>
+      </div>
+      <%= render 'spree/admin/page_builder/pages_dropdown' %>
+
+      <ul class="nav nav-pills" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active"
+          <button class="nav-link active with-tip"
                         title="Page sections"
                         data-toggle="tab"
                         data-target="#sections"
@@ -39,8 +46,8 @@
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link"
-                  title="Theme"
+          <button class="nav-link with-tip"
+                  title="<%= Spree.t(:theme) %>"
                   data-toggle="tab"
                   data-target="#colors"
                   type="button"
@@ -53,7 +60,7 @@
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link"
+          <button class="nav-link with-tip"
                 title="Fonts"
                 type="button"
                 data-toggle="tab"
@@ -67,8 +74,8 @@
             <%= icon 'typography', class: 'mr-0' %>
           </button>
         </li>
-      <% end %>
-    </ul>
+      </ul>
+    <% end %>
 
     <ul class="nav nav-pills ml-auto" role="tablist">
       <li class="nav-item" role="presentation">
@@ -94,6 +101,6 @@
     </ul>
 
     <%= link_to_with_icon 'eye', Spree.t(:preview), @page.preview_url(@theme_preview, @page_preview), class: 'btn btn-light ml-auto', target: '_blank' %>
-    <%= turbo_save_button_tag(@theme.default? ? Spree.t('actions.publish') : Spree.t('actions.save')) %>
+    <%= turbo_save_button_tag(@theme.default? ? icon('cloud-up') + Spree.t('actions.publish') : icon('pencil-check') + Spree.t('actions.save')) %>
   </nav>
 </header>

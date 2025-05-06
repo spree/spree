@@ -10,9 +10,7 @@
       <%= render 'spree/admin/page_links/form', f: f %>
     <% end %>
   </div>
-  <div class="position-fixed border-top bg-light bottom-bar" style="bottom: 0px; width:344px; z-index: 9999">
-    <div class="px-3 py-2" data-action="click->page-builder#hideSidebarMobile">
-      <%= link_to_delete(@page_link, url: spree.admin_page_link_path(@page_link)) %>
-    </div>
+  <div class="sidebar-footer">
+    <%= link_to_delete(@page_link, url: spree.admin_page_link_path(@page_link)) %>
   </div>
 <% end %>

@@ -12,7 +12,6 @@
   position: relative;
   transition: background 0.15s, color 0.1s;
   will-change: background, color;
-  font-weight: 400;
   color: $gray-700;
 
   &:hover {

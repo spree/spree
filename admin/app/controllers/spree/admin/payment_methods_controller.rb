@@ -2,9 +2,11 @@ module Spree
   module Admin
     class PaymentMethodsController < ResourceController
       include Spree::Admin::PreferencesConcern
+      add_breadcrumb Spree.t(:payment_methods), :admin_payment_methods_path
 
       prepend_before_action :require_payment_type, only: [:new, :create]
       before_action -> { clear_empty_password_preferences(:payment_method) }, only: :update
+      before_action :set_breadcrumb, only: :edit
 
       private
 
@@ -28,6 +30,10 @@ module Spree
 
       def require_payment_type
         redirect_to spree.admin_payment_methods_path unless params.dig(:payment_method, :type).present?
+      end
+
+      def set_breadcrumb
+        add_breadcrumb @payment_method.name, spree.edit_admin_payment_method_path(@payment_method)
       end
     end
   end

@@ -4,7 +4,7 @@
   <%= nav_item(Spree.t(:returns), spree.admin_customer_returns_path, icon: 'receipt-refund', active: returns_active) %>
 
   <% if returns_active %>
-    <ul class="ml-4 pl-1 mb-2 nav-submenu mt-1">
+    <ul class="nav-submenu">
       <% if can?(:manage, Spree::ReturnAuthorization) %>
         <%= nav_item(Spree.t(:return_authorizations), spree.admin_return_authorizations_path) %>
       <% end %>

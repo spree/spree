@@ -359,6 +359,18 @@ en:
       spree/order:
         one: Order
         other: Orders
+      spree/page:
+        one: Page
+        other: Pages
+      spree/page_block:
+        one: Page Block
+        other: Page Blocks
+      spree/page_link:
+        one: Page Link
+        other: Page Links
+      spree/page_section:
+        one: Page Section
+        other: Page Sections
       spree/payment:
         one: Payment
         other: Payments
@@ -1189,7 +1201,6 @@ en:
     list: List
     live: Live
     loading: Loading
-    loading_tree: Loading tree. Please wait…
     locale_changed: Locale Changed
     location: Location
     lock: Lock
@@ -1204,7 +1215,6 @@ en:
     login_failed: Login authentication failed.
     login_name: Login
     logo: Logo
-    logo_alt: Brand logo
     logout: Logout
     logs: Logs
     look_for_similar_items: Look for similar items
@@ -1484,7 +1494,6 @@ en:
       video:
         heading_1_default: Why I recommend it?
         heading_2_default: There's nothing like a soft hint of blush to add dimension and color to your look.
-    page_settings: Page settings
     pages: Pages
     pages_defaults:
       homepage:
@@ -2145,6 +2154,7 @@ en:
     translations_for: "%{resource_name} translations"
     tree: Tree
     true_label: 'TRUE'
+    try_removing_filters: Try removing some filters to see more products
     twitter: Twitter
     type: Type
     type_to_search: Type to search

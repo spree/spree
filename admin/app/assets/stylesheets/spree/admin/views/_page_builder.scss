@@ -1,3 +1,6 @@
+$sidebar-width: 345px;
+$header-height: 43px;
+
 #page-builder {
   background-color: $gray-100;
 
@@ -16,9 +19,8 @@
   }
 
   .nav-pills {
-    border: 1px solid $border-color;
     border-radius: $border-radius;
-    background-color: $gray-50;
+    background-color: $gray-100;
     padding: 0.1rem;
 
     .nav-link {
@@ -41,7 +43,7 @@
 #page-builder-header {
   z-index: 1031;
   border-bottom: 1px solid $border-color;
-
+  height: $header-height;
   nav {
     width: 100%;
     display: flex;
@@ -51,17 +53,20 @@
   }
 }
 #page-builder-sidebar {
-  width: 345px;
-  top: 43px;
+  position: fixed;
+  width: $sidebar-width;
+  top: $header-height;
   left: 0px;
   background-color: $body-bg;
   border-right: 1px solid $border-color;
-
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: calc(100vh - $header-height);
   .sidebar-header {
     height: 48px;
-    padding: 0.5rem 1rem;
-    background-color: $gray-25;
-    border-bottom: 1px solid $gray-50;
+    padding: 0.5rem 0.7rem;
+    background-color: $body-bg;
+    border-bottom: 1px solid $border-color;
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
@@ -75,17 +80,24 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 345px;
-    padding: 0.5rem 1rem;
-    background-color: $gray-25;
-    border-top: 1px solid $gray-50;
+    width: calc($sidebar-width - 1px);
+    padding: 0.5rem;
+    background-color: $body-bg;
+    box-shadow: 0 0 0 1px $border-color;
     z-index: 1031;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .list-group-item {
+    padding: 0.5rem 0.5rem;
   }
 }
 #page-builder-preview {
   border-radius: $border-radius;
   border: 1px solid $gray-300;
-  margin-top: 60px;
+  margin-top: calc($header-height + 1rem);
 }
 
 
