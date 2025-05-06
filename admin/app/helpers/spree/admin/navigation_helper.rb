@@ -190,7 +190,7 @@ module Spree
       # @return [String] the badge with the icon
       def active_badge(condition, options = {})
         label = options[:label]
-        label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
+        label ||= condition ? Spree.t(:say_yes).to_s : Spree.t(:say_no).to_s
         label = icon('check') + label if condition
 
         css_class = condition ? 'badge-active' : 'badge-inactive'
