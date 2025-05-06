@@ -1,0 +1,19 @@
+<% content_for :page_title do %>
+  <% if @user.present? %>
+    <%= page_header_back_button spree.admin_user_path(@user) %>
+  <% else %>
+    <%= page_header_back_button spree.admin_gift_cards_path %>
+  <% end %>
+
+  <%= Spree.t(:new_gift_card) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+
+<%= form_for [:admin, @user, @object] do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+
+    <%= render 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>
