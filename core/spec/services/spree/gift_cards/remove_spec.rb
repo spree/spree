@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe Spree::GiftCards::Remove do
   subject { described_class.call(order: order) }
 
