@@ -8,16 +8,16 @@ description: "Learn how to create and use pages in your Spree storefront"
 
 Spree Storefront comes with a full set of built-in pages that you can customize via page builder.
 
-| Page | Description | Class | Controller |
+| Page | Description | Class | URL |
 |------|-------------|-------|------------|
-| Home | The main landing page of your store | [Spree::Pages::Homepage](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/homepage.rb) | Spree::HomeController |
-| Product Details | Individual product display page | [Spree::Pages::ProductDetails](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/product_details.rb) | Spree::ProductsController `show` action |
-| Taxon | Shows products filtered by taxon | [Spree::Pages::Taxon](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/taxon.rb) | Spree::TaxonsController |
-| Search Results | Displays search results for products | [Spree::Pages::SearchResults](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/search_results.rb) | Spree::SearchController |
-| Shop All | Shows all products | [Spree::Pages::ShopAll](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/shop_all.rb) | Spree::ProductsController `index` action |
-| Blog | Shows your store's blog posts and articles | [Spree::Pages::PostList](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/post_list.rb) | Spree::PostsController `index` action |
-| Post | Individual blog post | [Spree::Pages::Post](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/post.rb) | Spree::PostsController `show` action |
-| Password | Password page, when password protected storefront is enabled | [Spree::Pages::Password](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/password.rb) | Spree::PasswordController |
+| Home | The main landing page of your store | [Spree::Pages::Homepage](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/homepage.rb) | `/` |
+| Product Details | Individual product display page | [Spree::Pages::ProductDetails](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/product_details.rb) | `/products/:id` |
+| Taxon | Shows products filtered by taxon | [Spree::Pages::Taxon](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/taxon.rb) | `/t/:permalink` |
+| Search Results | Displays search results for products | [Spree::Pages::SearchResults](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/search_results.rb) | `/search` |
+| Shop All | Shows all products | [Spree::Pages::ShopAll](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/shop_all.rb) | `/products` |
+| Blog | Shows your store's blog posts and articles | [Spree::Pages::PostList](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/post_list.rb) | `/posts` |
+| Post | Individual blog post | [Spree::Pages::Post](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/post.rb) | `/posts/:permalink` |
+| Password | Password page, when password protected storefront is enabled | [Spree::Pages::Password](https://github.com/spree/spree/blob/main/core/app/models/spree/pages/password.rb) | `/` |
 
 All of these page can be fully customized via page builder. You can add/remove sections, etc.
 
@@ -26,6 +26,16 @@ We're planning to add page builder support for the following pages in the next S
 - Cart
 - Checkout
 - Account
+
+## Sections
+
+Each page is made of [sections](/developer/storefront/sections). Sections are the building blocks of a page. They are used to create the page content.
+
+You can fetch page sections using:
+
+```ruby
+current_page.sections
+```
 
 ## Custom Landing Pages in the Admin
 
