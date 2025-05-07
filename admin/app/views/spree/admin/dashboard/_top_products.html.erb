@@ -47,7 +47,7 @@
                     <%= product.name %>
                   <% end %>
                 </td>
-                <% if enterprise_edition? && defined?(vendor_logo_link) && !@vendor %>
+                <% if defined?(vendor_logo_link) && !@vendor %>
                   <td>
                     <%= vendor_logo_link(product.vendor) if product.vendor.present? %>
                   </td>
