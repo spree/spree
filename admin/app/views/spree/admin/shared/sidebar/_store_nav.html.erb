@@ -48,7 +48,7 @@
     <% end %>
 
     <% if can?(:manage, Spree::Store) %>
-      <% if enterprise_edition? %>
+      <% if spree.respond_to?(:admin_audits_path) %>
         <%= nav_item(Spree.t('admin.audit_log'), spree.admin_audits_path, icon: 'history', active: %w[audits exports imports].include?(controller_name)) %>
       <% else %>
         <li class="nav-item">

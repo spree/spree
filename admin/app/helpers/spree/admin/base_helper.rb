@@ -10,7 +10,7 @@ module Spree
       end
 
       def enterprise_edition?
-        defined?(Vendo)
+        defined?(SpreeEnterprise)
       end
 
       def spree_updater
