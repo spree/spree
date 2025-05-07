@@ -43,7 +43,7 @@ module Spree
 
     def generate_code
       loop do
-        code = "#{prefix.upcase}#{SecureRandom.hex(3).upcase}"
+        code = "#{prefix.downcase}#{SecureRandom.hex(3).downcase}"
         break code unless Spree::GiftCard.exists?(code: code) && @gift_cards_to_insert.detect { |gc| gc[:code] == code }
       end
     end
