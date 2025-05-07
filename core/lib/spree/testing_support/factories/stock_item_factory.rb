@@ -11,6 +11,10 @@ FactoryBot.define do
       )&.destroy
     end
 
-    after(:create) { |object| object.adjust_count_on_hand(10) }
+    transient do
+      adjust_count_on_hand { true }
+    end
+
+    after(:create) { |object, evaluator| object.adjust_count_on_hand(10) if evaluator.adjust_count_on_hand }
   end
 end

@@ -338,6 +338,8 @@ module Spree
                                     end
     end
 
+    # Returns the default stock location for the store or creates a new one if it doesn't exist
+    # @return [Spree::StockLocation]
     def default_stock_location
       @default_stock_location ||= begin
         stock_location_scope = Spree::StockLocation.order_default

@@ -73,6 +73,8 @@ module Spree
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
+
+    after_create :create_default_stock_item, unless: :track_inventory?
     after_update_commit :handle_track_inventory_change
 
     after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
@@ -553,11 +555,17 @@ module Spree
       line_items.update_all(updated_at: Time.current)
     end
 
+    def create_default_stock_item
+      return if stock_items.any?
+
+      Spree::Store.current.default_stock_location.set_up_stock_item(self)
+    end
+
     def handle_track_inventory_change
       return unless track_inventory_previously_changed?
       return if track_inventory
 
-      stock_items.update_all(backorderable: true, count_on_hand: 0, updated_at: Time.current)
+      stock_items.update_all(count_on_hand: 0, updated_at: Time.current)
     end
 
     def remove_prices_from_master_variant
