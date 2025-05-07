@@ -121,6 +121,9 @@ Spree::Core::Engine.add_routes do
     # gift cards
     resources :gift_cards
 
+    # gift card batches
+    resources :gift_card_batches, only: [:new, :create]
+
     # returns
     resources :return_authorizations, only: [:index, :destroy] do
       member do
