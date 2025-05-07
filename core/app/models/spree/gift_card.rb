@@ -30,6 +30,7 @@ module Spree
     auto_strip_attributes :code
 
     before_validation :generate_code
+    before_validation :normalize_code
     after_validation :set_amount_remaining
 
     after_commit :track_gift_card_issued, on: :create
@@ -59,6 +60,14 @@ module Spree
         random_token = SecureRandom.hex(8).to_s.upcase
         break random_token unless self.class.exists?(code: random_token, store_id: store_id)
       end
+    end
+
+    def normalize_code
+      self.code = code.downcase if code.present?
+    end
+
+    def display_code
+      code.upcase
     end
 
     def expired?
