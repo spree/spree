@@ -76,6 +76,7 @@
                   "developer/deployment/render",
                   "developer/deployment/docker",
                   "developer/deployment/environment_variables",
+                  "developer/deployment/emails",
                   "developer/deployment/assets",
                   "developer/deployment/cdn",
                   "developer/deployment/caching"
