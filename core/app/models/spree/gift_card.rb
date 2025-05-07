@@ -1,26 +1,8 @@
-# == Schema Information
-#
-# Table name: spree_gift_cards
-#
-#  id                   :bigint           not null, primary key
-#  amount               :decimal(10, 2)   not null
-#  amount_remaining     :decimal(10, 2)   default(0.0), not null
-#  code                 :string           not null
-#  expires_at           :date
-#  minimum_order_amount :decimal(10, 2)   default(0.0)
-#  state                :integer          default("active"), not null
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  gift_card_batch_id   :bigint
-#  store_credit_id      :bigint
-#  store_id             :bigint           not null
-#  tenant_id            :bigint           not null
-#  user_id              :bigint
-#
 module Spree
   class GiftCard < Spree.base_class
     extend DisplayMoney
     include Spree::SingleStoreResource
+    include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
     enum :state, { active: 0, redeemed: 1, canceled: 2, redeemed_by_order: 3, partialy_redeemed: 4 }
 
