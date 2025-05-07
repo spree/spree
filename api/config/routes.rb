@@ -32,6 +32,7 @@ Spree::Core::Engine.add_routes do
           get :shipping_rates
           patch :select_shipping_method
           post :validate_order_for_payment
+          post :validate_gift_card_data
         end
 
         resource :account, controller: :account, only: %i[show create update]
