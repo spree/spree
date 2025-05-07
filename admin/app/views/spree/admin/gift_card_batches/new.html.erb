@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_gift_cards_path %>
+  <%= Spree.t(:new_gift_card_batch) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+
+<%= form_for [:admin, @object] do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+
+    <%= render 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>
