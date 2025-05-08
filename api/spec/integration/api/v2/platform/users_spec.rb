@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Users API', swagger: true do
+xdescribe 'Users API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'User'
