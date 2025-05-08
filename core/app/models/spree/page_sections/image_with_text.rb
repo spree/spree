@@ -27,6 +27,14 @@ module Spree
         ]
       end
 
+      def available_blocks_to_add
+        [
+          Spree::PageBlocks::Buttons,
+          Spree::PageBlocks::Heading,
+          Spree::PageBlocks::Text
+        ]
+      end
+
       def default_links
         @default_links.presence || [
           Spree::PageLink.new(
@@ -37,6 +45,10 @@ module Spree
       end
 
       def blocks_available?
+        true
+      end
+
+      def can_sort_blocks?
         true
       end
 

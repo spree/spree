@@ -1455,6 +1455,9 @@ en:
     package_from: package from
     page: Page
     page_blocks:
+      products:
+        buy_buttons:
+          display_name: Add To Cart
       buttons:
         display_name: Button
       link:
