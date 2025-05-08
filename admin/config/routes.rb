@@ -97,6 +97,7 @@ Spree::Core::Engine.add_routes do
       resources :store_credits
       resources :orders, only: [:index]
       resources :checkouts, only: [:index]
+      resources :gift_cards
 
       collection do
         get :bulk_modal
