@@ -17,8 +17,11 @@ module Spree
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
     has_many :store_credits, class_name: 'Spree::StoreCredit'
 
-    has_many :orders, -> { without_vendor }, through: :store_credits, source: :orders
-    has_many :users, through: :orders
+    if defined?(Spree::Vendor)
+      has_many :orders, -> { without_vendor }, through: :store_credits, source: :orders
+    else
+      has_many :orders, through: :store_credits, source: :orders
+    end
 
     scope :active, -> { where(state: [:active, :partialy_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
