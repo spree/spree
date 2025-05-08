@@ -23,6 +23,8 @@ module Spree
       has_many :orders, through: :store_credits, source: :orders
     end
 
+    has_many :users, through: :orders
+
     scope :active, -> { where(state: [:active, :partialy_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
     scope :redeemed, -> { where(state: [:redeemed, :redeemed_by_order]) }
