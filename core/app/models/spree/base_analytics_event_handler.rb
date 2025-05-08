@@ -5,13 +5,15 @@ module Spree
     # @param opts [Hash] The options
     # @option opts [User] :user
     # @option opts [String] :session_id
+    # @option opts [Spree::Store] :store
     def initialize(opts = {})
       @user = opts[:user]
       @session = opts[:session]
       @request = opts[:request]
+      @store = opts[:store]
     end
 
-    attr_reader :user, :session, :request
+    attr_reader :user, :session, :request, :store
 
     # Returns the client
     # @return [Object] The client object
