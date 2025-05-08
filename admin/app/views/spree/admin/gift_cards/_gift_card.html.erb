@@ -22,7 +22,7 @@
     </td>
   <% else %>
     <td class="actions">
-      <%= link_to_edit_url(
+      <%= link_to_edit(
         spree.edit_admin_user_gift_card_path(gift_card, user_id: params[:user_id]),
         data: { 'turbo-frame': '_top' }
       ) if can? :edit, gift_card %>
