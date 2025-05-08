@@ -6,6 +6,10 @@ module Spree
         BOTTOM_PADDING_DEFAULT = 20
 
         preference :text_color, :string
+
+        def icon_name
+          'selector'
+        end
       end
     end
   end

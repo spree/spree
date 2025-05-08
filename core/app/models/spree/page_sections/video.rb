@@ -44,11 +44,19 @@ module Spree
         ]
       end
 
+      def available_blocks_to_add
+        [Spree::PageBlocks::Heading]
+      end
+
       def icon_name
         'movie'
       end
 
       def blocks_available?
+        true
+      end
+
+      def can_sort_blocks?
         true
       end
 
