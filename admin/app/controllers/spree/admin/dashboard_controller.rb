@@ -139,7 +139,7 @@ module Spree
                                                             default_value: 0)
                   end
 
-        @top_landing_pages = @visits_scope.where.not(landing_page_title: [nil, '']).top(:landing_page_title, 10)
+        @top_landing_pages = @visits_scope.where.not(landing_page: [nil, '']).top(:landing_page, 10)
         @top_referrers = @visits_scope.where.not(referring_domain: current_store.custom_domains.pluck(:url) << current_store.url).top(
           :referring_domain, 10
         )
