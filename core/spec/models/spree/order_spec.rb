@@ -2016,6 +2016,7 @@ describe Spree::Order, type: :model do
     let(:order) { create(:order) }
     let(:variant) { create(:variant) }
     let(:variant_2) { create(:variant) }
+    let(:variant_3) { create(:variant, track_inventory: false) }
 
     before do
       create(:line_item, order: order, variant: variant, quantity: 1)
@@ -2023,6 +2024,9 @@ describe Spree::Order, type: :model do
 
       create(:line_item, order: order, variant: variant_2, quantity: 1)
       variant_2.stock_items.first.update(count_on_hand: 1, backorderable: true)
+
+      create(:line_item, order: order, variant: variant_3, quantity: 1)
+      variant_3.stock_items.first.update(count_on_hand: 0, backorderable: true)
     end
 
     it 'returns the backordered variants' do
