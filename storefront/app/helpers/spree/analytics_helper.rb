@@ -2,7 +2,7 @@ module Spree
   module AnalyticsHelper
     def analytics_event_handlers
       @analytics_event_handlers ||= Spree::Analytics.event_handlers.map do |handler|
-        handler.new(user: try_spree_current_user, session: session, request: request, store: defined?(current_store) ? current_store : nil)
+        handler.new(user: try_spree_current_user, session: session, request: request, store: Spree::Store.current)
       end
     end
 
