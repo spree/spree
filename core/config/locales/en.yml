@@ -1455,9 +1455,6 @@ en:
     package_from: package from
     page: Page
     page_blocks:
-      products:
-        buy_buttons:
-          display_name: Add To Cart
       buttons:
         display_name: Button
       link:
@@ -1467,6 +1464,9 @@ en:
       newsletter_form:
         button_text_default: Submit
         placeholder_default: Enter your email
+      products:
+        buy_buttons:
+          display_name: Add To Cart
     page_not_found: Sorry! Page you are looking can’t be found.
     page_sections:
       announcement_bar:
