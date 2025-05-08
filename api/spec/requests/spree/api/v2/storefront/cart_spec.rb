@@ -633,6 +633,23 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response[:included][0]).to have_attribute(:public_metadata).with_value(order.ship_address.public_metadata)
       end
     end
+
+    context 'with gift card' do
+      let(:gift_card) { create(:gift_card, amount: 10, store: store) }
+      let(:coupon_code) { gift_card.code }
+
+      before do
+        order.update_column(:total, 30)
+        patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers_bearer
+        get '/api/v2/storefront/cart', headers: headers_bearer, params: { include: 'gift_card' }
+      end
+
+      it 'should return an order with gift card' do
+        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.code)))
+        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:display_amount).with_value('$10.00')))
+        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:display_amount_remaining).with_value('$0.00')))
+      end
+    end
   end
 
   describe 'cart#apply_coupon_code' do
@@ -680,11 +697,65 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
 
+    shared_examples 'apply gift card coupon code' do
+      before { execute }
+
+      context 'apply gift card' do
+        subject(:apply_gift_card) { patch '/api/v2/storefront/cart/apply_coupon_code', params: params, headers: headers }
+
+        let(:execute) { nil }
+        let(:gift_card) { create(:gift_card, amount: 10, store: store) }
+        let(:coupon_code) { gift_card.code }
+        let(:params) { { coupon_code: coupon_code, include: 'gift_card' } }
+
+        before do
+          # create(:stripe_gateway, stores: [store])
+        end
+
+        it 'applies the gift card' do
+          apply_gift_card
+          expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.code)))
+        end
+
+        context 'for a gift card with minimal order amount' do
+          let(:order_total) { order.total }
+          let(:gift_card) { create(:gift_card, store: store, amount: 10, minimum_order_amount: minimal_order_amount) }
+
+          context 'when the condition is met' do
+            let(:minimal_order_amount) { order.total }
+
+            it 'applies the gift card' do
+              apply_gift_card
+
+              expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.code)))
+
+              expect(order.reload.gift_card).to eq(gift_card)
+              expect(order.total_applied_store_credit).to eq(gift_card.amount)
+            end
+          end
+
+          context 'when the condition is not met' do
+            let(:minimal_order_amount) { order.total + 1 }
+
+            it 'skips applying the gift card' do
+              apply_gift_card
+
+              expect(json_response['error']).to eq("You can't apply the gift card. The order total must be at least #{gift_card.display_minimum_order_amount}, excluding shipping cost.")
+
+              expect(order.reload.gift_card).to be(nil)
+              expect(order.total_applied_store_credit).to eq(0)
+            end
+          end
+        end
+      end
+    end
+
     context 'as a guest user' do
       include_context 'creates guest order with guest token'
 
       context 'with existing order' do
         it_behaves_like 'apply coupon code'
+        it_behaves_like 'apply gift card coupon code'
       end
 
       it_behaves_like 'no current order'
@@ -695,6 +766,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       context 'with existing order' do
         it_behaves_like 'apply coupon code'
+        it_behaves_like 'apply gift card coupon code'
       end
 
       it_behaves_like 'no current order'
@@ -763,6 +835,23 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           it 'doesnt includes the promotion in the response' do
             expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+
+        context 'removing the gift card' do
+          let(:gift_card) { create(:gift_card, store: store) }
+          let(:coupon_code) { gift_card.code }
+
+          before do
+            order.apply_gift_card(gift_card)
+          end
+
+          context 'when gift card is applied' do
+            before { execute }
+
+            it 'changes the adjustment total to 0.0' do
+              expect(order.reload.gift_card_id).to be_nil
+            end
           end
         end
       end
