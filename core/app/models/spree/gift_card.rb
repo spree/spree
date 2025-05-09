@@ -4,7 +4,23 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
-    enum :state, { active: 0, redeemed: 1, canceled: 2, redeemed_by_order: 3, partialy_redeemed: 4 }
+    state_machine :state, initial: :active do
+      event :cancel do
+        transition active: :canceled
+      end
+
+      event :redeem do
+        transition active: :redeemed
+      end
+
+      event :redeem_by_order do
+        transition active: :redeemed_by_order
+      end
+
+      event :partial_redeem do
+        transition active: :partialy_redeemed
+      end
+    end
 
     validates :code, presence: true, uniqueness: true
     validates :amount, numericality: { greater_than: 0 }
