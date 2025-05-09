@@ -7,13 +7,13 @@ en:
         newsletter_settings: Newsletter settings
         no_addresses_description: If you place an order, you will find address details here.
         no_addresses_title: You currently have no Addresses
+        no_gift_cards: You currently have no gift cards
         no_orders_description: If you place an order, you will find details here.
         no_orders_title: You currently have no orders
         no_store_credits: You don't have any store credit.
         personal_details: Personal details
         please_update_your_contact_details: Please update your contact details
         store_credits_history: Store credits history
-        no_gift_cards: You currently have no gift cards
       cart:
         items_in_cart: Items in cart
         shipping_and_taxes_calculated_at_checkout: Shipping & taxes calculated at checkout
