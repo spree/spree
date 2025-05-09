@@ -32,7 +32,7 @@ module Spree
       end
 
       def available_blocks_to_add
-        [Spree::PageBlocks::Image]
+        [Spree::PageBlocks::Image, Spree::PageBlocks::Heading, Spree::PageBlocks::Text, Spree::PageBlocks::NewsletterForm]
       end
 
       def can_sort_blocks?
