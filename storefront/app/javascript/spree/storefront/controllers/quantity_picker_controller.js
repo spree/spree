@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [ 'quantity', 'increase', 'decrease' ]
 
   static values = {
-    min: { type: Number, default: 0 },
+    min: { type: Number, default: 1 },
     max: { type: Number, default: 9999 }
   }
 
