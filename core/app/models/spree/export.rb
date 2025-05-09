@@ -7,7 +7,6 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
-    include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     include Spree::Core::NumberGenerator.new(prefix: 'EF')
 
@@ -16,7 +15,6 @@ module Spree
     #
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: Spree.admin_user_class.to_s
-    belongs_to :vendor, -> { with_deleted }, class_name: 'Spree::Vendor', optional: true
 
     #
     # Validations
@@ -31,7 +29,7 @@ module Spree
     #
     # Ransack configuration
     #
-    self.whitelisted_ransackable_attributes = %w[number type format vendor_id]
+    self.whitelisted_ransackable_attributes = %w[number type format]
 
     #
     # Attachments
@@ -102,7 +100,6 @@ module Spree
     def scope
       scope = model_class
       scope = scope.for_store(store) if model_class.respond_to?(:for_store)
-      scope = scope.for_vendor(vendor) if model_class.respond_to?(:for_vendor) && vendor.present?
       scope.accessible_by(current_ability)
     end
 

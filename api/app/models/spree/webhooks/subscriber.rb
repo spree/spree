@@ -1,16 +1,11 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
-      if defined?(Spree::VendorConcern)
-        include Spree::VendorConcern
-      end
-
       if Rails::VERSION::STRING >= '7.1.0'
         has_secure_token :secret_key, on: :save
       else
         has_secure_token :secret_key
       end
-
 
       has_many :events, inverse_of: :subscriber
 
@@ -28,7 +23,7 @@ module Spree
       def latest_event_at
         events.order(:created_at).last&.created_at
       end
-      
+
       def self.with_urls_for(event)
         where(
           case ActiveRecord::Base.connection.adapter_name

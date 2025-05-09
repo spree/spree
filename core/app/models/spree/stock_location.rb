@@ -7,9 +7,6 @@ module Spree
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations
     end
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     acts_as_paranoid
 

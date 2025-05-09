@@ -7,9 +7,6 @@ module Spree
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     extend Spree::DisplayMoney
 

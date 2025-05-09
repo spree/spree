@@ -1,7 +1,6 @@
 module Spree
   class Report < Spree.base_class
     include Spree::SingleStoreResource
-    include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     #
     # Associations
