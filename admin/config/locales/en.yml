@@ -77,6 +77,23 @@ en:
       export_only_filtered_records: Export only filtered records, matching the search criteria
       filters: Filters
       getting_started: Getting started
+      gift_cards:
+        active: Active
+        expired: Expired
+        redeemed: Redeemed
+        all: All
+        all_statuses: All statuses
+        issued_to: Issued to
+        new_gift_card: New gift card
+        expires_at: Expires at
+        minimum_order_amount: Minimum order amount
+      gift_card_batches:
+        codes_count: Codes count
+        expires_at: Expires at
+        gift_card_batch: Gift card batch
+        minimum_order_amount: Minimum order amount
+        new_gift_card_batch: New gift card batch
+        prefix: Prefix
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
