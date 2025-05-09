@@ -80,7 +80,7 @@ en:
       gift_card_batches:
         codes_count: Codes count
         gift_card_batch: Gift card batch
-        new_gift_card_batch: New gift card batch
+        new_gift_card_batch: New Gift Card Batch
         prefix: Prefix
       gift_cards:
         active: Active
