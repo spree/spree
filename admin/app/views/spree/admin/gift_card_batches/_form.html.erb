@@ -3,13 +3,13 @@
     <div class="card mb-4">
       <div class="card-header">
         <h5 class="card-title">
-          <%= Spree.t(:gift_card_batch) %>
+          <%= Spree.t('admin.gift_card_batches.gift_card_batch') %>
         </h5>
       </div>
 
       <div class="card-body">
         <div class="form-group">
-          <%= f.label :prefix, raw(Spree.t(:prefix) + required_span_tag)%>
+          <%= f.label :prefix, raw(Spree.t('admin.gift_card_batches.prefix') + required_span_tag)%>
           <%= f.text_field :prefix, class: 'form-control', disabled: f.object.persisted? %>
           <%= f.error_message_on :prefix %>
         </div>
@@ -32,7 +32,7 @@
         </div>
 
         <div class="form-group">
-          <%= f.label :codes_count, raw(Spree.t(:codes_count) + required_span_tag) %>
+          <%= f.label :codes_count, raw(Spree.t('admin.gift_card_batches.codes_count') + required_span_tag) %>
           <%= f.number_field :codes_count, class: 'form-control', disabled: f.object.persisted?, required: true %>
           <%= f.error_message_on :codes_count %>
         </div>

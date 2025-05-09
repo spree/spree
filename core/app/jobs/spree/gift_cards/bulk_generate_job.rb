@@ -1,7 +1,7 @@
 module Spree
   module GiftCards
     class BulkGenerateJob < ::Spree::BaseJob
-      queue_as Spree.queues.gift_cards_bulk_generate
+      queue_as Spree.queues.gift_cards
 
       def perform(id)
         gift_cards_batch = Spree::GiftCardBatch.find(id)

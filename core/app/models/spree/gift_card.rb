@@ -23,7 +23,7 @@ module Spree
       has_many :orders, through: :store_credits, source: :orders
     end
 
-    has_many :users, through: :orders
+    has_many :users, through: :orders, class_name: Spree.user_class.to_s
 
     scope :active, -> { where(state: [:active, :partialy_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
@@ -37,8 +37,6 @@ module Spree
     before_validation :generate_code
     before_validation :normalize_code
     after_validation :set_amount_remaining
-
-    after_commit :track_gift_card_issued, on: :create
 
     before_destroy :ensure_can_be_deleted
 
@@ -144,20 +142,6 @@ module Spree
       return if amount_remaining_changed?
 
       self.amount_remaining = amount
-    end
-
-    def track_gift_card_issued
-      return unless user_id.present?
-
-      if store_integration('klaviyo').present?
-        Klaviyo::CreateEventWorker.perform_async(
-          store_integration('klaviyo').id,
-          'Gift Card Issued',
-          id,
-          self.class.to_s,
-          user.email
-        )
-      end
     end
 
     def ensure_can_be_deleted

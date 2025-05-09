@@ -896,17 +896,14 @@ module Spree
 
     def after_cancel
       shipments.each(&:cancel!)
-      payments.completed.each(&:cancel!)
-
-      # Free up authorized store credits
-      payments.store_credits.pending.each(&:void!)
 
       # payments fully covered by gift card won't be refunded
       # we want to only void the payment
-      if (parent || self).gift_card.present? && covered_by_store_credit?
+      if gift_card.present? && covered_by_store_credit?
         payments.completed.store_credits.each(&:void!)
       else
-        payments.completed.not_for_shipping.each(&:cancel!)
+        payments.completed.each(&:cancel!)
+        payments.store_credits.pending.each(&:void!)
       end
 
       send_cancel_email

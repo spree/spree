@@ -171,6 +171,36 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#after_cancel' do
+    context 'when gift card is present' do
+      let(:gift_card) { create(:gift_card, amount: 110) }
+      let(:order) { create(:completed_order_with_totals, store: store, gift_card: gift_card, total: 110) }
+      let!(:payment) { create(:store_credit_payment, order: order, state: 'completed', amount: 110) }
+
+      it 'handles additional actions' do
+        order.cancel
+        order.reload
+
+        expect(order.shipments).to all(have_attributes(state: 'canceled'))
+        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
+      end
+    end
+
+    context 'when no gift card' do
+      let(:order) { create(:completed_order_with_totals, store: store) }
+      let!(:payment) { create(:payment, order: order, state: 'completed', amount: 10) }
+
+      it 'handles additional actions' do
+        order.cancel
+        order.reload
+
+        expect(order.shipments).to all(have_attributes(state: 'canceled'))
+        expect(order.payments).to all(have_attributes(state: 'void'))
+        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
+      end
+    end
+  end
+
   describe '#canceled_by' do
     subject { order.canceled_by(admin_user) }
 

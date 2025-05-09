@@ -3,10 +3,8 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
 
-    LIMIT = ENV.fetch('GIFT_CARD_BATCH_LIMIT', 50_000).to_i
-
     validates :codes_count, :amount, :prefix, presence: true
-    validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: LIMIT }
+    validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit] }
     validates :amount, numericality: { greater_than: 0 }
     validates :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
 
