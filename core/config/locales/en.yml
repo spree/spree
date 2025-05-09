@@ -1028,6 +1028,7 @@ en:
     expiration: Expiration
     expiration_date: Expiration Date
     expired: Expired
+    expires_at: Expires at
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1253,6 +1254,7 @@ en:
     metadata: Metadata
     min: Min
     minimal_amount: Minimal Amount
+    minimum_order_amount: Minimum order amount
     missing_return_authorization: Missing Return Authorization for %{item_name}.
     month: Month
     more: More
