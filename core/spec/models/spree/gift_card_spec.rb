@@ -17,7 +17,7 @@
 #  tenant_id            :bigint           not null
 #  user_id              :bigint
 #
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Spree::GiftCard, type: :model do
   describe 'before_destroy :ensure_can_be_deleted' do
@@ -37,52 +37,54 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
-  describe 'after_commit :track_gift_card_issued' do
-    subject do
-      create(
-        :gift_card,
-        user: user,
-        code: 'gift-card-code-1234',
-        amount: 10,
-        minimum_order_amount: 50,
-        expires_at: 2.days.from_now
-      )
-    end
+  if defined?(Sidekiq)
+    describe 'after_commit :track_gift_card_issued' do
+      subject do
+        create(
+          :gift_card,
+          user: user,
+          code: 'gift-card-code-1234',
+          amount: 10,
+          minimum_order_amount: 50,
+          expires_at: 2.days.from_now
+        )
+      end
 
-    before do
-      Sidekiq::Worker.clear_all
-    end
+      before do
+        Sidekiq::Worker.clear_all
+      end
 
-    context 'with klaviyo integration' do
-      let!(:klaviyo_integration) { create(:klaviyo_integration) }
+      context 'with klaviyo integration' do
+        let!(:klaviyo_integration) { create(:klaviyo_integration) }
 
-      context 'without user assigned' do
-        let(:user) { nil }
+        context 'without user assigned' do
+          let(:user) { nil }
+
+          it 'skips tracking' do
+            subject
+            expect(Klaviyo::CreateEventWorker.jobs).to be_empty
+          end
+        end
+
+        context 'with user assigned' do
+          let(:user) { create(:user) }
+
+          it 'tracks the gift card issued' do
+            subject
+
+            expect(Klaviyo::CreateEventWorker.jobs.count).to eq(1)
+            expect(Klaviyo::CreateEventWorker.jobs.last['args']).to eq([klaviyo_integration.id, 'Gift Card Issued', subject.id, 'Spree::GiftCard', user.email])
+          end
+        end
+      end
+
+      context 'without klaviyo integration' do
+        let(:user) { create(:user) }
 
         it 'skips tracking' do
           subject
           expect(Klaviyo::CreateEventWorker.jobs).to be_empty
         end
-      end
-
-      context 'with user assigned' do
-        let(:user) { create(:user) }
-
-        it 'tracks the gift card issued' do
-          subject
-
-          expect(Klaviyo::CreateEventWorker.jobs.count).to eq(1)
-          expect(Klaviyo::CreateEventWorker.jobs.last['args']).to eq([klaviyo_integration.id, 'Gift Card Issued', subject.id, 'Spree::GiftCard', user.email])
-        end
-      end
-    end
-
-    context 'without klaviyo integration' do
-      let(:user) { create(:user) }
-
-      it 'skips tracking' do
-        subject
-        expect(Klaviyo::CreateEventWorker.jobs).to be_empty
       end
     end
   end
