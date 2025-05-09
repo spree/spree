@@ -51,7 +51,7 @@
                 <%= f.number_field :minimum_order_amount, class: 'form-control', min: 0, step: 0.01, disabled: !f.object.editable? %>
                 <span class="text-muted form-text">
                   <% if !f.object.editable? %>
-                    You can't change the amount of a redeemed gift card
+                    You can't change the minimum order amount of a redeemed gift card
                   <% end %>
                 </span>
                 <%= f.error_message_on :minimum_order_amount %>

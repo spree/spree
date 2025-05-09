@@ -42,7 +42,7 @@ module Spree
     def generate_code
       loop do
         code = "#{prefix.downcase}#{SecureRandom.hex(3).downcase}"
-        break code unless Spree::GiftCard.exists?(code: code) && @gift_cards_to_insert.detect { |gc| gc[:code] == code }
+        break code unless Spree::GiftCard.exists?(code: code) || @gift_cards_to_insert.detect { |gc| gc[:code] == code }
       end
     end
 
@@ -50,6 +50,7 @@ module Spree
 
     def gift_card_hash
       {
+        state: :active,
         gift_card_batch_id: id,
         amount: amount,
         amount_remaining: amount,

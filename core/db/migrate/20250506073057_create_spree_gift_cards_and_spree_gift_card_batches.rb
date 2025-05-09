@@ -17,7 +17,7 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
       t.references :store_credit
       t.date :expires_at
       t.string :code, null: false
-      t.integer :state, default: 0, null: false
+      t.string :state, null: false
       t.decimal :amount, precision: 10, scale: 2, null: false
       t.decimal :amount_remaining, precision: 10, scale: 2, default: '0.0', null: false
       t.references :gift_card_batch
