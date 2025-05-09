@@ -12,7 +12,7 @@
 #  updated_at           :datetime         not null
 #  tenant_id            :bigint           not null
 #
-require 'rails_helper'
+require 'spec_helper'
 
 RSpec.describe Spree::GiftCardBatch, type: :model do
   describe '#create_gift_cards' do
@@ -23,10 +23,10 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
 
       expect(gift_card_batch.gift_cards.count).to eq 2
 
-      expect(gift_card_batch.gift_cards.pluck(:amount).uniq).to  eq [gift_card_batch.amount]
-      expect(gift_card_batch.gift_cards.pluck(:amount_remaining).uniq).to  eq [gift_card_batch.amount]
-      expect(gift_card_batch.gift_cards.pluck(:expires_at).uniq).to  eq [gift_card_batch.expires_at]
-      expect(gift_card_batch.gift_cards.take.code).to  match(/batch_/)
+      expect(gift_card_batch.gift_cards.pluck(:amount).uniq).to eq [gift_card_batch.amount]
+      expect(gift_card_batch.gift_cards.pluck(:amount_remaining).uniq).to eq [gift_card_batch.amount]
+      expect(gift_card_batch.gift_cards.pluck(:expires_at).uniq).to eq [gift_card_batch.expires_at]
+      expect(gift_card_batch.gift_cards.take.code).to match(/batch_/)
     end
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       before { gift_card_batch.codes_count = 501 }
 
       it 'enqueues a job' do
-        expect(Spree::GiftCards::BulkGenerateWorker).to receive(:perform_async)
+        expect(Spree::GiftCards::BulkGenerateJob).to receive(:perform_later)
 
         gift_card_batch.save
       end

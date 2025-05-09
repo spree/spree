@@ -47,7 +47,7 @@
             </div>
             <div class="col-6">
               <div class="form-group">
-                <%= f.label :minimum_order_amount, raw(Spree.t('admin.gift_cards.minimum_order_amount') + required_span_tag) %>
+                <%= f.label :minimum_order_amount, raw(Spree.t(:minimum_order_amount) + required_span_tag) %>
                 <%= f.number_field :minimum_order_amount, class: 'form-control', min: 0, step: 0.01, disabled: !f.object.editable? %>
                 <span class="text-muted form-text">
                   <% if !f.object.editable? %>
@@ -79,7 +79,7 @@
 
             <div class="col-6">
               <div class="form-group">
-                <%= f.label :expires_at, Spree.t('admin.gift_cards.expires_at') %>
+                <%= f.label :expires_at, Spree.t(:expires_at) %>
                 <%= f.date_field :expires_at, class: 'form-control', disabled: !f.object.editable? %>
                 <%= f.error_message_on :expires_at %>
               </div>
