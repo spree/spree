@@ -16,7 +16,7 @@ module Spree
     rescue => e
       Rails.error.report(
         e,
-        context: { event_name: event_name, record_id: record&.id, record_type: record&.class&.name },
+        context: { event_name: event_name, record: record },
         source: 'spree.storefront'
       )
     end
