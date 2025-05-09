@@ -12,14 +12,24 @@ module Spree
       nullify_translatable_fields = @resource_class.translatable_fields.map { |f| "#{f}=null" }.join(', ')
 
       unless @resource_class::Translation.exists?
-        ActiveRecord::Base.connection.execute("
-          INSERT INTO #{@translations_table} (#{@translatable_fields}, #{@foreign_key}, locale, created_at, updated_at)
-          SELECT #{@translatable_fields}, id, '#{@default_locale}' as locale, created_at, updated_at FROM #{@resource_class.table_name};
-                                              ")
-        ActiveRecord::Base.connection.execute("
-          UPDATE #{@resource_class.table_name}
-          SET #{nullify_translatable_fields};
-                                              ")
+        # Copy data from main table to translations table
+        @resource_class.find_each do |resource|
+          translation_attrs = @resource_class.translatable_fields.each_with_object({}) do |field, attrs|
+            attrs[field] = resource[field]
+          end
+
+          @resource_class::Translation.create!(
+            translation_attrs.merge(
+              @foreign_key => resource.id,
+              locale: @default_locale,
+              created_at: resource.created_at,
+              updated_at: resource.updated_at
+            )
+          )
+        end
+
+        # Nullify translatable fields in main table
+        @resource_class.update_all(nullify_translatable_fields)
       end
     end
 
@@ -27,14 +37,16 @@ module Spree
       translation_table_fields = @resource_class.translatable_fields.map { |f| "#{@translations_table}.#{f}" }.join(', ')
       row_expression = @resource_class.translatable_fields.count == 1 ? 'ROW' : ''
 
-      ActiveRecord::Base.connection.execute("
-          UPDATE #{@resource_class.table_name}
-          SET (#{@translatable_fields}) = #{row_expression}(#{translation_table_fields})
-          FROM #{@translations_table}
-          WHERE #{@translations_table}.#{@foreign_key} = #{@resource_class.table_name}.id
-                                            ")
+      # Update main table with translations
+      @resource_class::Translation.find_each do |translation|
+        resource = @resource_class.find(translation[@foreign_key])
+        @resource_class.translatable_fields.each do |field|
+          resource.update_column(field, translation[field])
+        end
+      end
 
-      ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{@translations_table}")
+      # Clear translations table
+      @resource_class::Translation.delete_all
     end
   end
 end
