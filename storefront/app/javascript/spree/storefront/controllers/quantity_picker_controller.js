@@ -4,10 +4,11 @@ export default class extends Controller {
   static targets = [ 'quantity', 'increase', 'decrease' ]
 
   static values = {
-    min: { type: Number, default: 1 },
-    max: { type: Number, default: 9999 },
-    disableClass: { type: String, default: 'opacity-50 cursor-not-allowed' }
+    min: { type: Number, default: 0 },
+    max: { type: Number, default: 9999 }
   }
+
+  static classes = ['disabled']
 
   connect() {
     if (this.quantity <= this.minValue) this.disableButton(this.decreaseTarget)
@@ -39,11 +40,11 @@ export default class extends Controller {
 
   disableButton(button) {
     button.setAttribute('disabled', 'disabled')
-    this.disableClassValue.split(' ').forEach(className => button.classList.add(className))
+    button.classList.add(...this.disabledClasses)
   }
 
   enableButton(button) {
     button.removeAttribute('disabled')
-    this.disableClassValue.split(' ').forEach(className => button.classList.remove(className))
+    button.classList.remove(...this.disabledClasses)
   }
 }
