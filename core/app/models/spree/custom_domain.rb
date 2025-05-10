@@ -14,7 +14,7 @@ module Spree
     # Validations
     #
     validates :url, presence: true, uniqueness: true, format: {
-      with: %r{[a-z][a-z0-9-]*[a-z0-9]}i
+      with: %r{\A[a-z][a-z0-9-]*[a-z0-9]\z}i
     }, length: { in: 1..63 }
     validate :url_is_valid
 
