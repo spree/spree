@@ -3,14 +3,8 @@ module Spree
     class AssetsController < ResourceController
       include Spree::Admin::SessionAssetsHelper
 
-      ALLOWED_ASSET_TYPES = ['Spree::Asset', 'Spree::Image'].freeze
-
       def create
-        if ALLOWED_ASSET_TYPES.include?(asset_type)
-          @asset = asset_type.constantize.new(permitted_resource_params)
-        else
-          raise "Invalid asset type"
-        end
+        @asset = asset_type.new(permitted_resource_params)
 
         # we only should check this for vendor users
         authorize! :update, @asset.viewable if @asset.viewable.present? && current_vendor
@@ -47,7 +41,7 @@ module Spree
       private
 
       def permitted_resource_params
-        params.require(:asset).permit(:type, :viewable_id, :viewable_type, :attachment, :alt, :position)
+        params.require(:asset).permit(Spree::PermittedAttributes.asset_attributes)
       end
 
       def create_turbo_stream_enabled?
@@ -63,7 +57,11 @@ module Spree
       end
 
       def asset_type
-        permitted_resource_params[:type] || model_class.to_s
+        allowed_asset_types.find { |type| type.to_s == permitted_resource_params[:type] } || model_class
+      end
+
+      def allowed_asset_types
+        [Spree::Asset, Spree::Image]
       end
     end
   end

@@ -2,6 +2,7 @@ module Spree
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
+      :asset_attributes,
       :checkout_attributes,
       :classification_attributes,
       :cms_page_attributes,
@@ -46,6 +47,8 @@ module Spree
       { country: [:iso, :name, :iso3, :iso_name],
         state: [:name, :abbr] }
     ]
+
+    @@asset_attributes = [:type, :viewable_id, :viewable_type, :attachment, :alt, :position]
 
     @@checkout_attributes = [
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, :use_shipping,
