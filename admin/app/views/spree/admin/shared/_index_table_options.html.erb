@@ -5,7 +5,7 @@
   <% args[:action] = per_page_action %>
 <% end %>
 
-<% if collection.any? && collection.total_pages > 1 %>
+<% if collection.any? %>
   <div class="py-2 border-top">
     <div class="index-pagination-row d-flex align-items-center">
       <div class="col-6 col-lg-3">
