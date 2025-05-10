@@ -27,9 +27,10 @@ module Spree
 
       def create
         page_block_type = params.dig(:page_block, :type)
+        allowed_type = allowed_types.find { |type| type.to_s == page_block_type }
 
-        if allowed_types.map(&:to_s).include?(page_block_type) && page_block_type.safe_constantize.present?
-          @page_block = page_block_type.constantize.new
+        if allowed_type
+          @page_block = allowed_type.new
           @page_block.section = @page_section
           @page_block.save!
         end

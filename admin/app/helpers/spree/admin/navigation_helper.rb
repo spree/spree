@@ -52,11 +52,7 @@ module Spree
       # @param per_page [Integer] the number of items per page
       # @return [Hash] the params to apply per page
       def per_page_dropdown_params(per_page)
-        args = params.permit!.to_h.clone
-        args.delete(:page)
-        args.delete(:per_page)
-        args.merge!(per_page: per_page)
-        args
+        params.to_unsafe_h.clone.merge(per_page: per_page, page: nil)
       end
 
       # render a button link to edit a resource

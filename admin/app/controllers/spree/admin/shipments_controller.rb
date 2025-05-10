@@ -55,7 +55,7 @@ module Spree
 
         if errors.any?
           flash[:error] = errors.to_sentence
-          return redirect_back_or_default(spree.edit_admin_order_path(@order))
+          return redirect_back(fallback_location: spree.edit_admin_order_path(@order))
         end
 
         if transfer.valid? && transfer.run!
@@ -64,7 +64,7 @@ module Spree
           flash[:error] = transfer.errors.full_messages.to_sentence
         end
 
-        redirect_back_or_default(spree.edit_admin_order_path(@order))
+        redirect_back(fallback_location: spree.edit_admin_order_path(@order))
       end
 
       private

@@ -36,9 +36,12 @@ module Spree
 
       def model_class
         @model_class = if params[:type].present?
+                         # Find the actual class from allowed types rather than using constantize
                          report_type = "Spree::Reports::#{params[:type].classify}"
-                         if allowed_report_types.include?(report_type)
-                           report_type.constantize
+                         report_class = allowed_report_types.find { |type| type == report_type }
+
+                         if report_class
+                           Object.const_get(report_class)
                          else
                            raise 'Unknown report type'
                          end

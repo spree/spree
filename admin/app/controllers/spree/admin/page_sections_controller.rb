@@ -9,10 +9,15 @@ module Spree
         page_section_type = params.dig(:page_section, :type)
         allowed_types = available_page_section_types.map(&:to_s)
 
-        if allowed_types.include?(page_section_type) && page_section_type.safe_constantize.present?
-          @page_section = page_section_type.constantize.new(permitted_resource_params)
-          @page_section.pageable = @pageable
-          @page_section.save!
+        if allowed_types.include?(page_section_type)
+          # Find the actual class from our allowed types rather than using constantize
+          section_class = available_page_section_types.find { |type| type.to_s == page_section_type }
+
+          if section_class
+            @page_section = section_class.new(permitted_resource_params)
+            @page_section.pageable = @pageable
+            @page_section.save!
+          end
         end
       end
 

@@ -7,7 +7,7 @@ module Spree
 
       def store_uploaded_asset_in_session(asset)
         ensure_session_uploaded_assets_uuid
-        asset.update(session_uploaded_assets_uuid: session['spree.admin.uploaded_assets.uuid'])
+        asset.update(session_id: session['spree.admin.uploaded_assets.uuid'])
       end
 
       def session_uploaded_assets

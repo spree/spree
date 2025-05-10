@@ -53,8 +53,8 @@ describe Spree::Asset, type: :model do
   describe '.with_session_uploaded_assets_uuid' do
     subject { described_class.with_session_uploaded_assets_uuid(uuid) }
 
-    let!(:assets) { create_list(:asset, 2, session_uploaded_assets_uuid: uuid) }
-    let!(:other_assets) { create_list(:asset, 2, session_uploaded_assets_uuid: SecureRandom.uuid) }
+    let!(:assets) { create_list(:asset, 2, session_id: uuid) }
+    let!(:other_assets) { create_list(:asset, 2, session_id: SecureRandom.uuid) }
 
     let(:uuid) { SecureRandom.uuid }
 

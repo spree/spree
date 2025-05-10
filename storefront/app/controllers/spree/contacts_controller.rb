@@ -40,7 +40,7 @@ module Spree
       return if current_store.customer_support_email.present?
 
       flash[:error] = Spree.t('storefront.contacts.customer_support_email_not_configured')
-      redirect_back_or_default root_path
+      redirect_back(fallback_location: root_path)
     end
   end
 end

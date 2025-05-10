@@ -36,7 +36,15 @@ module Spree
       end
 
       def resource_class
-        @resource_class ||= params[:resource_type].constantize
+        @resource_class ||= begin
+          klass = params[:resource_type]
+          allowed_resource_class.find { |allowed_class| allowed_class.to_s == klass } ||
+            raise(ActiveRecord::RecordNotFound, "Resource type not found")
+        end
+      end
+
+      def allowed_resource_class
+        Rails.application.config.spree.translatable_resources
       end
 
       def set_resource

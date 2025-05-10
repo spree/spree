@@ -33,9 +33,7 @@ module Spree
       # If an old id or a numeric id was used to find the record,
       # we should do a 301 redirect that uses the current friendly id.
       if params[:id] != @taxon.friendly_id
-        params[:id] = @taxon.friendly_id
-        params.permit!
-        redirect_to url_for(params), status: :moved_permanently
+        redirect_to spree.nested_taxons_path(@taxon), status: :moved_permanently
       end
     end
 
