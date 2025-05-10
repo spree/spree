@@ -7,6 +7,7 @@ module Spree
       :classification_attributes,
       :cms_page_attributes,
       :cms_section_attributes,
+      :custom_domain_attributes,
       :customer_return_attributes,
       :digital_attributes,
       :digital_link_attributes,
@@ -62,6 +63,8 @@ module Spree
     @@cms_page_attributes = [:title, :meta_title, :content, :meta_description, :visible, :slug, :locale]
 
     @@cms_section_attributes = [:name, :cms_page_id, :fit, :destination, { content: {}, settings: {} }]
+
+    @@custom_domain_attributes = [:url, :default]
 
     @@customer_return_attributes = [:stock_location_id, {
       return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,

@@ -14,7 +14,7 @@ module Spree
     # Validations
     #
     validates :url, presence: true, uniqueness: true, format: {
-      with: %r{\A[a-z][a-z0-9-]*[a-z0-9]\z}i
+      with: %r{\A(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z}i
     }, length: { in: 1..63 }
     validate :url_is_valid
 
@@ -26,6 +26,7 @@ module Spree
     after_validation :ensure_default, on: :create
 
     def url_is_valid
+      return if url.blank?
       parts = url.split('.')
 
       errors.add(:url, 'use domain or subdomain') if (parts[0] != 'www' && parts.size > 3) || (parts[0] == 'www' && parts.size > 4) || parts.size < 2
