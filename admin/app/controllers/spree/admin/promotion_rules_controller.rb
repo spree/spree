@@ -9,8 +9,12 @@ module Spree
 
       def model_class
         @model_class = if params.dig(:promotion_rule, :type).present?
-                         if allowed_rule_types.map(&:to_s).include?(params.dig(:promotion_rule, :type))
-                           params.dig(:promotion_rule, :type).safe_constantize
+                         # Find the actual class from allowed types rather than using constantize
+                         rule_type = params.dig(:promotion_rule, :type)
+                         rule_class = allowed_rule_types.find { |type| type.to_s == rule_type }
+
+                         if rule_class
+                           rule_class
                          else
                            raise 'Unknown promotion rule type'
                          end

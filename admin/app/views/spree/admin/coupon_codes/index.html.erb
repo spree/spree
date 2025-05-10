@@ -19,14 +19,14 @@
               </button>
               <div class="dropdown-menu w-100 font-size-sm" style="min-width: 200px">
                 <%= active_link_to Spree.t(:all),
-                  spree.admin_promotion_coupon_codes_path,
+                  spree.admin_promotion_coupon_codes_path(@promotion),
                   class: 'dropdown-item',
                   active: (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
                 <%= link_to Spree.t('admin.coupon_codes.used'),
-                  params.merge({q: {state_eq: :used}}).permit!,
+                  spree.admin_promotion_coupon_codes_path(@promotion, q: {state_eq: :used}),
                   class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'used'}" %>
                 <%= link_to Spree.t('admin.coupon_codes.unused'),
-                  params.merge({q: {state_eq: :unused}}).permit!,
+                  spree.admin_promotion_coupon_codes_path(@promotion, q: {state_eq: :unused}),
                   class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'unused'}" %>
               </div>
             </div>
