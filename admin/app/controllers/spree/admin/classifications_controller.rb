@@ -69,6 +69,10 @@ module Spree
 
         sort_orders.fetch(sort_order.to_s, 'manual')
       end
+
+      def permitted_resource_params
+        params.require(:classification).permit(Spree::PermittedAttributes.classification_attributes)
+      end
     end
   end
 end

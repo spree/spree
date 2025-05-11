@@ -17,26 +17,22 @@
           <%= zone_form.text_field :description, class: 'form-control' %>
         </div>
 
-        <div class="form-group checkbox">
-          <%= label_tag "zone[#{:default_tax}" do %>
-            <%= zone_form.check_box :default_tax %>
-            <%= Spree.t(:default_tax_zone) %>
-          <% end %>
+        <div class="form-group">
+          <div class="custom-control custom-checkbox">
+            <%= zone_form.check_box :default_tax, class: 'custom-control-input' %>
+            <%= zone_form.label :default_tax, Spree.t(:default_tax_zone), class: 'custom-control-label' %>
+          </div>
         </div>
 
         <div class="form-group">
           <strong><%= Spree.t(:type) %></strong>
-          <div class="radio my-2">
-            <%= label_tag :country_based do %>
-              <%= zone_form.radio_button :kind, :country, id: 'country_based', data: { action: 'auto-submit#submit' }  %>
-              <%= Spree.t(:country_based) %>
-            <% end %>
+          <div class="custom-control custom-radio my-2">
+            <%= zone_form.radio_button :kind, :country, id: 'country_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+            <%= label_tag :country_based, Spree.t(:country_based), class: 'custom-control-label' %>
           </div>
-          <div class="radio my-2">
-            <%= label_tag :state_based do %>
-              <%= zone_form.radio_button :kind, :state, id: 'state_based', data: { action: 'auto-submit#submit' } %>
-              <%= Spree.t(:state_based) %>
-            <% end %>
+          <div class="custom-control custom-radio my-2">
+            <%= zone_form.radio_button :kind, :state, id: 'state_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+            <%= label_tag :state_based, Spree.t(:state_based), class: 'custom-control-label' %>
           </div>
         </div>
       </div>

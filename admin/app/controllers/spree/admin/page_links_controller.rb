@@ -38,6 +38,15 @@ module Spree
         @page_link.linkable_type ||= @parent.default_linkable_type
         @page_link.linkable ||= @parent.default_linkable_resource
       end
+
+      # for create action we don't pass the page_link at all
+      def permitted_resource_params
+        if params[:page_link].present?
+          params.require(:page_link).permit(permitted_page_link_attributes)
+        else
+          {}
+        end
+      end
     end
   end
 end

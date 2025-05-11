@@ -283,14 +283,6 @@ module Spree
         clone_admin_product_url resource
       end
 
-      def permitted_resource_params
-        if cannot?(:activate, @product) && @new_status&.to_sym == :active
-          super.except(:status, :make_active_at).permit!
-        else
-          super
-        end
-      end
-
       private
 
       def variant_stock_includes
@@ -360,6 +352,16 @@ module Spree
       def check_slug_availability
         new_slug = permitted_resource_params[:slug]
         permitted_resource_params[:slug] = @product.ensure_slug_is_unique(new_slug)
+      end
+
+      def permitted_resource_params
+        @permitted_resource_params ||= begin
+          if cannot?(:activate, @product) && @new_status&.to_sym == :active
+            params.require(:product).permit(permitted_product_attributes).except(:status, :make_active_at)
+          else
+            params.require(:product).permit(permitted_product_attributes)
+          end
+        end
       end
     end
   end

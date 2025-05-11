@@ -6,6 +6,10 @@ module Spree
       def model_class
         Spree::DummyModel
       end
+
+      def permitted_resource_params
+        params.require(:dummy_model).permit(:name)
+      end
     end
   end
 end
@@ -34,18 +38,6 @@ describe Spree::Admin::DummyModelsController, type: :controller do
 
     it 'creates the resource' do
       expect { subject }.to change { Spree::DummyModel.count }.by(1)
-    end
-
-    context 'without any parameters' do
-      let(:params) { {} }
-
-      before do
-        allow_any_instance_of(Spree::DummyModel).to receive(:name).and_return('some name')
-      end
-
-      it 'creates the resource' do
-        expect { subject }.to change { Spree::DummyModel.count }.by(1)
-      end
     end
   end
 

@@ -53,6 +53,10 @@ module Spree
       def allowed_report_types
         Rails.application.config.spree.reports.map(&:to_s)
       end
+
+      def permitted_resource_params
+        params.require(:report).permit(permitted_report_attributes)
+      end
     end
   end
 end

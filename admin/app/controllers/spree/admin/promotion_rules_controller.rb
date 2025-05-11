@@ -38,6 +38,10 @@ module Spree
       def collection_url
         spree.admin_promotion_path(parent)
       end
+
+      def permitted_resource_params
+        params.require(:promotion_rule).permit(*permitted_promotion_rule_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
+      end
     end
   end
 end

@@ -47,6 +47,10 @@ module Spree
       def allowed_payment_types
         Rails.application.config.spree.payment_methods
       end
+
+      def permitted_resource_params
+        params.require(:payment_method).permit(permitted_payment_method_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
+      end
     end
   end
 end

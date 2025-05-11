@@ -73,6 +73,10 @@ module Spree
       def collection
         super.without_previews.order(default: :desc).includes(screenshot_attachment: :blob)
       end
+
+      def permitted_resource_params
+        params.require(:theme).permit(permitted_theme_attributes)
+      end
     end
   end
 end

@@ -81,6 +81,10 @@ module Spree
           spree.admin_users_url
         end
       end
+
+      def permitted_resource_params
+        params.require(:address).permit(Spree::PermittedAttributes.address_attributes)
+      end
     end
   end
 end

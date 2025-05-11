@@ -46,6 +46,10 @@ module Spree
           @promotion_action.calculator_type = @promotion_action.class.calculators.first.name
         end
       end
+
+      def permitted_resource_params
+        params.require(:promotion_action).permit(permitted_promotion_action_attributes)
+      end
     end
   end
 end
