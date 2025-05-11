@@ -18,7 +18,7 @@ module Spree
       end
 
       event :partial_redeem do
-        transition active: :partialy_redeemed
+        transition active: :partially_redeemed
       end
     end
 
@@ -41,7 +41,7 @@ module Spree
 
     has_many :users, through: :orders, class_name: Spree.user_class.to_s
 
-    scope :active, -> { where(state: [:active, :partialy_redeemed]).where(expires_at: [nil, Time.current..]) }
+    scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
     scope :redeemed, -> { where(state: [:redeemed, :redeemed_by_order]) }
 
@@ -133,7 +133,7 @@ module Spree
     def undo_apply!(amount:)
       transaction do
         self.amount_remaining = [amount_remaining + amount, self.amount].min
-        self.state = amount_remaining == self.amount ? :active : :partialy_redeemed
+        self.state = amount_remaining == self.amount ? :active : :partially_redeemed
         self.skip_expires_at_validation = true
         save!
 
@@ -145,7 +145,7 @@ module Spree
     end
 
     def redeem!
-      new_state = amount_remaining.positive? ? :partialy_redeemed : :redeemed
+      new_state = amount_remaining.positive? ? :partially_redeemed : :redeemed
       update!(state: new_state)
     end
 

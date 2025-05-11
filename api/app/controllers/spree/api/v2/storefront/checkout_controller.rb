@@ -113,9 +113,9 @@ module Spree
 
           def validate_gift_card_data
             if params[:gift_card_code].present? && spree_current_order.gift_card.nil?
-              render json: { error: 'Gift card is not found' }, status: 422
+              render json: { error: Spree.t('api.v2.gift_card.not_found') }, status: 422
             elsif params[:gift_card_amount].to_d != spree_current_order.gift_card_total.to_d
-              render json: { error: 'Gift card amount is not valid' }, status: 422
+              render json: { error: Spree.t('api.v2.gift_card.amount_not_valid') }, status: 422
             else
               render json: { success: true }, status: 200
             end

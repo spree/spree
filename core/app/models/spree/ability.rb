@@ -63,7 +63,7 @@ module Spree
       can :cancel, Spree::Order, &:allow_cancel?
       cannot [:edit, :update], Spree::RefundReason, mutable: false
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
-      cannot %i[update delete], Spree::GiftCard, state: [:redeemed, :redeemed_by_order, :partialy_redeemed]
+      cannot %i[update delete], Spree::GiftCard, state: [:redeemed, :redeemed_by_order, :partially_redeemed]
       can :edit, Spree::GiftCard
     end
 
