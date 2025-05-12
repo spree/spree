@@ -12,6 +12,7 @@ module Spree
       :digital_attributes,
       :digital_link_attributes,
       :export_attributes,
+      :gift_card_attributes,
       :image_attributes,
       :integration_attributes,
       :inventory_unit_attributes,
@@ -98,6 +99,8 @@ module Spree
     @@digital_link_attributes = [:access_counter]
 
     @@export_attributes = [:type, :format, :record_selection, search_params: {}]
+
+    @@gift_card_attributes = [:code, :amount, :minimum_order_amount, :expires_at, :user_id]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
