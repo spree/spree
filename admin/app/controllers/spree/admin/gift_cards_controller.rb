@@ -9,10 +9,14 @@ module Spree
       private
 
       def permitted_resource_params
-        if @user.present?
-          super.merge(user_id: @user.id)
-        else
-          super
+        @permitted_resource_params ||= begin
+          params_hash = params.require(:gift_card).permit(permitted_gift_card_attributes)
+
+          if @user.present?
+            params_hash.merge(user_id: @user.id)
+          else
+            params_hash
+          end
         end
       end
 
