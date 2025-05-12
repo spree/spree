@@ -78,7 +78,6 @@ import StockTransferController from 'spree/admin/controllers/stock_transfer_cont
 import StoreFormController from 'spree/admin/controllers/store_form_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
 import VariantsFormController from 'spree/admin/controllers/variants_form_controller'
-import WebhooksSubscriberEventsController from 'spree/admin/controllers/webhook_subscriber_events_controller'
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import EnableButtonController from 'spree/core/controllers/enable_button_controller'
@@ -131,7 +130,6 @@ application.register('tabs', Tabs)
 application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)
-application.register('webhooks-subscriber-events', WebhooksSubscriberEventsController)
 
 LocalTime.start()
 
