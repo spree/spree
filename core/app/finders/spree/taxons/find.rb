@@ -68,7 +68,7 @@ module Spree
         if Spree.use_translations?
           taxons.joins(:parent).
             join_translation_table(Taxon, 'parents_spree_taxons').
-            where(["#{Taxon.translation_table_alias}.permalink = ?", parent_permalink])
+            where(Taxon.translation_table_alias => { permalink: parent_permalink })
         else
           taxons.joins(:parent).where(parent: { permalink: parent_permalink })
         end

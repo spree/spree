@@ -63,6 +63,26 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
         }.to raise_error('Unknown promotion rule type')
       end
     end
+
+    context 'with preferences' do
+      let(:rule_params) do
+        {
+          type: 'Spree::Promotion::Rules::Country',
+          preferred_country_iso: 'US'
+        }
+      end
+
+      it 'creates a new promotion rule' do
+        expect {
+          post :create, params: { promotion_id: promotion.id, promotion_rule: rule_params }
+        }.to change(Spree::PromotionRule, :count).by(1)
+      end
+
+      it 'sets the preferences' do
+        post :create, params: { promotion_id: promotion.id, promotion_rule: rule_params }
+        expect(assigns(:promotion_rule).preferred_country_iso).to eq('US')
+      end
+    end
   end
 
   describe 'GET #edit' do

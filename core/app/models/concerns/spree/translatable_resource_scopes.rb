@@ -15,9 +15,23 @@ module Spree
                              end
         translatable_class_foreign_key = "#{translatable_class.table_name.singularize}_id"
 
-        joins("LEFT OUTER JOIN #{translatable_class::Translation.table_name} #{translatable_class.translation_table_alias}
-             ON #{translatable_class.translation_table_alias}.#{translatable_class_foreign_key} = #{join_on_table_name}.id
-             AND #{translatable_class.translation_table_alias}.locale = '#{Mobility.locale}'")
+        joins(
+          Arel::Nodes::OuterJoin.new(
+            Arel::Table.new(translatable_class::Translation.table_name).alias(translatable_class.translation_table_alias),
+            Arel::Nodes::On.new(
+              Arel::Nodes::And.new([
+                Arel::Nodes::Equality.new(
+                  Arel::Table.new(translatable_class.translation_table_alias)[translatable_class_foreign_key],
+                  Arel::Table.new(join_on_table_name)[:id]
+                ),
+                Arel::Nodes::Equality.new(
+                  Arel::Table.new(translatable_class.translation_table_alias)[:locale],
+                  Arel::Nodes::Quoted.new(Mobility.locale.to_s)
+                )
+              ])
+            )
+          )
+        )
       end
     end
   end

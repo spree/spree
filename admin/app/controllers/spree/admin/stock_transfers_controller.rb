@@ -26,8 +26,7 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:stock_transfer).permit(:source_location_id, :destination_location_id, :reference,
-                                               stock_movements_attributes: [:variant_id, :quantity, :originator_id, :stock_item_id])
+        params.require(:stock_transfer).permit(permitted_stock_transfer_attributes)
       end
 
       def prepare_params

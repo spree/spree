@@ -147,6 +147,17 @@ jobs:
       <<: *mysql_environment
       PROJECTS: emails,sample
 
+  # brakeman
+  brakeman:
+    <<: *defaults
+    steps:
+      - checkout
+      - bundle_install
+      - run: bin/brakeman.sh
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: test-artifacts
+
 workflows:
   main:
     jobs:
@@ -189,3 +200,8 @@ workflows:
           requires:
             - build
             - test_other_postgres
+
+      # brakeman
+      - brakeman:
+          requires:
+            - build

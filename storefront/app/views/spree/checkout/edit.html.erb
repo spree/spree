@@ -39,7 +39,7 @@
               <%= Spree.t(:ship_address) %>
             </div>
             <div class="px-5 word-break">
-              <%= @order.ship_address.to_s.gsub('<br/>', ', ').html_safe %>
+              <%= sanitize(@order.ship_address.to_s.gsub('<br/>', ', ')) %>
             </div>
           </div>
           <div class="text-xs">
@@ -82,11 +82,13 @@
     <%= render partial: 'spree/checkout/payment', locals: { order: @order } %>
   <% elsif @order.delivery? %>
     <%= render partial: 'spree/checkout/delivery', locals: { order: @order } %>
-  <% else %>
+  <% elsif step = @order.checkout_steps.find { |s| s == @order.state } %>
     <%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
       <div>
         <%= form.hidden_field :state_lock_version unless @order.errors.any? %>
-        <%= render @order.state, form: form %>
+        <% if step.in?(%w[address delivery payment confirm]) %>
+          <%= render partial: "spree/checkout/#{step}", locals: { form: form } %>
+        <% end %>
       </div>
       <div>
         <%= button_tag Spree.t(:save_and_continue),

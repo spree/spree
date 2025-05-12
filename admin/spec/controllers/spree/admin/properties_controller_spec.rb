@@ -25,7 +25,14 @@ describe Spree::Admin::PropertiesController, type: :controller do
 
   describe '#create ' do
     it 'creates a property' do
-      expect { post :create, params: {property: {name: 'New Property', presentation: 'New Presentation'}} }.to change(Spree::Property, :count).by(1)
+      expect { post :create, params: {property: {name: 'New Property', presentation: 'New Presentation', kind: 'long_text', display_on: 'both'}} }.to change(Spree::Property, :count).by(1)
+      property = Spree::Property.last
+      expect(property.name).to eq('new-property')
+      expect(property.presentation).to eq('New Presentation')
+      expect(property.kind).to eq('long_text')
+      expect(property.display_on).to eq('both')
+
+      expect(response).to redirect_to(spree.edit_admin_property_path(property))
     end
   end
 

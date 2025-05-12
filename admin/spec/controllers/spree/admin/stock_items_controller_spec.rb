@@ -2,19 +2,20 @@ require 'spec_helper'
 
 RSpec.describe Spree::Admin::StockItemsController, type: :controller do
   stub_authorization!
-
-  let!(:stock_location_1) { create(:stock_location, name: 'Stock location 1') }
-  let!(:stock_location_2) { create(:stock_location, name: 'Stock location 2') }
-
-  let!(:variant_1) { create(:variant, create_stock: false, sku: 'shirt-1', product: create(:base_product, name: 'Shirt')) }
-  let!(:variant_1_stock_1) { create(:stock_item, variant: variant_1, stock_location: stock_location_1) }
-  let!(:variant_1_stock_2) { create(:stock_item, variant: variant_1, stock_location: stock_location_2) }
-
-  let!(:variant_2) { create(:variant, create_stock: false, sku: 'shoes-2', product: create(:base_product, name: 'Shoes')) }
-  let!(:variant_2_stock_1) { create(:stock_item, variant: variant_2, stock_location: stock_location_1) }
-  let!(:variant_2_stock_2) { create(:stock_item, variant: variant_2, stock_location: stock_location_2) }
+  render_views
 
   describe '#index' do
+    let!(:stock_location_1) { create(:stock_location, name: 'Stock location 1') }
+    let!(:stock_location_2) { create(:stock_location, name: 'Stock location 2') }
+
+    let!(:variant_1) { create(:variant, create_stock: false, sku: 'shirt-1', product: create(:base_product, name: 'Shirt')) }
+    let!(:variant_1_stock_1) { create(:stock_item, variant: variant_1, stock_location: stock_location_1) }
+    let!(:variant_1_stock_2) { create(:stock_item, variant: variant_1, stock_location: stock_location_2) }
+
+    let!(:variant_2) { create(:variant, create_stock: false, sku: 'shoes-2', product: create(:base_product, name: 'Shoes')) }
+    let!(:variant_2_stock_1) { create(:stock_item, variant: variant_2, stock_location: stock_location_1) }
+    let!(:variant_2_stock_2) { create(:stock_item, variant: variant_2, stock_location: stock_location_2) }
+
     subject(:index) { get :index, params: params }
 
     let(:params) { {} }
@@ -70,6 +71,20 @@ RSpec.describe Spree::Admin::StockItemsController, type: :controller do
           expect(assigns[:collection]).to contain_exactly(variant_1_stock_2, variant_2_stock_2)
         end
       end
+    end
+  end
+
+  describe '#update' do
+    let!(:stock_item) { create(:stock_item, count_on_hand: 100) }
+
+    subject(:update) { patch :update, params: params, format: :turbo_stream }
+
+    let(:params) { { id: stock_item.id, stock_item: { backorderable: true, count_on_hand: 99 } } }
+
+    it 'updates the stock item' do
+      update
+      expect(stock_item.reload.backorderable).to be(true)
+      expect(stock_item.reload.count_on_hand).to eq(99)
     end
   end
 end

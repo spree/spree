@@ -58,6 +58,10 @@ module Spree
 
         @collection
       end
+
+      def permitted_resource_params
+        params.require(:promotion).permit(permitted_promotion_attributes)
+      end
     end
   end
 end

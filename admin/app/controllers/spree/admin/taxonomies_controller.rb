@@ -27,6 +27,10 @@ module Spree
           add_breadcrumb @taxonomy.name, spree.admin_taxonomy_path(@taxonomy)
         end
       end
+
+      def permitted_resource_params
+        params.require(:taxonomy).permit(permitted_taxonomy_attributes)
+      end
     end
   end
 end

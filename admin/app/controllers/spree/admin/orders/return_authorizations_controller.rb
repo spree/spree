@@ -84,6 +84,10 @@ module Spree
         def model_class
           Spree::ReturnAuthorization
         end
+
+        def permitted_resource_params
+          params.require(:return_authorization).permit(permitted_return_authorization_attributes)
+        end
       end
     end
   end

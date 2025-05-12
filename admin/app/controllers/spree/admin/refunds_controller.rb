@@ -38,6 +38,10 @@ module Spree
       def assign_refunder
         @refund.refunder = try_spree_current_user
       end
+
+      def permitted_resource_params
+        params.require(:refund).permit(permitted_refund_attributes)
+      end
     end
   end
 end

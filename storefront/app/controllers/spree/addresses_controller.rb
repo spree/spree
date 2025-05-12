@@ -69,7 +69,7 @@ module Spree
             format.html { redirect_to spree.checkout_state_path(@order.token, 'address') }
           end
         else
-          redirect_back_or_default(spree.account_addresses_path)
+          redirect_back(fallback_location: spree.account_addresses_path)
         end
       elsif params[:from_modal].present?
         render turbo_stream: turbo_stream.update("edit_address_modal_#{@address.id}", partial: 'spree/account/addresses/edit_address_modal', locals: { address: @address }), status: :unprocessable_entity

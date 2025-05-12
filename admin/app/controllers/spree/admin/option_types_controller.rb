@@ -29,6 +29,10 @@ module Spree
           add_breadcrumb @option_type.presentation, spree.edit_admin_option_type_path(@option_type)
         end
       end
+
+      def permitted_resource_params
+        params.require(:option_type).permit(permitted_option_type_attributes)
+      end
     end
   end
 end

@@ -29,6 +29,10 @@ module Spree
         add_breadcrumb Spree.t(:stock), spree.admin_stock_items_path
         add_breadcrumb Spree.t(:stock_items), spree.admin_stock_items_path
       end
+
+      def permitted_resource_params
+        params.require(:stock_item).permit(permitted_stock_item_attributes)
+      end
     end
   end
 end

@@ -112,6 +112,10 @@ module Spree
           add_breadcrumb @object.name, spree.edit_admin_taxonomy_taxon_path(@taxonomy, @object.id)
         end
       end
+
+      def permitted_resource_params
+        params.require(:taxon).permit(permitted_taxon_attributes)
+      end
     end
   end
 end

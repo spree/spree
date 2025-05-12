@@ -38,6 +38,10 @@ module Spree
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(params[:per_page])
       end
+
+      def permitted_resource_params
+        params.require(:page).permit(permitted_page_attributes)
+      end
     end
   end
 end

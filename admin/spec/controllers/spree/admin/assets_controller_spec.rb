@@ -25,7 +25,7 @@ describe Spree::Admin::AssetsController, type: :controller do
         expect(asset.alt).to eq("some text")
         expect(asset.attached?).to be true
         expect(asset.viewable).to be_nil
-        expect(asset.session_uploaded_assets_uuid).to eq(request.session['spree.admin.uploaded_assets.uuid'])
+        expect(asset.session_id).to eq(request.session['spree.admin.uploaded_assets.uuid'])
       end
     end
 
@@ -42,7 +42,7 @@ describe Spree::Admin::AssetsController, type: :controller do
         expect(response).to have_http_status(:ok)
 
         expect(asset.viewable).to eq(product.master)
-        expect(asset.session_uploaded_assets_uuid).to be_nil
+        expect(asset.session_id).to be_nil
       end
     end
   end

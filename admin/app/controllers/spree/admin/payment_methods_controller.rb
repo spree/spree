@@ -11,7 +11,15 @@ module Spree
       private
 
       def build_resource
-        @object = params[:payment_method].delete(:type).constantize.new if params[:payment_method].present?
+        if params[:payment_method].present?
+          payment_type = params[:payment_method].delete(:type)
+          # Find the actual class from our allowed types rather than using constantize
+          payment_class = allowed_payment_types.find { |type| type.to_s == payment_type }
+
+          if payment_class
+            @object = payment_class.new
+          end
+        end
       end
 
       def collection
@@ -34,6 +42,14 @@ module Spree
 
       def set_breadcrumb
         add_breadcrumb @payment_method.name, spree.edit_admin_payment_method_path(@payment_method)
+      end
+
+      def allowed_payment_types
+        Rails.application.config.spree.payment_methods
+      end
+
+      def permitted_resource_params
+        params.require(:payment_method).permit(permitted_payment_method_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
       end
     end
   end
