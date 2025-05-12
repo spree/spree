@@ -82,11 +82,13 @@
     <%= render partial: 'spree/checkout/payment', locals: { order: @order } %>
   <% elsif @order.delivery? %>
     <%= render partial: 'spree/checkout/delivery', locals: { order: @order } %>
-  <% else %>
+  <% elsif step = @order.checkout_steps.find { |s| s == @order.state } %>
     <%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
       <div>
         <%= form.hidden_field :state_lock_version unless @order.errors.any? %>
-        <%= render partial: "spree/checkout/#{@order.state}", locals: { form: form } %>
+        <% if step.in?(%w[address delivery payment confirm]) %>
+          <%= render partial: "spree/checkout/#{step}", locals: { form: form } %>
+        <% end %>
       </div>
       <div>
         <%= button_tag Spree.t(:save_and_continue),
