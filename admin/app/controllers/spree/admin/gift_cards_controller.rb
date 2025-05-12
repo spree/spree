@@ -67,7 +67,7 @@ module Spree
       end
 
       def gift_cards_filter_dropdown_value
-        case params[:q][:status_eq]
+        case params.dig(:q, :status_eq)
         when 'active'
           Spree.t('admin.gift_cards.active')
         when 'expired'
