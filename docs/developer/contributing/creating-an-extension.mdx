@@ -99,7 +99,7 @@ module SpreeSimpleSales
   end
 end
 
-Spree::HomeController.prepend SpreeSimpleSalesSpree::HomeControllerDecorator
+Spree::HomeController.prepend SpreeSimpleSales::Spree::HomeControllerDecorator
 ```
 
 This will select just the products that have a variant with a `sale_price` set.
