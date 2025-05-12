@@ -44,6 +44,7 @@ end
 group :test, :development do
   gem 'awesome_print'
   gem 'brakeman'
+  gem 'bundler-audit'
   gem 'gem-release'
   gem 'i18n-tasks'
   gem 'rubocop', '~> 1.0', require: false

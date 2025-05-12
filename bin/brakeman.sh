@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -euxo pipefail
+set -eux
 
 bundle exec brakeman -p api/ --exit-on-warn --exit-on-error
 bundle exec brakeman -p core/ --exit-on-warn --exit-on-error
