@@ -111,12 +111,6 @@ jobs:
             - spree-bundle-{{ .Branch }}
             - spree-bundle
       - run:
-          name: Add keyserver
-          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
-      - run:
-          name: Install libvips
-          command: sudo apt-get update && sudo apt-get install libvips
-      - run:
           name: Set bundle path
           command: bundle config --local path vendor/bundle
       - run:
@@ -125,7 +119,16 @@ jobs:
             bundle check || bundle install
       - run:
           name: Brakeman
-          command: bundle exec brakeman --exit-on-warn --exit-on-error
+          command: bundle exec brakeman --exit-on-warn --exit-on-error -o brakeman.json -o brakeman.html
+      - run:
+          name: Move brakeman reports to artifacts directory
+          command: |
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman.json /tmp/test-artifacts/
+            mv brakeman.html /tmp/test-artifacts/
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: brakeman-reports
 
 workflows:
   version: 2
