@@ -57,6 +57,19 @@
                       "developer/storefront/custom-css"
                     ]
                   },
+                  {
+                    "group": "Admin Dashboard",
+                    "icon": "gauge",
+                    "pages": [
+                      "developer/admin/admin",
+                      "developer/admin/extending-ui",
+                      "developer/admin/navigation",
+                      "developer/admin/permissions",
+                      "developer/admin/new-admin-sections",
+                      "developer/admin/custom-javascript",
+                      "developer/admin/custom-css"
+                    ]
+                  },
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
