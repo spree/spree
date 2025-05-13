@@ -64,12 +64,13 @@ describe Spree::Admin::IntegrationsController, type: :controller do
     context 'with valid integration type' do
       it 'creates new integration' do
         expect {
-          post :create, params: { integration: { type: integration_type, preferred_api_key: 'APIKEY' } }
+          post :create, params: { integration: { type: integration_type, active: true, preferred_api_key: 'APIKEY' } }
         }.to change(Spree::Integrations::DummyIntegration, :count).by(1)
 
         integration = Spree::Integrations::DummyIntegration.first
         expect(response).to redirect_to(spree.edit_admin_integration_path(integration))
         expect(integration.preferred_api_key).to eq('APIKEY')
+        expect(integration.active).to eq(true)
       end
     end
 

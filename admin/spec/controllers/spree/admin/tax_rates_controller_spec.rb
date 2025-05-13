@@ -34,9 +34,12 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
     let(:tax_rate_params) do
       {
         name: 'General Tax',
-        amount: 0.1, zone_id: zone.id,
+        amount: 0.1,
+        zone_id: zone.id,
         tax_category_id: tax_category.id,
-        calculator_type: calculator.name
+        calculator_type: calculator.name,
+        show_rate_in_label: true,
+        included_in_price: true
       }
     end
 
@@ -53,6 +56,8 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
       expect(tax_rate.zone).to eq(zone)
       expect(tax_rate.tax_category).to eq(tax_category)
       expect(tax_rate.calculator_type).to eq(calculator.name)
+      expect(tax_rate.show_rate_in_label).to eq(true)
+      expect(tax_rate.included_in_price).to eq(true)
     end
   end
 
