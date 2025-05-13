@@ -119,10 +119,14 @@
     <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
   </ul>
 
-  <ul class="nav flex-column mt-auto mb-2">
-    <% if can?(:manage, current_store) %>
-      <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
-      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
-    <% end %>
-  </ul>
+  <div class="mt-auto d-flex flex-column">
+    <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
+
+    <ul class="nav flex-column mb-2">
+      <% if can?(:manage, current_store) %>
+        <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
+        <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
+      <% end %>
+    </ul>
+  </div>
 <% end %>
