@@ -154,6 +154,9 @@ jobs:
       - checkout
       - bundle_install
       - run: bin/brakeman.sh
+      - run:
+          name: Move brakeman reports to artifacts directory
+          command: mv brakeman-*.html /tmp/test-artifacts/
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts
