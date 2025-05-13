@@ -158,7 +158,7 @@ jobs:
           name: Move brakeman reports to artifacts directory
           command: |
             mkdir -p /tmp/test-artifacts/
-            mv brakeman-*.html /tmp/test-artifacts/
+            mv brakeman-*.* /tmp/test-artifacts/
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: brakeman-reports

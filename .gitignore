@@ -55,4 +55,4 @@ vendor/bundle
 */vendor/bundle
 .ignore
 TODO
-brakeman-*.html
+brakeman-*.*
