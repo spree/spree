@@ -1,0 +1,6 @@
+ignore:
+  - spec/**
+  - docs/**
+  - bin/**
+  - sandbox/**
+  - pkg/**
