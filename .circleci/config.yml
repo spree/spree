@@ -156,10 +156,12 @@ jobs:
       - run: bin/brakeman.sh
       - run:
           name: Move brakeman reports to artifacts directory
-          command: mv brakeman-*.html /tmp/test-artifacts/
+          command: |
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman-*.html /tmp/test-artifacts/
       - store_artifacts:
           path: /tmp/test-artifacts
-          destination: test-artifacts
+          destination: brakeman-reports
 
 workflows:
   main:
