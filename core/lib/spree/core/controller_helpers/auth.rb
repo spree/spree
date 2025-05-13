@@ -26,6 +26,7 @@ module Spree
         end
 
         def set_token
+          Spree::Deprecation.warn('set_token is deprecated and will be removed in Spree 5.2. Please use create_token_cookie(token) instead.')
           cookies.permanent.signed[:token] ||= cookies.signed[:guest_token]
           cookies.permanent.signed[:token] ||= {
             value: generate_token,
