@@ -1,7 +1,17 @@
 <% frame_name ||= nil %>
 
+<% search_form_path = if @user.present?
+                        spree.admin_user_orders_path(@user)
+                      elsif @vendor.present? && spree.respond_to?(:admin_vendor_orders_path)
+                        spree.admin_vendor_orders_path(@vendor)
+                      elsif controller_name == 'checkouts'
+                        spree.admin_checkouts_path
+                      else
+                        spree.admin_orders_path
+                      end %>
+
 <%= search_form_for [:admin, @vendor || @user, @search],
-  url: controller_name == 'checkouts' ? spree.admin_checkouts_path : nil,
+  url: search_form_path,
   class: "filter-wrap",
   data: {
     controller: "filters reveal",
