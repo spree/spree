@@ -6,9 +6,6 @@ module Spree
       create.before :process_subscriptions
       update.before :process_subscriptions
 
-      add_breadcrumb Spree.t(:developers), :admin_oauth_applications_path
-      add_breadcrumb Spree.t(:webhooks), :admin_webhooks_subscribers_path
-
       def show
         @webhooks_subscriber = Webhooks::Subscriber.find(params[:id])
         @events = @webhooks_subscriber.events.order(created_at: :desc).page(params[:page]).per(params[:per_page])
