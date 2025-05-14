@@ -96,10 +96,10 @@ module Spree
         joins(:taxonomy).
           join_translation_table(Taxonomy).
           where(
-            Taxonomy.arel_table_alias[:name].lower.eq(taxonomy_name.downcase.strip)
+            Taxonomy.arel_table_alias[:name].lower.matches(taxonomy_name.downcase.strip)
           )
       else
-        joins(:taxonomy).where(Spree::Taxonomy.arel_table[:name].lower.eq(taxonomy_name.downcase.strip))
+        joins(:taxonomy).where(Spree::Taxonomy.arel_table[:name].lower.matches(taxonomy_name.downcase.strip))
       end
     }
 
