@@ -45,7 +45,6 @@ RSpec.feature 'Customers', :js do
       customer_user.billing_address.destroy!
       customer_user.shipping_address.destroy!
 
-      allow_any_instance_of(Spree::Address).to receive(:skip_mainstreet_validation?).and_return(true)
       visit spree.admin_user_path(customer_user)
     end
 
@@ -115,8 +114,6 @@ RSpec.feature 'Customers', :js do
     before do
       customer_user.update!(ship_address: ship_address, bill_address: bill_address)
       visit spree.admin_user_path(customer_user)
-
-      allow_any_instance_of(Spree::Address).to receive(:skip_mainstreet_validation?).and_return(true)
     end
 
     it 'can update user' do
