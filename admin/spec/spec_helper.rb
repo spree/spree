@@ -37,6 +37,7 @@ require 'ffaker'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
+require 'spree/api/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
