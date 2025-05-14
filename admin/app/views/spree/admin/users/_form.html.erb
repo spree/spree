@@ -1,6 +1,6 @@
 <div class="form-group">
   <%= f.label :email, raw(Spree.t(:email) + required_span_tag) %>
-  <%= f.email_field :email, class: 'form-control', required: true, autofocus: f.object.new_record?, required: true %>
+  <%= f.email_field :email, class: 'form-control', required: true, autofocus: f.object.new_record? %>
   <%= f.error_message_on :email %>
 </div>
 <div class="form-group">
