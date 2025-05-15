@@ -912,7 +912,7 @@ module Spree
 
     def track_order_completed_event
       analytics_event_handlers = Spree::Analytics.event_handlers.map do |handler|
-        handler.new(user: order.user, session: nil, request: nil, store: order.store)
+        handler.new(user: user, session: nil, request: nil, store: store)
       end
 
       analytics_event_handlers.each do |handler|
@@ -922,7 +922,7 @@ module Spree
 
     def track_order_cancelled_event
       analytics_event_handlers = Spree::Analytics.event_handlers.map do |handler|
-        handler.new(user: order.user, session: nil, request: nil, store: order.store)
+        handler.new(user: user, session: nil, request: nil, store: store)
       end
 
 
