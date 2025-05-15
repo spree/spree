@@ -3,5 +3,215 @@ title: Extending Admin Dashboard UI
 sidebarTitle: Extending UI
 ---
 
+Spree Admin Dashboard allows you easily extend existing pages and screens with your own code, without any need to modify the core codebase. This allows you to easily inject your custom UI elements without compromising the integrity of the core codebase. Which in effect allows you to safely update your Spree installation to the latest version.
 
+## How it works
 
+The entire system works on the basis of injection points which are declared throughout the admin dashboard and allows you to push your own code there.
+
+Let's say you want to add a new footer to the admin dashboard. You'll need to generate a template in your application:
+
+1. Ensure you have the proper directory to store your templates:
+
+    ```bash
+    mkdir -p app/views/spree/admin/shared
+    ```
+
+2. Create a new partial template file (partial templates file names start with underscore)
+
+    ```bash
+    touch app/views/spree/admin/shared/_additional_footer.html.erb
+    ```
+
+3. Add your own code to the partial
+
+    ```erb
+    <div class="mx-auto bg-light p-3 rounded-lg text-center w-10">
+      Copyright <%= current_store.name %> <%= Time.current.year %>
+    </div>
+    ```
+
+4. Register your partial in `config/initializers/spree.rb`
+
+    ```ruby
+    Rails.application.config.spree_admin.body_end_partials << 'spree/admin/shared/additional_footer'
+    ```
+
+    <Info>
+      Remember to use the correct path to your partial and skip the `_` prefix.
+    </Info>
+
+5. Restart your web server and you should see your new footer.
+
+    <Frame>
+      <img src="/images/developer/admin/partial_injecting_example.png" />
+    </Frame>
+
+    <Info>
+      Making further changes to the partial template will not require you to restart the web server. They will be picked up automatically.
+    </Info>
+
+<Hint>
+  To summarize, we're injecting our code into the `body_end_partials` array. This is a list of partials that will be rendered at the end of the body tag (before the closing `</body>` tag). The order of the partials in the array is the order in which they will be rendered.
+</Hint>
+
+## Admin Dashboard injection points
+
+Here's a list of all places you can inject your custom code:
+
+### Layout
+
+* `head_partials` - Injects code into the `<head>` tag
+* `body_start_partials` - Injects code into the `<body>` tag, before the main content
+* `body_end_partials` - Injects code into the `<body>` tag, after the main content
+
+### Dashboard
+
+#### `dashboard_analytics_partials`
+
+<Frame>
+  <img src="/images/developer/admin/dashboard_analytics_partials.png" />
+</Frame>
+
+Injects code into the dashboard analytics section, eg.
+
+```erb
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Top ERP products</h5>
+  </div>
+  <div class="card-footer">
+    <%# ... my custom content ... %>
+  </div>
+</div>
+```
+
+#### `dashboard_sidebar_partials`
+
+<Frame>
+  <img src="/images/developer/admin/dashboard_sidebar_partials.png" />
+</Frame>
+
+Injects code into the dashboard sidebar, eg.
+
+```erb
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Latest ERP syncs</h5>
+  </div>
+  <div class="card-footer">
+    <%# ... my custom content ... %>
+  </div>
+</div>
+```
+
+### Orders
+
+#### `orders_filters_partials`
+
+<Frame>
+  <img src="/images/developer/admin/orders_filters_partials.png" />
+</Frame>
+
+Injects code into the orders list filters, to build custom filters. This partial has access to the `f` variable, which is the form builder for the filters, eg.
+
+```erb
+<%= f.text_field :q_number_cont, class: "form-control", data: { filters_target: :input } %>
+```
+
+* `q_number_cont` is the name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
+* `form-control` is a bootstrap class for styling the input field.
+* `data: { filters_target: :input }` is needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
+
+#### `order_page_dropdown_partials`
+
+<Frame>
+  <img src="/images/developer/admin/order_page_dropdown_partials.png" />
+</Frame>
+
+Injects code into the order page dropdown. This partial has access to the `order` variable.
+
+To add an additional dropdown item, you can use the following code:
+
+```erb
+<%= link_to "View Order in ERP", "https://erp.com/orders/#{order.number}", class: "dropdown-item", target: "_blank" %>
+```
+
+* `dropdown-item` is a bootstrap class for styling the dropdown item
+* `target: "_blank"` is used to open the link in a new tab
+
+#### `order_page_header_partials`
+
+<Frame>
+  <img src="/images/developer/admin/order_page_header_partials.png" />
+</Frame>
+
+Injects code into the order page header. This partial has access to the `order` variable.
+
+To add an additional action button near the `...` button, you can use the following code:
+
+```erb
+<%= content_for :page_actions do %>
+  <%= link_to "Send to ERP", "#", class: "btn btn-primary" %>
+<% end %>
+```
+
+To add an inline alert to the order page, you can use the following code:
+
+```erb
+<%= content_for :page_alerts do %>
+  <% if order.sent_to_erp_at.blank? %>
+    <div class="alert alert-success">Order sent to ERP at <%= local_time(order.sent_to_erp_at) %></div>
+  <% else %>
+    <div class="alert alert-danger">Order not sent to ERP</div>
+  <% end %>
+<% end %>
+```
+
+* `local_time` is a helper for displaying the time in the user's timezone in a human readable **format** (based on the browser's timezone).
+
+#### `order_page_body_partials`
+
+<Frame>
+  <img src="/images/developer/admin/order_page_body_partials.png" />
+</Frame>
+
+Injects code into the order page body. This partial has access to the `order` variable.
+
+To add a new section to the order page, you can use the following code:
+
+```erb
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">ERP Integration</h5>
+  </div>
+  <div class="card-body">
+    <% if order.sent_to_erp_at.blank? %>
+      <p class="text-muted text-center">Order not sent to ERP</p>
+    <% else %>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          <strong>ERP Order ID:</strong> <%= order.erp_order_id %>
+        </li>
+        <li class="list-group-item">
+          <strong>Sent to ERP at:</strong> <%= local_time(order.sent_to_erp_at) %>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+</div>
+```
+
+#### `order_page_sidebar_partials`
+
+<Frame>
+  <img src="/images/developer/admin/order_page_sidebar_partials.png" />
+</Frame>
+
+Injects code into the order page sidebar. This partial has access to the `order` variable.
+
+### Products
+
+### Customers
+
+### Store Settings

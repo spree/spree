@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "mint",
+  "theme": "maple",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
@@ -65,7 +65,7 @@
                       "developer/admin/extending-ui",
                       "developer/admin/navigation",
                       "developer/admin/permissions",
-                      "developer/admin/new-admin-sections",
+                      "developer/admin/helper-methods",
                       "developer/admin/custom-javascript",
                       "developer/admin/custom-css"
                     ]
