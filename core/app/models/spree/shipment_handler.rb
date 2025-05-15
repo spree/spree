@@ -26,6 +26,7 @@ module Spree
       @shipment.touch :shipped_at
       update_order_shipment_state
       send_shipped_email
+      track_package_shipped_event
     end
 
     protected
@@ -35,6 +36,16 @@ module Spree
 
       new_state = OrderUpdater.new(order).update_shipment_state
       order.update_columns(shipment_state: new_state, updated_at: Time.current)
+    end
+
+    def track_package_shipped_event
+      analytics_event_handlers = Spree::Analytics.event_handlers.map do |handler|
+        handler.new(user: order.user, session: nil, request: nil, store: order.store)
+      end
+
+      analytics_event_handlers.each do |handler|
+        handler.handle_event('package_shipped', {order: order, shipment: @shipment})
+      end
     end
   end
 end
