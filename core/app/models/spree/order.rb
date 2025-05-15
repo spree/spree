@@ -502,6 +502,8 @@ module Spree
       deliver_order_confirmation_email unless confirmation_delivered?
       deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
+      track_order_completed_event
+
       send_order_placed_webhook
 
       consider_risk
@@ -872,6 +874,7 @@ module Spree
 
       send_cancel_email
       update_with_updater!
+      track_order_cancelled_event
       send_order_canceled_webhook
     end
 
@@ -905,6 +908,27 @@ module Spree
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
+    end
+
+    def track_order_completed_event
+      analytics_event_handlers = Spree::Analytics.event_handlers.map do |handler|
+        handler.new(user: order.user, session: nil, request: nil, store: order.store)
+      end
+
+      analytics_event_handlers.each do |handler|
+        handler.handle_event('order_completed', {order: self})
+      end
+    end
+
+    def track_order_cancelled_event
+      analytics_event_handlers = Spree::Analytics.event_handlers.map do |handler|
+        handler.new(user: order.user, session: nil, request: nil, store: order.store)
+      end
+
+
+      analytics_event_handlers.each do |handler|
+        handler.handle_event('order_cancelled', {order: self})
+      end
     end
   end
 end
