@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Admin::ReportsController, type: :controller do
   stub_authorization!
 
+  render_views
+
   let(:store) { @default_store }
 
   describe '#index' do
@@ -50,7 +52,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       }
     end
 
-    subject { post :create, params: { report: report_params } }
+    subject { post :create, params: { report: report_params }, format: :turbo_stream }
 
     it 'creates a new report' do
       expect { subject }.to change(Spree::Report, :count).by(1)

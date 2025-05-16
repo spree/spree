@@ -116,6 +116,10 @@ module Spree
           model_class.new
         end
       end
+
+      def permitted_resource_params
+        params.require(:line_item).permit(permitted_line_item_attributes)
+      end
     end
   end
 end

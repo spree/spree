@@ -2,7 +2,7 @@ module Spree
   module AnalyticsHelper
     def analytics_event_handlers
       @analytics_event_handlers ||= Spree::Analytics.event_handlers.map do |handler|
-        handler.new(user: try_spree_current_user, session: session, request: request)
+        handler.new(user: try_spree_current_user, session: session, request: request, store: Spree::Store.current, visitor_id: visitor_id)
       end
     end
 
@@ -16,9 +16,13 @@ module Spree
     rescue => e
       Rails.error.report(
         e,
-        context: { event_name: event_name, record_id: record&.id, record_type: record&.class&.name },
+        context: { event_name: event_name, record: record },
         source: 'spree.storefront'
       )
+    end
+
+    def visitor_id
+      session[:spree_visitor_token] ||= SecureRandom.uuid
     end
 
     def unsupported_event?(event_name)

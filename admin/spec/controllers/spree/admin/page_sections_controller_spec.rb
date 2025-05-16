@@ -13,6 +13,13 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     session[:theme_preview_id] = theme.id
   end
 
+  describe '#new' do
+    it 'renders the new template' do
+      get :new, params: { page_id: page.id }
+      expect(response).to render_template(:new)
+    end
+  end
+
   describe '#create' do
     subject { post :create, params: params, format: :turbo_stream }
 
@@ -50,6 +57,22 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
           expect { subject }.not_to change(theme.layout_sections, :count)
         end
       end
+    end
+  end
+
+  describe '#update' do
+    let!(:page_section) { create(:header_page_section, pageable: theme) }
+
+    it 'updates the page section' do
+      put :update, params: { id: page_section.id, page_section: { preferred_top_padding: 100 } }, format: :turbo_stream
+
+      expect(page_section.reload.preferred_top_padding).to eq(100)
+    end
+
+    it 'can attach an asset' do
+      put :update, params: { id: page_section.id, page_section: { asset: fixture_file_upload('logo.png', 'image/png') } }, format: :turbo_stream
+
+      expect(page_section.reload.asset).to be_attached
     end
   end
 

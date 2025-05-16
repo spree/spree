@@ -16,6 +16,10 @@ module Spree
       def location_after_save
         spree.edit_admin_option_type_path(@parent)
       end
+
+      def permitted_resource_params
+        params.require(:option_value).permit(permitted_option_value_attributes)
+      end
     end
   end
 end

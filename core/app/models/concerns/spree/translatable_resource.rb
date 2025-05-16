@@ -20,6 +20,10 @@ module Spree
       def translation_table_alias
         "#{self::Translation.table_name}_#{Mobility.normalize_locale(Mobility.locale)}"
       end
+
+      def arel_table_alias
+        Arel::Table.new(translation_table_alias)
+      end
     end
   end
 end

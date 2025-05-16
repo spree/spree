@@ -21,11 +21,12 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session['spree_user_return_to'] || request.env['HTTP_REFERER'] || default)
-          session['spree_user_return_to'] = nil
+          Spree::Deprecation.warn('redirect_back_or_default is deprecated and will be removed in Spree 5.2. Please use redirect_back(fallback_location: default) instead.')
+          redirect_back(fallback_location: default)
         end
 
         def set_token
+          Spree::Deprecation.warn('set_token is deprecated and will be removed in Spree 5.2. Please use create_token_cookie(token) instead.')
           cookies.permanent.signed[:token] ||= cookies.signed[:guest_token]
           cookies.permanent.signed[:token] ||= {
             value: generate_token,

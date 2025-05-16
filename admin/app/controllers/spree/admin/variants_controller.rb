@@ -94,6 +94,10 @@ module Spree
           add_breadcrumb @variant.human_name, spree.edit_admin_product_variant_path(@product, @variant)
         end
       end
+
+      def permitted_resource_params
+        params.require(:variant).permit(permitted_variant_attributes)
+      end
     end
   end
 end

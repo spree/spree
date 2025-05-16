@@ -21,6 +21,7 @@ module Spree
                                :page_sections,
                                :page_blocks,
                                :reports,
+                               :translatable_resources,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations)
@@ -235,6 +236,13 @@ module Spree
           Spree::Reports::SalesTotal
         ]
 
+        Rails.application.config.spree.translatable_resources = [
+          Spree::Product,
+          Spree::Taxon,
+          Spree::Taxonomy,
+          Spree::Store
+        ]
+
         Rails.application.config.spree.analytics_events = {
           product_viewed: 'Product Viewed',
           product_list_viewed: 'Product List Viewed',
@@ -258,7 +266,7 @@ module Spree
           checkout_email_entered: 'Checkout Email Entered',
           checkout_step_viewed: 'Checkout Step Viewed',
           checkout_step_completed: 'Checkout Step Completed',
-          order_completed: 'Order Completed'
+          order_completed: 'Order Completed',
         }
         Rails.application.config.spree.analytics_event_handlers = []
 

@@ -28,6 +28,10 @@ module Spree
       end
     end
 
+    def can_be_deleted?
+      !store_credit_category_used?
+    end
+
     class << self
       def default_reimbursement_category(_options = {})
         Spree::StoreCreditCategory.first

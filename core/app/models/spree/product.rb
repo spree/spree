@@ -595,7 +595,11 @@ module Spree
                      join_translation_table(Taxonomy).
                      find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
                  else
-                   taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                   if taxons.loaded?
+                     taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                   else
+                     taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                   end
                  end
     end
 
@@ -606,7 +610,11 @@ module Spree
                         order(depth: :desc).
                         find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
                     else
-                      taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                      if taxons.loaded?
+                        taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
+                      else
+                        taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                      end
                     end
     end
 

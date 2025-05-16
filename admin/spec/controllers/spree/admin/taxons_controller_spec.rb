@@ -22,6 +22,38 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     end
   end
 
+  describe 'POST #create' do
+    let!(:parent_taxon) { create(:taxon, taxonomy: taxonomy) }
+
+    context 'automatic taxon' do
+      it 'returns a successful response' do
+        expect {
+            post :create, params: {
+              taxonomy_id: taxonomy.id,
+              taxon: {
+              parent_id: parent_taxon.id,
+              name: 'Automatic Taxon',
+              automatic: true,
+              taxon_rules_attributes: [
+                { type: 'Spree::TaxonRules::AvailableOn', value: '1', match_policy: 'is_equal_to' }
+              ]
+            }
+          }
+        }.to change(Spree::Taxon, :count).by(1).and change(Spree::TaxonRule, :count).by(1)
+
+        taxon = Spree::Taxon.last
+        expect(taxon.automatic).to be_truthy
+        expect(taxon.taxon_rules.count).to eq(1)
+        expect(taxon.taxon_rules.first.type).to eq('Spree::TaxonRules::AvailableOn')
+        expect(taxon.taxon_rules.first.value).to eq('1')
+        expect(taxon.taxon_rules.first.match_policy).to eq('is_equal_to')
+        expect(taxon.parent).to eq(parent_taxon)
+
+        expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+      end
+    end
+  end
+
   describe 'GET #show' do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
@@ -41,11 +73,42 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+    let(:taxon) { create(:taxon, taxonomy: taxonomy, automatic: true) }
+    let!(:sale_taxon_rule) { create(:sale_taxon_rule, taxon: taxon) }
 
     it 'returns a successful response' do
-      put :update, params: { taxonomy_id: taxonomy.id, id: taxon.id, taxon: { name: 'New Name' } }
+      put :update, params: {
+        taxonomy_id: taxonomy.id, id: taxon.id,
+        taxon: {
+          name: 'New Name',
+          description: 'New Description',
+          automatic: true,
+          rules_match_policy: 'any',
+          taxon_rules_attributes: [
+            {
+              type: 'Spree::TaxonRules::AvailableOn',
+              value: '1',
+              match_policy: 'is_equal_to'
+            },
+            {
+              id: sale_taxon_rule.id,
+              type: 'Spree::TaxonRules::Sale',
+              value: '1',
+              match_policy: 'is_equal_to',
+              _destroy: '1'
+            }
+          ]
+        }
+      }
       expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+
+      expect(taxon.reload.name).to eq('New Name')
+      expect(taxon.description.to_plain_text).to eq('New Description')
+      expect(taxon.automatic).to be_truthy
+      expect(taxon.rules_match_policy).to eq('any')
+      expect(taxon.taxon_rules.count).to eq(1)
+      expect(taxon.taxon_rules.first.type).to eq('Spree::TaxonRules::AvailableOn')
+      expect(taxon.taxon_rules.first.value).to eq('1')
     end
 
     context 'when permalink_part is present' do

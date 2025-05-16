@@ -38,7 +38,13 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     let(:action_type) { 'Spree::Promotion::Actions::CreateAdjustment' }
     let(:action_params) do
       {
-        type: action_type
+        type: action_type,
+        calculator_type: 'Spree::Calculator::FlatRate',
+        calculator_attributes: {
+          type: 'Spree::Calculator::FlatRate',
+          preferred_amount: 20.0,
+          preferred_currency: 'EUR'
+        }
       }
     end
 
@@ -46,6 +52,9 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
       expect {
         post :create, params: { promotion_id: promotion.id, promotion_action: action_params }
       }.to change(Spree::PromotionAction, :count).by(1)
+
+      expect(assigns(:promotion_action).calculator.preferred_amount).to eq(20.0)
+      expect(assigns(:promotion_action).calculator.preferred_currency).to eq('EUR')
     end
 
     it 'redirects to the promotion page' do
@@ -99,6 +108,32 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     it 'redirects to the promotion page' do
       patch :update, params: { promotion_id: promotion.id, id: promotion_action.id, promotion_action: update_params }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
+    end
+
+    context 'create line items type' do
+      let!(:promotion_action) { create(:promotion_action_create_line_items, promotion: promotion) }
+      let(:action_type) { 'Spree::Promotion::Actions::CreateLineItems' }
+      let(:product) { create(:product, stores: [store]) }
+      let(:variant) { create(:variant, product: product) }
+      let(:action_params) do
+        {
+          type: action_type,
+          promotion_action_line_items_attributes: {
+            '0' => {
+              promotion_action_id: promotion_action.id,
+              variant_id: variant.id,
+              quantity: 2,
+              _destroy: nil
+            }
+          }
+        }
+      end
+
+      it 'sets the promotion action line items' do
+        patch :update, params: { promotion_id: promotion.id, id: promotion_action.id, promotion_action: action_params }
+        expect(assigns(:promotion_action).promotion_action_line_items.first.variant_id).to eq(variant.id)
+        expect(assigns(:promotion_action).promotion_action_line_items.first.quantity).to eq(2)
+      end
     end
   end
 

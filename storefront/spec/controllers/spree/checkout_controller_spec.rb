@@ -648,7 +648,7 @@ describe Spree::CheckoutController, type: :controller do
           it 'moves to complete state' do
             expect(controller).to receive(:track_event).with('payment_info_entered', { order: order })
             expect(controller).to receive(:track_event).with('checkout_step_completed', { order: order, step: 'payment' })
-            expect(controller).to receive(:track_event).with('checkout_completed', { order: order })
+            expect(controller).to receive(:track_event).with('order_completed', { order: order })
             expect { update }.to change { order.state }.from('payment').to('complete')
             expect(response).to redirect_to spree.checkout_complete_path(order.token)
           end

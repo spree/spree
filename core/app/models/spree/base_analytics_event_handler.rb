@@ -5,13 +5,16 @@ module Spree
     # @param opts [Hash] The options
     # @option opts [User] :user
     # @option opts [String] :session_id
+    # @option opts [Spree::Store] :store
     def initialize(opts = {})
       @user = opts[:user]
       @session = opts[:session]
       @request = opts[:request]
+      @store = opts[:store]
+      @visitor_id = opts[:visitor_id]
     end
 
-    attr_reader :user, :session, :request
+    attr_reader :user, :session, :request, :store, :visitor_id
 
     # Returns the client
     # @return [Object] The client object
@@ -42,7 +45,9 @@ module Spree
     def identity_hash
       {
         user_id: user&.id,
-        session_id: session&.id
+        # session.id is a custom class (not a string), which has overridden the `to_json` method, we have to convert it to a string first so it does not send garbage to the analytics service
+        session_id: session&.id&.to_s,
+        visitor_id: visitor_id
       }
     end
   end

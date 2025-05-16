@@ -11,8 +11,12 @@ module Spree
 
       def model_class
         @model_class = if params.dig(:promotion_action, :type).present?
-                         if allowed_action_types.map(&:to_s).include?(params.dig(:promotion_action, :type))
-                           params.dig(:promotion_action, :type).safe_constantize
+                         # Find the actual class from allowed types rather than using constantize
+                         action_type = params.dig(:promotion_action, :type)
+                         action_class = allowed_action_types.find { |type| type.to_s == action_type }
+
+                         if action_class
+                           action_class
                          else
                            raise 'Unknown promotion action type'
                          end
@@ -41,6 +45,10 @@ module Spree
         if @promotion_action.respond_to?(:calculator_type)
           @promotion_action.calculator_type = @promotion_action.class.calculators.first.name
         end
+      end
+
+      def permitted_resource_params
+        params.require(:promotion_action).permit(permitted_promotion_action_attributes)
       end
     end
   end

@@ -198,7 +198,8 @@ module Spree
     end
 
     def redirect_back_or_default(default)
-      redirect_to(session[:user_return_to] || default)
+      Spree::Deprecation.warn('redirect_back_or_default is deprecated and will be removed in Spree 5.2. Please use redirect_back(fallback_location: default) instead.')
+      redirect_back(fallback_location: default)
     end
 
     def require_user(return_to = nil)

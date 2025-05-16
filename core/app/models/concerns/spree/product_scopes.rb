@@ -49,11 +49,11 @@ module Spree
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
-        order("#{price_table_name}.amount ASC")
+        order(price_table_name => { amount: :asc })
       end
 
       add_search_scope :descend_by_master_price do
-        order("#{price_table_name}.amount DESC")
+        order(price_table_name => { amount: :desc })
       end
 
       add_search_scope :price_between do |low, high|
@@ -61,11 +61,11 @@ module Spree
       end
 
       add_search_scope :master_price_lte do |price|
-        where("#{price_table_name}.amount <= ?", price)
+        where(Price.table_name => { amount: ..price })
       end
 
       add_search_scope :master_price_gte do |price|
-        where("#{price_table_name}.amount >= ?", price)
+        where(Price.table_name => { amount: price.. })
       end
 
       add_search_scope :in_stock do
@@ -137,11 +137,11 @@ module Spree
           joins(:properties).
             join_translation_table(Property).
             join_translation_table(ProductProperty).
-            where("#{ProductProperty.translation_table_alias}.value = ?", value).
+            where(ProductProperty.translation_table_alias => { value: value }).
             where(property_conditions(property))
         else
           joins(:properties).
-            where("#{ProductProperty.table_name}.value = ?", value).
+            where(ProductProperty.table_name => { value: value }).
             where(property_conditions(property))
         end
       end

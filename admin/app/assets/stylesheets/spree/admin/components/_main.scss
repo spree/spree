@@ -3,7 +3,7 @@
 }
 
 #page-header {
-  height: 60px;
+  height: 70px;
   display: flex;
   align-items: center;
 }
@@ -140,7 +140,7 @@
     display: flex;
     flex-direction: column;
     list-style: none;
-    margin-top: 0.25rem;
+    padding-top: 0.25rem;
     padding-left: 2rem;
     &:before {
       content: '';
@@ -208,20 +208,14 @@
 }
 
 #enterprise-edition-notice {
+  @extend .alert;
   @extend .alert-info;
 
   background-image: none;
   position: relative;
-  padding: 0.5rem 1rem;
-  padding-right: 2rem;
-  border-top: 1px solid $border-color;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
-  border-radius: 0;
   font-size: $font-size-sm;
-  margin-bottom: 0;
-  margin-right: 1px;
+  padding: 0.5rem 1rem;
+  margin: 0.75rem;
   p {
     margin-bottom: 0.5rem;
   }

@@ -44,8 +44,10 @@ end
 group :test, :development do
   gem 'awesome_print'
   gem 'brakeman'
+  gem 'bundler-audit'
   gem 'gem-release'
   gem 'i18n-tasks'
+  gem 'license_finder'
   gem 'rubocop', '~> 1.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
