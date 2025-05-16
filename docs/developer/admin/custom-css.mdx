@@ -1,0 +1,57 @@
+---
+title: Admin Dashboard Custom CSS
+sidebarTitle: Custom CSS
+---
+
+<Warning>
+  This guide is still work in progress!
+</Warning>
+
+Spree Admin Dashboard stylesheet system is built in top [Bootstrap](https://getbootstrap.com/) and uses [SASS](https://sass-lang.com/) preprocessor to compile custom stylesheets. To be precise we're using DART-SASS (so you don't need to install Node.js).
+
+You can find the stylesheets files in [app/assets/stylesheets/spree/admin](https://github.com/spree/spree/tree/main/admin/app/assets/stylesheets/spree/admin) directory.
+
+The main entry point file is [application.scss](https://github.com/spree/spree/blob/main/admin/app/assets/stylesheets/spree/admin/application.scss) which uses SASS `@import` directive to include other stylesheets.
+
+## Overriding existing SASS code
+
+<Warning>
+  This section will be added soon!
+</Warning>
+
+## Adding custom CSS
+
+Besides SASS you can still include standard CSS files. To do so:
+
+
+1. Create a new file in your application `app/assets/stylesheets` directory:
+
+    ```bash
+    touch app/assets/stylesheets/custom_spree_admin.css
+    ```
+2. Add some CSS rules to the file:
+
+    ```css
+    .custom-class {
+      color: red;
+    }
+    ```
+3. Create a template file in your application `app/views/spree/admin/shared` directory:
+
+    ```bash
+    touch app/views/spree/admin/shared/custom_spree_admin_stylesheets.html.erb
+    ```
+
+4. Use standard Ruby on Rails [stylesheet_link_tag](https://api.rubyonrails.org/v7.2/classes/ActionView/Helpers/AssetTagHelper.html#method-i-stylesheet_link_tag)
+
+    ```erb
+    <%= stylesheet_link_tag 'custom_spree_admin' %>
+    ```
+
+5. Register this template in the Spree initializer (`config/initializers/spree.rb`):
+
+    ```ruby
+    Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/custom_spree_admin_stylesheets'
+    ```
+
+That's it! Now you're custom CSS code will be included after loading the standard Admin stylesheets.

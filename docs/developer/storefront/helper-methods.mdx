@@ -1,0 +1,68 @@
+---
+title: Storefront Helper Methods
+sidebarTitle: Helper Methods
+---
+
+Here you can find a list of helper methods provided by Spree that are available in the Storefront that you can use in every template.
+
+<Warning>
+The list is incomplete. We're working on it!
+</Warning>
+
+## `current_currency`
+
+Returns the currently selected currency. By default in the Storefront this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
+<%= current_currency %>
+```
+
+will return
+
+```
+USD
+```
+
+## `current_store`
+
+Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+
+```erb
+<%= current_store.name %>
+```
+
+## `local_time`
+
+Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+
+```erb
+<%= local_time(order.sent_to_erp_at) %>
+```
+
+Provided by [local_time gem](https://github.com/basecamp/local_time).
+
+## `supported_currencies`
+
+Returns the list of supported currencies for the current store as an array of strings.
+
+```erb
+<%= supported_currencies %>
+```
+
+will return
+
+```ruby
+["USD", "EUR"]
+```
+
+## `try_spree_current_user`
+
+Returns the current user object (class depends on the `Spree.admin_user_class` configuration). If the user is not signed in, it will return `nil`.
+
+```erb
+<%= try_spree_current_user.email %>
+```
+
+If you want to check if the user is signed in, you can use the following:
+
+```erb
+<%= try_spree_current_user.present? %>
+```

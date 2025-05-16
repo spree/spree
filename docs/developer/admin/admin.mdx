@@ -1,0 +1,49 @@
+---
+title: Admin Dashboard
+sidebarTitle: Overview
+---
+
+Spree Admin Dashboard is the main interface for managing your store. It's built with Ruby on Rails and is installable as a `spree_admin` gem. If you're using Spree Starter, this is already installed for you.
+
+## Overview
+
+Admin Dashboard can be fully customized to your liking. You can extend the UI, include custom CSS and JavaScript, and you can add new sections to the dashboard or modify existing ones.
+
+The basis of the admin dashboard is same as with any Ruby on Rails application:
+
+## Templates (aka Views)
+
+Views are the HTML templates that are used to generate the user interface. They are responsible for displaying the data to the user. Views use standard [Ruby on Rails ERB template system](https://guides.rubyonrails.org/action_view_overview.html#erb), eg.
+
+```erb
+<%# Example of a simple view %>
+<div>
+  <h1>Welcome to the <%= current_store.name %></h1>
+</div>
+```
+
+In views you can use Ruby code and also helper methods defined in
+
+Spree Admin provides a way for you to inject your own templates into existing screens, eg. adding additional fields to forms or adding new navigation elements.
+
+## Controllers
+
+Controllers are the Ruby classes that handle requests from the user. They are responsible for processing the data and returning the appropriate response. Controllers use standard [Ruby on Rails controller system](https://guides.rubyonrails.org/action_controller_overview.html).
+
+### Namespace
+
+Every Admin controller should be placed in `Spree::Admin` namespace and [app/controllers/spree/admin](https://github.com/spree/spree/tree/main/admin/app/controllers/spree/admin) directory, eg. `Spree::Admin::ProductsController`.
+
+### BaseController
+
+The main Admin Controller is [Spree::Admin::BaseController](https://github.com/spree/spree/blob/main/admin/app/controllers/spree/admin/base_controller.rb). It provides a lot of functionality out of the box, such as authentication, authorization, and breadcrumbs.
+
+### ResourceController
+
+For easier and faster development Spree provides [Spree::Admin::ResourceController](https://github.com/spree/spree/blob/main/admin/app/controllers/spree/admin/resource_controller.rb) which provides all the necessary CRUD (Create, Read, Update, Delete) functionality for managing resources in a RESTful way so you can focus on building your application.
+
+You will learn more about this in the [Creating new Admin sections guide](/developer/admin/new-admin-sections).
+
+## JavaScript
+
+Interactitivy in Spree Admin is handled by [Hotwire](https://hotwire.dev/) which is the default Ruby on Rails frontend framework. JavaScript bundling is done via [Importmaps](https://github.com/rails/importmap-rails), which is a modern JavaScript bundling solution that is easy to use and integrates well with Rails. Also, it doesn't require node at all.

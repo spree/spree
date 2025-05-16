@@ -1,0 +1,54 @@
+---
+title: Admin Dashboard Permissions
+sidebarTitle: Permissions
+---
+
+## Overview
+
+Admin Dashboard utilizes [Spree's authorization system](/developer/customization/permissions) to control access to the different pages.
+
+## Restricting access to certain pages
+
+Let's assume you would like to add a new Role `customer_service` with some limited access to Admin Panel only Orders section.
+
+Create a new file called `app/models/customer_service_ability.rb`
+
+```ruby
+class CustomerServiceAbility
+  include CanCan::Ability
+
+  def initialize(user)
+    if user.respond_to?(:has_spree_role?) && user.has_spree_role?('customer_service')
+      can :manage, Spree::Order
+    end
+  end
+end
+```
+
+Please familiarize yourself with [CanCanCan](https://github.com/CanCanCommunity/cancancan) syntax to understand `can/cannot` methods more.
+
+Now we need to inform Spree to use this ability, create another file `app/models/spree/ability_decorator.rb` with contents:
+
+```ruby
+module Spree
+  module AbilityDecorator
+    def abilities_to_register
+      [CustomerServiceAbility]
+    end
+  end
+
+  Ability.prepend(AbilityDecorator)
+end
+```
+
+This will automatically remove all other pages/navigation items from the sidebar for the `customer_service` role.
+
+You can be even more granular with the permissions by using the `can` method.
+
+```ruby
+can :manage, Spree::Order
+can :read, Spree::Product
+can :update, Spree::Product
+```
+
+This will restrict the access to the `customer_service` role to only the Orders and Products pages. However they won't be able to delete products or add new ones, just update existing ones.
