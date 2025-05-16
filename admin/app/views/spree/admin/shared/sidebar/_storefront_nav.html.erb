@@ -17,6 +17,8 @@
       <% if can?(:manage, current_store) %>
         <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
       <% end %>
+
+      <%= render_admin_partials(:storefront_nav_partials) %>
     </ul>
   <% end %>
 <% end %>
