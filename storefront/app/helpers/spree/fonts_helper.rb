@@ -38,8 +38,10 @@ module Spree
 
       return if fonts.blank?
 
+      font_weights = (200..700).step(100).to_a
+
       imports = fonts.map do |font|
-        "family=#{font.split(' ').join('+')}:wght@200..700"
+        "family=#{font.split.join('+')}:wght@#{font_weights.join(';')}"
       end.compact.join('&')
 
       return if imports.blank?
