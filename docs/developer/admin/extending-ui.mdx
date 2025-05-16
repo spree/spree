@@ -7,7 +7,7 @@ Spree Admin Dashboard allows you easily extend existing pages and screens with y
 
 ## How it works
 
-The entire system works on the basis of injection points which are declared throughout the admin dashboard and allows you to push your own code there.
+The entire system works on the basis of injection points which are declared throughout the admin dashboard and allows you to push your own code there. Each injection point is identified by a key, eg. `body_end_partials`.
 
 Let's say you want to add a new footer to the admin dashboard. You'll need to generate a template in your application:
 
@@ -38,6 +38,10 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
     ```
 
     <Info>
+      The key is the name of the injection point, eg. `body_end_partials`.
+    </Info>
+
+    <Info>
       Remember to use the correct path to your partial and skip the `_` prefix.
     </Info>
 
@@ -61,157 +65,430 @@ Here's a list of all places you can inject your custom code:
 
 ### Layout
 
-* `head_partials` - Injects code into the `<head>` tag
-* `body_start_partials` - Injects code into the `<body>` tag, before the main content
-* `body_end_partials` - Injects code into the `<body>` tag, after the main content
+<AccordionGroup>
+  <Accordion title="<head>">
+    `head_partials`
+
+    Injects code into the `<head>` tag
+  </Accordion>
+
+  <Accordion title="<body>">
+    `body_start_partials`
+
+    Injects code into the `<body>` tag, before the main content
+  </Accordion>
+
+  <Accordion title="</body>">
+    `body_end_partials`
+
+    Injects code into the `<body>` tag, after the main content
+  </Accordion>
+</AccordionGroup>
 
 ### Dashboard
 
-#### `dashboard_analytics_partials`
+<AccordionGroup>
+  <Accordion title="Analytics">
+    `dashboard_analytics_partials`
 
-<Frame>
-  <img src="/images/developer/admin/dashboard_analytics_partials.png" />
-</Frame>
+    <Frame>
+      <img src="/images/developer/admin/dashboard_analytics_partials.png" />
+    </Frame>
 
-Injects code into the dashboard analytics section, eg.
+    Injects code into the dashboard analytics section, eg.
 
-```erb
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Top ERP products</h5>
-  </div>
-  <div class="card-footer">
-    <%# ... my custom content ... %>
-  </div>
-</div>
-```
+    ```erb
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Top ERP products</h5>
+      </div>
+      <div class="card-footer">
+        <%# ... my custom content ... %>
+      </div>
+    </div>
+    ```
+  </Accordion>
 
-#### `dashboard_sidebar_partials`
+  <Accordion title="Sidebar">
+    `dashboard_sidebar_partials`
 
-<Frame>
-  <img src="/images/developer/admin/dashboard_sidebar_partials.png" />
-</Frame>
+    <Frame>
+      <img src="/images/developer/admin/dashboard_sidebar_partials.png" />
+    </Frame>
 
-Injects code into the dashboard sidebar, eg.
+    Injects code into the dashboard sidebar, eg.
 
-```erb
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Latest ERP syncs</h5>
-  </div>
-  <div class="card-footer">
-    <%# ... my custom content ... %>
-  </div>
-</div>
-```
+    ```erb
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Latest ERP syncs</h5>
+      </div>
+      <div class="card-footer">
+        <%# ... my custom content ... %>
+      </div>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
 
 ### Orders
 
-#### `orders_filters_partials`
+<AccordionGroup>
+  <Accordion title="Orders List Filters">
+    `orders_filters_partials`
 
-<Frame>
-  <img src="/images/developer/admin/orders_filters_partials.png" />
-</Frame>
+    <Frame>
+      <img src="/images/developer/admin/orders_filters_partials.png" />
+    </Frame>
 
-Injects code into the orders list filters, to build custom filters. This partial has access to the `f` variable, which is the form builder for the filters, eg.
+    #### Variables
 
-```erb
-<%= f.text_field :q_number_cont, class: "form-control", data: { filters_target: :input } %>
-```
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
 
-* `q_number_cont` is the name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
-* `form-control` is a bootstrap class for styling the input field.
-* `data: { filters_target: :input }` is needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
+    Injects code into the orders list filters, to add custom filters. 
+    This partial has access to the `f` variable, which is the form builder for the filters, eg.
 
-#### `order_page_dropdown_partials`
+    ```erb
+    <%= f.text_field :q_number_cont, class: "form-control", data: { filters_target: :input } %>
+    ```
 
-<Frame>
-  <img src="/images/developer/admin/order_page_dropdown_partials.png" />
-</Frame>
+    <Tip>
+    * `q_number_cont` - The name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
+    * `form-control` - A bootstrap class for styling the input field.
+    * `data: { filters_target: :input }` - Needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
+    </Tip>
+  </Accordion>
 
-Injects code into the order page dropdown. This partial has access to the `order` variable.
+  <Accordion title="Order Page Dropdown">
+    `order_page_dropdown_partials`
 
-To add an additional dropdown item, you can use the following code:
+    <Frame>
+      <img src="/images/developer/admin/order_page_dropdown_partials.png" />
+    </Frame>
 
-```erb
-<%= link_to "View Order in ERP", "https://erp.com/orders/#{order.number}", class: "dropdown-item", target: "_blank" %>
-```
+    #### Variables
 
-* `dropdown-item` is a bootstrap class for styling the dropdown item
-* `target: "_blank"` is used to open the link in a new tab
+    <ParamField path="order" type="Spree::Order">
+      The [Spree::Order](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb) object.
+    </ParamField>
 
-#### `order_page_header_partials`
+    Injects code into the order page dropdown. This partial has access to the `order` variable.
 
-<Frame>
-  <img src="/images/developer/admin/order_page_header_partials.png" />
-</Frame>
+    To add an additional dropdown item, you can use the following code:
 
-Injects code into the order page header. This partial has access to the `order` variable.
+    ```erb
+    <%= link_to "View Order in ERP", "https://erp.com/orders/#{order.number}", class: "dropdown-item", target: "_blank" %>
+    ```
 
-To add an additional action button near the `...` button, you can use the following code:
+    <Tip>
+    * `dropdown-item` is a bootstrap class for styling the dropdown item
+    * `target: "_blank"` is used to open the link in a new tab
+    </Tip>
+  </Accordion>
 
-```erb
-<%= content_for :page_actions do %>
-  <%= link_to "Send to ERP", "#", class: "btn btn-primary" %>
-<% end %>
-```
+  <Accordion title="Order Page Header">
+    `order_page_header_partials`
 
-To add an inline alert to the order page, you can use the following code:
+    <Frame>
+      <img src="/images/developer/admin/order_page_header_partials.png" />
+    </Frame>
 
-```erb
-<%= content_for :page_alerts do %>
-  <% if order.sent_to_erp_at.blank? %>
-    <div class="alert alert-success">Order sent to ERP at <%= local_time(order.sent_to_erp_at) %></div>
-  <% else %>
-    <div class="alert alert-danger">Order not sent to ERP</div>
-  <% end %>
-<% end %>
-```
+    #### Variables
 
-* `local_time` is a helper for displaying the time in the user's timezone in a human readable **format** (based on the browser's timezone).
+    <ParamField path="order" type="Spree::Order">
+      The [Spree::Order](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb) object.
+    </ParamField>
 
-#### `order_page_body_partials`
+    Injects code into the order page header.
 
-<Frame>
-  <img src="/images/developer/admin/order_page_body_partials.png" />
-</Frame>
+    To add an additional action button near the `...` button, you can use the following code:
 
-Injects code into the order page body. This partial has access to the `order` variable.
+    <Frame>
+      <img src="/images/developer/admin/order_page_header_partials.png" />
+    </Frame>
 
-To add a new section to the order page, you can use the following code:
+    Injects code into the order page header.
 
-```erb
-<div class="card mb-4">
-  <div class="card-header">
-    <h5 class="card-title">ERP Integration</h5>
-  </div>
-  <div class="card-body">
-    <% if order.sent_to_erp_at.blank? %>
-      <p class="text-muted text-center">Order not sent to ERP</p>
-    <% else %>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">
-          <strong>ERP Order ID:</strong> <%= order.erp_order_id %>
-        </li>
-        <li class="list-group-item">
-          <strong>Sent to ERP at:</strong> <%= local_time(order.sent_to_erp_at) %>
-        </li>
-      </ul>
+    To add an additional action button near the `...` button, you can use the following code:
+
+    ```erb
+    <%= content_for :page_actions do %>
+      <%= link_to "Send to ERP", "#", class: "btn btn-primary" %>
     <% end %>
-  </div>
-</div>
-```
+    ```
 
-#### `order_page_sidebar_partials`
+    To add an inline alert to the order page, you can use the following code:
 
-<Frame>
-  <img src="/images/developer/admin/order_page_sidebar_partials.png" />
-</Frame>
+    ```erb
+    <%= content_for :page_alerts do %>
+      <% if order.sent_to_erp_at.blank? %>
+        <div class="alert alert-success">Order sent to ERP at <%= local_time(order.sent_to_erp_at) %></div>
+      <% else %>
+        <div class="alert alert-danger">Order not sent to ERP</div>
+      <% end %>
+    <% end %>
+    ```
 
-Injects code into the order page sidebar. This partial has access to the `order` variable.
+    <Tip>
+    `local_time` is a helper for displaying the time in the user's timezone in a human readable **format** (based on the browser's timezone).
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Order Page Body">
+    `order_page_body_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/order_page_body_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="order" type="Spree::Order">
+      The [Spree::Order](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb) object.
+    </ParamField>
+
+    Injects code into the order page body. This partial has access to the `order` variable.
+
+    To add a new section to the order page, you can use the following code:
+
+    ```erb
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">ERP Integration</h5>
+      </div>
+      <div class="card-body">
+        <% if order.sent_to_erp_at.blank? %>
+          <p class="text-muted text-center">Order not sent to ERP</p>
+        <% else %>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <strong>ERP Order ID:</strong> <%= order.erp_order_id %>
+            </li>
+            <li class="list-group-item">
+              <strong>Sent to ERP at:</strong> <%= local_time(order.sent_to_erp_at) %>
+            </li>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Order Page Sidebar">
+    `order_page_sidebar_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/order_page_sidebar_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="order" type="Spree::Order">
+      The [Spree::Order](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb) object.
+    </ParamField>
+
+    Injects code into the order page sidebar. This partial has access to the `order` variable.
+  </Accordion>
+</AccordionGroup>
 
 ### Products
 
-### Customers
+<AccordionGroup>
+  <Accordion title="Products List Filters">
+    `products_filters_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/products_filters_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the products list filters. This partial has access to the `f` variable, which is the form builder for the filters.
+
+    To add a new filter field, you can use the following code:
+
+    ```erb
+    <%= f.text_field :q_name_cont, class: "form-control", data: { filters_target: :input } %>
+    ```
+
+    <Tip>
+    * `q_name_cont` is the name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
+    * `form-control` is a bootstrap class for styling the input field.
+    * `data: { filters_target: :input }` is needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Products Page Dropdown">
+    `product_dropdown_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/product_dropdown_partials.png" />
+    </Frame>
+
+    Injects code into the products page dropdown. This partial has access to the `product` variable.
+
+    To add an additional dropdown item, you can use the following code:
+
+    ```erb
+    <%= link_to "View Product in WMS", "https://wms.com/products/#{product.id}", class: "dropdown-item", target: "_blank" %>
+    ```
+
+    <Info>
+    Your code will be placed before the dropdown divider.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Products Page Form">
+    `product_form_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/product_form_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    <ParamField path="product" type="Spree::Product">
+      The [Spree::Product](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) object.
+    </ParamField>
+
+    Injects code into the product form. This partial has access to the `f` variable, which is the form builder for the product form, and the `product` variable.
+
+    To add a new section to the product form, you can use the following code:
+
+    ```erb
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">ERP Integration</h5>
+      </div>
+      <div class="card-body">
+        <%= f.text_field :erp_product_id, class: "form-control" %>
+      </div>
+    </div>
+    ```
+
+    <Info>
+      The partial will be displayed for both new product form and edit product form.
+    </Info>
+
+    <Tip>
+      If you want to display the partial only on the edit product form, you can use the following code:
+
+      ```erb
+      <% if product.persisted? %>
+        <%# ... your code ... %>
+      <% end %>
+      ```
+
+      And similarly for the new product form.
+
+      ```erb
+      <% if product.new_record? %>
+        <%# ... your code ... %>
+      <% end %>
+      ```
+    </Tip>
+
+  </Accordion>
+
+  <Accordion title="Products Page Sidebar">
+    `product_form_sidebar_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/product_form_sidebar_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    <ParamField path="product" type="Spree::Product">
+      The [Spree::Product](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) object.
+    </ParamField>
+
+    Injects code into the product form sidebar. This partial has access to the `f` variable, which is the form builder for the product form, and the `product` variable.
+
+    To add a new section to the product form sidebar, you can use the following code:
+
+    ```erb
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">ERP Integration</h5>
+      </div>
+      <div class="card-body">
+        <%= f.text_field :erp_product_id, class: "form-control" %>
+      </div>
+    </div>
+    ```
+
+    <Info>
+      The partial will be displayed for both new product form and edit product form.
+    </Info>
+
+    <Tip>
+      If you want to display the partial only on the edit product form, you can use the following code:
+
+      ```erb
+      <% if product.persisted? %>
+        <%# ... your code ... %>
+      <% end %>
+      ```
+
+      And similarly for the new product form.
+
+      ```erb
+      <% if product.new_record? %>
+        <%# ... your code ... %>
+      <% end %>
+      ```
+    </Tip>
+  </Accordion>
+</AccordionGroup>
 
 ### Store Settings
+
+<AccordionGroup>
+  <Accordion title="Store Settings Form">
+    `store_form_partials`
+
+    <Frame>
+      <img src="/images/developer/admin/store_form_partials.png" />
+    </Frame>
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    <ParamField path="store" type="Spree::Store">
+      The [Spree::Store](https://github.com/spree/spree/blob/main/core/app/models/spree/store.rb) object.
+    </ParamField>
+
+    Injects code into the store settings form. This partial has access to the `f` variable, which is the form builder for the store form, and the `store` variable.
+
+    To add a new section to the store form, you can use the following code:
+
+    ```erb
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">ERP Integration</h5>
+      </div>
+      <div class="card-body">
+        <%= f.text_field :erp_store_id, class: "form-control" %>
+      </div>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>

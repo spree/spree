@@ -53,6 +53,7 @@
                       "developer/storefront/blocks",
                       "developer/storefront/links",
                       "developer/storefront/images",
+                      "developer/storefront/helper-methods",
                       "developer/storefront/custom-javascript",
                       "developer/storefront/custom-css"
                     ]
