@@ -650,6 +650,15 @@ describe Spree::Shipment, type: :model do
           expect(shipment.adjustments).to all(receive(:finalize!))
           shipment.ship!
         end
+
+        it 'tracks package shipped event' do
+          analytics_event_handler = double
+          allow(Spree::Analytics).to receive(:event_handlers).and_return([analytics_event_handler])
+          allow(analytics_event_handler).to receive(:new).and_return(analytics_event_handler)
+          expect(analytics_event_handler).to receive(:handle_event).with('package_shipped', {order: order, shipment: shipment})
+
+          shipment.ship!
+        end
       end
     end
   end

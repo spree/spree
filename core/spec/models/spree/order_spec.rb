@@ -169,6 +169,15 @@ describe Spree::Order, type: :model do
 
       expect(order.payments.first).to be_void
     end
+
+    it 'tracks order cancelled event' do
+      analytics_event_handler = double
+      allow(Spree::Analytics).to receive(:event_handlers).and_return([analytics_event_handler])
+      allow(analytics_event_handler).to receive(:new).and_return(analytics_event_handler)
+      expect(analytics_event_handler).to receive(:handle_event).with('order_cancelled', {order: order})
+
+      order.cancel
+    end
   end
 
   describe '#canceled_by' do
@@ -291,6 +300,15 @@ describe Spree::Order, type: :model do
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       expect(adjustments).to all(receive(:close))
+      order.finalize!
+    end
+
+    it 'tracks order completed event' do
+      analytics_event_handler = double
+      allow(Spree::Analytics).to receive(:event_handlers).and_return([analytics_event_handler])
+      allow(analytics_event_handler).to receive(:new).and_return(analytics_event_handler)
+      expect(analytics_event_handler).to receive(:handle_event).with('order_completed', {order: order})
+
       order.finalize!
     end
 

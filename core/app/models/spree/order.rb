@@ -918,6 +918,12 @@ module Spree
       analytics_event_handlers.each do |handler|
         handler.handle_event('order_completed', {order: self})
       end
+    rescue => e
+      Rails.error.report(
+        e,
+        context: { event_name: 'order_completed', record: {order: self} },
+        source: 'spree.core'
+      )
     end
 
     def track_order_cancelled_event
@@ -929,6 +935,12 @@ module Spree
       analytics_event_handlers.each do |handler|
         handler.handle_event('order_cancelled', {order: self})
       end
+    rescue => e
+      Rails.error.report(
+        e,
+        context: { event_name: 'order_cancelled', record: {order: self} },
+        source: 'spree.core'
+      )
     end
   end
 end
