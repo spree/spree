@@ -303,15 +303,6 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'tracks order completed event' do
-      analytics_event_handler = double
-      allow(Spree::Analytics).to receive(:event_handlers).and_return([analytics_event_handler])
-      allow(analytics_event_handler).to receive(:new).and_return(analytics_event_handler)
-      expect(analytics_event_handler).to receive(:handle_event).with('order_completed', {order: order})
-
-      order.finalize!
-    end
-
     context 'order is considered risky' do
       before do
         allow(order).to receive_messages is_risky?: true

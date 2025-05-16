@@ -68,7 +68,7 @@ module Spree
 
     def track_checkout_completed
       # server-side tracking
-      track_event('checkout_completed', { order: @order })
+      track_event('order_completed', { order: @order })
 
       # client-side tracking
       session[:checkout_completed] = true
