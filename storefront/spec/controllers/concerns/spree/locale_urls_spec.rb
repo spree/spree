@@ -62,7 +62,7 @@ module Spree
       context 'when locale param is present but not supported' do
         it 'redirects to URL without locale' do
           allow(controller).to receive(:supported_locale?).with('xx').and_return(false)
-          expect(controller).to receive(:url_for).with({ 'locale' => nil, 'action' => 'index', 'controller' => 'anonymous' }).and_return('/anonymous/index')
+          expect(controller).to receive(:url_for).with({ locale: nil, action: 'index', controller: 'anonymous' }).and_return('/anonymous/index')
           get :index, params: { locale: 'xx' }
           expect(response).to redirect_to('/anonymous/index')
         end

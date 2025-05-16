@@ -97,6 +97,38 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       post :create, params: { promotion: promotion_params }
       expect(response).to redirect_to(spree.admin_promotion_path(assigns[:promotion]))
     end
+
+    context 'multi code promotion' do
+      let(:promotion_params) do
+        {
+          name: 'New Promotion',
+          kind: 'coupon_code',
+          number_of_codes: 10,
+          multi_codes: true,
+          code_prefix: 'PRM'
+        }
+      end
+
+      it 'creates a new promotion' do
+        expect {
+          post :create, params: { promotion: promotion_params }
+        }.to change(Spree::Promotion, :count).by(1)
+        promotion = Spree::Promotion.last
+        expect(promotion.name).to eq('New Promotion')
+        expect(promotion.kind).to eq('coupon_code')
+        expect(promotion.code_prefix).to eq('PRM')
+        expect(promotion.multi_codes).to be_truthy
+        expect(promotion.number_of_codes).to eq(10)
+      end
+
+      it 'creates the correct number of coupon codes' do
+        expect {
+          post :create, params: { promotion: promotion_params }
+        }.to change(Spree::CouponCode, :count).by(10)
+        promotion = Spree::Promotion.last
+        expect(promotion.coupon_codes.count).to eq(10)
+      end
+    end
   end
 
   describe 'GET #edit' do

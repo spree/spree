@@ -12,6 +12,7 @@
       <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
       <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
       <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
+      <%= render_admin_partials(:store_settings_nav_partials) %>
     <% end %>
 
     <% if can?(:manage, Spree::CustomDomain) %>
@@ -43,7 +44,7 @@
     <% end %>
 
     <% if can?(:manage, Spree::Store) %>
-      <% if enterprise_edition? %>
+      <% if spree.respond_to?(:admin_audits_path) %>
         <%= nav_item(Spree.t('admin.audit_log'), spree.admin_audits_path, icon: 'history', active: %w[audits exports imports].include?(controller_name)) %>
       <% else %>
         <li class="nav-item">
@@ -61,7 +62,7 @@
       <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     <% end %>
 
-    <%= render_admin_partials(:store_settings_nav_partials) %>
+    <%= render_admin_partials(:settings_nav_partials) %>
   </ul>
 <% else %>
   <ul class="nav flex-column">
@@ -119,10 +120,14 @@
     <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
   </ul>
 
-  <ul class="nav flex-column mt-auto mb-2">
-    <% if can?(:manage, current_store) %>
-      <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
-      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
-    <% end %>
-  </ul>
+  <div class="mt-auto d-flex flex-column">
+    <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
+
+    <ul class="nav flex-column mb-2">
+      <% if can?(:manage, current_store) %>
+        <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
+        <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
+      <% end %>
+    </ul>
+  </div>
 <% end %>

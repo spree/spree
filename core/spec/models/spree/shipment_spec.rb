@@ -604,6 +604,17 @@ describe Spree::Shipment, type: :model do
       expect(shipment.stock_location).to receive(:unstock).with(variant, 1, shipment)
       shipment.after_resume
     end
+
+    context 'for a shipment item that does not track inventory' do
+      before { variant.update(track_inventory: false) }
+
+      it 'skips unstocking the shipment item' do
+        allow(shipment).to receive(:inventory_units).and_return([inventory_unit])
+        shipment.stock_location = create(:stock_location)
+        expect(shipment.stock_location).not_to receive(:unstock)
+        shipment.after_resume
+      end
+    end
   end
 
   describe '#ship' do

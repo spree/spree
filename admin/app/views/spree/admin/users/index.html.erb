@@ -6,12 +6,12 @@
   <%= link_to spree.admin_users_path(q: params[:q].to_unsafe_hash, page: params[:page], per_page: params[:per_page], format: :csv), class: 'btn btn-light bg-transparent with-tip d-none d-lg-inline-flex', title: 'Export Customers to a CSV file. To filter specific Customers use "Filters" or Customers/Subscribers tabs before clicking this button' do %>
     <%= icon 'table-export' %>
     <%= Spree.t(:export) %>
-  <% end if can?(:export, Spree::Export) %>
+  <% end if can?(:create, Spree::Export) %>
   
   <%= render 'extra_actions' %>
 
-  <%= link_to_with_icon 'plus', Spree.t(:create_customer), spree.new_admin_user_path, class: "btn btn-primary" %>
-<% end if can? :create, Spree::user_class %>
+  <%= link_to_with_icon 'plus', Spree.t(:create_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
+<% end %>
 
 <div class="card-lg">
   <%= render "spree/admin/users/filters" %>

@@ -32,15 +32,4 @@ You will need to supply the following environment variables to run the container
 | `REDIS_URL` | Redis URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis instance | `redis://localhost:6379/0` |
 | `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
 
-There are also some other environment variables that you can set to customize your Spree application.
-
-| Variable | Description | Default value |
-| --- | --- | --- |
-| `DEVISE_SESSION_TIMEOUT` | Session timeout (in days) | `14` |
-| `PORT` | Web server port | `3000` |
-| `RAILS_ENV` | Rails environment (production, development, test) | `production` |
-| `RAILS_LOG_LEVEL` | Log level, you can switch it to `debug` to see more detailed logs | `info` |
-| `RAILS_MAX_THREADS` | Web server (Puma) threads | `3` |
-| `REDIS_CACHE_URL` | Redis URL, used for caching, this could be your AWS ElastiCache instance or any other Redis instance (optional, if not provided will use file based cache) | `redis://localhost:6379/1` |
-| `SENDGRID_API_KEY` | [SendGrid API key](https://docs.sendgrid.com/api-reference/api-keys) (optional, if not provided will not send transactional emails) | `SG.1234567890` |
-| `SENTRY_DSN` | Sentry DSN (optional, if not provided will not send errors to [Sentry](https://sentry.io/)) | `https://sentry.io/...` |
+This is the bare minimum you need to run Spree Starter. [Learn more about environment variables](/developer/deployment/environment_variables).

@@ -118,7 +118,8 @@ module Spree
             value: token,
             expires: 90.days.from_now,
             secure: Rails.configuration.force_ssl || Rails.application.config.ssl_options[:secure_cookies],
-            domain: current_store.url_or_custom_domain
+            domain: current_store.url_or_custom_domain,
+            httponly: true
           }
         end
 

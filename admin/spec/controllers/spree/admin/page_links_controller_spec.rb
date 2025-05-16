@@ -82,13 +82,14 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
 
   describe '#update' do
     subject :post_update do
-      post :update, params: { id: page_link.id, page_link: { label: 'New Label' } }, as: :turbo_stream
+      post :update, params: { id: page_link.id, page_link: { label: 'New Label', position: 2 } }, as: :turbo_stream
     end
 
     let(:page_link) { create(:page_link) }
 
     it 'updates the page link' do
       expect { post_update }.to change { page_link.reload.label }.to 'New Label'
+      expect(page_link.reload.position).to eq(2)
     end
 
     it 'renders the update template' do

@@ -294,7 +294,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   #
   # Other controllers can, should, override it to set custom logic
   def permitted_resource_params
-    params[resource.object_name].present? ? params.require(resource.object_name).permit! : ActionController::Parameters.new
+    raise NotImplementedError, "You must implement the permitted_resource_params method"
   end
 
   def collection_actions

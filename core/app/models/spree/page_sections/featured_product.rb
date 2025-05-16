@@ -41,6 +41,10 @@ module Spree
       def blocks_available?
         true
       end
+
+      def can_sort_blocks?
+        true
+      end
     end
   end
 end

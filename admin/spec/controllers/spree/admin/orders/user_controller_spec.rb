@@ -2,6 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
   stub_authorization!
+  render_views
 
   let(:order) { create(:order, user: nil, email: nil) }
   let(:user_params) do

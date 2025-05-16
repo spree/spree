@@ -21,6 +21,7 @@ module Spree
                                :page_sections,
                                :page_blocks,
                                :reports,
+                               :translatable_resources,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations)
@@ -233,6 +234,13 @@ module Spree
         Rails.application.config.spree.reports = [
           Spree::Reports::ProductsPerformance,
           Spree::Reports::SalesTotal
+        ]
+
+        Rails.application.config.spree.translatable_resources = [
+          Spree::Product,
+          Spree::Taxon,
+          Spree::Taxonomy,
+          Spree::Store
         ]
 
         Rails.application.config.spree.analytics_events = {

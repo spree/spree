@@ -458,6 +458,7 @@ module Spree
     # @return [Array<Spree::Variant>] the backordered variants for the order
     def backordered_variants
       variants.
+        where(track_inventory: true).
         joins(:stock_items, :product).
         where(Spree::StockItem.table_name => { count_on_hand: ..0, backorderable: true })
     end

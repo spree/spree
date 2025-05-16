@@ -26,6 +26,10 @@ module Spree
       def update_turbo_stream_enabled?
         true
       end
+
+      def permitted_resource_params
+        params.require(:shipping_method).permit(permitted_shipping_method_attributes)
+      end
     end
   end
 end

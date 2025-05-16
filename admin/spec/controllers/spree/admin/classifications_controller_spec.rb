@@ -58,6 +58,21 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     end
   end
 
+  describe 'PATCH #update' do
+    let!(:classification) { create(:classification, taxon: taxon, product: product1, position: 1) }
+
+    subject { patch :update, params: { taxon_id: taxon.id, id: classification.id, classification: { position: 2 }, format: :turbo_stream } }
+
+    it 'updates the classification' do
+      expect { subject }.to change { classification.reload.position }.from(1).to(2)
+    end
+
+    it 'returns a successful response' do
+      subject
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe 'DELETE #destroy' do
     let!(:classification) { create(:classification, taxon: taxon, product: product1) }
 

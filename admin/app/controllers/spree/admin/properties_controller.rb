@@ -29,6 +29,10 @@ module Spree
           add_breadcrumb @property.presentation, spree.edit_admin_property_path(@property)
         end
       end
+
+      def permitted_resource_params
+        params.require(:property).permit(permitted_property_attributes)
+      end
     end
   end
 end

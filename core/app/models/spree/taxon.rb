@@ -1,4 +1,3 @@
-# TODO: let friendly id take care of sanitizing the url
 require 'stringex'
 
 module Spree
@@ -96,9 +95,11 @@ module Spree
       if Spree.use_translations?
         joins(:taxonomy).
           join_translation_table(Taxonomy).
-          where(["LOWER(#{Taxonomy.translation_table_alias}.name) = ?", taxonomy_name.downcase.strip])
+          where(
+            Taxonomy.arel_table_alias[:name].lower.matches(taxonomy_name.downcase.strip)
+          )
       else
-        joins(:taxonomy).where(["LOWER(#{Spree::Taxonomy.table_name}.name) = ?", taxonomy_name.downcase.strip])
+        joins(:taxonomy).where(Spree::Taxonomy.arel_table[:name].lower.matches(taxonomy_name.downcase.strip))
       end
     }
 

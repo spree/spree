@@ -52,6 +52,10 @@ module Spree
           render action == :create ? :new : :edit, status: :unprocessable_entity
         end
       end
+
+      def permitted_resource_params
+        params.require(:integration).permit(*permitted_integration_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
+      end
     end
   end
 end

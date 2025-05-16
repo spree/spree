@@ -37,6 +37,7 @@ require 'ffaker'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
+require 'spree/api/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
@@ -65,7 +66,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Capybara.match = :smart
-    Capybara.javascript_driver = :selenium_chrome
+    Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
     # Clean out the database state before the tests run
