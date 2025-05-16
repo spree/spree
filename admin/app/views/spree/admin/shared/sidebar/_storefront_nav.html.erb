@@ -4,7 +4,9 @@
 
   <% if storefront_active %>
     <ul class="nav-submenu">
-      <%= nav_item(Spree.t(:themes), spree.admin_themes_path) %>
+      <% if can?(:manage, Spree::Theme) %>
+        <%= nav_item(Spree.t(:themes), spree.admin_themes_path) %>
+      <% end %>
       
       <% if can?(:manage, Spree::Page) %>
         <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
@@ -17,6 +19,8 @@
       <% if can?(:manage, current_store) %>
         <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
       <% end %>
+
+      <%= render_admin_partials(:storefront_nav_partials) %>
     </ul>
   <% end %>
 <% end %>
