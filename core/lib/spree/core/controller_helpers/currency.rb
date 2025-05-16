@@ -29,7 +29,7 @@ module Spree
         end
 
         # Returns the list of supported currencies for the current store.
-        # @return [Array<String>] the list of supported currencies, eg. `["USD", "EUR"]`
+        # @return [Array<Money::Currency>] the list of supported currencies
         def supported_currencies
           @supported_currencies ||= current_store&.supported_currencies_list
         end
