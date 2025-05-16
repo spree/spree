@@ -5,7 +5,8 @@ RSpec.describe Spree::BaseAnalyticsEventHandler do
   let(:user) { create(:user) }
   let(:session) { double('session', id: 'test-session-123') }
   let(:request) { double('request', remote_ip: '127.0.0.1') }
-  let(:handler) { described_class.new(user: user, session: session, request: request) }
+  let(:visitor_id) { 'test-visitor-123' }
+  let(:handler) { described_class.new(user: user, session: session, request: request, visitor_id: visitor_id) }
 
   describe '#client' do
     it 'raises NotImplementedError' do
@@ -41,20 +42,22 @@ RSpec.describe Spree::BaseAnalyticsEventHandler do
 
   describe '#identity_hash' do
     context 'when user is present' do
-      it 'returns hash with user_id and session_id' do
+      it 'returns hash with user_id, visitor_id and session_id' do
         expect(handler.send(:identity_hash)).to eq({
           user_id: user.id,
-          session_id: session.id
+          session_id: session.id,
+          visitor_id: visitor_id
         })
       end
     end
 
     context 'when user is not present' do
-      let(:handler) { described_class.new(session: session) }
+      let(:handler) { described_class.new(session: session, visitor_id: visitor_id) }
 
-      it 'returns hash with nil user_id and session_id' do
+      it 'returns hash with nil user_id, visitor_id and session_id' do
         expect(handler.send(:identity_hash)).to eq({
           user_id: nil,
+          visitor_id: visitor_id,
           session_id: session.id
         })
       end
