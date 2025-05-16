@@ -266,7 +266,7 @@ module Spree
           checkout_email_entered: 'Checkout Email Entered',
           checkout_step_viewed: 'Checkout Step Viewed',
           checkout_step_completed: 'Checkout Step Completed',
-          order_completed: 'Order Completed'
+          order_completed: 'Order Completed',
         }
         Rails.application.config.spree.analytics_event_handlers = []
 
