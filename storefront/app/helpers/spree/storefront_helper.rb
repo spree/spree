@@ -3,12 +3,20 @@ module Spree
     include BaseHelper
     include Heroicon::Engine.helpers
 
+    # Renders the storefront partials for the given section.
+    #
+    # @param section [String] The section to render
+    # @param options [Hash] The options/variables to pass to the partials
+    # @return [String] The rendered partials
     def render_storefront_partials(section, options = {})
       Rails.application.config.spree_storefront.send(section).map do |partial|
         render partial, options
       end.join.html_safe
     end
 
+    # Returns the page description for the current page.
+    #
+    # @return [String] The page description
     def page_description
       return @page_description if @page_description.present?
 
@@ -23,6 +31,10 @@ module Spree
       @page_description
     end
 
+    # Returns the page image for the current page.
+    # This is used for SEO, social media and Open Graph tags.
+    #
+    # @return [String] The page image
     def page_image
       return @page_image if @page_image.present?
 

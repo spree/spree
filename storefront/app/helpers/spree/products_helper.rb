@@ -21,10 +21,14 @@ module Spree
     end
 
     def weeks_online(product)
+      Spree::Deprecation.warn('weeks_online is deprecated and will be removed in Spree 5.2')
+
       (Time.current - product.activated_at.in_time_zone(current_store.preferred_timezone)).seconds.in_weeks.to_i.abs
     end
 
     def brand_name(product)
+      Spree::Deprecation.warn('brand_name is deprecated and will be removed in Spree 5.2. Please use `product.brand_name` instead.')
+
       product.brand&.name || product.try(:vendor)&.display_name
     end
 
@@ -152,6 +156,10 @@ module Spree
       product.main_taxon.self_and_ancestors.find_all { |taxon| taxon.depth != 0 }
     end
 
+    # Generates the JSON-LD elements for a list of products.
+    #
+    # @param product_slugs [Array<String>] The slugs of the products to generate elements for
+    # @return [Array<Hash>] The JSON-LD elements
     def product_list_json_ld_elements(product_slugs)
       product_slugs.each_with_index.map do |product_slug, index|
         {
@@ -162,6 +170,10 @@ module Spree
       end
     end
 
+    # Generates the JSON-LD breadcrumbs for a product.
+    #
+    # @param product [Spree::Product] The product to generate breadcrumbs for
+    # @return [Hash] The JSON-LD breadcrumbs
     def product_json_ld_breadcrumbs(product)
       json_ld = {
         '@context' => 'https://schema.org',

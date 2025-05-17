@@ -1,0 +1,156 @@
+import SpreeUser from '/snippets/objects/spree_user.mdx';
+import SpreeAddress from '/snippets/objects/spree_address.mdx';
+import SpreeLineItem from '/snippets/objects/spree_line_item.mdx';
+
+<Expandable title="properties">
+  <ResponseField name="number" type="string">
+    The order number
+    Example: `R123456789`
+  </ResponseField>
+
+  <ResponseField name="total" type="decimal">
+    The total amount of the order
+    Example: 99.99
+  </ResponseField>
+
+  <ResponseField name="display_total" type="string">
+    Formatted total with currency
+    Example: "$99.99" 
+  </ResponseField>
+
+  <ResponseField name="item_total" type="decimal">
+    Sum of all line item amounts pre-tax
+    Example: 89.99
+  </ResponseField>
+
+  <ResponseField name="display_item_total" type="string">
+    Formatted item total with currency
+    Example: "$89.99"
+  </ResponseField>
+
+  <ResponseField name="adjustment_total" type="decimal">
+    Sum of all adjustments
+    Example: -10.00
+  </ResponseField>
+
+  <ResponseField name="display_adjustment_total" type="string">
+    Formatted adjustment total with currency
+    Example: "-$10.00"
+  </ResponseField>
+
+  <ResponseField name="tax_total" type="decimal">
+    Sum of all tax amounts
+    Example: 13.25
+  </ResponseField>
+
+  <ResponseField name="display_tax_total" type="string">
+    Formatted tax total with currency
+    Example: "$13.25"
+  </ResponseField>
+
+  <ResponseField name="shipment_total" type="decimal">
+    Sum of shipment amounts
+    Example: 10.00
+  </ResponseField>
+
+  <ResponseField name="display_shipment_total" type="string">
+    Formatted shipment total with currency
+    Example: "$10.00"
+  </ResponseField>
+
+  <ResponseField name="promo_total" type="decimal">
+    Sum of all promotion adjustments
+    Example: -15.00
+  </ResponseField>
+
+  <ResponseField name="display_promo_total" type="string">
+    Formatted promotion total with currency
+    Example: "-$15.00"
+  </ResponseField>
+
+  <ResponseField name="included_tax_total" type="decimal">
+    Sum of included tax amounts
+    Example: 8.25
+  </ResponseField>
+
+  <ResponseField name="additional_tax_total" type="decimal">
+    Sum of additional tax amounts
+    Example: 5.00
+  </ResponseField>
+
+  <ResponseField name="payment_total" type="decimal">
+    Sum of completed payment amounts
+    Example: 99.99
+  </ResponseField>
+
+  <ResponseField name="state" type="string">
+    Current order state
+    Example: `cart`
+  </ResponseField>
+
+  <ResponseField name="email" type="string">
+    Customer email address
+    Example: `customer@example.com`
+  </ResponseField>
+
+  <ResponseField name="user_id" type="integer">
+    Associated user ID
+    Example: 123
+  </ResponseField>
+
+  <ResponseField name="user" type="Spree::User">
+    Associated user object
+
+    <SpreeUser />
+  </ResponseField>
+
+  <ResponseField name="completed_at" type="datetime">
+    When the order was completed (placed and paid). For orders in `cart` state, this will be `nil`.
+    Example: `2023-06-15 13:45:00`
+  </ResponseField>
+
+  <ResponseField name="bill_address_id" type="integer">
+    Billing address ID
+    Example: 456
+  </ResponseField>
+
+  <ResponseField name="bill_address" type="Spree::Address">
+    Billing address object
+    <SpreeAddress />
+  </ResponseField>
+
+  <ResponseField name="ship_address_id" type="integer">
+    Shipping address ID
+    Example: 457
+  </ResponseField>
+
+  <ResponseField name="ship_address" type="Spree::Address">
+    Shipping address object
+    <SpreeAddress />
+  </ResponseField>
+
+  <ResponseField name="payment_state" type="string">
+    Payment state (balance_due, credit_owed, failed, paid, void)
+    Example: `paid`
+  </ResponseField>
+
+  <ResponseField name="shipment_state" type="string">
+    Shipment state (backorder, canceled, partial, pending, ready, shipped)
+    Example: `shipped`
+  </ResponseField>
+
+  <ResponseField name="currency" type="string">
+    Order currency
+    Example: `USD`
+  </ResponseField>
+
+  <ResponseField name="store_id" type="integer">
+    Associated store ID
+    Example: 1
+  </ResponseField>
+
+  <ResponseField name="line_items" type="array">
+    Line items in the order
+    <SpreeLineItem />
+  </ResponseField>
+</Expandable>

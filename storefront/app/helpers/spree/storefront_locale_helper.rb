@@ -1,5 +1,8 @@
 module Spree
   module StorefrontLocaleHelper
+    # Returns the currently selected locale.
+    #
+    # @return [String] The currently selected locale
     def current_locale
       @current_locale ||= if user_locale?
                             try_spree_current_user.selected_locale
