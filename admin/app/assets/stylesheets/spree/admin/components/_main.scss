@@ -32,6 +32,7 @@
   justify-content: space-between;
   text-align: left;
   gap: 0.5rem;
+  box-shadow: none !important;
 
   &:hover {
     background-color: $gray-50;

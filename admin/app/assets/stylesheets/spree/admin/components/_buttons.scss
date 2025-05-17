@@ -9,6 +9,10 @@ button[disabled]        .show-when-enabled { display: none; }
   @include button-variant(theme-color('success'), theme-color('success'), theme-color('success') );
 }
 
+.btn {
+  box-shadow: $btn-box-shadow;
+}
+
 .btn,
 .nav-pills > li > a {
   vertical-align: middle;

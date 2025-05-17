@@ -1,6 +1,6 @@
 .custom-checkbox .custom-control-label::before {
   border-radius: 0.25rem !important;
-  border-color: $gray-200;
+  border-color: $input-border-color;
 }
 
 label {
@@ -27,6 +27,7 @@ label {
 }
 
 .form-control, .text-input, .trix-container, .ts-control, trix-toolbar .trix-dialog .trix-input, .custom-select, .input-group-text, .custom-file-label {
+  box-shadow: $input-box-shadow;
   transition-property: box-shadow;
   transition-duration: 0.2s;
 

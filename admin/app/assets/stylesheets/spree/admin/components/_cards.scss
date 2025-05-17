@@ -35,6 +35,10 @@
 	}
 }
 
+.card .card {
+  border-radius: $border-radius;
+}
+
 .card-header, .card-footer {
   background-color: transparent;
 }
@@ -60,9 +64,8 @@
 }
 
 .card, .card-lg {
-  border: 0;
-  box-shadow: 0 0 0 1px $card-border-color;
-  background-color: $white;
+  box-shadow: $card-box-shadow;
+  background-color: $card-bg;
   border-radius: $border-radius-lg;
 }
 .card-lg {

@@ -2,7 +2,7 @@
 
 $gray-25: #F9F9F9;
 $gray-50: #F3F3F3;
-$gray-100: #E6E6E6 !default;
+$gray-100: #E7E5E4 !default;
 $gray-200: #D5D5D5 !default;
 $gray-300: #B3B3B3 !default;
 $gray-400: #999999 !default;
@@ -72,7 +72,6 @@ $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
 $border-radius-sm: 0.4rem !default;
 $border-radius-lg: 0.75rem !default;
-$card-border-radius: $border-radius-lg !default;
 $border-color: $gray-100 !default;
 $input-border-color: $border-color !default;
 $list-group-border-color: $border-color !default;
@@ -95,6 +94,8 @@ $input-placeholder-color: $gray-500;
 $input-padding-y:         .5rem !default;
 $input-disabled-bg: $gray-50 !default;
 $input-focus-border-color: $blue !default;
+$input-box-shadow: none !default;
+$btn-box-shadow: $input-box-shadow !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-400 !default;
@@ -111,6 +112,11 @@ $nav-link-padding-x:                .6rem !default;
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
 $box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
+
+$card-border-width: 0px !default;
+$card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$card-bg: $white !default;
+$card-border-radius: $border-radius-lg !default;
 
 $tooltip-border-radius: $border-radius !default;
 $tooltip-opacity: 1 !default;
@@ -162,10 +168,10 @@ $dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
-$dropdown-divider-margin-y: 0.5rem !default;
+$dropdown-divider-margin-y: 0.25rem !default;
 $dropdown-header-color: $gray-500 !default;
 
-$modal-backdrop-bg:                 $white !default;
+$modal-backdrop-bg:                 $body-bg !default;
 $modal-backdrop-opacity:            0.8 !default;
 $modal-content-border-color:        $border-color !default;
 $modal-content-border-width:        0px !default;

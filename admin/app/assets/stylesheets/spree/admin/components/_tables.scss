@@ -50,14 +50,20 @@ table.table {
   }
 
   thead {
-    background-color: rgba($gray-25, 0.5);
     th {
+      background-color: rgba($gray-25, 0.5);
       @extend .text-muted;
       font-size: $font-size-sm;
       font-weight: $font-weight-normal;
       vertical-align: middle;
       padding-top: 0.3rem;
       padding-bottom: 0.3rem;
+    }
+    th:first-child {
+      border-top-left-radius: $border-radius-lg;
+    }
+    th:last-child {
+      border-top-right-radius: $border-radius-lg;
     }
   }
 
@@ -194,5 +200,18 @@ td.actions {
 
   @media (min-width: 768px) {
     top: 0px;
+  }
+}
+
+.card-lg {
+  table {
+    thead {
+      th:first-child {
+        border-top-left-radius: 0;
+      }
+      th:last-child {
+        border-top-right-radius: 0;
+      }
+    }
   }
 }
