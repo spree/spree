@@ -3,6 +3,9 @@ title: Admin Dashboard Helper Methods
 sidebarTitle: Helper Methods
 ---
 
+import SpreeStore from '/snippets/objects/spree_store.mdx'
+import SpreeVendor from '/snippets/objects/spree_vendor.mdx'
+
 Here you can find a list of helper methods that are available in the Admin Dashboard that you can use in every template.
 
 <Warning>
@@ -78,23 +81,21 @@ USD
 
 ## `current_store`
 
-Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+<ResponseField name="current_store" type="Spree::Store" description="The current store object.">
+  <SpreeStore />
+</ResponseField>
 
-```erb
-<%= current_store.name %>
-```
+Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
 
 ## `current_vendor`
 
 <Info>
-  Only Spree Enterprise edition has this method.
+  Available only in [Spree Enterprise Edition](https://spreecommerce.com/pricing).
 </Info>
 
-Returns the current vendor `Spree::Vendor` instance.
-
-```erb
-<%= current_vendor.name %>
-```
+<ResponseField name="current_vendor" type="Spree::Vendor" description="The current vendor object.">
+  <SpreeVendor />
+</ResponseField>
 
 ## `icon`
 
