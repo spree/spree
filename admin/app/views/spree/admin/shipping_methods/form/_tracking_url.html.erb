@@ -1,0 +1,18 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:tracking_url) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.url_field :tracking_url, class: 'form-control', placeholder: Spree.t(:tracking_url_placeholder) %>
+      <%= f.error_message_on :tracking_url %>
+    </div>
+
+    <p class="form-text text-muted small mt-2">
+      <code>:tracking</code>
+      <span>will be replaced with the tracking number.</span>
+    </p>
+  </div>
+</div>

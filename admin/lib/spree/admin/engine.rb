@@ -22,6 +22,7 @@ module Spree
         :store_form_partials,
         :store_nav_partials,
         :settings_nav_partials,
+        :shipping_method_form_partials,
         :store_settings_nav_partials,
         :store_orders_nav_partials,
         :store_products_nav_partials,
@@ -97,6 +98,7 @@ module Spree
         Rails.application.config.spree_admin.store_form_partials = []
         Rails.application.config.spree_admin.store_nav_partials = []
         Rails.application.config.spree_admin.settings_nav_partials = []
+        Rails.application.config.spree_admin.shipping_method_form_partials = []
         Rails.application.config.spree_admin.store_settings_nav_partials = []
         Rails.application.config.spree_admin.store_orders_nav_partials = []
         Rails.application.config.spree_admin.store_products_nav_partials = []

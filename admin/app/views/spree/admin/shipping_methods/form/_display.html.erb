@@ -1,0 +1,25 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group">
+          <%= f.label :name, Spree.t(:name) %>
+          <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
+          <%= f.error_message_on :name %>
+        </div>
+
+        <p class="form-text text-muted small mt-2">
+          This will be displayed to customers.
+        </p>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="form-group">
+          <%= f.label :display_on %>
+          <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select' } %>
+          <%= f.error_message_on :display_on %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
