@@ -891,9 +891,7 @@
                   "user/customers/issue-gift-card",
                   "user/customers/assign-store-credits",
                   "user/customers/searching-customers",
-                  "user/customers/exporting-customers",
-                  "user/customers/importing-customers",
-                  "user/customers/customer-import-file"
+                  "user/customers/exporting-customers"
                 ]
               },
               {
