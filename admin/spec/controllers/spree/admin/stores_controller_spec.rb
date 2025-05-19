@@ -52,7 +52,10 @@ describe Spree::Admin::StoresController do
         name: 'New Store Name',
         default_currency: 'GBR',
         default_country_iso: 'GB',
-        default_locale: 'pl'
+        default_locale: 'pl',
+        preferred_timezone: 'Europe/Warsaw',
+        preferred_weight_unit: 'kg',
+        preferred_unit_system: 'metric'
       }
     end
 
@@ -69,6 +72,10 @@ describe Spree::Admin::StoresController do
       expect(store.default_currency).to eq('GBR')
       expect(store.default_country).to eq(uk_country)
       expect(store.default_locale).to eq('pl')
+
+      expect(store.preferred_timezone).to eq('Europe/Warsaw')
+      expect(store.preferred_weight_unit).to eq('kg')
+      expect(store.preferred_unit_system).to eq('metric')
     end
 
     context 'when removing assets' do

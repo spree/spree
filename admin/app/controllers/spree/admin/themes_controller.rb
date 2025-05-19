@@ -75,7 +75,7 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:theme).permit(permitted_theme_attributes)
+        params.require(:theme).permit(permitted_theme_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
       end
     end
   end
