@@ -1,141 +1,14 @@
 <div class="row">
   <div class="col-lg-6">
-    <div class="card mb-4">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="form-group">
-              <%= f.label :name, Spree.t(:name) %>
-              <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-              <%= f.error_message_on :name %>
-            </div>
-
-            <p class="form-text text-muted small mt-2">
-              This will be displayed to customers.
-            </p>
-          </div>
-
-          <div class="col-lg-6">
-            <div class="form-group">
-              <%= f.label :display_on %>
-              <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select' } %>
-              <%= f.error_message_on :display_on %>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title">
-          <%= Spree.t(:tracking_url) %>
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="form-group">
-          <%= f.url_field :tracking_url, class: 'form-control', placeholder: Spree.t(:tracking_url_placeholder) %>
-          <%= f.error_message_on :tracking_url %>
-        </div>
-
-        <p class="form-text text-muted small mt-2">
-          <code>:tracking</code>
-          <span>will be replaced with the tracking number.</span>
-        </p>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header d-flex align-items-center">
-        <h5 class="card-title">
-          <%= Spree.t(:zones) %>
-        </h5>
-
-        <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-100') if can?(:manage, Spree::Zone) %>
-      </div>
-
-      <div class="card-body">
-        <div class="form-group">
-          <% @available_zones.each do |zone| %>
-            <div class="custom-control custom-checkbox mb-2">
-              <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
-              <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label' do %>
-                <span ><%= zone.name.gsub('_',  ' ') %></span>
-                <p class="text-muted small mb-0">
-                  <%= zone.zone_members.map {|zone_member| zone_member.zoneable.name }.join(', ') %>
-                </p>
-              <% end %>
-            </div>
-          <% end %>
-          <%= f.error_message_on :zone_id %>
-        </div>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title">
-          <%= Spree.t(:shipping_categories) %>
-        </h5>
-      </div>
-
-      <div class="card-body">
-        <div class="form-group">
-          <% @shipping_categories.each do |category| %>
-            <div class="custom-control custom-checkbox mb-2">
-              <%= check_box_tag('shipping_method[shipping_category_ids][]', category.id, @shipping_method.shipping_categories.include?(category), id: "shipping_method_categories_#{category.id}", class: 'custom-control-input') %>
-              <%= label_tag "shipping_method_categories_#{category.id}", class: 'custom-control-label' do %>
-                <%= category.name.gsub('_',  ' ') %>
-              <% end %>
-            </div>
-          <% end %>
-          <%= f.error_message_on :shipping_category_id %>
-        </div>
-      </div>
-    </div>
-
-    <% if can?(:manage, Spree::TaxCategory) %>
-      <div class="card mb-4">
-        <div class="card-header">
-          <h5 class="card-title">
-            <%= Spree.t(:tax_category) %>
-          </h5>
-        </div>
-
-        <div class="card-body">
-          <div class="form-group">
-            <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'custom-select' }) %>
-            <%= f.error_message_on :tax_category %>
-          </div>
-        </div>
-      </div>
-    <% end %>
+    <%= render 'spree/admin/shipping_methods/form/display', f: f %>
+    <%= render 'spree/admin/shipping_methods/form/tracking_url', f: f %>
+    <%= render 'spree/admin/shipping_methods/form/zones', f: f %>
+    <%= render 'spree/admin/shipping_methods/form/shipping_categories', f: f %>
+    <%= render 'spree/admin/shipping_methods/form/tax_category', f: f %>
   </div>
   <div class="col-lg-6">
     <%= render partial: 'spree/admin/shared/calculator_fields', locals: { f: f, calculators: @calculators } %>
-
-    <div class="card mb-4 tax_categories">
-      <div class="card-header">
-        <h5 class="card-title">
-          <%= Spree.t(:estimated_transit_business_days) %>
-        </h5>
-      </div>
-      <div class="card-body">
-        <div class="alert alert-info">
-          This is the estimated number of business days it will take for the package to arrive at the customer's address.
-          It will be displayed on the checkout page.
-        </div>
-        <div class="row">
-          <div class="col">
-            <%= f.label :estimated_transit_business_days_min, Spree.t(:min) %>
-            <%= f.number_field :estimated_transit_business_days_min, class: 'form-control w-auto', size: 2, placeholder: Spree.t(:min), min: 1 %>
-          </div>
-          <div class="col">
-            <%= f.label :estimated_transit_business_days_max, Spree.t(:max) %>
-            <%= f.number_field :estimated_transit_business_days_max, class: 'form-control w-auto', size: 2, placeholder: Spree.t(:max), min: 1 %>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%= render 'spree/admin/shipping_methods/form/estimated_transit_business_days', f: f %>
+    <%= render_admin_partials(:shipping_method_form_partials, f: f, shipping_method: @shipping_method) %>
   </div>
 </div>

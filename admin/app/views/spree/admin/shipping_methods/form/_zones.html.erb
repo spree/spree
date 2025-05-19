@@ -1,0 +1,26 @@
+<div class="card mb-4">
+  <div class="card-header d-flex align-items-center">
+    <h5 class="card-title">
+      <%= Spree.t(:zones) %>
+    </h5>
+
+    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-100') if can?(:manage, Spree::Zone) %>
+  </div>
+
+  <div class="card-body">
+    <div class="form-group">
+      <% @available_zones.each do |zone| %>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
+          <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label' do %>
+            <span ><%= zone.name.gsub('_',  ' ') %></span>
+            <p class="text-muted small mb-0">
+              <%= zone.zone_members.map {|zone_member| zone_member.zoneable.name }.join(', ') %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+      <%= f.error_message_on :zone_ids %>
+    </div>
+  </div>
+</div>

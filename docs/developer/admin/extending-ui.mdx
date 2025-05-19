@@ -456,6 +456,39 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
+### Shipping Methods
+
+<AccordionGroup>
+  <Accordion title="Shipping Methods Form">
+    `shipping_method_form_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    <ParamField path="shipping_method" type="Spree::ShippingMethod">
+      The [Spree::ShippingMethod](https://github.com/spree/spree/blob/main/core/app/models/spree/shipping_method.rb) object.
+    </ParamField>
+
+    Injects code into the shipping method form. This partial has access to the `f` variable, which is the form builder for the shipping method form, and the `shipping_method` variable.
+
+    To add a new section to the shipping method form, you can use the following code:
+
+    ```erb
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">ERP Integration</h5>
+      </div>
+      <div class="card-body">
+        <%= f.text_field :erp_shipping_method_id, class: "form-control" %>
+      </div>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
 ### Store Settings
 
 <AccordionGroup>
