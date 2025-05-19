@@ -78,6 +78,11 @@ module Spree
     def install_storefront
       if @install_storefront && Spree::Core::Engine.frontend_available?
         generate 'spree:storefront:install'
+
+        # generate devise controllers if authentication is devise
+        if @authentication == 'devise'
+          generate 'spree:storefront:devise'
+        end
       end
     end
 
