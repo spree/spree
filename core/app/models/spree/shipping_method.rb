@@ -50,7 +50,7 @@ module Spree
     def include?(address)
       return false unless address
 
-      zones.includes(:zone_members).any? do |zone|
+      zones.includes(zone_members: :zoneable).any? do |zone|
         zone.include?(address)
       end
     end
