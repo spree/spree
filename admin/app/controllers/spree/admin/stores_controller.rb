@@ -68,7 +68,7 @@ module Spree
       protected
 
       def permitted_store_params
-        params.require(:store).permit(permitted_store_attributes)
+        params.require(:store).permit(permitted_store_attributes + current_store.preferences.keys.map { |key| "preferred_#{key}" })
       end
 
       private

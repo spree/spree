@@ -52,7 +52,10 @@ describe Spree::Admin::StoresController do
         name: 'New Store Name',
         default_currency: 'GBR',
         default_country_iso: 'GB',
-        default_locale: 'pl'
+        default_locale: 'pl',
+        preferred_timezone: 'Europe/Warsaw',
+        preferred_weight_unit: 'kg',
+        preferred_unit_system: 'metric'
       }
     end
 

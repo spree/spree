@@ -34,6 +34,15 @@ RSpec.describe Spree::Admin::ThemesController, type: :controller do
     end
   end
 
+  describe 'PUT #update' do
+    it 'updates the theme' do
+      expect do
+        put :update, params: { id: theme.id, theme: { preferred_primary_color: '#0090FE', preferred_font_family: 'Inconsolata' }, format: :turbo_stream }
+      end.to change { theme.reload.preferred_primary_color }.to('#0090FE')
+        .and change { theme.reload.preferred_font_family }.to('Inconsolata')
+    end
+  end
+
   describe 'PUT #publish' do
     it 'sets the theme as default' do
       put :publish, params: { id: theme.id }, format: :turbo_stream
