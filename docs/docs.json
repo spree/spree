@@ -1744,6 +1744,13 @@
                 ]
               },
               {
+                "group": "Customers",
+                "pages": [
+                  "user/customers/create-customer",
+                  "user/customers/customer-profile"                 
+                ]
+              },
+              {
                 "group": "Storefront",
                 "pages": [
                   {
