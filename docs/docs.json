@@ -1747,7 +1747,14 @@
                 "group": "Customers",
                 "pages": [
                   "user/customers/create-customer",
-                  "user/customers/customer-profile"                 
+                  "user/customers/customer-profile",
+                  "user/customers/edit-customer",
+                  "user/customers/issue-gift-card",
+                  "user/customers/assign-store-credits",
+                  "user/customers/searching-customers",
+                  "user/customers/exporting-customers",
+                  "user/customers/importing-customers",
+                  "user/customers/customer-import-file"
                 ]
               },
               {
