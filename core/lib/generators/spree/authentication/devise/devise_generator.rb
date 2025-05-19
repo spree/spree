@@ -33,6 +33,8 @@ module Spree
     include Spree::UserPaymentSource
             RUBY
           end
+          gsub_file user_class_file, "< ApplicationRecord", "< Spree.base_class"
+
           say "Successfully added Spree user modules into #{user_class_file}"
         else
           say "Could not locate user model file at #{user_class_file}. Please add these lines manually:", :red
@@ -42,13 +44,14 @@ module Spree
             include Spree::UserMethods
             include Spree::UserPaymentSource
           RUBY
+
+          say "Please replace < ApplicationRecord with < Spree.base_class in #{user_class_file}"
         end
 
         append_file 'config/initializers/spree.rb' do
           %Q{
             if defined?(Devise) && Devise.respond_to?(:parent_controller)
-              Devise.parent_controller = "Spree::StoreController"
-              Devise.parent_mailer = "Spree::BaseMailer"
+              Devise.parent_controller = "Spree::BaseController"
             end\n}
         end
       end
