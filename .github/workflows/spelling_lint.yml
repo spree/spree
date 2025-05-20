@@ -3,6 +3,9 @@ name: Lint Code Spelling
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   codespell:
     name: Check spelling all files with codespell
