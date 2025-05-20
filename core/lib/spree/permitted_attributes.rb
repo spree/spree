@@ -22,6 +22,7 @@ module Spree
       :option_type_attributes,
       :option_value_attributes,
       :page_attributes,
+      :page_block_attributes,
       :page_link_attributes,
       :page_section_attributes,
       :payment_attributes,
@@ -123,6 +124,8 @@ module Spree
     @@option_value_attributes = [:name, :presentation, :position]
 
     @@page_attributes = [:name, :slug, :meta_title, :meta_description, :meta_keywords]
+
+    @@page_block_attributes = [:type, :name, :position]
 
     @@page_link_attributes = [:linkable_id, :linkable_type, :position, :label, :url]
 

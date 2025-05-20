@@ -69,6 +69,30 @@ RSpec.describe Spree::Admin::PageBlocksController, type: :controller do
     end
   end
 
+  describe '#edit' do
+    subject { get :edit, params: { id: page_block.id, page_section_id: page_section.id } }
+
+    let(:page_block) { create(:page_block, :buttons, section: page_section) }
+    let(:page_section) { create(:featured_taxon_page_section) }
+
+    it 'renders the edit template' do
+      subject
+
+      expect(response).to render_template(:edit)
+    end
+  end
+
+  describe '#update' do
+    subject { put :update, params: { id: page_block.id, page_section_id: page_section.id, page_block: { preferred_button_text_color: '#000000' } }, format: :turbo_stream }
+
+    let(:page_block) { create(:buttons_block, section: page_section) }
+    let(:page_section) { create(:featured_taxon_page_section) }
+
+    it 'updates the page block' do
+      expect { subject }.to change { page_block.reload.preferred_button_text_color }.to('#000000')
+    end
+  end
+
   describe '#allowed_types' do
     subject { controller.send(:allowed_types) }
 
