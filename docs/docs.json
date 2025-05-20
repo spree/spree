@@ -1782,7 +1782,8 @@
               {
                 "group": "Vendors",
                 "pages": [
-                  "user/vendors/invite-vendor"
+                  "user/vendors/invite-vendor",
+                  "user/vendors/vendor-onboarding"
                 ]
               },
               {
@@ -1816,6 +1817,13 @@
                   },
                   "user/storefront/storefront-settings",
                   "user/storefront/create-new-store"
+                ]
+              },
+              {
+                "group": "Settings",
+                "pages": [
+                  "user/settings/locations",
+                  "user/settings/shipping-methods"
                 ]
               }
             ]
