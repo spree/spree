@@ -85,6 +85,20 @@
                 ]
               },
               {
+                "group": "Use Cases",
+                "icon": "book-open",
+                "pages": [
+                  {
+                    "group": "Multi-Tenant",
+                    "icon": "building",
+                    "pages": [
+                      "developer/multi-tenant/quickstart",
+                      "developer/multi-tenant/installation"
+                    ]
+                  }
+                ]
+              },
+              {
                 "group": "Deployment",
                 "pages": [
                   "developer/deployment/render",
