@@ -36,12 +36,12 @@ module Spree
         private
 
         def formatted_amount_min
-          Spree::Money.new(preferred_amount_min).to_s
+          Spree::Money.new(preferred_amount_min, currency: order.currency).to_s
         end
 
         def formatted_amount_max
           if preferred_amount_max.present?
-            Spree::Money.new(preferred_amount_max).to_s
+            Spree::Money.new(preferred_amount_max, currency: order.currency).to_s
           else
             Spree.t('no_maximum')
           end
