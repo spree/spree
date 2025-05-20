@@ -117,6 +117,7 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
+                      "developer/upgrades/5.0-to-5.1",
                       "developer/upgrades/4.10-to-5.0",
                       "developer/upgrades/4.9-to-4.10",
                       "developer/upgrades/4.8-to-4.9",
