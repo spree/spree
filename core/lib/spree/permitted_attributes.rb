@@ -33,6 +33,9 @@ module Spree
       :product_properties_attributes,
       :property_attributes,
       :refund_attributes,
+      :refund_reason_attributes,
+      :reimbursement_attributes,
+      :reimbursement_type_attributes,
       :report_attributes,
       :return_authorization_attributes,
       :return_authorization_reason_attributes,
@@ -160,7 +163,11 @@ module Spree
 
     @@refund_attributes = [:amount, :refund_reason_id]
 
+    @@refund_reason_attributes = [:name, :active, :mutable]
+
     @@reimbursement_attributes = [return_items_attributes: [:id, :override_reimbursement_type_id, :pre_tax_amount, :exchange_variant_id]]
+
+    @@reimbursement_type_attributes = [:name, :active]
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]
 
@@ -170,7 +177,7 @@ module Spree
                                             :acceptance_status, :exchange_variant_id, :resellable]
                                         }]
 
-    @@return_authorization_reason_attributes = [:name, :description]
+    @@return_authorization_reason_attributes = [:name, :active]
 
     @@return_item_attributes = [:inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]
 
