@@ -910,6 +910,13 @@
                 ]
               },
               {
+                "group": "Vendors",
+                "pages": [
+                  "user/vendors/invite-vendor",
+                  "user/vendors/vendor-onboarding"
+                ]
+              },
+              {
                 "group": "Storefront",
                 "pages": [
                   {
@@ -940,6 +947,19 @@
                   },
                   "user/storefront/storefront-settings",
                   "user/storefront/create-new-store"
+                ]
+              },
+               {
+                "group": "Settings",
+                "pages": [
+                  "user/settings/store-details",
+                  "user/settings/emails",
+                  "user/settings/policies",
+                  "user/settings/checkout",
+                  "user/settings/locations",
+                  "user/settings/zones",
+                  "user/settings/shipping-methods",
+                  "user/settings/tax"
                 ]
               }
             ]
