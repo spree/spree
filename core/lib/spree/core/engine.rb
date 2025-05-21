@@ -42,7 +42,7 @@ module Spree
         Spree::Config = app.config.spree.preferences
         Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
-        Spree::Deprecation = ActiveSupport::Deprecation.new
+        Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|

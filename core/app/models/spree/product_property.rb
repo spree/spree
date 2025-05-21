@@ -42,19 +42,6 @@ module Spree
     # virtual attributes for use with AJAX completion stuff
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true
 
-    def property_name=(name)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `ProductProperty#property_name=` is deprecated and will be removed in Spree 5.0.
-      DEPRECATION
-      if name.present?
-        self.property = if Property.where(name: name).exists?
-                          Property.where(name: name).first
-                        else
-                          Property.create(name: name, presentation: name)
-                        end
-      end
-    end
-
     protected
 
     def param_candidate
