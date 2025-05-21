@@ -93,7 +93,9 @@
                     "icon": "building",
                     "pages": [
                       "developer/multi-tenant/quickstart",
-                      "developer/multi-tenant/installation"
+                      "developer/multi-tenant/installation",
+                      "developer/multi-tenant/core-concepts"
+
                     ]
                   }
                 ]
