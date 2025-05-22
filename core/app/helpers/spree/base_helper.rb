@@ -136,10 +136,7 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#pretty_time` is deprecated and will be removed in Spree 6.0.
-        Please add `local_time` gem to your Gemfile and use `local_time(time)` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#pretty_time is deprecated and will be removed in Spree 6.0. Please add `local_time` gem to your Gemfile and use `local_time(time)` instead')
 
       [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
     end
@@ -147,10 +144,7 @@ module Spree
     def pretty_date(date)
       return '' if date.blank?
 
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#pretty_date` is deprecated and will be removed in Spree 6.0.
-        Please add `local_time` gem to your Gemfile and use `local_date(date)` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#pretty_date is deprecated and will be removed in Spree 6.0. Please add `local_time` gem to your Gemfile and use `local_date(date)` instead')
 
       [I18n.l(date.to_date, format: :long)].join(' ')
     end
@@ -219,19 +213,13 @@ module Spree
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#default_image_for_product` is deprecated and will be removed in Spree 6.0.
-        Please use `product.default_image` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#default_image_for_product is deprecated and will be removed in Spree 6.0. Please use product.default_image instead')
 
       product.default_image
     end
 
     def default_image_for_product_or_variant(product_or_variant)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#default_image_for_product_or_variant` is deprecated and will be removed in Spree 6.0.
-        Please use `product_or_variant.default_image` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#default_image_for_product_or_variant is deprecated and will be removed in Spree 6.0. Please use product_or_variant.default_image instead')
 
       product_or_variant.default_image
     end

@@ -59,10 +59,10 @@ Spree::Core::Engine.add_routes do
         post :resend
         put :cancel
       end
-      resource :shipping_address, except: [:index, :show], controller: 'orders/shipping_address'
-      resource :billing_address, except: [:index, :show], controller: 'orders/billing_address'
+      resource :shipping_address, except: [:show], controller: 'orders/shipping_address'
+      resource :billing_address, except: [:show], controller: 'orders/billing_address'
       resource :contact_information, only: [:edit, :update], controller: 'orders/contact_information'
-      resource :user, except: [:edit, :show, :index], controller: 'orders/user'
+      resource :user, except: [:edit, :show], controller: 'orders/user'
       resources :shipments, only: [:edit, :update, :create], controller: 'shipments' do
         member do
           post :ship

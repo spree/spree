@@ -5,21 +5,14 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let(:store) { @default_store }
-  let(:first_store) { create(:store, name: 'First Store', default: true, default_locale: 'en') }
+  let!(:store) { create(:store, name: 'First Store', default: true, default_locale: 'en') }
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: 'en') }
 
-  before do
-    # Make sure we always start with the default locale
-    I18n.locale = :en
-  end
-
   let(:order) do
-    order = create(:completed_order_with_totals, email: 'test@example.com')
+    order = create(:completed_order_with_totals, email: 'test@example.com', store: store)
     product = create(:product, name: %{The "BEST" product})
     variant = create(:variant, product: product)
     price = create(:price, variant: variant, amount: 5.00)
-    store = first_store
     line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
@@ -29,7 +22,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = create(:completed_order_with_totals, email: 'test2@example.com')
+    order = create(:completed_order_with_totals, email: 'test2@example.com', store: second_store)
     product = create(:product, name: %{The "BESTEST" product})
     variant = create(:variant, product: product)
     price = create(:price, variant: variant, amount: 15.00)
@@ -217,12 +210,12 @@ describe Spree::OrderMailer, type: :mailer do
           order
 
           I18n.locale = :'pt-BR'
-          first_store.update(default_locale: 'pt-BR')
+          store.update(default_locale: 'pt-BR')
         end
 
         after do
           I18n.locale = :en
-          first_store.update(default_locale: 'en')
+          store.update(default_locale: 'en')
         end
 
         it_behaves_like 'translates emails'
@@ -255,8 +248,8 @@ describe Spree::OrderMailer, type: :mailer do
   context 'confirm_email comes with data of the store where order was made' do
     it 'shows order store data' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email.from).to include(first_store.mail_from_address)
-      expect(confirmation_email.subject).to include(first_store.name)
+      expect(confirmation_email.from).to include(store.mail_from_address)
+      expect(confirmation_email.subject).to include(store.name)
     end
 
     it 'shows order store data #2' do
@@ -283,7 +276,7 @@ describe Spree::OrderMailer, type: :mailer do
   describe '#payment_link_email' do
     let(:payment_link_email) { described_class.payment_link_email(order_for_payment.id) }
 
-    let(:order_for_payment) { create(:order_with_line_items, store: first_store) }
+    let(:order_for_payment) { create(:order_with_line_items, store: store) }
     let(:payment_url) { "http://shop.com/checkout/#{order_for_payment.token}/payment" }
 
     before do
@@ -291,7 +284,7 @@ describe Spree::OrderMailer, type: :mailer do
     end
 
     it 'sends an email with the payment link' do
-      expect(payment_link_email.from).to contain_exactly(first_store.mail_from_address)
+      expect(payment_link_email.from).to contain_exactly(store.mail_from_address)
       expect(payment_link_email.to).to contain_exactly(order_for_payment.email)
       expect(payment_link_email.subject).to eq("Payment link for order ##{order_for_payment.number}")
       expect(payment_link_email.body).to include(payment_url)

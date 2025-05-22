@@ -57,6 +57,8 @@ module Spree
         app.config.assets.paths << root.join('app/javascript')
         app.config.assets.paths << root.join('vendor/javascript')
         app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
+        # fix for TinyMCE-rails gem to work with both propshaft and sprockets
+        app.config.assets.excluded_paths ||= []
       end
 
       initializer 'spree.admin.importmap', after: 'importmap' do |app|

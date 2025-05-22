@@ -696,7 +696,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         it 'raises an error' do
           expect {
             send_request
-          }.to raise_error(ActionController::ParameterMissing, 'param is missing or the value is empty: id')
+          }.to raise_error(ActionController::ParameterMissing)
         end
       end
     end

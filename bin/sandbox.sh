@@ -20,6 +20,13 @@ sqlite|'')
 esac
 
 rm -rf ./sandbox
+
+mkdir -p sandbox/app/assets/config
+cat <<MANIFEST > sandbox/app/assets/config/manifest.js
+//= link_tree ../images
+//= link_directory ../stylesheets .css
+MANIFEST
+
 bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-bundle \
   --skip-git \

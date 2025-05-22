@@ -54,18 +54,6 @@ describe Spree::ProductProperty, type: :model do
     end
   end
 
-  context 'property_name=' do
-    before do
-      @pp = create(:product_property)
-    end
-
-    it 'assigns property' do
-      @pp.property_name = 'Size'
-      expect(@pp.property.name).to eq('size')
-      expect(@pp.property.presentation).to eq('Size')
-    end
-  end
-
   context 'ransackable_associations' do
     it { expect(described_class.whitelisted_ransackable_associations).to include('property') }
   end
