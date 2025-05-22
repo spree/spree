@@ -832,6 +832,10 @@ module Spree
 
     private
 
+    def all_line_items
+      line_items
+    end
+
     def link_by_email
       self.email = user.email if user
     end
