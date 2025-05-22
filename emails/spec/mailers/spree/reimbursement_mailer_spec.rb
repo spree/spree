@@ -7,11 +7,6 @@ describe Spree::ReimbursementMailer, type: :mailer do
 
   let(:reimbursement) { create(:reimbursement) }
 
-  before do
-    # Make sure we always start with the default locale
-    I18n.locale = :en
-  end
-
   context ':from not set explicitly' do
     it 'uses store mail from address' do
       message = Spree::ReimbursementMailer.reimbursement_email(reimbursement)

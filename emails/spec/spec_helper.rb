@@ -72,6 +72,7 @@ RSpec.configure do |config|
   config.before(:each) do
     Spree::Webhooks.disabled = true
     reset_spree_preferences
+    I18n.locale = :en
   end
 
   config.include FactoryBot::Syntax::Methods
