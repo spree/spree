@@ -170,7 +170,7 @@ module Spree
 
     @@reimbursement_attributes = [return_items_attributes: [:id, :override_reimbursement_type_id, :pre_tax_amount, :exchange_variant_id]]
 
-    @@reimbursement_type_attributes = [:name, :active]
+    @@reimbursement_type_attributes = [:name, :type, :active, :mutable]
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]
 
