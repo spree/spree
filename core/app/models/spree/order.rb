@@ -830,6 +830,10 @@ module Spree
       csv_lines
     end
 
+    def all_line_items
+      line_items
+    end
+
     private
 
     def link_by_email

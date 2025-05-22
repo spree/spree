@@ -2108,4 +2108,32 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#to_csv' do
+    subject { order.to_csv }
+
+    context 'when order has no line items' do
+      let(:order) { create(:order) }
+
+      it 'returns no csv lines' do
+        expect(subject).to eq([])
+      end
+    end
+
+    context 'when order has line items' do
+      let(:order) { create(:order_with_line_items) }
+
+      let(:presenter) { Spree::CSV::OrderLineItemPresenter }
+      let(:presenter_instance) { instance_double(presenter) }
+
+      before do
+        allow(presenter).to receive(:new).and_return(presenter_instance)
+        allow(presenter_instance).to receive(:call).and_return('csv_line')
+      end
+
+      it 'returns the csv lines' do
+        expect(subject).to eq(['csv_line'])
+      end
+    end
+  end
 end
