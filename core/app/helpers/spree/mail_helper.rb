@@ -1,10 +1,11 @@
 module Spree
   module MailHelper
-    include BaseHelper
+    include Spree::BaseHelper
+    include Spree::ImagesHelper
 
     def variant_image_url(variant)
-      image = default_image_for_product_or_variant(variant)
-      image ? main_app.cdn_image_url(image.url(:small)) : image_url('noimage/small.png')
+      image = variant.default_image
+      image.present? && image.attached? ? spree_image_url(image, width: 100, height: 100) : image_url('noimage/small.png')
     end
 
     def name_for(order)
