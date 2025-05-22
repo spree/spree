@@ -108,6 +108,16 @@ module Spree::Preferences::Preferable
     preference_keys.each { |pref| preferences[pref] = preference_default(pref) }
   end
 
+  def preference_change(name, changes_or_previous_changes)
+    preference_changes = changes_or_previous_changes.with_indifferent_access.fetch('preferences', [{}, {}])
+    before_preferences = preference_changes[0] || {}
+    after_preferences = preference_changes[1] || {}
+
+    return if before_preferences[name] == after_preferences[name]
+
+    [before_preferences[name], after_preferences[name]]
+  end
+
   private
 
   def convert_preference_value(value, type, nullable: false)
