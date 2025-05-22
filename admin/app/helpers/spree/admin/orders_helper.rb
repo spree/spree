@@ -25,8 +25,10 @@ module Spree
             icon('credit-card-refund') + Spree.t('payment_states.refunded')
           elsif order.partially_refunded?
             icon('credit-card-refund') + Spree.t('payment_states.partially_refunded')
-          elsif order.payment_state == 'failed' || order.payment_state == 'void'
+          elsif order.payment_state == 'failed'
             icon('cancel') + Spree.t('payment_states.failed')
+          elsif order.payment_state == 'void'
+            icon('cancel') + Spree.t('payment_states.void')
           elsif order.payment_state == 'paid'
             icon('check') + Spree.t('payment_states.paid')
           else
