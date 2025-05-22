@@ -874,8 +874,6 @@
                     "pages": [
                       "user/manage-products/search-products",
                       "user/manage-products/bulk-product-operations",
-                      "user/manage-products/import-products",
-                      "user/manage-products/product-import-file-template",
                       "user/manage-products/export-products",
                       "user/manage-products/stock-levels",
                       "user/manage-products/stock-transfers",
@@ -955,13 +953,17 @@
                 "group": "Settings",
                 "pages": [
                   "user/settings/store-details",
+                  "user/settings/users",
                   "user/settings/emails",
                   "user/settings/policies",
                   "user/settings/checkout",
+                  "user/settings/domains",
                   "user/settings/locations",
+                  "user/settings/payments",
                   "user/settings/zones",
                   "user/settings/shipping-methods",
-                  "user/settings/tax"
+                  "user/settings/tax",
+                  "user/settings/returns"
                 ]
               }
             ]
