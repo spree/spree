@@ -105,6 +105,7 @@ jobs:
       PROJECTS: api
   test_admin_postgres:
     <<: *test
+    parallelism: 2
     environment:
       <<: *environment
       PROJECTS: admin
@@ -134,6 +135,7 @@ jobs:
       PROJECTS: api
   test_admin_mysql:
     <<: *test_mysql
+    parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: admin
