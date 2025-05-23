@@ -7,7 +7,7 @@ module Spree
 
           def render_order(result)
             if result.success?
-              render_serialized_payload { serialized_current_order }
+              render_serialized_payload { serialize_resource(spree_current_order) }
             else
               render_error_payload(result.error&.value || result.value)
             end
@@ -35,6 +35,7 @@ module Spree
           end
 
           def serialized_current_order
+            Spree::Deprecation.warn('OrderConcern#serialized_current_order is deprecated and will be removed in Spree 6.0. Please use `serialize_resource(spree_current_order)` method')
             serialize_resource(spree_current_order)
           end
 

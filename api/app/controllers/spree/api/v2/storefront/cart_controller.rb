@@ -54,7 +54,7 @@ module Spree
               line_item: line_item
             )
 
-            render_serialized_payload { serialized_current_order }
+            render_serialized_payload { serialize_resource(spree_current_order) }
           end
 
           def empty
@@ -63,7 +63,7 @@ module Spree
             result = empty_cart_service.call(order: spree_current_order)
 
             if result.success?
-              render_serialized_payload { serialized_current_order }
+              render_serialized_payload { serialize_resource(spree_current_order) }
             else
               render_error_payload(result.error)
             end
@@ -94,7 +94,7 @@ module Spree
           def show
             spree_authorize! :show, spree_current_order, order_token
 
-            render_serialized_payload { serialized_current_order }
+            render_serialized_payload { serialize_resource(spree_current_order) }
           end
 
           def apply_coupon_code
@@ -104,7 +104,7 @@ module Spree
             result = coupon_handler.new(spree_current_order).apply
 
             if result.error.blank?
-              render_serialized_payload { serialized_current_order }
+              render_serialized_payload { serialize_resource(spree_current_order) }
             else
               render_error_payload(result.error)
             end
@@ -120,7 +120,7 @@ module Spree
             result_errors = coupon_codes.count > 1 ? select_errors(coupon_codes) : select_error(coupon_codes)
 
             if result_errors.blank?
-              render_serialized_payload { serialized_current_order }
+              render_serialized_payload { serialize_resource(spree_current_order) }
             else
               render_error_payload(result_errors)
             end
