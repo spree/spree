@@ -105,9 +105,9 @@ jobs:
       PROJECTS: api
   test_admin_postgres:
     <<: *test
+    parallelism: 2
     environment:
       <<: *environment
-      parallelism: 2
       PROJECTS: admin
   test_storefront_postgres:
     <<: *test
