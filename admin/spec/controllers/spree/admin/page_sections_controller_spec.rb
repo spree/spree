@@ -4,7 +4,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:parent_theme) { @default_store.default_theme }
+  let(:store) { @default_store }
+  let(:parent_theme) { create(:theme, store: store) }
   let(:theme) { create(:theme, :preview, parent: parent_theme) }
   let(:page) { create(:page, :preview, pageable: parent_theme) }
 
@@ -74,6 +75,26 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
 
       expect(page_section.reload.asset).to be_attached
     end
+
+    context "with action text field" do
+      let(:page_section) { create(:announcement_bar_page_section, pageable: theme) }
+
+      it "persists page section action text" do
+        put :update, params: { id: page_section.id, page_section: { text: "Welcome to our amazing store" } }, format: :turbo_stream
+
+        expect(page_section.reload.text.to_plain_text).to eq("Welcome to our amazing store")
+      end
+    end
+
+    context "changing position" do
+      let(:page_section) { create(:featured_taxon_page_section, pageable: page, position: 1) }
+
+      it "updates the position" do
+        put :update, params: { id: page_section.id, page_section: { position: 2 } }, format: :turbo_stream
+
+        expect(page_section.reload.position).to eq(2)
+      end
+    end
   end
 
   describe '#destroy' do
@@ -89,7 +110,7 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
       let!(:page_section) { create(:header_page_section) }
 
       it 'does not delete the page section' do
-        expect { delete :destroy, params: { id: page_section.id }, format: :turbo_stream }.to change(Spree::PageSection, :count).by(0)
+        expect { delete :destroy, params: { id: page_section.id }, format: :turbo_stream }.not_to change(Spree::PageSection, :count)
       end
     end
   end

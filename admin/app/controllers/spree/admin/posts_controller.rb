@@ -35,6 +35,10 @@ module Spree
 
         add_breadcrumb @post.title, spree.edit_admin_post_path(@post)
       end
+
+      def permitted_resource_params
+        params.require(:post).permit(permitted_post_attributes)
+      end
     end
   end
 end

@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::ShipmentsController, type: :controller do
     end
   end
 
-  describe '#ships' do
+  describe '#ship' do
     context 'when shipment can be shipped' do
       it 'ships the shipment' do
         post :ship, params: { order_id: order.number, id: shipment.number }
