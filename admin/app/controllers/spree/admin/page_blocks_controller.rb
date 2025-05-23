@@ -47,7 +47,9 @@ module Spree
 
       def permitted_resource_params
         params.require(:page_block).permit(
-          permitted_page_block_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" }
+          permitted_page_block_attributes +
+          [link_attributes: permitted_page_link_attributes + [:id]] +
+          @object.preferences.keys.map { |key| "preferred_#{key}" }
         )
       end
     end
