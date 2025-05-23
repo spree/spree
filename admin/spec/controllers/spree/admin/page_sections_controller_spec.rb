@@ -4,13 +4,12 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:parent_theme) { create(:theme, store: store) }
   let(:theme) { create(:theme, :preview, parent: parent_theme) }
   let(:page) { create(:page, :preview, pageable: parent_theme) }
 
   before do
-    allow(controller).to receive(:current_store).and_return(store)
     session[:page_preview_id] = page.id
     session[:theme_preview_id] = theme.id
   end
