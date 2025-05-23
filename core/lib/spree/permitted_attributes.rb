@@ -27,6 +27,8 @@ module Spree
       :page_section_attributes,
       :payment_attributes,
       :payment_method_attributes,
+      :post_attributes,
+      :post_category_attributes,
       :product_attributes,
       :promotion_attributes,
       :promotion_rule_attributes,
@@ -125,15 +127,19 @@ module Spree
 
     @@page_attributes = [:name, :slug, :meta_title, :meta_description, :meta_keywords]
 
-    @@page_block_attributes = [:type, :name, :position]
+    @@page_block_attributes = [:type, :name, :text, :position]
 
     @@page_link_attributes = [:linkable_id, :linkable_type, :position, :label, :url]
 
-    @@page_section_attributes = [:type, :name, :position, :asset]
+    @@page_section_attributes = [:type, :name, :position, :asset, :text, :description]
 
     @@payment_attributes = [:amount, :payment_method_id, :payment_method]
 
     @@payment_method_attributes = [:name, :type, :description, :active, :display_on, :auto_capture, :position]
+
+    @@post_attributes = [:title, :meta_title, :meta_description, :slug, :author_id, :post_category_id, :published_at, :content, :excerpt, :image, tag_list: []]
+
+    @@post_category_attributes = [:title, :slug, :description]
 
     @@product_properties_attributes = [:property_name, :property_id, :value, :position, :_destroy]
 
