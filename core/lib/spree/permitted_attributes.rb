@@ -129,7 +129,7 @@ module Spree
 
     @@page_block_attributes = [:type, :name, :text, :position]
 
-    @@page_link_attributes = [:linkable_id, :linkable_type, :position, :label, :url]
+    @@page_link_attributes = [:linkable_id, :linkable_type, :position, :label, :url, :open_in_new_tab]
 
     @@page_section_attributes = [:type, :name, :position, :asset, :text, :description]
 

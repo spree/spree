@@ -95,6 +95,17 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
         expect(page_section.reload.position).to eq(2)
       end
     end
+
+    context 'with link' do
+      let(:page_section) { create(:image_with_text_page_section, pageable: page) }
+
+      it 'updates the page section link' do
+        put :update, params: { id: page_section.id, page_section: { link_attributes: { id: page_section.link.id, label: 'New Label', open_in_new_tab: true } } }, format: :turbo_stream
+
+        expect(page_section.reload.link.label).to eq('New Label')
+        expect(page_section.reload.link.open_in_new_tab).to be_truthy
+      end
+    end
   end
 
   describe '#destroy' do
