@@ -45,6 +45,7 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/admin/testing_support/capybara_utils'
+require 'spree/admin/testing_support/tom_select'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
@@ -88,6 +89,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::Admin::TestingSupport::CapybaraUtils
+  config.include Spree::Admin::TestingSupport::TomSelect
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller

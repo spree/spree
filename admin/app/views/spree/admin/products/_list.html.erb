@@ -15,8 +15,11 @@
                   <%= sort_link @search,
                   :name,
                   Spree.t(:name),
-                  { default_order: "desc" },
-                  { title: "admin_products_listing_name_title" } %>
+                  { 
+                    default_order: "desc", 
+                    title: "admin_products_listing_name_title" 
+                  } 
+                  %>
                 </th>
                 <th scope="col" class="text-center">
                   <%= Spree.t(:status) %>
