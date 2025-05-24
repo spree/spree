@@ -570,6 +570,7 @@ en:
       resend: Resend
       resolve: Mark as resolved
       save: Save
+      remove: Remove
       select_file: Select file
       send_invitation: Send invitation
       update: Update

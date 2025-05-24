@@ -33,7 +33,8 @@
           <%= link_to_with_icon 'credit-card-refund', Spree.t(:refund), spree.new_admin_order_payment_refund_path(@order, payment), class: 'dropdown-item' %>
         <% end %>
         <% if can?(:cancel, payment) && payment.pending? %>
-          <%= link_to_with_icon 'cancel', Spree.t(:void), spree.void_admin_order_payment_path(@order, payment), class: 'dropdown-item', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
+          <div class="dropdown-divider"></div>
+          <%= link_to_with_icon 'cancel', Spree.t(:void), spree.void_admin_order_payment_path(@order, payment), class: 'dropdown-item btn-danger', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
         <% end %>
         <% if can?(:destroy, payment) && payment.can_be_deleted? %>
           <div class="dropdown-divider"></div>
