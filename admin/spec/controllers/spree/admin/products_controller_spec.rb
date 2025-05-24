@@ -155,6 +155,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:other_stock_location) { create(:stock_location) }
 
     let(:shipping_category) { create(:shipping_category, name: 'Default') }
+    let(:tax_category) { create(:tax_category, name: 'Clothing') }
 
     context 'without variants' do
       let(:product_params) do
@@ -168,7 +169,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           depth: 10,
           dimensions_unit: 'cm',
           weight_unit: 'kg',
-          shipping_category_id: shipping_category.id
+          shipping_category_id: shipping_category.id,
+          tax_category_id: tax_category.id
         }
       end
 
@@ -185,6 +187,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.dimensions_unit).to eq 'cm'
         expect(product.weight_unit).to eq 'kg'
         expect(product.stores).to eq [store]
+
+        expect(product.shipping_category).to eq shipping_category
+        expect(product.tax_category).to eq tax_category
       end
 
       context 'with multi-currency pricing' do
