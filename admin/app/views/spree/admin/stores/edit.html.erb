@@ -1,6 +1,6 @@
-<% content_for :head do %>
-  <script type="text/javascript" src="https://cdn.goentri.com/entri.js"></script>
-<% end if entri_enabled? %>
+<%= content_for :page_actions do %>
+  <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_store_#{current_store.id}" %>
+<% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
 
