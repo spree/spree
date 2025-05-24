@@ -5,22 +5,22 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-group" data-hook="sku">
+    <div class="form-group">
       <%= f.label :sku, Spree.t(:sku) %>
       <%= f.text_field :sku, class: 'form-control' %>
     </div>
 
-    <div class="form-group" data-hook="sku">
+    <div class="form-group">
       <%= f.label :barcode, Spree.t(:barcode) %>
       <%= f.text_field :barcode, class: 'form-control' %>
     </div>
 
-    <div class="form-group" data-hook="tax_category">
+    <div class="form-group">
       <%= f.label :tax_category_id, Spree.t(:tax_category) %>
       <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { data: { controller: 'autocomplete-select' } }) %>
     </div>
 
-    <div class="form-group" data-hook="discontinue_on">
+    <div class="form-group">
       <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
       <%= f.error_message_on :discontinue_on %>
       <%= f.date_field :discontinue_on, class: 'form-control' %>
