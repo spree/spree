@@ -171,6 +171,9 @@ strong {
 .cursor-not-allowed {
   cursor: not-allowed !important;
 }
+.cursor-help {
+  cursor: help;
+}
 
 .active {
   color: theme-color('primary');
@@ -444,6 +447,9 @@ small,
 }
 .opacity-50 {
   opacity: 0.5;
+}
+.opacity-75 {
+  opacity: 0.75;
 }
 .opacity-0 {
   opacity: 0;

@@ -263,7 +263,7 @@ module Spree
       # @param css [String] the css class of the help bubble
       # @return [String] the help bubble with the icon
       def help_bubble(text = '', placement = 'bottom', css: nil)
-        css ||= 'text-muted'
+        css ||= 'text-muted opacity-75 cursor-help'
         content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
       end
 
