@@ -70,6 +70,32 @@ describe Spree::CheckoutController, type: :controller do
       expect(assigns(:order).signup_for_an_account).to be(true)
     end
 
+    describe 'special instructions field visibility' do
+      before do
+        order.update_column(:state, 'address')
+      end
+
+      context 'when special instructions preference is enabled' do
+        before { store.update!(preferred_special_instructions_enabled: true) }
+        after  { store.update!(preferred_special_instructions_enabled: false) }
+
+        it 'renders the special instructions field' do
+          get :edit, params: { token: order.token, state: 'address' }
+          expect(response.body).to include('special_instructions')
+          expect(response.body).to include(I18n.t('activerecord.attributes.spree/order.special_instructions'))
+        end
+      end
+
+      context 'when special instructions preference is disabled' do
+        before { store.update!(preferred_special_instructions_enabled: false) }
+
+        it 'does not render the special instructions field' do
+          get :edit, params: { token: order.token, state: 'address' }
+          expect(response.body).not_to include('special_instructions')
+        end
+      end
+    end
+
     context 'when user is not signed in' do
       let(:user) { nil }
 
@@ -538,6 +564,42 @@ describe Spree::CheckoutController, type: :controller do
               expect(response).to have_http_status(:redirect)
               expect(order.ship_address.company).to be_blank
               expect(order.ship_address.user).to eq(user)
+            end
+          end
+        end
+
+        describe 'special instructions' do
+          let(:ship_address) { create(:address, user: user, country: country, state: state) }
+          let(:special_instructions) { "Please leave at the front door.\nKnock on the door." }
+          let(:ship_address_params) { order.ship_address.attributes.except(:user_id, :created_at, :updated_at) }
+          let(:update_params) do
+            {
+              token: order.token,
+              state: 'address',
+              order: {
+                ship_address_attributes: ship_address_params,
+                special_instructions: special_instructions
+              }
+            }
+          end
+
+          before { store.update!(preferred_special_instructions_enabled: true) }
+          after  { store.update!(preferred_special_instructions_enabled: false) }
+
+          it 'saves special instructions when provided' do
+            update
+            expect(response).to have_http_status(:redirect)
+            expect(order.special_instructions).to eq("Please leave at the front door.\nKnock on the door.")
+          end
+
+          context 'when special instructions is empty' do
+            let(:special_instructions) { '' }
+
+            it 'saves order without special instructions' do
+              update
+
+              expect(response).to have_http_status(:redirect)
+              expect(order.special_instructions).to be_blank
             end
           end
         end

@@ -37,6 +37,7 @@ en:
         payment_processing_message: You will receive an email confirmation when your payment is processed.
         shipping_not_available: Shipping not available
         signup_for_an_account: Create an account for faster future purchases, order tracking, and more.
+        special_instructions_placeholder: Here you can add any special instructions for your order
         store_credits_amount_applied: You applied a %{amount} store credit to your order.
         thanks_for_your_order: Thanks %{name} for your order!
         you_will_need_to_pay_only: You will need to pay only %{amount} with your payment method of choosing.

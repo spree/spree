@@ -78,7 +78,7 @@ html {
 }
 
 textarea.text-input {
-  height: auto;
+  height: auto !important;
   min-height: 3rem;
   border-radius: 0;
 }
