@@ -305,7 +305,17 @@ module Spree
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
-        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+
+        begin
+          if ActiveRecord::Base.connection.extension_enabled?('pg_trgm')
+            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
+          else
+            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+          end
+        rescue ActiveRecord::ConnectionNotEstablished, PG::Error => e
+          Rails.logger.warn("Could not check pg_trgm extension, falling back to tsearch for product search: #{e.message}")
+          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+        end
       else
         def self.search_by_name(query)
           i18n { name.lower.matches("%#{query.downcase}%") }
