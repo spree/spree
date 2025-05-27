@@ -103,7 +103,7 @@ module Spree
 
     @@digital_link_attributes = [:access_counter]
 
-    @@export_attributes = [:type, :format, :record_selection, search_params: {}]
+    @@export_attributes = [:type, :format, :record_selection, :search_params]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
