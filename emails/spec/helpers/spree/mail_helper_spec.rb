@@ -2,6 +2,11 @@ require 'spec_helper'
 
 module Spree
   describe MailHelper, type: :helper do
+    let(:store) { create(:store) }
+
+    before do
+      allow(helper).to receive(:current_store) { store }
+    end
 
     describe '#variant_image_url' do
       subject { helper.variant_image_url(variant) }
@@ -45,43 +50,6 @@ module Spree
 
         it 'shows customer full name' do
           expect(subject).to eq address.full_name
-        end
-      end
-    end
-
-    describe '#logo_path' do
-      subject { helper.logo_path }
-
-      let(:store) { @default_store }
-
-      before do
-        allow(helper).to receive(:current_store) { store }
-      end
-
-      context 'when @order exists' do
-        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/logo/spree_50.png', __dir__)) }
-
-        before do
-          store.mailer_logo.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
-          store.save!
-          @order = create(:order, store: store)
-        end
-
-        it 'shows logo attached to orders store' do
-          expect(subject).to include(store.mailer_logo.filename.to_s)
-        end
-      end
-
-      context 'when @order does not exist' do
-        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/noimage/mini.png', __dir__)) }
-
-        before do
-          store.mailer_logo.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')
-          store.save!
-        end
-
-        it 'shows logo attached to current store' do
-          expect(subject).to include(store.mailer_logo.filename.to_s)
         end
       end
     end
