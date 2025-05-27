@@ -1,7 +1,7 @@
 module Spree
   class AddressesController < Spree::StoreController
     helper Spree::AddressesHelper
-    load_and_authorize_resource class: Spree::Address
+    before_action :load_and_authorize_address, except: [:index]
 
     def create
       order_token = params[:order_token]
@@ -96,6 +96,18 @@ module Spree
 
     def update_service
       Spree::Dependencies.address_update_service.constantize
+    end
+
+    def load_and_authorize_address
+      action = params[:action]
+
+      @address ||= if [:new, :create].include?(action.to_sym)
+                    Spree::Address.new(country: current_store.default_country, user: try_spree_current_user)
+                  else
+                    Spree::Address.find(params[:id])
+                  end
+
+      authorize! action, @address
     end
 
     def address_changes_except
