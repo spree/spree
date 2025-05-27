@@ -567,10 +567,10 @@ en:
       receive: Mark as received
       refund: Refund
       reject: Reject
+      remove: Remove
       resend: Resend
       resolve: Mark as resolved
       save: Save
-      remove: Remove
       select_file: Select file
       send_invitation: Send invitation
       update: Update
