@@ -28,12 +28,12 @@ describe 'Store admin', type: :feature, js: true do
       visit spree.edit_admin_store_path(section: 'general-settings')
       page.fill_in 'store_name', with: '', wait: 5
       page.fill_in 'store_name', with: 'New Store Name', wait: 5
-      click_button 'Update'
+      within('#page-header') { click_button 'Update' }
 
       expect(page).to have_content('successfully updated')
 
       # tom_select 'EUR', from: 'Currency'
-      # click_button 'Update'
+      # within('#page-header') { click_button 'Update' }
 
       wait_for_turbo
 
@@ -59,7 +59,7 @@ describe 'Store admin', type: :feature, js: true do
       )
 
       select 'Imperial system', from: 'store_preferred_unit_system'
-      click_button 'Update'
+      within('#page-header') { click_button 'Update' }
 
       expect(page).to have_content('successfully updated')
 
