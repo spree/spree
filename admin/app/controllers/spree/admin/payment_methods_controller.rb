@@ -14,10 +14,10 @@ module Spree
         if params[:payment_method].present?
           payment_type = params[:payment_method].delete(:type)
           # Find the actual class from our allowed types rather than using constantize
-          payment_class = allowed_payment_types.find { |type| type.to_s == payment_type }
+          payment_class = allowed_payment_types.find { |type| type == payment_type }
 
-          if payment_class
-            @object = payment_class.new
+          if payment_class.present?
+            @object = payment_class.constantize.new
           end
         end
       end
@@ -45,7 +45,9 @@ module Spree
       end
 
       def allowed_payment_types
-        Rails.application.config.spree.payment_methods
+        # We need to map to strings, otherwise some weird things happen with STI
+        # where Rails can't find the ancestor class when we try to save the payment method.
+        Rails.application.config.spree.payment_methods.map(&:to_s)
       end
 
       def permitted_resource_params
