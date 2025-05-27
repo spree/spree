@@ -273,7 +273,7 @@ module Spree
                       for_ordering_with_translations(model_class, :name).
                       includes(product_includes).
                       page(params[:page]).
-                      per(params[:per_page] || ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25))
+                      per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_products_per_page)
 
         @collection
       end
