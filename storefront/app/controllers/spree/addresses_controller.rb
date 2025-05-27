@@ -99,9 +99,9 @@ module Spree
     end
 
     def load_and_authorize_address
-      action = params[:action]
+      action = params[:action].to_sym
 
-      @address ||= if [:new, :create].include?(action.to_sym)
+      @address ||= if [:new, :create].include?(action)
                     Spree::Address.new(country: current_store.default_country, user: try_spree_current_user)
                   else
                     Spree::Address.find(params[:id])
