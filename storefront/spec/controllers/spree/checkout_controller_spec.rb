@@ -70,6 +70,32 @@ describe Spree::CheckoutController, type: :controller do
       expect(assigns(:order).signup_for_an_account).to be(true)
     end
 
+    describe 'special instructions field visibility' do
+      before do
+        order.update_column(:state, 'address')
+      end
+
+      context 'when special instructions preference is enabled' do
+        before { store.update!(preferred_special_instructions_enabled: true) }
+        after  { store.update!(preferred_special_instructions_enabled: false) }
+
+        it 'renders the special instructions field' do
+          get :edit, params: { token: order.token, state: 'address' }
+          expect(response.body).to include('special_instructions')
+          expect(response.body).to include(I18n.t('activerecord.attributes.spree/order.special_instructions'))
+        end
+      end
+
+      context 'when special instructions preference is disabled' do
+        before { store.update!(preferred_special_instructions_enabled: false) }
+
+        it 'does not render the special instructions field' do
+          get :edit, params: { token: order.token, state: 'address' }
+          expect(response.body).not_to include('special_instructions')
+        end
+      end
+    end
+
     context 'when user is not signed in' do
       let(:user) { nil }
 
@@ -514,6 +540,69 @@ describe Spree::CheckoutController, type: :controller do
             end
           end
         end
+
+        describe 'address company field' do
+          let(:company_name) { 'Test Company Inc.' }
+          let(:ship_address_params) { build(:address, company: company_name, country: country, state: state).attributes.except(:user_id, :created_at, :updated_at) }
+
+          before { store.update!(preferred_company_field_enabled: true) }
+          after  { store.update!(preferred_company_field_enabled: false) }
+
+          it 'saves company field when provided' do
+            update
+            expect(response).to have_http_status(:redirect)
+            expect(order.ship_address.company).to eq('Test Company Inc.')
+            expect(order.ship_address.user).to eq(user)
+          end
+
+          context 'when company field is empty' do
+            let(:company_name) { '' }
+
+            it 'saves address without company field' do
+              update
+
+              expect(response).to have_http_status(:redirect)
+              expect(order.ship_address.company).to be_blank
+              expect(order.ship_address.user).to eq(user)
+            end
+          end
+        end
+
+        describe 'special instructions' do
+          let(:ship_address) { create(:address, user: user, country: country, state: state) }
+          let(:special_instructions) { "Please leave at the front door.\nKnock on the door." }
+          let(:ship_address_params) { order.ship_address.attributes.except(:user_id, :created_at, :updated_at) }
+          let(:update_params) do
+            {
+              token: order.token,
+              state: 'address',
+              order: {
+                ship_address_attributes: ship_address_params,
+                special_instructions: special_instructions
+              }
+            }
+          end
+
+          before { store.update!(preferred_special_instructions_enabled: true) }
+          after  { store.update!(preferred_special_instructions_enabled: false) }
+
+          it 'saves special instructions when provided' do
+            update
+            expect(response).to have_http_status(:redirect)
+            expect(order.special_instructions).to eq("Please leave at the front door.\nKnock on the door.")
+          end
+
+          context 'when special instructions is empty' do
+            let(:special_instructions) { '' }
+
+            it 'saves order without special instructions' do
+              update
+
+              expect(response).to have_http_status(:redirect)
+              expect(order.special_instructions).to be_blank
+            end
+          end
+        end
       end
 
       context 'with the order in the delivery state' do
@@ -909,6 +998,36 @@ describe Spree::CheckoutController, type: :controller do
           expect(order.billing_address.user).to eq user
 
           expect(user.reload.bill_address).to eq(order.billing_address)
+        end
+
+        describe 'billing address company field' do
+          let(:bill_address_with_company) { bill_address_attributes.merge(company: company_name) }
+
+          before { store.update!(preferred_company_field_enabled: true) }
+          after  { store.update!(preferred_company_field_enabled: false) }
+
+          context 'when company field is provided' do
+            let(:company_name) { 'Billing Company Corp.' }
+
+            it 'saves company field in billing address' do
+              put :update, params: { token: order.token, state: 'payment', order: { bill_address_attributes: bill_address_with_company } }
+
+              expect(response).to have_http_status(:redirect)
+              expect(order.reload.bill_address.company).to eq('Billing Company Corp.')
+              expect(order.bill_address.user).to eq(user)
+            end
+          end
+
+          context 'when company field is empty' do
+            let(:company_name) { '' }
+
+            it 'saves billing address without company field' do
+              put :update, params: { token: order.token, state: 'payment', order: { bill_address_attributes: bill_address_with_company } }
+
+              expect(response).to have_http_status(:redirect)
+              expect(order.reload.bill_address.company).to be_blank
+            end
+          end
         end
       end
     end
