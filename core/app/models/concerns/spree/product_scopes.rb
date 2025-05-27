@@ -305,7 +305,12 @@ module Spree
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
-        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+
+        if ActiveRecord::Base.connection.extension_enabled?('pg_trgm')
+          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
+        else
+          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+        end
       else
         def self.search_by_name(query)
           i18n { name.lower.matches("%#{query.downcase}%") }
