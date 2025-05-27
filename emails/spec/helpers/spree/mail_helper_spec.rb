@@ -11,7 +11,8 @@ module Spree
     describe '#variant_image_url' do
       subject { helper.variant_image_url(variant) }
 
-      let(:variant) { create(:variant, images: images) }
+      let(:product) { create(:product, stores: [store]) }
+      let(:variant) { create(:variant, product: product, images: images) }
 
       context 'with no images' do
         let(:images) { [] }
@@ -34,7 +35,7 @@ module Spree
     describe '#name_for' do
       subject { helper.name_for(order) }
 
-      let(:order) { create(:order, ship_address_id: nil, bill_address_id: nil) }
+      let(:order) { create(:order, ship_address_id: nil, bill_address_id: nil, store: store) }
       let(:address) { create(:address) }
 
       context 'without address' do
