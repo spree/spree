@@ -37,7 +37,7 @@ module Spree
       preference :auto_capture_on_dispatch, :boolean, default: false # Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized.
       preference :binary_inventory_cache, :boolean, default: false, deprecated: true # only invalidate product cache when a stock item changes whether it is in_stock
       preference :checkout_zone, :string, default: nil, deprecated: true # replace with the name of a zone if you would like to limit the countries
-      preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Address model' # Request company field for billing and shipping addr
+      preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation

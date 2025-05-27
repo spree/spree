@@ -24,7 +24,7 @@
   <%= render partial: 'spree/shared/order_shipment', collection: shipments, as: :shipment, cached: spree_base_cache_scope %>
 </ul>
 
-<% if order.store.prefers_special_instructions_enabled? && order.special_instructions.present? %>
+<% if order.special_instructions.present? %>
   <div class="p-4 lg:p-6 text-sm border">
     <div class="uppercase tracking-widest mb-1">
       <%= I18n.t('activerecord.attributes.spree/order.special_instructions') %>

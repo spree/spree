@@ -33,7 +33,7 @@
       </div>
     </div>
   <% end %>
-  <%= address_field(address_form, :company, address_id, address.require_company?) if current_store.prefers_company_field_enabled? %>
+  <%= address_field(address_form, :company, address_id, address.require_company?) if address.show_company_address_field? %>
   <div class="mb-4 flex flex-col space-y-2" data-address-autocomplete-target="autocompleteInputContainer" tabindex="-1" >
     <div class="relative">
       <div id="<%= address_id %>address1">

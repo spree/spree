@@ -42,10 +42,10 @@ en:
         guest_checkout:
           description: Allow customers to checkout without creating an account.
           label: Allow guest checkout
+        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
-        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
       copied: Copied!
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
@@ -196,11 +196,11 @@ en:
       store_credit:
         amount_remaining_of_total: "<strong>%{amount}</strong> remaining (<strong>%{total}</strong> total)"
       store_form:
-        customer_support_email_help: This email is visible to your Store visitors in the Footer section
-        new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
         company_field:
           description: It shows the company field on the address form in the My Account section and on the checkout address step.
           label: Display the company address field
+        customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
       store_setup_tasks:
         add_billing_address: Add billing address
         add_products: Add products

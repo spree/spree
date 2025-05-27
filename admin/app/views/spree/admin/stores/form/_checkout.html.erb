@@ -31,7 +31,7 @@
   <div class="col-lg-5">
     <div class="card mb-4">
       <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:customizations) %></h5>
+        <h5 class="card-title"><%= Spree.t(:settings) %></h5>
       </div>
 
       <div class="card-body">
@@ -43,6 +43,16 @@
           <p class="text-muted mt-1">
             <%= Spree.t('admin.checkout_settings.guest_checkout.description') %>
           </p>
+        </div>
+
+        <div class="custom-control custom-checkbox mb-3">
+          <%= f.check_box :preferred_company_field_enabled, class: "custom-control-input" %>
+          <%= f.label :preferred_company_field_enabled, Spree.t('admin.store_form.company_field.label'), class: "custom-control-label" %>
+          <%= f.error_message_on :preferred_company_field_enabled %>
+
+          <div class="text-muted mt-1">
+            <%= Spree.t('admin.store_form.company_field.description') %>
+          </div>
         </div>
 
         <div class="custom-control custom-checkbox">
@@ -57,3 +67,4 @@
       </div>
     </div>
   </div>
+</div>

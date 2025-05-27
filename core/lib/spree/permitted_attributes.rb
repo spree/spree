@@ -213,7 +213,7 @@ module Spree
     @@stock_item_attributes = [:variant_id, :stock_location_id, :backorderable, :count_on_hand]
 
     @@stock_location_attributes = [
-      :name, :active, :address1, :address2, :city, :zipcode,
+      :name, :active, :address1, :address2, :city, :zipcode, :company,
       :backorderable_default, :state_name, :state_id, :country_id, :phone,
       :propagate_all_variants
     ]

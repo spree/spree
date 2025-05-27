@@ -135,6 +135,7 @@ module Spree
       Spree::Address.new(
         address1: address1,
         address2: address2,
+        company: company,
         city: city,
         state: state,
         state_name: state_name,
@@ -156,6 +157,10 @@ module Spree
 
     def require_phone?
       false
+    end
+
+    def show_company_address_field?
+      true
     end
 
     def display_name
