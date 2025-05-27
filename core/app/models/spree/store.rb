@@ -48,6 +48,9 @@ module Spree
     preference :password_protected, :boolean, default: false
     # Checkout preferences
     preference :guest_checkout, :boolean, default: true
+    preference :special_instructions_enabled, :boolean, default: false
+    # Address preferences
+    preference :company_field_enabled, :boolean, default: false
     # digital assets preferences
     preference :limit_digital_download_count, :boolean, default: true
     preference :limit_digital_download_days, :boolean, default: true

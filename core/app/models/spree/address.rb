@@ -188,10 +188,6 @@ module Spree
       !quick_checkout
     end
 
-    def show_company_address_field?
-      false
-    end
-
     def editable?
       new_record? || Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end

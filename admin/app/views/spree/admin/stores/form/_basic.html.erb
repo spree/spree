@@ -154,6 +154,24 @@
         </div>
       </div>
     </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:address_settings) %></h5>
+      </div>
+
+      <div class="card-body">
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :preferred_company_field_enabled, class: "custom-control-input" %>
+          <%= f.label :preferred_company_field_enabled, Spree.t('admin.store_form.company_field.label'), class: "custom-control-label" %>
+          <%= f.error_message_on :preferred_company_field_enabled %>
+
+          <div class="text-muted mt-1">
+            <%= Spree.t('admin.store_form.company_field.description') %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

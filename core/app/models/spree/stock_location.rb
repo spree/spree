@@ -29,7 +29,6 @@ module Spree
     after_update :conditional_touch_records
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
-    delegate :show_company_address_field?, to: :address
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
