@@ -1,0 +1,14 @@
+<% if @order.special_instructions.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= I18n.t('activerecord.attributes.spree/order.special_instructions') %>
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="card-text">
+        <%= simple_format(@order.special_instructions) %>
+      </div>
+    </div>
+  </div>
+<% end %>

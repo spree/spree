@@ -61,6 +61,9 @@
         <%= form.hidden_field :state_lock_version %>
         <%= form.hidden_field :ship_address_id, data: { 'checkout-address-book-target': 'addressId' } %>
       </div>
+
+      <%= render 'spree/checkout/special_instructions', form: form %>
+
       <div>
         <%= button_tag Spree.t(:save_and_continue),
                         data: {
@@ -139,6 +142,8 @@
           <% end %>
         </div>
       </div>
+
+      <%= render 'spree/checkout/special_instructions', form: form %>
 
       <%= hidden_field_tag 'save_user_address', true, data: { hook: "save_user_address" } %>
     </div>

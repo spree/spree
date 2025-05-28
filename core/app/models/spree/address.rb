@@ -189,7 +189,7 @@ module Spree
     end
 
     def show_company_address_field?
-      false
+      Spree::Store.current.prefers_company_field_enabled?
     end
 
     def editable?
