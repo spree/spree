@@ -152,7 +152,7 @@ module Spree
       protected
 
       def find_resource
-        current_store.products.accessible_by(current_ability, :manage).with_deleted.friendly.find(params[:id])
+        current_store.products.accessible_by(current_ability, :manage).friendly.find(params[:id])
       end
 
       def load_data
