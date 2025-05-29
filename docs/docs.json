@@ -861,6 +861,12 @@
                 ]
               },
               {
+                "group": "Analytics",
+                "pages": [
+                  "integrations/analytics/google-analytics"
+                ]
+              },
+              {
                 "group": "Marketing",
                 "pages": [
                   "integrations/marketing/klaviyo"
