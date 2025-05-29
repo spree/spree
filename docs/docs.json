@@ -963,7 +963,7 @@
                   "user/settings/zones",
                   "user/settings/shipping-methods",
                   "user/settings/tax",
-                  "user/settings/returns"
+                  "user/settings/returns-configuration"
                 ]
               }
             ]
