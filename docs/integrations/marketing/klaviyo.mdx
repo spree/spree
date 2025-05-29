@@ -1,5 +1,6 @@
 ---
-title: "Klaviyo"
+title: "Connect Klaviyo email marketing platform to Spree Commerce"
+sidebarTitle: Klaviyo
 description: "Learn how to set up and manage Spree's native Klaviyo integration."
 ---
 
@@ -7,19 +8,29 @@ Klaviyo is a powerful marketing automation platform used for email and SMS campa
 
 With Spree’s native integration, you can start collecting meaningful data for segmentation and automation with just a few clicks.
 
-<Warning>
+<Info>
   You must have an existing Klaviyo account to connect this integration.
-</Warning>
+</Info>
 
-To start using Klaviyo with Spree, navigate to the Integrations tab of the admin dashboard.
+## Installation
 
-![](/docs/images/integrations/klaviyo/1.klaviyo.png)
+To install the Klaviyo integration, you need to run the following command:
+
+```bash
+bundle add spree_klaviyo && bundle exec rails spree_klaviyo:install
+```
+
+After that, you need to make sure to restart the server.
 
 ## Connect Klaviyo
 
+Sign in to your Spree admin dashboard and navigate to the Integrations tab. 
+
+![](/images/integrations/klaviyo/1.klaviyo.png)
+
 To connect Klaviyo, locate the Klaviyo tile under the Marketing section and click Connect Klaviyo to open the setup form.
 
-![](/docs/images/integrations/klaviyo/2.creation_form.png)
+![](/images/integrations/klaviyo/2.creation_form.png)
 
 You’ll need to enter the following:
 
@@ -30,19 +41,19 @@ You’ll need to enter the following:
 
 Click **Create** to finalize the integration.
 
-<Warning>
+<Info>
   You must configure your Private API Key in Klaviyo before you can finalize the integration (see below).
-</Warning>
+</Info>
 
 ## Configure API Key Permissions in Klaviyo
 
 Before you can finalize the creation of your Klaviyo integration, you’ll need to create a Private API Key. To do so navigate to Settings → Account → API Keys in Klaviyo.
 
-![](/docs/images/integrations/klaviyo/3.create_private_key.png)
+![](/images/integrations/klaviyo/3.create_private_key.png)
 
 Click Create Private API Key to open the key creation form.
 
-![](/docs/images/integrations/klaviyo/4.configure_private_key.png)
+![](/images/integrations/klaviyo/4.configure_private_key.png)
 
 When generating your Private API Key in Klaviyo, you must enable specific access scopes for the integration to function properly:
 
@@ -82,7 +93,7 @@ These events populate the Audience → Profiles section in Klaviyo, where you ca
 
 ## Managing Your Integration
 
-![](/docs/images/integrations/klaviyo/5.manage_integration.png)
+![](/images/integrations/klaviyo/5.manage_integration.png)
 
 After setup, you can revisit the integration form at any time to:
 

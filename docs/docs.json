@@ -846,6 +846,29 @@
             ]
           },
           {
+            "tab": "Integrations",
+            "groups": [
+              {
+                "group": "Integrations",
+                "pages": [
+                  "integrations/integrations"
+                ]
+              },
+              {
+                "group": "Payments",
+                "pages": [
+                  "integrations/payments/stripe"
+                ]
+              },
+              {
+                "group": "Marketing",
+                "pages": [
+                  "integrations/marketing/klaviyo"
+                ]
+              }
+            ]
+          },
+          {
             "tab": "User Docs",
             "groups": [
               {
@@ -996,8 +1019,7 @@
                   "developer/core-concepts/promotions",
                   "developer/core-concepts/shipments",
                   "developer/core-concepts/addresses",
-                  "developer/core-concepts/i18n",
-                  "developer/core-concepts/preferences"
+                  "developer/core-concepts/i18n"
                 ]
               },
               {
