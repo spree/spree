@@ -69,13 +69,61 @@ Before upgrading, please ensure you have the following prerequisites:
     ```
   </Accordion>
 
-  <Accordion title="4. Run the authentication generator (Optional)">
+  <Accordion title="4. Migrate from Spree Auth Devise gem">
+    If you previously used the `spree_auth_devise` gem, you will need to run some commands to create User and connect it to Spree. We don't use the `spree_auth_devise` gem anymore to allow you more control over the authentication and access to all Devise options directly in your application.
+
+    First, install Devise and run the Devise generator:
+
+    ```bash
+    bundle add devise
+    bin/rails g devise:install
+    ```
+
+    Create `Spree::User` model:
+
+    ```bash
+    mkdir -p app/models/spree && touch app/models/spree/user.rb
+    ```
+
+    Add the following code to your `Spree::User` model:
+
+    ```ruby
+    module Spree
+      class User < ApplicationRecord
+        devise :database_authenticatable # if you want to use the database_authenticatable feature
+        devise :recoverable # if you want to use the recoverable feature
+        devise :registerable # if you want to use the registerable feature
+        devise :confirmable # if you want to use the confirmable feature
+        devise :validatable # if you want to use the validatable feature
+
+        devise :rememberable, :trackable, :encryptable, encryptor: 'authlogic_sha512'
+
+        acts_as_paranoid
+      end
+    end
+    ```
+
+    In you `config/initializers/spree.rb` file, add the following code:
+
+    ```ruby
+    Spree.user_class = "Spree::User"
+    ```
+
+    Now run the new authentication generator to connect your `Spree::User` model to Spree:
 
     ```bash
     bin/rails g spree:authentication:devise
     ```
 
-    Refer to [Customizing Spree Authentication](/developer/customization/authentication) for more information.
+    And if you're using the default spree storefront, please run the following generator:
+
+    ```bash
+    bin/rails g spree:storefront:devise
+    ```
+
+    This will add devise routes and create controllers for the storefront.
+
+    And that's it! You can now login to the admin panel and storefront using your existing users.
   </Accordion>
 </AccordionGroup>
 
