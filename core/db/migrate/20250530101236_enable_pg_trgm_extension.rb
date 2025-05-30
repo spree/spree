@@ -6,7 +6,7 @@ class EnablePgTrgmExtension < ActiveRecord::Migration[7.2]
   end
 
   def down
-    if supports_extensions? && extension_available?('pg_trgm') &&extension_enabled?('pg_trgm')
+    if supports_extensions? && extension_available?('pg_trgm') && extension_enabled?('pg_trgm')
       disable_extension 'pg_trgm'
     end
   end
