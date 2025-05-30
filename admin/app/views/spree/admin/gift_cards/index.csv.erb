@@ -1,0 +1,15 @@
+<%- headers = [
+  'Code', 'Amount', 'Minimum Order Amount', 'Used', 'Status', 'Expires At'
+  ]
+-%>
+<%= CSV.generate_line(headers).strip %>
+<%- @collection.find_each do |gift_card| -%>
+  <%= CSV.generate_line([
+    gift_card.code.upcase,
+    gift_card.amount.to_f,
+    gift_card.minimum_order_amount.to_f,
+    gift_card.used_amount.to_f,
+    gift_card.display_state,
+    gift_card.expires_at,
+    ]).strip.html_safe %>
+<%- end -%>
