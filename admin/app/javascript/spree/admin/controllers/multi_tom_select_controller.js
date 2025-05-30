@@ -26,8 +26,9 @@ export default class extends Controller {
   values() {
     return this.selectTargets
       .map((selectTarget) => selectTarget.querySelector('select'))
-      .map((select) => select.options[select.selectedIndex].text)
-      .filter((text) => text?.length > 0)
+      .map((select) => select.options[select.selectedIndex])
+      .filter((option) => option.value.length > 0)
+      .map((option) => ({ text: option.text, value: option.value}))
   }
 
   setValues() {
