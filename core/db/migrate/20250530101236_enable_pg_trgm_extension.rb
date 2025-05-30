@@ -1,4 +1,4 @@
-class EnablePgTrgmExtension < ActiveRecord::Migration[8.0]
+class EnablePgTrgmExtension < ActiveRecord::Migration[7.2]
   def up
     if supports_extensions? && extension_available?('pg_trgm') && !extension_enabled?('pg_trgm')
       enable_extension 'pg_trgm'
