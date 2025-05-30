@@ -306,6 +306,10 @@ module Spree
       if defined?(PgSearch)
         include PgSearch::Model
 
+        unless connected?
+          establish_connection(Rails.env.to_sym)
+        end
+
         if connection.extension_enabled?('pg_trgm')
           pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
         else
