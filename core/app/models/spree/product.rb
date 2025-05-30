@@ -28,9 +28,6 @@ module Spree
     include Spree::MemoizedData
     include Spree::Metadata
     include Spree::Product::Webhooks
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
