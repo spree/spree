@@ -50,13 +50,7 @@ module Spree
       if defined?(PgSearch)
         include PgSearch::Model
 
-        with_connection do |db_conn|
-          if db_conn.extension_enabled?('pg_trgm')
-            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
-          else
-            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
-          end
-        end
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       end
 
       before_save :set_slug
