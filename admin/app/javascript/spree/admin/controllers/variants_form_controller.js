@@ -955,7 +955,6 @@ export default class extends CheckboxSelectAll {
       const template = this.optionValueTemplateTarget.content.cloneNode(true)
       const optionValueNameEl = template.querySelector('[data-slot="optionValueName"]')
       optionValueNameEl.textContent = value.text
-      optionValueNameEl.dataset.value = value.value
 
       templates.push(template)
     })
