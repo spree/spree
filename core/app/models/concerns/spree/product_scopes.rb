@@ -306,14 +306,12 @@ module Spree
       if defined?(PgSearch)
         include PgSearch::Model
 
-        unless connected?
-          establish_connection(Rails.env.to_sym)
-        end
-
-        if connection.extension_enabled?('pg_trgm')
-          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
-        else
-          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+        with_connection do |db_conn|
+          if db_conn.extension_enabled?('pg_trgm')
+            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
+          else
+            pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
+          end
         end
       else
         def self.search_by_name(query)
