@@ -271,7 +271,7 @@ module Spree
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,
       {
-        options: [:id, :name, :value, :position, :_destroy],
+        options: [:id, :name, :option_value_id, :option_value_name, :position, :_destroy],
         stock_items_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],
         prices_attributes: [:id, :amount, :compare_at_amount, :currency, :_destroy],
         price: {},

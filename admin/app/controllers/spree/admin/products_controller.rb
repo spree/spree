@@ -180,7 +180,7 @@ module Spree
             @product_options[option_type.id.to_s] = {
               name: option_type.presentation,
               position: index + 1,
-              values: option_values.pluck(:presentation).uniq
+              values: option_values.pluck(:id, :presentation).uniq.map { |id, presentation| { value: id.to_s, text: presentation } }
             }
 
             @product_available_options[option_type.id.to_s] = option_type.option_values.to_tom_select_json

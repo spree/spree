@@ -265,10 +265,10 @@ export default class extends CheckboxSelectAll {
     let name = ''
     let internalName = name
     if (i === 0) {
-      name = variant[keys[i]]
+      name = variant[keys[i]].text
       internalName = name
     } else {
-      const namesPath = keys.slice(1, keys.length).map((key) => variant[key])
+      const namesPath = keys.slice(1, keys.length).map((key) => variant[key].text)
       name = namesPath.join(' / ')
       internalName = `${variant[keys[0]]}/${namesPath.join('/')}`
     }
@@ -615,11 +615,17 @@ export default class extends CheckboxSelectAll {
         .find((option) => option.name === key).position
       inputs.push(positionInput)
 
-      const valueInput = document.createElement('input')
-      valueInput.type = 'hidden'
-      valueInput.name = `product[variants_attributes][${i}][options][][value]`
-      valueInput.value = variant[key]
-      inputs.push(valueInput)
+      const optionNameInput = document.createElement('input')
+      optionNameInput.type = 'hidden'
+      optionNameInput.name = `product[variants_attributes][${i}][options][][option_value_name]`
+      optionNameInput.value = variant[key].text
+      inputs.push(optionNameInput)
+
+      const optionIdInput = document.createElement('input')
+      optionIdInput.type = 'hidden'
+      optionIdInput.name = `product[variants_attributes][${i}][options][][option_value_id]`
+      optionIdInput.value = variant[key].value
+      inputs.push(optionIdInput)
     })
 
     return inputs
@@ -948,8 +954,8 @@ export default class extends CheckboxSelectAll {
     values.forEach((value) => {
       const template = this.optionValueTemplateTarget.content.cloneNode(true)
       const optionValueNameEl = template.querySelector('[data-slot="optionValueName"]')
-      optionValueNameEl.textContent = value
-      optionValueNameEl.dataset.name = value
+      optionValueNameEl.textContent = value.text
+      optionValueNameEl.dataset.value = value.value
 
       templates.push(template)
     })
