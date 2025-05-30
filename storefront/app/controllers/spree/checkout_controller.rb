@@ -188,7 +188,7 @@ module Spree
             redirect_to spree.checkout_path(@order.token)
           else
             store_location
-            redirect_to spree_login_path
+            redirect_to spree_signup_path
           end
         end
       end

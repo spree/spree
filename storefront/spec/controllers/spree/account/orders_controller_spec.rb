@@ -8,8 +8,11 @@ describe Spree::Account::OrdersController, type: :controller do
   render_views
 
   before do
-    allow(controller).to receive(:current_store).and_return(store)
-    allow(controller).to receive(:spree_login_path).and_return('/login')
+    allow(controller).to receive_messages(
+      current_store: store,
+      spree_signup_path: '/signup',
+      spree_login_path: '/login'
+    )
   end
 
   describe '#index' do
@@ -76,8 +79,9 @@ describe Spree::Account::OrdersController, type: :controller do
     end
 
     context 'when user is not logged in' do
-      it 'redirects to login page' do
+      it 'redirects to sign up page' do
         expect(subject).to have_http_status(302)
+        expect(response).to redirect_to('/signup')
       end
     end
   end
