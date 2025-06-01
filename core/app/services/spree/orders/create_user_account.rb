@@ -44,6 +44,7 @@ module Spree
         user.accepts_email_marketing = accepts_email_marketing.to_b if user.respond_to?(:accepts_email_marketing)
         user.password = password if user.respond_to?(:password)
         user.password_confirmation = password if user.respond_to?(:password_confirmation)
+        user.skip_confirmation! if user.respond_to?(:skip_confirmation!)
 
         user.save
 
