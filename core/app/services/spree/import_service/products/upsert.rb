@@ -19,11 +19,15 @@ module Spree
         end
 
         def update
-          Spree::ImportService::Products::Update.new(row: row).call
+          ActiveRecord::Base.transaction do
+            ImportService::Products::Update.new(row: row).call
+          end
         end
 
         def create
-          Spree::ImportService::Products::Create.new(row: row).call
+          ActiveRecord::Base.transaction do
+            Spree::ImportService::Products::Create.new(row: row).call
+          end
         end
       end
     end
