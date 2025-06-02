@@ -14,6 +14,7 @@ module Spree
                                :line_item_comparison_hooks,
                                :data_feed_types,
                                :export_types,
+                               :import_types,
                                :taxon_rules,
                                :themes,
                                :theme_layout_sections,
@@ -148,6 +149,10 @@ module Spree
         Rails.application.config.spree.export_types = [
           Spree::Exports::Products,
           Spree::Exports::Orders
+        ]
+
+        Rails.application.config.spree.import_types = [
+          Spree::Imports::Products
         ]
 
         Rails.application.config.spree.taxon_rules = [
