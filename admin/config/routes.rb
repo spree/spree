@@ -133,6 +133,10 @@ Spree::Core::Engine.add_routes do
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 
+    resources :imports, except: [:destroy, :update] do
+      get :errors, on: :member
+    end
+
     # reporting
     resources :reports, only: [:index, :new, :create, :show]
 
