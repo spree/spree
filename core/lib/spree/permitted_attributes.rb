@@ -13,6 +13,7 @@ module Spree
       :digital_link_attributes,
       :export_attributes,
       :image_attributes,
+      :import_attributes,
       :integration_attributes,
       :inventory_unit_attributes,
       :invitation_attributes,
@@ -101,6 +102,8 @@ module Spree
     @@digital_link_attributes = [:access_counter]
 
     @@export_attributes = [:type, :format, :record_selection, search_params: {}]
+
+    @@import_attributes = [:type, :attachment]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
