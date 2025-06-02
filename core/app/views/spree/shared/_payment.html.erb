@@ -30,6 +30,15 @@
     <div class="flex-shrink-0">
       <%= payment_method_icon_tag source.class.to_s.demodulize.downcase, height: 30 %>
     </div>
+    <div>
+      <% if payment.payment_method.respond_to?(:source_partial_name) %>
+        <%= render partial: "spree/payment_sources/#{payment.payment_method.source_partial_name}", locals: { payment: payment, source: source } %>
+      <% elsif source.respond_to?(:name) %>
+        <%= source.name %>
+      <% else %>
+        <%= source.class.to_s.demodulize.downcase %>
+      <% end %>
+    </div>
   <% else %>
     <div class="flex-shrink-0">
       <%= payment_method_icon_tag payment.payment_method.payment_icon_name %>
