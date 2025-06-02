@@ -76,8 +76,12 @@ module Spree
       if filter_selected
         default_storefront_filter_values_scope
       else
-        Spree::OptionValue.for_products(storefront_products_for_filters).distinct
+        all_option_values_scope
       end
+    end
+
+    def all_option_values_scope
+      @all_option_values_scope ||= Spree::OptionValue.for_products(storefront_products_scope).distinct
     end
 
     def filter_values_for_filter(filter)

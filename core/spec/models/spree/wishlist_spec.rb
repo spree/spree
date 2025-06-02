@@ -123,4 +123,18 @@ describe Spree::Wishlist, type: :model do
       expect(wishlist.wished_items_count).to eq 1
     end
   end
+
+  describe '#variant_ids' do
+    let(:variant) { create(:variant) }
+    let(:variant_2) { create(:variant) }
+
+    before do
+      wishlist.wished_items << create(:wished_item, variant: variant)
+      wishlist.wished_items << create(:wished_item, variant: variant_2)
+    end
+
+    it 'returns the variant ids' do
+      expect(wishlist.variant_ids).to eq [variant.id, variant_2.id]
+    end
+  end
 end
