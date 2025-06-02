@@ -36,6 +36,13 @@ module Spree
       @wished_items_count ||= variant_ids.count
     end
 
+    # returns the variant ids in the wishlist
+    #
+    # @return [Array<Integer>]
+    def variant_ids
+      @variant_ids ||= wished_items.pluck(:variant_id)
+    end
+
     def self.get_by_param(param)
       find_by(token: param)
     end
