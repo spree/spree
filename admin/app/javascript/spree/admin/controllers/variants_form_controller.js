@@ -129,7 +129,7 @@ export default class extends CheckboxSelectAll {
       const nestingLevel = internalName.split('/').length
       if (nestingLevel === 1) {
         const firstOptionKey = Object.keys(this.optionsValue)[0]
-        const newOptionValues = this.optionsValue[firstOptionKey].values.filter((value) => value !== internalName)
+        const newOptionValues = this.optionsValue[firstOptionKey].values.filter((value) => value.text !== internalName)
         if (newOptionValues.length === 0) {
           const newOptionsValue = this.optionsValue
           delete newOptionsValue[firstOptionKey]
