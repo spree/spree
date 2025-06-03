@@ -1,4 +1,4 @@
-<% orders_active = %[orders checkouts].include?(controller_name) || @order %>
+<% orders_active = %[orders checkouts].include?(controller_name) || @order&.present? || @parent&.is_a?(Spree::Order) %>
 <% if can?(:manage, Spree::Order) %>
   <% orders_label = Spree.t(:orders) %>
   <% if ready_to_ship_orders_count&.positive? %>

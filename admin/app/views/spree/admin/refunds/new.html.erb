@@ -1,7 +1,5 @@
-<%= render 'spree/admin/orders/header' %>
-
-<div class="row">
-  <div class="col-lg-6">
+<div class="row mt-4">
+  <div class="col-lg-6 offset-lg-3">
     <%= render 'spree/admin/shared/error_messages', target: @refund %>
 
     <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund] do |f| %>
