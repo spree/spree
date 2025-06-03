@@ -221,6 +221,31 @@ describe Spree::Payment, type: :model do
         end
       end
     end
+
+    describe '#create_payment_profile' do
+      context 'when payment method supports profiles' do
+        context 'when source is a credit card' do
+          let(:source) { create(:credit_card) }
+          let(:payment) { build(:payment, source: source) }
+
+          it 'creates a payment profile' do
+            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
+          end
+        end
+
+        context 'when source is not a credit card' do
+          let(:user) { create(:user) }
+          let(:order) { create(:order, user: user, total: 100) }
+          let(:gateway) { create(:custom_payment_method) }
+          let(:source) { create(:payment_source, user: user, payment_method: gateway) }
+          let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
+
+          it 'creates a payment profile' do
+            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
+          end
+        end
+      end
+    end
   end
 
   # Regression test for https://github.com/spree/spree/pull/2224
