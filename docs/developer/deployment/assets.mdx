@@ -92,7 +92,7 @@ aws-sdk-s3 version 1.178.0 introduced a modification to the default checksum beh
 To mitigate, users can use 1.177.0 or add the following to their s3 client instantiation:
 
 ```yaml
-request_checksum_calculation: "when_required",
+request_checksum_calculation: "when_required"
 response_checksum_validation: "when_required"
 ```
 </Info>
