@@ -10,16 +10,13 @@ Spree::Gateway.class_eval do
   end
 end
 
-# This table was previously called spree_creditcards, and older migrations
-# reference it as such. Make it explicit here that this table has been renamed.
-Spree::CreditCard.table_name = 'spree_credit_cards'
-
-credit_card = Spree::CreditCard.where(cc_type: 'visa',
-                                      month: 12,
-                                      year: 2.years.from_now.year,
-                                      last_digits: '1111',
-                                      name: 'Sean Schofield',
-                                      gateway_customer_profile_id: 'BGS-1234').first_or_create!
+credit_card = Spree::CreditCard.find_or_initialize_by(gateway_customer_profile_id: 'BGS-1234')
+credit_card.cc_type = 'visa'
+credit_card.month = 12
+credit_card.year = 2.years.from_now.year
+credit_card.last_digits = '1111'
+credit_card.name = 'Sean Schofield'
+credit_card.save!
 
 Spree::Order.all.each_with_index do |order, _index|
   order.update_with_updater!
