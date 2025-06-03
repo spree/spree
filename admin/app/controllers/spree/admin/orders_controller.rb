@@ -3,6 +3,7 @@ module Spree
     class OrdersController < Spree::Admin::BaseController
       include Spree::Admin::OrderConcern
       include Spree::Admin::OrdersFiltersHelper
+      include Spree::Admin::OrderBreadcrumbConcern
 
       before_action :initialize_order_events
       before_action :load_order, only: %i[edit cancel resend]
@@ -10,9 +11,6 @@ module Spree
       before_action :load_user, only: [:index]
 
       helper_method :model_class
-
-      add_breadcrumb Spree.t(:orders), :admin_orders_path
-      add_breadcrumb_icon 'inbox'
 
       def create
         @order = Spree::Order.create(created_by: try_spree_current_user, store: current_store)

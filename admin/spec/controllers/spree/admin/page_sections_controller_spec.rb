@@ -12,6 +12,13 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   before do
     session[:page_preview_id] = page.id
     session[:theme_preview_id] = theme.id
+
+    allow(controller).to receive(:current_store).and_return(store)
+  end
+
+  after do
+    session.delete(:page_preview_id)
+    session.delete(:theme_preview_id)
   end
 
   describe '#new' do
