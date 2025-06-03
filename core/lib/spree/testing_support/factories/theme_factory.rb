@@ -8,7 +8,7 @@ FactoryBot.define do
     end
 
     trait :preview do
-      parent { create(:theme, store: store) }
+      parent { Spree::Store.default.default_theme || create(:theme, store: store) }
     end
   end
 end
