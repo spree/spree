@@ -270,7 +270,7 @@ export default class extends CheckboxSelectAll {
     } else {
       const namesPath = keys.slice(1, keys.length).map((key) => variant[key].text)
       name = namesPath.join(' / ')
-      internalName = `${variant[keys[0]]}/${namesPath.join('/')}`
+      internalName = `${variant[keys[0]].text}/${namesPath.join('/')}`
     }
 
     return { name, internalName }
@@ -572,12 +572,12 @@ export default class extends CheckboxSelectAll {
   refreshParentInputs() {
     const firstOption = Object.values(this.optionsValue)[0]
     if (firstOption) {
-      firstOption.values.forEach((name) => {
+      firstOption.values.forEach((option) => {
         this.currenciesValue.forEach((currency) => {
-          this.updateParentPriceRange(name, currency)
+          this.updateParentPriceRange(option.text, currency)
         })
         this.stockLocationsValue.forEach((stockLocationId) => {
-          this.updateParentStockSum(name, stockLocationId)
+          this.updateParentStockSum(option.text, stockLocationId)
         })
         this.updateShopLocationCountOnHand()
       })
@@ -930,8 +930,8 @@ export default class extends CheckboxSelectAll {
     const optionValuesSelectContainer = template.querySelector('[data-slot="optionValuesSelectContainer"]')
     const tomSelectOptionValues = optionValues.map((optionValue) => {
       return {
-        id: availableOptions.find((availableOption) => availableOption.name === optionValue)?.id,
-        name: optionValue
+        id: optionValue.value,
+        name: optionValue.text,
       }
     })
 
@@ -955,6 +955,7 @@ export default class extends CheckboxSelectAll {
       const template = this.optionValueTemplateTarget.content.cloneNode(true)
       const optionValueNameEl = template.querySelector('[data-slot="optionValueName"]')
       optionValueNameEl.textContent = value.text
+      optionValueNameEl.dataset.name = value.text
 
       templates.push(template)
     })
