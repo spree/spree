@@ -8,7 +8,7 @@ FactoryBot.define do
     end
 
     trait :preview do
-      parent { create(:theme) }
+      parent { create(:theme, store: store) }
     end
   end
 end
