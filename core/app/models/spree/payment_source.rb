@@ -20,12 +20,6 @@ module Spree
     #
     delegate :profile_id, to: :gateway_customer, prefix: true, allow_nil: true
 
-    # Returns true if the payment source has a payment profile.
-    # @return [Boolean]
-    def has_payment_profile?
-      gateway_customer&.profile_id&.present? || gateway_payment_profile_id.present?
-    end
-
     # Returns the gateway customer for the user.
     # @return [Spree::GatewayCustomer]
     def gateway_customer
