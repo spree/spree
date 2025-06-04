@@ -915,6 +915,8 @@ en:
     destroy: Destroy
     details: Details
     developers: Developers
+    didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
+    didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
@@ -1245,6 +1247,9 @@ en:
     metadata: Metadata
     min: Min
     minimal_amount: Minimal Amount
+    minimum_password_length:
+      one: "(%{count} character minimum)"
+      other: "(%{count} characters minimum)"
     missing_return_authorization: Missing Return Authorization for %{item_name}.
     month: Month
     more: More
@@ -1915,6 +1920,7 @@ en:
     show_store_selector:
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
       short: Show Store selector
+    sign_in_with_provider: Sign in with %{provider}
     sign_out: Sign out
     sign_up: Sign Up
     site_name: Site name
