@@ -22,7 +22,7 @@ module Spree
         class: opts[:class],
         data: {
           'quantity-picker-target': opts[:action],
-          action: "click->quantity-picker##{opts[:action]} click->cart#disableCart"
+          action: "click->quantity-picker##{opts[:action]} click->cart#disableCart turbo-stream-form:submit-end->cart#enableCart"
         }
       )
     end
