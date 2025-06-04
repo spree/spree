@@ -237,13 +237,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Red'
+                  option_value_presentation: 'Red',
+                  option_value_name: nil
                 },
                 {
                   id: nil,
                   name: 'Not existing option',
                   position: 2,
-                  value: 'Not existing value'
+                  option_value_presentation: 'Not existing value',
+                  option_value_name: nil
                 }
               ]
             },
@@ -263,13 +265,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Blue'
+                  option_value_presentation: 'Blue',
+                  option_value_name: nil
                 },
                 {
                   id: nil,
                   name: 'Not existing option',
                   position: 2,
-                  value: 'Not existing value2'
+                  option_value_presentation: 'Not existing value2',
+                  option_value_name: nil
                 }
               ]
             }
@@ -572,6 +576,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       let(:stock_location) { create(:stock_location) }
       let(:other_stock_location) { create(:stock_location) }
       let(:new_option_type) { create(:option_type, name: 'Material', presentation: 'Fabric') }
+      let(:silk_option_value) { create(:option_value, name: 'Silk', option_type: new_option_type, presentation: 'Silk') }
 
       let(:product_params) do
         {
@@ -593,19 +598,22 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Red'
+                  option_value_presentation: 'Red',
+                  option_value_name: nil
                 },
                 {
                   id: nil,
                   name: 'Not existing option',
                   position: 2,
-                  value: 'Not existing value'
+                  option_value_presentation: 'Not existing value',
+                  option_value_name: nil
                 },
                 {
                   id: new_option_type.id,
                   name: 'Fabric',
                   position: 3,
-                  value: 'Silk'
+                  option_value_presentation: silk_option_value.presentation,
+                  option_value_name: silk_option_value.name
                 }
               ]
             },
@@ -625,19 +633,22 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Blue'
+                  option_value_presentation: 'Blue',
+                  option_value_name: nil
                 },
                 {
                   id: nil,
                   name: 'Not existing option',
                   position: 2,
-                  value: 'Not existing value2'
+                  option_value_presentation: 'Not existing value2',
+                  option_value_name: nil
                 },
                 {
                   id: new_option_type.id,
                   name: 'Fabric',
                   position: 3,
-                  value: 'Cotton'
+                  option_value_presentation: 'Cotton',
+                  option_value_name: nil
                 }
               ]
             }
@@ -748,13 +759,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Red'
+                  option_value_presentation: red_option_value.presentation,
+                  option_value_name: red_option_value.name
                 },
                 {
                   id: nil,
                   name: 'Size',
                   position: 2,
-                  value: 'Small'
+                  option_value_presentation: small_option_value.presentation,
+                  option_value_name: small_option_value.name
                 }
               ]
             },
@@ -776,13 +789,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Blue'
+                  option_value_presentation: blue_option_value.presentation,
+                  option_value_name: blue_option_value.name
                 },
                 {
                   id: nil,
                   name: 'Size',
                   position: 2,
-                  value: 'Large'
+                  option_value_presentation: large_option_value.presentation,
+                  option_value_name: large_option_value.name
                 }
               ]
             },
@@ -804,13 +819,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                   id: nil,
                   name: 'Color',
                   position: 1,
-                  value: 'Red'
+                  option_value_presentation: red_option_value.presentation,
+                  option_value_name: red_option_value.name
                 },
                 {
                   id: nil,
                   name: 'Size',
                   position: 2,
-                  value: 'Large'
+                  option_value_presentation: large_option_value.presentation,
+                  option_value_name: large_option_value.name
                 }
               ]
             }
@@ -860,13 +877,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                     id: nil,
                     name: 'Size',
                     position: 1,
-                    value: 'S'
+                    option_value_presentation: small_option_value.presentation,
+                    option_value_name: small_option_value.name
                   },
                   {
                     id: nil,
                     name: 'Color',
                     position: 2,
-                    value: 'Red'
+                    option_value_presentation: red_option_value.presentation,
+                    option_value_name: red_option_value.name
                   }
                 ]
               },
@@ -881,13 +900,15 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                     id: nil,
                     name: 'Size',
                     position: 1,
-                    value: 'M'
+                    option_value_presentation: large_option_value.presentation,
+                    option_value_name: large_option_value.name
                   },
                   {
                     id: nil,
                     name: 'Color',
                     position: 2,
-                    value: 'Blue'
+                    option_value_presentation: blue_option_value.presentation,
+                    option_value_name: blue_option_value.name
                   }
                 ]
               }
@@ -925,7 +946,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                     id: nil,
                     name: 'Size',
                     position: 1,
-                    value: 'S'
+                    option_value_presentation: small_option_value.presentation,
+                    option_value_name: small_option_value.name
                   }
                 ],
                 stock_items_attributes: {
@@ -951,7 +973,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
                     id: nil,
                     name: 'Size',
                     position: 1,
-                    value: 'M'
+                    option_value_presentation: large_option_value.presentation,
+                    option_value_name: large_option_value.name
                   }
                 ]
               }
