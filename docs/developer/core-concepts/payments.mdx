@@ -165,16 +165,25 @@ payment.log_entries.first.details
 
 ## Supported Gateways
 
-Spree team maintains several payment gateways integrations, including:
+### Spree Team maintained gateways
 
-* [Spree Stripe](https://github.com/spree/spree_stripe) - Stripe integration, supports all Stripe payment methods, including credit cards, bank transfers, Apple Pay, Google Pay, Klarna, Afterpay, and more. Also supports quick checkout.
-* [Spree PayPal](https://github.com/spree/spree_paypal) - native PayPal integration, supports PayPal, PayPal Credit, and PayPal Pay Later.
+Spree team maintains several payment gateways integrations. All of these gateways are **fully PCI compliant**, using native gateway SDKs/UIs, meaning no sensitive data is stored or processed through Spree.
 
-<Info>
-  Spree Stripe and Spree PayPal are fully PCI compliant, meaning no sensitive data is stored or processed through Spree.
-</Info>
+<Card title="Stripe" href="/integrations/payments/stripe" icon="link">
+  Stripe integration, supports all Stripe payment methods, including credit cards, bank transfers, Apple Pay, Google Pay, Klarna, Afterpay, and more. Also supports quick checkout.
+</Card>
 
-There are also community-maintained extensions for other payment gateways, such as [Spree Gateway](https://github.com/spree/spree_gateway) extension. This extension currently supports the following gateways:
+<Card title="Adyen">
+  We're working on this, stay tuned! If you want to know more, please reach out to us via email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+</Card>
+
+<Card title="PayPal" href="/integrations/payments/paypal" icon="link">
+  Native PayPal integration, supports PayPal, PayPal Credit, and PayPal Pay Later.
+</Card>
+
+### Community maintained gateways
+
+There are also community-maintained extensions for other payment gateways combined in the [Spree Gateway](https://github.com/spree/spree_gateway) gem. This gem currently supports the following gateways:
 
 * Authorize.net
 * BanWire
