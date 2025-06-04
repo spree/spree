@@ -20,6 +20,7 @@ en:
       checkout:
         all_transactions_are_secure_and_encrypted: All transactions are secure and encrypted
         already_have_an_account: Already have an account?
+        backorder_notice: 'Some products in your cart will be dispatched a bit later than the rest of your order:'
         by_placing_this_order_you_agree_to: By placing this order you agree to
         calculated_at_next_step: Calculated at next step
         continue_to_cart: Continue to cart
