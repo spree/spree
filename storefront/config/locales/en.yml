@@ -30,6 +30,7 @@ en:
             one: This item will be removed from your cart because there are no delivery methods available for your address.
             other: These %{count} items will be removed from your cart because there are no delivery methods available for your address.
         gift_card_amount_applied: Gift card %{code} applied %{amount} to your order.
+        it_seems_you_already_have_an_account_html: It seems you already have an account with us. Please %{link} to continue.
         or_continue_below: or continue below
         order_already_paid: You don't need to pay anything, just click Place now button to confirm the order.
         order_success: Your order is confirmed!
