@@ -24,10 +24,11 @@ module Spree
         return scope unless (value = sort_by?('price'))
 
         scope.joins(variants_including_master: :prices).
-          select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").
+          select("#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)").
           distinct.
-          where("#{Spree::Price.table_name}.currency": currency).
-          order("#{Spree::Price.table_name}.amount #{value[1]}")
+          where(spree_prices: { currency: currency }).
+          order("min(#{Spree::Price.table_name}.amount) #{value[1]}").
+          group("#{Spree::Product.table_name}.id")
       end
 
       def by_sku(scope)
@@ -36,12 +37,12 @@ module Spree
         select_product_attributes = if scope.to_sql.include?("#{Spree::Product.table_name}.*")
                                       ''
                                     else
-                                      "#{Spree::Product.table_name}.*, "
+                                      "#{Spree::Product.table_name}.*"
                                     end
 
-        scope.joins(:master).
-          select("#{select_product_attributes}#{Spree::Variant.table_name}.sku").
-          order("#{Spree::Variant.table_name}.sku #{value[1]}")
+        attributes_to_select = [select_product_attributes, 'master.sku'].filter(&:present?).uniq.join(', ')
+
+        scope.joins(:master).select(attributes_to_select).order("master.sku #{value[1]}").group("#{Spree::Product.table_name}.id").group('master.sku')
       end
 
       def sort_by?(field)
@@ -55,7 +56,7 @@ module Spree
 
         # if sorting by 'sku' or 'price', spree_products.* is already included in SELECT statement
         if sort_by?('sku') || sort_by?('price')
-          scope.i18n.select(*translatable_fields)
+          scope.i18n.select(*translatable_fields).group(*translatable_fields)
         else
           scope.i18n.select("#{Product.table_name}.*").select(*translatable_fields)
         end
