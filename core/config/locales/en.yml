@@ -716,6 +716,7 @@ en:
     capture: Capture
     capture_events: Capture events
     card_code: Card Verification Code (CVC)
+    card_expiration_placeholder: MM/YYYY
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
