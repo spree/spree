@@ -37,6 +37,7 @@ en:
         order_success: Your order is confirmed!
         order_success_message: When your order is ready, you will receive an email confirmation.
         payment_processing_message: You will receive an email confirmation when your payment is processed.
+        return_to_cart: Return to cart
         shipping_not_available: Shipping not available
         signup_for_an_account: Create an account for faster future purchases, order tracking, and more.
         store_credits_amount_applied: You applied a %{amount} store credit to your order.
