@@ -44,7 +44,7 @@
 
   <div class="form-group col-6">
     <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + required_span_tag) %><br>
-    <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM/YYYY" %>
+    <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: Spree.t(:card_expiration_placeholder) %>
   </div>
 
   <div class="form-group col-6">
