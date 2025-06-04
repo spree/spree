@@ -16,13 +16,10 @@ describe Spree::CheckoutController, type: :controller do
   let(:accept_marketing) { true }
 
   before do
-    allow(controller).to receive_messages(
-      current_store: store,
-      try_spree_current_user: user,
-      spree_current_user: user,
-      spree_signup_path: '/signup',
-      spree_login_path: '/login'
-    )
+    allow(controller).to receive(:current_store).and_return(store)
+    allow(controller).to receive_messages try_spree_current_user: user
+    allow(controller).to receive_messages spree_current_user: user
+    allow(controller).to receive(:spree_login_path).and_return('/login')
   end
 
   describe '#edit' do
@@ -120,7 +117,7 @@ describe Spree::CheckoutController, type: :controller do
 
         it 'redirects to the login page' do
           get :edit, params: { token: order.token }
-          expect(response).to redirect_to('/signup')
+          expect(response).to redirect_to('/login')
         end
       end
     end
@@ -158,9 +155,9 @@ describe Spree::CheckoutController, type: :controller do
         context 'when user is not logged in' do
           let(:user) { nil }
 
-          it 'redirects to sign up page' do
+          it 'redirects to login page' do
             get :edit, params: { token: order.token }
-            expect(response).to redirect_to('/signup')
+            expect(response).to redirect_to('/login')
           end
 
           context 'when guest checkout is allowed' do
