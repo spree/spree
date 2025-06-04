@@ -42,13 +42,13 @@
             <%= check_box_tag "default_shipping", "true", @address.user_default_shipping?,
               class: 'input-checkbox input-address-default',
               disabled: @address.user_default_shipping? %>
-            Set as default delivery address
+            <%= Spree.t("address_book.set_as_default_delivery_address") %>
           <% end %>
           <%= label_tag "default_billing", class: "flex items-center gap-2 text-sm mb-4" do %>
             <%= check_box_tag "default_billing", "true", @address.user_default_billing?,
               class: 'input-checkbox input-address-default',
               disabled: @address.user_default_billing? %>
-            Set as default billing address
+            <%= Spree.t("address_book.set_as_default_billing_address") %>
           <% end %>
         </div>
         <div class="border-t border-default -mx-4 lg:mx-0 px-4 flex justify-end items-center gap-4 py-6 lg:px-8">
