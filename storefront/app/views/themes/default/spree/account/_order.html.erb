@@ -8,16 +8,16 @@
       <% if order.payment_state == 'void' %>
         <% if order.order_refunded? %>
           <span class="badge-refunded">
-            <%= Spree.t("payment_states.refunded").titleize %>
+            <%= Spree.t("payment_states.refunded") %>
           </span>
         <% else %>
           <span class="badge-void">
-            <%= Spree.t("payment_states.#{order.payment_state}").titleize %>
+            <%= Spree.t("payment_states.#{order.payment_state}") %>
           </span>
         <% end %>
       <% else %>
         <span class="badge-success">
-          <%= Spree.t("payment_states.#{order.payment_state}").titleize %>
+          <%= Spree.t("payment_states.#{order.payment_state}") %>
         </span>
       <% end %>
     <% end %>
@@ -26,11 +26,11 @@
     <% if order.shipment_state %>
       <% if order.shipment_state == 'shipped' %>
         <span class="badge-success">
-          <%= Spree.t("shipment_states.#{order.shipment_state}").titleize %>
+          <%= Spree.t("shipment_states.#{order.shipment_state}") %>
         </span>
       <% else %>
         <span class="badge-<%= order.shipment_state %>">
-          <%= Spree.t("shipment_states.#{order.shipment_state}").titleize %>
+          <%= Spree.t("shipment_states.#{order.shipment_state}") %>
         </span>
       <% end %>
     <% end %>
