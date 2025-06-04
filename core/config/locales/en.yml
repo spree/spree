@@ -1487,7 +1487,7 @@ en:
     password_protected: Password protected
     paste: Paste
     path: Path
-    pay: pay
+    pay: Pay
     payment: Payment
     payment_amount: Payment amount
     payment_attempts: failed attempts
@@ -1504,11 +1504,11 @@ en:
     payment_source: Payment source
     payment_state: Payment State
     payment_states:
-      balance_due: Balance due
+      balance_due: Balance Due
       checkout: Checkout
       complete: Complete
       completed: Completed
-      credit_owed: Credit owed
+      credit_owed: Credit Owed
       failed: Failed
       paid: Paid
       partially_refunded: Partially Refunded
