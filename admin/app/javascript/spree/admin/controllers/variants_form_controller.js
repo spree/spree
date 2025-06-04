@@ -618,13 +618,13 @@ export default class extends CheckboxSelectAll {
       const optionNameInput = document.createElement('input')
       optionNameInput.type = 'hidden'
       optionNameInput.name = `product[variants_attributes][${i}][options][][option_value_name]`
-      optionNameInput.value = variant[key].text
+      optionNameInput.value = variant[key].value
       inputs.push(optionNameInput)
 
       const optionIdInput = document.createElement('input')
       optionIdInput.type = 'hidden'
-      optionIdInput.name = `product[variants_attributes][${i}][options][][option_value_id]`
-      optionIdInput.value = variant[key].value
+      optionIdInput.name = `product[variants_attributes][${i}][options][][option_value_presentation]`
+      optionIdInput.value = variant[key].text
       inputs.push(optionIdInput)
     })
 
