@@ -8,7 +8,7 @@
                                                   aria: { label: Spree.t('cart_page.add_promo_code') },
                                                   data: { 'enable-button-target': 'input' },
                                                   required: true %>
-        <%= button_tag 'Apply', class: 'min-h-full ml-3 btn-primary !px-4 !py-3', data: { 'enable-button-target': 'button' }, disabled: true %>
+        <%= button_tag Spree.t(:apply), class: 'min-h-full ml-3 btn-primary !px-4 !py-3', data: { 'enable-button-target': 'button' }, disabled: true %>
       </div>
     <% end %>
   <% elsif promotion.present? %>
