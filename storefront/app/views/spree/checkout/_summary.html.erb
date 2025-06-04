@@ -91,7 +91,7 @@
           </div>
         <% elsif order.using_store_credit? %>
           <div class="flex justify-between items-center mb-2">
-            <span>Store credit:</span>
+            <span><%= Spree.t(:store_credit_name) %>:</span>
             <span><%= order.display_total_applied_store_credit %></span>
           </div>
         <% end %>
