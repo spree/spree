@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class RefundsController < ResourceController
+      include Spree::Admin::OrderBreadcrumbConcern
+
       belongs_to 'spree/payment', find_by: :number
 
       before_action :load_order
@@ -18,6 +20,8 @@ module Spree
 
       def load_order
         @order = @payment.order if @payment
+
+        add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
       end
 
       def refund_reasons

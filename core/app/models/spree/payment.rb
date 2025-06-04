@@ -302,7 +302,8 @@ module Spree
       # Payment profile cannot be created without source
       return unless source
       # Imported payments shouldn't create a payment profile.
-      return if source.imported
+      # Imported is only available on Spree::CreditCard, non-credit card payments should not have this attribute.
+      return if source.respond_to?(:imported) && source.imported
 
       payment_method.create_profile(self)
     rescue ActiveMerchant::ConnectionError => e
