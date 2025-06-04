@@ -6,7 +6,7 @@
     <div class="flex flex-col mb-4">
       <%= f.label :password, Spree.t(:password) %>
       <% if @minimum_password_length %>
-        <em>(<%= @minimum_password_length %> characters minimum)</em>
+        <em><%= Spree.t(:minimum_password_length, count: @minimum_password_length) %></em>
       <% end %>
       <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: 'text-input', required: true %>
     </div>
