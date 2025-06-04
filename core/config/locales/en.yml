@@ -2105,6 +2105,7 @@ en:
     timezone: Timezone
     title: Title
     title_link: Title link
+    to: To
     to_add_variants_you_must_first_define: To add variants, you must first define
     toggle_menu: Toggle menu
     top_suggestions: Top suggestions
