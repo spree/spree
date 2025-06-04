@@ -180,10 +180,10 @@ module Spree
             @product_options[option_type.id.to_s] = {
               name: option_type.presentation,
               position: index + 1,
-              values: option_values.pluck(:presentation).uniq
+              values: option_values.pluck(:name, :presentation).uniq.map { |name, presentation| { value: name, text: presentation } }
             }
 
-            @product_available_options[option_type.id.to_s] = option_type.option_values.to_tom_select_json
+            @product_available_options[option_type.id.to_s] = option_type.option_values.pluck(:name, :presentation).uniq.map { |name, presentation| { id: name, name: presentation } }
           end
 
         @product_stock = {}
