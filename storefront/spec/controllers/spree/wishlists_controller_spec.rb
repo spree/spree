@@ -10,11 +10,8 @@ describe Spree::WishlistsController, type: :controller do
   render_views
 
   before do
-    allow(controller).to receive_messages(
-      current_store: store,
-      spree_signup_path: '/signup',
-      spree_login_path: '/login'
-    )
+    allow(controller).to receive(:current_store).and_return(store)
+    allow(controller).to receive(:spree_login_path).and_return('/login')
   end
 
   describe '#show' do
