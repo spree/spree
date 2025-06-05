@@ -22,8 +22,6 @@ module Spree
                                           quantity: @quantity,
                                           options: options)
 
-      flash.now[:error] = result.value.errors.full_messages.to_sentence if result.failure?
-
       @line_item = result.value
 
       if result.success?
@@ -45,9 +43,12 @@ module Spree
       quantity = line_item_params[:quantity]&.to_i || 1
       result = cart_set_item_quantity_service.call(order: @order, line_item: @line_item, quantity: quantity)
 
-      @error = result.value.errors.full_messages.to_sentence if result.failure?
-
-      load_line_items if result.success?
+      if result.success?
+        load_line_items
+      else
+        @error = result.value.errors.full_messages.to_sentence
+        flash.now[:error] = @error
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -57,9 +58,15 @@ module Spree
 
     def destroy
       result = cart_remove_line_item_service.call(order: @order, line_item: @line_item)
-      load_line_items if result.success?
 
-      track_event('product_removed', { line_item: @line_item })
+      if result.success?
+        load_line_items
+
+        track_event('product_removed', { line_item: @line_item })
+      else
+        @error = result.value.errors.full_messages.to_sentence
+        flash.now[:error] = @error
+      end
 
       respond_to do |format|
         format.turbo_stream

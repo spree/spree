@@ -45,7 +45,7 @@ This will ensure that your `User` model can be used as a Spree user.
 This generator will also add 2 new lines to your Spree initializer file:
 
 ```ruby
-Devise.parent_controller = "Spree::StoreController"
+Devise.parent_controller = "Spree::BaseController"
 Devise.parent_mailer = "Spree::BaseMailer"
 ```
 

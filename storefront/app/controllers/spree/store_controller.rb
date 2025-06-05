@@ -123,29 +123,31 @@ module Spree
     end
 
     def storefront_products_scope
-      current_store.products.active(current_currency)
+      @storefront_products_scope ||= current_store.products.active(current_currency)
     end
 
     def default_products_finder_params
-      taxon = @taxon || current_taxon
+      @default_products_finder_params ||= begin
+        taxon = @taxon || current_taxon
 
-      filter = permitted_products_params.fetch(:filter, {}).dup
+        filter = permitted_products_params.fetch(:filter, {}).dup
 
-      filter[:taxon_ids] ||= [taxon&.id.to_s].compact
-      filter[:taxons] = filter[:taxon_ids].join(',')
+        filter[:taxon_ids] ||= [taxon&.id.to_s].compact
+        filter[:taxons] = filter[:taxon_ids].join(',')
 
-      if filter.key?(:min_price) || filter.key?(:max_price)
-        min_price = filter[:min_price].presence || 0
-        max_price = filter[:max_price].presence || 'Infinity'
+        if filter.key?(:min_price) || filter.key?(:max_price)
+          min_price = filter[:min_price].presence || 0
+          max_price = filter[:max_price].presence || 'Infinity'
 
-        filter[:price] = [min_price, max_price].compact.join(',')
+          filter[:price] = [min_price, max_price].compact.join(',')
+        end
+
+        permitted_products_params.merge(
+          store: current_store,
+          filter: filter,
+          currency: current_currency
+        )
       end
-
-      permitted_products_params.merge(
-        store: current_store,
-        filter: filter,
-        currency: current_currency
-      )
     end
 
     def storefront_products

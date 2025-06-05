@@ -50,6 +50,8 @@ gem 'spree_admin', path: '../admin'
 gem 'spree_storefront', path: '../storefront'
 gem 'spree_stripe', github: 'spree/spree_stripe', branch: 'main'
 gem 'spree_google_analytics', github: 'spree/spree_google_analytics', branch: 'main'
+gem 'spree_klaviyo', github: 'spree/spree_klaviyo', branch: 'main'
+gem 'spree_paypal_checkout', github: 'spree/spree_paypal_checkout', branch: 'main'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
@@ -88,6 +90,8 @@ bin/rails g devise Spree::User
 bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true --sample=true
 bin/rails g spree_stripe:install
 bin/rails g spree_google_analytics:install
+bin/rails g spree_klaviyo:install
+bin/rails g spree_paypal_checkout:install
 # setup letter_opener
 cat <<RUBY >> config/environments/development.rb
 Rails.application.config.action_mailer.delivery_method = :letter_opener

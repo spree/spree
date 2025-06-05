@@ -76,6 +76,8 @@ cloudflare:
   secret_access_key: <%= ENV.fetch("CLOUDFLARE_SECRET_ACCESS_KEY", "") %>
   region: auto
   bucket: <%= ENV.fetch("CLOUDFLARE_BUCKET", "spree-#{Rails.env}") %>
+  request_checksum_calculation: "when_required"
+  response_checksum_validation: "when_required"
 ```
 
 You will also need to add the `aws-sdk-s3` gem to your Gemfile.
@@ -83,6 +85,17 @@ You will also need to add the `aws-sdk-s3` gem to your Gemfile.
 ```ruby
 gem "aws-sdk-s3", require: false
 ```
+
+<Info>
+aws-sdk-s3 version 1.178.0 introduced a modification to the default checksum behavior from the client that is currently incompatible with R2 APIs.
+
+To mitigate, users can use 1.177.0 or add the following to their s3 client instantiation:
+
+```yaml
+request_checksum_calculation: "when_required"
+response_checksum_validation: "when_required"
+```
+</Info>
 
 And run `bundle install`.
 

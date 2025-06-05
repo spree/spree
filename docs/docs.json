@@ -846,6 +846,36 @@
             ]
           },
           {
+            "tab": "Integrations",
+            "groups": [
+              {
+                "group": "Integrations",
+                "pages": [
+                  "integrations/integrations"
+                ]
+              },
+              {
+                "group": "Payments",
+                "pages": [
+                  "integrations/payments/stripe",
+                  "integrations/payments/paypal"
+                ]
+              },
+              {
+                "group": "Analytics",
+                "pages": [
+                  "integrations/analytics/google-analytics"
+                ]
+              },
+              {
+                "group": "Marketing",
+                "pages": [
+                  "integrations/marketing/klaviyo"
+                ]
+              }
+            ]
+          },
+          {
             "tab": "User Docs",
             "groups": [
               {
@@ -963,7 +993,7 @@
                   "user/settings/zones",
                   "user/settings/shipping-methods",
                   "user/settings/tax",
-                  "user/settings/returns"
+                  "user/settings/returns-configuration"
                 ]
               }
             ]
@@ -996,8 +1026,7 @@
                   "developer/core-concepts/promotions",
                   "developer/core-concepts/shipments",
                   "developer/core-concepts/addresses",
-                  "developer/core-concepts/i18n",
-                  "developer/core-concepts/preferences"
+                  "developer/core-concepts/i18n"
                 ]
               },
               {
