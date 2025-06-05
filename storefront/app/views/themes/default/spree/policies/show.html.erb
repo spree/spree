@@ -3,7 +3,7 @@
     <%= Spree.t(params[:id]) %>
   </h1>
 
-  <% if @policy %>
+  <% if @policy.present? %>
     <p class="mb-8 text-center lg:text-left">
       <%= Spree.t("storefront.policies.last_update_at", date: l(@policy.updated_at.to_date)) %>
     </p>
