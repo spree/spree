@@ -44,6 +44,7 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/storefront/testing_support/capybara_utils'
+require 'spree/storefront/testing_support/auth'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
@@ -65,7 +66,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Capybara.match = :smart
-    Capybara.javascript_driver = :selenium_chrome
+    Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
     # Clean out the database state before the tests run
@@ -87,6 +88,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::Storefront::TestingSupport::CapybaraUtils
+  config.include Spree::Storefront::TestingSupport::Auth
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
