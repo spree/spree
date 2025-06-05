@@ -180,11 +180,17 @@ module Spree
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]
 
-    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes,
-                                         :return_authorization_reason_id, {
-                                          return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
-                                            :acceptance_status, :exchange_variant_id, :resellable]
-                                        }]
+    @@return_authorization_attributes = [
+      :amount, :memo, :stock_location_id, :inventory_units_attributes,
+      :return_authorization_reason_id, {
+        return_items_attributes: [
+          :id, :inventory_unit_id,
+          :preferred_reimbursement_type_id,
+          :return_authorization_id, :returned, :pre_tax_amount,
+          :acceptance_status, :exchange_variant_id, :resellable
+        ]
+      }
+    ]
 
     @@return_authorization_reason_attributes = [:name, :active]
 
