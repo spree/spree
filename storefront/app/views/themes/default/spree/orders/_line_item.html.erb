@@ -1,5 +1,5 @@
-<%= turbo_frame_tag dom_id(line_item), data: { controller: 'reveal' } do %>
-  <li class="cart-line-item flex items-top py-6 px-4 w-full" data-reveal-target="item">
+<%= turbo_frame_tag dom_id(line_item) do %>
+  <li class="cart-line-item flex items-top py-6 px-4 w-full">
     <div class="line-item-overlay"></div>
       <div class="cart-product-image flex-shrink-0" id="<%= dom_id(line_item) %>-image" data-turbo-permanent>
         <% image = line_item.variant.default_image %>
@@ -14,7 +14,7 @@
           <%= link_to line_item.name, spree_storefront_resource_url(line_item.product), class: 'font-semibold text-text', data: { 'turbo-frame': '_top' } %>
 
           <%= form_for line_item, url: spree.line_item_url(line_item, order_token: line_item.order.token), method: :delete, data: { controller: 'turbo-stream-form' } do |item_form| %>
-            <%= button_tag type: :submit, class: 'remove-line-item-button h-100', data: { action: "click->reveal#hide click->cart#disableCart" } do %>
+            <%= button_tag type: :submit, class: 'remove-line-item-button h-100', data: { action: "click->cart#disableCart turbo-stream-form:submit-end->cart#enableCart" } do %>
               <%= render 'spree/shared/icons/cross', size: 16 %>
             <% end %>
           <% end %>
