@@ -10,6 +10,25 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
     Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false)
   end
 
+  describe '#create' do
+    context 'when build_from_customer_return_id is present' do
+      subject do
+        post :create, params: { order_id: order.to_param, build_from_customer_return_id: customer_return.id }
+      end
+
+      let(:order) { create(:order) }
+      let(:customer_return) { create(:customer_return) }
+
+
+      it 'creates a reimbursement from a customer return' do
+        expect do
+          subject
+        end.to change { Spree::Reimbursement.count }.by(1)
+        expect(Spree::Reimbursement.last.customer_return).to eq(customer_return)
+      end
+    end
+  end
+
   describe '#perform' do
     subject do
       post :perform, params: { order_id: order.to_param, id: reimbursement.to_param }
