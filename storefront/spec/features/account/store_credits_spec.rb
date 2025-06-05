@@ -1,5 +1,4 @@
 require 'spec_helper'
-
 RSpec.describe 'Account store credits', type: :feature do
   let(:user) { create(:user) }
   let!(:store_credit) { create(:store_credit, user: user, amount: 100.00) }
