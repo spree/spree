@@ -246,6 +246,11 @@ module Spree
       Spree::DatabaseTypeUtilities.maximum_value_for(:integer)
     end
 
+    def payment_method_icon_tag(payment_method, opts = {})
+      image_tag "payment_icons/#{payment_method}.svg", opts
+    rescue Sprockets::Rails::Helper::AssetNotFound
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
