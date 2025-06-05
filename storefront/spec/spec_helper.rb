@@ -44,7 +44,6 @@ require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/storefront/testing_support/capybara_utils'
-require 'spree/storefront/testing_support/auth'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
@@ -88,13 +87,16 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::Storefront::TestingSupport::CapybaraUtils
-  config.include Spree::Storefront::TestingSupport::Auth
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::ImageHelpers
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
+
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  config.include Devise::Test::ControllerHelpers, type: :view
+  config.include Devise::Test::IntegrationHelpers, type: :feature
 
   config.order = :random
   Kernel.srand config.seed

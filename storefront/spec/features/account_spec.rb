@@ -8,7 +8,7 @@ describe 'Accounts section on storefront', type: :feature do
     let(:phone) { FFaker::PhoneNumber.phone_number }
 
     before do
-      mock_sign_in(user)
+      login_as(user, scope: :user)
       visit '/account/profile/edit'
     end
 
@@ -39,7 +39,7 @@ describe 'Accounts section on storefront', type: :feature do
       order2.update(completed_at: 1.day.ago)
       order2.shipments.first.update(address: user.ship_address)
 
-      mock_sign_in(user)
+      login_as(user, scope: :user)
       visit '/account'
     end
 
@@ -64,7 +64,7 @@ describe 'Accounts section on storefront', type: :feature do
     let(:user) { create(:user_with_addresses) }
     let(:order) { create(:shipped_order, user: user) }
 
-    before { mock_sign_in(user) }
+    before { login_as(user, scope: :user) }
 
     context 'when shipment is shipped' do
       before do
@@ -99,7 +99,7 @@ describe 'Accounts section on storefront', type: :feature do
     let(:user) { create(:user, addresses: addresses) }
 
     before do
-      mock_sign_in(user)
+      login_as(user, scope: :user)
       visit spree.account_addresses_path
     end
 
@@ -141,7 +141,7 @@ describe 'Accounts section on storefront', type: :feature do
 
       before do
         state
-        mock_sign_in(user)
+        login_as(user, scope: :user)
         visit '/account/addresses'
       end
 
@@ -217,7 +217,7 @@ describe 'Accounts section on storefront', type: :feature do
       let(:user) { create(:user_with_addresses) }
 
       before do
-        mock_sign_in(user)
+        login_as(user, scope: :user)
         visit spree.account_addresses_path
       end
 
@@ -236,7 +236,7 @@ describe 'Accounts section on storefront', type: :feature do
     let(:user) { create(:user, accepts_email_marketing: accepts_email_marketing) }
 
     before do
-      mock_sign_in(user)
+      login_as(user, scope: :user)
       visit spree.edit_account_newsletter_path
     end
 
