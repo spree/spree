@@ -49,7 +49,7 @@
                     <% end %>
                   </div>
                 </label>
-              </label>
+              </div>
             </li>
           </ul>
         </div>
@@ -118,8 +118,7 @@
       <% unless try_spree_current_user %>
         <% if already_have_an_account? %>
           <div class="py-2 text-sm">
-            It seems you already have an account with us. Please
-            <%= link_to Spree.t(:login), spree_login_path, class: 'text-primary font-semibold' %> to continue.
+            <%= Spree.t("storefront.checkout.it_seems_you_already_have_an_account_html", link: link_to(Spree.t(:login), spree_login_path, class: 'text-primary font-semibold')) %>
           </div>
         <% end %>
       <% end %>

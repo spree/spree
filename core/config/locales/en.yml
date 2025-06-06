@@ -740,6 +740,7 @@ en:
     capture: Capture
     capture_events: Capture events
     card_code: Card Verification Code (CVC)
+    card_expiration_placeholder: MM/YYYY
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
@@ -915,6 +916,8 @@ en:
     destroy: Destroy
     details: Details
     developers: Developers
+    didn_t_receive_confirmation_instructions: Didn't receive confirmation instructions?
+    didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
@@ -1245,6 +1248,9 @@ en:
     metadata: Metadata
     min: Min
     minimal_amount: Minimal Amount
+    minimum_password_length:
+      one: "(%{count} character minimum)"
+      other: "(%{count} characters minimum)"
     missing_return_authorization: Missing Return Authorization for %{item_name}.
     month: Month
     more: More
@@ -1517,7 +1523,7 @@ en:
     password_protected: Password protected
     paste: Paste
     path: Path
-    pay: pay
+    pay: Pay
     payment: Payment
     payment_amount: Payment amount
     payment_attempts: failed attempts
@@ -1534,11 +1540,11 @@ en:
     payment_source: Payment source
     payment_state: Payment State
     payment_states:
-      balance_due: Balance due
+      balance_due: Balance Due
       checkout: Checkout
       complete: Complete
       completed: Completed
-      credit_owed: Credit owed
+      credit_owed: Credit Owed
       failed: Failed
       paid: Paid
       partially_refunded: Partially Refunded
@@ -1915,6 +1921,7 @@ en:
     show_store_selector:
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
       short: Show Store selector
+    sign_in_with_provider: Sign in with %{provider}
     sign_out: Sign out
     sign_up: Sign Up
     site_name: Site name
@@ -2135,6 +2142,7 @@ en:
     timezone: Timezone
     title: Title
     title_link: Title link
+    to: To
     to_add_variants_you_must_first_define: To add variants, you must first define
     toggle_menu: Toggle menu
     top_suggestions: Top suggestions

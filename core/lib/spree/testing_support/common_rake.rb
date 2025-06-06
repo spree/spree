@@ -33,13 +33,19 @@ namespace :common do
       system('bin/rails stimulus:install')
     end
 
+    # install devise if it's not the legacy user, useful for testing storefront
+    if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
+      system('bin/rails g devise:install --force --auto-accept')
+      system("bin/rails g devise #{args[:user_class]} --force --auto-accept")
+      system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
+    end
+
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
       '--auto-accept',
       '--migrate=false',
       '--seed=false',
       '--sample=false',
-      '--copy_storefront=false',
       "--install_storefront=#{args[:install_storefront]}",
       "--install_admin=#{args[:install_admin]}",
       "--user_class=#{args[:user_class]}",

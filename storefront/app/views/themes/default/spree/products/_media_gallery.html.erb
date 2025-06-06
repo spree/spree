@@ -85,8 +85,7 @@
       <div id='pinch-to-zoom' class='fixed top-0 left-0 p-4 bg-background z-50 flex justify-center items-center flex-col'>
         <div class='w-14 h-14'><%= render 'spree/shared/icons/pinch' %></div>
         <div class='text-sm uppercase pt-4 px-5 text-center !leading-tight'>
-          Pinch to <br>
-          zoom
+          <%= Spree.t("storefront.products.pinch_to_zoom_html") %>
         </div>
       </div>
     <% end %>

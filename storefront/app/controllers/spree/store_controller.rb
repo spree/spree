@@ -210,7 +210,7 @@ module Spree
       store_location(return_to)
 
       respond_to do |format|
-        format.html { redirect_to spree_signup_path }
+        format.html { redirect_to spree_login_path }
         format.turbo_stream { render turbo_stream: turbo_stream.slideover_open('slideover-account', 'account-pane') }
       end
     end

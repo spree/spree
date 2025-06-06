@@ -16,15 +16,15 @@
     data-no-ui-slider-range-value="[<%= filter_price_range[:min].floor %>,<%= filter_price_range[:max].ceil %>]">
     <div class="flex justify-between gap-6 px-4 lg:px-10 lg:text-sm">
       <div class="relative w-1/2">
-        <%= f.number_field filter_price_range[:min].floor, class: "pl-16 without-arrows w-full peer focus:border-primary focus:ring-primary", inputmode: "numeric", name: "filter[min_price]", data: { no_ui_slider_target: "minInput" }, id: "price_from", value: params.dig(:filter, :min_price).present? ? min_price_value.to_i : nil, placeholder: filter_price_range[:min].floor %>
+        <%= f.number_field filter_price_range[:min].floor, class: "pl-16 text-right without-arrows w-full peer focus:border-primary focus:ring-primary", inputmode: "numeric", name: "filter[min_price]", data: { no_ui_slider_target: "minInput" }, id: "price_from", value: params.dig(:filter, :min_price).present? ? min_price_value.to_i : nil, placeholder: filter_price_range[:min].floor %>
         <label class="absolute left-0 top-0 flex pl-3 items-center h-full text-input-text peer-placeholder-shown:opacity-50" for="price_from">
-          from <%= currency_symbol(current_currency) %>
+          <%= Spree.t(:from) %> <%= currency_symbol(current_currency) %>
         </label>
       </div>
       <div class="relative w-1/2">
-        <%= f.number_field filter_price_range[:max].ceil, class: "pl-[2.75rem] without-arrows w-full peer focus:border-primary focus:ring-primary", placeholder: filter_price_range[:max].ceil, inputmode: "numeric", name: "filter[max_price]", data: { no_ui_slider_target: "maxInput" }, id: "price_to", value: params.dig(:filter, :max_price).present? ? max_price_value.to_i : nil %>
+        <%= f.number_field filter_price_range[:max].ceil, class: "pl-[2.75rem] text-right without-arrows w-full peer focus:border-primary focus:ring-primary", placeholder: filter_price_range[:max].ceil, inputmode: "numeric", name: "filter[max_price]", data: { no_ui_slider_target: "maxInput" }, id: "price_to", value: params.dig(:filter, :max_price).present? ? max_price_value.to_i : nil %>
         <label class="absolute left-0 top-0 flex pl-3 items-center h-full text-input-text peer-placeholder-shown:opacity-50" for="price_to">
-          to <%= currency_symbol(current_currency) %>
+          <%= Spree.t(:to) %> <%= currency_symbol(current_currency) %>
         </label>
       </div>
     </div>

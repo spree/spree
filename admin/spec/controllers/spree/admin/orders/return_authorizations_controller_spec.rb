@@ -37,7 +37,8 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
           return_items_attributes: {
             0 => {
               inventory_unit_id: order.inventory_units.shipped.first.id,
-              pre_tax_amount: 10
+              pre_tax_amount: 10,
+              preferred_reimbursement_type_id: reimbursement_type.id
             }
           }
         }
@@ -53,6 +54,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
       expect(return_auth.memo).to eq 'Test memo'
       expect(return_auth.return_items.count).to eq 1
       expect(return_auth.return_items.first.pre_tax_amount).to eq 10
+      expect(return_auth.return_items.first.preferred_reimbursement_type).to eq reimbursement_type
     end
 
     it 'redirects to the edit page of the return authorization' do

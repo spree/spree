@@ -180,11 +180,17 @@ module Spree
 
     @@report_attributes = [:type, :date_from, :date_to, :currency]
 
-    @@return_authorization_attributes = [:amount, :memo, :stock_location_id, :inventory_units_attributes,
-                                         :return_authorization_reason_id, {
-                                          return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount,
-                                            :acceptance_status, :exchange_variant_id, :resellable]
-                                        }]
+    @@return_authorization_attributes = [
+      :amount, :memo, :stock_location_id, :inventory_units_attributes,
+      :return_authorization_reason_id, {
+        return_items_attributes: [
+          :id, :inventory_unit_id,
+          :preferred_reimbursement_type_id,
+          :return_authorization_id, :returned, :pre_tax_amount,
+          :acceptance_status, :exchange_variant_id, :resellable
+        ]
+      }
+    ]
 
     @@return_authorization_reason_attributes = [:name, :active]
 
@@ -271,7 +277,7 @@ module Spree
       :weight, :height, :width, :depth, :sku, :barcode, :cost_currency,
       :weight_unit, :dimensions_unit,
       {
-        options: [:id, :name, :value, :position, :_destroy],
+        options: [:id, :name, :option_value_presentation, :option_value_name, :position, :_destroy],
         stock_items_attributes: [:id, :count_on_hand, :stock_location_id, :backorderable, :_destroy],
         prices_attributes: [:id, :amount, :compare_at_amount, :currency, :_destroy],
         price: {},

@@ -168,11 +168,10 @@ Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contrib
 Spree is developed and maintained by
 
 <a href="https://getvendo.com">
-<img alt="Vendo" src="https://cdn.getvendo.com/assets/vendo-logo-4bda02af8c99bc2ecc5a400120f0ebe4eafcd385e02e25f198a8c355ab75d1ff.png" />
+<img alt="Vendo" src="https://avatars.githubusercontent.com/u/89416582?s=96&v=4" />
 </a>
 
-> Vendo is an eCommerce platform based on Spree which you can customize to your exact needs (source available).
-Go global on day 1. DTC x B2B x Marketplace. API-first. One or multiple storefronts.
+> Vendo is the commercial entity behind Spree Commerce and in particular the latest, unprecedented investment into Spree 5 and following versions as well as its integrations. We've been the Spree core team since 2016 and led numerous Spree projects while supporting the community. Learn more at: https://www.getvendo.com/
 
 ## License
 
@@ -188,8 +187,17 @@ Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
 
 Spree Commerce versions 4.9 and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the BSD-3-Clause license and users are required to comply with its terms.
 
+Please note:
+* [Spree under AGPLv3 may be used privately](https://spreecommerce.org/spree-under-agplv3-may-be-used-privately/) 
+
+* [Spree Commerce Developer Covenant](https://spreecommerce.org/spree-commerce-developer-covenant/) 
+
 If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for a SaaS business, please talk to us about obtaining a [Commercial License](https://github.com/spree/spree/blob/main/license.md#commercial-license).
 
 All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
 
 Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions
+
+If you like what you see, consider giving Spree a GitHub star :star:
+
+Thank you for supporting Spree open-source :heart:

@@ -44,7 +44,11 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:reimbursement).permit(permitted_reimbursement_attributes)
+        if params[:build_from_customer_return_id].present?
+          params.permit()
+        else
+          params.require(:reimbursement).permit(permitted_reimbursement_attributes)
+        end
       end
     end
   end

@@ -6,11 +6,9 @@ description: "Learn how to set up and manage Spree's native Stripe integration."
 
 Stripe is a widely used payment processor that enables secure and seamless transactions for online businesses. It supports multiple payment methods, automates payouts, and ensures a smooth checkout experience for customers.
 
-In Spree Enterprise Edition, Stripe can also be used to power marketplace payments, enabling automated vendor payouts, split payments, and secure transaction handling.
-
-<Warning>
-  You must have an existing Stripe account to enable Stripe payments in Spree.
-</Warning>
+<Tip>
+  In [Spree Enterprise Edition](https://spreecommerce.org/pricing/), Stripe can also be used to power marketplace payments, enabling automated vendor payouts, split payments, and secure transaction handling.
+</Tip>
 
 ## Installation
 
@@ -56,7 +54,7 @@ You can optionally configure the following settings for your Stripe payment meth
 - **Auto Capture**: Decide whether payments should be automatically captured at the time of authorization (recommended), or manually captured later.
 - **Active Status**: Enable or disable the payment method. Inactive methods are hidden from checkout but not removed.
 
-### Enable Apple Pay 
+### Enable Apple Pay
 
 To enable Apple Pay (including Apple Pay quick checkout) as a payment method, follow these steps:
 
@@ -101,7 +99,7 @@ Spree’s Stripe integration enhances the customer experience with dynamic, cont
 - Various payment options on the payment step (cards, BNPL, Apple Pay, Google Pay, Link)
   ![Quick payments bypassing checkout 1st step (Apple Pay, Google_Pay, Link)](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742930027/docs/github/Spree_x_Stripe_-_Apple_Pay_Google_Pay_Link_-_Checkout_payment_step_rxxnr9.jpg)
 
-## Stripe Connect
+## Stripe Connect for Marketplaces
 
 Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) comes with a fully automated Stripe Connect integration for [multi-vendor marketplace use cases](https://spreecommerce.org/marketplace-ecommerce/):
 

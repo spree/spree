@@ -24,7 +24,7 @@
       <div class="mt-3 border-t pt-3">
         <span class="text-sm"><%= Spree.t(:status) %></span>
         <% if @order.payment_state.present? %>
-          <span class="badge-<%= @order.payment_state %>"><%= Spree.t("payment_states.#{@order.payment_state}").titleize %></span>
+          <span class="badge-<%= @order.payment_state %>"><%= Spree.t("payment_states.#{@order.payment_state}") %></span>
         <% else %>
           <span class="badge-pending"><%= Spree.t(:pending) %></span>
         <% end %>

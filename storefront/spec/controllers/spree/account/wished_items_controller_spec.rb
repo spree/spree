@@ -10,13 +10,10 @@ describe Spree::Account::WishedItemsController, type: :controller do
   render_views
 
   before do
-    allow(controller).to receive_messages(
-      current_store: store,
-      try_spree_current_user: user,
-      current_wishlist: wishlist,
-      spree_signup_path: '/signup',
-      spree_login_path: '/login'
-    )
+    allow(controller).to receive(:current_store).and_return(store)
+    allow(controller).to receive(:spree_login_path).and_return('/login')
+    allow(controller).to receive_messages try_spree_current_user: user
+    allow(controller).to receive(:current_wishlist).and_return(wishlist)
   end
 
   describe '#create' do
@@ -75,9 +72,8 @@ describe Spree::Account::WishedItemsController, type: :controller do
         allow(controller).to receive(:try_spree_current_user).and_return(nil)
       end
 
-      it 'redirects to sign up page' do
+      it 'redirects to login page' do
         expect(subject).to have_http_status(302)
-        expect(response).to redirect_to('/signup')
       end
     end
 

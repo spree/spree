@@ -27,9 +27,9 @@ $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 960px,
-  xl: 1240px
+  xl: 1260px
 ) !default;
-
+$grid-gutter-width: 16px !default;
 
 $theme-colors: (
   "white": $white,
