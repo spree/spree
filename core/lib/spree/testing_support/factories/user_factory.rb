@@ -5,8 +5,8 @@ FactoryBot.define do
     password              { 'secret' }
     password_confirmation { password }
 
-    first_name { FFaker::Name.first_name } if Spree.user_class.attribute_method?(:first_name)
-    last_name  { FFaker::Name.last_name } if Spree.user_class.attribute_method?(:last_name)
+    first_name { FFaker::Name.first_name }
+    last_name  { FFaker::Name.last_name }
 
     public_metadata { {} }
     private_metadata { {} }

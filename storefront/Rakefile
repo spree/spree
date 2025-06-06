@@ -11,5 +11,11 @@ task default: :spec
 desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/storefront'
-  Rake::Task['common:test_app'].execute
+
+  Rake::Task['common:test_app'].execute(
+    user_class: 'User',
+    authentication: 'devise',
+    install_storefront: 'true',
+    install_admin: 'false'
+  )
 end

@@ -12,7 +12,6 @@ module Spree
     class_option :sample, type: :boolean, default: false, banner: 'load sample data (migrations must be run)'
     class_option :install_storefront, type: :boolean, default: false, banner: 'installs default rails storefront'
     class_option :install_admin, type: :boolean, default: false, banner: 'installs default rails admin'
-    class_option :copy_storefront, type: :boolean, default: false, banner: 'copy all storefront views and stylesheets'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
@@ -35,7 +34,6 @@ module Spree
       @load_sample_data = options[:sample]
       @install_storefront = options[:install_storefront]
       @install_admin = options[:install_admin]
-      @copy_storefront = options[:copy_storefront]
       @authentication = options[:authentication]
 
       unless @run_migrations
@@ -89,12 +87,6 @@ module Spree
     def install_admin
       if @install_admin && Spree::Core::Engine.admin_available?
         generate 'spree:admin:install'
-      end
-    end
-
-    def copy_storefront
-      if @copy_storefront && Spree::Core::Engine.frontend_available?
-        generate 'spree:storefront:copy_storefront'
       end
     end
 
