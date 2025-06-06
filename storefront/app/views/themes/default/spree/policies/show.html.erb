@@ -1,11 +1,15 @@
 <div class="page-container py-12">
   <h1 class="text-2xl tracking-tight text-center lg:text-left mb-3 uppercase">
-    <%= params[:id].titleize %>
+    <%= Spree.t(params[:id]) %>
   </h1>
-  <p class="mb-8 text-center lg:text-left">
-    Last update: <%= @policy&.updated_at&.strftime('%d/%m/%Y') %>
-  </p>
-  <div class="mb-5">
-    <%= @policy&.to_s %>
-  </div>
+
+  <% if @policy.present? %>
+    <p class="mb-8 text-center lg:text-left">
+      <%= Spree.t("storefront.policies.last_update_at", date: l(@policy.updated_at.to_date)) %>
+    </p>
+
+    <div class="mb-5">
+      <%= @policy&.to_s %>
+    </div>
+  <% end %>
 </div>

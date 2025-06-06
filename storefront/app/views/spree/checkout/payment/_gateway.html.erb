@@ -11,7 +11,7 @@
     <div class="form-group mb-3 relative">
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
       <label for="card_number" class="block text-xs text-neutral-600 mb-1"><%= Spree.t(:card_number) %></label>
-      <%= text_field_tag "#{param_prefix}[number]", '', 
+      <%= text_field_tag "#{param_prefix}[number]", '',
           options_hash.merge(
             id: 'card_number',
             data: { card_validation_target: "number" },
@@ -23,7 +23,7 @@
             required: true
           )
       %>
-      <div class="absolute right-2 top-7" 
+      <div class="absolute right-2 top-7"
            data-card-validation-target="typeContainer"
            id="credit-card-type-container">
       </div>
@@ -32,37 +32,37 @@
     <div class="flex gap-3">
       <div class="form-group">
         <label for="card_expiry" class="block text-xs text-neutral-600 mb-1"><%= Spree.t(:expiration_date) %></label>
-        <%= text_field_tag "#{param_prefix}[expiry]", '', 
-            id: 'card_expiry', 
+        <%= text_field_tag "#{param_prefix}[expiry]", '',
+            id: 'card_expiry',
             class: 'text-input',
             data: {
               card_validation_target: "expiry"
             },
-            placeholder: "MM/YYYY",
+            placeholder: Spree.t(:card_expiration_placeholder),
             required: true
         %>
       </div>
       <div class="form-group">
         <label for="card_code" class="block text-xs text-neutral-600 mb-1"><%= Spree.t(:cvv) %></label>
-        <%= text_field_tag "#{param_prefix}[verification_value]", '', 
+        <%= text_field_tag "#{param_prefix}[verification_value]", '',
             options_hash.merge(
-              id: 'card_code', 
-              class: 'text-input', 
+              id: 'card_code',
+              class: 'text-input',
               data: { card_validation_target: "cvv" },
               size: 4,
               maxlength: 4,
               pattern: '[0-9]*',
               inputmode: 'numeric',
-              placeholder: Spree.t(:cvv), 
+              placeholder: Spree.t(:cvv),
               required: true
-            ) 
+            )
         %>
       </div>
     </div>
 
-    <%= hidden_field_tag "#{param_prefix}[cc_type]", '', 
+    <%= hidden_field_tag "#{param_prefix}[cc_type]", '',
         id: "cc_type",
-        data: { card_validation_target: "ccType" } 
+        data: { card_validation_target: "ccType" }
     %>
 
     <% PaymentIcon.credit_cards.each do |card| %>
