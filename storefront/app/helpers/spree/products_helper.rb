@@ -165,7 +165,7 @@ module Spree
         {
           '@type' => 'ListItem',
           'position' => index + 1,
-          'url' => spree.product_url(product_slug)
+          'url' => spree.product_url(product_slug, host: current_store.url_or_custom_domain)
         }
       end
     end

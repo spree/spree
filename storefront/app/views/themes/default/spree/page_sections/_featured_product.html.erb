@@ -89,7 +89,7 @@
                           <% if presenter.product %>
                             <div class="absolute flex" data-controller="copy-input">
                               <div class="has-float-label flex flex-col max-w-[200px]">
-                                <%= text_field_tag "product-#{presenter.product.id}-share-link", spree.product_url(presenter.product, host: current_store.url), class: 'text-ellipsis text-input border-r-0 !rounded-r-none !rounded-l-md', readonly: true, type: 'text', onclick: 'this.select()', data: { copy_input_target: 'input' } %>
+                                <%= text_field_tag "product-#{presenter.product.id}-share-link", spree.product_url(presenter.product, host: current_store.url_or_custom_domain), class: 'text-ellipsis text-input border-r-0 !rounded-r-none !rounded-l-md', readonly: true, type: 'text', onclick: 'this.select()', data: { copy_input_target: 'input' } %>
                                 <%= label_tag "product-#{presenter.product.id}-share-link", Spree.t(:link) %>
                               </div>
                               <button
