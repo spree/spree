@@ -205,7 +205,7 @@ module Spree
 
     @@shipping_category_attributes = [:name]
 
-    @@shipping_method_attributes = [:name, :code,:tracking_url, :tax_category_id, :display_on,
+    @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :display_on,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,
                                     :calculator_type, :preferences, zone_ids: [], shipping_category_ids: [], calculator_attributes: {}]
 
