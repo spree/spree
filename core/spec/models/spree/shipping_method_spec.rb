@@ -183,6 +183,20 @@ describe Spree::ShippingMethod, type: :model do
 
       it { expect(shipping_method.delivery_range).to eq('1') }
     end
+
+    context "when only one transit day value is set" do
+      context "when only minimum day is set" do
+        let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1) }
+
+        it { expect(shipping_method.delivery_range).to eq('1') }
+      end
+
+      context "when only maximum day is set" do
+        let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_max: 2) }
+
+        it { expect(shipping_method.delivery_range).to eq('2') }
+      end
+    end
   end
 
   describe '#display_estimated_price' do
