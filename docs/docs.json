@@ -928,6 +928,13 @@
                 ]
               },
               {
+                "group": "Returns",
+                "pages": [
+                  "user/settings/returns-configuration",
+                  "user/returns/returns-processing"
+                ]
+              },
+              {
                 "group": "Customers",
                 "pages": [
                   "user/customers/create-customer",
