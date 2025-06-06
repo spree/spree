@@ -44,6 +44,16 @@ describe Spree::OptionValue, type: :model do
     end
   end
 
+  describe '.to_tom_select_json' do
+    let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
+    let!(:option_value2) { create(:option_value, name: 'blue', presentation: 'Blue') }
+    let!(:option_value3) { create(:option_value, name: 'green', presentation: 'Green') }
+
+    it 'returns the option values in the correct format' do
+      expect(Spree::OptionValue.to_tom_select_json).to eq([{ id: 'red', name: 'Red' }, { id: 'blue', name: 'Blue' }, { id: 'green', name: 'Green' }])
+    end
+  end
+
   describe 'translations' do
     let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
 
