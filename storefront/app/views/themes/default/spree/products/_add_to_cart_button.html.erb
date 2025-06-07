@@ -21,9 +21,9 @@ variant_not_available = selected_variant.nil? ||
                   },
                   disabled: product.price_in(current_currency).zero? do %>
     <% if not_selected_options.size == 1 %>
-      <span><%= Spree.t(:please_select, option: not_selected_options[0].presentation) %></span>
+      <span><%= Spree.t('storefront.variant_picker.please_choose', option_type: not_selected_options[0].presentation) %></span>
     <% elsif not_all_options_selected %>
-      <span><%= Spree.t(:please_select_all_options) %></span>
+      <span><%= Spree.t('storefront.variant_picker.please_choose_all_options') %></span>
     <% elsif variant_not_available %>
       <span><%= Spree.t(:notify_me_when_available) %></span>
       <%= render 'spree/shared/icons/bell' %>
@@ -43,9 +43,9 @@ variant_not_available = selected_variant.nil? ||
                   },
                   disabled: product.price_in(current_currency).zero? do %>
       <% if not_selected_options.size == 1 %>
-        <span><%= Spree.t(:please_select, option: not_selected_options[0].presentation) %></span>
+        <span><%= Spree.t('storefront.variant_picker.please_choose', option_type: not_selected_options[0].presentation) %></span>
       <% elsif not_all_options_selected %>
-        <span><%= Spree.t(:please_select_all_options) %></span>
+        <span><%= Spree.t('storefront.variant_picker.please_choose_all_options') %></span>
       <% elsif variant_not_available %>
         <span><%= Spree.t(:notify_me_when_available) %></span>
         <%= render 'spree/shared/icons/bell' %>
