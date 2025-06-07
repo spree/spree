@@ -151,6 +151,8 @@ en:
         updated: Updated
         user: User
       spree/store:
+        address: Address
+        contact_phone: Contact Phone
         mail_from_address: Mail From Address
         meta_description: Meta Description
         meta_keywords: Meta Keywords

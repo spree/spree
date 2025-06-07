@@ -14,6 +14,8 @@
           <div class="trix-container mb-0">
             <%= rich_text_area_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), { contenteditable: !readonly } %>
           </div>
+        <% when :address %>
+          <%= text_area_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), class: 'form-control', readonly: readonly, data: { controller: 'textarea-autogrow'} %>
         <% else %>
           <%= text_field_tag "translation[#{field}][#{translation_locale}]", resource.get_field_with_locale(translation_locale, field), class: 'form-control', readonly: readonly %>
         <% end %>
