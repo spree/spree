@@ -74,6 +74,7 @@ en:
           partially: This order has been partially refunded. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
       variant_picker:
         please_choose: Please choose %{option_type}
+        please_choose_all_options: Please choose all options
       wished_items:
         add: Add to wishlist
         no_wished_items:
