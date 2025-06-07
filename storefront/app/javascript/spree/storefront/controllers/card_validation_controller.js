@@ -56,6 +56,8 @@ export default class extends Controller {
   }
 
   updateCardIcon(cardType) {
+    cardType = (cardType === "mastercard" ? "master" : cardType)
+
     const iconElement = document.getElementById(`credit-card-icon-${cardType}`)
     if (iconElement) {
       this.typeContainerTarget.innerHTML = iconElement.innerHTML
