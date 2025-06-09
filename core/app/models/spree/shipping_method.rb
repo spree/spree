@@ -93,7 +93,7 @@ module Spree
       if estimated_transit_business_days_min == estimated_transit_business_days_max
         estimated_transit_business_days_min.to_s
       else
-        "#{estimated_transit_business_days_min}-#{estimated_transit_business_days_max}"
+        [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join("-")
       end
     end
 
