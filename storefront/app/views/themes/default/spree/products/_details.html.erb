@@ -39,7 +39,7 @@
       </div>
     <% end %>
 
-    <% product.product_properties.joins(:property).merge(Spree::Property.available_on_front_end).sort_by_property_position.each do |product_property| %>
+    <% product_properties(product).each do |product_property| %>
       <div class="product-property py-4 border-b border-default">
 
         <%= link_to "#property_#{product_property.id}", class: 'text-sm uppercase tracking-widest inline-flex w-full justify-between !border-b-transparent', data: { action: 'accordion#toggle' } do %>
