@@ -214,7 +214,7 @@ module Spree
       Spree::ColorsPreviewStylesPresenter.new(option_type.option_values.map { |ov| { name: ov.name, filter_name: ov.name } }).to_s
     end
 
-    def default_product_properties
+    def product_properties(product)
       product.product_properties.joins(:property).merge(Spree::Property.available_on_front_end).sort_by_property_position
     end
   end
