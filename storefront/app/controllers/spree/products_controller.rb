@@ -23,7 +23,7 @@ module Spree
       load_product
       # An interesting thing is that since we're querying the translations table (in the multi_search),
       # when using not default locale, our related products are different for different locales.
-      @products = current_store.products.active(current_currency).where.not(id: @product.id).
+      @products = storefront_products_scope.where.not(id: @product.id).
                   multi_search(@product.name).includes(storefront_products_includes).
                   limit(@section.preferred_max_products_to_show)
     end

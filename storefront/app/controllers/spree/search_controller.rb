@@ -13,7 +13,7 @@ module Spree
       @taxons = []
 
       if query.present? && query.length >= Spree::Storefront::Config.search_min_query_length
-        products_scope = current_store.products.active(current_currency).multi_search(query)
+        products_scope = storefront_products_scope.multi_search(query)
         @products = products_scope.includes(storefront_products_includes)
         @taxons = current_store.taxons.search_by_name(query)
       end

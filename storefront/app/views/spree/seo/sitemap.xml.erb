@@ -12,8 +12,8 @@
     <% end %>
   <% end %>
 
-  <% cache [current_store.products, current_currency] do %>
-    <% current_store.products.active(current_currency).find_each do |product| %>
+  <% cache [storefront_products_scope, current_currency] do %>
+    <% storefront_products_scope.find_each do |product| %>
       <url>
         <loc><%= spree_storefront_resource_url(product) %></loc>
         <lastmod><%= product.updated_at.strftime('%Y-%m-%d') %></lastmod>
