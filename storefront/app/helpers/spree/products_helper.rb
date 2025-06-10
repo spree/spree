@@ -165,7 +165,7 @@ module Spree
         {
           '@type' => 'ListItem',
           'position' => index + 1,
-          'url' => spree.product_url(product_slug)
+          'url' => spree.product_url(product_slug, host: current_store.url_or_custom_domain)
         }
       end
     end
@@ -212,6 +212,10 @@ module Spree
       return unless option_type.color?
 
       Spree::ColorsPreviewStylesPresenter.new(option_type.option_values.map { |ov| { name: ov.name, filter_name: ov.name } }).to_s
+    end
+
+    def product_properties(product)
+      product.product_properties.joins(:property).merge(Spree::Property.available_on_front_end).sort_by_property_position
     end
   end
 end

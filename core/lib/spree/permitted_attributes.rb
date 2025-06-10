@@ -127,7 +127,7 @@ module Spree
 
     @@page_attributes = [:name, :slug, :meta_title, :meta_description, :meta_keywords]
 
-    @@page_block_attributes = [:type, :name, :text, :position]
+    @@page_block_attributes = [:type, :name, :text, :position, :asset]
 
     @@page_link_attributes = [:linkable_id, :linkable_type, :position, :label, :url, :open_in_new_tab]
 
@@ -206,7 +206,7 @@ module Spree
 
     @@shipping_category_attributes = [:name]
 
-    @@shipping_method_attributes = [:name, :code,:tracking_url, :tax_category_id, :display_on,
+    @@shipping_method_attributes = [:name, :admin_name, :code, :tracking_url, :tax_category_id, :display_on,
                                     :estimated_transit_business_days_min, :estimated_transit_business_days_max,
                                     :calculator_type, :preferences, zone_ids: [], shipping_category_ids: [], calculator_attributes: {}]
 

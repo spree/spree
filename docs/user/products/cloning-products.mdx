@@ -1,38 +1,38 @@
 ---
-description: "How to Clone a Product in the Spree Commerce open-source eCommerce platform"
 title: "Clone a Product"
+description: "Learn how to clone a product in Spree Commerce."
 ---
 
-If you plan to add many products that share similar characteristics, then you may find it more convenient to clone existing products and then edit the product information where necessary. This is especially time saving when it comes to multi-variant products.
+If you need to create multiple products with similar details - such as color variants, seasonal versions, or items with the same structure - cloning an existing product can save you a lot of time. This is especially helpful when working with multi-variant products.
 
-To clone a product, first find the product you’d like to clone and click on it.
+## How to Clone a Product
 
-<img alt="Find The Product You Want to Clone" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733828525/docs/Products/Clone%20a%20Product/2.1.4.1_Cloning_Products_-_Find_The_Product_You_Want_to_Clone_ou9hg4.png" />
+![](/docs/images/user/products/clone-a-product/1.clone_product.png)
 
-Doing so will open the product editor for this particular product.
+1. Go to the **Products** tab in the admin and open the product you want to clone.
+2. Click the **three-dot menu** in the top-right corner.
+3. Select **Clone** from the dropdown.
 
-Locate ‘More Actions’ in the top right corner and select ‘Clone’ from the dropdown.
+You’ll be redirected to the product editor for the newly cloned product.
 
-<img alt="Locate More Actions" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733828525/docs/Products/Clone%20a%20Product/2.1.4.2_Cloning_Products_-_Locate_More_Actions_oyr6bx.png" />
+![](/docs/images/user/products/clone-a-product/2.product_cloned.png)
 
-After clicking Clone, you’ll be redirected to the product editor for the newly cloned product.
+### Cloning Behaviour
 
-<img alt="Newly Cloned Product" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733828525/docs/Products/Clone%20a%20Product/2.1.4.3_Cloning_Products_-_Newly_Cloned_Product_srkexm.png" />
+When cloning a product, most of the product fields are copied over, with a few key differences:
 
-All product information will be copied from the original product, with a few exceptions:
+- **Name** changes to **COPY OF Name**
+- **Slug** changes to **/copy-of-name**
+- **Status** is set to **Draft** by default
+- **Stock** quantity is reset to **0**
 
-* The ‘Name’ will change to ‘COPY OF Name’
+## Update the New Product
 
-* The slug will change from ‘/name’ to ‘/copy-of-name’
+Now that the product has been cloned, you'll need to update the product details as needed (e.g., name, media, price, stock levels) to reflect the new product.
 
-* The status will always be set to Draft
+Remember to click **Update** at the top or bottom of the page to save your changes.
 
-* Stock quantities will be reset to zero
+\
+For help understanding the fields in the product editor, see [Create a Product](https://spreecommerce.org/docs/user/products/creating-products)
 
-You can then update the product details to match the attributes of the new product.
-
-Once you’re happy with the changes, make sure to click Update at the bottom of the page, otherwise any changes you’ve made will not be saved.
-
-For more information about [editing products](https://spreecommerce.org/docs/user/products/editing-products), please refer to this support article.
-
-For more information about [editing multi-variant products](https://spreecommerce.org/docs/user/products/editing-multi-variant-products), please refer to this support article.
+For help updating variant-specific info, see [Edit a Multi-Variant Product](https://spreecommerce.org/docs/user/products/editing-multi-variant-products)

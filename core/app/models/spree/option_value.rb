@@ -48,8 +48,8 @@ module Spree
     }
 
     scope :for_products, lambda { |products|
-      joins(:variants).
-        where(Variant.table_name => { product_id: products.map(&:id) })
+      # we need to use map(&:id) to avoid SQL errors when merging with other scopes
+      joins(:variants).where(Spree::Variant.table_name => { product_id: products.map(&:id) })
     }
 
     #
@@ -62,9 +62,9 @@ module Spree
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
     def self.to_tom_select_json
-      all.pluck(:id, :presentation).map do |id, presentation|
+      all.pluck(:name, :presentation).map do |name, presentation|
         {
-          id: id,
+          id: name,
           name: presentation
         }
       end

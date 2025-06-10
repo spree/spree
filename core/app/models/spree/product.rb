@@ -50,11 +50,7 @@ module Spree
       if defined?(PgSearch)
         include PgSearch::Model
 
-        if connected? && connection.extension_enabled?('pg_trgm')
-          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
-        else
-          pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { tsearch: { any_word: true, prefix: true } }
-        end
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       end
 
       before_save :set_slug
@@ -231,7 +227,7 @@ module Spree
         having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
     }
     scope :out_of_stock, lambda {
-                           joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false)
+                           joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
                          }
 
     scope :by_best_selling, lambda { |order_direction = :desc|
