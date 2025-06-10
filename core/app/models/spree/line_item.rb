@@ -85,13 +85,17 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
                   :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
-                  :pre_tax_amount, :shipping_cost, :tax_total
+                  :pre_tax_amount, :shipping_cost, :tax_total, :compare_at_amount
 
     alias single_money display_price
     alias single_display_amount display_price
 
     def amount
       price * quantity
+    end
+
+    def compare_at_amount
+      (variant.compare_at_amount_in(currency) || 0) * quantity
     end
 
     alias subtotal amount
