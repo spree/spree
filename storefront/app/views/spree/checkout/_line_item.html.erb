@@ -15,7 +15,7 @@
   <div class="font-semibold text-sm text-right shrink-0">
     <% if should_display_compare_at_price?(line_item.variant) %>
       <span class="line-through text-red-500">
-        <%= Spree::Money.new(line_item.variant.compare_at_amount_in(line_item.currency) * line_item.quantity, currency: line_item.currency) %>
+        <%= line_item.display_compare_at_amount %>
       </span>
       <br />
     <% end %>
