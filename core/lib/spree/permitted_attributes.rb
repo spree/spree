@@ -184,6 +184,7 @@ module Spree
       :amount, :memo, :stock_location_id, :inventory_units_attributes,
       :return_authorization_reason_id, {
         return_items_attributes: [
+          :_destroy,
           :id, :inventory_unit_id,
           :preferred_reimbursement_type_id,
           :return_authorization_id, :returned, :pre_tax_amount,

@@ -113,6 +113,10 @@ module Spree
       original_return_item_id?
     end
 
+    def percentage_of_line_item
+      quantity / BigDecimal(line_item.quantity)
+    end
+
     private
 
     def allow_ship?
@@ -122,10 +126,6 @@ module Spree
     def fulfill_order
       reload
       order.fulfill!
-    end
-
-    def percentage_of_line_item
-      quantity / BigDecimal(line_item.quantity)
     end
 
     def current_return_item
