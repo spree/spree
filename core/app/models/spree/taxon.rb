@@ -22,7 +22,7 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    MEMOIZED_METHODS = [:cached_self_and_descendants_ids]
+    MEMOIZED_METHODS = %w[cached_self_and_descendants_ids].freeze
 
     #
     # Magic methods
