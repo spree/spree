@@ -48,8 +48,9 @@ module Spree
     }
 
     scope :for_products, lambda { |products|
-      joins(:variants).
-        where(Variant.table_name => { product_id: products.map(&:id) })
+      product_ids = products.loaded? ? products.map(&:id) : products
+
+      joins(:variants).where(Spree::Variant.table_name => { product_id: product_ids })
     }
 
     #

@@ -26,19 +26,23 @@ module Spree
     end
 
     def product_filters_aggregations
-      @product_filters_aggregations ||= storefront_products_for_filters.
-                                        joins(variants_including_master: :option_values).
-                                        group("#{Spree::OptionValue.table_name}.id").
-                                        distinct.
-                                        count
+      @product_filters_aggregations ||= Rails.cache.fetch(["product-filters-aggregations", storefront_products_for_filters.cache_key_with_version], expires_in: 1.day) do
+        storefront_products_for_filters.
+        joins(variants_including_master: :option_values).
+        group("#{Spree::OptionValue.table_name}.id").
+        distinct.
+        count
+      end
     end
 
     def product_single_filter_aggregations
-      @product_single_filter_aggregations ||= default_storefront_products_for_filters.
-                                              joins(variants_including_master: :option_values).
-                                              group("#{Spree::OptionValue.table_name}.id").
-                                              distinct.
-                                              count
+      @product_single_filter_aggregations ||= Rails.cache.fetch(["product-single-filter-aggregations", default_storefront_products_for_filters.cache_key_with_version], expires_in: 1.day) do
+        default_storefront_products_for_filters.
+        joins(variants_including_master: :option_values).
+        group("#{Spree::OptionValue.table_name}.id").
+        distinct.
+        count
+      end
     end
 
     def products_count_for_filter(name, value_id)
@@ -48,23 +52,27 @@ module Spree
 
     def filter_price_range
       @filter_price_range ||= begin
-        product_ids = products_for_filters_scope(except_filters: [:price]).ids
+        products = products_for_filters_scope(except_filters: [:price])
 
-        {
-          min: Spree::Price.for_products(product_ids).minimum(:amount) || 0.to_d,
-          max: Spree::Price.for_products(product_ids).maximum(:amount) || 0.to_d
-        }
+        Rails.cache.fetch(["price-range", products.cache_key_with_version, current_currency], expires_in: 1.day) do
+          {
+            min: Spree::Price.for_products(products, current_currency).minimum(:amount) || 0.to_d,
+            max: Spree::Price.for_products(products, current_currency).maximum(:amount) || 0.to_d
+          }
+        end
       end
     end
 
     def filter_stock_count
       @filter_stock_count ||= begin
-        products_scope = products_for_filters_scope(except_filters: [:purchasable, :out_of_stock])
+        products = products_for_filters_scope(except_filters: [:purchasable, :out_of_stock])
 
-        {
-          in_stock: products_scope.in_stock.distinct.count,
-          out_of_stock: products_scope.out_of_stock.distinct.count
-        }
+        Rails.cache.fetch(["stock-count", products.cache_key_with_version], expires_in: 1.day) do
+          {
+            in_stock: products.in_stock.distinct.count,
+            out_of_stock: products.out_of_stock.distinct.count
+          }
+        end
       end
     end
 

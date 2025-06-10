@@ -36,7 +36,13 @@ module Spree
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
-    scope :for_products, ->(products) { joins(variant: :product).where("#{Spree::Product.table_name}.id" => products) }
+    scope :for_products, ->(products, currency = nil) do
+      currency ||= Spree::Store.default.default_currency
+
+      with_currency(currency).joins(:variant).where(
+        Spree::Variant.table_name => { product_id: products }
+      )
+    end
 
     extend DisplayMoney
     money_methods :amount, :price, :compare_at_amount

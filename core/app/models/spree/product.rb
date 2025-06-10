@@ -227,7 +227,7 @@ module Spree
         having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
     }
     scope :out_of_stock, lambda {
-                           joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand <= ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false)
+                           joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
                          }
 
     scope :by_best_selling, lambda { |order_direction = :desc|
