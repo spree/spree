@@ -95,7 +95,7 @@ module Spree
     end
 
     def compare_at_amount
-      variant.compare_at_amount_in(currency) * quantity
+      (variant.compare_at_amount_in(currency) || 0) * quantity
     end
 
     alias subtotal amount
