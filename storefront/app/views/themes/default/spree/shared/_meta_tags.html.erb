@@ -32,9 +32,9 @@
   <meta property="twitter:image" content="<%= image_url %>" />
 <% end %>
 
-<% if @product && @product.price_in(current_currency).present? %>
+<% if @product.present? && @product.price_in(current_currency).present? %>
   <meta property="og:price:amount" content="<%= @product.price_in(current_currency).amount.to_s %>">
-  <meta property="og:price:currency" content="<%= current_order&.currency || current_store.default_currency %>">
+  <meta property="og:price:currency" content="<%= current_currency %>">
 <% end %>
 
 <% if current_store.twitter.present? %>
