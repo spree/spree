@@ -95,7 +95,7 @@ module Spree
     def filter_values_for_filter(filter)
       selected = single_option_filter_selected?(filter.name)
       if filter.option_values.loaded?
-        storefront_filter_values_ids = storefront_filter_values_scope(selected).pluck(:id)
+        storefront_filter_values_ids = storefront_filter_values_scope(selected).ids
 
         filter.option_values.find_all { |option_value| storefront_filter_values_ids.include?(option_value.id) }
       else
