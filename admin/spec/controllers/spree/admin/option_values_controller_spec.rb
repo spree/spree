@@ -55,7 +55,7 @@ RSpec.describe Spree::Admin::OptionValuesController do
       json_response = JSON.parse(response.body)
       expect(json_response).to be_an(Array)
       expect(json_response.first).to eq({
-        id: option_value.id,
+        id: option_value.name,
         name: option_value.presentation
       }.stringify_keys)
       expect(json_response.length).to eq(4)
