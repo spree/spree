@@ -113,6 +113,10 @@ module Spree
       original_return_item_id?
     end
 
+    def charged_amount
+      percentage_of_line_item * line_item.pre_tax_amount
+    end
+
     def percentage_of_line_item
       quantity / BigDecimal(line_item.quantity)
     end

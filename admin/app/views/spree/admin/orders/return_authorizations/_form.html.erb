@@ -66,11 +66,11 @@
               <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
             </td>
             <td><%= inventory_unit.state.humanize %></td>
-            <% charged_amount =
-              inventory_unit.percentage_of_line_item *
-                inventory_unit.line_item.pre_tax_amount %>
-            <td class="charged-amount" data-charged-amount="<%= charged_amount %>">
-              <%= Spree::Money.new(charged_amount, currency: return_item.currency) %>
+            <td
+              class="charged-amount"
+              data-charged-amount="<%= inventory_unit.charged_amount %>"
+            >
+              <%= Spree::Money.new(inventory_unit.charged_amount, currency: return_item.currency) %>
             </td>
             <td class="purchased-quantity">
               <%= inventory_unit.quantity %>
