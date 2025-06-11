@@ -173,6 +173,22 @@ Spree is developed and maintained by
 
 > Vendo is the commercial entity behind Spree Commerce and in particular the latest, unprecedented investment into Spree 5 and following versions as well as its integrations. We've been the Spree core team since 2016 and led numerous Spree projects while supporting the community. Learn more at: https://www.getvendo.com/
 
+## Guidelines for issue labeling
+
+* admin panel -- has to do with the admin panel for spree customers
+* API - fixing the api endpoint
+* Bug - bug found in any area
+* Documentation - adding documentation to the project
+* Good first issue - something you think would be good for a beginner
+* Improvement - improvement to existing feature
+* International - affects international aspect of project
+* Multi-Store - affects multi store feature
+* New Feature - request for a new feature
+* Question - post a question to the developers
+* Security - issues with site security
+* StoreFront - issues with storefront
+* Verified - verified issue from Spree devs
+
 ## License
 
 Spree Commerce is a free, open-source eCommerce framework giving you full control and customizability.
