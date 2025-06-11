@@ -148,7 +148,7 @@ button[disabled]        .show-when-enabled { display: none; }
   color: $gray-700;
 
   &:hover, &:focus {
-    border-color: $gray-100;
+    border-color: $border-color;
     background-color: $gray-25;
     color: $gray-900;
   }
