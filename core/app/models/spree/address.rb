@@ -6,9 +6,6 @@ module Spree
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
-    if defined?(Spree::Security::Addresses)
-      include Spree::Security::Addresses
-    end
 
     serialize :preferences, type: Hash, coder: YAML, default: {}
 
@@ -31,6 +28,10 @@ module Spree
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
     FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
+
+    if defined?(Spree::Security::Addresses)
+      include Spree::Security::Addresses
+    end
 
     scope :not_deleted, -> { where(deleted_at: nil) }
 
