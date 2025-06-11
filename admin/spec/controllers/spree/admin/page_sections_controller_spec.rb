@@ -84,7 +84,8 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     end
 
     context "with action text field" do
-      let(:page_section) { create(:announcement_bar_page_section, pageable: create(:theme, store: store)) }
+      let!(:theme) { create(:theme, store: store) }
+      let!(:page_section) { create(:announcement_bar_page_section, pageable: theme) }
 
       it "persists page section action text" do
         put :update, params: { id: page_section.id, page_section: { text: "Welcome to our amazing store" } }, format: :turbo_stream
