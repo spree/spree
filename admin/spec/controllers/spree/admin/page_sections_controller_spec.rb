@@ -4,10 +4,10 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { Spree::Store.default }
-  let(:parent_theme) { create(:theme, store: store) }
-  let(:theme) { create(:theme, :preview, parent: parent_theme) }
-  let(:page) { create(:page, :preview, pageable: parent_theme) }
+  let!(:store) { Spree::Store.default }
+  let!(:parent_theme) { create(:theme, store: store) }
+  let!(:theme) { create(:theme, :preview, parent: parent_theme) }
+  let!(:page) { create(:page, :preview, pageable: parent_theme) }
 
   before do
     session[:page_preview_id] = page.id
@@ -84,7 +84,6 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
     end
 
     context "with action text field" do
-      let!(:theme) { create(:theme, store: store) }
       let!(:page_section) { create(:announcement_bar_page_section, pageable: theme) }
 
       it "persists page section action text" do
