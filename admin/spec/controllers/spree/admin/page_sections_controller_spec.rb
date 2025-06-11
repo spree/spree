@@ -69,7 +69,7 @@ RSpec.describe Spree::Admin::PageSectionsController, type: :controller do
   end
 
   describe '#update' do
-    let!(:page_section) { create(:header_page_section, pageable: theme) }
+    let!(:page_section) { create(:featured_taxon_page_section, pageable: page) }
 
     it 'updates the page section' do
       put :update, params: { id: page_section.id, page_section: { preferred_top_padding: 100 } }, format: :turbo_stream
