@@ -47,7 +47,7 @@
           <% if section_with_image %>
             <div class='lg:col-span-5'>
               <%= link_to spree.nested_taxons_path(section.taxon), data: { turbo_frame: "_top" } do %>
-                <%= spree_image_tag(section.taxon.image, height: 500, width: 500, class: 'h-full w-full object-cover object-center', loading: :lazy) %>
+                <%= spree_image_tag(section.taxon.square_image, height: 500, width: 500, class: 'h-full w-full object-cover object-center', loading: :lazy) %>
               <% end %>
             </div>
           <% end %>
