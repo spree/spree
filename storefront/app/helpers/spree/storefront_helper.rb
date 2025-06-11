@@ -53,6 +53,7 @@ module Spree
 
     def svg_country_icon(country_code)
       country_code = :us if country_code.to_s.downcase == 'en'
+      country_code = :jp if country_code.to_s.downcase == 'ja'
       tag.span(class: "fi fi-#{country_code.downcase}")
     end
 
