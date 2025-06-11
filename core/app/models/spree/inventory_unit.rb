@@ -1,5 +1,6 @@
 module Spree
   class InventoryUnit < Spree.base_class
+    extend Spree::DisplayMoney
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -29,6 +30,8 @@ module Spree
     end
 
     validates :quantity, numericality: { greater_than: 0 }
+
+    money_methods :charged_amount
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do

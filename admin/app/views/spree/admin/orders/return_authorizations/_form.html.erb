@@ -70,7 +70,7 @@
               class="charged-amount"
               data-charged-amount="<%= inventory_unit.charged_amount %>"
             >
-              <%= Spree::Money.new(inventory_unit.charged_amount, currency: return_item.currency) %>
+              <%= inventory_unit.display_charged_amount %>
             </td>
             <td class="purchased-quantity">
               <%= inventory_unit.quantity %>
@@ -93,7 +93,7 @@
             </td>
             <td>
               <% if editable %>
-                <%= item_fields.number_field :pre_tax_amount,
+                <%= item_fields.text_field :pre_tax_amount,
                                          {
                                            class: "refund-amount-input form-control",
                                            required: true,
