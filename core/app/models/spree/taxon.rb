@@ -17,9 +17,12 @@ module Spree
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
     include Spree::Metadata
+    include Spree::MemoizedData
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
+
+    MEMOIZED_METHODS = %w[cached_self_and_descendants_ids].freeze
 
     #
     # Magic methods
@@ -368,7 +371,7 @@ module Spree
     end
 
     def cached_self_and_descendants_ids
-      Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
+      @cached_self_and_descendants_ids ||= Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
         self_and_descendants.ids
       end
     end
