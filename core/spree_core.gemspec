@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
     actionpack actionview activejob activemodel activerecord
     activestorage activesupport railties
   ].each do |rails_gem|
-    s.add_dependency rails_gem, '>= 6.1', '< 8.0'
+    s.add_dependency rails_gem, '>= 6.1', '< 9.0'
   end
 
   s.add_dependency 'activemerchant', '~> 1.67'
@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'kaminari', '~> 1.2'
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
-  s.add_dependency 'paranoia', '~> 2.4'
+  s.add_dependency 'paranoia', '~> 3.0'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'rexml'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'

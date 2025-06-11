@@ -17,9 +17,9 @@ module Spree
           attr_writer :title
 
           def title
-            Spree::Deprecation.warn(<<-DEPRECATION, caller)
-              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
-            DEPRECATION
+            # Spree::Deprecation.warn(<<-DEPRECATION, caller)
+            #   ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            # DEPRECATION
             title_string = @title.present? ? @title : accurate_title
             if title_string.present?
               if Spree::Config[:always_put_site_name_in_title] && !title_string.include?(default_title)
@@ -33,27 +33,27 @@ module Spree
           end
 
           def default_title
-            Spree::Deprecation.warn(<<-DEPRECATION, caller)
-              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
-            DEPRECATION
+            # Spree::Deprecation.warn(<<-DEPRECATION, caller)
+            #   ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            # DEPRECATION
             current_store.name
           end
 
           # this is a hook for subclasses to provide title
           def accurate_title
-            Spree::Deprecation.warn(<<-DEPRECATION, caller)
-              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
-            DEPRECATION
+            # Spree::Deprecation.warn(<<-DEPRECATION, caller)
+            #   ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            # DEPRECATION
             current_store.seo_title
           end
 
           private
 
           def set_user_language
-            Spree::Deprecation.warn(<<-DEPRECATION, caller)
-              ControllerHelpers::Common#set_user_language is deprecated and will be removed in Spree 5.0.
-              Please use `before_action :set_locale` instead
-            DEPRECATION
+            # Spree::Deprecation.warn(<<-DEPRECATION, caller)
+            #   ControllerHelpers::Common#set_user_language is deprecated and will be removed in Spree 5.0.
+            #   Please use `before_action :set_locale` instead
+            # DEPRECATION
 
             set_locale
           end
@@ -65,9 +65,9 @@ module Spree
           # Default layout is: +app/views/spree/layouts/spree_application+
           #
           def get_layout
-            Spree::Deprecation.warn(<<-DEPRECATION, caller)
-              ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
-            DEPRECATION
+            # Spree::Deprecation.warn(<<-DEPRECATION, caller)
+            #   ControllerHelpers::Common is deprecated and will be removed in Spree 5.0.
+            # DEPRECATION
             return unless defined?(Spree::Frontend)
 
             layout ||= Spree::Frontend::Config[:layout]
