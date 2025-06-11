@@ -13,6 +13,10 @@ module Spree
       @_return_quantity = value.to_i
     end
 
+    def pre_tax_amount=(amount)
+      self[:pre_tax_amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
     def return_quantity
       @_return_quantity.nil? ? inventory_unit.quantity : @_return_quantity
     end

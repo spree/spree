@@ -68,9 +68,9 @@
             <td><%= inventory_unit.state.humanize %></td>
             <td
               class="charged-amount"
-              data-charged-amount="<%= return_item.pre_tax_amount %>"
+              data-charged-amount="<%= inventory_unit.charged_amount %>"
             >
-              <%= return_item.display_pre_tax_amount %>
+              <%= inventory_unit.display_charged_amount %>
             </td>
             <td class="purchased-quantity">
               <%= inventory_unit.quantity %>
@@ -81,6 +81,7 @@
                                          {
                                            class: "refund-quantity-input form-control",
                                            min: 0,
+                                           required: true,
                                            data: {
                                              action: "return-items#updateSuggestedAmount",
                                            },
@@ -93,12 +94,13 @@
             <td>
               <% if editable %>
                 <%= item_fields.text_field :pre_tax_amount,
-                                       {
-                                         class: "refund-amount-input form-control",
-                                         data: {
-                                           action: "return-items#updateTotalRefundAmount",
-                                         },
-                                       } %>
+                                         {
+                                           class: "refund-amount-input form-control",
+                                           required: true,
+                                           data: {
+                                             action: "return-items#updateTotalRefundAmount",
+                                           },
+                                         } %>
               <% else %>
                 <%= return_item.display_pre_tax_amount %>
               <% end %>
@@ -153,9 +155,9 @@
       <div class="form-group">
         <%= f.label :reason, raw(Spree.t(:reason) + required_span_tag) %>
         <%= f.select :return_authorization_reason_id,
-                      @reasons.collect { |r| [r.name, r.id] },
-                      { include_blank: Spree.t(:select_a_return_authorization_reason) },
-                      { class: "custom-select" } %>
+                 @reasons.collect { |r| [r.name, r.id] },
+                 { include_blank: Spree.t(:select_a_return_authorization_reason) },
+                 { class: "custom-select" } %>
         <%= f.error_message_on :reason %>
       </div>
 

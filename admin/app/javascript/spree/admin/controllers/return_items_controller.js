@@ -21,7 +21,12 @@ export default class extends CheckboxSelectAll {
     var totalPretaxRefund = 0
     this.checked.forEach((checkbox) => {
       const returnItemRow = checkbox.closest('tr')
-      const amount = parseFloat(returnItemRow.querySelector('.refund-amount-input').value)
+      const refundAmountInput = returnItemRow.querySelector('.refund-amount-input')
+      let amount = parseFloat(refundAmountInput.value)
+      if (!Number.isFinite(amount)) {
+        amount = 0
+        refundAmountInput.value = 0
+      }
       totalPretaxRefund += amount
     })
 
