@@ -11,6 +11,6 @@ if (typeof window.Stimulus === "undefined") {
   application = window.Stimulus
 }
 
-import <%= class_name %>Controller from './controllers/<%= file_name %>_controller'
+import <%= class_name %>Controller from '<%= file_name %>/controllers/<%= file_name %>_controller' 
 
 application.register('<%= file_name %>', <%= class_name %>Controller)
