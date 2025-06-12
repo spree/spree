@@ -155,7 +155,7 @@ module Spree
       end
     end
 
-    # Returns an array of available layout section classes for the theme
+    # Returns an array of available layout section classes for the theme, eg. header, footer, newsletter, etc.
     #
     # @return [Array<Class>]
     def available_layout_sections

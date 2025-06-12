@@ -94,8 +94,8 @@
                     "pages": [
                       "developer/multi-tenant/quickstart",
                       "developer/multi-tenant/installation",
-                      "developer/multi-tenant/core-concepts"
-
+                      "developer/multi-tenant/core-concepts",
+                      "developer/multi-tenant/configuration"
                     ]
                   }
                 ]
