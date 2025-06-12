@@ -157,6 +157,10 @@ module Spree
       sort_order == 'manual'
     end
 
+    def page_builder_image
+      square_image.presence || image
+    end
+
     def active_products_with_descendants
       @active_products_with_descendants ||= store.products.
                                             joins(:classifications).
