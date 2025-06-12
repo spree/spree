@@ -3,3 +3,9 @@ require 'spree_extension'
 require '<%=file_name%>/engine'
 require '<%=file_name%>/version'
 require '<%=file_name%>/configuration'
+
+module <%= class_name %>
+  def self.queue
+    'default'
+  end
+end
