@@ -19,14 +19,15 @@ module SpreeCli
       directory 'bin',      "#{file_name}/bin"
       directory 'spec',     "#{file_name}/spec"
 
-      empty_directory "#{file_name}/app/models/spree"
       empty_directory "#{file_name}/app/models/#{file_name}"
       empty_directory "#{file_name}/app/views/spree"
       empty_directory "#{file_name}/app/views/#{file_name}"
-      empty_directory "#{file_name}/app/controllers/spree"
+      empty_directory "#{file_name}/app/controllers/spree/admin"
       empty_directory "#{file_name}/app/controllers/#{file_name}"
-      empty_directory "#{file_name}/app/services/spree"
       empty_directory "#{file_name}/app/services/#{file_name}"
+      empty_directory "#{file_name}/app/serializers/spree/v2/storefront"
+      empty_directory "#{file_name}/app/serializers/spree/api/v2/platform"
+      empty_directory "#{file_name}/vendor/javascript"
 
       chmod "#{file_name}/bin/rails", 0o755
 
@@ -38,6 +39,9 @@ module SpreeCli
       template 'README.md', "#{file_name}/README.md"
       template 'config/routes.rb', "#{file_name}/config/routes.rb"
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
+      template 'config/initializers/spree.rb', "#{file_name}/config/initializers/spree.rb"
+      template 'config/importmap.rb', "#{file_name}/config/importmap.rb"
+
       template 'rspec', "#{file_name}/.rspec"
       template '.circleci/config.yml', "#{file_name}/.circleci/config.yml"
       template '.github/.dependabot.yml', "#{file_name}/.github/.dependabot.yml"
