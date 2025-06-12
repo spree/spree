@@ -1,0 +1,21 @@
+<%= turbo_frame_tag :dialog_modal do %>
+  <div class="card-lg">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:sku) %></th>
+            <th><%= Spree.t(:error) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @errors.each do |sku, error| %>
+            <td><%= sku %></td>
+            <td><%= error %></td>
+            <tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

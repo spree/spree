@@ -1,0 +1,3 @@
+product_id,skunks,name,slug,shipping_category,description,meta_description,meta_keywords,price,currency,width,height,depth,dimensions_unit,weight,weight_unit,available_on,tax_category,option1_name,option1_value,property1_name,property1_value
+1,"sku1",Denim Shirt,denim-shirt,Default,description1,meta description,meta keywords,20.99,USD,20.00,30.23,44.999,lb,500,kg,2025-05-21 10:14:40,Default,color,red,property_1,property_value
+2,"sku2",Checked Shirt,checked-shirt,Default,description2,meta description,meta keywords,70.99,USD,20.00,30.23,0.0,lb,500,kg,2025-05-21 10:14:40,Default,color,green,,
