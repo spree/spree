@@ -783,6 +783,35 @@ describe Spree::Taxon, type: :model do
     end
   end
 
+  describe '#page_builder_image' do
+    subject(:page_builder_image) { taxon.page_builder_image }
+
+    let(:taxon) { build(:taxon, image: image, square_image: square_image) }
+
+    context 'when image and square image are not attached' do
+      let(:image) { nil }
+      let(:square_image) { nil }
+
+      it { is_expected.to_not be_attached }
+    end
+
+    context 'when only image is attached' do
+      let(:image) { file_fixture('icon_256x256.png') }
+      let(:square_image) { nil }
+
+      it { is_expected.to be_attached }
+      it { is_expected.to eq(taxon.image)}
+    end
+
+    context 'when both image and square image are attached' do
+      let(:image) { file_fixture('icon_256x256.png') }
+      let(:square_image) { file_fixture('icon_256x256.png') }
+
+      it { is_expected.to be_attached}
+      it { is_expected.to eq(taxon.square_image)}
+    end
+  end
+
   describe '#featured_sections' do
     subject { taxon.featured_sections }
 
