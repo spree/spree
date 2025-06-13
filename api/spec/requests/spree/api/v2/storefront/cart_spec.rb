@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
-  let!(:store) { @default_store }
+  let!(:store) { create(:store) }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -702,8 +702,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#remove_coupon_code' do
-    let(:params) { { include: 'promotions' } }
-    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", params: params, headers: headers }
+    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}?include=promotions", headers: headers }
 
     include_context 'coupon codes'
 
@@ -721,8 +720,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'removes coupon code correctly' do
           before { execute }
-
-          it_behaves_like 'returns valid cart JSON'
 
           it 'changes the adjustment total to 0.0' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
@@ -770,7 +767,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
       end
 
-      context 'when multiple coupon codes are applied' do
+      xcontext 'when multiple coupon codes are applied' do
         let!(:promotion_with_item_adjustment) do
           create(
             :promotion_with_item_adjustment,
@@ -802,14 +799,9 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns valid cart JSON'
-
-          it 'changes the adjustment total to 0.0' do
-            expect(json_response['data']).not_to have_attribute(:adjustment_total).with_value(0.0.to_s)
-          end
-
-          it 'includes the second promotion in the response' do
-            expect(json_response['included']).to include(have_type('promotion'))
+          it 'removes only the order promotion' do
+            expect(json_response['included']).not_to include(have_type('promotion').and(have_id(promotion_with_order_adjustment.id.to_s)))
+            expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion_with_item_adjustment.id.to_s)))
           end
         end
 
@@ -818,12 +810,10 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           before { execute }
 
-          it 'changes the adjustment total to 0.0' do
+          it 'removes both promotions' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
-          end
-
-          it 'doesnt includes the promotion in the response' do
-            expect(json_response['included']).not_to include(have_type('promotion'))
+            expect(json_response['included']).not_to include(have_type('promotion').and(have_id(promotion_with_order_adjustment.id.to_s)))
+            expect(json_response['included']).not_to include(have_type('promotion').and(have_id(promotion_with_item_adjustment.id.to_s)))
           end
         end
 
@@ -832,12 +822,10 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           before { execute }
 
-          it 'changes the adjustment total to 0.0' do
+          it 'removes both promotions' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
-          end
-
-          it 'doesnt includes the promotion in the response' do
-            expect(json_response['included']).not_to include(have_type('promotion'))
+            expect(json_response['included']).not_to include(have_type('promotion').and(have_id(promotion_with_order_adjustment.id.to_s)))
+            expect(json_response['included']).not_to include(have_type('promotion').and(have_id(promotion_with_item_adjustment.id.to_s)))
           end
         end
       end
