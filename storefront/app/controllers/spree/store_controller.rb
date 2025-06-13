@@ -204,13 +204,13 @@ module Spree
       redirect_back(fallback_location: default)
     end
 
-    def require_user(return_to = nil)
+    def require_user(return_to: nil, redirect_path: nil)
       return if try_spree_current_user
 
       store_location(return_to)
 
       respond_to do |format|
-        format.html { redirect_to spree_login_path }
+        format.html { redirect_to redirect_path || spree_login_path }
         format.turbo_stream { render turbo_stream: turbo_stream.slideover_open('slideover-account', 'account-pane') }
       end
     end
