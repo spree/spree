@@ -325,7 +325,14 @@ module Spree
     # Either fully digital or not digital at all
     # @return [Boolean]
     def quick_checkout_available?
-      payment_required? && shipments.count <= 1 && (digital? || !some_digital?)
+      payment_required? && shipments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
+    end
+
+    # Check if quick checkout requires an address collection
+    # If the order is digital or not delivery required, then we don't need to collect an address
+    # @return [Boolean]
+    def quick_checkout_require_address?
+      !digital? && delivery_required?
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.
