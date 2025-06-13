@@ -47,8 +47,7 @@ module Spree
     end
 
     def quick_checkout_enabled?(order)
-      order.payment_required? && order.shipments.count <= 1 &&
-        (order.digital? || !order.some_digital?) # Either fully digital or not digital at all
+      order.quick_checkout_available?
     end
 
     def can_use_store_credit_on_checkout?(order)
