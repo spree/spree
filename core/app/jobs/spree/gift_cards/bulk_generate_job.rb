@@ -6,19 +6,7 @@ module Spree
       def perform(id)
         gift_cards_batch = Spree::GiftCardBatch.find(id)
 
-        with_optional_tenant(gift_cards_batch) do
-          gift_cards_batch.create_gift_cards
-        end
-      end
-
-      private
-
-      def with_optional_tenant(gift_cards_batch, &block)
-        if defined?(ActsAsTenant)
-          ActsAsTenant.with_tenant(gift_cards_batch.tenant, &block)
-        else
-          block.call
-        end
+        gift_cards_batch.create_gift_cards
       end
     end
   end
