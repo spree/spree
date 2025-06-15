@@ -29,13 +29,13 @@ RSpec.describe Spree::GiftCards::Remove do
       expect { subject }.to change(Spree::StoreCredit, :count).by(-1)
       expect(subject).to be_success
 
-      expect(order.reload.gift_card).to be(nil)
+      expect(order.reload.gift_card).to be_nil
 
       expect(gift_card.reload).to be_active
       expect(gift_card.amount_remaining).to eq(50)
 
       expect(store_credit_payment).to be_present
-      expect(store_credit_payment).to be_invalid
+      expect(store_credit_payment.state).to eq('invalid')
       expect(store_credit_payment.source).to be_deleted
     end
 
