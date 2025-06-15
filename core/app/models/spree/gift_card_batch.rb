@@ -4,7 +4,7 @@ module Spree
     include Spree::SingleStoreResource
 
     validates :codes_count, :amount, :prefix, presence: true
-    validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit] }
+    validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit].to_i }
     validates :amount, numericality: { greater_than: 0 }
     validates :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
 
@@ -58,9 +58,7 @@ module Spree
         store_id: store_id,
         expires_at: expires_at,
         minimum_order_amount: minimum_order_amount
-      }.tap do |hash|
-        hash[:tenant_id] = tenant_id if defined?(ActsAsTenant)
-      end
+      }
     end
   end
 end

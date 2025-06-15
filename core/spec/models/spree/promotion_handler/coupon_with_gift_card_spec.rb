@@ -49,7 +49,7 @@ describe Spree::PromotionHandler::Coupon, type: :model do
   describe '#remove' do
     context 'when gift card is applied' do
       let(:store) { Spree::Store.default }
-      let(:order) { create(:order_with_line_items, store: store, gift_card: gift_card) }
+      let(:order) { create(:order_with_line_items, store: store) }
       let(:gift_card) { create(:gift_card, store: store, amount: 10) }
 
       subject { Spree::PromotionHandler::Coupon.new(order) }
