@@ -191,23 +191,18 @@ workflows:
       - test_core_mysql:
           requires:
             - build
-            - test_core_postgres
       - test_api_mysql:
           requires:
             - build
-            - test_api_postgres
       - test_admin_mysql:
           requires:
             - build
-            - test_admin_postgres
       - test_storefront_mysql:
           requires:
             - build
-            - test_storefront_postgres
       - test_other_mysql:
           requires:
             - build
-            - test_other_postgres
 
       # brakeman
       - brakeman:
