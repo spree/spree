@@ -17,7 +17,9 @@
             </tr>
           </thead>
           <tbody>
-            <%= render partial: 'spree/admin/orders/return_authorizations/return_authorization', collection: @return_authorizations, cached: spree_base_cache_scope %>
+            <%= render partial: "spree/admin/orders/return_authorizations/return_authorization",
+            collection: @return_authorizations,
+            cached: ->(r = nil) { [spree_base_cache_key, r, r.return_items] } %>
           </tbody>
         </table>
       </div>
