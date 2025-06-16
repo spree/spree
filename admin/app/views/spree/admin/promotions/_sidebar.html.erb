@@ -2,7 +2,6 @@
   <% coupon_codes_count = @promotion.coupon_codes.count %>
   <% if coupon_codes_count.positive? %>
     <% used_coupon_codes_count = @promotion.coupon_codes.used.count %>
-    <% remaining_coupon_codes_count = coupon_codes_count - used_coupon_codes_count %>
 
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between">
@@ -12,9 +11,7 @@
         <%= link_to_with_icon 'eye', Spree.t(:view), spree.admin_promotion_coupon_codes_path(@promotion), class: 'btn btn-sm btn-light' %>
       </div>
       <div class="card-body">
-        <div class="progress">
-          <div class="progress-bar" role="progressbar" style="width: <%= (used_coupon_codes_count.to_f / coupon_codes_count * 100).round %>%" aria-valuenow="<%= used_coupon_codes_count %>" aria-valuemin="0" aria-valuemax="<%= coupon_codes_count %>"></div>
-        </div>
+        <%= progress_bar_component(used_coupon_codes_count, max: coupon_codes_count) %>
       </div>
       <div class="card-footer d-flex justify-content-between">
         <span class="badge badge-light">
