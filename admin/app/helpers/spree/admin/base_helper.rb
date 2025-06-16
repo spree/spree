@@ -243,6 +243,44 @@ module Spree
         content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end
 
+      # renders a clipboard button
+      # @param options [Hash] the options for the button
+      # @option options [String] :class the CSS class(es) of the button
+      # @option options [Hash] :data the data attributes for the button
+      # @option options [String] :title the title of the button
+      # @return [String] the button
+      def clipboard_button(options = {})
+        options[:class] ||= 'btn btn-clipboard with-tip'
+        options[:type] ||= 'button'
+        options[:data] ||= {}
+        options[:data][:action] = 'clipboard#copy'
+        options[:data][:clipboard_target] = 'button'
+        options[:data][:title] = Spree.t('admin.copy_to_clipboard')
+        options[:aria_label] ||= Spree.t('admin.copy_to_clipboard') # screen-reader label
+
+        content_tag(:button, options) do
+          icon('copy', class: 'mr-0 font-size-sm')
+        end
+      end
+
+      # renders a clipboard component
+      # @param text [String] the text to copy
+      # @param options [Hash] the options for the component
+      # @option options [String] :class the CSS class(es) of the component
+      # @option options [Hash] :data the data attributes for the component
+      # @option options [String] :title the title of the component
+      # @return [String] the component
+      def clipboard_component(text, options = {})
+        options[:data] ||= {}
+        options[:data][:controller] = 'clipboard'
+        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 font-size-sm'))
+
+        content_tag(:span, data: options[:data]) do
+          hidden_field_tag(:clipboard_source, text, data: { clipboard_target: 'source' }) +
+            clipboard_button
+        end
+      end
+
       # returns the allowed file types for upload, according to the active storage configuration
       # @return [Array<String>] the allowed file types for upload, eg. ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
       def allowed_file_types_for_upload
