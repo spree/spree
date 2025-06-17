@@ -79,7 +79,7 @@ module Spree
         @payments = @order.payments.includes(:payment_method, :source).order(:created_at)
         @refunds = @order.refunds
 
-        @return_authorizations = @order.return_authorizations
+        @return_authorizations = @order.return_authorizations.includes(:return_items)
         @customer_returns = @order.customer_returns.distinct
       end
 
