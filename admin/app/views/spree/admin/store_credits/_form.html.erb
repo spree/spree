@@ -3,7 +3,7 @@
     <div class="col-6">
       <div class="form-group">
         <%= f.label :amount, raw(Spree.t(:amount) + required_span_tag) %>
-        <%= f.number_field :amount, class: 'form-control', step: 0.01, required: true, disabled: !f.object.editable? %>
+        <%= f.number_field :amount, class: 'form-control', min: 0.01, step: 0.01, required: true, disabled: !f.object.editable? %>
         <%= f.error_message_on :amount %>
       </div>
     </div>

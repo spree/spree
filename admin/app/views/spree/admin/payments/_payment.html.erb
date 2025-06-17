@@ -1,10 +1,12 @@
 <div class="card" id="<%= dom_id(payment) %>">
   <div class="card-header d-flex align-items-center gap-2">
-    <span class="badge badge-<%= payment.state %>">
+    <span class="badge badge-<%= payment.state %> gap-1">
       <% if payment.completed? %>
-        <%= icon('check', class: 'mr-2') %>
+        <%= icon('check') %>
+      <% elsif payment.invalid? || payment.void? || payment.failed? %>
+        <%= icon('x') %>
       <% else %>
-        <%= icon('progress', class: 'mr-2') %>
+        <%= icon('progress') %>
       <% end %>
       <%= Spree.t('payment_states.' + payment.state) %>
     </span>
@@ -15,7 +17,7 @@
     <%= local_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
 
     <div class="dropdown">
-      <button class="btn btn-light btn-sm" type="button" data-toggle="dropdown" aria-expanded="false">
+      <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">
         <%= icon('dots-vertical', class: 'mr-0') %>
       </button>
       <div class="dropdown-menu">
@@ -46,11 +48,14 @@
   <div class="card-body">
     <div class="d-flex">
       <div class="w-50">
-        <p class="mb-2"><%= Spree.t(:payment_method) %>:</p>
+        <p class="mb-1"><%= Spree.t(:amount) %>:</p>
+        <strong><%= payment.display_amount %></strong>
+
+        <p class="mb-1 mt-2"><%= Spree.t(:payment_method) %>:</p>
         <strong><%= link_to payment.payment_method.name, spree.admin_payment_method_path(payment.payment_method) %></strong>
 
         <% if payment.transaction_id.present? %>
-          <p class="mb-2 mt-3">
+          <p class="mb-1 mt-2">
             <%= Spree.t(:transaction_id) %>
             <%= help_bubble(Spree.t(:transaction_id_help)) %>
           </p>

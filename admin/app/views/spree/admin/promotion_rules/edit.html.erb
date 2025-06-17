@@ -1,10 +1,10 @@
 <%= turbo_frame_tag @promotion_rule do %>
   <%= form_with model: @promotion_rule, url: spree.admin_promotion_rule_path(@promotion, @promotion_rule), method: :put, scope: :promotion_rule do |f| %>
-    <div class="card mb-3" id="<%= spree_dom_id(@promotion_rule) %>">
+    <div class="card" id="<%= spree_dom_id(@promotion_rule) %>">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="card-title"><%= @promotion_rule.human_name %></h5>
       </div>
-      <div class="card-body pb-0">
+      <div class="card-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
         <%= render "spree/admin/promotion_rules/forms/#{@promotion_rule.key}", f: f %>
       </div>

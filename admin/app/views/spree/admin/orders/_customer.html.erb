@@ -5,7 +5,7 @@
     </h5>
     <% if can?(:update_customer, @order) || can?(:update_addresses, @order) %>
       <div class="dropdown ml-auto" id="customer-edit-dropdown">
-        <%= link_to_with_icon 'dots-vertical', nil, '#', class: 'btn btn-light btn-sm px-2', data: { toggle: 'dropdown', test_id: 'dropdown-toggle' } %>
+        <%= link_to_with_icon 'dots-vertical', nil, '#', class: 'btn btn-light btn-sm px-1', data: { toggle: 'dropdown', test_id: 'dropdown-toggle' } %>
         <div class="dropdown-menu dropdown-menu-right" >
           <div data-toggle="modal" data-target="#modal">
             <% if can?(:update_customer, @order) && !@order.user.present? %>
