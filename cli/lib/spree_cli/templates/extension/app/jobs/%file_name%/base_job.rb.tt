@@ -1,0 +1,5 @@
+module <%= class_name %>
+  class BaseJob < Spree::BaseJob
+    queue_as <%= class_name %>.queue
+  end
+end

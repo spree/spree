@@ -2,4 +2,6 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  spree:
+    <%= file_name.gsub('spree_', '') %>:
+      hello: "Hello <%= class_name %>"

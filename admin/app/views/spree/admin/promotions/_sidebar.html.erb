@@ -75,16 +75,11 @@
         </li>
 
         <% if @promotion.code.present? %>
-          <li class="list-group-item d-flex justify-content-between align-items-center py-2" data-controller="clipboard" data-clipboard-success-content="Copied!">
+          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
             <span class="text-muted"><%= Spree.t(:coupon_code) %></span>
             <div class="d-flex align-items-center gap-1">
-              <span class="form-control form-control-sm">
-                <span data-clipboard-target="source"><%= @promotion.code.upcase %></span>
-              </span>
-
-              <button type="button" class="btn btn-light btn-sm with-tip p-1" data-action="clipboard#copy" title="<%= Spree.t(:copy) %>">
-                <%= icon 'copy', class: 'mr-0' %>
-              </button>
+              <code><%= @promotion.code.upcase %></code>
+              <%= clipboard_component(@promotion.code.upcase) %>
             </div>
           </li>
         <% end %>

@@ -313,8 +313,26 @@ module Spree
       shipments.any?(&:backordered?)
     end
 
+    # Check if the shipping address is a quick checkout address
+    # quick checkout addresses are incomplete as wallet providers like Apple Pay and Google Pay
+    # do not provide all the address fields until the checkout is completed (confirmed) on their side
+    # @return [Boolean]
     def quick_checkout?
       shipping_address.present? && shipping_address.quick_checkout?
+    end
+
+    # Check if quick checkout is available for this order
+    # Either fully digital or not digital at all
+    # @return [Boolean]
+    def quick_checkout_available?
+      payment_required? && shipments.count <= 1 && (digital? || !some_digital? || !delivery_required?)
+    end
+
+    # Check if quick checkout requires an address collection
+    # If the order is digital or not delivery required, then we don't need to collect an address
+    # @return [Boolean]
+    def quick_checkout_require_address?
+      !digital? && delivery_required?
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.

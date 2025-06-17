@@ -1,0 +1,6 @@
+pin 'application-<%= file_name.tr("_","-") %>', to: '<%= file_name %>/application.js', preload: false
+
+pin_all_from <%= class_name %>::Engine.root.join('app/javascript/<%= file_name %>/controllers'),
+             under: '<%= file_name %>/controllers',
+             to:    '<%= file_name %>/controllers',
+             preload: 'application-<%= file_name.tr("_","-") %>'

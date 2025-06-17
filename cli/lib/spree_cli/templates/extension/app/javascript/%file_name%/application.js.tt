@@ -1,0 +1,16 @@
+import '@hotwired/turbo-rails'
+import { Application } from '@hotwired/stimulus'
+
+let application
+
+if (typeof window.Stimulus === "undefined") {
+  application = Application.start()
+  application.debug = false
+  window.Stimulus = application
+} else {
+  application = window.Stimulus
+}
+
+import <%= class_name %>Controller from '<%= file_name %>/controllers/<%= file_name %>_controller' 
+
+application.register('<%= file_name %>', <%= class_name %>Controller)

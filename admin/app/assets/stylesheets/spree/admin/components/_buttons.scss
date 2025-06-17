@@ -148,7 +148,7 @@ button[disabled]        .show-when-enabled { display: none; }
   color: $gray-700;
 
   &:hover, &:focus {
-    border-color: $gray-100;
+    border-color: $border-color;
     background-color: $gray-25;
     color: $gray-900;
   }
@@ -172,6 +172,16 @@ button[disabled]        .show-when-enabled { display: none; }
     border-color: $gray-700 !important;
     color: $white !important;
   }
+}
+
+.btn-clipboard {
+  @extend .btn-light;
+  @extend .px-1;
+  @extend .ml-2;
+  @extend .font-size-sm;
+
+  min-width: 24px;
+  height: 24px;
 }
 
 .page-link {

@@ -1295,7 +1295,7 @@ describe Spree::CheckoutController, type: :controller do
       expect(response).to redirect_to spree.checkout_path(order.token)
 
       expect(order.reload.payments.count).to eq(1)
-      expect(order.payments.first).to be_invalid
+      expect(order.payments.first.state).to eq('invalid')
       expect(order.payments.first.source).to eq(store_credit)
       expect(order.payments.first.payment_method).to eq(payment_method)
       expect(order.payments.first.amount).to eq(12.34)

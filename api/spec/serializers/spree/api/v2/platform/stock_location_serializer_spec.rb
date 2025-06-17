@@ -21,6 +21,7 @@ describe Spree::Api::V2::Platform::StockLocationSerializer do
           admin_name: resource.admin_name,
           display_name: resource.display_name,
           backorderable_default: resource.backorderable_default,
+          company: resource.company,
           city: resource.city,
           created_at: resource.created_at,
           deleted_at: resource.deleted_at,

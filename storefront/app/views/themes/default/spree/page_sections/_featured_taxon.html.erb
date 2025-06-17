@@ -5,7 +5,7 @@
                       when 'medium' then 'text-lg lg:text-xl font-medium'
                       when 'large' then 'text-xl lg:text-2xl font-medium'
                       end %>
-    <% if section.taxon&.image&.attached? && section.preferred_show_taxon_image %>
+    <% if section.taxon&.page_builder_image&.attached? && section.preferred_show_taxon_image %>
       <% desktop_slides_amount = 2.5 %>
       <% section_with_image = true %>
       <% arrows_on_top = false %>
@@ -47,7 +47,7 @@
           <% if section_with_image %>
             <div class='lg:col-span-5'>
               <%= link_to spree.nested_taxons_path(section.taxon), data: { turbo_frame: "_top" } do %>
-                <%= spree_image_tag(section.taxon.image, height: 500, width: 500, class: 'h-full w-full object-cover object-center', loading: :lazy) %>
+                <%= spree_image_tag(section.taxon.page_builder_image, height: 500, width: 500, class: 'h-full w-full object-cover object-center', loading: :lazy) %>
               <% end %>
             </div>
           <% end %>
