@@ -7,7 +7,7 @@
 
   <%= @object.code.upcase %>
   <span class="badge">
-    <%= active_badge(@object.active?, label: @object.state) %>
+    <%= active_badge(@object.active?, label: @object.display_state) %>
   </span>
 <% end %>
 
