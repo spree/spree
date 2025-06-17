@@ -4,28 +4,42 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(gift_card:, order:)
+        # we shouldn't mix an order with a gift card and a store credit
         return failure(:gift_card_using_store_credit_error) if order.using_store_credit?
 
-        amount_applied = [gift_card.amount_remaining, order.total].min
+        # we shouldn't allow a gift card to be applied to an order with a different currency
+        return failure(:gift_card_mismatched_currency) if gift_card.currency != order.currency
+
+        amount = [gift_card.amount_remaining, order.total].min
         store = order.store
 
-        gift_card.transaction do
-          payment_method = ensure_store_credit_payment_method!(store)
-          store_credit = gift_card.apply!(amount: amount_applied, user: order.user, currency: order.currency)
+        return failure(:gift_card_no_amount_remaining) unless amount.positive? || order.total.zero?
 
-          return failure(:gift_card_no_amount_remaining) unless store_credit.present?
+        payment_method = ensure_store_credit_payment_method!(store)
+
+        gift_card.lock!
+        order.with_lock do
+          store_credit = gift_card.store_credits.create!(
+            store: store,
+            user: order.user,
+            amount: amount,
+            currency: order.currency,
+            expires_at: gift_card.expires_at
+          )
+          gift_card.amount_remaining -= amount
+          gift_card.save!
 
           order.update!(gift_card: gift_card)
           order.payments.create!(
             source: store_credit,
             payment_method: payment_method,
-            amount: amount_applied,
+            amount: amount,
             state: 'checkout',
             response_code: store_credit.generate_authorization_code
           )
-
-          success(true)
         end
+
+        success(order.reload)
       end
 
       private

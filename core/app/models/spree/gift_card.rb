@@ -127,27 +127,6 @@ module Spree
     end
     alias_method :amount_used, :used_amount
 
-    def apply!(amount:, user:, currency:)
-      amount_applied = [amount, amount_remaining].min
-      return unless amount_applied.positive?
-
-      transaction do
-        store_credit = Spree::StoreCredit.create!(
-          gift_card: self,
-          store: store,
-          user: user,
-          amount: amount_applied,
-          currency: currency,
-          expires_at: expires_at
-        )
-
-        self.amount_remaining -= amount_applied
-        save!
-
-        store_credit
-      end
-    end
-
     def undo_apply!(amount:)
       transaction do
         self.amount_remaining = [amount_remaining + amount, self.amount].min
