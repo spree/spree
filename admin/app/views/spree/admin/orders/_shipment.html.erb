@@ -65,7 +65,7 @@
           <strong><%= Spree.t(:tracking) %>: </strong>
           <% if shipment.tracked? %>
             <% if shipment.tracking_url.present? %>
-              <span><%= link_to ERB::Util.html_escape(shipment.tracking || shipment.tracking_url), ERB::Util.html_escape(shipment.tracking_url), target: '_blank', rel: "noopener noreferrer" %></span>
+              <span><%= shipment_tracking_link_to(shipment, target: '_blank', rel: 'noopener noreferrer') %></span>
             <% elsif shipment.tracking.present? %>
               <span><%= shipment.tracking %></span>
             <% end %>
