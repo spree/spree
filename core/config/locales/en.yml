@@ -1093,13 +1093,13 @@ en:
     general_settings: General Settings
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
-    gift_card: Gift card
-    gift_card_applied: The gift card was successfully applied to your order!
-    gift_card_batch: Gift card batch
-    gift_card_no_amount_remaining: You can't apply the gift card with no balance on it.
-    gift_card_removed: The gift card was successfully removed from your order
-    gift_card_using_store_credit_error: You can't apply the gift card after you applied the store credit.
-    gift_cards: Gift cards
+    gift_card: Gift Card
+    gift_card_applied: The Gift Card was successfully applied to your order!
+    gift_card_batch: Gift Card batch
+    gift_card_no_amount_remaining: You can't apply the Gift Card with no balance on it.
+    gift_card_removed: The Gift Card was successfully removed from your order
+    gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
+    gift_cards: Gift Cards
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
