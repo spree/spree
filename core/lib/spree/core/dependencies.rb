@@ -33,6 +33,10 @@ module Spree
         checkout_get_shipping_rates_service: 'Spree::Checkout::GetShippingRates',
         checkout_select_shipping_method_service: 'Spree::Checkout::SelectShippingMethod',
 
+        # gift cards
+        gift_card_apply_service: 'Spree::GiftCards::Apply',
+        gift_card_remove_service: 'Spree::GiftCards::Remove',
+
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
