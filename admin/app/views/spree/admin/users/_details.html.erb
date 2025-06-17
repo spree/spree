@@ -12,6 +12,7 @@
           <%= Spree.t(:email) %>
           <span>
             <%= @user.email %>
+            <%= clipboard_component(@user.email) %>
           </span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">

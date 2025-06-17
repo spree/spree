@@ -37,7 +37,10 @@
           <%= render 'spree/admin/shared/user', user: @order.user %>
           <%= render 'spree/admin/orders/user_overview', user: @order.user %>
         <% elsif @order.email.present? %>
-          <%= mail_to truncate(@order.email, length: 35), class: 'text-dark with-tip', title: @order.email %>
+          <div class="d-flex align-items-center w-100">
+            <%= mail_to @order.email, @order.email, class: 'text-blue' %>
+            <%= clipboard_component(@order.email) %>
+          </div>
         <% else %>
           <span class="text-muted">
             <%= Spree.t(:no_email_provided) %>
