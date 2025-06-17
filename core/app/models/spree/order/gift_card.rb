@@ -20,11 +20,11 @@ module Spree
       end
 
       def apply_gift_card(gift_card)
-        Spree::GiftCards::Apply.call(gift_card: gift_card, order: self)
+        Spree::Dependencies.gift_card_apply_service.constantize.call(gift_card: gift_card, order: self)
       end
 
       def remove_gift_card
-        Spree::GiftCards::Remove.call(order: self)
+        Spree::Dependencies.gift_card_remove_service.constantize.call(order: self)
       end
 
       def recalculate_gift_card
