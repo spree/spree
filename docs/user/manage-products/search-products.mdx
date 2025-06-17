@@ -1,72 +1,67 @@
 ---
-title: "Search Products"
-description: "How to Search Products in the Spree open-source eCommerce dashboard"
+title: "Searching Products"
+description: "Learn how to search for products in the Spree Commerce dashboard."
 ---
 
-## Searching Products
+As your catalog grows, manually scrolling through the Products list becomes less practical. Fortunately, Spree’s search and filtering tools make it easy to find exactly what you’re looking for - whether it's a specific product, a group by status, or everything under a certain category.
 
-The more products you add to your store, the more challenging it becomes to manage your product catalog. 
+## How to Search & Filter Products
 
-Using search and filters can make it much more convenient to find the products you’d like to manage, as opposed to scrolling through thousands of products in the hopes of finding the one you’re looking.
+To begin, go to the **Products** tab in the admin dashboard.
 
-To use product search and filters, navigate to the Products tab of the admin dashboard.
+![](/docs/images/user/products/searching-products/1.product_tab.png)
 
-<img alt="Products Management Tab" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921781/docs/Manage%20Products/Search%20Products/2.2.1.1_Searching_Products_-_Products_Tab_i91fov.png" />
-
-At the top, you’ll notice the Search bar and some filtering options. Let’s take a look at each separately.
+At the top of the page, you’ll find a search bar and a variety of filtering options to help narrow down results.
 
 ### Search
 
-The search bar allows you to enter a query and return a list of products that match that the query.
+![](/docs/images/user/products/searching-products/2.search.png)
 
-<img alt="Product Search" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921778/docs/Manage%20Products/Search%20Products/2.2.1.2_Searching_Products_-_Search_r6cnhz.png" />
+Use the search bar to quickly find products by name or keyword.
 
-To remove the query, simply click the X next to the query that’s displayed below the search bar.
+Results update automatically to match your query.
 
-### Status and Stock Filter
+To clear the current search, click the **X** next to the query label below the search bar.
 
-The box that (by default) contains “Show:All products” is a dropdown that allows you to narrow product results by their status and whether or not they are in stock.
+### Status & Stock Filters
 
-Simply click on the dropdown and select the option you’d like to filter.
+![](/docs/images/user/products/searching-products/3.status_and_stock.png)
 
-<img alt="Status and Stock" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921780/docs/Manage%20Products/Search%20Products/2.2.1.3_Searching_Products_-_Status_and_Stock_r2dfqg.png" />
+The dropdown labeled **Show: All Products** allows you to filter by:
 
-You can have one filter active from each of Status and Stock at a time, and the current selection will be displayed in the box, e.g., ‘Active and In Stock’
+- **Status**: Active, Draft, or Archived
+- **Stock availability**: Any stock, In Stock, or Out of Stock
 
-<img alt="Product Active Selection" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921779/docs/Manage%20Products/Search%20Products/2.2.1.4_Searching_Products_-_Active_Selection_apgzj7.png" />
+You can apply one filter from each category at a time (e.g., Active and In Stock). The current filter selection will be reflected in the label.
 
-### Filters
+## Additional Filters
 
-Filters allow you to the refine your search based on other criteria, such as taxons, vendors, and tags.
+![](/docs/images/user/products/searching-products/4.filters.png)
 
-<img alt="Product Filters" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921777/docs/Manage%20Products/Search%20Products/2.2.1.5_Searching_Products_-_Filters_f2jfhz.png" />
+Click the **Filters** button to open more filtering options. These include:
 
-#### Taxons
+### Taxons
 
-Here you can filter products based on the categories, brands, collections, etc., the products belong to.
+![](/docs/images/user/products/searching-products/5.taxon_filter.png)
 
-Simply select the taxons you’d like to filter by from the dropdown.
+Here, you can filter by category, collection, brand, or any other taxonomy you’ve defined (e.g., Categories → Men → Shoes or Collections → Spring).
 
-<img alt="Product Taxon Filter" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921778/docs/Manage%20Products/Search%20Products/2.2.1.6_Searching_Products_-_Taxon_Filter_ogeq6l.png" />
+Feel free to select multiple taxons from the dropdown, or select **Without taxon** to filter by products that haven’t been merchandised yet.
 
-To learn more about taxons, please refer to another support article.
+To learn more about organizing products into taxons, see **Taxonomies**.
 
-#### Tags
+### Tags
 
-Here you can filter products based on the tags that have been assigned to them.
+![](/docs/images/user/products/searching-products/6.tag_filter.png)
 
-Simply select the tags you’d like to filter by from the dropdown.
+You can also filter products by one or more tags which can be helpful for merchandising or marketing workflows (e.g., Sale, New Arrival, Vegan).
 
-<img alt="Product Tag Filter" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921778/docs/Manage%20Products/Search%20Products/2.2.1.6_Searching_Products_-_Tag_Filter_ffuaho.png" />
+<Note>
+  Tags can be added in the product editor or via bulk actions.
+</Note>
 
-To learn more about tags, please refer to another support article.
+### Vendors (Enterprise only)
 
-#### Vendors (Enterprise Edition only)
+![](/docs/images/user/products/searching-products/7.vendor_filter.png)
 
-If you’re running a multi-vendor platform with Spree Enterprise Edition, you can also filter products based on the vendor that uploaded them.
-
-Simply select the vendors you’d like to filter by from the dropdown
-
-<img alt="Produt Vendor Filter" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921778/docs/Manage%20Products/Search%20Products/2.2.1.7_Searching_Products_-_Vendor_Filter_ngtf7o.png" />
-
-To learn more about onboarding vendors, please refer to another support article.
+If you're using Spree Enterprise, you can also filter products by vendor which is incredibly useful for managing multi-vendor catalogs.

@@ -1,40 +1,53 @@
 ---
 title: "Stock Levels"
-description: "How to manage stock levels in the Spree open-source eCommerce dashboard"
+description: "Learn how to manage stock levels in Spree Commerce."
 ---
 
-Maintaining accurate stock levels is crucial in e-commerce for several reasons such as customer satisfaction, operational efficiency, and financial management, to name a few.
+Maintaining accurate stock levels is critical for delivering a smooth customer experience, avoiding overselling, and ensuring clean operational and financial reporting.
 
-There are several ways to manage stock levels in Spree:
+There are two main ways to manage inventory, depending on your workflow:
 
-* Update stock levels of individual products using the product editor
+- Edit stock levels individually via the product editor
+- Manage inventory directly from the **Stock Items** tab (covered in this article)
 
-* Update stock levels in bulk using a CSV upload
+<Note>When a customer places an order, stock quantities are automatically reduced based on the quantity purchased. Similarly, when items are returned and marked as resellable, the stock quantities will automatically increase.</Note>
 
-* Update stock levels using the Stock Items tab
+## How to Manage Stock Levels
 
-<Note>This support article covers the use of the Stock Items tab to update stock levels.</Note>
+To manage stock levels across your catalog, navigate to **Products → Stock → Stock Items.**
 
-When a product is purchased by a customer, the quantity of the product sold is automatically deducted from the total quantity.
+![](/docs/images/user/products/stock-levels/1.stock_tab.png)
 
-To get started, navigate to the Stock Items tab found under Products > Stock in the admin dashboard, where you’ll be greeted by a list of products.
+Here you’ll see a list of all product variants, separated by stock location (i.e., if you have two stock locations, each variant will have two rows in the table).
 
-<img alt="Stock Levels" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734430753/docs/Manage%20Products/Stock%20Levels/2.3.1.1_Stock_Items_-_Navigate_To_Tab_ew6unz.png" />
+You can use the search bar to filter by product name, SKU (partial or full), or stock location.
 
-This list shows the quantity of each product variant available at each of your stock locations.
+![](/docs/images/user/products/stock-levels/2.search_filters.png)
 
-You can filter the list by searching the product name, SKU (partial or full), and/or the stock location.
+This makes it easier to manage stock updates when, for example, receiving a new shipment to a specific warehouse or restocking a particular product line.
 
-<img alt="Product Filters" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734430752/docs/Manage%20Products/Stock%20Levels/2.3.1.2_Stock_Items_-_Filters_iwmanv.png" />
+## Updating Stock Levels
 
-Once you’ve found the variant(s) for which you’d like to update the quantity, you simply need to type in the new quantity in ‘Count On Hand’ column, and click the corresponding Update button.
+![](/docs/images/user/products/stock-levels/3.update_stock_levels.png)
 
-A green popup will appear at the top of the screen to ntofiy you that the Stock Item has been successfully updated.
+To adjust stock levels:
 
-<img alt="Update Stock Level Quantities" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734430754/docs/Manage%20Products/Stock%20Levels/2.3.1.3_Stock_Items_-_Update_Quantities_aqyqf3.png" />
+1. Locate the variant you want to update
+2. Enter the new quantity in the **Count On Hand** column
+3. Click **Update** at the end of the row
 
-You can also set whether or not to make any of your product backorderable but simply checking the box in the ‘Backorderable’ column (no need to click update - this change will automatically be saved).
+You’ll see a green confirmation popup at the top of the screen once the update is saved.
 
-<img alt="Backorderable Products" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734430754/docs/Manage%20Products/Stock%20Levels/2.3.1.4_Stock_Items_-_Backorderable_jztlp8.png" />
+<Note>Each variant/location combination must be updated independently.</Note>
 
-<Warning>Marking products as backorderable will allow them to be sold even when out of stock, so make sure not to mark products as backorderable if you don’t intend to restock them.</Warning>
+## Enabling Backorders
+
+![](/docs/images/user/products/stock-levels/4.backorderability.png)
+
+You can allow a product to be sold even when its inventory reaches zero by marking it as **Backorderable**.
+
+To do so, simply **check** or **uncheck the box** in the **Backorderable** column in the associated row.
+
+This setting saves automatically, so there’s **no need to click Update**.
+
+<Warning>Only mark products as backorderable if you plan to restock them. Enabling backorders for discontinued or limited-stock items may result in customer service issues.</Warning>

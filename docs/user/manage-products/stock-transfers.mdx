@@ -1,74 +1,64 @@
 ---
 title: "Stock Transfers"
-description: "How to do stock transfers in the Spree open-source eCommerce dashboard"
+description: "Learn how to create stock transfers in the Spree Commerce."
 ---
 
-Stock transfers are crucial for multi-warehouse e-commerce businesses as it enables seamless movement of inventory between locations, ensuring optimal stock levels and reducing the risk of overstocking or stockouts. 
+Stock transfers allow you to move inventory between stock locations - a critical feature for multi-warehouse operations. This helps keep inventory balanced across your network, improves fulfillment speed, and reduces shipping costs by positioning products closer to customers.
 
-This improves order fulfillment efficiency, lowers shipping costs, and enhances customer satisfaction by routing products from the nearest warehouse.
+<Note>
+  Before you can create stock transfers, you must first set up additional stock locations.
+  See: [<u>Settings → Locations</u>](https://spreecommerce.org/docs/user/settings/locations).
+</Note>
 
-### Stock Locations
+## How to Create a Stock Transfer
 
-By default, your store will only have one stock location, so before you can create stock transfers, you must add additional stock locations.
+To create a new stock transfer, navigate to **Products → Stock → Stock Transfers**.
 
-To do so, navigate to Locations found in Settings.
+![](/docs/images/user/products/stock-transfers/1.stock_transfers_tab.png)
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431856/docs/Manage%20Products/Stock%20Transfers/2.3.2.0.1_Stock_Transfers_-_Stock_Locations_ythnyj.png" />
+Click **New Stock Transfer** in the top-right corner and you’ll be redirected to the stock transfer creation form.
 
-Click on the blue ‘New Stock Location’ button found in the top right corner.
+![](/docs/images/user/products/stock-transfers/2.transfer_form.png)
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431857/docs/Manage%20Products/Stock%20Transfers/2.3.2.0.2_Stock_Transfers_-_New_Location_pscpqs.png" />
+Here you’ll see two distinct sections that allow you to:
 
-Add a name and the address of the warehouse and click ‘Create’.
+## Configure Transfer Details
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431857/docs/Manage%20Products/Stock%20Transfers/2.3.2.0.3_Stock_Transfers_-_Name_and_Address_bee8kq.png" />
+![](/docs/images/user/products/stock-transfers/3.transfer_details.png)
 
-You will now be able to transfer stock to your newly added warehouse.
+At the top of the form, you can specify the details of the stock transfer:
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431857/docs/Manage%20Products/Stock%20Transfers/2.3.2.0.4_Stock_Transfers_-_Warehouse_Added_lssf8q.png" />
+- **Origin Location**: Select the warehouse the stock will be transferred from
+- **Destination Location**: Select the warehouse the stock will be transferred to
+- **Reference (optional)**: Add a label or note to help identify the transfer (e.g., Q2 Restock - East Coast)
 
-### Creating Stock Transfers
+## Add Products to the Transfer
 
-To create a stock transfer, navigate to the Stock tab of the admin dashboard found under Products, and click on Stock Transfers above the search bar.
+![](/docs/images/user/products/stock-transfers/4.add_products.png)
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431871/docs/Manage%20Products/Stock%20Transfers/2.3.2.1_Stock_Transfers_-_Navigate_To_Tab_qshlm9.png" />
+At the bottom of the form is where you can add the products to be transfered.
 
-If you haven’t made any stock transfers before, you’ll be greeted by a blank page, with a blue ‘New Stock Transfer’ button in the top right corner of the screen.
+To do so, click **\+ Add Products** and a search window will open, allowing you to start typing a product name to find matching variants.
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431858/docs/Manage%20Products/Stock%20Transfers/2.3.2.2_Stock_Transfers_-_Stock_Transfers_Page_diij7n.png" />
+![](/docs/images/user/products/stock-transfers/5.select_variants.png)
 
-Click on the blue ‘New Stock Transfer’ button and you’ll be redirected to another page where you can begin creating the stock transfer.
+Select a variant and then click **Add selected variant** to add it to the stock transfer.
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431867/docs/Manage%20Products/Stock%20Transfers/2.3.2.3_Stock_Transfers_-_New_Stock_Transfer_kenefy.png" />
+![](/docs/images/user/products/stock-transfers/6.variants_added.png)
 
-First, you must select the Origin location and the Destination location from the dropdowns.
+Now simply enter the number of units to be transferred for each variant.
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431867/docs/Manage%20Products/Stock%20Transfers/2.3.2.4_Stock_Transfers_-_Select_Locations_d9jkj0.png" />
+<Note>
+  You can only transfer quantities that are currently in stock at the origin location.
+</Note>
 
-Optionally, you can add a reference to make the transfer more easily identifiable, e.g., for auditing purposes.
+## Finalize the Transfer
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431868/docs/Manage%20Products/Stock%20Transfers/2.3.2.5_Stock_Transfers_-_Reference_tbjtgf.png" />
+When you're ready:
 
-Next, you should select the product variants you’d like to include in the transfers.
+- Review the details
+- Click **Create** to process the transfer
 
-To do so, click on the ‘+ Add Products’ button which will open a small window where you can search for the product variants you want to add.
+The inventory counts at each location will be updated immediately to reflect the transfer (assuming the physical movement of stock has already occurred) and a record of the transfer will be added to the Stock Transfers tab.
 
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431868/docs/Manage%20Products/Stock%20Transfers/2.3.2.6_Stock_Transfers_-_Add_Products_ppohs3.png" />
-
-Start typing in the name of the product to return a list of products matching the query.
-
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431869/docs/Manage%20Products/Stock%20Transfers/2.3.2.7_Stock_Transfers_-_Search_Products_frppvf.png" />
-
-Select the variants you want to add to the transfers and click ‘Add selected variant’.
-
-Once you’ve add all the variants that should be included in the transfer, you need only adjust the quantity of each to be transferred.
-
-Please Note: You cannot transfer more stock than you have available at the Origin location. Doing so will result in an error message.
-
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431869/docs/Manage%20Products/Stock%20Transfers/2.3.2.8_Stock_Transfers_-_Adjust_Quantities_xpjmmp.png" />
-
-After adjusting the quantities, all that’s left to do is to click the blue ‘Create’ button and the transfer will be processed.
-
-<img alt="" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734431870/docs/Manage%20Products/Stock%20Transfers/2.3.2.9_Stock_Transfers_-_Create_Transfer_xm1gg9.png" />
-
-The stock levels at each warehouse will now be accurately reflected in the system, provided the physical transfer of the items has already been made.
+![](/docs/images/user/products/stock-transfers/7.transfer_complete.png)

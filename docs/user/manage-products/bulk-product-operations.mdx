@@ -1,102 +1,86 @@
 ---
 title: "Bulk Product Operations"
-description: "How to do bulk product operations in the Spree admin dashboard"
+description: "Learn how to perform bulk product operations in Spree Commerce."
 ---
 
-## Bulk Operations
+Managing a large product catalog doesn’t mean you need to edit each product one by one. Spree’s bulk operations make it easy to update multiple products at once, saving you time and reducing repetitive work.
 
-When you have a fairly large product catalog, you’ll likely find it much more convenient to manage multiple products at once rather than managing each product separately. 
+Bulk operations can be used to:
 
-For that reason, there are a number of bulk operations that you can perform to make managing your product catalog less tedious and time consuming.
+- Update product statuses
+- Add/remove taxons
+- Add/remove tags
 
-Bulk operations can be used to do the following: 
+<Note>
+  Bulk operations can be used in combination with product search and filters, for example, to quickly tag all products in a specific taxon.
+</Note>
 
-* Update product statuses
+## How to Perform Bulk Operations
 
-* Add/remove taxons
+Navigate to the **Products** tab in the admin dashboard.
 
-* Add/remove tags
+![](/docs/images/user/products/bulk-product-operations/1.product_tab.png)
 
-To perform a bulk operations, navigate to the Products tab of the admin dashboard.
+Select one or more products by checking the boxes on the left-hand side of the list.
 
-<img alt="Products Management Tab" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733922539/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.1_Bulk_Operations_-_Products_Tab_vvx7fd.png" />
+Once selected, the bulk actions menu will appear at the bottom of the page.
 
-To bring up the bulk operations menu, simply select one or more products by checking the boxes on the lefthand side of the list.
+![](/docs/images/user/products/bulk-product-operations/2.bulk_actions_menu.png)
 
-The menu will then pop up at the bottom of the page.
+The menu will show how many products are selected and present several action options.
 
-<img alt="Product Bulk Operations Menu" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921795/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.2_Bulk_Operations_-_Bulk_Operations_Menu_paid8z.png" />
+## Status Updates
 
-The menu bar has 3 options to choose from, and display the number products selected.
+![](/docs/images/user/products/bulk-product-operations/3.status.png)
 
-### Set as Active
+The following actions are available directly in the bulk menu:
 
-The first option allows you set all the selected products Active.
+- **Set as Active**: Marks selected products as active and visible on the storefront.
+- **Set as Draft**: Moves selected products to draft status, making them hidden from the storefront.
+- **Set as Archived**: Archives the selected products, removing them from storefront view while keeping them in the admin (accessed in the three-dot menu).
 
-When clicking on the button, a window will open up to confirm the action.
+## Taxon Management
 
-<img alt="Set Products As Active" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921791/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.3._Bulk_Operations_-_Set_As_Active_yl5zzi.png" />
+These options, accessible in the three-dot menu, let you bulk-manage product categories and collections:
 
-### Set as Draft
+### Add to Taxons
 
-The second option allows you set all of the selected products to Draft.
+![](/docs/images/user/products/bulk-product-operations/4.add_taxons.png)
 
-As above, clicking on the button, a window will open up to confirm the action.
+Using the **Add to taxons** operation, you can assign one or more taxons to the selected products.
 
-<img alt="Set Products As Draft" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921791/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.4_Bulk_Operations_-_Set_As_Draft_wknizb.png" />
+Simply select taxons from the dropdown list or start typing to narrow results.
 
-### Other Operations (...)
+### Remove from Taxons
 
-Clicking on the three dots opens a submenu that contains other useful bulk operations.
+![](/docs/images/user/products/bulk-product-operations/5.remove_taxons.png)
 
-<img alt="Other Product Operations" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921793/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.5_Bulk_Operations_-_Other_Operations_sihz3j.png" />
+Similar to above, you can use the **Remove from taxons** operation to remove specific taxons from selected products.
 
-Let’s take a look at each operation individually.
+Multiple taxons can be removed at once using the same interface.
 
-### Set as Archived
+## Tag Management
 
-Allows you to set the selected products as Archived.
+You can also quickly assign or unassign tags across multiple products:
 
-#### Add to Taxons
+### Add Tags
 
-Allows you to assign taxons to the selected products.
+![](/docs/images/user/products/bulk-product-operations/6.add_tags.png)
 
-When clicking on ‘Add to taxons’, a window will appear that allows you to select the taxons you’d like to assign to the products. You can assign multiple taxons at the same time.
+Using the **Add tags** operation, you can apply one or more tags to all selected products at once.
 
-Either scroll through and select them from the list or start typing the name to narrow the results.
+Select tags from the dropdown list or create new ones on the fly directly within the interface.
 
-<img alt="Add Products to Taxons" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921793/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.6_Bulk_Operations_-_Add_To_Taxons_kirhtx.png" />
+### Remove Tags
 
-#### Remove From Taxons
+![](/docs/images/user/products/bulk-product-operations/7.remove_tags.png)
 
-Allows you to remove taxons from the selected products.
+The **Remove tags** operation allows you to remove selected tags from all chosen products.
 
-When clicking on ‘Remove from taxons’, a window will appear that allows you to select the taxons you’d like to remove from the products. You can remove multiple taxons at the same time.
+As before, multiple tags can be removed at once.
 
-Either scroll through and select them from the list or start typing the name to narrow the results.
+## Saving Changes
 
-<img alt="Remove Products From Taxons" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921792/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.7_Bulk_Operations_-_Remove_From_Taxons_rgd9m6.png" />
+![](/docs/images/user/products/bulk-product-operations/8.save_changes.png)
 
-#### Add Tags
-
-Allows you to assign tags to the selected products.
-
-When clicking on ‘Add tags’, a window will appear that allows you to select the taxons you’d like to assign to the products. You can assign multiple tags at the same time.
-
-Either scroll through and select them from the list or start typing the name to narrow the results.
-
-<img alt="Add Tags to Products" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921792/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.8_Bulk_Operations_-_Add_Tags_wiejxn.png" />
-
-#### Remove Tags
-
-Allows you to remove tags from the selected products.
-
-When clicking on ‘Remove tags’’, a window will appear that allows you to select the tags you’d like to remove from the products. You can remove multiple tags at the same time.
-
-Either scroll through and select them from the list or start typing the name to narrow the results.
-
-<img alt="Remove Tags from Products" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733921794/docs/Manage%20Products/Bulk%20Product%20Operations/2.2.2.9_Bulk_Operations_-_Remove_Tags_wirwbq.png" />
-
-### Cick Save
-
-Whichever operation you’d like to perform, always make sure to click the blue Save button to save changes.
+After selecting and confirming your desired operation, always click **Save** in the bottom right corner of the modal to apply your changes.
