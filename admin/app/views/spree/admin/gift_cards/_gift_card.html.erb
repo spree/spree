@@ -6,6 +6,7 @@
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= gift_card.display_amount %></td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= gift_card.display_used_amount %></td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= gift_card.currency.upcase %></td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= active_badge(gift_card.active?, label: gift_card.display_state) %></td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
     <% if gift_card.expires_at.present? %>

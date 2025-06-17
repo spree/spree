@@ -8,6 +8,7 @@ module Spree
     #
     validates :codes_count, :amount, :prefix, presence: true
     validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit].to_i }
+    validates :store, :currency, presence: true
     validates :amount, numericality: { greater_than: 0 }
 
     #
@@ -18,6 +19,7 @@ module Spree
     #
     # Callbacks
     #
+    before_validation :set_currency
     after_create :generate_gift_cards
 
     auto_strip_attributes :prefix
@@ -60,10 +62,15 @@ module Spree
         gift_card_batch_id: id,
         amount: amount,
         amount_remaining: amount,
+        currency: currency,
         code: generate_code,
         store_id: store_id,
         expires_at: expires_at
       }
+    end
+
+    def set_currency
+      self.currency ||= store.default_currency
     end
   end
 end

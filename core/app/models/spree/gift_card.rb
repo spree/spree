@@ -26,6 +26,7 @@ module Spree
     # Validations
     #
     validates :code, presence: true, uniqueness: { scope: :store_id }
+    validates :store, :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :expires_at, comparison: { greater_than: Date.current + 1.day }, allow_nil: true, unless: :skip_expires_at_validation
@@ -62,6 +63,7 @@ module Spree
     before_validation :generate_code
     before_validation :normalize_code
     before_validation :set_amount_remaining
+    before_validation :set_currency
     before_destroy :ensure_can_be_deleted
 
     #
@@ -181,6 +183,10 @@ module Spree
 
       errors.add(:base, :cannot_destroy_used_gift_card)
       throw(:abort)
+    end
+
+    def set_currency
+      self.currency ||= store.default_currency
     end
   end
 end
