@@ -7,7 +7,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @reimbursement_type } %>
 
 <div class="row">
-  <div class="col-lg-6">
+  <div class="col-lg-6 offset-lg-3">
     <%= form_for [:admin, @reimbursement_type] do |reimbursement_form| %>
       <%= render partial: 'form', locals: { f: reimbursement_form } %>
       <%= render 'spree/admin/shared/new_resource_links' %>

@@ -9,6 +9,10 @@
   <%= form.hidden_field :type %>
   <%= form.hidden_field :active, value: true %>
 
-  <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
-  <%= render 'spree/admin/shared/new_resource_links' %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    </div>
+  </div>
 <% end %>
