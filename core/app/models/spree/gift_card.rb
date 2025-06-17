@@ -25,16 +25,17 @@ module Spree
     #
     # Validations
     #
-    validates :code, presence: true, uniqueness: true
-    validates :amount, numericality: { greater_than: 0 }
+    validates :code, presence: true, uniqueness: { scope: :store_id }
+    validates :amount, presence: true, numericality: { greater_than: 0 }
+    validates :amount_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :expires_at, comparison: { greater_than: Date.current + 1.day }, allow_nil: true, unless: :skip_expires_at_validation
     validates :user, presence: true, if: -> { user_id.present? }
 
     #
     # Associations
     #
-    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
     has_many :store_credits, class_name: 'Spree::StoreCredit'
     has_many :orders, through: :store_credits, source: :orders
@@ -60,7 +61,7 @@ module Spree
     #
     before_validation :generate_code
     before_validation :normalize_code
-    after_validation :set_amount_remaining
+    before_validation :set_amount_remaining
     before_destroy :ensure_can_be_deleted
 
     #

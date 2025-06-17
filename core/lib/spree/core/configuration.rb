@@ -45,7 +45,6 @@ module Spree
       preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
       preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
       preference :geocode_addresses, :boolean, default: true
-      preference :gift_card_batch_limit, :integer, default: 50_000
       preference :layout, :string, deprecated: 'Please use Spree::Frontend::Config[:layout] instead'
       preference :logo, :string, deprecated: true
       preference :mailer_logo, :string, deprecated: true
@@ -74,6 +73,10 @@ module Spree
       # coupon codes
       preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job
       preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
+
+      # gift cards
+      preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
+      preference :gift_card_batch_limit, :integer, default: 50_000
 
       attr_writer :searcher_class
     end

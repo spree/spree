@@ -31,16 +31,12 @@ module Spree
       private
 
       def ensure_store_credit_payment_method!(store)
-        payment_method = Spree::PaymentMethod::StoreCredit.find_or_initialize_by(
-          name: 'Store Credit',
-          description: 'Store Credit',
-          active: true
+        payment_method = store.payment_methods.find_or_initialize_by(
+          type: 'Spree::PaymentMethod::StoreCredit'
         )
-
-        if payment_method.new_record?
-          payment_method.stores << store
-          payment_method.save!
-        end
+        payment_method.name ||= Spree.t(:store_credit_name)
+        payment_method.active = true
+        payment_method.save! if payment_method.new_record?
 
         payment_method
       end
