@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class GiftCardsController < ResourceController
-      before_action :load_user, only: [:new, :create, :edit, :update, :destroy]
+      before_action :load_user
       before_action :add_breadcrumbs
 
       helper_method :gift_cards_filter_dropdown_value
@@ -35,11 +35,9 @@ module Spree
         @search = @search.active if params[:q][:status_eq] == 'active'
         @search = @search.redeemed if params[:q][:status_eq] == 'redeemed'
 
-        @search = @search.where(code: params[:q][:code_eq].strip) if params[:q][:code_eq].present?
-
         @search = @search.ransack(params[:q])
 
-        @collection = @search.result
+        @collection = @search.result.includes(:user)
 
         @collection = @collection.page(params[:page]).per(params[:per_page]) if params[:format] != 'csv'
 
@@ -55,15 +53,11 @@ module Spree
       end
 
       def location_after_save
-        if @user.present?
-          spree.edit_admin_user_gift_card_path(@object, user_id: @user.id)
-        else
-          spree.edit_admin_gift_card_path(@object.id)
-        end
+        spree.admin_gift_card_path(@object.id)
       end
 
       def load_user
-        @user = Spree.user_class.find_by(id: params[:user_id])
+        @user = Spree.user_class.find_by(id: params[:user_id]) if params[:user_id].present?
       end
 
       def gift_cards_filter_dropdown_value

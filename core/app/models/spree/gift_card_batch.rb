@@ -6,7 +6,6 @@ module Spree
     validates :codes_count, :amount, :prefix, presence: true
     validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit].to_i }
     validates :amount, numericality: { greater_than: 0 }
-    validates :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
 
     belongs_to :store, class_name: 'Spree::Store'
 
@@ -16,7 +15,7 @@ module Spree
 
     auto_strip_attributes :prefix
 
-    money_methods :amount, :minimum_order_amount
+    money_methods :amount
 
     self.whitelisted_ransackable_attributes = %w[prefix]
 
@@ -56,8 +55,7 @@ module Spree
         amount_remaining: amount,
         code: generate_code,
         store_id: store_id,
-        expires_at: expires_at,
-        minimum_order_amount: minimum_order_amount
+        expires_at: expires_at
       }
     end
   end

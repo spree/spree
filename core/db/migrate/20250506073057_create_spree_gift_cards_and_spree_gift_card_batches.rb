@@ -6,7 +6,6 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
       t.decimal :amount, precision: 10, scale: 2, default: '10.0', null: false
       t.string :prefix
       t.date :expires_at
-      t.decimal :minimum_order_amount, precision: 10, scale: 2, default: '0.0'
 
       t.timestamps
     end
@@ -21,7 +20,6 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
       t.decimal :amount, precision: 10, scale: 2, null: false
       t.decimal :amount_remaining, precision: 10, scale: 2, default: '0.0', null: false
       t.references :gift_card_batch
-      t.decimal :minimum_order_amount, precision: 10, scale: 2, default: '0.0'
 
       t.timestamps
     end
