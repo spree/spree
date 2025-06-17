@@ -15,7 +15,6 @@ export default class ActiveStorageUpload extends BasePlugin {
     this.id = opts.id || "ActiveStorageUpload"
     this.title = opts.title || "ActiveStorageUpload"
     this.type = "uploader"
-    this.onEditorComplete = this.onEditorComplete.bind(this)
 
     const defaultOptions = {
       limit: 0,
@@ -46,12 +45,12 @@ export default class ActiveStorageUpload extends BasePlugin {
     this.uppy.removeUploader(this.handleUpload)
     this.uppy.off('file-editor:complete', this.onEditorComplete)
   }
-
-  onEditorComplete (updatedFile) {
+  
+  onEditorComplete = (updatedFile) => {
     this.handleUpload([updatedFile.id])
 
     // call directly upload method after editing image
-    return this.uploadFiles([updatedFile]).then(() => null)
+    return this.uploadFiles([updatedFile])
   }
 
   handleUpload(fileIDs) {
