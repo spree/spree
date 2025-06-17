@@ -231,7 +231,7 @@ module Spree
           link_to url, opts, &block
         else
           link_to url, opts do
-            (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+            (label + icon('external-link', class: 'ml-1 mr-0 small opacity-50')).html_safe
           end
         end
       end

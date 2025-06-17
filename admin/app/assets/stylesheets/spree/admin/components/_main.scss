@@ -76,7 +76,6 @@
   background-color: $sidebar-bg;
   box-shadow: inset -1px 0 0 $border-color;
   height: calc(100vh - $header-height);
-  overflow-y: auto;
   overflow-x: hidden;
   position: fixed;
   top: $header-height;

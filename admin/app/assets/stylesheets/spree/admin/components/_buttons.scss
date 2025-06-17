@@ -68,7 +68,7 @@ button[disabled]        .show-when-enabled { display: none; }
 
 .hover-light {
   &:hover, &:focus {
-    background-color: $dropdown-link-hover-bg;
+    background-color: $gray-25;
     text-decoration: none;
   }
 }
