@@ -3,7 +3,8 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
     create_table :spree_gift_card_batches, if_not_exists: true do |t|
       t.references :store, null: false, index: true
       t.integer :codes_count, default: 1, null: false
-      t.decimal :amount, precision: 10, scale: 2, default: '10.0', null: false
+      t.decimal :amount, precision: 10, scale: 2, null: false
+      t.string :currency, null: false
       t.string :prefix
       t.date :expires_at
 
@@ -20,6 +21,7 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
       t.string :state, null: false, index: true
       t.decimal :amount, precision: 10, scale: 2, null: false
       t.decimal :amount_remaining, precision: 10, scale: 2, null: false
+      t.string :currency, null: false
 
       t.timestamps
     end
