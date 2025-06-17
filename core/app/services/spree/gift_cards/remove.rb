@@ -9,14 +9,27 @@ module Spree
 
         gift_card = order.gift_card
 
-        order.transaction do
-          payments = order.payments.checkout.store_credits
+        return failure(:gift_card_not_found) if gift_card.nil?
+
+        order.with_lock do
+          payments = order.payments.checkout.store_credits.where(source: gift_card.store_credits)
           payment_total = payments.sum(:amount)
-
           payments.each(&:invalidate!)
-          gift_card.undo_apply!(amount: payment_total)
 
-          order.update_columns(gift_card_id: nil, updated_at: Time.current)
+          gift_card.with_lock do
+            gift_card.amount_remaining = [gift_card.amount_remaining + payment_total, gift_card.amount].min
+            gift_card.state = gift_card.amount_remaining == gift_card.amount ? :active : :partially_redeemed
+            gift_card.skip_expires_at_validation = true
+            gift_card.save!
+          end
+
+          # we need to destroy the store credits here because they are not associated with the order
+          # and we need to remove them from the gift card
+          payments.each do |payment|
+            payment.source.destroy!
+          end
+
+          order.update!(gift_card: nil)
         end
 
         success(true)

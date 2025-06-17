@@ -1094,8 +1094,8 @@ en:
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
     gift_card: Gift card
-    gift_card_batch: Gift card batch
     gift_card_applied: The gift card was successfully applied to your order!
+    gift_card_batch: Gift card batch
     gift_card_no_amount_remaining: You can't apply the gift card with no balance on it.
     gift_card_removed: The gift card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the gift card after you applied the store credit.

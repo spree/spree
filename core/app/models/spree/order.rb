@@ -926,7 +926,7 @@ module Spree
     end
 
     def ensure_currency_presence
-      self.currency ||= store.default_currency
+      self.currency ||= store&.default_currency
     end
 
     def collect_payment_methods(store = nil)

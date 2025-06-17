@@ -70,7 +70,7 @@ module Spree
     end
 
     def set_currency
-      self.currency ||= store.default_currency
+      self.currency ||= store&.default_currency
     end
   end
 end

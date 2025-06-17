@@ -4,6 +4,9 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
+    #
+    # State machine
+    #
     state_machine :state, initial: :active do
       event :cancel do
         transition active: :canceled
@@ -23,6 +26,11 @@ module Spree
     end
 
     #
+    # Attributes
+    #
+    attribute :skip_expires_at_validation, :boolean, default: false
+
+    #
     # Validations
     #
     validates :code, presence: true, uniqueness: { scope: :store_id }
@@ -38,8 +46,9 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
+
     has_many :store_credits, class_name: 'Spree::StoreCredit'
-    has_many :orders, through: :store_credits, source: :orders
+    has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
     has_many :users, through: :orders, class_name: Spree.user_class.to_s
 
     #
@@ -93,7 +102,7 @@ module Spree
       return if code.present?
 
       self.code = loop do
-        random_token = SecureRandom.hex(8).to_s.upcase
+        random_token = SecureRandom.hex(8).downcase
         break random_token unless self.class.exists?(code: random_token, store_id: store_id)
       end
     end
@@ -127,28 +136,12 @@ module Spree
     end
     alias_method :amount_used, :used_amount
 
-    def undo_apply!(amount:)
-      transaction do
-        self.amount_remaining = [amount_remaining + amount, self.amount].min
-        self.state = amount_remaining == self.amount ? :active : :partially_redeemed
-        self.skip_expires_at_validation = true
-        save!
-
-        self.skip_expires_at_validation = false
-
-        store_credit = store_credits.available.find_by(amount: amount)
-        store_credit.destroy!
-      end
-    end
-
     def redeem!
       new_state = amount_remaining.positive? ? :partially_redeemed : :redeemed
       update!(state: new_state)
     end
 
     private
-
-    attr_accessor :skip_expires_at_validation
 
     def set_amount_remaining
       return unless active?
@@ -165,7 +158,7 @@ module Spree
     end
 
     def set_currency
-      self.currency ||= store.default_currency
+      self.currency ||= store&.default_currency
     end
   end
 end
