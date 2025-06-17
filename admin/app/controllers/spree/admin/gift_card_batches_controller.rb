@@ -1,6 +1,10 @@
 module Spree
   module Admin
     class GiftCardBatchesController < ResourceController
+      add_breadcrumb_icon 'discount'
+      add_breadcrumb Spree.t(:promotions), :admin_promotions_path
+      add_breadcrumb Spree.t(:gift_cards), :admin_gift_cards_path
+
       private
 
       def location_after_save

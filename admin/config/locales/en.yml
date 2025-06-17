@@ -79,7 +79,6 @@ en:
       getting_started: Getting started
       gift_card_batches:
         codes_count: Codes count
-        gift_card_batch: Gift card batch
         new_gift_card_batch: New Gift Card Batch
         prefix: Prefix
       gift_cards:
@@ -90,6 +89,7 @@ en:
         issued_to: Issued to
         new_gift_card: New gift card
         redeemed: Redeemed
+        code_help_text: If you leave it blank, we will generate code for you
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.

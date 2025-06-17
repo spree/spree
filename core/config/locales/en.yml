@@ -50,6 +50,8 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/gift_card:
+        expires_at: Expires at
       spree/inventory_unit:
         state: State
       spree/invitation:
@@ -1037,7 +1039,6 @@ en:
     expiration: Expiration
     expiration_date: Expiration Date
     expired: Expired
-    expires_at: Expires At
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1093,8 +1094,8 @@ en:
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
     gift_card: Gift card
+    gift_card_batch: Gift card batch
     gift_card_applied: The gift card was successfully applied to your order!
-    gift_card_minimum_order_value_error: You can't apply the gift card. The order total must be at least %{minimum_order_amount}, excluding shipping cost.
     gift_card_no_amount_remaining: You can't apply the gift card with no balance on it.
     gift_card_removed: The gift card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the gift card after you applied the store credit.
@@ -1262,7 +1263,6 @@ en:
     metadata: Metadata
     min: Min
     minimal_amount: Minimal Amount
-    minimum_order_amount: Minimum Order Amount
     minimum_password_length:
       one: "(%{count} character minimum)"
       other: "(%{count} characters minimum)"

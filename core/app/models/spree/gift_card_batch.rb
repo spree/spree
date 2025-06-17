@@ -3,25 +3,31 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
 
+    #
+    # Validations
+    #
     validates :codes_count, :amount, :prefix, presence: true
     validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit].to_i }
     validates :amount, numericality: { greater_than: 0 }
-    validates :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
 
+    #
+    # Associations
     belongs_to :store, class_name: 'Spree::Store'
-
     has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :batch
 
+    #
+    # Callbacks
+    #
     after_create :generate_gift_cards
 
     auto_strip_attributes :prefix
 
-    money_methods :amount, :minimum_order_amount
+    money_methods :amount
 
     self.whitelisted_ransackable_attributes = %w[prefix]
 
     def generate_gift_cards
-      if codes_count < 500
+      if codes_count < Spree::Config[:gift_card_batch_web_limit].to_i
         create_gift_cards
       else
         Spree::GiftCards::BulkGenerateJob.perform_later(id)
@@ -56,8 +62,7 @@ module Spree
         amount_remaining: amount,
         code: generate_code,
         store_id: store_id,
-        expires_at: expires_at,
-        minimum_order_amount: minimum_order_amount
+        expires_at: expires_at
       }
     end
   end

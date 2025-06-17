@@ -3,14 +3,14 @@ require 'spec_helper'
 RSpec.describe Spree::GiftCard, type: :model do
   describe 'before_destroy :ensure_can_be_deleted' do
     it "ensures a used gift card can't be destroyed" do
-      expect(create(:gift_card, state: :redeemed).destroy).to be(false)
-      expect(create(:gift_card, state: :partially_redeemed).destroy).to be(false)
-      expect(create(:gift_card, state: :active).destroy).to be_destroyed
-      expect(create(:gift_card, state: :canceled).destroy).to be_destroyed
+      expect(create(:gift_card, state: :redeemed, amount_remaining: 0).destroy).to be(false)
+      expect(create(:gift_card, state: :partially_redeemed, amount_remaining: 1).destroy).to be(false)
+      expect(create(:gift_card, state: :active, amount_remaining: 10).destroy).to be_destroyed
+      expect(create(:gift_card, state: :canceled, amount_remaining: 10).destroy).to be_destroyed
     end
 
     it 'adds an error' do
-      gift_card = create(:gift_card, state: :redeemed)
+      gift_card = create(:gift_card, state: :redeemed, amount_remaining: 0)
       gift_card.destroy
 
       expect(gift_card).to_not be_destroyed

@@ -11,9 +11,19 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
 
 <%= form_for [:admin, @user, @object] do |f| %>
-  <fieldset>
-    <%= render 'form', f: f %>
-
-    <%= render 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">
+            <%= Spree.t(:gift_card) %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <%= render 'form', f: f %>
+        </div>
+      </div>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    </div>
+  </div>
 <% end %>

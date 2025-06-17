@@ -60,7 +60,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
         end
         format.html do
           flash[:success] = message_after_create
-          redirect_to location_after_save, status: :see_other
+          redirect_to location_after_create, status: :see_other
         end
       end
     else
@@ -224,6 +224,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def location_after_destroy
     collection_url
+  end
+
+  def location_after_create
+    location_after_save
   end
 
   def location_after_save

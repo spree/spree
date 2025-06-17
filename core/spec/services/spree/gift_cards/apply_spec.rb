@@ -3,10 +3,10 @@ require 'spec_helper'
 RSpec.describe Spree::GiftCards::Apply do
   subject { described_class.call(gift_card: gift_card, order: order) }
 
-  let(:order) { create(:order) }
+  let(:store) { Spree::Store.default }
+  let(:order) { create(:order, store: store) }
 
-  let(:gift_card) { create(:gift_card, amount: 50, minimum_order_amount: minimum_order_amount, store: Spree::Store.default) }
-  let(:minimum_order_amount) { 30 }
+  let(:gift_card) { create(:gift_card, amount: 50, store: store) }
 
   let(:store_credit_payment) { order.payments.store_credits.last }
   let(:store_credit) { store_credit_payment.source }
@@ -35,23 +35,9 @@ RSpec.describe Spree::GiftCards::Apply do
     expect(store_credit.gift_card).to eq(gift_card)
   end
 
-  context 'when the order total is below minimum' do
-    let(:minimum_order_amount) { 35 }
-
-    it 'responds with an error' do
-      expect { subject }.to_not change(Spree::StoreCredit, :count)
-
-      expect(subject).to be_failure
-      expect(subject.value).to eq(:gift_card_minimum_order_value_error)
-      expect(subject.error.value).to eq(minimum_order_amount: Spree::Money.new(minimum_order_amount))
-
-      expect(order.reload.gift_card).to eq(nil)
-    end
-  end
-
   context 'when the order has applied store credit' do
-    let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [order.store]) }
-    let!(:store_credit) { create(:store_credit, user: order.user, amount: 10) }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
+    let!(:store_credit) { create(:store_credit, user: order.user, amount: 10, store: store) }
 
     before do
       order.add_store_credit_payments

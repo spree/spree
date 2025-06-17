@@ -22,46 +22,61 @@ module Spree
       end
     end
 
-    validates :code, presence: true, uniqueness: true
-    validates :amount, numericality: { greater_than: 0 }
-    validates :minimum_order_amount, numericality: { greater_than_or_equal_to: 0 }
+    #
+    # Validations
+    #
+    validates :code, presence: true, uniqueness: { scope: :store_id }
+    validates :amount, presence: true, numericality: { greater_than: 0 }
+    validates :amount_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :expires_at, comparison: { greater_than: Date.current + 1.day }, allow_nil: true, unless: :skip_expires_at_validation
     validates :user, presence: true, if: -> { user_id.present? }
 
-    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
+    #
+    # Associations
+    #
     belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
     has_many :store_credits, class_name: 'Spree::StoreCredit'
-
-    if defined?(Spree::Vendor)
-      has_many :orders, -> { without_vendor }, through: :store_credits, source: :orders
-    else
-      has_many :orders, through: :store_credits, source: :orders
-    end
-
+    has_many :orders, through: :store_credits, source: :orders
     has_many :users, through: :orders, class_name: Spree.user_class.to_s
 
+    #
+    # Scopes
+    #
     scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
     scope :redeemed, -> { where(state: [:redeemed, :redeemed_by_order]) }
 
+    #
+    # Ransack
+    #
     self.whitelisted_ransackable_attributes = %w[code user_id]
     self.whitelisted_ransackable_associations = %w[users orders batch]
 
     auto_strip_attributes :code
 
+    #
+    # Callbacks
+    #
     before_validation :generate_code
     before_validation :normalize_code
-    after_validation :set_amount_remaining
-
+    before_validation :set_amount_remaining
     before_destroy :ensure_can_be_deleted
 
-    money_methods :amount, :used_amount, :amount_remaining, :minimum_order_amount
+    #
+    # Money
+    #
+    money_methods :amount, :used_amount, :amount_remaining
+
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
 
     delegate :email, to: :user, prefix: true, allow_nil: true
 
     def self.json_api_columns
-      %w[code amount minimum_order_amount expires_at]
+      %w[code amount expires_at]
     end
 
     def editable?
@@ -108,6 +123,7 @@ module Spree
     def used_amount
       @used_amount ||= amount - amount_remaining
     end
+    alias_method :amount_used, :used_amount
 
     def apply!(amount:, user:, currency:)
       amount_applied = [amount, amount_remaining].min

@@ -6,11 +6,6 @@ module Spree
       def call(gift_card:, order:)
         return failure(:gift_card_using_store_credit_error) if order.using_store_credit?
 
-        if order_total_below_minimum?(order.total, gift_card)
-          minimum_order_amount = gift_card.display_minimum_order_amount
-          return failure(:gift_card_minimum_order_value_error, minimum_order_amount: minimum_order_amount)
-        end
-
         amount_applied = [gift_card.amount_remaining, order.total].min
         store = order.store
 
@@ -35,25 +30,13 @@ module Spree
 
       private
 
-      def can_apply_gift_card?(order)
-        !order.using_store_credit?
-      end
-
-      def order_total_below_minimum?(order_total, gift_card)
-        gift_card.minimum_order_amount.present? && gift_card.minimum_order_amount > order_total
-      end
-
       def ensure_store_credit_payment_method!(store)
-        payment_method = Spree::PaymentMethod::StoreCredit.find_or_initialize_by(
-          name: 'Store Credit',
-          description: 'Store Credit',
-          active: true
+        payment_method = store.payment_methods.find_or_initialize_by(
+          type: 'Spree::PaymentMethod::StoreCredit'
         )
-
-        if payment_method.new_record?
-          payment_method.stores << store
-          payment_method.save!
-        end
+        payment_method.name ||= Spree.t(:store_credit_name)
+        payment_method.active = true
+        payment_method.save! if payment_method.new_record?
 
         payment_method
       end
