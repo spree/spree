@@ -20,7 +20,8 @@ export default class ActiveStorageUpload extends BasePlugin {
       limit: 0,
       timeout: 30 * 1000,
       directUploadUrl: null,
-      headers: {}
+      headers: {},
+      crop: false
     }
 
     this.opts = Object.assign({}, defaultOptions, opts)
@@ -37,15 +38,28 @@ export default class ActiveStorageUpload extends BasePlugin {
 
   install() {
     this.uppy.addUploader(this.handleUpload)
+    this.uppy.on('file-editor:complete', this.onEditorComplete)
   }
 
   uninstall() {
     this.uppy.removeUploader(this.handleUpload)
+    this.uppy.off('file-editor:complete', this.onEditorComplete)
+  }
+  
+  onEditorComplete = (updatedFile) => {
+    this.handleUpload([updatedFile.id])
+
+    // call directly upload method after editing image
+    return this.uploadFiles([updatedFile])
   }
 
   handleUpload(fileIDs) {
     if (fileIDs.length === 0) {
       this.uppy.log("[ActiveStorage] No files to upload!")
+      return Promise.resolve()
+    }
+    // do not upload before editing is done
+    if (this.opts.crop) {
       return Promise.resolve()
     }
 
@@ -114,8 +128,6 @@ export default class ActiveStorageUpload extends BasePlugin {
             status: "success",
             directUploadSignedId: blob.signed_id,
           }
-
-          this.uppy.setFileState(file.id, { response })
 
           this.uppy.emit("upload-success", file, blob)
 

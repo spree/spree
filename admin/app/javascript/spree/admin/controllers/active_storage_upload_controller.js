@@ -29,7 +29,8 @@ export default class extends Controller {
     })
 
     this.uppy.use(ActiveStorageUpload, {
-      directUploadUrl: document.querySelector("meta[name='direct-upload-url']").getAttribute('content')
+      directUploadUrl: document.querySelector("meta[name='direct-upload-url']").getAttribute('content'),
+      crop: this.cropValue
     })
 
     let dashboardOptions = {}
@@ -55,16 +56,6 @@ export default class extends Controller {
 
     this.uppy.on('file-editor:complete', (updatedFile) => {
       console.log('File editing complete:', updatedFile)
-      // Remove the old file from Uppy's file list
-      this.uppy.removeFile(updatedFile.id)
-      // Add the updated file to Uppy
-      this.uppy.addFile({
-        name: updatedFile.name,
-        type: updatedFile.type,
-        data: updatedFile.data,
-        source: 'local',
-        isRemote: false
-      })
 
       this.handleUI(updatedFile)
 
