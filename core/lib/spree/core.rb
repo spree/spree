@@ -165,6 +165,10 @@ module Spree
     yield(Spree::Dependencies)
   end
 
+  def self.address_validators
+    Rails.application.config.spree.address_validators
+  end
+
   module Core
     autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'

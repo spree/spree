@@ -24,7 +24,8 @@ module Spree
                                :translatable_resources,
                                :analytics_events,
                                :analytics_event_handlers,
-                               :integrations)
+                               :integrations,
+                               :address_validators)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -272,6 +273,8 @@ module Spree
         Rails.application.config.spree.analytics_event_handlers = []
 
         Rails.application.config.spree.integrations = []
+
+        Rails.application.config.spree.address_validators = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
