@@ -4,7 +4,6 @@ module Spree
     include Spree::CheckoutHelper
     include Spree::CheckoutAnalyticsHelper
 
-    before_action :require_user, unless: -> { current_store.prefers_guest_checkout? }
     before_action :load_order
     before_action :remove_out_of_stock_items, only: [:edit, :update]
 
@@ -191,6 +190,8 @@ module Spree
             redirect_to spree_login_path
           end
         end
+      elsif !current_store.prefers_guest_checkout?
+        require_user(redirect_path: spree_signup_path)
       end
 
       # completed orders shouldn't be updated anymore
