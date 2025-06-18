@@ -72,6 +72,10 @@ module Spree
                                     allow_blank: true,
                                     allow_nil: true }
 
+    if (validator_class = Spree::Dependencies.address_phone_validator_class.safe_constantize)
+      validates_with validator_class
+    end
+
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 

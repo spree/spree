@@ -66,6 +66,7 @@ module Spree
         # addresses
         address_create_service: 'Spree::Addresses::Create',
         address_update_service: 'Spree::Addresses::Update',
+        address_phone_validator_class: 'Spree::Addresses::PhoneValidator',
 
         # credit cards
         credit_cards_destroy_service: 'Spree::CreditCards::Destroy',
