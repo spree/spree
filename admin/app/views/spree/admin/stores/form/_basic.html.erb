@@ -33,6 +33,23 @@
 
     <div class="card mb-4">
       <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :contact_phone %>
+          <%= f.text_field :contact_phone, class: 'form-control' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :address %>
+          <%= f.text_area :address, class: 'form-control', data: { controller: 'textarea-autogrow' } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
       </div>
       <div class="card-body">
