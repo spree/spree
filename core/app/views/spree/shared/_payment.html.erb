@@ -12,11 +12,11 @@
       <p class="mb-0"><%= Spree.t(:expiration) %> <%= source.month %>/<%= source.year %></p>
     </div>
   <% elsif source.is_a?(Spree::StoreCredit) %>
-    <% if source.respond_to?(:gift_card) && source.gift_card.present? %>
-      <div class="d-flex align-items-center text-decoration-none w-100 h-100">
-        <%= icon('gift', height: 30, class: 'mr-3 text-muted') %>
+    <% if source.originator_type == 'Spree::GiftCard' %>
+      <div class="d-flex align-items-center">
+        <%= icon('gift', height: 30, class: 'mr-3 text-muted opacity-50') %>
         <div>
-          <p class="mb-1"><%= Spree.t(:gift_card) %>: <strong><%= source.gift_card.code.upcase %></strong></p>
+          <p class="mb-1"><%= Spree.t(:gift_card) %>: <strong><%= source.originator.code.upcase %></strong></p>
           <%= @order.display_gift_card_total %>
         </div>
       </div>

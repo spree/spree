@@ -47,7 +47,7 @@ module Spree
     belongs_to :user, class_name: Spree.user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
 
-    has_many :store_credits, class_name: 'Spree::StoreCredit'
+    has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
     has_many :orders, inverse_of: :gift_card, class_name: 'Spree::Order'
     has_many :users, through: :orders, class_name: Spree.user_class.to_s
 

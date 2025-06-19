@@ -24,8 +24,8 @@
         <% if payment.try(:gateway_dashboard_payment_url).present? %>
           <%= link_to_with_icon 'eye', Spree.t(:details), payment.gateway_dashboard_payment_url, class: 'dropdown-item', target: '_blank' %>
         <% end %>
-        <% if payment.source.is_a?(Spree::StoreCredit) && payment.source.respond_to?(:gift_card) && payment.source.gift_card.present? %>
-          <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_gift_card_path(payment.source.gift_card), class: 'dropdown-item' %>
+        <% if payment.source.is_a?(Spree::StoreCredit) && payment.source.originator_type == 'Spree::GiftCard' %>
+          <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_gift_card_path(payment.source.originator), class: 'dropdown-item' %>
         <% end %>
 
         <% if can?(:update, payment) && (payment.checkout? || payment.pending?) %>
