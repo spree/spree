@@ -88,7 +88,7 @@ module Spree
       end
 
       def scope
-        current_store.store_credits.where(user: @user).without_gift_card
+        current_store.store_credits.where(user: @user)
       end
 
       def ensure_unused_store_credit

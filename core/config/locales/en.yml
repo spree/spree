@@ -656,6 +656,7 @@ en:
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
+    expires_at: Expires at
     all: All
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
@@ -2024,6 +2025,7 @@ en:
     store_credit:
       additional_payment_needed: Select another payment method for the remaining <strong>%{amount}</strong>.
       allocated: Added
+      eligible: Eligible
       applicable_amount: "<strong>%{amount}</strong> in store credit will be applied to this order."
       apply: Apply
       authorized: Authorized
