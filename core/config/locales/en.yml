@@ -53,7 +53,6 @@ en:
       spree/inventory_unit:
         state: State
       spree/invitation:
-        expires_at: Expires at
         inviter: Inviter
       spree/line_item:
         price: Price
@@ -1031,6 +1030,7 @@ en:
     expiration: Expiration
     expiration_date: Expiration Date
     expired: Expired
+    expires_at: Expires at
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -2014,6 +2014,7 @@ en:
       available_amount: You have <strong>%{amount}</strong> in Store Credit available!
       captured: Used
       credit: Credit
+      eligible: Eligible
       errors:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
         unable_to_create: Unable to create store credit
@@ -2024,6 +2025,7 @@ en:
       remaining_amount: You have <strong>%{amount}</strong> remaining in your account's Store Credit.
       remove: Remove
     store_credit_categories: Store Credit Categories
+    store_credit_events: Store Credit Events
     store_credit_name: Store Credit
     store_credit_payment_method:
       currency_mismatch: Store credit currency does not match order currency

@@ -12,6 +12,7 @@ module Spree
 
     scope :active,    -> { where(active: true).order(position: :asc) }
     scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
+    scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }
 
     after_initialize :set_name, if: :new_record?
 

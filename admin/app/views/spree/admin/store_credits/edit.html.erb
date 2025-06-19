@@ -1,36 +1,21 @@
-<% content_for :title do %>
-  <%= Spree.t(:store_credits) %>
-<% end %>
+<%= turbo_frame_tag :store_credit_details do %>
+  <%= form_for @store_credit, url: spree.admin_user_store_credit_path(@user, @store_credit), method: :put do |f| %>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <%= Spree.t(:details) %>
+        </h5>
 
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_user_path(@user) %>
-  <%= @user.email %>
-<% end %>
+        <%= link_to Spree.t('actions.discard'), spree.admin_user_store_credit_path(@user, @store_credit), class: 'btn btn-sm btn-light' %>
+      </div>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
-
-<%= form_for @store_credit, url: spree.admin_user_store_credit_path(@user, @store_credit) do |f| %>
-  <div class="card mb-4">
-    <div class="card-header">
-      <h5 class="card-title">
-        <%= Spree.t(:store_credits) %>
-      </h5>
-    </div>
-
-    <div class="card-body">
-      <%= render 'form', f: f %>
-    </div>
-  </div>
-
-  <% if can? :update, @store_credit %>
-    <div class="form-actions">
-      <%= turbo_save_button_tag Spree.t('actions.update') %>
-
-      <% if @store_credit.can_be_deleted? && can?(:delete, @store_credit) %>
-        <%= link_to Spree.t('actions.destroy'), spree.admin_user_store_credit_path(@user),
-          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) },
-          class: 'btn btn-danger ml-auto' %>
-      <% end %>
+      <div class="card-body">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
+        <%= render 'form', f: f %>
+      </div>
+      <div class="card-footer">
+        <%= render 'spree/admin/shared/edit_resource_links', f: f, destroy_url: spree.admin_user_store_credit_path(@user, @store_credit) %>
+      </div>
     </div>
   <% end %>
 <% end %>

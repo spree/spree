@@ -9,33 +9,13 @@
         <th><%= Spree.t('store_credit.remaining') %></th>
         <th><%= Spree.t(:created_by) %></th>
         <th><%= Spree.t(:issued_on) %></th>
-        <th></th>
       </thead>
       <tbody>
-        <% @store_credits.each do |store_credit| %>
-          <tr>
-            <td><%= store_credit.currency %></td>
-            <td><%= store_credit.display_amount.to_html %></td>
-            <td><%= store_credit.display_amount_authorized.to_html %></td>
-            <td><%= store_credit.display_amount_used.to_html %></td>
-            <td><%= store_credit.display_amount_remaining.to_html %></td>
-            <td><%= store_credit.created_by_email %></td>
-            <td><%= local_date(store_credit.created_at) %></td>
-            <td class="actions">
-              <% if store_credit.editable? && can?(:edit, store_credit) %>
-                <%= link_to_edit store_credit, url: spree.edit_admin_user_store_credit_path(@user, store_credit), no_text: true, data: { 'turbo-frame': '_top' } %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
+        <%= render partial: 'spree/admin/store_credits/store_credit', collection: @store_credits, as: :store_credit, cached: spree_base_cache_scope %>
       </tbody>
     </table>
   </div>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @store_credits } %>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
-    <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-link ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::StoreCredit) %>
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found', model_class: Spree::StoreCredit, new_object_url: spree.new_admin_user_store_credit_path(@user) %>
 <% end %>
-
-<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>

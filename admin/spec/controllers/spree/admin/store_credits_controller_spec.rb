@@ -20,6 +20,18 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    let(:store_credit) { create(:store_credit, user: user) }
+    let!(:store_credit_events) { create_list(:store_credit_auth_event, 3, store_credit: store_credit) }
+
+    it 'renders the store credit show page' do
+      get :show, params: { user_id: user.id, id: store_credit.id }
+
+      expect(response).to be_successful
+      expect(response).to render_template(:show)
+    end
+  end
+
   describe 'GET #new' do
     it 'renders the new store credit form' do
       get :new, params: { user_id: user.id }
@@ -79,7 +91,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
     it 'updates the store credit' do
       expect { subject }.to change { store_credit.reload.amount }.to(200)
 
-      expect(response).to redirect_to(spree.admin_user_path(user))
+      expect(response).to redirect_to(spree.admin_user_store_credit_path(user, store_credit))
     end
 
     context 'when the store credit is not valid' do
