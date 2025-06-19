@@ -34,6 +34,7 @@
 .badge-approved,
 .badge-resolved,
 .badge-reimbursed,
+.badge-allocation,
 .bg-success {
   border: 1px solid rgba($success, 0.05);
   background-color: #C6F6D5 !important;
@@ -89,6 +90,8 @@
 .badge-draft,
 .badge-onboarding,
 .badge-light,
+.badge-authorize,
+.badge-eligible,
 .badge-invited {
   @extend .bg-white;
   @extend .text-muted;
@@ -104,6 +107,7 @@
 .badge-notice,
 .badge-update,
 .badge-partial,
+.badge-capture,
 .badge-info {
   border: 1px solid rgba($info, 0.05);
   background-color: #E0EFFE;

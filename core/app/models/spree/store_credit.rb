@@ -16,13 +16,12 @@ module Spree
     AUTHORIZE_ACTION  = 'authorize'.freeze
     ALLOCATION_ACTION = 'allocation'.freeze
 
-    DEFAULT_CREATED_BY_EMAIL = 'spree@example.com'.freeze
-
+    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
     belongs_to :category, class_name: 'Spree::StoreCreditCategory', optional: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", foreign_key: 'created_by_id', optional: true
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :originator, polymorphic: true, optional: true
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     has_many :payments, as: :source, class_name: 'Spree::Payment'
@@ -34,14 +33,16 @@ module Spree
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
 
-    delegate :name, to: :category, prefix: true
-    delegate :email, to: :created_by, prefix: true
+    delegate :name, to: :category, prefix: true, allow_nil: true
+    delegate :email, to: :created_by, prefix: true, allow_nil: true
 
     scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
     scope :not_authorized, -> { where(amount_authorized: 0) }
     scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
     scope :available, -> { not_authorized.not_used }
+    scope :with_gift_card, -> { where(originator_type: 'Spree::GiftCard') }
+    scope :without_gift_card, -> { where(originator_type: [nil, '']).or(where.not(originator_type: 'Spree::GiftCard')) }
 
     after_save :store_event
     before_destroy :validate_no_amount_used
@@ -184,7 +185,9 @@ module Spree
 
     class << self
       def default_created_by
-        Spree.user_class.find_by(email: DEFAULT_CREATED_BY_EMAIL)
+        Spree::Deprecation.warn('StoreCredit#default_created_by is deprecated and will be removed in Spree 6.0. Please use store.users.first instead.')
+
+        Spree::Store.current.users.first
       end
     end
 

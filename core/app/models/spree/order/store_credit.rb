@@ -27,7 +27,7 @@ module Spree
       end
 
       def could_use_store_credit?
-        return false if Spree::PaymentMethod::StoreCredit.available.empty?
+        return false if store.payment_methods.store_credit.available.empty?
 
         total_available_store_credit > 0
       end
