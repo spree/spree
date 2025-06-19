@@ -70,7 +70,7 @@
           <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <span class="text-muted">
-                <%= I18n.t('activerecord.attributes.spree/gift_card.expires_at') %>
+                <%= Spree.t(:expires_at) %>
               </span>
               <% if @object.expires_at %>
                 <span><%= local_time(@object.expires_at) %></span>
