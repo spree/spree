@@ -17,14 +17,8 @@
       </tbody>
     </table>
   </div>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::GiftCard)) %>
-    <%= link_to_with_icon 'plus', Spree.t(:add_one),
-      params[:user_id].present? ? spree.new_admin_user_gift_card_path(params[:user_id]) : new_object_url,
-      class: 'btn btn-link ml-3',
-      data: { 'turbo-frame': '_top' } if can?(:create, Spree::GiftCard) %>
-  </div>
+  <% new_object_url = @user.present? ? spree.new_admin_user_gift_card_path(@user) : spree.new_admin_gift_card_path %>
+  <%= render 'spree/admin/shared/no_resource_found', model_class: Spree::GiftCard, new_object_url: spree.new_admin_user_gift_card_path(@user) %>
 <% end %>
-
-<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
