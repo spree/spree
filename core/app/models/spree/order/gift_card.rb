@@ -14,7 +14,7 @@ module Spree
         return 0.to_d unless gift_card.present?
 
         store_credit_ids = payments.store_credits.valid.pluck(:source_id)
-        store_credits = Spree::StoreCredit.where(id: store_credit_ids, gift_card: gift_card)
+        store_credits = Spree::StoreCredit.where(id: store_credit_ids, originator: gift_card)
 
         store_credits.sum(:amount)
       end

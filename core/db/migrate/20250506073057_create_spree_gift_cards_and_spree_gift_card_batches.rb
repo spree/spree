@@ -28,11 +28,6 @@ class CreateSpreeGiftCardsAndSpreeGiftCardBatches < ActiveRecord::Migration[7.2]
 
     add_index :spree_gift_cards, :code, unique: { scope: :store_id }
 
-    add_column :spree_store_credits, :gift_card_id, :bigint, if_not_exists: true
-    add_column :spree_store_credits, :expires_at, :datetime, if_not_exists: true
-    add_column :spree_store_credits, :state, :integer, default: 0, if_not_exists: true
-    add_index :spree_store_credits, :gift_card_id, if_not_exists: true
-
     add_column :spree_orders, :gift_card_id, :bigint, if_not_exists: true
     add_index :spree_orders, :gift_card_id, if_not_exists: true
   end

@@ -24,7 +24,8 @@ module Spree
             user: order.user,
             amount: amount,
             currency: order.currency,
-            expires_at: gift_card.expires_at
+            originator: gift_card,
+            action_originator: gift_card
           )
           gift_card.amount_remaining -= amount
           gift_card.save!

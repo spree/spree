@@ -32,7 +32,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
     expect(store_credit.amount).to eq(30)
     expect(store_credit.store).to eq(Spree::Store.default)
-    expect(store_credit.gift_card).to eq(gift_card)
+    expect(store_credit.originator).to eq(gift_card)
   end
 
   context 'when the order has applied store credit' do
@@ -51,7 +51,7 @@ RSpec.describe Spree::GiftCards::Apply do
 
       expect(order.reload.gift_card).to eq(nil)
       expect(order.total_applied_store_credit).to eq(10)
-      expect(order.payments.store_credits.last.source.gift_card).to eq(nil)
+      expect(order.payments.store_credits.last.source.originator).to eq(nil)
     end
   end
 
