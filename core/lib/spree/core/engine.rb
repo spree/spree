@@ -5,6 +5,7 @@ module Spree
   module Core
     class Engine < ::Rails::Engine
       Environment = Struct.new(:calculators,
+                               :validators,
                                :preferences,
                                :dependencies,
                                :payment_methods,
@@ -24,10 +25,10 @@ module Spree
                                :translatable_resources,
                                :analytics_events,
                                :analytics_event_handlers,
-                               :integrations,
-                               :address_validators)
+                               :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
+      SpreeValidators = Struct.new(:addresses)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -36,7 +37,7 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+        app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
 
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess])
@@ -54,9 +55,6 @@ module Spree
 
       initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
         app.config.spree.line_item_comparison_hooks = Set.new
-      end
-
-      initializer 'spree.register.address_validators', before: :load_config_initializers do |app|
       end
 
       initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
@@ -277,7 +275,7 @@ module Spree
 
         Rails.application.config.spree.integrations = []
 
-        Rails.application.config.spree.address_validators = [
+        Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
       end
