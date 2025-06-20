@@ -281,6 +281,23 @@ module Spree
         end
       end
 
+      # renders a progress bar component
+      # @param options [Hash] the options for the component
+      # @param value [Integer] the value of the progress bar
+      # @option options [Integer] :min the minimum value of the progress bar
+      # @option options [Integer] :max the maximum value of the progress bar
+      # @return [String] the component
+      def progress_bar_component(value, options = {})
+        min = options[:min] || 0
+        max = options[:max] || 100
+        percentage = (value.to_f / max * 100).round
+
+        content_tag(:div, class: 'progress') do
+          content_tag(:div, { class: 'progress-bar', role: 'progressbar', style: "width: #{percentage}%", aria: { valuenow: value, valuemin: min, valuemax: max } }) do
+          end
+        end
+      end
+
       # returns the allowed file types for upload, according to the active storage configuration
       # @return [Array<String>] the allowed file types for upload, eg. ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
       def allowed_file_types_for_upload

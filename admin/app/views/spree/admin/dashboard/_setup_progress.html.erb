@@ -12,8 +12,7 @@
         </span>
       </span>
     </div>
-    <div class="progress">
-      <div class="progress-bar bg-success" style="width: <%= current_store.setup_percentage %>%" role="progressbar" aria-valuenow="<%= current_store.setup_percentage %>" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
+
+    <%= progress_bar_component(current_store.setup_percentage) %>
   </div>
 </div>
