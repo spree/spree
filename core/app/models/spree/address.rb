@@ -73,7 +73,7 @@ module Spree
                                     allow_nil: true }
 
     Spree.address_validators.each do |validator|
-      validates_with validator
+      validates_with validator.constantize
     end
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true

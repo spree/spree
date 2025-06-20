@@ -699,4 +699,12 @@ describe Spree::Address, type: :model do
       end
     end
   end
+
+  context 'address validators' do
+    it 'runs through all configured validators during validation' do
+      address = create(:address)
+      expect_any_instance_of(Spree::Addresses::PhoneValidator).to receive(:validate).with(address)
+      address.valid?
+    end
+  end
 end

@@ -50,6 +50,7 @@ module Spree
       preference :mailer_logo, :string, deprecated: true
       preference :max_level_in_taxons_menu, :integer, deprecated: true
       preference :non_expiring_credit_types, :array, default: []
+      preference :phone_countries, :string, default: ['US'] # Used when address_requires_phone is enabled and sets the default country for phone validation
       preference :products_per_page, :integer, default: 12
       preference :require_master_price, :boolean, default: false
       preference :restock_inventory, :boolean, default: true # Determines if a return item is restocked automatically once it has been received

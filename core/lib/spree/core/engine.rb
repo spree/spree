@@ -56,6 +56,12 @@ module Spree
         app.config.spree.line_item_comparison_hooks = Set.new
       end
 
+      initializer 'spree.register.address_validators', before: :load_config_initializers do |app|
+        app.config.spree.address_validators = [
+          'Spree::Addresses::PhoneValidator'
+        ]
+      end
+
       initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
       end
 
@@ -273,8 +279,6 @@ module Spree
         Rails.application.config.spree.analytics_event_handlers = []
 
         Rails.application.config.spree.integrations = []
-
-        Rails.application.config.spree.address_validators = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
