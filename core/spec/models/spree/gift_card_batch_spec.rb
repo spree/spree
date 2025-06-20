@@ -10,7 +10,6 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       expect(gift_card_batch.gift_cards.count).to eq 2
 
       expect(gift_card_batch.gift_cards.pluck(:amount).uniq).to eq [gift_card_batch.amount]
-      expect(gift_card_batch.gift_cards.pluck(:amount_remaining).uniq).to eq [gift_card_batch.amount]
       expect(gift_card_batch.gift_cards.pluck(:expires_at).uniq).to eq [gift_card_batch.expires_at]
       expect(gift_card_batch.gift_cards.take.code).to match(/batch_/)
     end

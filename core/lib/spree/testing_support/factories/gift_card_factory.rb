@@ -4,8 +4,15 @@ FactoryBot.define do
     amount { 10.00 }
     store { Spree::Store.default || create(:store) }
 
-    trait :fully_redeemed do
+    trait :redeemed do
       state { :redeemed }
+      redeemed_at { Time.current }
+      amount_used { amount }
+    end
+
+    trait :expired do
+      expires_at { 1.day.ago }
+      skip_expires_at_validation { true }
     end
   end
 end

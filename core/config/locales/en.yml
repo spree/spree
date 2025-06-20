@@ -1097,7 +1097,6 @@ en:
     gift_card: Gift Card
     gift_card_applied: The Gift Card was successfully applied to your order!
     gift_card_batch: Gift Card batch
-    gift_card_no_amount_remaining: You can't apply the Gift Card with no balance on it.
     gift_card_removed: The Gift Card was successfully removed from your order
     gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
     gift_cards: Gift Cards

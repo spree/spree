@@ -49,6 +49,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def create
     invoke_callbacks(:create, :before)
+    set_created_by
     @object.attributes = permitted_resource_params
     if @object.save
       invoke_callbacks(:create, :after)
@@ -246,6 +247,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     return if @object.nil?
 
     ensure_current_store(@object)
+  end
+
+  def set_created_by
+    return if @object.nil?
+
+    @object.created_by = try_spree_current_user if @object.respond_to?(:created_by_id)
   end
 
   def set_currency

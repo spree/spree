@@ -1,10 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
-  stub_authorization!
   render_views
 
+  let(:admin_user) { create(:admin_user) }
   let(:user) { create(:user) }
+
+  before do
+    allow(controller).to receive(:try_spree_current_user).and_return(admin_user)
+  end
 
   describe 'GET #index' do
     let!(:store_credits) { create_list(:store_credit, 3, user: user) }
@@ -55,6 +59,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
 
       expect(store_credit.amount).to eq(100)
       expect(store_credit.currency).to eq('USD')
+      expect(store_credit.created_by).to eq(admin_user)
     end
 
     context 'when the store credit is not valid' do

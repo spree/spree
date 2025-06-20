@@ -15,10 +15,7 @@ module Spree
       event :redeem do
         transition active: :redeemed
       end
-
-      event :redeem_by_order do
-        transition active: :redeemed_by_order
-      end
+      after_transition to: :redeemed, do: :after_redeem
 
       event :partial_redeem do
         transition active: :partially_redeemed
@@ -36,15 +33,15 @@ module Spree
     validates :code, presence: true, uniqueness: { scope: :store_id }
     validates :store, :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
-    validates :amount_remaining, presence: true, numericality: { greater_than_or_equal_to: 0 }
+    validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
     validates :expires_at, comparison: { greater_than: Date.current + 1.day }, allow_nil: true, unless: :skip_expires_at_validation
-    validates :user, presence: true, if: -> { user_id.present? }
 
     #
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: Spree.user_class.to_s, optional: true
+    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :batch, class_name: 'Spree::GiftCardBatch', optional: true, foreign_key: :gift_card_batch_id
 
     has_many :store_credits, class_name: 'Spree::StoreCredit', as: :originator
@@ -56,7 +53,7 @@ module Spree
     #
     scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil, Time.current..]) }
     scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
-    scope :redeemed, -> { where(state: [:redeemed, :redeemed_by_order]) }
+    scope :redeemed, -> { where(state: [:redeemed]) }
 
     #
     # Ransack
@@ -71,17 +68,24 @@ module Spree
     #
     before_validation :generate_code
     before_validation :normalize_code
-    before_validation :set_amount_remaining
     before_validation :set_currency
     before_destroy :ensure_can_be_deleted
 
     #
     # Money
     #
-    money_methods :amount, :used_amount, :amount_remaining
+    money_methods :amount, :amount_used, :amount_authorized, :amount_remaining
 
+    # Sets the amount
+    # @param amount [String]
     def amount=(amount)
       self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
+    # Calculates the remaining amount
+    # @return [Decimal]
+    def amount_remaining
+      amount - amount_used - amount_authorized
     end
 
     delegate :email, to: :user, prefix: true, allow_nil: true
@@ -90,13 +94,47 @@ module Spree
       %w[code amount expires_at]
     end
 
+    # Checks if the gift card is editable
+    # @return [Boolean]
     def editable?
-      active? || canceled?
+      active?
     end
 
+    # Checks if the gift card can be deleted
+    # @return [Boolean]
     def can_be_deleted?
-      editable?
+      !redeemed? && !partially_redeemed?
     end
+
+    # Displays the code in uppercase, eg. ABC1234
+    # @return [String]
+    def display_code
+      code.upcase
+    end
+
+    # Checks if the gift card is expired
+    # @return [Boolean]
+    def expired?
+      !redeemed? && expires_at.present? && expires_at < Time.current
+    end
+
+    # Checks if the gift card is active, i.e. not expired and not redeemed
+    # @return [Boolean]
+    def active?
+      super && !expired?
+    end
+
+    # Displays state as expired if the gift card is expired, otherwise displays the state
+    # @return [String]
+    def display_state
+      if expired?
+        :expired
+      else
+        state
+      end.to_s
+    end
+
+    private
 
     def generate_code
       return if code.present?
@@ -111,43 +149,8 @@ module Spree
       self.code = code.downcase if code.present?
     end
 
-    def display_code
-      code.upcase
-    end
-
-    def expired?
-      !redeemed? && expires_at.present? && expires_at < Time.current
-    end
-
-    def active?
-      super && !expired?
-    end
-
-    def display_state
-      if expired?
-        :expired
-      else
-        state
-      end.to_s
-    end
-
-    def used_amount
-      @used_amount ||= amount - amount_remaining
-    end
-    alias_method :amount_used, :used_amount
-
-    def redeem!
-      new_state = amount_remaining.positive? ? :partially_redeemed : :redeemed
-      update!(state: new_state)
-    end
-
-    private
-
-    def set_amount_remaining
-      return unless active?
-      return if amount_remaining_changed?
-
-      self.amount_remaining = amount
+    def after_redeem
+      update!(redeemed_at: Time.current)
     end
 
     def ensure_can_be_deleted
