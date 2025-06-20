@@ -26,7 +26,17 @@ describe Spree::Addresses::PhoneValidator do
     end
 
     context 'when no country is provided' do
-      let(:address) { create(:address, phone: '2025550123') }
+      let(:address) { build_stubbed(:address, phone: '2025550123', country: nil) }
+
+      before do
+        Spree::Config[:address_requires_phone] = false
+      end
+
+      it_behaves_like 'does not add a phone error'
+    end
+
+    context 'when no country iso is provided' do
+      let(:address) { build_stubbed(:address, phone: '2025550123') }
 
       before do
         Spree::Config[:address_requires_phone] = false

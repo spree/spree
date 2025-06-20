@@ -8,7 +8,7 @@ module Spree
   module Addresses
     class PhoneValidator < ActiveModel::Validator
       def validate(address)
-        return if address.phone.blank? || address.country_iso.blank? || !Spree::Config[:address_requires_phone]
+        return if !Spree::Config[:address_requires_phone] || address.phone.blank? || address.country.blank? || address.country_iso.blank?
 
         phone = Phonelib.parse(address.phone)
         unless phone.valid_for_country?(address.country_iso)
