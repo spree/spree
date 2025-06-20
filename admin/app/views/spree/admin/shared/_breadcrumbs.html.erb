@@ -3,7 +3,7 @@
     <%= render_breadcrumb_icon %>
     <% if settings_active? %>
       <li>
-        <%= active_link_to Spree.t(:settings), spree.edit_admin_store_path %>
+        <%= active_link_to Spree.t(:settings), current_vendor.present? ? spree.edit_admin_vendor_settings_path : spree.edit_admin_store_path %>
       </li>
       <%= icon('slash', class: 'text-muted font-size-sm') %>
     <% end %>
