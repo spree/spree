@@ -1118,4 +1118,52 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
     end
   end
+
+  describe 'checkout#validate_gift_card_data' do
+    let(:order) { create(:order) }
+
+    let(:execute) { post '/api/v2/storefront/checkout/validate_gift_card_data', params: params, headers: headers }
+
+    context 'when order is not present' do
+      let(:params) { { order_token: '' } }
+
+      it 'returns a 404 status' do
+        execute
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'when order is present' do
+      context 'and gift card code is not present' do
+        let(:params) { { order_token: order.token, gift_card_code: '' } }
+
+        it 'returns a 200 status' do
+          execute
+          expect(response).to have_http_status(:ok)
+        end
+      end
+
+      context 'and gift_card_code param present but order has no gift card' do
+        let(:params) { { order_token: order.token, gift_card_code: '123456' } }
+
+        it 'returns a 422 status' do
+          execute
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']).to eq(Spree.t('api.v2.gift_card.not_found'))
+        end
+      end
+
+      context 'and gift_card_amount param present but order gift card total is different' do
+        let(:params) { { order_token: order.token, gift_card_amount: 100 } }
+        let(:gift_card) { create(:gift_card, amount: 200) }
+        let(:order) { create(:order, gift_card: gift_card) }
+
+        it 'returns a 422 status' do
+          execute
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(json_response['error']).to eq(Spree.t('api.v2.gift_card.amount_not_valid'))
+        end
+      end
+    end
+  end
 end

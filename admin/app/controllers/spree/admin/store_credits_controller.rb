@@ -39,7 +39,6 @@ module Spree
 
       def update
         @store_credit.assign_attributes(permitted_store_credit_params)
-        @store_credit.created_by = try_spree_current_user
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_updated)

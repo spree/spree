@@ -49,6 +49,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def create
     invoke_callbacks(:create, :before)
+    set_created_by
     @object.attributes = permitted_resource_params
     if @object.save
       invoke_callbacks(:create, :after)
@@ -60,7 +61,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
         end
         format.html do
           flash[:success] = message_after_create
-          redirect_to location_after_save, status: :see_other
+          redirect_to location_after_create, status: :see_other
         end
       end
     else
@@ -226,6 +227,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     collection_url
   end
 
+  def location_after_create
+    location_after_save
+  end
+
   def location_after_save
     edit_object_url(@object)
   end
@@ -242,6 +247,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     return if @object.nil?
 
     ensure_current_store(@object)
+  end
+
+  def set_created_by
+    return if @object.nil?
+
+    @object.created_by = try_spree_current_user if @object.respond_to?(:created_by_id)
   end
 
   def set_currency

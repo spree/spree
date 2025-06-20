@@ -97,6 +97,7 @@ Spree::Core::Engine.add_routes do
       resources :store_credits
       resources :orders, only: [:index]
       resources :checkouts, only: [:index]
+      resources :gift_cards
 
       collection do
         get :bulk_modal
@@ -117,6 +118,11 @@ Spree::Core::Engine.add_routes do
       resources :coupon_codes, only: :index
     end
     get 'promotion_rules/option_values_search', defaults: { format: :json }
+
+    # gift cards
+    resources :gift_cards
+    # gift card batches
+    resources :gift_card_batches, only: [:new, :create]
 
     # returns
     resources :return_authorizations, only: [:index, :destroy] do

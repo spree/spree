@@ -1,0 +1,30 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'gift_cards' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5">
+    <h1 class="font-medium mb-4">
+      <%= Spree.t(:gift_cards) %>
+    </h1>
+    <% if @gift_cards.any? %>
+      <table class="inline-table md:table table-auto overflow-scroll w-full text-sm border-separate border-spacing-y-4 mb-24 mt-4">
+        <thead class="hidden md:table-row-group">
+          <tr class="text-left text-neutral text-xs">
+            <th class="font-normal px-4"><%= Spree.t(:code) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:status) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:amount) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:used) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:expires_at) %></th>
+          </tr>
+        </thead>
+        <tbody class="block md:table-row-group">
+          <%= render collection: @gift_cards, partial: 'spree/account/gift_cards/gift_card', cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="text-center my-16 lg:my14">
+        <p class="mb-2 font-medium uppercase"><%= Spree.t('storefront.account.no_gift_cards') %></p>
+      </div>
+    <% end %>
+  </div>
+</div>

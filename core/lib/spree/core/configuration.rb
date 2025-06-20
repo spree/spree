@@ -74,6 +74,10 @@ module Spree
       preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job
       preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
 
+      # gift cards
+      preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
+      preference :gift_card_batch_limit, :integer, default: 50_000
+
       attr_writer :searcher_class
     end
   end

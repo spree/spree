@@ -1,0 +1,6 @@
+<%= turbo_frame_tag :gift_card_settings do %>
+  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+  <%= form_for [:admin, @user, @object] do |f| %>
+    <%= render 'form', f: f %>
+  <% end %>
+<% end %>

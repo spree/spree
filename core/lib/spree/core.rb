@@ -105,7 +105,8 @@ module Spree
       coupon_codes: :default,
       webhooks: :default,
       themes: :default,
-      addresses: :default
+      addresses: :default,
+      gift_cards: :default
     )
   end
 

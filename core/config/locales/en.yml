@@ -50,6 +50,8 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/gift_card:
+        expires_at: Expires at
       spree/inventory_unit:
         state: State
       spree/invitation:
@@ -228,6 +230,10 @@ en:
             base:
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Can't delete a used gift card
         spree/image:
           attributes:
             attachment:
@@ -1085,8 +1091,12 @@ en:
     general_settings: General Settings
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
-    gift_card: Gift card
-    gift_cards: Gift cards
+    gift_card: Gift Card
+    gift_card_applied: The Gift Card was successfully applied to your order!
+    gift_card_batch: Gift Card batch
+    gift_card_removed: The Gift Card was successfully removed from your order
+    gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
+    gift_cards: Gift Cards
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
@@ -1177,7 +1187,7 @@ en:
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
-    issue_gift_card: Issue Gift Card
+    issue_gift_card: Issue a Gift Card
     issued_on: Issued On
     item: Item
     item_description: Item Description
@@ -1743,6 +1753,7 @@ en:
     remember_me: Remember me
     remove: Remove
     remove_condition: Remove condition
+    remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     remove_image: Remove Image
     rename: Rename
     report: Report
