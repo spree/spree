@@ -74,7 +74,7 @@ module Spree
                                     allow_nil: true }
 
     def address_validators
-      Spree.address_validators.each do |validator|
+      Rails.application.config.spree.validators.addresses.each do |validator|
         validates_with validator
       end
     end
