@@ -5,6 +5,7 @@ module Spree
   module Core
     class Engine < ::Rails::Engine
       Environment = Struct.new(:calculators,
+                               :validators,
                                :preferences,
                                :dependencies,
                                :payment_methods,
@@ -27,6 +28,7 @@ module Spree
                                :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
+      SpreeValidators = Struct.new(:addresses)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -35,7 +37,7 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
+        app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
 
         app.config.active_record.yaml_column_permitted_classes ||= []
         app.config.active_record.yaml_column_permitted_classes.concat([Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess])
@@ -272,6 +274,10 @@ module Spree
         Rails.application.config.spree.analytics_event_handlers = []
 
         Rails.application.config.spree.integrations = []
+
+        Rails.application.config.spree.validators.addresses = [
+          Spree::Addresses::PhoneValidator
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
