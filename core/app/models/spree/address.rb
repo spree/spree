@@ -65,6 +65,7 @@ module Spree
     end
 
     validate :state_validate, :postal_code_validate
+    validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
                                     scope: :user_id,
@@ -72,8 +73,10 @@ module Spree
                                     allow_blank: true,
                                     allow_nil: true }
 
-    Spree.address_validators.each do |validator|
-      validates_with validator.constantize
+    def address_validators
+      Spree.address_validators.each do |validator|
+        validates_with validator
+      end
     end
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true

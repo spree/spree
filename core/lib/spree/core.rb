@@ -166,7 +166,7 @@ module Spree
   end
 
   def self.address_validators
-    Rails.application.config.spree.address_validators || []
+    Rails.application.config.spree.address_validators
   end
 
   module Core
