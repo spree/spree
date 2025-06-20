@@ -25,6 +25,17 @@ describe Spree::Addresses::PhoneValidator do
       it_behaves_like 'does not add a phone error'
     end
 
+    context 'when no country is provided' do
+      let(:address) { create(:address, phone: '2025550123') }
+
+      before do
+        Spree::Config[:address_requires_phone] = false
+        address.country.iso = nil
+      end
+
+      it_behaves_like 'does not add a phone error'
+    end
+
     context 'when phone is provided' do
       context 'and country is US' do
         context 'and phone is valid' do
