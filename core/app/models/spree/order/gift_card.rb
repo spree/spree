@@ -10,6 +10,8 @@ module Spree
         money_methods :gift_card_total
       end
 
+      # Returns the total amount of the gift card applied to the order
+      # @return [Decimal]
       def gift_card_total
         return 0.to_d unless gift_card.present?
 
@@ -19,10 +21,15 @@ module Spree
         store_credits.sum(:amount)
       end
 
+      # Applies a gift card to the order
+      # @param gift_card [Spree::GiftCard] the gift card to apply
+      # @return [Spree::Order] the order with the gift card applied
       def apply_gift_card(gift_card)
         Spree::Dependencies.gift_card_apply_service.constantize.call(gift_card: gift_card, order: self)
       end
 
+      # Removes a gift card from the order
+      # @return [Spree::Order] the order with the gift card removed
       def remove_gift_card
         Spree::Dependencies.gift_card_remove_service.constantize.call(order: self)
       end

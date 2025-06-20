@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+# Applies a gift card to an order
+# under the hood it creates a store credit payment record and updates the gift card amount used
+# @param gift_card [Spree::GiftCard] the gift card to apply
+# @param order [Spree::Order] the order to apply the gift card to
+# @return [Spree::Order] the order with the gift card applied
 module Spree
   module GiftCards
     class Apply
@@ -27,7 +33,7 @@ module Spree
             originator: gift_card,
             action_originator: gift_card
           )
-          gift_card.amount_remaining -= amount
+          gift_card.amount_used += amount
           gift_card.save!
 
           order.update!(gift_card: gift_card)

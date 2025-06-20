@@ -4,17 +4,20 @@ module Spree
     include Spree::SingleStoreResource
 
     #
+    # Associations
+    #
+    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
+    has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :batch, dependent: :destroy
+
+
+    #
     # Validations
     #
     validates :codes_count, :amount, :prefix, presence: true
     validates :codes_count, numericality: { greater_than: 0, less_than_or_equal_to: Spree::Config[:gift_card_batch_limit].to_i }
     validates :store, :currency, presence: true
     validates :amount, numericality: { greater_than: 0 }
-
-    #
-    # Associations
-    belongs_to :store, class_name: 'Spree::Store'
-    has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :batch
 
     #
     # Callbacks
@@ -61,10 +64,10 @@ module Spree
         state: :active,
         gift_card_batch_id: id,
         amount: amount,
-        amount_remaining: amount,
         currency: currency,
         code: generate_code,
         store_id: store_id,
+        created_by_id: created_by_id,
         expires_at: expires_at
       }
     end

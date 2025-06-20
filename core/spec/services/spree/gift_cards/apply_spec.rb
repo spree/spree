@@ -56,7 +56,7 @@ RSpec.describe Spree::GiftCards::Apply do
   end
 
   context 'when the gift card has no amount remaining' do
-    before { gift_card.update!(amount_remaining: 0) }
+    before { gift_card.update!(amount_used: gift_card.amount) }
 
     it 'responds with an error' do
       expect { subject }.to_not change(Spree::StoreCredit, :count)

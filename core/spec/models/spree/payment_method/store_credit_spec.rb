@@ -308,6 +308,13 @@ describe Spree::PaymentMethod::StoreCredit do
 
       it { expect(store_credit_payment_method.available_for_order?(order_without_store_credit)).to be false }
     end
+
+    context 'when order has a gift card' do
+      let(:order) { build(:order, store: store, gift_card: gift_card) }
+      let(:gift_card) { create(:gift_card) }
+
+      it { expect(store_credit_payment_method.available_for_order?(order)).to be true }
+    end
   end
 
   describe '#source_required?' do

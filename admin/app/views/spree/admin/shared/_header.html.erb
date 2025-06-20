@@ -11,8 +11,8 @@
     </div>
 
     <% if settings_active? %>
-      <div class="store-dropdown pr-2">
-        <%= active_link_to_with_icon('arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'btn store-dropdown-button w-100 justify-content-start mr-1') %>
+      <div class="store-dropdown px-2">
+        <%= active_link_to_with_icon('arrow-left', Spree.t('admin.back_to_dashboard'), spree.admin_dashboard_path, class: 'btn store-dropdown-button w-100 justify-content-start mx-1 py-2') %>
       </div>
     <% else %>
       <% if defined?(current_vendor) && current_vendor.present? %>

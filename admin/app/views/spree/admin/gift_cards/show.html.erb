@@ -27,10 +27,9 @@
       <div class="card-body border-bottom">
         <div class="d-flex justify-content-between align-items-center">
           <div class="w-75">
-            <%= progress_bar_component(@object.used_amount, max: @object.amount) %>
+            <%= progress_bar_component(@object.amount_used, max: @object.amount) %>
           </div>
           <div class="w-25 text-right">
-            <%= @object.display_amount_remaining %> / <span class="text-muted"><%= @object.display_amount %></span>
           </div>
         </div>
       </div>
@@ -64,7 +63,7 @@
           <h5 class="card-title">
             <%= Spree.t(:settings) %>
           </h5>
-          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_gift_card_path(@object), icon: 'pencil', class: 'btn btn-sm btn-light' %>
+          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_gift_card_path(@object), icon: 'pencil', class: 'btn btn-sm btn-light', if: @gift_card.editable? %>
         </div>
         <div class="card-body p-0">
           <ul class="list-group list-group-flush">
