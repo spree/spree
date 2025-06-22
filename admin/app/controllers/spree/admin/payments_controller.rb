@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class PaymentsController < Spree::Admin::ResourceController
+      include Spree::Admin::OrderBreadcrumbConcern
+
       belongs_to 'spree/order', find_by: :number
 
       before_action :load_data
@@ -116,6 +118,7 @@ module Spree
       def load_data
         @payment_methods = @order.collect_backend_payment_methods
         @store_credits = @order.available_store_credits if @payment_methods.any?(&:store_credit?)
+        add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
       end
     end
   end
