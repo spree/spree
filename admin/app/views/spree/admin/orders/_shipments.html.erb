@@ -10,7 +10,7 @@
       <%= order_shipment_state(@order, class: "ml-auto") %>
     <% end %>
   </div>
-  <div class="card-body px-1 pt-0 pb-1 d-flex flex-column gap-2">
+  <div class="card-body px-2 pt-0 pb-2 d-flex flex-column gap-2">
     <% if @shipments.any? %>
       <%= render partial: "shipment", collection: @shipments %>
     <% else %>
