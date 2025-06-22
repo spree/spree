@@ -3,11 +3,10 @@
   <%= @oauth_application.name.capitalize %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>
-
 <div class="row">
   <div class="col-lg-6 offset-lg-3">
     <%= form_for [:admin, @oauth_application] do |f| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>
       <div class="card mb-4">
         <div class="card-body">
           <%= render 'form', f: f %>

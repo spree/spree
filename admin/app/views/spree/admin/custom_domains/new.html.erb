@@ -3,11 +3,10 @@
   <%= Spree.t(:new_custom_domain) %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
-
 <%= form_for @object, url: spree.admin_custom_domains_path do |f| %>
   <div class="row">
     <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
       <%= render partial: 'form', locals: { f: f } %>
       <%= render partial: 'spree/admin/shared/new_resource_links' %>
     </div>

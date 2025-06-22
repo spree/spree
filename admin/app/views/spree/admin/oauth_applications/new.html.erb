@@ -7,10 +7,9 @@
   <%= Spree.t('admin.oauth_applications.new') %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>
-
 <div class="row">
   <div class="col-lg-6 offset-lg-3">
+    <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>
     <%= turbo_frame_tag 'new_oauth_application' do %>
       <%= form_for [:admin, @oauth_application] do |f| %>
         <div class="card mb-4">
