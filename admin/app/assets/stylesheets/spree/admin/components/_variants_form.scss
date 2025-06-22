@@ -181,7 +181,7 @@
         display: flex;
         gap: 0.25rem;
 
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $table-border-color;
 
         &.nested {
           .column-checkbox,
