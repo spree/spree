@@ -19,7 +19,7 @@ describe Spree::Admin::ProfileController, type: :controller do
     end
 
     it 'updates the user' do
-      expect { subject }.to change { user.first_name }.to('John')
+      expect { subject }.to change { admin_user.first_name }.to('John')
     end
   end
 end

@@ -5,7 +5,6 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   render_views
 
   let(:store) { @default_store }
-  let(:user) { create(:admin_user) }
 
   describe '#create' do
     subject { post :create }
@@ -19,7 +18,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(response).to redirect_to(spree.edit_admin_order_path(order))
 
       expect(order.line_items).to be_empty
-      expect(order.created_by).to eq(user)
+      expect(order.created_by).to eq(admin_user)
       expect(order.store).to eq(assigns[:current_store])
     end
   end
@@ -147,7 +146,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(flash[:success]).to eq Spree.t(:order_canceled)
       order.reload
       expect(order.canceled?).to eq true
-      expect(order.canceler).to eq user
+      expect(order.canceler).to eq admin_user
     end
   end
 
@@ -169,6 +168,32 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       it "doesn't resend the email" do
         subject
         expect(flash[:error]).to eq Spree.t(:order_email_resent_error)
+      end
+    end
+  end
+
+  describe '#destroy' do
+    subject { delete :destroy, params: { id: order.number } }
+
+    context 'for a completed order' do
+      let!(:order) { create(:order_ready_to_ship, with_payment: true, store: store) }
+
+      it "won't delete a completed order" do
+        expect { subject }.not_to change(Spree::Order, :count)
+
+        expect(flash[:error]).to eq Spree.t(:authorization_failure)
+        expect(response).to redirect_to spree.admin_forbidden_path
+      end
+    end
+
+    context 'for an incomplete order' do
+      let!(:order) { create(:order, store: store) }
+
+      it 'deletes an order' do
+        expect { subject }.to change(Spree::Order, :count).by(-1)
+
+        expect(flash[:success]).to eq "Order has been successfully removed!"
+        expect(response).to redirect_to spree.admin_checkouts_path
       end
     end
   end

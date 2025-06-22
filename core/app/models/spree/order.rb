@@ -760,6 +760,11 @@ module Spree
     end
 
     def can_be_destroyed?
+      Spree::Deprecation.warn('Spree::Order#can_be_destroyed? is deprecated and will be removed in the next major version. Use Spree::Order#can_be_deleted? instead.')
+      can_be_deleted?
+    end
+
+    def can_be_deleted?
       !completed? && payments.completed.empty?
     end
 

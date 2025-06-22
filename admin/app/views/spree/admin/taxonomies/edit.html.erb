@@ -7,14 +7,12 @@
   <%= link_to_edit_translations(@taxonomy) %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxonomy } %>
-
 <div class="row">
   <div class="col-lg-6 offset-lg-3">
     <%= form_for [:admin, @taxonomy] do |f| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxonomy } %>
       <div class="card mb-4">
         <div class="card-body">
-          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxonomy } %>
           <div class="form-group">
             <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
             <%= f.text_field :name, class: 'form-control' %>

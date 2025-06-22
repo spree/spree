@@ -4,8 +4,8 @@ RSpec.describe Spree::Admin::RefundReasonsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:refund_reason) { create(:refund_reason) }
-  let(:valid_attributes) { { name: 'Test Reason', active: true } }
+  let(:refund_reason) { create(:refund_reason, mutable: true) }
+  let(:valid_attributes) { { name: 'Test Reason', active: true, mutable: true } }
   let(:invalid_attributes) { { name: '', active: nil } }
 
   describe 'GET #index' do

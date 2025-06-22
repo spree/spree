@@ -1,4 +1,9 @@
-<div class="row mt-4">
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <%= Spree.t(:new_refund) %>
+<% end %>
+
+<div class="row">
   <div class="col-lg-6 offset-lg-3">
     <%= render 'spree/admin/shared/error_messages', target: @refund %>
 

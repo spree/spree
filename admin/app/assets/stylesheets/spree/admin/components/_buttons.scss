@@ -176,6 +176,7 @@ button[disabled]        .show-when-enabled { display: none; }
 
 .btn-clipboard {
   @extend .btn-light;
+  @extend .btn-sm;
   @extend .px-1;
   @extend .ml-2;
   @extend .font-size-sm;

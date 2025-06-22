@@ -6,6 +6,19 @@
   height: 70px;
   display: flex;
   align-items: center;
+  background-color: $body-bg;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 1rem;
+
+  &.sticky-top {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    animation: slideDown 0.3s ease-out;
+    height: $header-height;
+    border-bottom: 1px solid $border-color;
+  }
 }
 
 .page-header-title {

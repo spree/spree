@@ -4,6 +4,8 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
   stub_authorization!
   render_views
 
+  let(:user) { create(:user) }
+
   describe 'GET #new' do
     it 'renders the new address form' do
       get :new

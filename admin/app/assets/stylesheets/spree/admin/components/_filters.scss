@@ -1,7 +1,13 @@
 .filter-wrap {
   padding: 0.5rem;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray-50;
   gap: 0.5rem;
+  position: sticky;
+  top: $header-height;
+  z-index: 1000;
+  background-color: $card-bg;
+  border-top-left-radius: $border-radius-lg;
+  border-top-right-radius: $border-radius-lg;
 
   .btn {
     height: 2.125rem;

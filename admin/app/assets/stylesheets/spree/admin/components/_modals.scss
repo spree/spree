@@ -14,6 +14,7 @@ body.modal-open {
 
 .modal-header {
   @extend .align-items-center;
+  border-color: $gray-50;
 
   .modal-title {
     margin-bottom: 0;
@@ -28,7 +29,7 @@ body.modal-open {
   justify-content: end;
   padding: $modal-inner-padding;
   background-color: $gray-25;
-  border-top: 1px solid $border-color;
+  border-top: 1px solid $gray-50;
 
   .btn {
     display: inline-flex ;

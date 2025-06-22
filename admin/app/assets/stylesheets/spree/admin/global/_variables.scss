@@ -1,8 +1,8 @@
 // https://github.com/twbs/bootstrap/blob/v4.6.2/scss/_variables.scss
 
-$gray-25: #FAFAFA;
+$gray-25: #F8F8F9;
 $gray-50: #F3F3F3;
-$gray-100: #EAEAEA !default;
+$gray-100: #E3E3E3 !default;
 $gray-200: #D5D5D5 !default;
 $gray-300: #B3B3B3 !default;
 $gray-400: #999999 !default;
@@ -81,7 +81,7 @@ $list-group-active-border-color: $action-border !default;
 
 $thumbnail-border-color: $border-color !default;
 $hr-border-color: $border-color !default;
-$table-border-color: $border-color !default;
+$table-border-color: $gray-50 !default;
 $card-border-color: $border-color !default;
 $input-btn-focus-width: 0.18rem !default;
 
@@ -207,11 +207,13 @@ $embed-responsive-aspect-ratios: (
 $table-cell-padding: .75rem .50rem !default;
 
 $code-color: $gray-600 !default;
+$code-bg: $gray-25 !default;
 
 $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
 
-$header-height: 52px !default;
+$header-bg: $gray-25 !default;
+$header-height: 60px !default;
 $sidebar-width: 220px !default;
 $sidebar-bg: $gray-25 !default;
 

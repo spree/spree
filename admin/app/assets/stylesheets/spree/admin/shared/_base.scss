@@ -720,3 +720,8 @@ div.uppy-Root {
   }
 }
 
+code {
+  background-color: $code-bg;
+  border-radius: $border-radius-sm;
+  padding: 0.25rem 0.5rem;
+}

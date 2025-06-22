@@ -889,9 +889,9 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#can_be_destroyed?' do
+  describe '#can_be_deleted?' do
     shared_examples 'cannot be destroyed' do
-      it { expect(order.can_be_destroyed?).to be false }
+      it { expect(order.can_be_deleted?).to be false }
     end
 
     context 'when order is completed' do
@@ -910,7 +910,7 @@ describe Spree::Order, type: :model do
       let(:order) { create(:order) }
 
       it 'can be destroyed' do
-        expect(order.can_be_destroyed?).to be true
+        expect(order.can_be_deleted?).to be true
       end
     end
   end

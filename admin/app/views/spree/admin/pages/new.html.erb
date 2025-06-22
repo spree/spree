@@ -5,7 +5,13 @@
 <% content_for :title do %>
   <%= Spree.t(:new_page) %>
 <% end %>
-<%= form_with model: @page, url: spree.admin_pages_path, data: { controller: 'slug-form seo-form' }, scope: :page do |f| %>
-  <%= render 'form', f: f, vertical: false %>
-  <%= render 'spree/admin/shared/new_resource_links', f: f %>
-<% end %>
+
+<div class="row">
+  <div class="col-lg-6 offset-lg-3">
+    <%= form_with model: @page, url: spree.admin_pages_path, data: { controller: 'slug-form seo-form' }, scope: :page do |f| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @page } %>
+      <%= render 'form', f: f, vertical: false %>
+      <%= render 'spree/admin/shared/new_resource_links', f: f %>
+    <% end %>
+  </div>
+</div>

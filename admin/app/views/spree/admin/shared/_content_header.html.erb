@@ -1,4 +1,4 @@
-<% record = @customer_return || @order || @product || @vendor || @user || @taxon || @object %>
+<% record = @object || @customer_return || @order || @product || @vendor || @user || @taxon || @store_credit %>
 <% record = nil if @user&.is_a?(Spree.admin_user_class) %>
 
 <% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
@@ -7,7 +7,7 @@
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>
-  <header id="page-header" class="container">
+  <header id="page-header" class="container-fluid" data-controller="sticky">
     <h3 class="page-header-title mb-0 d-flex align-items-center gap-3">
       <%= yield :page_title %>
     </h3>
@@ -45,7 +45,7 @@
                 <div data-controller="clipboard">
                   <%= hidden_field_tag :record_number, record.number, data: { clipboard_target: 'source' } %>
                   <button data-action="clipboard#copy" class="text-left dropdown-item">
-                    <%= icon 'files' %>
+                    <%= icon 'copy' %>
                     <%= 'Copy number' %>
                   </button>
                 </div>
@@ -53,10 +53,17 @@
               <div data-controller="clipboard">
                 <%= hidden_field_tag :record_id, record.id, data: { clipboard_target: 'source' } %>
                 <button data-action="clipboard#copy" class="text-left dropdown-item">
-                  <%= icon 'files.svg' %>
+                  <%= icon 'copy' %>
                   <%= Spree.t(:copy_id) %>
                 </button>
               </div>
+
+              <% if %w[show edit].include?(action_name) && record.respond_to?(:can_be_deleted?) && record.can_be_deleted? && can?(:destroy, record) %>
+                <% destroy_path = @parent ? [:admin, @parent, record] : [:admin, record] %>
+
+                <div class="dropdown-divider"></div>
+                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), destroy_path, class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+              <% end %>
             <% end %>
           </div>
         </div>

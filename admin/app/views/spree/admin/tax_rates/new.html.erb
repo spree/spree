@@ -3,12 +3,12 @@
   <%= Spree.t(:new_tax_rate) %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @tax_rate } %>
-
 <%= form_for [:admin, @tax_rate] do |f| %>
-  <fieldset>
-    <%= render 'form', f: f %>
-
-    <%= render 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @tax_rate } %>
+      <%= render 'form', f: f %>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    </div>
+  </div>
 <% end %>

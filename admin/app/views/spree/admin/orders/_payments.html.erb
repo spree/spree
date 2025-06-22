@@ -10,7 +10,7 @@
         <%= order_payment_state(@order, class: "ml-auto") %>
       <% end %>
     </div>
-    <div class="card-body d-flex flex-column gap-2 px-1 pt-0 pb-1">
+    <div class="card-body d-flex flex-column gap-2 px-2 pt-0 pb-2">
       <%= render collection: @payments, partial: 'spree/admin/payments/payment', as: :payment %>
 
       <% if @order.payment_total < @order.total && can?(:create, Spree::Payment.new(order: @order)) %>
