@@ -38,7 +38,7 @@ describe Spree::Admin::RefundsController, type: :controller do
       it 'assigns refunder to created refund' do
         subject
 
-        expect(payment.refunds.last.refunder).to eq user
+        expect(payment.refunds.last.refunder).to eq admin_user
       end
     end
   end

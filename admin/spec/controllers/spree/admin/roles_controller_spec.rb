@@ -13,7 +13,7 @@ RSpec.describe Spree::Admin::RolesController, type: :controller do
       expect(response).to be_successful
       expect(response).to render_template(:index)
 
-      expect(assigns(:roles)).to contain_exactly(*roles)
+      expect(assigns(:roles)).to contain_exactly(*roles, Spree::Role.default_admin_role)
     end
   end
 

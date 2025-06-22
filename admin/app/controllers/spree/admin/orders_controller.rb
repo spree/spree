@@ -6,18 +6,20 @@ module Spree
       include Spree::Admin::OrderBreadcrumbConcern
 
       before_action :initialize_order_events
-      before_action :load_order, only: %i[edit cancel resend]
+      before_action :load_order, only: %i[edit cancel resend destroy]
       before_action :load_order_items, only: :edit
       before_action :load_user, only: [:index]
 
       helper_method :model_class
 
+      # POST /admin/orders
       def create
         @order = Spree::Order.create(created_by: try_spree_current_user, store: current_store)
 
         redirect_to spree.edit_admin_order_path(@order)
       end
 
+      # GET /admin/orders/:id/edit
       def edit
         unless @order.completed?
           add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
@@ -26,6 +28,7 @@ module Spree
         add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
       end
 
+      # GET /admin/orders
       def index
         params[:q] ||= {}
         params[:q][:s] ||= 'completed_at desc'
@@ -33,12 +36,14 @@ module Spree
         load_orders
       end
 
+      # PUT /admin/orders/:id/cancel
       def cancel
         @order.canceled_by(try_spree_current_user)
         flash[:success] = Spree.t(:order_canceled)
         redirect_back fallback_location: spree.edit_admin_order_url(@order)
       end
 
+      # POST /admin/orders/:id/resend
       def resend
         @order.deliver_order_confirmation_email
         if @order.errors.any?
@@ -48,6 +53,18 @@ module Spree
         end
 
         redirect_back fallback_location: spree.edit_admin_order_url(@order)
+      end
+
+      # DELETE /admin/orders/:id
+      def destroy
+        @order.destroy
+        flash[:success] = flash_message_for(@order, :successfully_removed)
+
+        if @order.completed?
+          redirect_to spree.admin_orders_path
+        else
+          redirect_to spree.admin_checkouts_path
+        end
       end
 
       private

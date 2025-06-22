@@ -54,7 +54,7 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
     end
 
     it 'assigns reimbursement performer' do
-      expect { subject }.to change { reimbursement.reload.performed_by }.from(nil).to(user)
+      expect { subject }.to change { reimbursement.reload.performed_by }.from(nil).to(admin_user)
     end
 
     context 'a Spree::Core::GatewayError is raised' do

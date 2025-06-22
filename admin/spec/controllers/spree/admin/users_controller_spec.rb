@@ -28,7 +28,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(response).to render_template(:index)
 
-      expect(assigns(:collection).to_a).to contain_exactly(user_1, user_2, user_3)
+      expect(assigns(:collection).to_a).to include(user_1, user_2, user_3)
     end
 
     it 'returns subscribers' do

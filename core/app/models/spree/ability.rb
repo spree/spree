@@ -61,6 +61,8 @@ module Spree
       can :manage, :all
       cannot :cancel, Spree::Order
       can :cancel, Spree::Order, &:allow_cancel?
+      cannot :destroy, Spree::Order
+      can :destroy, Spree::Order, &:can_be_deleted?
       cannot [:edit, :update], Spree::RefundReason, mutable: false
       cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
