@@ -58,11 +58,9 @@
                 </button>
               </div>
 
-              <% if %w[show edit].include?(action_name) && record.respond_to?(:can_be_deleted?) && record.can_be_deleted? && can?(:destroy, record) %>
-                <% destroy_path = @parent ? [:admin, @parent, record] : [:admin, record] %>
-
+              <% if defined?(object_url) && %w[show edit].include?(action_name) && record.respond_to?(:can_be_deleted?) && record.can_be_deleted? && can?(:destroy, record) %>
                 <div class="dropdown-divider"></div>
-                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), destroy_path, class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), object_url, class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
               <% end %>
             <% end %>
           </div>
