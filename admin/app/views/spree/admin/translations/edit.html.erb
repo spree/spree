@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button @back_path %>
-  <span class="mr-3"><%= Spree.t(:translations_for, resource_name: @resource_name) %></span>
+  <span class="mr-3"><%= Spree.t(:translations_for, resource_name: @resource.try(:name)) %></span>
 <% end %>
 <% if @locales.any?%>
   <% if @locales.many? %>

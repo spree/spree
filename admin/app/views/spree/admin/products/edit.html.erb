@@ -1,7 +1,7 @@
 <% content_for :page_actions_dropdown do %>
   <%= link_to_edit_translations(@product) %>
   <%= link_to_with_icon(
-    "file",
+    "files",
     Spree.t(:digital_assets),
     spree.admin_product_digital_assets_path(@product),
     class: "dropdown-item",
@@ -15,7 +15,7 @@
 
   <% if can?(:clone, @product) %>
     <%= link_to_with_icon(
-      "copy",
+      "copy-check",
       Spree.t(:clone),
       spree.clone_admin_product_path(@product),
       class: "dropdown-item",
