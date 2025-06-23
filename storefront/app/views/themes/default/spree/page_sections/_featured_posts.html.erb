@@ -44,10 +44,10 @@
           cached: spree_base_cache_scope,
           as: :post %>
         </div>
-        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block top-[100px]", aria: { hidden: true }, style: "transform: translate(-50%, -50%);" do %>
+        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block top-[100px]", aria: { label: "Previous posts" }, style: "transform: translate(-50%, -50%);" do %>
           <%= render "spree/shared/icons/chevron" %>
         <% end %>
-        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block top-[100px]", aria: { hidden: true }, style: "transform: translate(50%, -50%);" do %>
+        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block top-[100px]", aria: { label: "Next posts" }, style: "transform: translate(50%, -50%);" do %>
           <%= render "spree/shared/icons/chevron_right" %>
         <% end %>
       </div>
