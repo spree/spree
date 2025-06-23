@@ -863,6 +863,7 @@ en:
     credits: Credits
     currencies: Currencies
     currency: Currency
+    currency_and_country_help: This determines which vendors you can connect with and what customers see on your store.
     currency_settings: Currency Settings
     current: Current
     current_password: Current password
@@ -892,6 +893,7 @@ en:
     default_country: Default Country
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_currency: Default currency
+    default_locale: Default locale
     default_post_categories:
       articles: Articles
       news: News
@@ -922,6 +924,7 @@ en:
     digital:
       digital_delivery: Digital Delivery
     digital_assets: Digital assets
+    digital_assets_help: Digital assets are files that can be downloaded by customers after purchase.
     digital_link_unauthorized: You are not authorized to access this asset
     dimension_units:
       centimeter: Centimeter (cm)
@@ -1903,6 +1906,7 @@ en:
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
     shipping_total: Shipping total
     shipping_zone: Shipping Zone
+    shipping_zone_help: Zone will limit to which Countries or States products are shipped.
     shop_all: Shop All
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart
@@ -1942,6 +1946,7 @@ en:
     ssl:
       change_protocol: Please switch to using HTTP (rather than HTTPS) and retry this request.
     standards_and_formats: Standards and formats
+    standards_and_formats_help: Set the timezone, default unit system and weight unit for your store.
     start: Start
     start_typing_to_search_for_products: Start typing to search for products
     start_typing_to_search_for_variants: Start typing to search for variants
@@ -2056,6 +2061,7 @@ en:
       seo_robots: Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>
       social_help: If you want to link to your social accounts in the footer part of your website please fill below fields
     store_name: Store name
+    store_name_help: This is the name of your store. It will be displayed in the header and in the footer.
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     store_set_default_button: Set as default
@@ -2178,6 +2184,7 @@ en:
     under_price: Under %{price}
     unit: Unit
     unit_system: Unit system
+    unit_system_help: This will be used as the default unit system for your store. You can override this on a per-product basis.
     unit_systems:
       imperial_system: Imperial system
       metric: metric
@@ -2239,6 +2246,7 @@ en:
     webhooks: Webhooks
     weight: Weight
     weight_unit: Weight unit
+    weight_unit_help: This will be used as the default weight unit for your store. You can override this on a per-product basis.
     weight_units:
       gram: Gram (g)
       kilogram: Kilogram (kg)
