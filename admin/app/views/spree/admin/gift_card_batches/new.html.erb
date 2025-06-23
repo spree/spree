@@ -3,12 +3,13 @@
   <%= Spree.t('admin.gift_card_batches.new_gift_card_batch') %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
-
 <%= form_for [:admin, @object] do |f| %>
-  <fieldset>
-    <%= render 'form', f: f %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
 
-    <%= render 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
+      <%= render 'form', f: f %>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    </div>
+  </div>
 <% end %>
