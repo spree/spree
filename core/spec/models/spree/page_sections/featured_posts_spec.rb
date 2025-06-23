@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::PageSections::FeaturedTaxon do
+RSpec.describe Spree::PageSections::FeaturedPosts do
   describe '#posts' do
     subject(:result) { section.posts }
 
