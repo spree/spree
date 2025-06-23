@@ -36,7 +36,7 @@
           lg:flex-col-reverse
         '
         data-controller='carousel'
-        data-carousel-options-value='{ "slidesPerView": 2, "centeredSlides": false, "spaceBetween": 16, "grabCursor": true, "breakpoints": { "768": { "slidesPerView": 4, "spaceBetween": 24 } }, "navigation": { "nextEl": ".swiper-custom-button-next-<%= section.id %>", "prevEl": ".swiper-custom-button-prev-<%= section.id %>" } }'
+        data-carousel-options-value='{ "slidesPerView": 1, "centeredSlides": false, "spaceBetween": 16, "grabCursor": true, "breakpoints": { "768": { "slidesPerView": 3, "spaceBetween": 24 } }, "navigation": { "nextEl": ".swiper-custom-button-next-<%= section.id %>", "prevEl": ".swiper-custom-button-prev-<%= section.id %>" } }'
       >
         <div class='swiper-wrapper px-4 lg:px-0 h-auto'>
           <%= render partial: "spree/posts/post",
