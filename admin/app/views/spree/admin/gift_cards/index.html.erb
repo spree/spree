@@ -10,7 +10,7 @@
     <% end %>
 
     <div class="dropdown" id="page_actions_dropdown">
-      <%= link_to_with_icon 'plus', 'Add a new gift card', '#', class: 'text-nowrap btn btn-primary align-self-center', data: { toggle: 'dropdown' }, id: 'more-actions-link' %>
+      <%= link_to_with_icon 'plus', Spree.t(:new_gift_card), '#', class: 'text-nowrap btn btn-primary align-self-center', data: { toggle: 'dropdown' }, id: 'more-actions-link' %>
       <div class="dropdown-menu dropdown-menu-right">
         <%= link_to spree.new_admin_gift_card_path,
               class: 'text-left dropdown-item'  do %>

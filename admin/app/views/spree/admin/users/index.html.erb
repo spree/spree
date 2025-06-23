@@ -10,7 +10,7 @@
   
   <%= render 'extra_actions' %>
 
-  <%= link_to_with_icon 'plus', Spree.t(:create_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
 <% end %>
 
 <div class="card-lg">

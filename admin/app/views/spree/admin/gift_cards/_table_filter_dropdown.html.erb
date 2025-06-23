@@ -13,7 +13,7 @@
     
     <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :expired}}),
       class: "dropdown-item #{'active' if params[:q] && params[:q][:status_eq] == 'expired'}" do %>
-        <%= Spree.t('admin.gift_cards.expired') %>
+        <%= Spree.t(:expired) %>
     <% end %>
 
     <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :redeemed}}),

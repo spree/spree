@@ -1,22 +1,18 @@
 require 'spec_helper'
 
 describe Spree::Admin::GiftCardsController, type: :controller do
+  stub_authorization!
   render_views
 
   let(:store) { @default_store }
-  let(:admin_user) { create(:admin_user) }
   let(:user) { create(:user) }
   let(:gift_card) { create(:gift_card, user: user, created_by: admin_user) }
-
-  before do
-    allow(controller).to receive(:current_store).and_return(store)
-    allow(controller).to receive(:try_spree_current_user).and_return(admin_user)
-  end
 
   describe '#index' do
     subject { get :index }
 
     it 'renders the index template' do
+      create_list(:gift_card, 3)
       subject
       expect(response).to render_template(:index)
       expect(response).to have_http_status(:ok)
@@ -65,6 +61,22 @@ describe Spree::Admin::GiftCardsController, type: :controller do
 
           expect(assigns(:collection)).to include(active_gift_card, redeemed_gift_card)
           expect(assigns(:collection)).not_to include(expired_gift_card)
+        end
+      end
+    end
+
+    context 'with CSV format' do
+      it 'renders the CSV template' do
+        gift_cards = create_list(:gift_card, 3)
+        get :index, params: { format: :csv }
+        expect(response).to render_template(:index)
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Code,Amount,Used,Currency,Status,Expires at,Customer")
+        gift_cards.each do |gift_card|
+          expect(response.body).to include(gift_card.display_code)
+          expect(response.body).to include(gift_card.display_amount.to_html)
+          expect(response.body).to include(gift_card.display_amount_used.to_html)
+          expect(response.body).to include(gift_card.currency)
         end
       end
     end

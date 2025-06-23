@@ -3,6 +3,7 @@ module Spree
     class GiftCardsController < ResourceController
       before_action :load_user
       before_action :add_breadcrumbs
+      before_action :load_orders, only: :show
 
       helper_method :gift_cards_filter_dropdown_value
 
@@ -65,7 +66,7 @@ module Spree
         when 'active'
           Spree.t('admin.gift_cards.active')
         when 'expired'
-          Spree.t('admin.gift_cards.expired')
+          Spree.t(:expired)
         when 'redeemed'
           Spree.t('admin.gift_cards.redeemed')
         else
@@ -83,6 +84,10 @@ module Spree
           add_breadcrumb Spree.t(:promotions), :admin_promotions_path
           add_breadcrumb Spree.t(:gift_cards), :admin_gift_cards_path
         end
+      end
+
+      def load_orders
+        @orders = @object.orders.includes(:user).order(created_at: :desc)
       end
     end
   end

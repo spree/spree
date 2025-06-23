@@ -86,10 +86,8 @@ en:
         all: All
         all_statuses: All statuses
         code_help_text: If you leave it blank, we will generate code for you
-        expired: Expired
-        issued_to: Issued to
-        new_gift_card: New gift card
         redeemed: Redeemed
+        usage: Usage
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
