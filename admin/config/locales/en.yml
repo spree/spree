@@ -184,6 +184,7 @@ en:
           choose_stores: Choose which stores this product should be available in
         variants:
           option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      recommended_size: Recommended size
       report_created: Your report is being generated. You will receive an email with a download link when it is ready!
       reset_digital_link_download_limits: Reset download limits
       response_code: Response Code

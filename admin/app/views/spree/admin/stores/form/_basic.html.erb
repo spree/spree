@@ -14,7 +14,7 @@
       </div>
       <div class="card-body">
         <p class="text-muted">
-          This is the name of your store. It will be displayed in the header and in the footer.
+          <%= Spree.t(:store_name_help) %>
         </p>
         <div class="form-group">
           <%= f.label :name, Spree.t(:name) %>
@@ -37,12 +37,12 @@
       </div>
       <div class="card-body">
         <div class="form-group">
-          <%= f.label :contact_phone %>
+          <%= f.label :contact_phone, Spree.t(:contact_phone) %>
           <%= f.text_field :contact_phone, class: 'form-control' %>
         </div>
 
         <div class="form-group">
-          <%= f.label :address %>
+          <%= f.label :address, Spree.t(:address) %>
           <%= f.text_area :address, class: 'form-control', data: { controller: 'textarea-autogrow' } %>
         </div>
       </div>
@@ -54,7 +54,7 @@
       </div>
       <div class="card-body">
         <p class="text-muted">
-          Set the timezone, default unit system and weight unit for your store.
+          <%= Spree.t(:standards_and_formats_help) %>
         </p>
         <div class="form-group mb-3">
           <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
@@ -65,14 +65,14 @@
             <%= label_tag :preferred_unit_system, raw(Spree.t(:unit_system) + required_span_tag) %>
             <%= select_tag 'store[preferred_unit_system]', options_for_select(unit_systems, @store.preferred_unit_system), {class: 'custom-select', data: {unit_system_target: "body", action: "change->unit-system#unitSystemHandler"}} %>
             <p class="text-muted form-text mt-2 mb-0">
-              This will be used as the default unit system for your store. You can override this on a per-product basis.
+              <%= Spree.t(:unit_system_help) %>
             </p>
           </div>
           <div class="form-group">
             <%= label_tag :preferred_weight_unit, raw(Spree.t(:weight_unit) + required_span_tag) %>
             <%= select_tag 'store[preferred_weight_unit]', options_for_select(weight_units(@store), @store.preferred_weight_unit), {class: 'custom-select', data: {unit_system_target: "weightUnit"}} %>
             <p class="text-muted form-text mt-2 mb-0">
-              This will be used as the default weight unit for your store. You can override this on a per-product basis.
+              <%= Spree.t(:weight_unit_help) %>
             </p>
           </div>
         </div>
@@ -87,10 +87,10 @@
       </div>
       <div class="card-body">
         <p class="text-muted">
-          This determines which vendors you can connect with and what customers see on your store.
+          <%= Spree.t(:currency_and_country_help) %>
         </p>
         <div class="form-group">
-          <%= f.label :default_currency %>
+          <%= f.label :default_currency, Spree.t(:default_currency) %>
           <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
           <%= f.error_message_on :default_currency %>
         </div>
@@ -112,14 +112,14 @@
           <%= f.label :checkout_zone_id, Spree.t(:shipping_zone) %>
           <%= f.select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { }, { data: { controller: 'autocomplete-select' } } %>
           <small class="form-text text-muted mt-2">
-            Zone will limit to which Countries or States products are shipped.
+            <%= Spree.t(:shipping_zone_help) %>
             <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path %>
           </small>
           <%= f.error_message_on :checkout_zone_id %>
         </div>
 
         <div class="form-group">
-          <%= f.label :default_locale %>
+          <%= f.label :default_locale, Spree.t(:default_locale) %>
           <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { data: { controller: 'autocomplete-select' } } %>
           <%= f.error_message_on :default_locale %>
         </div>
@@ -139,8 +139,7 @@
       </div>
       <div class="card-body">
         <p class="text-muted">
-          Digital assets are files that can be downloaded by customers after
-          purchase.
+          <%= Spree.t(:digital_assets_help) %>
         </p>
         <div class="custom-control custom-checkbox mb-3">
           <%= f.check_box :preferred_limit_digital_download_days,
