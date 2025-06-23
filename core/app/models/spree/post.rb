@@ -54,6 +54,7 @@ module Spree
     # Scopes
     #
     scope :published, -> { where(published_at: [..Time.current]) }
+    scope :by_newest, -> { order(created_at: :desc) }
 
     delegate :name, to: :author, prefix: true, allow_nil: true
     delegate :title, to: :post_category, prefix: true, allow_nil: true
