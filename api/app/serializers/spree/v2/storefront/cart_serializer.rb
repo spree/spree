@@ -58,7 +58,7 @@ module Spree
                    id_method_name: :ship_address_id,
                    serializer: :address,
                    record_type: :address
-        belongs_to :gift_card
+        belongs_to :gift_card, serializer: :gift_card
       end
     end
   end

@@ -256,7 +256,7 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
 
-    xcontext 'removes expired gift card' do
+    context 'removes expired gift card' do
       let!(:gift_card) { create :gift_card, code: '123', amount: 10, state: 'active' }
 
       before do
@@ -1166,7 +1166,7 @@ describe Spree::CheckoutController, type: :controller do
       expect(order.promotions).not_to include(promotion)
     end
 
-    xcontext 'for a gift card' do
+    context 'for a gift card' do
       let(:gift_card) { create :gift_card, store: store }
       let(:coupon_code) { gift_card.code.upcase }
 

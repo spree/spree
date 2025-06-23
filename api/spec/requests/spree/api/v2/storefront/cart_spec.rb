@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
   let!(:store) { create(:store) }
+  let!(:store_credit_payment_method) { create(:store_credit_payment_method, stores: [store]) }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -635,19 +636,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'with gift card' do
-      let(:gift_card) { create(:gift_card, amount: 10, store: store) }
-      let(:coupon_code) { gift_card.code }
+      let(:gift_card) { create(:gift_card, amount: 10, store: store, amount_used: 10) }
+      let(:order) { create(:order_with_line_items, store: store, user: nil, currency: store.default_currency, gift_card: gift_card) }
 
       before do
-        order.update_column(:total, 30)
-        patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers_bearer
-        get '/api/v2/storefront/cart', headers: headers_bearer, params: { include: 'gift_card' }
+        get '/api/v2/storefront/cart', headers: headers_order_token, params: { include: 'gift_card' }
       end
 
       it 'should return an order with gift card' do
-        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.code)))
+        expect(response.status).to eq(200)
+        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.display_code)))
         expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:display_amount).with_value('$10.00')))
         expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:display_amount_remaining).with_value('$0.00')))
+        expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:display_amount_used).with_value('$10.00')))
       end
     end
   end
@@ -710,7 +711,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         it 'applies the gift card' do
           apply_gift_card
-          expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.code)))
+          expect(response.status).to eq(200)
+          expect(json_response['included']).to include(have_type('gift_card').and(have_attribute(:code).with_value(gift_card.display_code)))
         end
       end
     end

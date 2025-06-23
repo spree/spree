@@ -3,13 +3,13 @@ module Spree
     module V2
       module Platform
         class GiftCardSerializer < BaseSerializer
+          include ResourceSerializerConcern
+
           set_type :gift_card
 
-          attributes :state, :code, :expires_at,
-                     :amount, :amount_remaining,
-                     :display_amount, :display_amount_remaining
-
           belongs_to :user
+
+          has_many :orders
         end
       end
     end
