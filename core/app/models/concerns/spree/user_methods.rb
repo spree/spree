@@ -31,6 +31,7 @@ module Spree
       has_many :wishlists, class_name: 'Spree::Wishlist', foreign_key: :user_id, dependent: :destroy
       has_many :wished_items, through: :wishlists, source: :wished_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
+      has_many :gift_cards, class_name: 'Spree::GiftCard', foreign_key: :user_id, dependent: :destroy
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -103,7 +104,7 @@ module Spree
     def total_available_store_credit(currency = nil, store = nil)
       store ||= Store.default
       currency ||= store.default_currency
-      store_credits.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
+      store_credits.without_gift_card.for_store(store).where(currency: currency).reload.to_a.sum(&:amount_remaining)
     end
 
     # Returns the available store credits for the current store per currency

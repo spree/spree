@@ -11,7 +11,7 @@
           <%= check_box_tag :store_credit, '1', @order.using_store_credit?,
             class: 'input-checkbox !border-neutral-200 rounded-md',
             data: { action: 'auto-submit#submit' } %>
-          <%= Spree.t("store_credit.apply") %>
+          <%= Spree.t(:apply_store_credit) %>
         <% end %>
 
         <div><%= @order.display_total_available_store_credit %></div>

@@ -205,6 +205,9 @@ Spree::Core::Engine.add_routes do
           resources :events, only: :index
           resources :subscribers
         end
+
+        # Gift Cards API
+        resources :gift_cards
       end
 
       namespace :data_feeds do

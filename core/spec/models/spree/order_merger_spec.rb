@@ -155,5 +155,24 @@ module Spree
         expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context 'merging an order with a gift card' do
+      let(:order_1) { create(:order, total: 20) }
+      let(:order_2) { create(:order, gift_card: gift_card, total: 20) }
+      let(:gift_card) { create(:gift_card, amount: 20, amount_used: 20) }
+      let(:store_credit_payment_method) { create(:store_credit_payment_method) }
+      let(:store_credit) { create(:store_credit, originator: gift_card, amount: 20) }
+      let!(:payment) { create(:payment, order: order_2, payment_method: store_credit_payment_method, amount: 20, source: store_credit) }
+
+      it 'merges the gift card' do
+        subject.merge!(order_2)
+
+        order_1.reload.tap do |merged|
+          expect(merged.gift_card).to eq(gift_card)
+          expect(merged.payments.store_credits.count).to eq(1)
+          expect(merged.total_applied_store_credit).to eq(20)
+        end
+      end
+    end
   end
 end

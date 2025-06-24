@@ -8,8 +8,8 @@
 <% end %>
 
 <% content_for(:page_actions_dropdown) do %>
-  <% if spree.respond_to?(:new_admin_user_gift_card_path) && can?(:create, Spree::GiftCard) %>
-    <%= link_to_with_icon 'plus', Spree.t(:issue_gift_card), spree.new_admin_user_gift_card_path(@user), class: 'text-left dropdown-item' %>
+  <% if can?(:create, Spree::GiftCard) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_gift_card), spree.new_admin_user_gift_card_path(@user), class: 'text-left dropdown-item' %>
   <% end %>
 
   <% if can?(:create, Spree::StoreCredit) %>

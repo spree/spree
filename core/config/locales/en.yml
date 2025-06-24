@@ -50,6 +50,9 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/gift_card:
+        amount_used: Amount used
+        expires_at: Expires at
       spree/inventory_unit:
         state: State
       spree/invitation:
@@ -228,6 +231,10 @@ en:
             base:
               card_expired: Card has expired
               expiry_invalid: Card expiration is invalid
+        spree/gift_card:
+          attributes:
+            base:
+              cannot_destroy_used_gift_card: Can't delete a used gift card
         spree/image:
           attributes:
             attachment:
@@ -582,6 +589,7 @@ en:
     add_address: Add address
     add_country: Add Country
     add_coupon_code: Add Coupon Code
+    add_gift_card: Add Gift Card
     add_new_address: Add new address
     add_new_credit_card: Add a new card
     add_new_header: Add New Header
@@ -669,6 +677,7 @@ en:
     api_keys: API keys
     apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
+    apply_store_credit: Apply Store Credit
     approve: approve
     approved_at: Approved at
     approver: Approver
@@ -846,10 +855,8 @@ en:
     coupon_codes: Coupon codes
     create: Create
     create_a_new_account: Create a new account
-    create_customer: Create customer
     create_new: Create new
     create_new_order: Create new order
-    create_new_team: Create new team
     create_reimbursement: Create reimbursement
     created_at: Created at
     created_by: Created by
@@ -867,7 +874,6 @@ en:
     currency_settings: Currency Settings
     current: Current
     current_password: Current password
-    current_promotion_usage: 'current usage: %{count}'
     custom_code: Custom code
     custom_font_code: Custom font code
     customer: Customer
@@ -951,7 +957,7 @@ en:
     download: Download
     draft: Draft
     draft_mode: Draft Mode
-    draft_orders: Draft orders
+    draft_orders: Draft Orders
     duplicate: Duplicate
     duplicating: Duplicating
     edit: Edit
@@ -1088,8 +1094,12 @@ en:
     general_settings: General Settings
     generate_code: Generate coupon code
     get_back_to_the: Get back to the
-    gift_card: Gift card
-    gift_cards: Gift cards
+    gift_card: Gift Card
+    gift_card_applied: The Gift Card was successfully applied to your order!
+    gift_card_batch: Gift Card Batch
+    gift_card_removed: The Gift Card was successfully removed from your order
+    gift_card_using_store_credit_error: You can't apply the Gift Card after you applied the store credit.
+    gift_cards: Gift Cards
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
@@ -1180,7 +1190,6 @@ en:
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
-    issue_gift_card: Issue Gift Card
     issued_on: Issued On
     item: Item
     item_description: Item Description
@@ -1285,6 +1294,7 @@ en:
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
     new_domain: New domain
+    new_gift_card: New Gift Card
     new_image: New Image
     new_line_item: Add line item
     new_market: New market
@@ -1746,6 +1756,7 @@ en:
     remember_me: Remember me
     remove: Remove
     remove_condition: Remove condition
+    remove_gift_card_on_completed_order_error: You can't remove the gift card after the order was placed
     remove_image: Remove Image
     rename: Rename
     report: Report
@@ -2014,7 +2025,6 @@ en:
       additional_payment_needed: Select another payment method for the remaining <strong>%{amount}</strong>.
       allocated: Added
       applicable_amount: "<strong>%{amount}</strong> in store credit will be applied to this order."
-      apply: Apply
       authorized: Authorized
       available_amount: You have <strong>%{amount}</strong> in Store Credit available!
       captured: Used

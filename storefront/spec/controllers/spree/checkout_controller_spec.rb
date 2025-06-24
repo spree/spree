@@ -256,7 +256,7 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
 
-    xcontext 'removes expired gift card' do
+    context 'removes expired gift card' do
       let!(:gift_card) { create :gift_card, code: '123', amount: 10, state: 'active' }
 
       before do
@@ -1097,7 +1097,7 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
 
-    xdescribe 'apply gift card' do
+    describe 'apply gift card' do
       let(:user) { create(:user) }
       let(:gift_card) { create :gift_card, store: store, user: user }
       let(:coupon_code) { gift_card.code.upcase }
@@ -1116,52 +1116,7 @@ describe Spree::CheckoutController, type: :controller do
         end
       end
 
-      xcontext 'for a gift card with minimal order amount' do
-        let(:user) { create(:user) }
-        let(:gift_card) { create(:gift_card, store: store, minimum_order_amount: minimal_order_amount, user: user) }
-
-        context 'when the condition is met' do
-          let(:minimal_order_amount) { order.total }
-
-          it 'applies the gift card' do
-            expect(controller).to receive(:track_event).with('coupon_entered', hash_including(order: order, coupon_code: gift_card.code.upcase))
-            expect(controller).to receive(:track_event).with('coupon_applied', hash_including(order: order, coupon_code: gift_card.code.upcase))
-
-            subject
-
-            expect(assigns[:result].status_code).to eq(:gift_card_applied)
-            expect(assigns[:result].error).to be(nil)
-
-            expect(order.reload.gift_card).to eq(gift_card)
-            expect(order.gift_card_total).to eq(gift_card.amount)
-            expect(order.total_applied_store_credit).to eq(gift_card.amount)
-          end
-        end
-
-        context 'when the condition is not met' do
-          let(:minimal_order_amount) { order.total + 1 }
-
-          it 'skips applying the gift card' do
-            subject
-
-            expect(assigns[:result].status_code).to eq(:gift_card_minimum_order_value_error)
-            expect(assigns[:result].error).to eq("You can't apply the gift card. The order total must be at least #{gift_card.display_minimum_order_amount}, excluding shipping cost.")
-
-            expect(order.reload.gift_card).to be(nil)
-            expect(order.gift_card_total).to eq(0)
-            expect(order.total_applied_store_credit).to eq(0)
-          end
-
-          it 'tracks the denied gift card' do
-            expect(controller).to receive(:track_event).with('coupon_entered', hash_including(order: order, coupon_code: gift_card.code.upcase))
-            expect(controller).to receive(:track_event).with('coupon_denied', hash_including(order: order, coupon_code: gift_card.code.upcase))
-
-            subject
-          end
-        end
-      end
-
-      xcontext 'applying a gift card already redeemed by order' do
+      context 'applying a gift card already redeemed by order' do
         let!(:old_order) { create(:order_with_totals, store: store, user: user) }
         let(:gift_card) { create :gift_card, store: store, amount: 50 }
         let(:coupon_code) { gift_card.code.upcase }
@@ -1211,7 +1166,7 @@ describe Spree::CheckoutController, type: :controller do
       expect(order.promotions).not_to include(promotion)
     end
 
-    xcontext 'for a gift card' do
+    context 'for a gift card' do
       let(:gift_card) { create :gift_card, store: store }
       let(:coupon_code) { gift_card.code.upcase }
 

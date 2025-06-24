@@ -375,10 +375,9 @@ module Spree
     end
 
     def remove_expired_gift_card
-      return unless defined?(Spree::GiftCards::Remove)
       return unless @order.gift_card.present? && @order.gift_card.expired?
 
-      Spree::GiftCards::Remove.call(order: @order)
+      Spree::Dependencies.gift_card_remove_service.constantize.call(order: @order)
     end
   end
 end
