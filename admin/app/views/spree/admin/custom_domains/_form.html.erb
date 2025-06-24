@@ -11,8 +11,8 @@
 
     <div class="custom-control custom-checkbox">
       <%= f.check_box :default, class: 'custom-control-input' %>
-      <%= f.label :default, class: 'custom-control-label font-weight-semibold' %>
-      <p class="form-text mb-0">We will use this domain in emails to customers.</p>
+      <%= f.label :default, Spree.t(:default), class: 'custom-control-label font-weight-semibold' %>
+      <p class="form-text mb-0"><%= Spree.t(:default_custom_domain_help) %></p>
       <%= f.error_message_on :default %>
     </div>
   </div>
