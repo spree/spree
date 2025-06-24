@@ -649,7 +649,7 @@ module Spree
     #
     # @return [BigDecimal] the total weight of the inventory units in the order
     def total_weight
-      @total_weight ||= line_items.joins(:variant).includes(:variant).map { |li| li.variant.weight * li.quantity }.sum
+      @total_weight ||= line_items.joins(:variant).includes(:variant).map(&:item_weight).sum
     end
 
     # Returns line items that have no shipping rates

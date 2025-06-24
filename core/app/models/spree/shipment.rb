@@ -221,8 +221,18 @@ module Spree
       inventory_units.where(line_item_id: line_item.id, variant_id: line_item.variant_id || variant.id)
     end
 
+    # Returns the cost of the shipment
+    #
+    # @return [BigDecimal]
     def item_cost
       manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
+    end
+
+    # Returns the weight of the shipment
+    #
+    # @return [BigDecimal]
+    def item_weight
+      manifest.map(&:item_weight).sum
     end
 
     def line_items

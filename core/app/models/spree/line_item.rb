@@ -48,7 +48,7 @@ module Spree
 
     after_create :update_tax_charge
 
-    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, to: :variant
+    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
     delegate :digital?, to: :variant
@@ -116,6 +116,13 @@ module Spree
 
     def final_amount
       amount + adjustment_total
+    end
+
+    # Returns the weight of the line item
+    #
+    # @return [BigDecimal]
+    def item_weight
+      variant.weight * quantity
     end
 
     alias total final_amount

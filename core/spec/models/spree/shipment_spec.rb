@@ -203,6 +203,13 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#item_weight' do
+    it 'equals line items weight' do
+      shipment = create(:shipment, order: create(:order_with_line_item_quantity, line_items_quantity: 2))
+      expect(shipment.item_weight).to eq(22.0)
+    end
+  end
+
   it '#discounted_cost' do
     shipment = create(:shipment)
     shipment.cost = 10
