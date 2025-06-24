@@ -166,7 +166,12 @@ module Spree
 
       it 'merges the gift card' do
         subject.merge!(order_2)
-        expect(order_1.reload.gift_card).to eq(gift_card)
+
+        order_1.reload.tap do |merged|
+          expect(merged.gift_card).to eq(gift_card)
+          expect(merged.payments.store_credits.count).to eq(1)
+          expect(merged.total_applied_store_credit).to eq(20)
+        end
       end
     end
   end
