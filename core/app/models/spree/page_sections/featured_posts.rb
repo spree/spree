@@ -19,6 +19,10 @@ module Spree
         'news'
       end
 
+      def posts
+        Spree::Post.published.by_newest.limit(preferred_max_posts_to_show)
+      end
+
       private
 
       def make_posts_to_show_valid
