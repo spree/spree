@@ -21,6 +21,17 @@ RSpec.describe Spree::PageSectionsController, type: :controller do
       it 'renders the show template' do
         expect(response).to render_template(:show)
       end
+
+      context 'when section is a featured posts section' do
+        render_views
+
+        let(:section) { create(:featured_posts_page_section, preferred_max_posts_to_show: 2) }
+        let!(:posts) { create_list(:post, 3, published_at: Time.current) }
+
+        it 'renders the show template' do
+          expect(response).to render_template(:show)
+        end
+      end
     end
 
     context 'when section does not exist' do

@@ -22,5 +22,7 @@ FactoryBot.define do
     factory :video_page_section, class: Spree::PageSections::Video
 
     factory :image_with_text_page_section, class: Spree::PageSections::ImageWithText
+
+    factory :featured_posts_page_section, class: Spree::PageSections::FeaturedPosts
   end
 end

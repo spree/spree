@@ -1,0 +1,56 @@
+<div style='<%= section_styles(section) %>' class='animate-fadeIn'>
+  <div class='page-container'>
+    <% heading_size =
+      case section.preferred_heading_size
+      when "small"
+        "text-base font-medium"
+      when "medium"
+        "text-lg lg:text-xl font-medium"
+      when "large"
+        "text-xl lg:text-2xl font-medium"
+      end %>
+    <% if section.preferred_heading.present? %>
+      <div class='mb-8 flex flex-col'>
+        <h3
+          class='
+            <%= heading_size %> featured-taxon--title font-medium
+            text-<%= section.preferred_heading_alignment %>
+          '
+          data-title="<%= section.preferred_heading.downcase %>"
+          style='<%= section_heading_styles(section) %>'
+        >
+          <%= section.preferred_heading %>
+        </h3>
+
+        <% if section.description.present? %>
+          <div class='pt-4 text-<%= section.preferred_description_alignment %>'>
+            <%= section.description %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <div class='flex h-full relative'>
+      <div
+        class='
+          swiper-container overflow-hidden flex-1 pr-8 lg:pr-0 -mx-4 lg:mx-0 flex flex-col
+          lg:flex-col-reverse
+        '
+        data-controller='carousel'
+        data-carousel-options-value='{ "slidesPerView": 1, "centeredSlides": false, "spaceBetween": 16, "grabCursor": true, "breakpoints": { "768": { "slidesPerView": 3, "spaceBetween": 24 } }, "navigation": { "nextEl": ".swiper-custom-button-next-<%= section.id %>", "prevEl": ".swiper-custom-button-prev-<%= section.id %>" } }'
+      >
+        <div class='swiper-wrapper px-4 lg:px-0 h-auto'>
+          <%= render partial: "spree/posts/post",
+          collection: section.posts,
+          cached: spree_base_cache_scope,
+          as: :post %>
+        </div>
+        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block top-[100px]", aria: { label: "Previous posts" }, style: "transform: translate(-50%, -50%);" do %>
+          <%= render "spree/shared/icons/chevron" %>
+        <% end %>
+        <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block top-[100px]", aria: { label: "Next posts" }, style: "transform: translate(50%, -50%);" do %>
+          <%= render "spree/shared/icons/chevron_right" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
