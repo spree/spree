@@ -203,6 +203,26 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#item_weight' do
+    it 'equals line items weight' do
+      order = create(:order)
+      variant = create(:variant, weight: 10)
+      line_item = create(:line_item, order: order, variant: variant, quantity: 2)
+      shipment = create(:shipment, order: order)
+      expect(shipment.item_weight).to eq(20.0)
+    end
+  end
+
+  describe '#weight_unit' do
+    it 'equals line items weight unit' do
+      order = create(:order)
+      variant = create(:variant, weight: 10, weight_unit: 'kg')
+      line_item = create(:line_item, order: order, variant: variant, quantity: 2)
+      shipment = create(:shipment, order: order)
+      expect(shipment.weight_unit).to eq('kg')
+    end
+  end
+
   it '#discounted_cost' do
     shipment = create(:shipment)
     shipment.cost = 10
