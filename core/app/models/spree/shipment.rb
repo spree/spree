@@ -232,7 +232,14 @@ module Spree
     #
     # @return [BigDecimal]
     def item_weight
-      manifest.map(&:item_weight).sum
+      manifest.map { |m| m.line_item.item_weight }.sum
+    end
+
+    # Returns the weight unit of the shipment
+    #
+    # @return [String]
+    def weight_unit
+      manifest.first.line_item.weight_unit
     end
 
     def line_items
