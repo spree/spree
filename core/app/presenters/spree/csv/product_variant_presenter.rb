@@ -1,6 +1,8 @@
 module Spree
   module CSV
     class ProductVariantPresenter
+      include Spree::ImagesHelper
+
       CSV_HEADERS = [
         'product_id',
         'sku',
@@ -99,9 +101,9 @@ module Spree
           variant.backorderable?,
           variant.tax_category&.name,
           variant.digital?,
-          variant.images[0]&.original_url,
-          variant.images[1]&.original_url,
-          variant.images[2]&.original_url,
+          spree_image_url(variant.images[0], image_url_options),
+          spree_image_url(variant.images[1], image_url_options),
+          spree_image_url(variant.images[2], image_url_options),
           index.positive? ? option_type(0)&.presentation : nil,
           index.positive? ? option_value(option_type(0)) : nil,
           index.positive? ? option_type(1)&.presentation : nil,
@@ -124,6 +126,15 @@ module Spree
 
       def option_value(option_type)
         variant.option_values.find { |ov| ov.option_type == option_type }&.presentation
+      end
+
+      private
+
+      def image_url_options
+        {
+          width: 1000,
+          height: 1000
+        }
       end
     end
   end

@@ -15,21 +15,22 @@ module Spree
     end
 
     def spree_image_url(image, options = {})
+      url_helpers = respond_to?(:main_app) ? main_app : Rails.application.routes.url_helpers
       width = options[:width]
       height = options[:height]
 
       width = width * 2 if width.present?
       height = height * 2 if height.present?
 
-      return unless image.attached?
-      return unless image.variable?
+      return unless image&.attached?
+      return unless image&.variable?
 
       if width.present? && height.present?
-        main_app.cdn_image_url(
+        url_helpers.cdn_image_url(
           image.variant(spree_image_variant_options(resize_to_fill: [width, height]))
         )
       else
-        main_app.cdn_image_url(
+        url_helpers.cdn_image_url(
           image.variant(spree_image_variant_options(resize_to_limit: [width, height]))
         )
       end
