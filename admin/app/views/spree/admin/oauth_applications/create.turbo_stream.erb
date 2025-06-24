@@ -3,7 +3,7 @@
     <div class="card-body">
       <div data-controller="clipboard" class="mb-3">
         <div class="form-group">
-          <%= label_tag :client_id, 'Client ID' %>
+          <%= label_tag :client_id, Spree.t(:client_id) %>
           <div class="input-group">
             <%= text_area_tag :client_id, @object.uid, class: 'form-control', rows: 1, data: { clipboard_target: 'source', action: 'clipboard#copy' }, readonly: true %>
             <div class="input-append">
@@ -18,7 +18,7 @@
 
       <div data-controller="clipboard" class="mb-3">
         <div class="form-group">
-          <%= label_tag :client_secret, 'Client Secret' %>
+          <%= label_tag :client_secret, Spree.t(:client_secret) %>
           <div class="input-group">
             <%= text_area_tag :client_secret, @object.plaintext_secret, class: 'form-control', rows: 1, data: { clipboard_target: 'source', action: 'clipboard#copy' }, readonly: true %>
             <div class="input-append">
@@ -29,13 +29,13 @@
             </div>
           </div>
           <div class="alert alert-warning mt-3">
-            This is your application's secret token, copy it now and keep it safe. It won't be shown again.
+           <%= Spree.t('admin.oauth_applications.warning') %>
           </div>
         </div>
       </div>
     </div>
     <div class="card-footer">
-      <%= link_to 'Back to list', spree.admin_oauth_applications_url, class: 'btn btn-light' %>
+      <%= link_to Spree.t(:back_to_list), spree.admin_oauth_applications_url, class: 'btn btn-light' %>
     </div>
   </div>
 <% end %>

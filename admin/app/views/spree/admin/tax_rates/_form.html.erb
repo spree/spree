@@ -34,14 +34,14 @@
     <div class="form-group">
       <div class="custom-control custom-checkbox">
         <%= f.check_box :included_in_price, class: 'custom-control-input' %>
-        <%= f.label :included_in_price, class: 'custom-control-label' %>
+        <%= f.label :included_in_price, Spree.t(:included_in_price), class: 'custom-control-label' %>
       </div>
     </div>
 
     <div class="form-group">
       <div class="custom-control custom-checkbox">
         <%= f.check_box :show_rate_in_label, class: 'custom-control-input' %>
-        <%= f.label :show_rate_in_label, class: 'custom-control-label' %>
+        <%= f.label :show_rate_in_label, Spree.t(:show_rate_in_label), class: 'custom-control-label' %>
       </div>
     </div>
   </div>

@@ -333,6 +333,9 @@ en:
       spree/credit_card:
         one: Credit Card
         other: Credit Cards
+      spree/custom_domain:
+        one: Custom Domain
+        other: Custom Domains
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
@@ -351,6 +354,9 @@ en:
       spree/line_item:
         one: Line Item
         other: Line Items
+      spree/oauth_application:
+        one: Oauth Application
+        other: Oauth Applications
       spree/option_type:
         one: Option Type
         other: Option Types
@@ -674,6 +680,7 @@ en:
     approver: Approver
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
+    assets: Assets
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     at_symbol: "@"
     attachments: Attachments
@@ -689,10 +696,13 @@ en:
     availability: availability
     available: Available
     available_on: Available On
+    available_payment_methods: Available Payment Methods
+    avatar: Avatar
     average_order_value: Average Order Value
     avs_response: AVS Response
     back: Back
     back_end: Backend
+    back_to_list: Back to list
     back_to_payment: Back To Payment
     back_to_resource_list: Back To %{resource} List
     back_to_rma_reason_list: Back To RMA Reason List
@@ -785,6 +795,8 @@ en:
     clear_cache_ok: Cache was flushed
     clear_cache_warning: Clearing cache will temporarily reduce the performance of your store.
     click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
+    client_id: Client ID
+    client_secret: Client Secret
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
@@ -869,6 +881,8 @@ en:
     current_password: Current password
     current_promotion_usage: 'current usage: %{count}'
     custom_code: Custom code
+    custom_domains: Custom domains
+    custom_domains_help: Connect your domain or subdomain to your store.
     custom_font_code: Custom font code
     customer: Customer
     customer_details: Customer Details
@@ -893,6 +907,7 @@ en:
     default_country: Default Country
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_currency: Default currency
+    default_custom_domain_help: We will use this domain in emails to customers.
     default_locale: Default locale
     default_post_categories:
       articles: Articles
@@ -926,6 +941,7 @@ en:
     digital_assets: Digital assets
     digital_assets_help: Digital assets are files that can be downloaded by customers after purchase.
     digital_link_unauthorized: You are not authorized to access this asset
+    digitals: Digitals
     dimension_units:
       centimeter: Centimeter (cm)
       foot: Foot (ft)
@@ -952,6 +968,8 @@ en:
     draft: Draft
     draft_mode: Draft Mode
     draft_orders: Draft orders
+    dummy_key: Dummy Key
+    dummy_secret_key: Dummy Secret Key
     duplicate: Duplicate
     duplicating: Duplicating
     edit: Edit
@@ -1008,6 +1026,7 @@ en:
       other: "%{count} errors prohibited this record from being saved"
     estimated_delivery_time: Estimated delivery time
     estimated_transit_business_days: Estimated transit business days
+    estimated_transit_business_days_help: This is the estimated number of business days it will take for the package to arrive at the customer's address. It will be displayed on the checkout page.
     event: Event
     events:
       spree:
@@ -1151,6 +1170,8 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_url: Internal URL
+    internal_url_help: This is your internal URL.
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
@@ -1174,8 +1195,10 @@ en:
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
     invitation_resent: Invitation resent!
+    inventory_units: Inventory Units
     invitations: Invitations
     invited_by: Invited by
+    is_default: Is Default
     is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
@@ -1237,6 +1260,7 @@ en:
     manage_variants: Manage Variants
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
+    marked_as_default: Marked as default
     master: Master
     master_price: Master Price
     master_sku: Master SKU
@@ -1245,6 +1269,8 @@ en:
       none: None
     max: Max
     max_items: Max Items
+    maximum_item_total: Maximum Item Total
+    maximum_weight: Maximum Weight
     media: Media
     memo: Memo
     meta_description: Meta Description
@@ -1253,9 +1279,11 @@ en:
     metadata: Metadata
     min: Min
     minimal_amount: Minimal Amount
+    minimum_item_total: Minimum Item Total
     minimum_password_length:
       one: "(%{count} character minimum)"
       other: "(%{count} characters minimum)"
+    minimum_weight: Minimum Weight
     missing_return_authorization: Missing Return Authorization for %{item_name}.
     month: Month
     more: More
@@ -1337,6 +1365,7 @@ en:
     no_billing_address_available: No billing address available
     no_cc_type: N/A
     no_country: No country set
+    no_custom_domains: You don't have any custom domains set yet.
     no_email_provided: No email provided
     no_limits_zone: No Limits
     no_payment_found: No payment found
@@ -1532,10 +1561,12 @@ en:
     payment: Payment
     payment_amount: Payment amount
     payment_attempts: failed attempts
+    payment_capture_events: Payment Capture Events
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
+    payment_method_name_help: This name will be used to identify the payment method on the storefront
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
@@ -1575,6 +1606,7 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     policies: Policies
+    policies_info: Policies will be automatically added to footer of your store and will be available to customers during checkout.
     populate_get_error: Something went wrong. Please try adding the item again.
     post_categories: Post categories
     posts: Posts
@@ -1595,6 +1627,7 @@ en:
     prices: Prices
     pricing: Pricing
     privacy_policy: Privacy Policy
+    privacy_policy_help: Customers will need to accept these privacy policy during signup.
     process: Process
     processing: Processing
     product: Product
@@ -1692,6 +1725,7 @@ en:
     prototypes: Prototypes
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
+    publishable_key: Publishable Key
     published_at: Published at
     purchased_quantity: Purchased Quantity
     qty: Qty
@@ -1789,6 +1823,7 @@ en:
     returned: Returned
     returns: Returns
     returns_policy: Returns Policy
+    returns_policy_help: Please provide your customers with a clear and transparent returns policy.
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis
@@ -1821,6 +1856,7 @@ en:
     search_results: Search results for '%{keywords}'
     search_results_for: Search results for %{query}
     searching: Searching
+    secret_key: Secret Key
     secure_connection_type: Secure Connection Type
     security: Security
     security_settings: Security Settings
@@ -1896,9 +1932,13 @@ en:
     shipping_flexible_rate: Flexible Rate per package item
     shipping_instructions: Shipping Instructions
     shipping_method: Shipping Method
+    shipping_method_name_help: This will be displayed to customers.
+    shipping_method_internal_name_help: This will be displayed to admins.
     shipping_methods: Shipping Methods
+    shipping_methods_info: Shipping methods are options that the customer sees when they reach the checkout, they are the carriers and services used to send your products.
     shipping_not_available: Shipping not available
     shipping_policy: Shipping Policy
+    shipping_policy_help: Please provide your customers with a clear and transparent shipping policy.
     shipping_price_sack: Price sack
     shipping_rates:
       display_price:
@@ -2049,6 +2089,7 @@ en:
       unable_to_create: Unable to create store.
       unable_to_delete: Unable to delete store.
       unable_to_update: Unable to update store.
+    store_favicon_images: Store Favicon Images
     store_form:
       checkout_zone_help: Selecting zone will limit to which Countries or States products are shipped. For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>
       code_help: Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)
@@ -2060,14 +2101,17 @@ en:
       new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
       seo_robots: Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>
       social_help: If you want to link to your social accounts in the footer part of your website please fill below fields
+    store_logos: Store Logos
     store_name: Store name
     store_name_help: This is the name of your store. It will be displayed in the header and in the footer.
+    store_mailer_logos: Store Mailer Logos
     store_not_set_as_default: Couldn't set store %{store} as a default store
     store_set_as_default: Store %{store} is now a default store
     store_set_default_button: Set as default
     stores: Stores
     street_address: Street Address
     street_address_2: Street Address (cont'd)
+    subscriber: Subscriber
     subscribed: Subscribed
     subtotal: Subtotal
     subtract: Subtract
@@ -2091,10 +2135,12 @@ en:
     tax_code: Tax Code
     tax_included: Tax (incl.)
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
+    tax_rate: Tax Rate
     tax_rates: Tax Rates
     taxes: Taxes
     taxon: Taxon
     taxon_edit: Edit Taxon
+    taxon_images: Taxon Images
     taxon_missing_alt: Category banner description
     taxon_placeholder: Add a Taxon
     taxon_rule:
@@ -2112,6 +2158,7 @@ en:
     taxonomy_tree_instruction: "* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: Taxons
     terms_of_service: Terms of Service
+    terms_of_service_help: Customers will need to accept these terms of service during signup.
     test: Test
     test_mailer:
       test_email:
@@ -2165,6 +2212,7 @@ en:
     tracking: Tracking
     tracking_number: Tracking Number
     tracking_url: Tracking URL
+    tracking_url_help: will be replaced with the tracking number.
     tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
     transaction_id: Transaction ID
     transaction_id_help: This is the ID of the transaction that was created in the 3rd party payment gateway.
@@ -2255,7 +2303,9 @@ en:
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?
     width: Width
+    wished_items: Wished Items
     wishlist: Wishlist
+    wishlists: Wishlists
     without_taxon: Without taxon
     year: Year
     you_have_no_orders_yet: You have no orders yet
@@ -2266,6 +2316,7 @@ en:
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
+    zones_info: Zones are geographical groupings, they represent collections of either states or countries.
   views:
     pagination:
       truncate: Truncate

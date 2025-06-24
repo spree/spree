@@ -31,7 +31,7 @@
           <%= label_tag :payment_method_name, Spree.t(:name) %>
           <%= text_field :payment_method, :name, class: 'form-control' %>
           <span class="text-muted form-text mt-2">
-            This name will be used to identify the payment method on the storefront
+            <%= Spree.t(:payment_method_name_help) %>
           </span>
 
           <%= error_message_on :payment_method, :name %>
