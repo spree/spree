@@ -9,7 +9,7 @@
 <% end %>
 
 <div class="form-group">
-  <%= f.label :starts_at %>
+  <%= f.label :starts_at, Spree.t(:starts_at) %>
   <%= f.datetime_field :starts_at, class: 'form-control' %>
   <%= f.error_message_on :starts_at %>  
 </div>

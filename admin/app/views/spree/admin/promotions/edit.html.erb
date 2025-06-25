@@ -22,7 +22,7 @@
         <% if @promotion.coupon_code? && !@promotion.multi_codes? %>
           <div class="form-group">   
             <%= f.label :code, Spree.t(:code) %>
-            <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: 'Your coupon code' %>
+            <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: Spree.t(:your_coupon_code) %>
           </div>
         <% end %>
       </div>
