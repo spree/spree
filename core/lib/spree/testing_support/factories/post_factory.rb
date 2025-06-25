@@ -6,5 +6,9 @@ FactoryBot.define do
     published_at { Time.current }
     author { create(:admin_user) }
     store { Spree::Store.default || create(:store) }
+
+    trait :with_image do
+      image { Rack::Test::UploadedFile.new(Spree::Core::Engine.root.join('spec/fixtures/thinking-cat.jpg'), 'image/jpeg') }
+    end
   end
 end

@@ -1,6 +1,7 @@
 module Spree
   module StorefrontHelper
     include BaseHelper
+    include Spree::ImagesHelper
     include Heroicon::Engine.helpers
 
     # Renders the storefront partials for the given section.
@@ -71,9 +72,9 @@ module Spree
 
     def show_account_pane?
       !try_spree_current_user &&
-        (defined?(spree_login_path) && !paths_equal?(canonical_path, spree_login_path)) &&
-        (defined?(spree_signup_path) && !paths_equal?(canonical_path, spree_signup_path)) &&
-        (defined?(spree_forgot_password_path) && !paths_equal?(canonical_path, spree_forgot_password_path))
+        defined?(spree_login_path) && !paths_equal?(canonical_path, spree_login_path) &&
+        defined?(spree_signup_path) && !paths_equal?(canonical_path, spree_signup_path) &&
+        defined?(spree_forgot_password_path) && !paths_equal?(canonical_path, spree_forgot_password_path)
     end
 
     def paths_equal?(path1, path2)
