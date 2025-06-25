@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     opts = options.slice(:protocol, :host, :port)
     opts[:host] = Spree.cdn_host if Spree.cdn_host.present?
     opts[:host] ||= Rails.application.routes.default_url_options[:host]
+    opts[:host] ||= Spree::Store.current.url_or_custom_domain if Spree::Store.current.present?
 
     opts[:only_path] = true if opts[:host].blank?
 
