@@ -43,7 +43,7 @@
       <div class="card-body">
         <ul class="list-group">
           <li class="list-group-item d-flex justify-content-between">
-            <%= Spree.t(:origin) %> <span><%= @stock_transfer.source_location&.display_name.presence || Spree.t(:none) %></span>
+            <%= Spree.t(:source) %> <span><%= @stock_transfer.source_location&.display_name.presence || Spree.t(:none) %></span>
           </li>
           <li class="list-group-item d-flex justify-content-between">
             <%= Spree.t(:destination) %> <span><%= @stock_transfer.destination_location.display_name %></span>

@@ -11,20 +11,20 @@
         </div>
         <div class="card-body">
           <div class="form-group mb-4">
-            <%= f.label :email, class: 'form-label' %>
+            <%= f.label :email, Spree.t(:email), class: 'form-label' %>
             <%= f.email_field :email, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-4">
-            <%= f.label :first_name, class: 'form-label' %>
+            <%= f.label :first_name, Spree.t(:first_name), class: 'form-label' %>
             <%= f.text_field :first_name, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-4">
-            <%= f.label :last_name, class: 'form-label' %>
+            <%= f.label :last_name, Spree.t(:last_name), class: 'form-label' %>
             <%= f.text_field :last_name, class: 'form-control', required: true %>
           </div>
           <div class="form-group mb-0">
             <div>
-              <%= f.label :avatar, class: 'form-label' %>
+              <%= f.label :avatar, Spree.t(:avatar), class: 'form-label' %>
             </div>
             <%= render 'active_storage/upload_form', form: f, field_name: :avatar, crop: true %>
           </div>

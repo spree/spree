@@ -9,8 +9,7 @@
 <%= content_for :page_alerts do %>
   <div class="alert alert-info mb-3">
     <p>
-      Here you can manage API keys to access the <%= link_to 'Platform API', 'https://spreecommerce.org/docs/api-reference/platform/authentication', target: '_blank' %>.
-      For headless storefronts you don't need an API key, please use the <%= link_to 'Storefront API', 'https://spreecommerce.org/docs/api-reference/storefront/authentication', target: '_blank' %>.
+      <%= Spree.t('admin.oauth_applications.info').html_safe %>
     </p>
   </div>
 <% end %>
@@ -22,7 +21,7 @@
         <thead>
           <tr>
             <th><%= Spree.t(:name) %></th>
-            <th>Client ID</th>
+            <th><%= Spree.t(:client_id) %></th>
             <th><%= Spree.t('admin.oauth_applications.scopes') %></th>
             <th><%= Spree.t('admin.oauth_applications.last_used') %></th>
             <th></th>

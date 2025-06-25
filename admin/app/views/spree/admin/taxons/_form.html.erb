@@ -79,7 +79,7 @@
 
         <div class="card-body border-bottom">
           <div class="d-flex align-items-center">
-            <%= f.label :sort_order, class: 'text-nowrap mr-2 mb-0' %>
+            <%= f.label :sort_order, Spree.t(:sort_order), class: 'text-nowrap mr-2 mb-0' %>
             <%= f.select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto',  data: { action: 'change->auto-submit#submit' } } %>
           </div>
         </div>
@@ -108,7 +108,7 @@
       <div class="card-body">
         <%= f.label :square_image, Spree.t(:square_image) %>
         <p class="text-muted form-text">
-          Used for the featured image on the homepage.
+          <%= Spree.t(:square_image_help) %>
         </p>
         <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true %>
         <%= f.error_message_on :square_image %>

@@ -4,7 +4,7 @@
 
 <%= content_for :page_alerts do %>
   <div class="alert alert-info mb-3">
-    Policies will be automatically added to footer of your store and will be available to customers during checkout.
+    <%= Spree.t(:policies_info) %>
   </div>
 <% end %>
 
@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        Customers will need to accept these terms of service during signup.
+        <%= Spree.t(:terms_of_service_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">
@@ -27,7 +27,7 @@
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        Customers will need to accept these privacy policy during signup.
+        <%= Spree.t(:privacy_policy_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">
@@ -42,7 +42,7 @@
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        Please provide your customers with a clear and transparent returns policy.
+        <%= Spree.t(:returns_policy_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">
@@ -56,7 +56,7 @@
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        Please provide your customers with a clear and transparent shipping policy.
+        <%= Spree.t(:shipping_policy_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">

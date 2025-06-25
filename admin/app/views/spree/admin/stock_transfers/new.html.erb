@@ -18,7 +18,7 @@
       <div class="card-body" >
         <div class="row">
           <div class="form-group col-12 col-lg-6">
-            <%= f.label :source_location_id, Spree.t(:origin), class: 'form-label' %>
+            <%= f.label :source_location_id, Spree.t(:source), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[source_location_id]",
               empty_option: Spree.t(:none),
               options: stock_locations,
@@ -41,7 +41,7 @@
           </div>
         </div>
         <div class="form-group">
-          <%= f.label :reference, class: 'form-label' %>
+          <%= f.label :reference, Spree.t(:reference), class: 'form-label' %>
           <%= f.text_field :reference, class: 'form-control' %>
         </div>
       </div>
