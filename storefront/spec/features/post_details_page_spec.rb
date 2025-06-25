@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-RSpec.describe 'Post details page', type: :feature, js: true do
+RSpec.describe 'Post details page', :js, type: :feature do
   describe 'JSON-LD data' do
     let(:store) { Spree::Store.default }
     let!(:post) do
       create(
-        :post,
+        :post, :with_image,
         post_category: post_category,
         tag_list: tags,
         title: 'New products on sale!',
@@ -27,11 +27,11 @@ RSpec.describe 'Post details page', type: :feature, js: true do
       let(:post_category) { create(:post_category, title: 'Articles') }
 
       it 'renders BlogPosting JSON-LD' do
-        expect(json_ld).to eq(
+        expect(json_ld).to match(
           '@context' => 'https://schema.org',
           '@type' => 'BlogPosting',
           'headline' => 'New products on sale!',
-          'image' => [],
+          'image' => array_including(kind_of(String)),
           'datePublished' => post.published_at.iso8601,
           'dateModified' => post.updated_at.iso8601,
           'author' => [
@@ -44,7 +44,7 @@ RSpec.describe 'Post details page', type: :feature, js: true do
       end
 
       it 'renders BreadcrumbList JSON-LD with a link to category page' do
-        expect(json_ld_breadcrumbs).to eq(
+        expect(json_ld_breadcrumbs).to match(
           {
             '@context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',
@@ -82,11 +82,11 @@ RSpec.describe 'Post details page', type: :feature, js: true do
       let(:post_category) { nil }
 
       it 'renders JSON-LD' do
-        expect(json_ld).to eq(
+        expect(json_ld).to match(
           '@context' => 'https://schema.org',
           '@type' => 'BlogPosting',
           'headline' => 'New products on sale!',
-          'image' => [],
+          'image' => array_including(kind_of(String)),
           'datePublished' => post.published_at.iso8601,
           'dateModified' => post.updated_at.iso8601,
           'author' => [
