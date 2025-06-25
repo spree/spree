@@ -18,10 +18,10 @@ module Spree
       width = options[:width]
       height = options[:height]
 
-      width = width * 2 if width.present?
-      height = height * 2 if height.present?
+      width *= 2 if width.present?
+      height *= 2 if height.present?
 
-      return unless image.attached?
+      return if image.respond_to?(:attached?) && !image.attached?
       return unless image.variable?
 
       if width.present? && height.present?
@@ -51,17 +51,18 @@ module Spree
       return unless height
       return if height.zero?
 
-      w, h = width.to_f, height.to_f
+      w = width.to_f
+      h = height.to_f
 
       # Always return width / height, flipping if needed
-      if h > w
-        ratio = h / w
-      elsif h < w
-        ratio = w / h
-      else
-        # h == w, square image
-        ratio = 1.0
-      end
+      ratio = if h > w
+                h / w
+              elsif h < w
+                w / h
+              else
+                # h == w, square image
+                1.0
+              end
 
       ratio.round(3)
     end

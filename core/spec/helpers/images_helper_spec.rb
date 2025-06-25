@@ -23,6 +23,10 @@ describe Spree::ImagesHelper, type: :helper do
   end
 
   describe '#spree_image_url' do
+    it 'supports blob' do
+      expect(helper.spree_image_url(image.blob)).to eq(helper.spree_image_url(image))
+    end
+
     context 'when image is not attached' do
       before do
         allow(image).to receive(:attached?).and_return(false)
@@ -35,8 +39,7 @@ describe Spree::ImagesHelper, type: :helper do
 
     context 'when image is not variable' do
       before do
-        allow(image).to receive(:attached?).and_return(true)
-        allow(image).to receive(:variable?).and_return(false)
+        allow(image).to receive_messages(attached?: true, variable?: false)
       end
 
       it 'returns nil' do
@@ -82,8 +85,7 @@ describe Spree::ImagesHelper, type: :helper do
 
     context 'when aspect_ratio is present in metadata' do
       before do
-        allow(attachment).to receive(:analyzed?).and_return(true)
-        allow(attachment).to receive(:metadata).and_return({ 'aspect_ratio' => 1.5 })
+        allow(attachment).to receive_messages(analyzed?: true, metadata: { 'aspect_ratio' => 1.5 })
       end
 
       it 'returns the aspect ratio' do
@@ -93,8 +95,7 @@ describe Spree::ImagesHelper, type: :helper do
 
     context 'when calculating aspect ratio from dimensions' do
       before do
-        allow(attachment).to receive(:analyzed?).and_return(true)
-        allow(attachment).to receive(:metadata).and_return({ 'width' => width, 'height' => height })
+        allow(attachment).to receive_messages(analyzed?: true, metadata: { 'width' => width, 'height' => height })
       end
 
       context 'when height is greater than width' do
