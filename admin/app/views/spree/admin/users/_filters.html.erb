@@ -49,7 +49,7 @@
     <div class="row">
       <div class="col-lg-3">
         <div class="form-group">
-          <%= f.label :accepts_email_marketing_eq, "Accepts email marketing" %>
+          <%= f.label :accepts_email_marketing_eq, Spree.t(:accepts_email_marketing) %>
           <%= f.select :accepts_email_marketing_eq,
                    options_for_select([["Yes", true], ["No", false]], params[:q][:accepts_email_marketing_eq]),
                    { include_blank: true },

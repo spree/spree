@@ -1052,6 +1052,7 @@ en:
     expiration_date: Expiration Date
     expired: Expired
     expires_at: Expires at
+    expires_at_help: Leave this field blank for no expiration.
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1230,6 +1231,7 @@ en:
     lastname: Last Name
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
+    limit_usage_help: Leave this field blank for unlimited usage.
     limit_usage_to: Limit usage to
     line_item: Line Item
     line_item_adjustments: Line item adjustments
@@ -1685,6 +1687,7 @@ en:
         all: Match all of these rules
         any: Match any of these rules
     promotion_label: Promotion (%{name})
+    promotion_name_help: Customers will see this in their cart and at checkout.
     promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
     promotion_rule: Promotion Rule
     promotion_rule_types:
