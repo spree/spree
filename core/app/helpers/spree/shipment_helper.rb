@@ -3,9 +3,12 @@ module Spree
     include BaseHelper
 
     def shipment_tracking_link_to(shipment, options = nil)
-      display_text = shipment.tracking.presence || shipment.tracking_url
+      tracking_url = shipment.tracking_url.presence
+      return '' unless tracking_url
 
-      link_to display_text, shipment.tracking_url, options
+      display_text = shipment.tracking.presence || tracking_url
+
+      link_to display_text, tracking_url, options
     end
   end
 end
