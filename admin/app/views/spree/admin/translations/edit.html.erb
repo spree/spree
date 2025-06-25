@@ -11,28 +11,30 @@
       </div>
     <% end %>
   <% end %>
-  <%= form_with url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
+  <%= form_with model: @resource, url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
     <%= turbo_frame_tag :translations_table, class: "table-responsive border rounded bg-white my-3", refresh: "morph" do %>
       <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
       <table class="table">
         <thead>
           <tr>
             <th scope="col" class="text-center"><%= Spree.t(:field) %></th>
-            <th scope="col" class="text-center" style="width: 40%;"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</th>
-            <th scope="col" class="text-center"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></th>
+            <th scope="col" class="text-center" style="width: 45%"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</th>
+            <th scope="col" class="text-center" style="width: 45%"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></th>
           </tr>
         </thead>
         <tbody>
-          <% options = { resource: @resource, selected_translation_locale: @selected_translation_locale } %>
+          <% options = { f: f, resource: @resource, locale: @selected_translation_locale } %>
           <% case @resource %>
+          <% when Spree::OptionType %>
+            <%= render 'spree/admin/translations/option_types/form', options %>
           <% when Spree::Product %>
             <%= render 'spree/admin/translations/products/form', options %>
+          <% when Spree::Store %>
+            <%= render 'spree/admin/translations/stores/form', options %>
           <% when Spree::Taxon %>
             <%= render 'spree/admin/translations/taxons/form', options %>
           <% when Spree::Taxonomy %>
             <%= render 'spree/admin/translations/taxonomies/form', options %>
-          <% when Spree::Store %>
-            <%= render 'spree/admin/translations/stores/form', options %>
           <% end %>
         </tbody>
       </table>

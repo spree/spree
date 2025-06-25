@@ -1,0 +1,15 @@
+<%# locals: (f:, field:, locale:) %>
+
+<tr>
+  <td class="text-left"><%= Spree.t(field) %></td>
+  <td>
+    <div class="trix-container mb-0">
+      <%= f.rich_textarea field, disabled: true, readonly: true, contenteditable: false %>
+    </div>
+  </td>
+  <td>
+    <div class="trix-container mb-0">
+      <%= f.rich_textarea "#{field}_#{locale}" %>
+    </div>
+  </td>
+</tr>

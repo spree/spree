@@ -240,6 +240,7 @@ module Spree
         ]
 
         Rails.application.config.spree.translatable_resources = [
+          Spree::OptionType,
           Spree::Product,
           Spree::Taxon,
           Spree::Taxonomy,
