@@ -43,9 +43,9 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[26]).to eq variant.backorderable?
       expect(subject[27]).to eq variant.tax_category&.name
       expect(subject[28]).to eq variant.digital?
-      expect(subject[29]).to eq variant.images[0].original_url
-      expect(subject[30]).to eq variant.images[1].original_url
-      expect(subject[31]).to eq variant.images[2].original_url
+      expect(subject[29]).to end_with(variant.images[0].filename.to_s)
+      expect(subject[30]).to end_with(variant.images[1].filename.to_s)
+      expect(subject[31]).to end_with(variant.images[2].filename.to_s)
       expect(subject[32]).to eq nil
       expect(subject[33]).to eq nil
       expect(subject[34]).to eq nil
@@ -82,6 +82,44 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         expect(subject[35]).to eq 'Small'
         expect(subject[36]).to eq nil
         expect(subject[37]).to eq nil
+      end
+    end
+
+    describe 'images host' do
+      context 'when default host is set' do
+        before do
+          allow(Rails.application.routes).to receive(:default_url_options).and_return({ host: 'test.host' })
+        end
+
+        it 'returns images with default host' do
+          expect(subject[29]).to start_with('http://test.host')
+          expect(subject[30]).to start_with('http://test.host')
+          expect(subject[31]).to start_with('http://test.host')
+        end
+      end
+
+      context 'when there is no default host' do
+        before do
+          allow(Rails.application.routes).to receive(:default_url_options).and_return({})
+        end
+
+        it 'returns images with the store url' do
+          expect(subject[29]).to start_with("http://#{store.url}")
+          expect(subject[30]).to start_with("http://#{store.url}")
+          expect(subject[31]).to start_with("http://#{store.url}")
+        end
+
+        context 'when custom domain is set' do
+          let!(:custom_domain) { create(:custom_domain, store: store, url: 'custom.domain') }
+
+          before { store.reload }
+
+          it 'returns images with the custom domain' do
+            expect(subject[29]).to start_with('http://custom.domain')
+            expect(subject[30]).to start_with('http://custom.domain')
+            expect(subject[31]).to start_with('http://custom.domain')
+          end
+        end
       end
     end
   end

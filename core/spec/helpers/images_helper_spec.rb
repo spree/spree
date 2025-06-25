@@ -51,7 +51,7 @@ describe Spree::ImagesHelper, type: :helper do
       it 'returns a url with resize_to_fill' do
         variant = double('variant')
         expect(image).to receive(:variant).with(hash_including(resize_to_fill: [200, 200])).and_return(variant)
-        expect(helper).to receive(:main_app).and_return(double('main_app', cdn_image_url: 'cdn_url'))
+        expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
         expect(helper.spree_image_url(image, width: 100, height: 100)).to eq('cdn_url')
       end
     end
@@ -60,7 +60,7 @@ describe Spree::ImagesHelper, type: :helper do
       it 'returns a url with resize_to_limit' do
         variant = double('variant')
         expect(image).to receive(:variant).with(hash_including(resize_to_limit: [200, nil])).and_return(variant)
-        expect(helper).to receive(:main_app).and_return(double('main_app', cdn_image_url: 'cdn_url'))
+        expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
         expect(helper.spree_image_url(image, width: 100)).to eq('cdn_url')
       end
     end
