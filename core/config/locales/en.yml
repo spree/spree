@@ -694,6 +694,7 @@ en:
     authorized: Authorized
     auto_capture: Auto Capture
     automatic_promotion: Automatic
+    automatic_promotion_help: This promotion will be automatically applied to all eligible orders.
     automatic_taxon_names:
       new_arrivals: New arrivals
       on_sale: On sale
@@ -804,6 +805,8 @@ en:
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
     code: Code
+    code_prefix_help: eg. <strong>ABC</strong>
+    code_prefix_placeholder: Coupon Prefix (optional)
     colors: Colors
     company: Company
     compare_at_amount: Compare at amount
@@ -1107,6 +1110,8 @@ en:
     general_information: General information
     general_settings: General Settings
     generate_code: Generate coupon code
+    generate_unique_codes: Generate unique codes
+    generate_unique_codes_help: These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
     get_back_to_the: Get back to the
     gift_card: Gift Card
     gift_card_applied: The Gift Card was successfully applied to your order!
@@ -1219,6 +1224,7 @@ en:
         gte: greater than or equal to
         lt: less than
         lte: less than or equal to
+      blank_maximum_amount_help: Leave this field blank to not limit the maximum amount.
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
     items_reimbursed: Items reimbursed
@@ -1272,6 +1278,8 @@ en:
     match_choices:
       all: All
       none: None
+    match_policy_all: Match policy all
+    match_policy_any: Match policy any
     max: Max
     max_items: Max Items
     media: Media
@@ -1332,6 +1340,7 @@ en:
     new_product: New Product
     new_promotion: New Promotion
     new_promotion_category: New Promotion Category
+    new_promotion_info: In the next step you will be able to add actions and rules to your promotion
     new_property: New Property
     new_prototype: New Prototype
     new_refund: New Refund
@@ -1410,6 +1419,10 @@ en:
     notify_me_when_available: Notify me when available
     num_orders: "# Orders"
     number: Number
+    number_of_codes: Number of Codes
+    number_of_codes_help: How many codes you want to generate.
+    one_code_for_all_customers: One code for all customers
+    one_code_for_all_customers_help: You can limit the number of times this code can be used.
     ok: OK
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
@@ -2316,6 +2329,7 @@ en:
     without_taxon: Without taxon
     year: Year
     you_have_no_orders_yet: You have no orders yet
+    your_coupon_code: Your coupon code
     your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
