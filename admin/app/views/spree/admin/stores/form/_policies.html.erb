@@ -68,11 +68,11 @@
 
   <% if current_store.respond_to?(:partners_terms_of_service) %>
     <hr class="my-5">
-    <h5 class="mb-3">Vendors <%= Spree.t(:terms_of_service) %></h5>
+    <h5 class="mb-3"><%= Spree.t(:vendors_terms_of_service) %></h5>
     <div class="row" id="partners-terms">
       <div class="col-lg-4">
         <p class="text-muted">
-          Vendors you invite will need to accept these terms of service during their onboarding process.
+          <%= Spree.t(:vendors_terms_of_service_help) %>
         </p>
       </div>
       <div class="col-lg-7 offset-lg-1">

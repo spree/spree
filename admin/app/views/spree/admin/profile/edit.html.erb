@@ -41,7 +41,7 @@
           <% if @user.respond_to?(:deliver_invitation_accepted_email) %>
             <div class="custom-control custom-switch mb-3">
               <%= f.check_box :deliver_invitation_accepted_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_invitation_accepted_email, 'Someone accepted your team invitation', class: 'custom-control-label' %>
+              <%= f.label :deliver_invitation_accepted_email, Spree.t(:deliver_invitation_accepted_email), class: 'custom-control-label' %>
             </div>
           <% end %>
 

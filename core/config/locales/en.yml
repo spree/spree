@@ -929,6 +929,7 @@ en:
     delete_from_taxon: Delete From Taxon
     delete_selected: Delete selected
     deleted: Deleted
+    deliver_invitation_accepted_email: Someone accepted your team invitation
     delivery: Delivery
     delivery_address: Delivery Address
     delivery_information: Delivery Information
@@ -2299,6 +2300,8 @@ en:
     variants_count: Variants count
     vendor: Vendor
     vendors: Vendors
+    vendors_terms_of_service: Vendors Terms of Service
+    vendors_terms_of_service_help: Vendors you invite will need to accept these terms of service during their onboarding process.
     version: Version
     view: View
     view_all: View all
