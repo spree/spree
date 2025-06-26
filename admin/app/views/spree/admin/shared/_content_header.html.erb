@@ -46,7 +46,7 @@
                   <%= hidden_field_tag :record_number, record.number, data: { clipboard_target: 'source' } %>
                   <button data-action="clipboard#copy" class="text-left dropdown-item">
                     <%= icon 'copy' %>
-                    <%= 'Copy number' %>
+                    <%= Spree.t(:copy_number) %>
                   </button>
                 </div>
               <% end %>

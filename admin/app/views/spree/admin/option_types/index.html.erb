@@ -8,8 +8,7 @@
 
 <%= content_for(:page_alerts) do %>
   <div class="alert alert-info">
-    Options are used to group certain attributes. For example, you can create an option named "shirt size" and then
-    create an option value named "small" and "medium" for this option.
+    <%= Spree.t(:option_types_info) %>
   </div>
 <% end %>
 
@@ -24,11 +23,11 @@
             <th><%= Spree.t(:internal_name) %></th>
             <th>
               <%= Spree.t(:presentation) %>
-              <%= help_bubble("How this option is presented to customers") %>
+              <%= help_bubble(Spree.t(:presentation_help)) %>
             </th>
             <th>
               <%= Spree.t(:filterable) %>
-              <%= help_bubble("Whether this option can be used in product filters") %>
+              <%= help_bubble(Spree.t(:filterable_help)) %>
             </th>
             <th>
               <%= Spree.t(:option_values) %>

@@ -9,14 +9,14 @@
         </div>
 
         <p class="form-text text-muted small mt-2">
-          This will be displayed to customers.
+          <%= Spree.t(:shipping_method_name_help) %>
         </p>
       </div>
 
       <div class="col-lg-6">
         <div class="form-group">
-          <%= f.label :display_on %>
-          <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select' } %>
+          <%= f.label :display_on, Spree.t(:display_on) %>
+          <%= f.select :display_on, display_on_options, {}, { class: 'custom-select' } %>
           <%= f.error_message_on :display_on %>
         </div>
       </div>
@@ -31,7 +31,7 @@
         </div>
 
         <p class="form-text text-muted small mt-2">
-          This will be displayed to admins.
+          <%= Spree.t(:shipping_method_internal_name_help) %>
         </p>
       </div>
 

@@ -17,7 +17,7 @@
           <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
             <div class="custom-control custom-radio custom-control-inline">
               <%= f.radio_button :match_policy, policy, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
-              <%= f.label "match_policy_#{policy}", class: 'custom-control-label' %>
+              <%= f.label "match_policy_#{policy}", Spree.t("match_policy_#{policy}"), class: 'custom-control-label' %>
             </div>
           <% end %>
         <% end %>

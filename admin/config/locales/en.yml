@@ -91,6 +91,9 @@ en:
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
+      logo_for_emails: Logo for emails
+      logo_for_emails_help: This logo is included in all email notifications such as order confirmation.
+      logo_for_emails_recommend: We recommend images with a transparent background.<br>Only JPEG and PNG formats are supported.
       manage_currencies: Manage Currencies
       manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations
@@ -103,6 +106,7 @@ en:
       notifications: Notifications
       num_orders: No. of Orders
       oauth_applications:
+        info: Here you can manage API keys to access the <a href='https://spreecommerce.org/docs/api-reference/platform/authentication' target='_blank' class='alert-link'>Platform API</a>. For headless storefronts you don't need an API key, please use the <a href='https://spreecommerce.org/docs/api-reference/storefront/authentication' target='_blank' class='alert-link'>Storefront API</a>.
         last_used: Last used
         list: API keys
         never: Never
@@ -211,6 +215,8 @@ en:
           description: It shows the company field on the address form in the My Account section and on the checkout address step.
           label: Display the company address field
         customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        email_addresses: Email addresses
+        email_addresses_help: Please provide the email address that will be used as the sender of all emails sent from your store.
         new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
       store_setup_tasks:
         add_billing_address: Add billing address
