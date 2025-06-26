@@ -18,11 +18,7 @@ module Spree
         end
 
         def store_locale
-          current_store.default_locale
-        end
-
-        def raise_record_not_found_if_store_is_not_found
-          raise ActiveRecord::RecordNotFound if current_store.nil?
+          @store_locale ||= current_store.default_locale
         end
 
         def ensure_current_store(object)
@@ -69,6 +65,10 @@ module Spree
 
         def current_store_finder
           Spree::Dependencies.current_store_finder.constantize
+        end
+
+        def raise_record_not_found_if_store_is_not_found
+          raise ActiveRecord::RecordNotFound if current_store.nil?
         end
       end
     end
