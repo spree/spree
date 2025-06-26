@@ -433,6 +433,8 @@ module Spree
     end
 
     def can_get_rates?
+      return true if order.ship_address.nil? && order.digital?
+
       order.ship_address&.valid?
     end
 

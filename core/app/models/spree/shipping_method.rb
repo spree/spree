@@ -48,11 +48,16 @@ module Spree
     end
 
     def include?(address)
+      return true if digital?
       return false unless address
 
       zones.includes(zone_members: :zoneable).any? do |zone|
         zone.include?(address)
       end
+    end
+
+    def digital?
+      calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     def build_tracking_url(tracking)
