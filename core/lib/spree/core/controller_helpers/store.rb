@@ -9,6 +9,8 @@ module Spree
             helper_method :current_store
             helper_method :current_price_options
           end
+
+          prepend_before_action :raise_record_not_found_if_store_is_not_found
         end
 
         def current_store
@@ -17,6 +19,10 @@ module Spree
 
         def store_locale
           current_store.default_locale
+        end
+
+        def raise_record_not_found_if_store_is_not_found
+          raise ActiveRecord::RecordNotFound if current_store.nil?
         end
 
         def ensure_current_store(object)
