@@ -124,11 +124,14 @@ describe Spree::OrdersController, type: :controller do
     context 'when order does not require ship address' do
       let(:digital_shipping_method) { create(:digital_shipping_method) }
       let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
-      let(:order) { create(:completed_order_with_totals, store: store, user: user, line_items: [create(:line_item, variant: digital_product.master)]) }
+      let(:order) { create(:completed_order_with_totals, store: store, user: user, ship_address: nil, variants: [digital_product.default_variant]) }
 
       it 'renders the show template' do
+        expect(order.digital?).to be_truthy
+        expect(order.requires_ship_address?).to be_falsey
         get :show, params: { id: order.number, token: order.token }
         expect(response).to render_template(:show)
+        expect(response.body).not_to include(Spree.t(:delivery_address))
       end
     end
 
