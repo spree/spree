@@ -43,7 +43,7 @@ describe Spree::Product::Slugs, type: :model do
 
     context 'when more than one translation exists' do
       before do
-        product.set_friendly_id('french-slug', :fr)
+        product.set_friendly_id("french-slug", :fr)
         product.save!
       end
 
@@ -66,8 +66,8 @@ describe Spree::Product::Slugs, type: :model do
       it 'truncates renamed slug to ensure it remains within length limit' do
         product.destroy!
         expect(product.slug.length).to eq(255)
-        expect(product.slugs.first.slug.length).to eq(255)
-        expect(product.translations.first.slug.length).to eq(255)
+        expect(product.slugs.with_deleted.first.slug.length).to eq(255)
+        expect(product.translations.with_deleted.first.slug.length).to eq(255)
       end
     end
   end
