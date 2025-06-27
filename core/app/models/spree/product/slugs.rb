@@ -40,7 +40,7 @@ module Spree
 
         validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
 
-        def slug_available?(slug, id)
+        def self.slug_available?(slug, id)
           !where(slug: slug).where.not(id: id).exists?
         end
       end
