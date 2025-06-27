@@ -9,9 +9,6 @@ module Spree
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
-    if defined?(Spree::VendorConcern)
-      include Spree::VendorConcern
-    end
     include Spree::Shipment::Emails
     include Spree::Shipment::Webhooks
 

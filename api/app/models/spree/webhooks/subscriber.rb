@@ -1,16 +1,11 @@
 module Spree
   module Webhooks
     class Subscriber < Spree::Webhooks::Base
-      if defined?(Spree::VendorConcern)
-        include Spree::VendorConcern
-      end
-
       if Rails::VERSION::STRING >= '7.1.0'
         has_secure_token :secret_key, on: :save
       else
         has_secure_token :secret_key
       end
-
 
       has_many :events, inverse_of: :subscriber
 
