@@ -39,7 +39,8 @@ describe Spree::Product::Slugs, type: :model do
 
     context 'when more than one translation exists' do
       before do
-        product.send(:slug=, 'french-slug', locale: :fr)
+        product.set_friendly_id("french-slug", :fr)
+        # product.send(:slug=, 'french-slug', locale: :fr)
         product.save!
       end
 

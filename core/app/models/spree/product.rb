@@ -20,6 +20,10 @@
 
 module Spree
   class Product < Spree.base_class
+    acts_as_paranoid
+    acts_as_taggable_on :tags, :labels
+    auto_strip_attributes :name
+
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
@@ -52,10 +56,6 @@ module Spree
         pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       end
     end
-
-    acts_as_paranoid
-    auto_strip_attributes :name
-    acts_as_taggable_on :tags, :labels
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458

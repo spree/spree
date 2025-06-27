@@ -9,7 +9,6 @@ module Spree
 
         translates :slug
         friendly_id :slug_candidates, use: [:history, :slugged, :scoped, :mobility], scope: spree_base_uniqueness_scope, slug_limit: 255
-        acts_as_paranoid
 
         Product::Translation.class_eval do
           before_save :set_slug
@@ -89,10 +88,9 @@ module Spree
 
         regenerate_slug
 
-        "slug = SUBSTRING(CONCAT('deleted-', id, '_', slug), 1, 255)".tap do |query|
-          translations.with_deleted.update_all(query)
-          slugs.with_deleted.update_all(query)
-        end
+        new_slug = ->(rec) { "deleted-#{rec.id}_#{rec.slug}"[..255] }
+        translations.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
+        slugs.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
 
         translations.find_by!(locale: I18n.locale).update_column(:slug, slug) if Spree.use_translations?
       end
