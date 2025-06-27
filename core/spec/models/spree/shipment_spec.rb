@@ -325,6 +325,37 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#can_get_rates?' do
+    let(:digital_shipping_method) { create(:digital_shipping_method) }
+    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+    let(:digital_line_item) { create(:line_item, variant: create(:variant, product: digital_product)) }
+
+    it 'returns true if order is digital and it does not have a ship address' do
+      order.ship_address = nil
+      order.line_items = [digital_line_item]
+      expect(order.digital?).to eq(true)
+      expect(shipment.send(:can_get_rates?)).to be_truthy
+    end
+
+    it 'returns false if order is not digital and it does not have a ship address' do
+      order.ship_address = nil
+      expect(order.digital?).to eq(false)
+      expect(shipment.send(:can_get_rates?)).to be_falsey
+    end
+
+    it 'returns false when order\'s ship address is not valid' do
+      order.ship_address = build(:address, address1: nil)
+      expect(order.digital?).to eq(false)
+      expect(shipment.send(:can_get_rates?)).to be_falsey
+    end
+
+    it 'returns true when order\'s ship address is valid' do
+      order.ship_address = build(:address)
+      expect(order.digital?).to eq(false)
+      expect(shipment.send(:can_get_rates?)).to be_truthy
+    end
+  end
+
   context 'shipping_rates' do
     let(:shipment) { create(:shipment) }
     let(:shipping_method1) { create(:shipping_method) }
