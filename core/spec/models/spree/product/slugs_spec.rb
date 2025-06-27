@@ -28,6 +28,24 @@ describe Spree::Product::Slugs, type: :model do
     end
   end
 
+  describe 'ability to retake a slug of deleted record with the same name' do
+    let(:another_product) { create(:product, name: name) }
+    let(:product) { build(:product, name: name) }
+
+    let(:name) { 'product-name' }
+
+    it 'can use original slug' do
+      original_slugs_slug = another_product.slugs.first.slug
+      original_product_slug = another_product.slug
+
+      another_product.destroy!
+      product.save!
+
+      expect(product.slugs.first.slug).to eq(original_slugs_slug)
+      expect(product.slug).to eq(original_product_slug)
+    end
+  end
+
   it 'stores old slugs in FriendlyIds history' do
     expect(product).to receive(:create_slug)
     # Set it, otherwise the create_slug method avoids writing a new one
@@ -43,7 +61,7 @@ describe Spree::Product::Slugs, type: :model do
 
     context 'when more than one translation exists' do
       before do
-        product.set_friendly_id("french-slug", :fr)
+        product.set_friendly_id('french-slug', :fr)
         product.save!
       end
 

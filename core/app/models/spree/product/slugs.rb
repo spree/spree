@@ -84,6 +84,8 @@ module Spree
       end
 
       def punch_slugs
+        return if new_record? || frozen?
+
         self.slug = nil
 
         set_slug
