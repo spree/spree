@@ -20,14 +20,17 @@
 
 module Spree
   class Product < Spree.base_class
-    extend FriendlyId
+    acts_as_paranoid
+    acts_as_taggable_on :tags, :labels
+    auto_strip_attributes :name
+
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
-    include Spree::TranslatableResourceSlug
     include Spree::MemoizedData
     include Spree::Metadata
     include Spree::Product::Webhooks
+    include Spree::Product::Slugs
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
@@ -53,32 +56,7 @@ module Spree
         pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' },
                                          using: { tsearch: { prefix: true, any_word: true } }
       end
-
-      before_save :set_slug
-      acts_as_paranoid
-      # deleted translation values also need to be accessible for index views listing deleted resources
-      default_scope { unscope(where: :deleted_at) }
-      def set_slug
-        self.slug = generate_slug
-      end
-
-      private
-
-      def generate_slug
-        if name.blank? && slug.blank?
-          translated_model.name.to_url
-        elsif slug.blank?
-          name.to_url
-        else
-          slug.to_url
-        end
-      end
     end
-
-    friendly_id :slug_candidates, use: [:history, :scoped, :mobility], scope: spree_base_uniqueness_scope
-    acts_as_paranoid
-    auto_strip_attributes :name
-    acts_as_taggable_on :tags, :labels
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -145,16 +123,11 @@ module Spree
     after_initialize :ensure_master
     after_initialize :assign_default_tax_category
 
-    before_validation :downcase_slug
-    before_validation :normalize_slug, on: :update
     before_validation :validate_master
     before_validation :ensure_default_shipping_category
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
-
-    after_destroy :punch_slug
-    after_restore :update_slug_history
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
@@ -173,7 +146,6 @@ module Spree
       validates :price, if: :requires_price?
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
@@ -512,17 +484,6 @@ module Spree
       where conditions.inject(:or)
     end
 
-    def self.slug_available?(slug, id)
-      !where(slug: slug).where.not(id: id).exists?
-    end
-
-    def ensure_slug_is_unique(candidate_slug)
-      return slug if candidate_slug.blank? || slug.blank?
-      return candidate_slug if self.class.slug_available?(candidate_slug, id)
-
-      normalize_friendly_id([candidate_slug, uuid_for_friendly_id])
-    end
-
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it
     # all option values. At that point all variants associated with only those
@@ -738,25 +699,6 @@ module Spree
       self.tax_category = Spree::TaxCategory.default if new_record?
     end
 
-    def normalize_slug
-      self.slug = normalize_friendly_id(slug)
-    end
-
-    def punch_slug
-      # punch slug with date prefix to allow reuse of original
-      return if frozen?
-
-      update_column(:slug, "#{Time.current.to_i}_#{slug}"[0..254])
-
-      translations.with_deleted.each do |t|
-        t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]
-      end
-    end
-
-    def update_slug_history
-      save!
-    end
-
     def anything_changed?
       saved_changes? || @nested_changes
     end
@@ -812,14 +754,6 @@ module Spree
       end
     end
 
-    # Try building a slug based on the following fields in increasing order of specificity.
-    def slug_candidates
-      [
-        :name,
-        [:name, :sku]
-      ]
-    end
-
     def run_touch_callbacks
       run_callbacks(:touch)
     end
@@ -865,10 +799,6 @@ module Spree
 
     def eligible_for_taxon_matching?
       previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
-    end
-
-    def downcase_slug
-      slug&.downcase!
     end
 
     def after_activate
