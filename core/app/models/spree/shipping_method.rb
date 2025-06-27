@@ -48,7 +48,7 @@ module Spree
     end
 
     def include?(address)
-      return true if digital?
+      return true unless requires_zone_check?
       return false unless address
 
       zones.includes(:zone_members).any? do |zone|
