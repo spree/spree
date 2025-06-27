@@ -51,7 +51,7 @@ module Spree
       return true if digital?
       return false unless address
 
-      zones.includes(zone_members: :zoneable).any? do |zone|
+      zones.includes(:zone_members).any? do |zone|
         zone.include?(address)
       end
     end
