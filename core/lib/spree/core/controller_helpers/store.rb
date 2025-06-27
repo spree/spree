@@ -68,7 +68,13 @@ module Spree
         end
 
         def raise_record_not_found_if_store_is_not_found
+          return if skip_store_lookup?
+
           raise ActiveRecord::RecordNotFound if current_store.nil?
+        end
+
+        def skip_store_lookup?
+          Spree.root_domain.present? && Spree.root_domain.include?(request.env['SERVER_NAME'])
         end
       end
     end
