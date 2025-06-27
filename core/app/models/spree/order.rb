@@ -860,6 +860,10 @@ module Spree
       line_items
     end
 
+    def requires_ship_address?
+      !digital?
+    end
+
     private
 
     def link_by_email

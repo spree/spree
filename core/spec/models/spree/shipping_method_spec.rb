@@ -35,14 +35,14 @@ describe Spree::ShippingMethod, type: :model do
     end
   end
 
-  describe '#digital?' do
-    it 'returns false if the shipping method is not digital' do
-      expect(shipping_method.digital?).to be_falsey
+  describe '#requires_zone_check?' do
+    it 'returns true if the shipping method is not digital' do
+      expect(shipping_method.requires_zone_check?).to be_truthy
     end
 
-    it 'returns true if the shipping method is digital' do
+    it 'returns false if the shipping method is digital' do
       shipping_method = create(:digital_shipping_method)
-      expect(shipping_method.digital?).to be_truthy
+      expect(shipping_method.requires_zone_check?).to be_falsey
     end
   end
 

@@ -56,8 +56,8 @@ module Spree
       end
     end
 
-    def digital?
-      calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
+    def requires_zone_check?
+      !calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     def build_tracking_url(tracking)
