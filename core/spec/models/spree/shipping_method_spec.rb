@@ -35,6 +35,17 @@ describe Spree::ShippingMethod, type: :model do
     end
   end
 
+  describe '#digital?' do
+    it 'returns false if the shipping method is not digital' do
+      expect(shipping_method.digital?).to be_falsey
+    end
+
+    it 'returns true if the shipping method is digital' do
+      shipping_method = create(:digital_shipping_method)
+      expect(shipping_method.digital?).to be_truthy
+    end
+  end
+
   context 'calculators' do
     it "rejects calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
