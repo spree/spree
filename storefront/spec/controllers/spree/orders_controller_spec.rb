@@ -120,6 +120,18 @@ describe Spree::OrdersController, type: :controller do
       end
     end
 
+
+    context 'when order does not require ship address' do
+      let(:digital_shipping_method) { create(:digital_shipping_method) }
+      let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+      let(:order) { create(:completed_order_with_totals, store: store, user: user, line_items: [create(:line_item, variant: digital_product.master)]) }
+
+      it 'renders the show template' do
+        get :show, params: { id: order.number, token: order.token }
+        expect(response).to render_template(:show)
+      end
+    end
+
     context 'when order belongs to another user' do
       let(:order) { create(:completed_order_with_totals, store: store, user: create(:user)) }
 
