@@ -20,7 +20,11 @@ describe Spree::Product::Slugs, type: :model do
     end
 
     it 'updates slugs withs deleted-{id} prefix to ensure uniqueness' do
-      expect { product.destroy! }.to change { product.slugs.with_deleted.first.reload.slug }.to a_string_matching(/deleted-\d+_.*/)
+      expect { product.destroy! }.to change { product.slugs.with_deleted.first.slug }.to a_string_matching(/deleted-\d+_.*/)
+    end
+
+    it 'soft deletes slug record' do
+      expect { product.destroy! }.to change { product.slugs.with_deleted.first.deleted? }.to be_truthy
     end
   end
 
@@ -39,8 +43,7 @@ describe Spree::Product::Slugs, type: :model do
 
     context 'when more than one translation exists' do
       before do
-        product.set_friendly_id("french-slug", :fr)
-        # product.send(:slug=, 'french-slug', locale: :fr)
+        product.set_friendly_id('french-slug', :fr)
         product.save!
       end
 
@@ -57,11 +60,14 @@ describe Spree::Product::Slugs, type: :model do
         product.slug = nil
         product.name = 'x' * 255
         product.save!
+        product.translations.create!(slug: product.name, locale: 'de')
       end
 
       it 'truncates renamed slug to ensure it remains within length limit' do
         product.destroy!
-        expect(product.slug.length).to eq 255
+        expect(product.slug.length).to eq(255)
+        expect(product.slugs.first.slug.length).to eq(255)
+        expect(product.translations.first.slug.length).to eq(255)
       end
     end
   end

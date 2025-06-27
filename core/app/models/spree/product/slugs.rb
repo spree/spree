@@ -86,10 +86,12 @@ module Spree
       def punch_slugs
         self.slug = nil
 
-        regenerate_slug
+        set_slug
+        update_column(:slug, slug)
 
-        new_slug = ->(rec) { "deleted-#{rec.id}_#{rec.slug}"[..255] }
-        translations.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
+        new_slug = ->(rec) { "deleted-#{rec.id}_#{rec.slug}"[..254] }
+
+        translations.with_deleted.each { |rec| rec.update_columns(slug: new_slug.call(rec)) }
         slugs.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
 
         translations.find_by!(locale: I18n.locale).update_column(:slug, slug) if Spree.use_translations?
