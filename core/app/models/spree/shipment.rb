@@ -433,6 +433,8 @@ module Spree
     end
 
     def can_get_rates?
+      return true unless order.requires_ship_address?
+
       order.ship_address&.valid?
     end
 
