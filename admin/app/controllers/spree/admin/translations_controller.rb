@@ -22,7 +22,16 @@ module Spree
       private
 
       def permitted_translation_params
-        params.require(@resource.model_name.param_key).permit(translation_fields(resource_class))
+        params.require(@resource.model_name.param_key).permit(translation_fields(resource_class), **nested_params)
+      end
+
+      def nested_params
+        case resource_class.to_s
+          when 'Spree::OptionType'
+            { option_values_attributes: [ :id, *translation_fields(Spree::OptionValue)] }
+          else
+            {}
+        end
       end
 
       def translation_fields(klass)
