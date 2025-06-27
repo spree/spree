@@ -29,6 +29,8 @@
             <%= render 'spree/admin/translations/option_types/form', options %>
           <% when Spree::Product %>
             <%= render 'spree/admin/translations/products/form', options %>
+          <% when Spree::Property %>
+            <%= render 'spree/admin/translations/properties/form', options %>
           <% when Spree::Store %>
             <%= render 'spree/admin/translations/stores/form', options %>
           <% when Spree::Taxon %>

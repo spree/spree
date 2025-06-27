@@ -71,6 +71,8 @@ module Spree
             spree.edit_admin_option_type_path(@resource)
           when Spree::Product
             spree.edit_admin_product_path(@resource)
+          when Spree::Property
+            spree.edit_admin_property_path(@resource)
           when Spree::Store
             spree.edit_admin_store_path(section: "general-settings")
           when Spree::Taxon

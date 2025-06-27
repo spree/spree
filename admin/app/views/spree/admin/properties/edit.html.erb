@@ -3,6 +3,9 @@
   <%= @property.presentation %>
 <% end %>
 
+<% content_for :page_actions_dropdown do %>
+  <%= link_to_edit_translations(@property) %>
+<% end %>
 
 <%= form_for [:admin, @property] do |f| %>
   <div class="row">
