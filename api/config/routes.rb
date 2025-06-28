@@ -35,6 +35,8 @@ Spree::Core::Engine.add_routes do
         end
 
         resource :account, controller: :account, only: %i[show create update]
+        resources :account_confirmations, only: %i[show]
+        resources :passwords, controller: :passwords, only: %i[create update]
 
         namespace :account do
           resources :addresses, controller: :addresses
