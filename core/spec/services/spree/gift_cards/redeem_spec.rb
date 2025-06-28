@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::GiftCards::Redeem do
-  subject { described_class.call(gift_card: gift_card, order: order) }
+  subject { described_class.call(gift_card: gift_card) }
 
   let(:store) { Spree::Store.default }
   let(:order) { create(:order, store: store) }
