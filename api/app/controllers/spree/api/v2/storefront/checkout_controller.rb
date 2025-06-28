@@ -104,10 +104,10 @@ module Spree
 
             if messages.any?
               render_serialized_payload(422) do
-                serialized_current_order.deep_merge({ meta: { messages: messages } })
+                serialize_resource(spree_current_order).deep_merge({ meta: { messages: messages } })
               end
             else
-              render_serialized_payload { serialized_current_order }
+              render_serialized_payload { serialize_resource(spree_current_order) }
             end
           end
 
