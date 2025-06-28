@@ -3,7 +3,7 @@ module Spree
     class Redeem
       prepend Spree::ServiceModule::Base
 
-      def call(gift_card:, order:)
+      def call(gift_card:)
         if gift_card.amount_remaining.zero?
           gift_card.redeem!
         else
