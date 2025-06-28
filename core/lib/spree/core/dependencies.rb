@@ -36,6 +36,7 @@ module Spree
         # gift cards
         gift_card_apply_service: 'Spree::GiftCards::Apply',
         gift_card_remove_service: 'Spree::GiftCards::Remove',
+        gift_card_redeem_service: 'Spree::GiftCards::Redeem',
 
         # order
         order_approve_service: 'Spree::Orders::Approve',

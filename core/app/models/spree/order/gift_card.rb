@@ -42,7 +42,7 @@ module Spree
       end
 
       def redeem_gift_card
-        gift_card.redeem! if gift_card.present?
+        Spree::Dependencies.gift_card_redeem_service.constantize.call(order: self, gift_card: gift_card)
       end
     end
   end
