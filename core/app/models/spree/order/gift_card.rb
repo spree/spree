@@ -42,6 +42,8 @@ module Spree
       end
 
       def redeem_gift_card
+        return unless gift_card.present?
+
         Spree::Dependencies.gift_card_redeem_service.constantize.call(order: self, gift_card: gift_card)
       end
     end
