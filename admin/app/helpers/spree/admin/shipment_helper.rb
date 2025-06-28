@@ -1,5 +1,7 @@
 module Spree::Admin
   module ShipmentHelper
+    include Spree::ShipmentHelper
+
     def can_ship?(shipment)
       can?(:update, shipment) && shipment.shippable?
     end
