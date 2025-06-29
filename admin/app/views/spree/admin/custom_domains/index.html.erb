@@ -6,11 +6,11 @@
 <% end %>
 
 <div class="card-lg p-4">
-  <h5 class="mb-3">Internal URL</h5>
+  <h5 class="mb-3"><%= Spree.t(:internal_url) %></h5>
   <div class="row mb-4">
     <div class="col-lg-4">
       <p class="text-muted">
-        This is your internal URL.
+        <%= Spree.t(:internal_url_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">
@@ -26,11 +26,11 @@
     </div>
   </div>
   <hr class="my-5" />
-  <h5>Custom domains</h5>
+  <h5><%= Spree.t(:custom_domains) %></h5>
   <div class="row">
     <div class="col-lg-4">
       <p class="text-muted">
-        Connect your domain or subdomain to your store.
+        <%= Spree.t(:custom_domains_help) %>
       </p>
     </div>
     <div class="col-lg-7 offset-lg-1">

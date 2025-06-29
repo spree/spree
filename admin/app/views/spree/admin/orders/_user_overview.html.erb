@@ -2,12 +2,9 @@
   <div class="alert alert-info mt-2 mb-0">
     <div>
       <h6 class="font-weight-bold">
-        <%= icon('magic') %> Assistant
+        <%= icon('magic') %> <%= Spree.t(:assistant) %> 
       </h6>
-      This is a repeat customer that has spent a total of
-      <strong><%= Spree::Money.new(@order.user.orders.complete.sum(:total)) %></strong> across
-      <strong><%= @order.user.orders.complete.count %> orders</strong>, averaging
-      <strong><%= Spree::Money.new(@order.user.orders.complete.average(:total)) %></strong> per order.
+      <%= Spree.t(:assistant_info, total: Spree::Money.new(@order.user.orders.complete.sum(:total)), count: @order.user.orders.complete.count, average: Spree::Money.new(@order.user.orders.complete.average(:total))).html_safe %>
     </div>
   </div>
 <% end %>

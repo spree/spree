@@ -6,15 +6,13 @@
   <div class="col-lg-6">
     <div class="card mb-4">
       <div class="card-header">
-        <h5 class="card-title">Logo for emails</h5>
+        <h5 class="card-title"><%= Spree.t('admin.logo_for_emails') %></h5>
       </div>
       <div class="card-body">
-        <p class="text-muted">This logo is included in all email notifications such as order confirmation</p>
+        <p class="text-muted"><%= Spree.t('admin.logo_for_emails_help') %></p>
         <%= render 'active_storage/upload_form', form: f, field_name: :mailer_logo, width: 204, height: 104 %>
         <p class="form-text text-muted mb-0 mt-2">
-          We recommend images with a transparent background.
-          <br />
-          Only JPEG and PNG formats are supported.
+          <%= Spree.t('admin.logo_for_emails_recommend').html_safe %>
         </p>
       </div>
     </div>
@@ -23,11 +21,11 @@
   <div class="col-lg-6">
     <div class="card mb-4">
       <div class="card-header">
-        <h5 class="card-title">Email addresses</h5>
+        <h5 class="card-title"><%= Spree.t('admin.store_form.email_addresses') %></h5>
       </div>
       <div class="card-body">
         <p class="text-muted">
-          Please provide the email address that will be used as the sender of all emails sent from your store.
+          <%= Spree.t('admin.store_form.email_addresses_help') %>
         </p>
 
         <div class="form-group">

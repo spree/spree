@@ -108,7 +108,7 @@
       <div class="card-body">
         <%= f.label :square_image, Spree.t(:square_image) %>
         <p class="text-muted form-text">
-          Used for the featured image on the homepage.
+          <%= Spree.t(:square_image_help) %>
         </p>
         <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true %>
         <%= f.error_message_on :square_image %>
@@ -143,6 +143,6 @@
           slug_attribute_name: :permalink_part,
           slug: @permalink_part,
           slug_path: ['t', @parent_permalink.presence].compact.join('/'),
-          placeholder: 'Add a title and description to see how this taxon might appear in a search engine listing' %>
+          placeholder: Spree.t('admin.taxons.seo_placeholder') %>
   </div>
 </div>

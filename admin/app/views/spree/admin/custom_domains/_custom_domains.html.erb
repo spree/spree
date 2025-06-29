@@ -4,10 +4,10 @@
       <thead>
         <tr>
           <th><%= Spree.t(:name) %></th>
-          <th>Active?</th>
+          <th><%= Spree.t(:active) %></th>
 
           <% unless entri_enabled? %>
-            <th>Default</th>
+            <th><%= Spree.t(:default) %></th>
             <th></th>
           <% end %>
         </tr>
@@ -19,6 +19,6 @@
   </div>
 <% else %>
   <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    You don't have any custom domains set yet.
+    <%= Spree.t(:no_custom_domains) %>
   </div>
 <% end %>

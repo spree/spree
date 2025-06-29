@@ -1,17 +1,7 @@
 <% if done %>
-  <p>
-    Good job, you've added products to your store!
-  </p>
-  <p>
-    Remember you can always add more!
-  </p>
+  <%= Spree.t('admin.store_setup_tasks.products.done').html_safe %>
 <% else %>
-  <p>
-    Add products to your store, either your own or invite 3rd party vendors to sell together.
-  </p>
-  <p>
-    You can also import products in bulk from a CSV or Excel file.
-  </p>
+  <%= Spree.t('admin.store_setup_tasks.products.copy').html_safe %>
 <% end %>
 
 <div class="d-flex gap-3">

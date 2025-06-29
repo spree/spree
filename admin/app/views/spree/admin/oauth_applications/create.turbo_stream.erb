@@ -29,13 +29,13 @@
             </div>
           </div>
           <div class="alert alert-warning mt-3">
-            This is your application's secret token, copy it now and keep it safe. It won't be shown again.
+            <%= Spree.t('admin.oauth_applications.warning') %>
           </div>
         </div>
       </div>
     </div>
     <div class="card-footer">
-      <%= link_to 'Back to list', spree.admin_oauth_applications_url, class: 'btn btn-light' %>
+      <%= link_to Spree.t(:back_to_list), spree.admin_oauth_applications_url, class: 'btn btn-light' %>
     </div>
   </div>
 <% end %>

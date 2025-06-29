@@ -1,5 +1,5 @@
 <div class="text-muted text-center py-5">
-  <p>Audit log is part of the Spree Enterprise offering.</p>
+  <p><%= Spree.t(:audit_log_help) %></p>
 
-  <%= external_link_to 'Upgrade to Spree Enterprise', 'https://spreecommerce.org/pricing', class: 'btn btn-primary' %>
+  <%= external_link_to Spree.t(:upgrade_to_spree_enterprise), 'https://spreecommerce.org/pricing', class: 'btn btn-primary' %>
 </div>

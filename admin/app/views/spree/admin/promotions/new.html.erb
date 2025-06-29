@@ -5,7 +5,7 @@
 <%= form_for :promotion, url: collection_url do |f| %>
   <%= render 'form', f: f %>
   <p class="alert alert-info text-center mt-3">
-    In the next step you will be able to add actions and rules to your promotion
+    <%= Spree.t(:new_promotion_info) %>
   </p>
   <%= render 'spree/admin/shared/new_resource_links' %>
 <% end %>
