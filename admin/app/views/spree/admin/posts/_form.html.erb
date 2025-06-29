@@ -24,7 +24,7 @@
 
         <div class="form-group mb-0">
           <%= f.label :excerpt, Spree.t(:excerpt) %>
-          <%= help_bubble('Add a summary of the post') %>
+          <%= help_bubble(Spree.t(:excerpt_help)) %>
 
           <div class="trix-container mb-0">
             <%= f.rich_text_area :excerpt, class: 'overflow-auto', style: 'height: 100px', data: { seo_form_target: 'sourceExcerptInput' } %>
@@ -76,6 +76,6 @@
           description: @post.content,
           slug: @post.slug,
           slug_path: 'posts',
-          placeholder: 'Add a title and content to see how this post might appear in a search engine listing' %>
+          placeholder: Spree.t('admin.posts.seo_placeholder') %>
   </div>
 </div>

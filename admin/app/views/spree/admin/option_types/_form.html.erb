@@ -10,7 +10,7 @@
             <%= f.text_field :presentation, class: "form-control", required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
             <%= f.error_message_on :presentation %>
             <p class="text-muted form-text mt-2 mb-0">
-              This is used to display the option type on the storefront.
+              <%= Spree.t(:presentation_help).html_safe %>
             </p>
           </div>
         </div>
@@ -21,7 +21,7 @@
             <%= f.text_field :name, class: "form-control", data: { slug_form_target: :url } %>
             <%= f.error_message_on :name %>
             <p class="text-muted form-text mt-2 mb-0">
-              This is used internally to identify the option type. <strong>It must be unique.</strong>
+              <%= Spree.t(:internal_name_help).html_safe %>
             </p>
           </div>
         </div>

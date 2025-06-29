@@ -4,7 +4,7 @@
 
 <% content_for(:page_alerts) do %>
   <div class="alert alert-info">
-    Properties allow you to enrich your Product information.
+    <%= Spree.t(:properties_info) %>
   </div>
 <% end %>
 
@@ -50,5 +50,5 @@
 </div>
 
 <p class="documentation-link-container">
-  <%= external_link_to "Learn more about properties", "https://spreecommerce.org/docs/user/manage-products/product-properties" %>
+  <%= external_link_to Spree.t(:learn_more_about_properties), "https://spreecommerce.org/docs/user/manage-products/product-properties" %>
 </p>
