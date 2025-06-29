@@ -1,12 +1,10 @@
 <%= turbo_frame_tag :set_customer_support_email, class: 'w-100' do %>
   <div class="alert alert-info">
-    We need your customer support email to display on your storefront.
-    This email will work as a contact point for your customers to reach out to you for any queries or support.
+    <%= Spree.t('admin.store_setup_tasks.customer_support_email.info').html_safe %>
   </div>
-
   <% if done %>
     <p>
-      Your customer support email is <strong><%= current_store.customer_support_email %>.</strong>
+      <%= Spree.t('admin.store_setup_tasks.customer_support_email.done', email: current_store.customer_support_email).html_safe %>
     </p>
     <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_emails_admin_store_path, class: 'btn btn-light' %>
   <% else %>

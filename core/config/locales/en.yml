@@ -122,6 +122,8 @@ en:
         event_name: Event Name
         expires_at: Expires At
         generate_code: Generate coupon code
+        match_policy_all: Match policy all
+        match_policy_any: Match policy any
         name: Name
         path: Path
         promotion_category: Promotion Category
@@ -141,6 +143,8 @@ en:
         name: Name
       spree/shipment:
         number: Number
+      spree/shipping_method:
+        display_on: Display On
       spree/state:
         abbr: Abbreviation
         name: Name
@@ -152,6 +156,8 @@ en:
         type: Type
         updated: Updated
         user: User
+      spree/stock_location:
+        active: Active
       spree/store:
         address: Address
         contact_phone: Contact Phone
@@ -172,6 +178,7 @@ en:
         name: Name
       spree/tax_category:
         description: Description
+        is_default: Is default
         name: Name
       spree/tax_rate:
         amount: Rate
@@ -181,6 +188,7 @@ en:
         name: Name
         permalink: Permalink
         position: Position
+        sort_order: Sort order
       spree/taxonomy:
         name: Name
       spree/user:
@@ -340,6 +348,9 @@ en:
       spree/credit_card:
         one: Credit Card
         other: Credit Cards
+      spree/custom_domain:
+        one: Custom domain
+        other: Custom domains
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
@@ -385,6 +396,12 @@ en:
       spree/payment_method:
         one: Payment Method
         other: Payment Methods
+      spree/post:
+        one:  Post
+        other: Posts
+      spree/post_category:
+        one:  Post Category
+        other: Post Categories
       spree/price:
         one: Price
         other: Prices
@@ -672,6 +689,8 @@ en:
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
+    amount_min: Amount Min
+    amount_max: Amount Max
     analytics: Analytics
     and: and
     api_keys: API keys
@@ -683,25 +702,34 @@ en:
     approver: Approver
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
+    assets: Assets
+    assistant: Assistant
+    assistant_info: This is a repeat customer that has spent a total of <strong>%{total}</strong> across <strong>%{count} orders</strong>, averaging <strong>%{average}</strong> per order.
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     at_symbol: "@"
     attachments: Attachments
     audit_log: Audit Log
+    audit_log_help: Audit log is part of the Spree Enterprise offering.
     author: Author
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
     automatic_promotion: Automatic
+    automatic_promotion_help: This promotion will be automatically applied to all eligible orders.
     automatic_taxon_names:
       new_arrivals: New arrivals
       on_sale: On sale
     availability: availability
     available: Available
     available_on: Available On
+    available_payment_methods: Available Payment Methods
+    avatar: Avatar
     average_order_value: Average Order Value
+    avg_order_value: Avg. Order Value
     avs_response: AVS Response
     back: Back
     back_end: Backend
+    back_to_list: Back To List
     back_to_payment: Back To Payment
     back_to_resource_list: Back To %{resource} List
     back_to_rma_reason_list: Back To RMA Reason List
@@ -775,6 +803,9 @@ en:
     categories: Categories
     categorization: Categorization
     category: Category
+    category_lvl0: Category Lvl0
+    category_lvl1: Category Lvl1
+    category_lvl2: Category Lvl2
     change: Change
     change_password: Change password
     changes_published: Changes published!
@@ -799,6 +830,8 @@ en:
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
     code: Code
+    code_prefix_help: eg. <strong>ABC</strong>
+    code_prefix_placeholder: Coupon Prefix (optional)
     colors: Colors
     company: Company
     compare_at_amount: Compare at amount
@@ -809,6 +842,7 @@ en:
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
+    connect_your_own_domain: Connect your own domain
     contact: Contact
     contact_information: Contact information
     contact_phone: Contact phone
@@ -823,6 +857,7 @@ en:
     copy: Copy
     copy_id: Copy ID
     copy_link: Copy link
+    copy_number: Copy number
     cost_currency: Cost Currency
     cost_price: Cost Price
     could_not_create_customer_return: Could not create customer return
@@ -831,6 +866,7 @@ en:
     countries: Countries
     country: Country
     country_based: Country Based
+    country_iso: Country ISO
     country_name: Name
     country_names:
       CA: Canada
@@ -875,6 +911,8 @@ en:
     current: Current
     current_password: Current password
     custom_code: Custom code
+    custom_domains: Custom domains
+    custom_domains_help: Connect your domain or subdomain to your store.
     custom_font_code: Custom font code
     customer: Customer
     customer_details: Customer Details
@@ -899,6 +937,7 @@ en:
     default_country: Default Country
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_currency: Default currency
+    default_custom_domains_help: We will use this domain in emails to customers.
     default_locale: Default locale
     default_post_categories:
       articles: Articles
@@ -916,6 +955,7 @@ en:
     delete_from_taxon: Delete From Taxon
     delete_selected: Delete selected
     deleted: Deleted
+    deliver_invitation_accepted_email: Someone accepted your team invitation
     delivery: Delivery
     delivery_address: Delivery Address
     delivery_information: Delivery Information
@@ -932,6 +972,8 @@ en:
     digital_assets: Digital assets
     digital_assets_help: Digital assets are files that can be downloaded by customers after purchase.
     digital_link_unauthorized: You are not authorized to access this asset
+    digital_links: Digital Links
+    digitals: Digitals
     dimension_units:
       centimeter: Centimeter (cm)
       foot: Foot (ft)
@@ -955,6 +997,7 @@ en:
     done: Done
     dont_have_account: No account?
     download: Download
+    download_records_as_csv_file: Download records as CSV file
     draft: Draft
     draft_mode: Draft Mode
     draft_orders: Draft Orders
@@ -1014,6 +1057,7 @@ en:
       other: "%{count} errors prohibited this record from being saved"
     estimated_delivery_time: Estimated delivery time
     estimated_transit_business_days: Estimated transit business days
+    estimated_transit_business_days_help: This is the estimated number of business days it will take for the package to arrive at the customer's address. It will be displayed on the checkout page.
     event: Event
     events:
       spree:
@@ -1031,6 +1075,7 @@ en:
     exceptions:
       count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
     excerpt: Excerpt
+    excerpt_help: Add a summary of the post
     exchange_for: Exchange for
     excl: excl.
     existing_address: Existing address
@@ -1040,6 +1085,7 @@ en:
     expiration_date: Expiration Date
     expired: Expired
     expires_at: Expires at
+    expires_at_help: Leave this field blank for no expiration.
     explore_taxon: Explore taxon
     export: Export
     export_mailer:
@@ -1053,6 +1099,8 @@ en:
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
     favicon: Favicon
+    favicon_image: Favicon image
+    favicon_image_info: A favicon is a small image that appears in the tab of your web browser when you visit a website. It is usually a tiny square or rectangle with a unique design or logo that represents the website
     favicon_upload_info: 'File format: PNG or ICO. File resolution: up to 256x256. File size: up to 1MB'
     featured_image: Featured image
     featured_taxon: Featured taxon
@@ -1062,6 +1110,7 @@ en:
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable
+    filterable_help: Whether this option can be used in product filters
     filtered_records: Filtered records
     finalize: Finalize
     finalized: Finalized
@@ -1093,6 +1142,8 @@ en:
     general_information: General information
     general_settings: General Settings
     generate_code: Generate coupon code
+    generate_unique_codes: Generate unique codes
+    generate_unique_codes_help: These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
     get_back_to_the: Get back to the
     gift_card: Gift Card
     gift_card_applied: The Gift Card was successfully applied to your order!
@@ -1148,6 +1199,7 @@ en:
     included_price_validation: cannot be selected unless you have set a Default Tax Zone
     incomplete: Incomplete
     index_in_search_engines: Index in search engines
+    index_in_search_engines_help: Checking this box will allow your site to appear in search engines.
     info_number_of_skus_not_shown:
       one: and one other
       other: and %{count} others
@@ -1161,6 +1213,9 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_name_help: This is used internally to identify the option type. <strong>It must be unique.</strong>
+    internal_url: Internal URL
+    internal_url_help: This is your internal URL.
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
@@ -1184,6 +1239,7 @@ en:
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
     invitation_resent: Invitation resent!
+    inventory_units: Inventory Units
     invitations: Invitations
     invited_by: Invited by
     is_not_available_to_shipment_address: is not available to shipment address
@@ -1200,6 +1256,7 @@ en:
         gte: greater than or equal to
         lt: less than
         lte: less than or equal to
+      blank_maximum_amount_help: Leave this field blank to not limit the maximum amount.
     items_cannot_be_shipped: We are unable to calculate shipping rates for the selected items.
     items_in_rmas: Items in Return Authorizations
     items_reimbursed: Items reimbursed
@@ -1211,8 +1268,12 @@ en:
     last_name_begins_with: Last Name Begins With
     lastname: Last Name
     learn_more: Learn More
+    learn_more_about_managing_products: Learn more about managing products
+    learn_more_about_options: Learn more about options
+    learn_more_about_properties: Learn more about properties
     lifetime_stats: Lifetime Stats
     limit_usage_to: Limit usage to
+    limit_usage_to_help: Leave this field blank for unlimited usage.
     line_item: Line Item
     line_item_adjustments: Line item adjustments
     line_items: Line items
@@ -1234,6 +1295,7 @@ en:
     login_failed: Login authentication failed.
     login_name: Login
     logo: Logo
+    logo_help: Used in the admin dashboard
     logout: Logout
     logs: Logs
     look_for_similar_items: Look for similar items
@@ -1252,6 +1314,7 @@ en:
     match_choices:
       all: All
       none: None
+    match_policy: Match Policy
     max: Max
     max_items: Max Items
     media: Media
@@ -1312,6 +1375,7 @@ en:
     new_product: New Product
     new_promotion: New Promotion
     new_promotion_category: New Promotion Category
+    new_promotion_info: In the next step you will be able to add actions and rules to your promotion
     new_property: New Property
     new_prototype: New Prototype
     new_refund: New Refund
@@ -1347,6 +1411,8 @@ en:
     no_billing_address_available: No billing address available
     no_cc_type: N/A
     no_country: No country set
+    no_custom_domains: You don't have any custom domains set yet.
+    no_domain_connected: You don't have domain connected to your store
     no_email_provided: No email provided
     no_limits_zone: No Limits
     no_payment_found: No payment found
@@ -1389,17 +1455,24 @@ en:
     notify_me_when_available: Notify me when available
     num_orders: "# Orders"
     number: Number
+    number_of_codes: Number of Codes
+    number_of_codes_help: How many codes you want to generate.
+    one_code_for_all_customers: One code for all customers
+    one_code_for_all_customers_help: You can limit the number of times this code can be used.
     ok: OK
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
     only_left: Only %{count} left
     open: Open
     open_all_adjustments: Open All Adjustments
+    operator_min: Operator Min
+    operator_max: Operator Max
     option_name: Option name
     option_type: Option Type
     option_type_filterable_info: When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color.<br><br><b>Please Note:</b> Filters will only be visible in the storefront taxons that contain products with this option type set.
     option_type_placeholder: Choose an option type
     option_types: Option Types
+    option_types_info: Options are used to group certain attributes. For example, you can create an option named "shirt size" and then create an option value named "small" and "medium" for this option.
     option_value: Option Value
     option_values: Option Values
     optional: Optional
@@ -1413,6 +1486,7 @@ en:
     order_already_completed: Order already completed
     order_already_updated: The order has already been updated.
     order_approved: Order approved
+    order_by_guest_customer: This order was placed by a guest customer
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
@@ -1536,16 +1610,19 @@ en:
       truncate: "&hellip;"
     password: Password
     password_protected: Password protected
+    password_protected_help: Checking this box will put your storefront behind a password.
     paste: Paste
     path: Path
     pay: Pay
     payment: Payment
     payment_amount: Payment amount
     payment_attempts: failed attempts
+    payment_capture_events: Payment Capture Events
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
+    payment_method_name_help: This name will be used to identify the payment method on the storefront
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
@@ -1585,6 +1662,7 @@ en:
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     policies: Policies
+    policies_info: Policies will be automatically added to footer of your store and will be available to customers during checkout.
     populate_get_error: Something went wrong. Please try adding the item again.
     post_categories: Post categories
     posts: Posts
@@ -1594,7 +1672,10 @@ en:
     pre_tax_total: Pre-Tax Total
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
+    presentation_help: How this option is presented to customers
     preview: Preview
+    preview_image: Preview Image
+    preview_image_info: This image will be used when your store is shared on social media or in search engines.
     preview_product: Preview Product
     preview_taxon: Preview Taxon
     previous: Previous
@@ -1605,6 +1686,7 @@ en:
     prices: Prices
     pricing: Pricing
     privacy_policy: Privacy Policy
+    privacy_policy_help: Customers will need to accept these privacy policy during signup.
     process: Process
     processing: Processing
     product: Product
@@ -1635,6 +1717,7 @@ en:
       price_high_to_low: Price (high-low)
       price_low_to_high: Price (low-high)
       relevance: Relevance
+    promo_total: Promo Total
     promotion: Promotion
     promotion_action: Promotion Action
     promotion_action_types:
@@ -1659,6 +1742,7 @@ en:
         all: Match all of these rules
         any: Match any of these rules
     promotion_label: Promotion (%{name})
+    promotion_name_help: Customers will see this in their cart and at checkout.
     promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
     promotion_rule: Promotion Rule
     promotion_rule_types:
@@ -1697,6 +1781,7 @@ en:
     promotions: Promotions
     propagate_all_variants: Propagate all variants
     properties: Properties
+    properties_info: Properties allow you to enrich your Product information.
     property: Property
     prototype: Prototype
     prototypes: Prototypes
@@ -1800,6 +1885,7 @@ en:
     returned: Returned
     returns: Returns
     returns_policy: Returns Policy
+    returns_policy_help: Please provide your customers with a clear and transparent returns policy.
     review: Review
     risk: Risk
     risk_analysis: Risk Analysis
@@ -1827,6 +1913,7 @@ en:
     search: Search
     search_all: Search all
     search_by: 'Search by:'
+    search_description: Search description
     search_engine_listing: Search engine listing
     search_order_number: Order Number
     search_results: Search results for '%{keywords}'
@@ -1893,6 +1980,7 @@ en:
       ready: Ready
       shipped: Shipped
     shipment_successfully_shipped: Shipment successfully shipped
+    shipment_total: Shipment Total
     shipment_transfer_error: There was an error transferring variants
     shipment_transfer_success: Variants successfully transferred
     shipments: Shipments
@@ -1907,9 +1995,13 @@ en:
     shipping_flexible_rate: Flexible Rate per package item
     shipping_instructions: Shipping Instructions
     shipping_method: Shipping Method
+    shipping_method_name_help: This will be displayed to customers.
+    shipping_method_internal_name_help: This will be displayed to admins.
     shipping_methods: Shipping Methods
+    shipping_methods_info: Shipping methods are options that the customer sees when they reach the checkout, they are the carriers and services used to send your products.
     shipping_not_available: Shipping not available
     shipping_policy: Shipping Policy
+    shipping_policy_help: Please provide your customers with a clear and transparent shipping policy.
     shipping_price_sack: Price sack
     shipping_rates:
       display_price:
@@ -1939,6 +2031,7 @@ en:
     sign_in_with_provider: Sign in with %{provider}
     sign_out: Sign out
     sign_up: Sign Up
+    sign_ups: Sign-ups
     site_name: Site name
     size: Size
     sku: SKU
@@ -1946,6 +2039,7 @@ en:
     slug: Slug
     social: Social
     social_media: Social media
+    social_media_info: Social links will be displayed in the footer of your store
     sold_out: Sold out
     something_went_wrong: Something went wrong
     sort_by: Sort by
@@ -1954,6 +2048,7 @@ en:
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
     square_image: Square image
+    square_image_help: Used for the featured image on the homepage.
     ssl:
       change_protocol: Please switch to using HTTP (rather than HTTPS) and retry this request.
     standards_and_formats: Standards and formats
@@ -2001,6 +2096,7 @@ en:
     states: States
     states_required: States Required
     status: Status
+    steps_done: steps done
     stock: Stock
     stock_items: Stock Items
     stock_location: Stock Location
@@ -2029,6 +2125,7 @@ en:
       available_amount: You have <strong>%{amount}</strong> in Store Credit available!
       captured: Used
       credit: Credit
+      description: Allow customers to use store credit for payment. Issue store credit to customers from the admin.
       eligible: Eligible
       errors:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
@@ -2059,6 +2156,7 @@ en:
       unable_to_create: Unable to create store.
       unable_to_delete: Unable to delete store.
       unable_to_update: Unable to update store.
+    store_favicon_images: Store Favicon Images
     store_form:
       checkout_zone_help: Selecting zone will limit to which Countries or States products are shipped. For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>
       code_help: Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)
@@ -2070,6 +2168,8 @@ en:
       new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
       seo_robots: Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>
       social_help: If you want to link to your social accounts in the footer part of your website please fill below fields
+    store_logos: Store Logos
+    store_mailer_logos: Store Mailer Logos
     store_name: Store name
     store_name_help: This is the name of your store. It will be displayed in the header and in the footer.
     store_not_set_as_default: Couldn't set store %{store} as a default store
@@ -2102,9 +2202,11 @@ en:
     tax_included: Tax (incl.)
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
+    tax_total: Tax Total
     taxes: Taxes
     taxon: Taxon
     taxon_edit: Edit Taxon
+    taxon_images: Taxon Images
     taxon_missing_alt: Category banner description
     taxon_placeholder: Add a Taxon
     taxon_rule:
@@ -2122,6 +2224,7 @@ en:
     taxonomy_tree_instruction: "* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: Taxons
     terms_of_service: Terms of Service
+    terms_of_service_help: Customers will need to accept these terms of service during signup.
     test: Test
     test_mailer:
       test_email:
@@ -2149,6 +2252,7 @@ en:
       success_color: Success color
       text_color: Text color
     themes: Themes
+    themes_info: If you wan't to make changes to theme but don't want to go live with them, you can make a copy of the theme and make changes to the copy. And later promote that copy to the live theme.
     there_are_no_items_for_this_order: There are no items for this order
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
@@ -2165,6 +2269,7 @@ en:
     toggle_menu: Toggle menu
     top_suggestions: Top suggestions
     total: Total
+    total_orders: Total Orders
     total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price
@@ -2175,6 +2280,7 @@ en:
     tracking: Tracking
     tracking_number: Tracking Number
     tracking_url: Tracking URL
+    tracking_url_help: will be replaced with the tracking number.
     tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
     transaction_id: Transaction ID
     transaction_id_help: This is the ID of the transaction that was created in the 3rd party payment gateway.
@@ -2209,6 +2315,7 @@ en:
     update_shipping_address: Update shipping address
     updated_at: Updated at
     updating: Updating
+    upgrade_to_spree_enterprise: Upgrade to Spree Enterprise
     upload_image: Upload image
     url: URL
     usage_limit: Usage Limit
@@ -2241,6 +2348,8 @@ en:
     variants_count: Variants count
     vendor: Vendor
     vendors: Vendors
+    vendors_terms_of_service: Vendors Terms of Service
+    vendors_terms_of_service_help: Vendors you invite will need to accept these terms of service during their onboarding process.
     version: Version
     view: View
     view_all: View all
@@ -2253,6 +2362,7 @@ en:
     we_are_busy_updating: We're updating the %{store_name} homepage.
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
+    weeks_online: Weeks online
     webhooks: Webhooks
     weight: Weight
     weight_unit: Weight unit
@@ -2265,17 +2375,22 @@ en:
     what_is_a_cvv: What is a (CVV) Credit Card Code?
     what_is_this: What's This?
     width: Width
+    wished_items: Wished Items
     wishlist: Wishlist
+    wishlists: Wishlists
     without_taxon: Without taxon
     year: Year
     you_have_no_orders_yet: You have no orders yet
+    your_coupon_code: Your coupon code
     your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
+    your_overall_setup_progress: Your overall setup progress
     zip: Zip
     zipcode: Zip Code
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
+    zones_info: Zones are geographical groupings, they represent collections of either states or countries.
   views:
     pagination:
       truncate: Truncate

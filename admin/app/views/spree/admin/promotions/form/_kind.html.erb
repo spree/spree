@@ -6,9 +6,9 @@
     <div class="d-flex align-items-start custom-control custom-radio">
       <%= f.radio_button :multi_codes, false, data: { toggle: :collapse, target: '#single-code' }, class: 'custom-control-input' %>
       <%= f.label :multi_codes_false, class: 'custom-control-label' do %>
-        One code for all customers
+        <%= Spree.t(:one_code_for_all_customers) %>
         <span class="form-text text-muted font-weight-normal mr-1">
-          You can limit the number of times this code can be used.
+          <%= Spree.t(:one_code_for_all_customers_help) %>
         </span>
       <% end %>
     </div>
@@ -19,25 +19,25 @@
     <div class="mt-2 d-flex align-items-start custom-control custom-radio">
       <%= f.radio_button :multi_codes, true, data: { toggle: :collapse, target: '#multi-codes' }, class: 'custom-control-input' %>
       <%= f.label :multi_codes_true, class: 'custom-control-label' do %>
-        Generate unique codes
+        <%= Spree.t(:generate_unique_codes) %>
         <span class="form-text text-muted font-weight-normal mr-1">
-          These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
+          <%= Spree.t(:generate_unique_codes_help) %>
         </span>
       <% end %>
     </div>
     <div id="multi-codes" class="ml-3 mt-2 row collapse <% if @promotion.multi_codes? %>show<% end %>" data-parent="#coupon-code">
       <div class="col-6">
-        <%= f.text_field :code_prefix, class: 'form-control text-uppercase', placeholder: 'Coupon Prefix (optional)' %>
+        <%= f.text_field :code_prefix, class: 'form-control text-uppercase', placeholder: Spree.t(:code_prefix_placeholder) %>
         <span class="form-text text-muted">
-          eg. <strong>ABC</strong>
+          <%= Spree.t(:code_prefix_help).html_safe %>
         </span>
       </div>
       <div class="col-6">
         <% minimum_number_of_codes = @promotion.persisted? && @promotion.coupon_codes.count.positive? ? @promotion.coupon_codes.count : 1 %>
         <% maximum_number_of_codes = ENV.fetch('PROMOTION_MAX_NUMBER_OF_CODES', 5000) %>
-        <%= f.number_field :number_of_codes, class: 'form-control', placeholder: 'Number of codes', min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>
+        <%= f.number_field :number_of_codes, class: 'form-control', placeholder: Spree.t(:number_of_codes), min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>
         <span class="form-text text-muted">
-          How many codes you want to generate.
+          <%= Spree.t(:number_of_codes_help) %>
           <% if @promotion.persisted? %>
             To add more codes just increase this number
           <% end %>
@@ -52,6 +52,6 @@
   <%= f.label :kind_automatic, Spree.t(:automatic_promotion), class: 'custom-control-label' %>
 
   <p class="form-text text-muted mt-2 mb-0">
-    This promotion will be automatically applied to all eligible orders.
+    <%= Spree.t(:automatic_promotion_help) %>
   </p>
 </div>

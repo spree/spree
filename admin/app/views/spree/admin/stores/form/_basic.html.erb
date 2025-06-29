@@ -24,7 +24,7 @@
         <div class="form-group mb-0">
           <%= f.label :logo do %>
             <%= Spree.t(:logo) %>
-            <%= help_bubble("Used in the admin dashboard") %>
+            <%= help_bubble(Spree.t(:logo_help)) %>
           <% end %>
           <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
         </div>

@@ -91,6 +91,9 @@ en:
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
+      logo_for_emails: Logo for emails
+      logo_for_emails_help: This logo is included in all email notifications such as order confirmation.
+      logo_for_emails_recommend: We recommend images with a transparent background.<br>Only JPEG and PNG formats are supported.
       manage_currencies: Manage Currencies
       manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations
@@ -103,6 +106,8 @@ en:
       notifications: Notifications
       num_orders: No. of Orders
       oauth_applications:
+        client_id: Client ID
+        info: Here you can manage API keys to access the <a href='https://spreecommerce.org/docs/api-reference/platform/authentication' target='_blank' class='alert-link'>Platform API</a>. For headless storefronts you don't need an API key, please use the <a href='https://spreecommerce.org/docs/api-reference/storefront/authentication' target='_blank' class='alert-link'>Storefront API</a>.
         last_used: Last used
         list: API keys
         never: Never
@@ -110,6 +115,7 @@ en:
         read_and_write: Read & Write
         read_only: Read Only
         scopes: Scopes
+        warning: This is your application's secret token, copy it now and keep it safe. It won't be shown again.
       order:
         events:
           approve: Approve
@@ -165,6 +171,8 @@ en:
         vertical_alignment: Vertical alignment
         youtube_video_url: Youtube video URL
       personal_details: Personal Details
+      posts:
+        seo_placeholder: Add a title and content to see how this post might appear in a search engine listing
       products:
         active: Active
         all_statuses: All statuses
@@ -211,16 +219,25 @@ en:
           description: It shows the company field on the address form in the My Account section and on the checkout address step.
           label: Display the company address field
         customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        email_addresses: Email addresses
+        email_addresses_help: Please provide the email address that will be used as the sender of all emails sent from your store.
         new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
       store_setup_tasks:
         add_billing_address: Add billing address
         add_products: Add products
+        customer_support_email:
+          info: We need your customer support email to display on your storefront.<br>This email will work as a contact point for your customers to reach out to you for any queries or support.
+          done: Your customer support email is <strong>%{email}</strong>.
         payment_methods:
           copy: In order to collect payments, please setup at least one online payment provider.
           done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
           setup: Setup Payment Methods
           title: Please setup Payment Methods for your store
+        products:
+          copy:  <p>Add products to your store, either your own or invite 3rd party vendors to sell together.</p><p>You can also import products in bulk from a CSV or Excel file.</p>
+          done: <p>Good job, you've added products to your store!</p><p>Remember you can always add more!</p>
         set_customer_support_email: Set customer support email
+        setup_payment_method: Setup payment method
         setup_taxes_collection: Setup taxes collection
         taxes:
           copy: In order to collect taxes, please setup your tax rates.
@@ -240,6 +257,7 @@ en:
           is_not_equal_to: is not equal to
         on_sale: On sale
         products_must_match: 'Products must match:'
+        sale: On Sale
         tag: Product tag
       taxon_type: Taxon type
       taxon_types:
@@ -247,6 +265,8 @@ en:
         automatic_info: Automatically add products to this taxon if they match the rules you set.
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
+      taxons:
+        seo_placeholder: Add a title and description to see how this taxon might appear in a search engine listing
       upload_new_asset: Upload new asset
       user:
         last_order_placed: Last order placed

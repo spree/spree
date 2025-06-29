@@ -11,7 +11,7 @@
     <span class="text-muted">
       <%= order.full_name %>
     </span>
-    <%= help_bubble('This order was placed by a guest customer') %>
+    <%= help_bubble(Spree.t(:order_by_guest_customer)) %>
   <% else %>
     <span class="text-muted">
       <%= Spree.t(:not_available) %>
