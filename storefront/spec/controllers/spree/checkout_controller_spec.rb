@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe Spree::CheckoutController, type: :controller do
   let(:store) { @default_store }
+  let(:address_params) do
+    address = build(:address, country: country, state: state)
+    address.attributes.except('created_at', 'updated_at')
+  end
+  let(:accept_marketing) { true }
   let(:country) { store.default_country || create(:country_us) }
   let!(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
   let(:user) { nil }
@@ -9,11 +14,6 @@ describe Spree::CheckoutController, type: :controller do
 
   render_views
 
-  let(:address_params) do
-    address = build(:address, country: country, state: state)
-    address.attributes.except('created_at', 'updated_at')
-  end
-  let(:accept_marketing) { true }
 
   before do
     allow(controller).to receive_messages(
@@ -80,6 +80,7 @@ describe Spree::CheckoutController, type: :controller do
 
       context 'when special instructions preference is enabled' do
         before { store.update!(preferred_special_instructions_enabled: true) }
+
         after  { store.update!(preferred_special_instructions_enabled: false) }
 
         it 'renders the special instructions field' do
@@ -247,12 +248,26 @@ describe Spree::CheckoutController, type: :controller do
 
       context 'on quick checkout' do
         let(:address) { create(:address, quick_checkout: true, country: country, state: state) }
+
         include_examples 'restarting checkout'
       end
 
       context 'with a missing shipping address' do
         let(:address) { nil }
+
         include_examples 'restarting checkout'
+
+        context 'when the order does not require a shipping address' do
+          let(:digital_shipping_method) { create(:digital_shipping_method) }
+          let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+          let(:order) { create(:order_with_line_items, variants: [digital_product.default_variant], state: 'payment', ship_address: nil, store: store, user: user, email: 'example@email.com') }
+
+          it 'does not redirect to the address step' do
+            get :edit, params: { token: order.token }
+            expect(response).to be_ok
+            expect(response).not_to redirect_to(spree.checkout_state_path(order.token, 'address'))
+          end
+        end
       end
     end
 
@@ -549,6 +564,7 @@ describe Spree::CheckoutController, type: :controller do
           let(:ship_address_params) { build(:address, company: company_name, country: country, state: state).attributes.except(:user_id, :created_at, :updated_at) }
 
           before { store.update!(preferred_company_field_enabled: true) }
+
           after  { store.update!(preferred_company_field_enabled: false) }
 
           it 'saves company field when provided' do
@@ -587,6 +603,7 @@ describe Spree::CheckoutController, type: :controller do
           end
 
           before { store.update!(preferred_special_instructions_enabled: true) }
+
           after  { store.update!(preferred_special_instructions_enabled: false) }
 
           it 'saves special instructions when provided' do
@@ -609,16 +626,12 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'with the order in the delivery state' do
-        let(:ship_address) { create(:address, user: user, country: country, state: state) }
-        let(:order) { create(:order_with_line_items, state: 'delivery', ship_address: ship_address, user: user, store: store, email: 'test@example.com') }
-
-        before do
-          order.create_proposed_shipments
-          order.send(:ensure_available_shipping_rates)
-          order.set_shipments_cost
+        subject :update do
+          patch :update, params: update_params
           order.reload
         end
 
+        let(:ship_address) { create(:address, user: user, country: country, state: state) }
         let(:update_params) do
           {
             token: order.token,
@@ -628,11 +641,16 @@ describe Spree::CheckoutController, type: :controller do
             }
           }
         end
+        let(:order) { create(:order_with_line_items, state: 'delivery', ship_address: ship_address, user: user, store: store, email: 'test@example.com') }
 
-        subject :update do
-          patch :update, params: update_params
+        before do
+          order.create_proposed_shipments
+          order.send(:ensure_available_shipping_rates)
+          order.set_shipments_cost
           order.reload
         end
+
+
 
         it 'sets shipping rate and moves to payment state' do
           expect(controller).to receive(:track_event).with('checkout_step_completed', { order: order, step: 'delivery' })
@@ -642,6 +660,11 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'with the order in the payment state' do
+        subject :update do
+          patch :update, params: update_params
+          order.reload
+        end
+
         let(:order) { create(:order_with_line_items, state: 'payment', user: user,store: store, email: 'test@example.com') }
         let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
 
@@ -681,10 +704,6 @@ describe Spree::CheckoutController, type: :controller do
           }
         end
 
-        subject :update do
-          patch :update, params: update_params
-          order.reload
-        end
 
         it 'saves payment method' do
           expect { update }.to change { order.payments.count }.by(1)
@@ -1007,6 +1026,7 @@ describe Spree::CheckoutController, type: :controller do
           let(:bill_address_with_company) { bill_address_attributes.merge(company: company_name) }
 
           before { store.update!(preferred_company_field_enabled: true) }
+
           after  { store.update!(preferred_company_field_enabled: false) }
 
           context 'when company field is provided' do
@@ -1062,6 +1082,8 @@ describe Spree::CheckoutController, type: :controller do
   end
 
   describe '#apply_coupon_code' do
+    subject { patch :apply_coupon_code, params: { token: order.token, coupon_code: coupon_code } }
+
     let(:user) { create(:user) }
     let!(:order) { create(:order_with_line_items, state: 'payment', store: store, bill_address: nil, user: user) }
     let!(:line_item) { create(:line_item, order: order) }
@@ -1069,7 +1091,6 @@ describe Spree::CheckoutController, type: :controller do
     let!(:promotion) { create(:promotion, name: 'Free shipping', code: 'freeship', stores: [store]) }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
 
-    subject { patch :apply_coupon_code, params: { token: order.token, coupon_code: coupon_code } }
 
     context 'when coupon code is valid' do
       let(:coupon_code) { 'FREESHIP' }
@@ -1098,11 +1119,12 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     describe 'apply gift card' do
+      subject { patch :apply_coupon_code, params: { token: order.token, coupon_code: gift_card.code.upcase } }
+
       let(:user) { create(:user) }
       let(:gift_card) { create :gift_card, store: store, user: user }
       let(:coupon_code) { gift_card.code.upcase }
 
-      subject { patch :apply_coupon_code, params: { token: order.token, coupon_code: gift_card.code.upcase } }
 
       context 'when gift card is valid' do
         it 'applies the gift card' do
@@ -1141,6 +1163,8 @@ describe Spree::CheckoutController, type: :controller do
   end
 
   describe '#remove_coupon_code' do
+    subject { delete :remove_coupon_code, params: { token: order.token, coupon_code: coupon_code } }
+
     let(:user) { create(:user) }
     let!(:order) { create(:order_with_line_items, state: 'payment', store: store, bill_address: nil, user: user) }
     let!(:line_item) { create(:line_item, order: order) }
@@ -1149,7 +1173,6 @@ describe Spree::CheckoutController, type: :controller do
     let!(:promotion) { create(:promotion, name: 'Free shipping', code: coupon_code, stores: [store]) }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
 
-    subject { delete :remove_coupon_code, params: { token: order.token, coupon_code: coupon_code } }
 
     before do
       order.coupon_code = coupon_code
@@ -1167,10 +1190,11 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     context 'for a gift card' do
+      subject { patch :remove_coupon_code, params: { token: order.token, gift_card: coupon_code } }
+
       let(:gift_card) { create :gift_card, store: store }
       let(:coupon_code) { gift_card.code.upcase }
 
-      subject { patch :remove_coupon_code, params: { token: order.token, gift_card: coupon_code } }
 
       before do
         Spree::GiftCards::Apply.call(order: order, gift_card: gift_card)
