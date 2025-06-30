@@ -27,7 +27,7 @@ module Spree
       end
 
       context 'with name passed in params' do
-        let(:name) { 'overriden name' }
+        let(:name) { 'overridden name' }
 
         let(:params) do
           {
@@ -37,7 +37,7 @@ module Spree
         end
 
         it 'creates link with passed value as a name' do
-          expect(shipment_tracking_link_to).to eq('<a href="https://example.com?tracking=Abc">overriden name</a>')
+          expect(shipment_tracking_link_to).to eq('<a href="https://example.com?tracking=Abc">overridden name</a>')
         end
       end
 
