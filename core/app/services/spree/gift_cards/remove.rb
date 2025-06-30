@@ -18,7 +18,6 @@ module Spree
 
           gift_card.with_lock do
             gift_card.amount_used -= payment_total
-            gift_card.skip_expires_at_validation = true
             gift_card.save!
           end
 

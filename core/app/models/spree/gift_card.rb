@@ -23,18 +23,12 @@ module Spree
     end
 
     #
-    # Attributes
-    #
-    attribute :skip_expires_at_validation, :boolean, default: false
-
-    #
     # Validations
     #
     validates :code, presence: true, uniqueness: { scope: :store_id }
     validates :store, :currency, presence: true
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
-    validates :expires_at, comparison: { greater_than: Date.current + 1.day }, allow_nil: true, unless: :skip_expires_at_validation
 
     #
     # Associations
@@ -51,9 +45,10 @@ module Spree
     #
     # Scopes
     #
-    scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil, Time.current..]) }
-    scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
+    scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil,  Date.tomorrow..]) }
+    scope :expired, -> { where(state: :active).where(expires_at: ..Date.current) }
     scope :redeemed, -> { where(state: [:redeemed]) }
+    scope :partially_redeemed, -> { where(state: [:partially_redeemed]) }
 
     #
     # Ransack
@@ -115,7 +110,7 @@ module Spree
     # Checks if the gift card is expired
     # @return [Boolean]
     def expired?
-      !redeemed? && expires_at.present? && expires_at < Time.current
+      !redeemed? && expires_at.present? && expires_at <= Date.current
     end
 
     # Checks if the gift card is active, i.e. not expired and not redeemed

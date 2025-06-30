@@ -20,9 +20,40 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
 
+  describe 'Scopes' do
+    let(:active_gift_card) { create(:gift_card, state: :active) }
+    let(:redeemed_gift_card) { create(:gift_card, state: :redeemed) }
+    let(:partially_redeemed_gift_card) { create(:gift_card, state: :partially_redeemed) }
+    let(:expired_gift_card) { create(:gift_card, expires_at: Date.current, state: :active) }
+
+    describe '#active' do
+      it 'returns active gift cards' do
+        expect(described_class.active).to contain_exactly(active_gift_card)
+      end
+    end
+
+    describe '#expired' do
+      it 'returns expired gift cards' do
+        expect(described_class.expired).to contain_exactly(expired_gift_card)
+      end
+    end
+
+    describe '#redeemed' do
+      it 'returns redeemed gift cards' do
+        expect(described_class.redeemed).to contain_exactly(redeemed_gift_card)
+      end
+    end
+
+    describe '#partially_redeemed' do
+      it 'returns partially redeemed gift cards' do
+        expect(described_class.partially_redeemed).to contain_exactly(partially_redeemed_gift_card)
+      end
+    end
+  end
+
   describe '#active?' do
     context 'when expired' do
-      let(:gift_card) { build(:gift_card, expires_at: 1.day.ago, state: :active) }
+      let(:gift_card) { build(:gift_card, expires_at: Date.current, state: :active) }
 
       it 'returns false' do
         expect(gift_card.active?).to be(false)
