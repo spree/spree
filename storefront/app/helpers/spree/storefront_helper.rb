@@ -2,6 +2,7 @@ module Spree
   module StorefrontHelper
     include BaseHelper
     include Spree::ImagesHelper
+    include Spree::ShipmentHelper
     include Heroicon::Engine.helpers
 
     # Renders the storefront partials for the given section.
