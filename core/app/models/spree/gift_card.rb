@@ -46,7 +46,7 @@ module Spree
     # Scopes
     #
     scope :active, -> { where(state: [:active, :partially_redeemed]).where(expires_at: [nil,  Date.tomorrow..]) }
-    scope :expired, -> { where(state: :active).where(expires_at: ..Time.current) }
+    scope :expired, -> { where(state: :active).where(expires_at: ..Date.current) }
     scope :redeemed, -> { where(state: [:redeemed]) }
     scope :partially_redeemed, -> { where(state: [:partially_redeemed]) }
 
