@@ -331,7 +331,7 @@ module Spree
       @order.bill_address ||= if @order.requires_ship_address?
                                 @order.ship_address.clone
                               else
-                                Address.new(country: current_store.default_country, user: try_spree_current_user)
+                                Spree::Address.new(country: current_store.default_country, user: try_spree_current_user)
                               end
 
       if @order.checkout_steps.include? 'delivery'
