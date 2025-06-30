@@ -860,6 +860,10 @@ module Spree
       line_items
     end
 
+    def requires_ship_address?
+      !digital?
+    end
+
     private
 
     def link_by_email
@@ -949,7 +953,7 @@ module Spree
       if gift_card.present?
         recalculate_gift_card
       elsif using_store_credit?
-        Spree::Checkout::AddStoreCredit.call(order: self)
+        Spree::Dependencies.checkout_add_store_credit_service.constantize.call(order: self)
       end
     end
   end

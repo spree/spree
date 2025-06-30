@@ -495,6 +495,34 @@ describe Spree::Order, type: :model do
         expect(order.user.reload.default_credit_card).to be_nil
       end
 
+      context 'when gift card is present' do
+        let(:gift_card) { create(:gift_card, amount: order.total, store: store) }
+        let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
+
+        before do
+          order.apply_gift_card(gift_card)
+        end
+
+        it 'redeems the gift card' do
+          expect(gift_card.redeemed_at).to be_nil
+          expect { order.next! }.to change { gift_card.reload.state }.from('active').to('redeemed')
+          expect(gift_card.amount_used).to eq(order.total)
+          expect(gift_card.amount_remaining).to eq(0)
+          expect(gift_card.redeemed_at).to be_present
+        end
+
+        context 'when gift card has amount bigger than order total' do
+          let(:gift_card) { create(:gift_card, amount: order.total + 1, store: store) }
+
+          it 'partially redeems the gift card' do
+            expect { order.next! }.to change { gift_card.reload.state }.from('active').to('partially_redeemed')
+            expect(gift_card.amount_used).to eq(order.total)
+            expect(gift_card.amount_remaining).to eq(1)
+            expect(gift_card.redeemed_at).to be_nil
+          end
+        end
+      end
+
       context 'when user is not present' do
         before do
           order.user = nil

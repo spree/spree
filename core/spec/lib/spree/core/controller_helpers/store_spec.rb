@@ -189,4 +189,39 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
     end
   end
+
+  describe '#raise_record_not_found_if_store_is_not_found' do
+    let(:store) { create :store }
+
+    context 'when the store is not found' do
+      before do
+        allow(controller).to receive(:current_store).and_return(nil)
+      end
+
+      it 'raises an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'with root_domain set' do
+      before do
+        allow(Spree).to receive(:root_domain).and_return('example.com')
+        controller.request.env['SERVER_NAME'] = 'example.com'
+      end
+
+      it 'does not raise an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.not_to raise_error
+      end
+    end
+
+    context 'when store is found' do
+      before do
+        allow(controller).to receive(:current_store).and_return(store)
+      end
+
+      it 'does not raise an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.not_to raise_error
+      end
+    end
+  end
 end
