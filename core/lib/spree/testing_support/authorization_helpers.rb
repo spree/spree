@@ -15,7 +15,7 @@ module Spree
         include CustomAbility
 
         def stub_authorization!(&block)
-          let(:admin_user) { create(:admin_user) }
+          let(:admin_user) { FactoryBot.create(:admin_user) }
 
           before do
             if defined?(Spree::Admin::BaseController)
@@ -40,7 +40,7 @@ module Spree
             ability_class.register_ability(ability)
           end
 
-          let(:admin_user) { create(:admin_user) }
+          let(:admin_user) { FactoryBot.create(:admin_user) }
 
           before do
             if defined?(Spree::Admin::BaseController)
