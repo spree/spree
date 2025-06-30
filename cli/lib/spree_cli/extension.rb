@@ -31,6 +31,7 @@ module SpreeCli
       empty_directory "#{file_name}/vendor/stylesheets"
 
       chmod "#{file_name}/bin/rails", 0o755
+      chmod "#{file_name}/bin/importmap", 0o755
 
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
       template 'Gemfile', "#{file_name}/Gemfile"
