@@ -16,6 +16,7 @@ module <%= class_name %>
     initializer '<%= file_name %>.assets' do |app|
       app.config.assets.paths << root.join('app/javascript')
       app.config.assets.paths << root.join('vendor/javascript')
+      app.config.assets.paths << root.join('vendor/stylesheets')
       app.config.assets.precompile += %w[<%= file_name %>_manifest]
     end
 
