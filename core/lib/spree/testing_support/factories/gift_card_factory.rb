@@ -12,7 +12,6 @@ FactoryBot.define do
 
     trait :expired do
       expires_at { 1.day.ago }
-      skip_expires_at_validation { true }
     end
   end
 end

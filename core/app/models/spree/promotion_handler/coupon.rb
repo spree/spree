@@ -12,6 +12,15 @@ module Spree
 
       def apply
         if load_gift_card_code
+
+          if @gift_card.expired?
+            set_error_code :gift_card_expired
+            return self
+          elsif @gift_card.redeemed?
+            set_error_code :gift_card_already_redeemed
+            return self
+          end
+
           result = order.apply_gift_card(@gift_card)
 
           if result.success?
@@ -207,7 +216,7 @@ module Spree
       def load_gift_card_code
         return unless order.coupon_code.present?
 
-        @gift_card = order.store.gift_cards.active.find_by(code: order.coupon_code.downcase)
+        @gift_card = order.store.gift_cards.find_by(code: order.coupon_code.downcase)
       end
     end
   end

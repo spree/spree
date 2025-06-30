@@ -43,6 +43,34 @@ describe Spree::PromotionHandler::Coupon, type: :model do
           expect(order.total_applied_store_credit).to eq(0)
         end
       end
+
+      context 'when gift card is expired' do
+        let(:gift_card) { create(:gift_card, :expired) }
+
+        it 'returns error code' do
+          order.coupon_code = gift_card.code
+          handler = described_class.new(order)
+          handler.apply
+
+          expect(order.reload.gift_card).to eq(nil)
+          expect(order.total_applied_store_credit).to eq(0)
+          expect(handler.status_code).to eq(:gift_card_expired)
+        end
+      end
+
+      context 'when gift card is already redeemed' do
+        let(:gift_card) { create(:gift_card, :redeemed) }
+
+        it 'returns error code' do
+          order.coupon_code = gift_card.code
+          handler = described_class.new(order)
+          handler.apply
+
+          expect(order.reload.gift_card).to eq(nil)
+          expect(order.total_applied_store_credit).to eq(0)
+          expect(handler.status_code).to eq(:gift_card_already_redeemed)
+        end
+      end
     end
   end
 
