@@ -28,6 +28,7 @@ module SpreeCli
       empty_directory "#{file_name}/app/serializers/spree/v2/storefront"
       empty_directory "#{file_name}/app/serializers/spree/api/v2/platform"
       empty_directory "#{file_name}/vendor/javascript"
+      empty_directory "#{file_name}/vendor/stylesheets"
 
       chmod "#{file_name}/bin/rails", 0o755
 
