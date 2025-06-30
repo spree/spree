@@ -258,7 +258,7 @@ module Spree
     end
 
     def should_restart_checkout?
-      (@order.quick_checkout? || @order.ship_address.nil?) && (@order.delivery? || @order.payment?)
+      (@order.quick_checkout? || (@order.requires_ship_address? && @order.ship_address.nil?)) && (@order.delivery? || @order.payment?)
     end
 
     def restart_checkout
@@ -315,7 +315,9 @@ module Spree
         @order.bill_address ||= try_spree_current_user.bill_address
       end
       # for guest users or users without addresses, we need to build an empty one here
-      @order.ship_address ||= Address.new(country: current_store.default_country, user: try_spree_current_user)
+      if @order.requires_ship_address?
+        @order.ship_address ||= Address.new(country: current_store.default_country, user: try_spree_current_user)
+      end
     end
 
     def before_delivery
@@ -326,7 +328,11 @@ module Spree
     end
 
     def before_payment
-      @order.bill_address ||= @order.ship_address.clone
+      @order.bill_address ||= if @order.requires_ship_address?
+                                @order.ship_address.clone
+                              else
+                                Spree::Address.new(country: current_store.default_country, user: try_spree_current_user)
+                              end
 
       if @order.checkout_steps.include? 'delivery'
         packages = @order.shipments.map(&:to_package)

@@ -123,28 +123,30 @@
         <% end %>
       <% end %>
 
-      <div class="mb-4" data-controller="checkout-address-book" data-checkout-address-book-target="list">
-        <div id="<%= address_type %>">
-          <h5 class="mt-5 mb-4 font-body">
-            <%= Spree.t(address_type + '_address') %>
-          </h5>
-          <%= form.fields_for address_name do |address_form| %>
-            <div class="inner checkout-content-inner" data-hook='<%= "#{address_type}_inner" %>'>
-              <%= render partial: 'spree/addresses/form', locals: {
-                address_name: address_name,
-                address_form: address_form,
-                address_type: address_type,
-                address: address_form.object.persisted? ? address_form.object : Spree::Address.new(country: current_store.default_country, user: try_spree_current_user),
-                form: form
-              } %>
-            </div>
-          <% end %>
+      <% if @order.requires_ship_address? %>
+        <div class="mb-4" data-controller="checkout-address-book" data-checkout-address-book-target="list">
+          <div id="<%= address_type %>">
+            <h5 class="mt-5 mb-4 font-body">
+              <%= Spree.t(address_type + '_address') %>
+            </h5>
+            <%= form.fields_for address_name do |address_form| %>
+              <div class="inner checkout-content-inner" data-hook='<%= "#{address_type}_inner" %>'>
+                <%= render partial: 'spree/addresses/form', locals: {
+                  address_name: address_name,
+                  address_form: address_form,
+                  address_type: address_type,
+                  address: address_form.object.persisted? ? address_form.object : Spree::Address.new(country: current_store.default_country, user: try_spree_current_user),
+                  form: form
+                } %>
+              </div>
+            <% end %>
+          </div>
         </div>
-      </div>
+        <%= hidden_field_tag 'save_user_address', true, data: { hook: "save_user_address" } %>
+      <% end %>
 
       <%= render 'spree/checkout/special_instructions', form: form %>
 
-      <%= hidden_field_tag 'save_user_address', true, data: { hook: "save_user_address" } %>
     </div>
     <div class="flex justify-end w-full">
       <%= button_tag Spree.t(:save_and_continue),
