@@ -131,7 +131,7 @@
                 address_name: address_name,
                 address_form: address_form,
                 address_type: address_type,
-                address: Spree::Address.new(country: current_store.default_country, user: try_spree_current_user),
+                address: address_form.object.persisted? ? address_form.object : Spree::Address.new(country: current_store.default_country, user: try_spree_current_user),
                 form: form
               } %>
             </div>
