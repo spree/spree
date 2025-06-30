@@ -15,9 +15,9 @@ module Spree
         include CustomAbility
 
         def stub_authorization!(&block)
-          let(:admin_user) { create(:admin_user) }
-
           before do
+            admin_user = create(:admin_user)
+
             if defined?(Spree::Admin::BaseController)
               allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(admin_user)
             end
@@ -40,9 +40,9 @@ module Spree
             ability_class.register_ability(ability)
           end
 
-          let(:admin_user) { create(:admin_user) }
-
           before do
+            admin_user = create(:admin_user)
+
             if defined?(Spree::Admin::BaseController)
               allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(admin_user)
             end
