@@ -26,7 +26,7 @@
 <% end %>
 <% if @shipment.tracking_url %>
   <p>
-    <%= Spree.t('shipment_mailer.shipped_email.track_link', url: link_to(@shipment.tracking_url, @shipment.tracking_url)).html_safe %>
+    <%= Spree.t('shipment_mailer.shipped_email.track_link', url: shipment_tracking_link_to(shipment: @shipment)).html_safe %>
   </p>
 <% end %>
 <p>

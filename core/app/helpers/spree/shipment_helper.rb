@@ -2,13 +2,13 @@ module Spree
   module ShipmentHelper
     include BaseHelper
 
-    def shipment_tracking_link_to(shipment, options = nil)
+    def shipment_tracking_link_to(shipment:, name: nil, html_options: {})
       tracking_url = shipment.tracking_url.presence
       return '' unless tracking_url
 
-      display_text = shipment.tracking.presence || tracking_url
+      display_text = name || shipment.tracking.presence || tracking_url
 
-      link_to display_text, tracking_url, options
+      link_to display_text, tracking_url, html_options
     end
   end
 end

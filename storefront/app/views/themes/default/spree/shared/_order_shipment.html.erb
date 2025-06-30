@@ -33,10 +33,7 @@
         <% unless shipment.digital? %>
           <div class="mt-4 lg:-mt-2 lg:-mr-2">
             <% if shipment.shipped? && shipment.tracked? && shipment.tracking_url.present? %>
-              <%= link_to Spree.t(:track_items),
-              shipment.tracking_url,
-              class: "!px-3 !py-1 block btn-primary !leading-6 text-sm text-center",
-              target: :_blank %>
+              <%= shipment_tracking_link_to(shipment: shipment, name: Spree.t(:track_items), html_options { class: "!px-3 !py-1 block btn-primary !leading-6 text-sm text-center", target: :_blank }) %>
             <% else %>
               <button
                 class="

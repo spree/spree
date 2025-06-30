@@ -1,5 +1,7 @@
 module Spree
   class ShipmentMailer < BaseMailer
+    helper Spree::ShipmentHelper
+
     def shipped_email(shipment, resend = false)
       @shipment = shipment.respond_to?(:id) ? shipment : Spree::Shipment.find(shipment)
       @order = @shipment.order

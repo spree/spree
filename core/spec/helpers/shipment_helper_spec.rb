@@ -4,19 +4,40 @@ module Spree
   describe ShipmentHelper, type: :helper do
     let(:shipment) { create(:shipment, tracking: tracking) }
     let(:tracking) { 'tracking' }
-    let(:tracking_url) { 'https://example.com?tracking=Abc' }
-    let(:options) { {} }
 
     before do
       allow(shipment).to receive(:tracking_url).and_return(tracking_url)
     end
 
     describe '#shipment_tracking_link_to' do
-      subject(:shipment_tracking_link_to) { helper.shipment_tracking_link_to(shipment, options) }
+      subject(:shipment_tracking_link_to) { helper.shipment_tracking_link_to(**params) }
+
+      let(:params) do
+        {
+          shipment: shipment,
+        }
+      end
+
+      let(:tracking_url) { 'https://example.com?tracking=Abc' }
 
       context 'with tracking and tracking_url' do
         it 'creates link with tracking as a name' do
           expect(shipment_tracking_link_to).to eq('<a href="https://example.com?tracking=Abc">tracking</a>')
+        end
+      end
+
+      context 'with name passed in params' do
+        let(:name) { 'overriden name' }
+
+        let(:params) do
+          {
+            shipment: shipment,
+            name: name
+          }
+        end
+
+        it 'creates link with passed value as a name' do
+          expect(shipment_tracking_link_to).to eq('<a href="https://example.com?tracking=Abc">overriden name</a>')
         end
       end
 
@@ -38,7 +59,12 @@ module Spree
       end
 
       context 'with options' do
-        let(:options) { { data: { foo: 'bar' } } }
+        let(:params) do
+          {
+            shipment: shipment,
+            html_options: { data: { foo: 'bar' } }
+          }
+        end
 
         it 'sets options for link' do
           expect(shipment_tracking_link_to).to include(' data-foo="bar"')
