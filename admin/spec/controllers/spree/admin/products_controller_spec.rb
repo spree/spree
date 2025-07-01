@@ -170,7 +170,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           dimensions_unit: 'cm',
           weight_unit: 'kg',
           shipping_category_id: shipping_category.id,
-          tax_category_id: tax_category.id
+          tax_category_id: tax_category.id,
+          meta_title: 'Amazing Product',
+          meta_description: 'This is an amazing product'
         }
       end
 
@@ -190,6 +192,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
         expect(product.shipping_category).to eq shipping_category
         expect(product.tax_category).to eq tax_category
+        expect(product.meta_title).to eq 'Amazing Product'
+        expect(product.meta_description).to eq 'This is an amazing product'
       end
 
       context 'with multi-currency pricing' do
