@@ -3,6 +3,8 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      auto_strip_attributes :name, :presentation
+
       #
       # Callbacks
       #
