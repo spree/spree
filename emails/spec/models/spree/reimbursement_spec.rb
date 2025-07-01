@@ -34,5 +34,20 @@ describe Spree::Reimbursement, type: :model do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
       subject
     end
+
+    context 'when send_consumer_transactional_emails store setting is set to false' do
+      before do
+        store.update!(preferred_send_consumer_transactional_emails: false)
+      end
+
+      after do
+        store.update!(preferred_send_consumer_transactional_emails: true)
+      end
+
+      it 'does not trigger the reimbursement mailer to be sent' do
+        expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
+        subject
+      end
+    end
   end
 end
