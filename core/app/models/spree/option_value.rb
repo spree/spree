@@ -7,19 +7,17 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation].freeze
-      translates(*TRANSLATABLE_FIELDS)
-    else
-      TRANSLATABLE_FIELDS = %i[presentation].freeze
-      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    self::Translation.class_eval do
+      auto_strip_attributes :presentation
     end
 
     #
     # Magic methods
     #
     acts_as_list scope: :option_type
-    auto_strip_attributes :name, :presentation
     self.whitelisted_ransackable_attributes = ['presentation']
 
     #
@@ -61,11 +59,12 @@ module Spree
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
+    # Using map here instead of pluck, as these values are translatable via Mobility gem
     def self.to_tom_select_json
-      all.pluck(:name, :presentation).map do |name, presentation|
+      all.map do |ov|
         {
-          id: name,
-          name: presentation
+          id: ov.name,
+          name: ov.presentation
         }
       end
     end

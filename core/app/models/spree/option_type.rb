@@ -10,12 +10,11 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation].freeze
-      translates(*TRANSLATABLE_FIELDS)
-    else
-      TRANSLATABLE_FIELDS = %i[presentation].freeze
-      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    self::Translation.class_eval do
+      auto_strip_attributes :presentation
     end
 
     #
@@ -23,7 +22,6 @@ module Spree
     #
     self.whitelisted_ransackable_scopes = %w[search_by_name]
     acts_as_list
-    auto_strip_attributes :name, :presentation
 
     #
     # Associations
