@@ -18,11 +18,10 @@ describe Spree::OptionValue, type: :model do
       let!(:option_value) { create(:option_value) }
       let!(:variant1) { create(:variant, option_values: [option_value]) }
       let!(:variant2) { create(:variant, option_values: [option_value]) }
-      let!(:variant3) { create(:variant) }
 
       it 'touches all variants associated with the option value' do
         Timecop.travel Time.current + 1.day do
-          expect { option_value.send(:touch_all_variants) }.to change { [variant1.reload.updated_at, variant2.reload.updated_at, variant3.reload.updated_at] }
+          expect { option_value.send(:touch_all_variants) }.to change { [variant1.reload.updated_at, variant2.reload.updated_at] }
         end
       end
     end
