@@ -1,0 +1,22 @@
+<li class="list-group-item p-0 m-0 border-b delivery-list-item border-default" data-checkout-delivery-target="shippingRate" id="<%= spree_dom_id(rate) %>">
+  <div class="custom-control custom-radio flex items-center px-5 py-4">
+    <%= ship_form.radio_button :selected_shipping_rate_id,
+      rate.id,
+      class: 'custom-control-input radio-input',
+      id: "shipping-rate-#{rate.id}",
+      data: {
+        action: 'click->checkout-delivery#update',
+        cost: rate.display_cost,
+        tax: rate.display_tax_amount
+      } %>
+    <label class="select-none cursor-pointer px-2 word-break w-full" for="<%= "shipping-rate-#{rate.id}" %>">
+      <%= rate.name %>
+      <% if rate.delivery_range %>
+        <span class="text-gray-600 text-xs ml-3"><%= rate.display_delivery_range %></span>
+      <% end %>
+    </label>
+    <span class="text-right">
+      <%= rate.cost <= 0 ? Spree.t(:free) : rate.display_cost %>
+    </span>
+  </div>
+</li>

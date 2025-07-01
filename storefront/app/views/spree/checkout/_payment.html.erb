@@ -1,5 +1,5 @@
 <%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
-  <%= form.hidden_field :state_lock_version %>
+  <%= render 'spree/checkout/order_lock_version', order: @order %>
 
   <% if @order.respond_to?(:gift_card) %>
     <%= turbo_frame_tag :gift_card_code_field do %>

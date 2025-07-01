@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :page_section, class: Spree::PageSection do
     pageable { Spree::Page.find_by!(name: 'Homepage') }
-    pageable_type { 'Spree::Page' }
 
     trait :without_links do
       do_not_create_links { true }

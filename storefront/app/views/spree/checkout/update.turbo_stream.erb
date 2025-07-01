@@ -2,9 +2,7 @@
   <%= render 'summary', order: @order %>
 <% end %>
 <%= turbo_stream.replace :checkout_lock_version do %>
-  <%= turbo_frame_tag :checkout_lock_version do %>
-    <%= hidden_field_tag 'order[state_lock_version]', @order.state_lock_version %>
-  <% end %>
+  <%= render 'spree/checkout/order_lock_version', order: @order %>
 <% end %>
 <%= turbo_stream.update 'summary-order-total' do %>
   <%= @order.display_total.to_html %>
