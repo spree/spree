@@ -13,7 +13,7 @@
           </h5>
           <ul class="select_address list-group mb-5 border mt-3 rounded-md border-default">
             <% user_available_addresses.each_with_index do |address, idx| %>
-              <%= render 'spree/checkout/address_list_item', address: address, idx: idx, order: @order %>
+              <%= render 'spree/checkout/address_list_item', address: address, idx: idx, order: @order, address_type: address_type, address_name: address_name %>
             <% end %>
             <li class="list-group-item p-0 m-0">
               <div class="custom-control custom-radio px-5 py-4 flex items-center">
