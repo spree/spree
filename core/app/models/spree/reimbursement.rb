@@ -86,6 +86,12 @@ module Spree
       end
     end
 
+    def custom_total?
+      return false if total.nil?
+
+      !total.between?(calculated_total - 0.01.to_d, calculated_total + 0.01.to_d)
+    end
+
     def display_total
       Spree::Money.new(total, currency: order.currency)
     end
@@ -106,17 +112,17 @@ module Spree
       total - paid_amount
     end
 
-    def perform!(performer = nil)
+    def perform!(performer = nil, send_email: true, custom_total: nil)
       reimbursement_tax_calculator.call(self)
       reload
-      update!(total: calculated_total, performed_by: performer)
+      update!(total: custom_total || calculated_total, performed_by: performer)
 
       reimbursement_performer.perform(self)
 
-      if unpaid_amount_within_tolerance?
+      if unpaid_amount_within_tolerance? || custom_total.present?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
-        send_reimbursement_email
+        send_reimbursement_email if send_email
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }

@@ -17,6 +17,7 @@ module Spree
         let(:simulate) { true }
 
         it 'returns an array of readonly refunds' do
+          expect(subject.sum(&:amount)).to eq(reimbursement.total)
           expect(subject.map(&:class)).to eq [Spree::Refund]
           expect(subject.map(&:readonly?)).to eq [true]
         end
@@ -27,6 +28,8 @@ module Spree
           expect do
             subject
           end.to change { payment.refunds.count }.by(1)
+
+          expect(subject).to contain_exactly(*payment.refunds)
           expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
         end
       end

@@ -71,7 +71,18 @@ describe Spree::Reimbursement, type: :model do
       expect do
         subject
       end.to change { Spree::Refund.count }.by(1)
-      expect(Spree::Refund.last.amount).to eq order.total
+      expect(reimbursement.refunds.last.amount).to eq order.total
+    end
+
+    context 'with a reimbursement performer' do
+      subject { reimbursement.perform!(performer) }
+
+      let(:performer) { create(:admin_user) }
+
+      it 'sets the refunder on a refund' do
+        subject
+        expect(reimbursement.refunds.last.refunder).to eq(performer)
+      end
     end
 
     context 'with additional tax' do
@@ -152,6 +163,10 @@ describe Spree::Reimbursement, type: :model do
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
       end
     end
+
+    it 'changes reimbursement state to reimbursed' do
+      expect { subject }.to change { reimbursement.reload.reimbursement_status }.from('pending').to('reimbursed')
+    end
   end
 
   describe '#return_items_requiring_exchange' do
@@ -210,6 +225,47 @@ describe Spree::Reimbursement, type: :model do
       expect(subject.return_items.to_a).to eq [accepted_return_item]
       expect(subject.order).to eq customer_return.order
       expect(subject.customer_return).to eq customer_return
+    end
+  end
+
+  describe '#custom_total?' do
+    subject { reimbursement.custom_total? }
+
+    let(:reimbursement) { create(:reimbursement, order: order, total: reimbursement_total, customer_return: customer_return) }
+
+    let(:customer_return) { create(:customer_return_without_return_items, return_items: return_items) }
+
+    let(:return_items) { [return_item_1, return_item_2] }
+    let(:return_item_1) { create(:return_item, pre_tax_amount: 5.42.to_d, inventory_unit: inventory_unit_1) }
+    let(:return_item_2) { create(:return_item, pre_tax_amount: 6.92.to_d, inventory_unit: inventory_unit_2) }
+
+    let(:inventory_unit_1) { order.line_items[0].inventory_units.first }
+    let(:inventory_unit_2) { order.line_items[1].inventory_units.first }
+
+    let(:order) { create(:shipped_order, line_items_count: 2) }
+
+    context 'for the same amount as return items total' do
+      let(:reimbursement_total) { 12.34.to_d }
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'for the difference of 1 cent between reimbursement total and return items total' do
+      let(:reimbursement_total) { 12.33.to_d }
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'for different reimbursement total and return items total amounts' do
+      let(:reimbursement_total) { 11.23.to_d }
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'for no total amount' do
+      let(:reimbursement_total) { nil }
+
+      it { is_expected.to be(false) }
     end
   end
 end
