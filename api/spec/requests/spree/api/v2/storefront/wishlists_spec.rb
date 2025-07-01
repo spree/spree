@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
-  let(:store) { @default_store }
+  let(:store) { create(:store) }
   let(:other_store) { create(:store) }
-  let(:other_user) { create(:user) }
 
   let(:wishlist) { create(:wishlist, store: store) }
   let(:user) { wishlist.user }
+  let(:other_user) { create(:user) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::WishlistsController).to receive(:current_store).and_return(store)
+  end
 
   include_context 'API v2 tokens'
 
@@ -56,8 +60,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
 
   describe '#index' do
     let!(:wishlists) { create_list(:wishlist, 30, user: user, store: store) }
-    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user, store: store) }
-    let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store) }
 
     it 'must return a list of wishlists paged' do
       get '/api/v2/storefront/wishlists', headers: headers_bearer
