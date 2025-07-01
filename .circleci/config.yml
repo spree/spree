@@ -111,6 +111,7 @@ jobs:
       PROJECTS: admin
   test_storefront_postgres:
     <<: *test
+    parallelism: 2
     environment:
       <<: *environment
       PROJECTS: storefront
@@ -141,6 +142,7 @@ jobs:
       PROJECTS: admin
   test_storefront_mysql:
     <<: *test_mysql
+    parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: storefront
