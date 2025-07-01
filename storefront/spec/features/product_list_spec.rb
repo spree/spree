@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 RSpec.describe 'Product list', type: :feature, js: true, job: true do
-  let!(:product1) { create(:product, name: 'Running Jacket', price: 20.00) }
-  let!(:product2) { create(:product, name: 'Waterproof Shoes', price: 10.00) }
-  let!(:product3) { create(:product, name: 'Warming gloves', price: 30.00) }
+  let!(:product1) { create(:product, name: 'Running Jacket', price: 20.00, available_on: Time.current - 4.days) }
+  let!(:product2) { create(:product, name: 'Waterproof Shoes', price: 10.00, available_on: Time.current - 3.days) }
+  let!(:product3) { create(:product, name: 'Warming gloves', price: 30.00, available_on: Time.current - 2.days) }
   let!(:product4) do
-    create(:product, name: 'Product out of stock') do |product|
+    create(:product, name: 'Product out of stock', available_on: Time.current - 1.day) do |product|
       product.master.stock_items.update_all(backorderable: false)
       product.touch
     end
@@ -15,7 +15,7 @@ RSpec.describe 'Product list', type: :feature, js: true, job: true do
     product.master.prices.delete_all
     product
   end
-  let!(:product6) { create(:product, name: 'Product for free', price: 0.00) }
+  let!(:product6) { create(:product, name: 'Product for free', price: 0.00, available_on: Date.today) }
 
   let!(:size) { Spree::OptionType.find_by(name: 'size') || create(:option_type, :size) }
   let!(:small) { create(:option_value, option_type: size, name: 'small', presentation: 'Small') }
