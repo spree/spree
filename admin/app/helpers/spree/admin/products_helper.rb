@@ -124,7 +124,7 @@ module Spree
       end
 
       def sorted_product_properties(product)
-        product.product_properties.sort_by { |product_property| product_property.property.position }
+        product.product_properties.includes(:property).sort_by { |product_property| product_property.property.position }
       end
     end
   end
