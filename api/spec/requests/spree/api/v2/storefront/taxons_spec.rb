@@ -7,7 +7,8 @@ describe 'Taxons Spec', type: :request do
 
   before do
     store.update_column(:supported_locales, 'en,pl,es')
-    Spree::Api::Config[:api_v2_per_page_limit] = 2
+    allow(Spree::Api::Config).to receive(:[]).and_call_original
+    allow(Spree::Api::Config).to receive(:[]).with(:api_v2_per_page_limit).and_return(2)
   end
 
   after { I18n.locale = :en }
