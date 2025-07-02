@@ -1901,7 +1901,8 @@
                   "use-case/marketplace/vendor-dashboard",
                   "use-case/marketplace/customer-ux"  
                 ]
-              }  
+              }
+            ]
           }
         ]
       }
