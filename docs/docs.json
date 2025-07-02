@@ -1888,6 +1888,20 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Use Cases",
+            "groups": [
+              {
+                "group": "Multi-vendor Marketplace",
+                "pages": [
+                  "use-case/marketplace/model",
+                  "use-case/marketplace/capabilities",
+                  "use-case/marketplace/admin-dashboard", 
+                  "use-case/marketplace/vendor-dashboard",
+                  "use-case/marketplace/customer-ux"  
+                ]
+              }  
           }
         ]
       }
