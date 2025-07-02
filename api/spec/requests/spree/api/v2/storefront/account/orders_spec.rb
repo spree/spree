@@ -6,12 +6,8 @@ describe 'Storefront API v2 Orders spec', type: :request do
   let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current, store: store) }
 
   before do
-    @original_limit = Spree::Api::Config[:api_v2_per_page_limit]
-    Spree::Api::Config[:api_v2_per_page_limit] = 2
-  end
-
-  after do
-    Spree::Api::Config[:api_v2_per_page_limit] = @original_limit
+    allow(Spree::Api::Config).to receive(:[]).and_call_original
+    allow(Spree::Api::Config).to receive(:[]).with(:api_v2_per_page_limit).and_return(2)
   end
 
   include_context 'API v2 tokens'

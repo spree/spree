@@ -7,14 +7,11 @@ describe 'Taxons Spec', type: :request do
 
   before do
     store.update_column(:supported_locales, 'en,pl,es')
-    @original_limit = Spree::Api::Config[:api_v2_per_page_limit]
-    Spree::Api::Config[:api_v2_per_page_limit] = 2
+    allow(Spree::Api::Config).to receive(:[]).and_call_original
+    allow(Spree::Api::Config).to receive(:[]).with(:api_v2_per_page_limit).and_return(2)
   end
 
-  after do
-    I18n.locale = :en
-    Spree::Api::Config[:api_v2_per_page_limit] = @original_limit
-  end
+  after { I18n.locale = :en }
 
   shared_examples 'returns valid taxon resource JSON' do
     it 'returns a valid taxon resource JSON response' do
