@@ -31,8 +31,15 @@ commands:
   install_libvips:
     steps:
       - run:
+          name: Fix APT mirrors
+          command: |
+            sudo sed -i 's|http://archive.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
+            sudo sed -i 's|http://security.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
+            sudo apt-get update
+      - run:
           name: Install libvips
-          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 32EE5355A6BC6E42 && sudo apt-get update && sudo apt-get install libvips42
+          command: |
+            sudo apt-get install -y libvips-dev
   store_all_artifacts:
     steps:
       - store_artifacts:
