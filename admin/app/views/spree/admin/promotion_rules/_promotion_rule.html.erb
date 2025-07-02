@@ -22,30 +22,47 @@
         <%= render 'spree/admin/shared/preferences', object: promotion_rule %>
       <% end %>
 
+      <% if promotion_rule.respond_to?(:preferred_eligible_values) %>
+        <div class="mt-3">
+          <span><%= Spree.t(:option_values) %>:</span>
+          <div class="d-flex flex-wrap gap-2">
+            <% promotion_rule_option_values(promotion_rule.preferred_eligible_values).each do |value| %>
+              <strong><%= value %></strong>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
       <% if promotion_rule.respond_to?(:products) %>
         <div class="mt-3">
           <span><%= Spree.t(:products) %>:</span>
-          <% promotion_rule.products.pluck(:name).each do |product_name| %>
+          <div class="d-flex flex-wrap gap-2">
+            <% promotion_rule.products.pluck(:name).each do |product_name| %>
             <strong><%= product_name %></strong>
-          <% end %>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
       <% if promotion_rule.respond_to?(:taxons) %>
         <div class="mt-3">
           <span><%= Spree.t(:taxons) %>:</span>
-          <% promotion_rule.taxons.pluck(:pretty_name).each do |taxon_name| %>
-            <strong><%= taxon_name %></strong>
-          <% end %>
+          <div class="d-flex flex-wrap gap-2">
+            <% promotion_rule.taxons.pluck(:pretty_name).each do |taxon_name| %>
+              <strong><%= taxon_name %></strong>
+            <% end %>
+          </div>
         </div>
       <% end %>
 
       <% if promotion_rule.respond_to?(:users) %>
         <div class="mt-3">
           <span><%= Spree.t(:users) %>:</span>
-          <% promotion_rule.users.pluck(:email).each do |user_email| %>
-            <strong><%= user_email %></strong>
-          <% end %>
+          <div class="d-flex flex-wrap gap-2">
+            <% promotion_rule.users.pluck(:email).each do |user_email| %>
+              <strong><%= user_email %></strong>
+            <% end %>
+          </div>
         </div>
       <% end %>
     </div>

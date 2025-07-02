@@ -39,13 +39,7 @@ module Spree
                       joins(:calculator).where(spree_calculators: { type: Spree::Calculator::Shipping::DigitalDelivery.to_s })
                     }
 
-    if defined?(PgSearch)
-      # full text search
-      include PgSearch::Model
-      pg_search_scope :search_by_name, against: %i[name]
-    else
-      scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") }
-    end
+    scope :search_by_name, ->(query) { where(arel_table[:name].lower.matches("%#{query}%")) }
 
     def include?(address)
       return true unless requires_zone_check?

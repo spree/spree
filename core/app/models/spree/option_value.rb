@@ -60,6 +60,7 @@ module Spree
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
 
     # Using map here instead of pluck, as these values are translatable via Mobility gem
+    # @return [Array<Hash>]
     def self.to_tom_select_json
       all.map do |ov|
         {
@@ -67,6 +68,12 @@ module Spree
           name: ov.presentation
         }
       end
+    end
+
+    # Returns the presentation with the option type presentation, eg. "Color: Red"
+    # @return [String]
+    def display_presentation
+      @display_presentation ||= "#{option_type.presentation}: #{presentation}"
     end
 
     private

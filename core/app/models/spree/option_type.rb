@@ -45,14 +45,6 @@ module Spree
     scope :colors, -> { where(name: COLOR_NAMES) }
     scope :filterable, -> { where(filterable: true) }
 
-    if defined?(PgSearch)
-      # full text search
-      include PgSearch::Model
-      pg_search_scope :search_by_name, against: %i[name presentation]
-    else
-      scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") }
-    end
-
     #
     # Attributes
     #

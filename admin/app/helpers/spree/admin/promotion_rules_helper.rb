@@ -10,7 +10,19 @@ module Spree
         eligible_values = promotion_rule.preferred_eligible_values || []
         return [] if eligible_values.empty?
 
-        Spree::OptionValueVariant.where(id: eligible_values).to_tom_select_json
+        Spree::OptionValue.includes(:option_type).where(id: eligible_values).map do |ov|
+          {
+            id: ov.id,
+            name: ov.display_presentation
+          }
+        end
+      end
+
+      # Returns the promotion rule option values
+      # @param value_ids [Array<Integer>]
+      # @return [Array<String>]
+      def promotion_rule_option_values(value_ids)
+        Spree::OptionValue.includes(:option_type).where(id: value_ids).map(&:display_presentation)
       end
     end
   end

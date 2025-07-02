@@ -44,6 +44,15 @@ describe Spree::OptionValue, type: :model do
     end
   end
 
+  describe '#display_presentation' do
+    let(:option_value) { build(:option_value, name: 'red', presentation: 'Red', option_type: option_type) }
+    let(:option_type) { create(:option_type, name: 'Color', presentation: 'Color') }
+
+    it 'returns the presentation with the option type presentation' do
+      expect(option_value.display_presentation).to eq('Color: Red')
+    end
+  end
+
   describe '.to_tom_select_json' do
     let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
     let!(:option_value2) { create(:option_value, name: 'blue', presentation: 'Blue') }
