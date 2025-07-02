@@ -1004,6 +1004,21 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Use Cases",
+            "groups": [
+              {
+                "group": "Multi-vendor Marketplace",
+                "pages": [
+                  "use-case/marketplace/model",
+                  "use-case/marketplace/capabilities",
+                  "use-case/marketplace/admin-dashboard", 
+                  "use-case/marketplace/vendor-dashboard",
+                  "use-case/marketplace/customer-ux"  
+                ]
+              }
+            ]
           }
         ]
       },
@@ -1885,21 +1900,6 @@
                 "pages": [
                   "user/settings/locations",
                   "user/settings/shipping-methods"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Use Cases",
-            "groups": [
-              {
-                "group": "Multi-vendor Marketplace",
-                "pages": [
-                  "use-case/marketplace/model",
-                  "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard", 
-                  "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"  
                 ]
               }
             ]
