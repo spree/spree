@@ -495,7 +495,7 @@ export default class extends CheckboxSelectAll {
             const variantEditButton = variantTarget.querySelector('[data-slot="variantEditButton"]')
 
             if (variantEditButton) {
-              variantEditButton.href = `/admin/products/${this.productIdValue}/variants/${variantId}/edit`
+              variantEditButton.href = `${Spree.adminPath}/products/${this.productIdValue}/variants/${variantId}/edit`
               variantEditButton.classList.remove('invisible')
             }
           }
