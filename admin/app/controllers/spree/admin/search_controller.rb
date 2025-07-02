@@ -8,7 +8,7 @@ module Spree
           json = Spree::OptionValue.includes(:option_type).search_by_name(query).map do |ov|
             {
               id: ov.id,
-              name: "#{ov.option_type.presentation}: #{ov.presentation}"
+              name: ov.display_presentation
             }
           end
 
