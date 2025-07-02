@@ -14,4 +14,8 @@ FactoryBot.define do
   factory :promotion_rule_taxon, class: Spree::Promotion::Rules::Taxon do
     association :promotion
   end
+
+  factory :promotion_rule_option_value, class: Spree::Promotion::Rules::OptionValue do
+    association :promotion
+  end
 end

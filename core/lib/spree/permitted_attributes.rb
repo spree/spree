@@ -170,7 +170,7 @@ module Spree
     @@promotion_attributes = [:name, :description, :starts_at, :expires_at, :code, :usage_limit, :path, :match_policy,
                               :advertise, :promotion_category_id, :code_prefix, :kind, :number_of_codes, :multi_codes, store_ids: []]
 
-    @@promotion_rule_attributes = [:type, :preferred_match_policy, user_ids_to_add: [], product_ids_to_add: [], taxon_ids_to_add: []]
+    @@promotion_rule_attributes = [:type, :preferred_match_policy, preferred_eligible_values: [], user_ids_to_add: [], product_ids_to_add: [], taxon_ids_to_add: []]
 
     @@promotion_action_attributes = [:type, :calculator_type, calculator_attributes: {}, promotion_action_line_items_attributes: [:id, :promotion_action_id, :variant_id, :quantity, :_destroy]]
 

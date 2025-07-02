@@ -117,7 +117,7 @@ Spree::Core::Engine.add_routes do
       resources :promotion_rules, as: :rules, except: [:index, :show]
       resources :coupon_codes, only: :index
     end
-    get 'promotion_rules/option_values_search', defaults: { format: :json }
+    get 'search/option_values', defaults: { format: :json }, to: 'search#option_values'
 
     # gift cards
     resources :gift_cards
