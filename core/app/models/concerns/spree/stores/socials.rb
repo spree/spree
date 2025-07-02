@@ -3,7 +3,7 @@ module Spree
     module Socials
       extend ActiveSupport::Concern
 
-      SUPPORTED_SOCIAL_NETWORKS = %w[instagram facebook twitter pinterest tiktok youtube spotify].freeze
+      SUPPORTED_SOCIAL_NETWORKS = %w[instagram facebook twitter pinterest tiktok youtube spotify discord].freeze
 
       SOCIAL_NETWORKS_CONFIG = {
         twitter: {
@@ -33,6 +33,10 @@ module Spree
         spotify: {
           input_placeholder: 'https://open.spotify.com/user/your_handle',
           profile_link: 'https://open.spotify.com/user/your_handle'
+        },
+        discord: {
+          input_placeholder: 'https://discord.com/invite/your_handle',
+          profile_link: 'https://discord.com/invite/your_handle'
         }
       }.freeze
 
@@ -61,7 +65,7 @@ module Spree
       end
 
       def social_links
-        @social_links ||= [instagram_link, facebook_link, twitter_link, pinterest_link, youtube_link, tiktok_link, spotify_link].compact_blank
+        @social_links ||= [instagram_link, facebook_link, twitter_link, pinterest_link, youtube_link, tiktok_link, spotify_link, discord_link].compact_blank
       end
     end
   end
