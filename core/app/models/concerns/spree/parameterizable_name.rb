@@ -16,7 +16,7 @@ module Spree
       #
       scope :search_by_name, ->(query) do
         i18n do
-          name.matches("%#{query.downcase}%").and(presentation.matches("%#{query.downcase}%"))
+          name.matches("%#{query.downcase}%").or(presentation.matches("%#{query.downcase}%"))
         end
       end
 
