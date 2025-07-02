@@ -27,11 +27,15 @@ describe 'API V2 Storefront Products Spec', type: :request do
   # We need to make sure that the default locale is reset before and after every test case
   before do
     I18n.default_locale = :en
+    @original_limit = Spree::Api::Config[:api_v2_per_page_limit]
     Spree::Api::Config[:api_v2_per_page_limit] = 4
     allow_any_instance_of(Spree::Api::V2::Storefront::ProductsController).to receive(:current_store).and_return(store)
   end
 
-  after { I18n.locale = :en }
+  after do
+    I18n.locale = :en
+    Spree::Api::Config[:api_v2_per_page_limit] = @original_limit
+  end
 
   describe 'products#index' do
     context 'with no params' do
