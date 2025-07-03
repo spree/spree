@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
-  let(:store) { @default_store }
   let(:order) { create(:order) }
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) { create(:shipment, cost: 1, state: 'pending', stock_location: create(:stock_location), order: order) }
@@ -39,11 +38,7 @@ describe Spree::Shipment, type: :model do
 
       context 'when send_consumer_transactional_emails store setting is set to false' do
         before do
-          store.update!(preferred_send_consumer_transactional_emails: false)
-        end
-
-        after do
-          store.update!(preferred_send_consumer_transactional_emails: true)
+          allow(shipment.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
         end
 
         it 'does not trigger the shipment mailer to be sent' do
