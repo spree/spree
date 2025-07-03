@@ -2,8 +2,8 @@
   <%= Spree.t(:store_details) %>
 <% end %>
 
-<%= content_for(:page_actions) do %>
-  <%= link_to_edit_translations(@store, classes: 'btn btn-light') %>
+<%= content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_translations(@store) %>
 <% end %>
 
 <div class="row">

@@ -1,15 +1,11 @@
 <%# locals: (f:, field:, locale:) %>
 
 <tr>
-  <td class="text-left"><%= Spree.t(field) %></td>
+  <td class="text-center"><%= Spree.t(field) %></td>
   <td>
-    <div class="border rounded mb-0">
-      <%= f.textarea field, rows: 5, class: "form-control", disabled: true, data: { controller: 'textarea-autogrow'} %>
-    </div>
+    <%= @resource.send(field) %>
   </td>
   <td>
-    <div class="border rounded mb-0">
-      <%= f.textarea "#{field}_#{locale}", rows: 5, class: "form-control", data: { controller: 'textarea-autogrow'} %>
-    </div>
+    <%= f.textarea "#{field}_#{locale}", rows: 5, class: "form-control", data: { controller: 'textarea-autogrow'} %>
   </td>
 </tr>

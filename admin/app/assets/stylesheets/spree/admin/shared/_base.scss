@@ -86,8 +86,8 @@ strong {
 .w-15 {
   width: 15%;
 }
-.w-25 {
-  width: 25%;
+.w-20 {
+  width: 20%;
 }
 .w-25 {
   width: 25%;
@@ -321,10 +321,6 @@ small,
 }
 
 // tailwind matchers
-
-.w-20 {
-  width: 20%;
-}
 
 .gap-1 {
   gap: calc($spacer / 4);

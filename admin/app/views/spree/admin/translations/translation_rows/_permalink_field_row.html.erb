@@ -11,7 +11,7 @@
 %>
 
 <tr>
-  <td class="text-left"><%= Spree.t(field) %></td>
+  <td class="text-center"><%= Spree.t(field) %></td>
   <td>
     <div class="form-group">
       <div class="input-group">
@@ -21,7 +21,7 @@
           </div>
         <% end %>
 
-        <%= f.text_field field, value: value, disabled: true, class: 'form-control' %>
+        <%= value %>
       </div>
     </div>
   </td>
