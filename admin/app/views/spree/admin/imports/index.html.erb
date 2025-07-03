@@ -1,0 +1,28 @@
+<%= render 'spree/admin/shared/audit_nav' %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-center"><%= Spree.t(:kind) %></th>
+            <th class="text-center"><%= Spree.t(:status) %></th>
+            <th><%= [Spree.t('admin.processed'), Spree.t(:total)].join('/') %></th>
+            <th><%= Spree.t(:user) %></th>
+            <th><%= Spree.t(:filename) %></th>
+            <th><%= Spree.t(:date) %></th>
+            <th><%= Spree.t(:size) %></th>
+            <th class="text-center"><%= Spree.t(:action) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'import', collection: @collection, cached: true %>
+        </tbody>
+      </table>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+  <% end %>
+</div>
