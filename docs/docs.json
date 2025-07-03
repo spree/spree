@@ -1008,7 +1008,13 @@
           {
             "tab": "Use Cases",
             "groups": [
-              {
+               {                
+                "group": "Overview",
+                "pages": [
+                  "use-case/overview", 
+                ]
+              },
+              {                
                 "group": "Multi-vendor Marketplace",
                 "pages": [
                   "use-case/marketplace/model",
