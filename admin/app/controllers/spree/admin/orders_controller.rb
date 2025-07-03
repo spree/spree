@@ -10,7 +10,7 @@ module Spree
       before_action :load_order_items, only: :edit
       before_action :load_user, only: [:index]
 
-      helper_method :model_class
+      helper_method :model_class, :object_url
 
       # POST /admin/orders
       def create
@@ -107,6 +107,11 @@ module Spree
 
       def model_class
         Spree::Order
+      end
+
+      # needed to show the delete button in the content header
+      def object_url
+        spree.admin_order_path(@order)
       end
     end
   end

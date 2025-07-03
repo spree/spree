@@ -10,6 +10,7 @@ Capybara.configure do |config|
   config.match = :smart
   config.ignore_hidden_elements = true
 end
+Capybara.test_id = 'data-test-id'
 
 if ENV['WEBDRIVER'] == 'accessible'
   require 'capybara/accessible'
