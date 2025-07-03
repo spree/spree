@@ -1017,6 +1017,12 @@
               {                
                 "group": "Multi-vendor Marketplace",
                 "pages": [
+                  "use-case/overview" 
+                ]
+              },
+              {    
+                "group": "Multi-Vendor Marketplace",
+                "pages": [
                   "use-case/marketplace/model",
                   "use-case/marketplace/capabilities",
                   "use-case/marketplace/admin-dashboard", 
