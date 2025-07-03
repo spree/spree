@@ -37,11 +37,7 @@ describe Spree::Reimbursement, type: :model do
 
     context 'when send_consumer_transactional_emails store setting is set to false' do
       before do
-        store.update!(preferred_send_consumer_transactional_emails: false)
-      end
-
-      after do
-        store.update!(preferred_send_consumer_transactional_emails: true)
+        allow_any_instance_of(Spree::Store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
       end
 
       it 'does not trigger the reimbursement mailer to be sent' do
