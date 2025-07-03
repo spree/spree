@@ -8,13 +8,7 @@ module Spree
       def edit; end
 
       def update
-        locale_translation_params = permitted_translation_params.to_h.transform_values do |translations|
-          translations[@selected_translation_locale]
-        end
-
-        Mobility.with_locale(@selected_translation_locale) do
-          @resource.update!(locale_translation_params)
-        end
+        @resource.update!(permitted_translation_params)
 
         flash[:success] = Spree.t('notice_messages.translations_saved')
 
@@ -28,11 +22,20 @@ module Spree
       private
 
       def permitted_translation_params
-        params.require(:translation).permit(
-          resource_class.translatable_fields.each_with_object({}) do |field, acc|
-            acc[field] = current_store.supported_locales_list.map(&:to_sym)
-          end
-        )
+        params.require(@resource.model_name.param_key).permit(translation_fields(resource_class), **nested_params)
+      end
+
+      def nested_params
+        case resource_class.to_s
+          when 'Spree::OptionType'
+            { option_values_attributes: [ :id, *translation_fields(Spree::OptionValue)] }
+          else
+            {}
+        end
+      end
+
+      def translation_fields(klass)
+        klass.translatable_fields.map { |field| "#{field}_#{@selected_translation_locale}" }
       end
 
       def resource_class
@@ -61,20 +64,23 @@ module Spree
 
       def load_data
         @locales = (current_store.supported_locales_list - [@default_locale]).sort
+        @resource_name = @resource.try(:name)
 
-        case @resource
-        when Spree::Product
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_product_path(@resource)
-        when Spree::Taxon
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_taxonomy_taxon_path(@resource.taxonomy, @resource.id)
-        when Spree::Taxonomy
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_taxonomy_path(@resource)
-        when Spree::Store
-          @resource_name = @resource.name
-          @back_path = spree.edit_admin_store_path(section: "general-settings")
+        @back_path = case @resource.class.name
+          when 'Spree::OptionType'
+            spree.edit_admin_option_type_path(@resource)
+          when 'Spree::Product'
+            spree.edit_admin_product_path(@resource)
+          when 'Spree::Property'
+            spree.edit_admin_property_path(@resource)
+          when 'Spree::Store'
+            spree.edit_admin_store_path(section: "general-settings")
+          when 'Spree::Taxon'
+            spree.edit_admin_taxonomy_taxon_path(@resource.taxonomy, @resource.id)
+          when 'Spree::Taxonomy'
+            spree.admin_taxonomy_path(@resource)
+          else
+            [:edit, :admin, @resource]
         end
       end
     end

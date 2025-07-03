@@ -3,7 +3,7 @@
     <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
   </td>
   <td class="w-20 cursor-pointer py-0" data-action="click->row-link#openLink">
-    <code><%= property.name %></vode>
+    <code><%= property.name %></code>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
     <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link } %>
