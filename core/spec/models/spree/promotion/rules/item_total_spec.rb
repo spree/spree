@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Promotion::Rules::ItemTotal, type: :model do
   let!(:store) { @default_store }
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
-  let(:order) { double(:order) }
+  let(:order) { build(:order, store: store) }
 
   before do
     rule.preferred_amount_min = 50
