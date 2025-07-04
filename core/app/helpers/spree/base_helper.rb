@@ -1,5 +1,9 @@
 module Spree
   module BaseHelper
+    def spree_dom_id(record)
+      dom_id(record, 'spree')
+    end
+
     def available_countries
       countries = current_store.countries_available_for_checkout
 

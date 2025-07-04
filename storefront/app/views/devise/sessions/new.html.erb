@@ -17,7 +17,7 @@
         </div>
       <% end %>
       <div class="actions">
-        <%= f.submit Spree.t(:login), class: 'btn btn-primary w-full' %>
+        <%= f.submit Spree.t(:login), class: 'btn btn-primary w-full', id: 'login-button' %>
       </div>
     <% end %>
     <%= render "devise/shared/links" %>
