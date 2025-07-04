@@ -226,6 +226,23 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
         expect(variant.stock_items.last.backorderable).to eq(true)
       end
     end
+
+    context 'disabling track inventory' do
+      let(:variant_params) do
+        {
+          id: variant.id,
+          product_id: product.slug,
+          variant: { track_inventory: false }
+        }
+      end
+
+      it 'sets the track inventory to false' do
+        put :update, params: variant_params
+        expect(variant.reload.track_inventory?).to eq(false)
+        expect(variant.stock_items.first.count_on_hand).to eq(0)
+        expect(variant.stock_items.first.backorderable).to eq(false)
+      end
+    end
   end
 
   describe 'DELETE #destroy' do

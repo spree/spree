@@ -251,7 +251,7 @@ module Spree
       delegate method_name, :"#{method_name}=", to: :default_variant
     end
 
-    delegate :display_amount, :display_price, :has_default_price?,
+    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
              :display_compare_at_price, :images, to: :default_variant
 
     delegate :name, to: :brand, prefix: true, allow_nil: true
