@@ -86,7 +86,7 @@ module Spree
           smart_subsample: true
         },
         format: options[:format] || :webp
-      }.merge(options)
+      }.merge(options.except(:format))
     end
   end
 end
