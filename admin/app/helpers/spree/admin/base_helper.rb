@@ -233,10 +233,6 @@ module Spree
         end
       end
 
-      def spree_dom_id(record)
-        dom_id(record, 'spree')
-      end
-
       # renders a red dot with a * to indicate that a field is required
       # @return [String] the required span tag
       def required_span_tag
