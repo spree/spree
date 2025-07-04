@@ -9,7 +9,7 @@ module Spree
     # @option options [Integer] :height the height of the image
     def spree_image_tag(image, options = {})
       image_tag(
-        spree_image_url(image, { width: options[:width], height: options[:height] }),
+        spree_image_url(image, { width: options[:width], height: options[:height], format: options[:format] }),
         options
       )
     end
@@ -28,11 +28,11 @@ module Spree
 
       if width.present? && height.present?
         url_helpers.cdn_image_url(
-          image.variant(spree_image_variant_options(resize_to_fill: [width, height]))
+          image.variant(spree_image_variant_options(resize_to_fill: [width, height], format: options[:format]))
         )
       else
         url_helpers.cdn_image_url(
-          image.variant(spree_image_variant_options(resize_to_limit: [width, height]))
+          image.variant(spree_image_variant_options(resize_to_limit: [width, height], format: options[:format]))
         )
       end
     end
@@ -85,7 +85,7 @@ module Spree
           reduction_effort: 6,
           smart_subsample: true
         },
-        format: :webp
+        format: options[:format] || :webp
       }.merge(options)
     end
   end
