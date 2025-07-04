@@ -131,7 +131,7 @@ describe Spree::Variant, type: :model do
       end
     end
 
-    describe 'create_default_stock_item' do
+    describe '#create_default_stock_item' do
       let(:new_variant) { product.variants.create(track_inventory: track_inventory, is_master: true) }
 
       context 'when not tracking inventory' do
@@ -176,6 +176,19 @@ describe Spree::Variant, type: :model do
         it 'does not create a default stock item' do
           new_variant
           expect(new_variant.reload.stock_items.count).to eq(0)
+        end
+      end
+
+      context 'existing variant' do
+        let(:variant) { create(:variant, product: product, track_inventory: true) }
+
+        # clear out previous stock items
+        before do
+          variant.stock_items.delete_all
+        end
+
+        it 'creates a default stock item' do
+          expect { variant.update!(track_inventory: false) }.to change(variant.stock_items, :count).by(1)
         end
       end
     end

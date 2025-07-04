@@ -378,6 +378,31 @@ describe 'Checkout steps (address and delivery)' do
         end
       end
     end
+
+    context 'when all items have track inventory disabled' do
+      before do
+        login_as(user, scope: :user)
+        order.variants.each do |variant|
+          variant.stock_items.delete_all
+        end
+        order.variants.each do |variant|
+          variant.update(track_inventory: false)
+        end
+      end
+
+      it 'still allows to checkout' do
+        visit "/checkout/#{order.token}"
+        choose "order_ship_address_id_#{user.shipping_address.id}"
+        click_on 'Save and Continue'
+
+        expect(page).to have_content('Delivery')
+        expect(page).to have_content(Spree::ShippingMethod.first.name)
+
+        page.find("input[data-cost='$10.00']").click
+
+        expect(page).to have_content('Payment')
+      end
+    end
   end
 
   describe 'payment step', js: true do

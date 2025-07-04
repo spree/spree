@@ -74,7 +74,7 @@ module Spree
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
 
-    after_create :create_default_stock_item, unless: :track_inventory?
+    after_save :create_default_stock_item, unless: :track_inventory?
     after_update_commit :handle_track_inventory_change
 
     after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?

@@ -566,6 +566,18 @@ describe Spree::Product, type: :model do
         expect(product.variants.length).to eq(27)
       end
     end
+
+    context 'when track inventory is disabled' do
+      let(:product) { build(:product, track_inventory: false, stores: [store]) }
+
+      it 'creates a default stock item' do
+        product.save
+        expect(product.master.track_inventory?).to eq(false)
+        expect(product.master.stock_items.count).to eq(1)
+        expect(product.master.stock_items.first.count_on_hand).to eq(0)
+        expect(product.master.stock_items.first.backorderable).to eq(false)
+      end
+    end
   end
 
   describe '#images' do
