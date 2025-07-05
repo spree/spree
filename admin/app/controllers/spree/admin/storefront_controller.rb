@@ -29,7 +29,7 @@ module Spree
           :meta_description, :meta_title, :meta_keywords, :seo_robots,
           :facebook, :twitter, :instagram, :linkedin, :youtube, :tiktok, :pinterest,
           :storefront_custom_code_head, :storefront_custom_code_body_start,
-          :storefront_custom_code_body_end, :storefront_password
+          :storefront_custom_code_body_end, :storefront_password, :spotify, :discord
         )
       end
 
