@@ -525,6 +525,7 @@ a:hover {
 .badge-ready,
 .badge-partial,
 .badge-active,
+.badge-balance_due,
 .badge-inactive {
   margin-right: 0.25rem;
   display: inline-block;
@@ -548,6 +549,7 @@ a:hover {
 .badge-void:last-child,
 .badge-pending:last-child,
 .badge-ready:last-child,
+.badge-balance_due:last-child,
 .badge-partial:last-child {
   margin-right: 0px;
 }
@@ -560,6 +562,7 @@ a:hover {
 
 .badge-warning,
 .badge-canceled,
+.badge-balance_due,
 .badge-failed {
   background-color: #f8e7e5;
 }

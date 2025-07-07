@@ -7,6 +7,8 @@
           <%= link_to spree_storefront_resource_url(line_item.product), data: { 'turbo-frame': '_top' } do %>
             <%= spree_image_tag(image, width: 128, height: 128, class: 'object-cover', loading: :lazy) %>
           <% end %>
+        <% else %>
+          <div class="w-32 h-32 bg-accent"></div>
         <% end %>
       </div>
       <div class="ml-3 w-full">

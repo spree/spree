@@ -8,6 +8,8 @@
         <%= link_to spree_storefront_resource_url(line_item.product, relative: true) do %>
           <%= spree_image_tag(image, width: 128, height: 128, loading: :lazy) %>
         <% end %>
+      <% else %>
+        <div class="w-32 h-32 bg-accent"></div>
       <% end %>
     </div>
     <div class="flex flex-col gap-2">

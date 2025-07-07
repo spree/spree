@@ -26,7 +26,7 @@
 
 <% if order.special_instructions.present? %>
   <div class="p-4 lg:p-6 text-sm border">
-    <div class="uppercase tracking-widest mb-1">
+    <div class="uppercase tracking-widest mb-2">
       <%= I18n.t('activerecord.attributes.spree/order.special_instructions') %>
     </div>
     <div class="!leading-[1.375rem] text-neutral-800">
@@ -39,7 +39,7 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 p-4 lg:p-6 text-sm bg-border bg-accent-100">
     <!-- billing address -->
     <div>
-      <div class="uppercase tracking-widest">
+      <div class="uppercase tracking-widest mb-2">
         <%= Spree.t(:billing_address) %>
       </div>
       <div class="!leading-[1.375rem] text-neutral-800">
@@ -48,7 +48,7 @@
     </div>
     <!-- payment into -->
     <div class="mb-5 lg:mb-0">
-      <div class="uppercase tracking-widest">
+      <div class="uppercase tracking-widest mb-2">
         <%= Spree.t(:payment_information) %>
       </div>
       <div class="!leading-[1.375rem] text-neutral-800">
