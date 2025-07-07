@@ -29,7 +29,10 @@ RSpec.describe "Taxon translations", type: :feature, js: true do
   let(:taxon) { create(:taxon, name: 'taxon') }
 
   it "allows to translate taxon" do
+    expect(page).to have_field('taxon_name_fr')
+
     fill_in :taxon_name_fr, with: 'French taxon'
+    fill_in_rich_text_area 'taxon_description_fr', with: 'French description'
 
     click_on Spree.t(:update)
 
@@ -41,6 +44,7 @@ RSpec.describe "Taxon translations", type: :feature, js: true do
 
     I18n.with_locale(:fr) do
       expect(taxon.reload.name).to eq('French taxon')
+      expect(taxon.reload.description.to_plain_text).to eq('French description')
     end
   end
 end

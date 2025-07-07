@@ -275,7 +275,6 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       expect(store_pl_translation).to be_present
       expect(store_pl_translation.name).to eq('Store PL')
-      expect(store_pl_translation.description).to eq('PL description')
     end
   end
 

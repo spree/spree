@@ -28,6 +28,8 @@ RSpec.describe "Product translations", type: :feature, js: true do
   let(:product) { create(:product, name: 'product', stores: [store], meta_title: 'seo title', meta_description: 'meta description') }
 
   it "allows to translate product" do
+    expect(page).to have_field('product_name_fr')
+
     fill_in :product_name_fr, with: 'French product'
     # fill_in :product_description_fr, with: 'French description'
     fill_in :product_meta_description_fr, with: 'French meta description'
