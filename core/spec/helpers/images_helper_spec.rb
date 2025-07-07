@@ -16,7 +16,7 @@ describe Spree::ImagesHelper, type: :helper do
 
   describe '#spree_image_tag' do
     it 'returns an image tag with the correct url' do
-      expect(helper).to receive(:spree_image_url).with(image, { width: 100, height: 100 }).and_return('image_url')
+      expect(helper).to receive(:spree_image_url).with(image, { width: 100, height: 100, format: nil }).and_return('image_url')
       expect(helper).to receive(:image_tag).with('image_url', { width: 100, height: 100 }).and_return('image_tag')
       expect(helper.spree_image_tag(image, width: 100, height: 100)).to eq('image_tag')
     end
@@ -62,6 +62,15 @@ describe Spree::ImagesHelper, type: :helper do
         expect(image).to receive(:variant).with(hash_including(resize_to_limit: [200, nil])).and_return(variant)
         expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
         expect(helper.spree_image_url(image, width: 100)).to eq('cdn_url')
+      end
+    end
+
+    context 'when format is provided' do
+      it 'returns a url with the correct format' do
+        variant = double('variant')
+        expect(image).to receive(:variant).with(hash_including(resize_to_fill: [200, 200], format: :png)).and_return(variant)
+        expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
+        expect(helper.spree_image_url(image, width: 100, height: 100, format: :png)).to eq('cdn_url')
       end
     end
   end

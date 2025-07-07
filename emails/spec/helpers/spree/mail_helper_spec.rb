@@ -27,7 +27,7 @@ module Spree
         let(:image) { create(:image) }
 
         specify 'returns proper image path' do
-          expect(subject).to eq spree_image_url(image, width: 100, height: 100)
+          expect(subject).to eq spree_image_url(image, width: 100, height: 100, format: :png)
         end
       end
     end
