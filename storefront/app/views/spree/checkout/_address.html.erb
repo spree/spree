@@ -3,7 +3,7 @@
 <% address_type = 'shipping' %>
 <% address_name = "#{address_type[0...4]}_address" %>
 
-<% if user_available_addresses.present? %>
+<% if @order.requires_ship_address? &&user_available_addresses.present? %>
   <div data-controller="checkout-address-book">
     <%= turbo_frame_tag :checkout_address_book do %>
       <div class="mb-4" data-checkout-address-book-target="list">

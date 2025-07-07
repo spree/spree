@@ -48,3 +48,17 @@ store_ids.each do |store_id|
     )
   end
 end
+
+# Create a fully digital product
+digital_shipping_category = Spree::ShippingCategory.find_or_create_by!(name: 'Digital')
+
+digital_product = Spree::Product.find_or_initialize_by(name: 'Digital Download') do |product|
+  product.price = 9.99
+  product.description = 'A fully digital product that can be downloaded immediately after purchase.'
+  product.available_on = Time.zone.now
+  product.status = 'active'
+  product.shipping_category = digital_shipping_category
+  product.stores = Spree::Store.all
+  product.track_inventory = false
+end
+digital_product.save!

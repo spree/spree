@@ -937,9 +937,10 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     context 'Address Book' do
-      let!(:user) { create(:user) }
+      let!(:user) { create(:user_with_addresses) }
       let!(:variant) { create(:product, sku: 'Demo-SKU').master }
-      let!(:address) { create(:address, user: user, country: country, state: state) }
+      let!(:address) { user.ship_address }
+      let!(:other_address) { create(:address, user: user, country: country, state: state) }
       let!(:order) { create(:order, store: store, bill_address_id: nil, ship_address_id: nil, user: user, state: 'address') }
       let(:address_params) { build(:address, country: country, state: state).attributes }
 
@@ -948,15 +949,34 @@ describe Spree::CheckoutController, type: :controller do
         allow(order).to receive(:available_shipping_methods).and_return [stub_model(Spree::ShippingMethod)]
         allow(order).to receive(:available_payment_methods).and_return [stub_model(Spree::PaymentMethod)]
         allow(order).to receive(:ensure_available_shipping_rates).and_return true
+        allow(controller).to receive(:try_spree_current_user).and_return(user)
       end
 
       describe 'on address step' do
-        it 'set ship_address_id' do
-          put_address_to_order(ship_address_id: address.id)
-          expect(order.reload.ship_address).to eq(address)
+        it 'automatically selects existing address if user has one' do
+          get :edit, params: { state: 'address', token: order.token }
+
+          expect(controller.current_order.ship_address).to eq(address)
         end
 
-        it 'set address attributes' do
+        context 'when shipping address is not required' do
+          before do
+            allow_any_instance_of(Spree::Order).to receive(:requires_ship_address?).and_return(false)
+          end
+
+          it 'does not select existing address' do
+            get :edit, params: { state: 'address', token: order.token }
+
+            expect(controller.current_order.ship_address).to be_nil
+          end
+        end
+
+        it 'can select existing address' do
+          put_address_to_order(ship_address_id: other_address.id)
+          expect(order.reload.ship_address).to eq(other_address)
+        end
+
+        it 'can create new address' do
           expect { put_address_to_order(ship_address_attributes: address_params) }.to change(user.addresses, :count).by(1)
           expect(order.ship_address).not_to be_nil
           expect(order.ship_address.user).to eq(user)

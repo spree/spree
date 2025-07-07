@@ -24,7 +24,7 @@ FactoryBot.define do
 
       before(:create) do |shipping_method|
         shipping_method.shipping_categories.delete_all
-        shipping_method.shipping_categories << create(:shipping_category, name: 'Digital')
+        shipping_method.shipping_categories << create(:digital_shipping_category)
       end
     end
   end

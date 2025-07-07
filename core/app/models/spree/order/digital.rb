@@ -32,13 +32,6 @@ module Spree
           end
         end
       end
-
-      def go_to_payment_if_fully_digital!
-        return unless digital?
-        return unless delivery?
-
-        next!
-      end
     end
   end
 end

@@ -110,7 +110,7 @@ module Spree
                 before_transition to: :delivery, do: :create_shipment_tax_charge!
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
                 before_transition to: :delivery, do: :apply_unassigned_promotions
-                after_transition to: :delivery, do: :go_to_payment_if_fully_digital!
+                after_transition to: :delivery, do: :move_to_next_step_if_address_not_required
               end
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_discontinued
@@ -296,6 +296,12 @@ module Spree
 
           def user_has_valid_default_card?
             user && user.default_credit_card.try(:valid?)
+          end
+
+          def move_to_next_step_if_address_not_required
+            return if requires_ship_address?
+
+            next!
           end
 
           private

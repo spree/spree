@@ -2,7 +2,7 @@ module Spree
   module CheckoutHelper
     def checkout_progress(numbers: false)
       states = (@order.checkout_steps - ['complete']).unshift('cart')
-      states -= ['delivery'] if @order.digital?
+      states -= ['delivery'] if !@order.requires_ship_address? || !@order.delivery_required?
 
       items = states.each_with_index.map do |state, i|
         text = Spree.t("order_state.#{state}").titleize
@@ -10,9 +10,11 @@ module Spree
 
         css_classes = ['breadcrumb-item']
 
-        if @order.passed_checkout_step?(state)
+        # cart is not included in checkout_steps, so we need to handle it separately
+        if @order.passed_checkout_step?(state) || state == 'cart'
           link_content = text
           link_url = if state == 'cart'
+                       # using absolute URL if using headless storefronts
                        spree.cart_url(host: current_store.url_or_custom_domain, order_token: @order.token)
                      else
                        spree.checkout_state_path(@order.token, state)
