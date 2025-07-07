@@ -11,7 +11,11 @@
 
   <%= f.fields_for :option_values do |ff| %>
     <% ff.object.class.translatable_fields.each do |field| %>
-      <%= render "spree/admin/translations/translation_rows/text_field_row", f: ff, field: field, locale: locale %>
+      <tr>
+        <td><%= Spree.t(field) %></td>
+        <td><%= ff.object.send(field) %></td>
+        <td><%= ff.text_field "#{field}_#{locale}", class: 'form-control' %></td>
+      </tr>
     <% end %>
   <% end %>
 <% end %>

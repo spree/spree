@@ -403,7 +403,6 @@ describe Spree::Product, type: :model do
         expect(product_pl_translation.description).to eq('PL description')
         expect(product_pl_translation.meta_title).to eq('PL meta title')
         expect(product_pl_translation.meta_description).to eq('PL meta description')
-        expect(product_pl_translation.meta_keywords).to eq('PL meta keywords')
       end
     end
   end

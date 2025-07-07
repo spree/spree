@@ -46,7 +46,7 @@ module Spree
       'archived' => 'archived'
     }.freeze
 
-    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
+    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do

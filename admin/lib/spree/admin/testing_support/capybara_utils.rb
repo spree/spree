@@ -35,10 +35,6 @@ module Spree
         rescue Selenium::WebDriver::Error::TimeoutError
           default_options[:error].nil? ? false : raise(default_options[:error])
         end
-
-        def fill_in_trix_editor(id, with:)
-          page.find(id, visible: :all).click.set(with)
-        end
       end
     end
   end

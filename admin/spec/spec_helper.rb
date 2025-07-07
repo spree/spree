@@ -52,6 +52,8 @@ require 'spree/testing_support/image_helpers'
 
 require 'spree/core/controller_helpers/strong_parameters'
 
+require 'action_text/system_test_helper'
+
 RSpec.configure do |config|
   config.color = true
   config.default_formatter = 'doc'
@@ -96,6 +98,8 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
+
+  config.include ActionText::SystemTestHelper, type: :feature
 
   config.order = :random
   Kernel.srand config.seed

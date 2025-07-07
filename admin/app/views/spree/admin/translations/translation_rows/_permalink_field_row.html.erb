@@ -11,19 +11,11 @@
 %>
 
 <tr>
-  <td class="text-center"><%= Spree.t(field) %></td>
+  <td><%= Spree.t(field) %></td>
   <td>
-    <div class="form-group">
-      <div class="input-group">
-        <% if base_permalink.present? %>
-          <div class="input-group-prepend">
-            <span class="input-group-text"><%= base_permalink %></span>
-          </div>
-        <% end %>
-
-        <%= value %>
-      </div>
-    </div>
+    <code>
+      <%= f.object.permalink %>
+    </code>
   </td>
   <td>
     <div class="form-group">
