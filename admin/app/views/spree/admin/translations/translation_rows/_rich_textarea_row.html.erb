@@ -1,7 +1,7 @@
 <%# locals: (f:, field:, locale:) %>
 
 <tr>
-  <td class="text-center"><%= Spree.t(field) %></td>
+  <td><%= Spree.t(field) %></td>
   <td class="text-wrap">
     <%= @resource.send(field)%>
   </td>

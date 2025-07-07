@@ -25,8 +25,8 @@ module Spree
     # Translations
     #
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
-                             twitter instagram customer_support_email description
-                             address contact_phone new_order_notifications_email].freeze
+                             twitter instagram customer_support_email
+                             address contact_phone].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
     self::Translation.class_eval do
       acts_as_paranoid

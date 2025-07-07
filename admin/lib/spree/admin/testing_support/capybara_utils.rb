@@ -37,6 +37,9 @@ module Spree
         end
 
         def fill_in_trix_editor(id, with:)
+          id = id.to_s
+          id = "##{id}" unless id.starts_with?('#')
+
           page.find(id, visible: :all).click.set(with)
         end
       end

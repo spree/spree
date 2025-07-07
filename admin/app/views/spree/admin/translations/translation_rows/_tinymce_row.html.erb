@@ -6,6 +6,8 @@
     <%= @resource.send(field) %>
   </td>
   <td>
-    <%= f.textarea "#{field}_#{locale}", rows: 5, class: "form-control", data: { controller: 'textarea-autogrow'} %>
+    <div class="trix-container">
+      <%= f.text_area "#{field}_#{locale}", rows: 10, class: "form-control spree-rte" %>
+    </div>
   </td>
 </tr>
