@@ -16,7 +16,7 @@ describe Spree::ImagesHelper, type: :helper do
 
   describe '#spree_image_tag' do
     it 'returns an image tag with the correct url' do
-      expect(helper).to receive(:spree_image_url).with(image, { width: 100, height: 100, format: nil }).and_return('image_url')
+      expect(helper).to receive(:spree_image_url).with(image, { width: 100, height: 100 }).and_return('image_url')
       expect(helper).to receive(:image_tag).with('image_url', { width: 100, height: 100 }).and_return('image_tag')
       expect(helper.spree_image_tag(image, width: 100, height: 100)).to eq('image_tag')
     end
