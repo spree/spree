@@ -53,6 +53,11 @@ FactoryBot.define do
           create(:product_property, product: product, property_id: 10, value: 'Epsilon')
         end
       end
+
+      factory :digital_product do
+        track_inventory { false }
+        shipping_category { |r| Spree::ShippingCategory.digital || r.association(:digital_shipping_category) }
+      end
     end
   end
 end

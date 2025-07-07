@@ -228,10 +228,8 @@ module Spree
         @order.checkout_steps.first
       elsif insufficient_payment?
         'payment'
-      elsif @order.state == 'cart'
-        'address'
-      elsif @order.digital? && @order.delivery?
-        'address'
+      elsif @order.state == 'cart' || (!@order.requires_ship_address? && @order.delivery?)
+        @order.checkout_steps.first
       else
         @order.state
       end
@@ -311,7 +309,7 @@ module Spree
 
     def before_address
       if try_spree_current_user.present?
-        @order.ship_address ||= try_spree_current_user.ship_address
+        @order.ship_address ||= try_spree_current_user.ship_address || try_spree_current_user.bill_address if @order.requires_ship_address?
         @order.bill_address ||= try_spree_current_user.bill_address
       end
       # for guest users or users without addresses, we need to build an empty one here

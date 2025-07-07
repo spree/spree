@@ -23,7 +23,7 @@
     <% elsif payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
       <div class="d-flex flex align-items-center items-center">
         <div><%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %></div>
-        <div class="mx-2"><%= Spree.t(:store_credit_name) %></div>
+        <div class="ml-3"><%= Spree.t(:store_credit_name) %></div>
       </div>
     <% end %>
   <% elsif source.present? %>
