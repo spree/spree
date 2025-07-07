@@ -60,6 +60,8 @@ RSpec.describe "Stores translations", type: :feature, js: true do
     end
 
     it "allows to translate store" do
+      expect(page).to have_field('store_name_pl')
+
       fill_in :store_name_pl, with: 'Sklep'
       fill_in :store_meta_description_pl, with: 'Sklep'
       fill_in :store_seo_title_pl, with: 'Sklep'
@@ -117,6 +119,7 @@ RSpec.describe "Stores translations", type: :feature, js: true do
     end
 
     it 'shows dropdown to select language' do
+      expect(page).to have_select('translation_locale')
       select "Français (FR)", from: 'translation_locale'
 
       expect(page).to have_field('store_name_fr')
