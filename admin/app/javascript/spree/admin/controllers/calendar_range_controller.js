@@ -28,6 +28,7 @@ export default class extends Controller {
         'This Month', 'Last Month'],
         position: 'left'
       },
+      lang: Spree.locale
     })
 
     this.picker.on('render', () => {
