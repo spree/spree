@@ -9,7 +9,6 @@ module Spree
             attachment = store.send(attribute_name)
             return unless attachment.attached?
 
-            url_helpers = Rails.application.routes.url_helpers
             url_helpers.cdn_image_url(attachment)
           end
 

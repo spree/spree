@@ -16,7 +16,7 @@ module Spree
         end
 
         attribute :header_url do |taxon|
-          taxon.image.attachment&.url
+          url_helpers.cdn_image_url(taxon.image.attachment) if taxon.image.present? && taxon.image.attached?
         end
 
         attribute :is_root do |taxon|
