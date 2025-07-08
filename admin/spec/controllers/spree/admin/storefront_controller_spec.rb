@@ -23,7 +23,15 @@ describe Spree::Admin::StorefrontController do
       {
         name: 'New Store Name',
         meta_description: 'This is a cool store',
-        storefront_password: 'password'
+        storefront_password: 'password',
+        facebook: 'https://www.facebook.com/spreecommerce',
+        instagram: 'https://www.instagram.com/spreecommerce',
+        twitter: 'https://www.twitter.com/spreecommerce',
+        youtube: 'https://www.youtube.com/spreecommerce',
+        pinterest: 'https://www.pinterest.com/spreecommerce',
+        tiktok: 'spreecommerce',
+        spotify: 'https://www.spotify.com/spreecommerce',
+        discord: 'https://www.discord.com/spreecommerce'
       }
     end
 
@@ -35,6 +43,14 @@ describe Spree::Admin::StorefrontController do
       expect(store.reload.name).to eq('New Store Name')
       expect(store.meta_description).to eq('This is a cool store')
       expect(store.storefront_password).to eq('password')
+      expect(store.facebook).to eq('https://www.facebook.com/spreecommerce')
+      expect(store.instagram).to eq('https://www.instagram.com/spreecommerce')
+      expect(store.twitter).to eq('https://www.twitter.com/spreecommerce')
+      expect(store.youtube).to eq('https://www.youtube.com/spreecommerce')
+      expect(store.pinterest).to eq('https://www.pinterest.com/spreecommerce')
+      expect(store.tiktok).to eq('spreecommerce')
+      expect(store.spotify).to eq('https://www.spotify.com/spreecommerce')
+      expect(store.discord).to eq('https://www.discord.com/spreecommerce')
     end
 
     context 'when removing assets' do

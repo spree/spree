@@ -35,4 +35,32 @@ RSpec.describe Spree::PageLink, type: :model do
       end
     end
   end
+
+  describe '#formatted_url' do
+    it 'returns the formatted url' do
+      page_link = build(:page_link, url: 'https://www.google.com')
+      expect(page_link.formatted_url).to eq('https://www.google.com')
+    end
+
+    context 'url without http' do
+      it 'returns the formatted url' do
+        page_link = build(:page_link, url: 'www.google.com')
+        expect(page_link.formatted_url).to eq('http://www.google.com')
+      end
+    end
+
+    context 'mailto links' do
+      it 'returns the formatted url' do
+        page_link = build(:page_link, url: 'mailto:test@example.com')
+        expect(page_link.formatted_url).to eq('mailto:test@example.com')
+      end
+    end
+
+    context 'url is blank' do
+      it 'returns nil' do
+        page_link = build(:page_link, url: nil)
+        expect(page_link.formatted_url).to be_nil
+      end
+    end
+  end
 end
