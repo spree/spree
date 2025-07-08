@@ -14,7 +14,7 @@ module Spree
       end
 
       def self.latest_version
-        @latest_version ||= fetch_updates.first&.dig('version')
+        @latest_version ||= fetch_updates.first
       end
 
       def self.fetch_updates

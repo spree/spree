@@ -54,4 +54,12 @@ describe Spree::Admin::DashboardController, type: :controller do
       expect(session[:spree_enterprise_edition_notice_dismissed]).to be_truthy
     end
   end
+
+  describe '#dismiss_updater_notice' do
+    it 'dismisses the updater notice' do
+      patch :dismiss_updater_notice
+      expect(response).to redirect_to(spree.admin_dashboard_path)
+      expect(session[:spree_updater_notice_dismissed]).to be_truthy
+    end
+  end
 end

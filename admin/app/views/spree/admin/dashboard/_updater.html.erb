@@ -1,9 +1,15 @@
-<% if Spree::Admin::RuntimeConfig.admin_updater_enabled && can?(:manage, current_store) && spree_update_available? %>
-  <div class="alert alert-info">
-    <div>
-      <p class="mb-1">There's a newer version of Spree available.</p>
+<% if Spree::Admin::RuntimeConfig.admin_updater_enabled && can?(:manage, current_store) && spree_update_available? && !session[:spree_updater_notice_dismissed] %>
+  <div id="updater-notice" class="mb-3">
+    <div class="d-flex align-items-center">
+      <%= image_tag 'favicon_256x256.png', alt: 'Spree', width: 32, height: 32 %>
+      <span class="ml-2">
+        <strong>Spree <%= spree_updater.latest_version['name'] %></strong> is available.
+      </span>
+    </div>
 
-      <%= link_to_with_icon 'settings-up', 'Update now', 'https://spreecommerce.org/docs/developer/upgrades', target: '_blank', class: 'btn btn-light btn-sm' %>
+    <div class="d-flex align-items-center gap-1">
+      <%= link_to_with_icon 'settings-up', 'Update now', spree_updater.latest_version['url'], target: '_blank', class: 'btn btn-light btn-sm' %>
+      <%= link_to '', spree.admin_dismiss_updater_notice_path, data: { turbo_method: :patch }, class: 'btn-close' %>
     </div>
   </div>
 <% end %>

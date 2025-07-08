@@ -64,6 +64,12 @@ module Spree
         redirect_back(fallback_location: spree.admin_dashboard_path)
       end
 
+      # PATCH /admin/dashboard/dismiss_updater_notice
+      def dismiss_updater_notice
+        session[:spree_updater_notice_dismissed] = { value: true, expires_at: 7.days.from_now }
+        redirect_back(fallback_location: spree.admin_dashboard_path)
+      end
+
       private
 
       def load_vendor
