@@ -33,6 +33,10 @@ module Spree
 
           super(opts, fieldset, include_list, params)
         end
+
+        def self.url_helpers
+          Rails.application.routes.url_helpers
+        end
       end
     end
   end

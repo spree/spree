@@ -6,7 +6,6 @@ module Spree
           set_type :digital
 
           attribute :url do |digital|
-            url_helpers = Rails.application.routes.url_helpers
             url_helpers.polymorphic_url(digital.attachment, only_path: true)
           end
 
