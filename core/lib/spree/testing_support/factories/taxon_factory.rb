@@ -9,6 +9,12 @@ FactoryBot.define do
     trait :with_description do
       description { '<div>Test <strong>description</strong></div>' }
     end
+
+    trait :with_header_image do
+      after(:create) do |taxon|
+        taxon.image.attach(io: File.new(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')), filename: 'thinking-cat.jpg')
+      end
+    end
   end
 
   factory :automatic_taxon, parent: :taxon do
