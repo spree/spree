@@ -14,6 +14,7 @@ module Spree
 
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
+                                            # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
                                             date = Time.parse(search_params[:created_at_gt]).to_date.to_s
                                             Time.zone.parse(date).beginning_of_day
                                           rescue StandardError
