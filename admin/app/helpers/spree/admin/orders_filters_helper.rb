@@ -14,7 +14,8 @@ module Spree
 
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
-                                            Time.zone.parse(search_params[:created_at_gt]).beginning_of_day
+                                            # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
+                                            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
                                           rescue StandardError
                                             ''
                                           end
@@ -22,7 +23,7 @@ module Spree
 
         if search_params[:created_at_lt].present?
           search_params[:created_at_lt] = begin
-                                            Time.zone.parse(search_params[:created_at_lt]).end_of_day
+                                            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
                                           rescue StandardError
                                             ''
                                           end
@@ -30,7 +31,7 @@ module Spree
 
         if search_params[:completed_at_gt].present?
           search_params[:completed_at_gt] = begin
-                                            Time.zone.parse(search_params[:completed_at_gt]).beginning_of_day
+                                            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
                                           rescue StandardError
                                             ''
                                           end
@@ -38,7 +39,7 @@ module Spree
 
         if search_params[:completed_at_lt].present?
           search_params[:completed_at_lt] = begin
-                                            Time.zone.parse(search_params[:completed_at_lt]).end_of_day
+                                            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
                                           rescue StandardError
                                             ''
                                           end

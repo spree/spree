@@ -115,6 +115,23 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
           expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
         end
       end
+
+      context 'filtering in different timezones' do
+        let(:date_from) { 'Tue Jul 08 2025 00:00:00 GMT+0200 (czas środkowoeuropejski letni)' }
+        let(:date_to) { 'Tue Jul 09 2025 00:00:00 GMT+0200 (czas środkowoeuropejski letni)' }
+
+        let(:q) { { completed_at_gt: date_from, completed_at_lt: date_to } }
+
+        before do
+          order1.update(completed_at: date_from.to_date.in_time_zone(store.preferred_timezone) + 1.minute)
+          order2.update(completed_at: date_to.to_date.in_time_zone(store.preferred_timezone).end_of_day - 1.minute)
+        end
+
+        it 'filters by orders completed_at in the store timezone' do
+          subject
+          expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
+        end
+      end
     end
   end
 
