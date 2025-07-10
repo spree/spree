@@ -686,7 +686,6 @@ en:
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     at_symbol: "@"
     attachments: Attachments
-    audit_log: Audit Log
     author: Author
     authorization_failure: Authorization Failure
     authorized: Authorized
