@@ -2,10 +2,14 @@
   <%= Spree.t('admin.edit_profile') %>
 <% end %>
 
+<%= content_for :page_actions do %>
+  <%= turbo_save_button_tag Spree.t('actions.update'), form: 'edit_user' %>
+<% end %>
+
 <%= form_for @user, url: spree.admin_profile_path, method: :put, as: :user do |f| %>
   <div class="row">
-    <div class="col-lg-6 mb-4">
-      <div class="card">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.personal_details') %></h5>
         </div>
@@ -30,9 +34,7 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-lg-6 mb-4">
       <div class="card">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.notifications') %></h5>
@@ -71,9 +73,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="form-actions">
-    <%= turbo_save_button_tag Spree.t('actions.update') %>
   </div>
 <% end %>

@@ -46,6 +46,7 @@ module Spree
       end
 
       def add_breadcrumbs
+        add_breadcrumb @product.name, spree.edit_admin_product_path(@product)
         add_breadcrumb Spree.t(:digital_assets), spree.admin_product_digital_assets_path(@product)
       end
     end

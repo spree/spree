@@ -3,18 +3,15 @@
   <%= @variant.human_name %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
-
 <%= form_for [:admin, @product, @variant] do |f| %>
   <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
       <%= render 'spree/admin/variants/form/basic', f: f %>
       <%= render 'spree/admin/variants/form/pricing', f: f %>
       <%= render 'spree/admin/variants/form/inventory', f: f %>
-    </div>
-    <div class="col-lg-6">
       <%= render 'spree/admin/variants/form/media', viewable: @variant %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
     </div>
   </div>
-  <%= render 'spree/admin/shared/edit_resource_links', f: f %>
 <% end %>
