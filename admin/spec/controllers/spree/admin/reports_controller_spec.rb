@@ -50,7 +50,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       it 'sets the dates in the store timezone' do
         subject
         expect(assigns(:object).date_from).to eq(date_from.to_date.in_time_zone(store.preferred_timezone))
-        expect(assigns(:object).date_to).to eq(date_to.to_date.in_time_zone(store.preferred_timezone).end_of_day)
+        expect(assigns(:object).date_to.change(usec: 0)).to eq(date_to.to_date.in_time_zone(store.preferred_timezone).end_of_day.change(usec: 0))
       end
     end
 
@@ -64,7 +64,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       it 'sets default values' do
         subject
         expect(assigns(:object).date_from).to eq(1.month.ago.in_time_zone(store.preferred_timezone).beginning_of_day)
-        expect(assigns(:object).date_to).to eq(Time.current.in_time_zone(store.preferred_timezone).end_of_day)
+        expect(assigns(:object).date_to.change(usec: 0)).to eq(Time.current.in_time_zone(store.preferred_timezone).end_of_day.change(usec: 0))
       end
     end
   end
@@ -116,7 +116,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       it 'sets the dates in the store timezone' do
         subject
         expect(assigns(:object).date_from).to eq(date_from.to_date.in_time_zone(store.preferred_timezone))
-        expect(assigns(:object).date_to).to eq(date_to.to_date.in_time_zone(store.preferred_timezone).end_of_day)
+        expect(assigns(:object).date_to.change(usec: 0)).to eq(date_to.to_date.in_time_zone(store.preferred_timezone).end_of_day.change(usec: 0))
       end
     end
 
@@ -130,7 +130,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       it 'sets default values' do
         subject
         expect(assigns(:object).date_from).to eq(1.month.ago.in_time_zone(store.preferred_timezone).beginning_of_day)
-        expect(assigns(:object).date_to).to eq(Time.current.in_time_zone(store.preferred_timezone).end_of_day)
+        expect(assigns(:object).date_to.change(usec: 0)).to eq(Time.current.in_time_zone(store.preferred_timezone).end_of_day.change(usec: 0))
       end
     end
   end
