@@ -6,15 +6,19 @@
   <%= Spree.t(:settings) %>
 <% end %>
 
-<%= content_for(:page_actions) do %>
+<%= content_for(:page_actions_dropdown) do %>
   <%= link_to_edit_translations(@store) %>
+<% end %>
+
+<%= content_for(:page_actions) do %>
+  <%= turbo_save_button_tag Spree.t('actions.update'), form: "edit_store_#{@store.id}" %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
 
 <%= form_for @store, url: spree.admin_storefront_path, method: :patch do |f| %>
   <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-6 offset-lg-3">
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title">
@@ -85,9 +89,7 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-lg-6">
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title">
@@ -139,6 +141,4 @@
       </div>
     </div>
   </div>
-
-  <%= render 'spree/admin/stores/form/buttons' %>
 <% end %>
