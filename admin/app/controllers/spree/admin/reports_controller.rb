@@ -31,7 +31,10 @@ module Spree
       end
 
       def build_resource
-        model_class.new(store: current_store, date_from: params[:date_from], date_to: params[:date_to], currency: params[:currency])
+        model_class.new(store: current_store,
+                        date_from: parse_date_param(params[:date_from]),
+                        date_to: parse_date_param(params[:date_to])&.end_of_day,
+                        currency: params[:currency])
       end
 
       def model_class
@@ -55,7 +58,16 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:report).permit(permitted_report_attributes)
+        attributes = params.require(:report).permit(permitted_report_attributes)
+        attributes[:date_from] = parse_date_param(attributes[:date_from]) if attributes[:date_from].present?
+        attributes[:date_to] = parse_date_param(attributes[:date_to])&.end_of_day if attributes[:date_to].present?
+        attributes
+      end
+
+      def parse_date_param(date_string)
+        return if date_string.blank?
+
+        date_string.to_date&.in_time_zone(current_timezone)
       end
     end
   end

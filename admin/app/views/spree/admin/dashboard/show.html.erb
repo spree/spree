@@ -15,8 +15,8 @@
       <%= form_tag spree.admin_dashboard_analytics_path, method: :get, data: { turbo_frame: :analytics } do %>
         <%= hidden_field_tag :vendor_id, @vendor.id if @vendor.present? %>
         <%= render 'spree/admin/shared/calendar_range_picker',
-          date_from_value: params[:date_from] || 1.month.ago.beginning_of_month,
-          date_to_value: params[:date_to] || 1.month.ago.end_of_month,
+          date_from_value: params[:date_from] || 1.month.ago.end_of_day,
+          date_to_value: params[:date_to] || Time.zone.now.beginning_of_day,
           css_classes: "btn btn-sm border rounded-lg hover-light d-inline-flex align-items-center h-100 dropdown-toggle" %>
       <% end %>
     </div>

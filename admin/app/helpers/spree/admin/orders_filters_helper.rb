@@ -15,8 +15,7 @@ module Spree
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
                                             # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
-                                            date = Time.parse(search_params[:created_at_gt]).to_date.to_s
-                                            Time.zone.parse(date).beginning_of_day
+                                            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
                                           rescue StandardError
                                             ''
                                           end
@@ -24,8 +23,7 @@ module Spree
 
         if search_params[:created_at_lt].present?
           search_params[:created_at_lt] = begin
-                                            date = Time.parse(search_params[:created_at_lt]).to_date.to_s
-                                            Time.zone.parse(date).end_of_day
+                                            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
                                           rescue StandardError
                                             ''
                                           end
@@ -33,8 +31,7 @@ module Spree
 
         if search_params[:completed_at_gt].present?
           search_params[:completed_at_gt] = begin
-                                            date = Time.parse(search_params[:completed_at_gt]).to_date.to_s
-                                            Time.zone.parse(date).beginning_of_day
+                                            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
                                           rescue StandardError
                                             ''
                                           end
@@ -42,8 +39,7 @@ module Spree
 
         if search_params[:completed_at_lt].present?
           search_params[:completed_at_lt] = begin
-                                            date = Time.parse(search_params[:completed_at_lt]).to_date.to_s
-                                            Time.zone.parse(date).end_of_day
+                                            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
                                           rescue StandardError
                                             ''
                                           end
