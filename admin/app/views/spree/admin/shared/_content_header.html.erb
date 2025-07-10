@@ -71,8 +71,8 @@
 <% end %>
 
 <% if content_for?(:page_tabs) %>
-  <div class="container">
-    <ul class="nav nav-pills flex-nowrap w-100 mb-3">
+  <div class="container-fluid" id="page-tabs">
+    <ul class="nav">
       <%= yield :page_tabs %>
     </ul>
   </div>

@@ -25,6 +25,37 @@
   font-size: 1.25rem;
 }
 
+#page-tabs {
+  border-bottom: 1px solid $border-color;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  margin-top: -1rem;
+
+  .nav {
+    gap: 1rem;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-left: 0;
+    margin-bottom: -1px;
+
+    .nav-link {
+      border-radius: 0;
+      padding-bottom: 1rem;
+      padding-top: 1rem;
+      padding-left: 0rem;
+      padding-right: 0rem;
+  
+      &.active {
+        background-color: transparent;
+        color: theme-color('primary');
+        font-weight: 600;
+      }
+    }
+  }
+}
+
 .store-dropdown {
   display: flex;
   align-items: center;
