@@ -10,7 +10,13 @@ module Spree
         helper_method :stored_location
         layout 'spree/storefront'
 
+        include Spree::Core::ControllerHelpers::Auth
+        include Spree::Core::ControllerHelpers::Store
         include Spree::Core::ControllerHelpers::Order
+        include Spree::Core::ControllerHelpers::StrongParameters
+        include Spree::Core::ControllerHelpers::Locale
+        include Spree::Core::ControllerHelpers::Currency
+        include Spree::Core::ControllerHelpers::Turbo
         include Spree::LocaleUrls
         include Spree::ThemeConcern
         include Spree::IntegrationsHelper if defined?(Spree::IntegrationsHelper)
