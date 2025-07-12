@@ -59,7 +59,10 @@ describe Spree::Admin::DashboardController, type: :controller do
     it 'dismisses the updater notice' do
       patch :dismiss_updater_notice
       expect(response).to redirect_to(spree.admin_dashboard_path)
-      expect(session[:spree_updater_notice_dismissed]).to be_truthy
+      expect(session[:spree_updater_notice_dismissed]).to include(
+        value: true,
+        expires_at: be_within(1.second).of(7.days.from_now)
+      )
     end
   end
 end
