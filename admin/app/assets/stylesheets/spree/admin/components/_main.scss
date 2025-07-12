@@ -276,6 +276,21 @@
   }
 }
 
+#updater-notice {
+  background-color: $white;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-xs;
+}
+
+
 .documentation-link-container {
   font-size: $font-size-sm;
   text-align: center;
