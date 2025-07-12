@@ -19,7 +19,8 @@
           </tr>
         </thead>
         <tbody>
-          <%= render collection: @collection, partial: "spree/admin/pages/page", cached: spree_base_cache_scope %>
+          <% default_theme = current_store.default_theme %>
+          <%= render collection: @collection, partial: "spree/admin/pages/page", cached: ->(page) { [*spree_base_cache_scope.call(page), default_theme] } %>
         </tbody>
       </table>
       <%= render "spree/admin/shared/index_table_options", collection: @collection %>
