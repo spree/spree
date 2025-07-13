@@ -23,7 +23,8 @@ module Spree
       end
 
       def updater_notice_dismissed?
-        session[:spree_updater_notice_dismissed] && session[:spree_updater_notice_dismissed]['expires_at'].to_time <= Time.current
+        dismissal_data = session[:spree_updater_notice_dismissed]
+        dismissal_data.is_a?(Hash) && dismissal_data['expires_at'].to_time > Time.current
       end
 
       def show_spree_updater_notice?
