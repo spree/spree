@@ -281,10 +281,10 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 0.25rem;
-  justify-content: space-between;
+  gap: 1rem;
+  justify-content: flex-start;
   align-items: center;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   border: 1px solid $border-color;
   border-radius: $border-radius-lg;
   box-shadow: $box-shadow-xs;
