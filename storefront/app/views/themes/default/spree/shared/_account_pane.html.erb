@@ -20,7 +20,7 @@
       >
         <%= render 'spree/shared/icons/cross' %>
       </button>
-      <span class='text-xl font-medium uppercase leading-loose'><%= Spree.t(:account) %></span>
+      <span class='text-xl font-medium uppercase leading-none'><%= Spree.t(:account) %></span>
       <span></span>
     </div>
     <%= turbo_frame_tag "login", src: spree_login_path, loading: "lazy" %>
