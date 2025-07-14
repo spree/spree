@@ -140,8 +140,8 @@ module Spree
           option_value_identificator = if opt[:option_value_name].present?
                                          opt[:option_value_name]
                                        else
-                                         opt[:option_value_presentation].parameterize
-                                       end.strip
+                                         opt[:option_value_presentation]
+                                       end.parameterize.strip
 
           option_value = option_type.option_values.where(name: option_value_identificator).first_or_initialize do |o|
             o.presentation = opt[:option_value_presentation]

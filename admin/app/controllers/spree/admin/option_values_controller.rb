@@ -20,6 +20,15 @@ module Spree
       def permitted_resource_params
         params.require(:option_value).permit(permitted_option_value_attributes)
       end
+
+      # for select_options action, we only require read permission
+      def authorize_admin
+        if action == :select_options
+          authorize! :read, Spree::OptionValue
+        else
+          super
+        end
+      end
     end
   end
 end
