@@ -56,7 +56,7 @@
                 <label class="label" for="new_option_name"><%= Spree.t(:option_name) %></label>
                 <%= tom_select_tag :new_option_name,
                   multiple: false,
-                  create: true,
+                  create: can?(:create, Spree::OptionType),
                   preloaded_options: option_types_for_select,
                   include_blank: true,
                   select_data: {
