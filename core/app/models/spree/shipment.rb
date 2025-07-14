@@ -223,7 +223,7 @@ module Spree
 
     # Returns the total quantity of all line items in the shipment
     def item_quantity
-      manifest.map { |m| m.line_item.quantity }.sum
+      manifest.sum(&:quantity)
     end
 
     # Returns the cost of the shipment
