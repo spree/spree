@@ -13,12 +13,22 @@ module Spree
         defined?(SpreeEnterprise)
       end
 
+      # @return [Spree::Admin::Updater] the spree updater
       def spree_updater
         @spree_updater ||= Spree::Admin::Updater
       end
 
       def spree_update_available?
         @spree_update_available ||= !Rails.env.test? && spree_updater.update_available?
+      end
+
+      def updater_notice_dismissed?
+        dismissal_data = session[:spree_updater_notice_dismissed]
+        dismissal_data.is_a?(Hash) && dismissal_data['expires_at'].to_time > Time.current
+      end
+
+      def show_spree_updater_notice?
+        Spree::Admin::RuntimeConfig.admin_updater_enabled && can?(:manage, current_store) && spree_update_available? && !updater_notice_dismissed?
       end
 
       # check if the current controller is a settings controller
