@@ -221,6 +221,11 @@ module Spree
       inventory_units.where(line_item_id: line_item.id, variant_id: line_item.variant_id || variant.id)
     end
 
+    # Returns the total quantity of all line items in the shipment
+    def item_quantity
+      manifest.map { |m| m.line_item.quantity }.sum
+    end
+
     # Returns the cost of the shipment
     #
     # @return [BigDecimal]
