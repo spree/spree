@@ -35,10 +35,6 @@ describe Spree::OrderMailer, type: :mailer do
     order
   end
 
-  before do
-    ActionMailer::Base.default_url_options = {}
-  end
-
   context ':from not set explicitly' do
     it 'uses store mail from address' do
       message = described_class.confirm_email(order)

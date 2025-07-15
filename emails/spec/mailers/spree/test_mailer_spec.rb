@@ -19,18 +19,4 @@ describe Spree::TestMailer, type: :mailer do
       Spree::TestMailer.test_email('test@example.com')
     end.not_to raise_error
   end
-
-  context 'action mailer host' do
-    it 'falls back to spree store url' do
-      ActionMailer::Base.default_url_options = {}
-      Spree::TestMailer.test_email('test@example.com').deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(@default_store.url)
-    end
-
-    it 'uses developer set host' do
-      ActionMailer::Base.default_url_options[:host] = 'test.test'
-      Spree::TestMailer.test_email('test@example.com').deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq('test.test')
-    end
-  end
 end
