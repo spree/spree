@@ -261,15 +261,25 @@ describe Spree::OrderMailer, type: :mailer do
 
   context 'emails contain only urls of the store where the order was made' do
     it 'shows proper host url in email content' do
-      ActionMailer::Base.default_url_options[:host] = order.store.url
       described_class.confirm_email(order).deliver_now
       expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
     end
 
     it 'shows proper host url in email content #2' do
-      ActionMailer::Base.default_url_options[:host] = second_order.store.url
       described_class.confirm_email(second_order).deliver_now
       expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
+    end
+
+    context 'with custom domain' do
+      let!(:custom_domain) { create(:custom_domain, store: store, url: 'my-store.com') }
+
+      it 'uses custom domain for URLs in emails' do
+        email = described_class.confirm_email(order).deliver_now
+        expect(ActionMailer::Base.default_url_options[:host]).to eq('my-store.com')
+        # testing HTML body
+        expect(email.body.parts.last.body).to include('my-store.com')
+        expect(email.body.parts.last.body).not_to include(store.url)
+      end
     end
   end
 

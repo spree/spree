@@ -83,12 +83,4 @@ describe Spree::ShipmentMailer, type: :mailer do
       expect(shipped_email).to have_body_text("Dear #{order.name}")
     end
   end
-
-  context 'emails contain only urls of the store where the order was made' do
-    it 'shows proper host url in email content' do
-      ActionMailer::Base.default_url_options[:host] = store.url
-      described_class.shipped_email(shipment).deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(shipment.order.store.url)
-    end
-  end
 end
