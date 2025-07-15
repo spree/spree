@@ -28,7 +28,7 @@ module Spree
     def url_is_valid
       parts = url.split('.')
 
-      errors.add(:url, 'use domain or subdomain') if (parts[0] != 'www' && parts.size > 3) || (parts[0] == 'www' && parts.size > 4) || parts.size < 2
+      errors.add(:url, 'use domain or subdomain') if parts.size > 4 || parts.size < 2
     end
 
     def ensure_default
