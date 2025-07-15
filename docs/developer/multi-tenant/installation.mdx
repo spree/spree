@@ -12,14 +12,19 @@ description: Learn how to setup a multi-tenant eCommerce (SaaS) with Spree
 
 ## Prerequisites
 
-* You need to be on Spree 5.1+
+* You need to be on Spree 5.1+, we recommend using [spree_starter](https://github.com/spree/spree_starter) as a base for your application
 * You need to have 2 environment variables set:
   * `KEYGEN_ACCOUNT_ID`
   * `KEYGEN_LICENSE_KEY`
+* We support both PostgreSQL and MySQL databases
 
 <Info>
   Environment variables will be provided to you after purchasing the [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
 </Info>
+
+<Warning>
+  You will need to add these environment variables to your CI/CD pipeline and production environments.
+</Warning>
 
 ## Customer User Class
 
@@ -53,14 +58,6 @@ class Spree::AdminUser < Spree::Base
 
   # Spree modules
   include Spree::UserMethods
-
-  def login=(login)
-    @email = login
-  end
-
-  def login
-    @email
-  end
 end
 ```
 
@@ -69,14 +66,6 @@ If you already have a custom Admin user class, you can add the following code to
 ```ruby
   # Spree modules
   include Spree::UserMethods
-
-  def login=(login)
-    @email = login
-  end
-
-  def login
-    @email
-  end
 ```
 
 This will make sure that the Admin user class works well with Spree ecosystem.
