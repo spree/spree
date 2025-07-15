@@ -18,6 +18,10 @@ RSpec.describe Spree::CustomDomain, type: :model do
         expect(build(:custom_domain, url: 'shop.custom.domain')).to be_valid
       end
 
+      it 'is valid with composed tlds' do
+        expect(build(:custom_domain, url: 'shop.domain.com.br')).to be_valid
+      end
+
       it 'is invalid with wrong number of parts' do
         expect(build(:custom_domain, url: 'com')).not_to be_valid
       end
