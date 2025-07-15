@@ -39,8 +39,12 @@ module Spree
     # this is only a fail-safe solution if developer didn't set this in environment files
     # http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views
     def ensure_default_action_mailer_url_host(store_url = nil)
+      host_url = store_url.presence || current_store.try(:url_or_custom_domain)
+
+      return if host_url.blank?
+
       ActionMailer::Base.default_url_options ||= {}
-      ActionMailer::Base.default_url_options[:host] ||= store_url.presence || current_store.url_or_custom_domain
+      ActionMailer::Base.default_url_options[:host] = host_url
     end
 
     def set_email_locale
