@@ -261,6 +261,7 @@ describe Spree::OrderMailer, type: :mailer do
 
   context 'emails contain only urls of the store where the order was made' do
     it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options = { host: 'localhost' }
       described_class.confirm_email(order).deliver_now
       expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
     end
