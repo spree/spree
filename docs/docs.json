@@ -112,6 +112,7 @@
                 "group": "Deployment",
                 "pages": [
                   "developer/deployment/render",
+                  "developer/deployment/aws",
                   "developer/deployment/docker",
                   "developer/deployment/environment_variables",
                   "developer/deployment/emails",
