@@ -78,6 +78,29 @@
                 filters_target: :input,
               } %>
     </div>
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+          <%= f.select :promotions_id_in,
+                   Spree::Promotion.applied.pluck(:name, :id),
+                   { include_blank: true },
+                   data: {
+                     controller: "autocomplete-select",
+                     filters_target: :input,
+                   } %>
+        </div>
+      </div>
+
+      <!-- Payment State filter -->
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+          <%= f.select :payment_state_eq,
+                       Spree::Order::PAYMENT_STATES.map { |state| [Spree.t("payment_states.#{state}"), state] },
+                       { include_blank: true },
+                       { class: "custom-select", data: { filters_target: :input } } %>
+        </div>
+      </div>
 
     <%= render_admin_partials(:orders_filters_partials, f: f) %>
     <%= render 'spree/admin/shared/filter_submit' %>

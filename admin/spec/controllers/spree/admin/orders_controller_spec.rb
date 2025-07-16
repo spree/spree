@@ -34,6 +34,9 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     let!(:payment_one) { create(:payment, state: 'completed', amount: order.total, order: order) }
     let!(:partial_refund) { create(:refund, payment: payment_one, amount: (payment_one.amount - 10)) }
 
+    # Additional fixture for payment_state filter specs
+    let!(:paid_order) { create(:order_ready_to_ship, store: store) }
+
     it 'renders index' do
       get :index
       expect(response).to have_http_status(:ok)
@@ -67,6 +70,18 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       get :index, params: { q: { partially_refunded: '1' } }
 
       expect(assigns(:orders).to_a).to eq([order])
+    end
+
+    it "returns all paid orders" do
+      get :index, params: { q: { payment_state_eq: :paid } }
+
+      expect(assigns(:orders).to_a).to match_array([paid_order, cancelled_order])
+    end
+
+    it "returns all orders with balance due" do
+      get :index, params: { q: { payment_state_eq: :balance_due } }
+
+      expect(assigns(:orders).to_a).to match_array([order, shipped_order])
     end
 
     context 'filtering by date' do
