@@ -82,9 +82,11 @@ module Spree
       # render a counter for the bulk operations
       # @return [String]
       def bulk_operations_counter
-        content_tag(:span, class: 'bulk-operations-counter') do
-          content_tag(:strong, '', data: { bulk_operation_target: 'counter' }) +
-          Spree.t("admin.selected")
+        content_tag(:div, class: 'bulk-operations-counter') do
+          content_tag(:span, class: 'bulk-operations-counter-label') do
+            content_tag(:strong, '', data: { bulk_operation_target: 'counter' }) +
+            Spree.t("admin.selected")
+          end
         end
       end
     end

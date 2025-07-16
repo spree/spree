@@ -1,5 +1,7 @@
 <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
   <div class="bulk-panel-container">
+    <%= bulk_operations_counter %>
+
     <% if can?(:activate, Spree::Product) %>
       <%= bulk_action_link(
         Spree.t("admin.bulk_ops.products.title.set_status", status: :active),
@@ -20,7 +22,7 @@
       <button
         type="button"
         data-display="static"
-        class="btn btn-light px-2 h-100"
+        class="btn btn-light"
         data-placement="bottom"
         data-toggle="dropdown"
         aria-expanded="false"
@@ -81,7 +83,6 @@
       </div>
     </div>
 
-    <%= bulk_operations_counter %>
     <%= bulk_operations_close_button %>
   </div>
 </div>

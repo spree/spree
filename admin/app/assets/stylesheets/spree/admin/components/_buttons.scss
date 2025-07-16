@@ -184,18 +184,3 @@ button[disabled]        .show-when-enabled { display: none; }
   min-width: 24px;
   height: 24px;
 }
-
-.page-link {
-  @extend .btn;
-  @extend .btn-sm;
-  @extend .btn-light;
-  @extend .ml-1;
-  @extend .p-2;
-
-  .ti {
-    @extend .mr-0;
-  }
-}
-.page-link.disabled {
-  cursor: not-allowed;
-}
