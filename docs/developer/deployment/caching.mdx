@@ -8,15 +8,15 @@ icon: "database"
 
 Caching is a great way to improve the performance of your Spree application. In all modern web applications, usually the most time consuming operations are database queries and rendering templates. Caching allows you to store the results of these operations in memory and serve them from there.
 
-We recommend using a distributed cache storage engine such as Memcached or Redis. Spree Starter uses Redis by default.
+We recommend using a distributed cache storage engine such as Memcached, Valkey or Redis. Spree Starter uses Redis by default.
 
-## Setting up Redis as a cache storage engine
+## Setting up Redis (or Valkey) as a cache storage engine
 
 <Info>
 If you're using Spree Starter, you don't need to do anything as it's already pre-configured for you.
 </Info>
 
-Firstly add `solid_cache` to your project
+Firstly add `redis` gem to your project
 
 ```bash
 bundle add redis
