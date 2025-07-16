@@ -207,7 +207,30 @@ td.actions {
 }
 
 .pagination-container {
-  border-top: 1px solid $gray-50;
+  border-top: 1px solid $table-border-color;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+
+  position: sticky;
+  bottom: 0;
+  background-color: $card-bg;
+  z-index: 100;
+  border-bottom-left-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
+
+  .page-link {
+    @extend .btn;
+    @extend .btn-sm;
+    @extend .btn-light;
+    @extend .ml-1;
+    @extend .p-2;
+  
+    .ti {
+      @extend .mr-0;
+    }
+  }
+  .page-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
+  }
 }

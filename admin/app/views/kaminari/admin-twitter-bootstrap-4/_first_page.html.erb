@@ -6,8 +6,6 @@
     per_page:      number of items to fetch per page
     remote:        data-remote -%>
 
-<% unless current_page.first? %>
-  <li class="first page-item">
-    <%= link_to_unless current_page.first?, icon('double-chevron-left', class: 'mb-0'), url, remote: remote, class: 'page-link', 'aria-label': 'First page' %>
-  </li>
-<% end %>
+<li class="first page-item <%= current_page.first? ? 'disabled' : '' %>">
+  <%= link_to icon('double-chevron-left', class: 'text-dark'), url, remote: remote, class: 'page-link', 'aria-label': 'First page' %>
+</li>
