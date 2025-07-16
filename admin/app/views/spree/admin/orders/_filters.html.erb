@@ -43,7 +43,6 @@
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
   <div data-reveal-target="item" class="d-none" id="table-filter">
-    <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
     <%= f.hidden_field :partially_refunded, value: params.dig(:q, :partially_refunded) %>
@@ -92,6 +91,17 @@
                      controller: "autocomplete-select",
                      filters_target: :input,
                    } %>
+        </div>
+      </div>
+
+      <!-- Payment State filter -->
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+          <%= f.select :payment_state_eq,
+                       Spree::Order::PAYMENT_STATES.map { |state| [Spree.t("payment_states.#{state}"), state] },
+                       { include_blank: true },
+                       { class: "custom-select", data: { filters_target: :input } } %>
         </div>
       </div>
 
