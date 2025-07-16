@@ -22,6 +22,8 @@
         <%= render 'spree/admin/shared/bulk_modal' %>
         <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
           <div class="bulk-panel-container">
+            <%= bulk_operations_counter %>
+
             <% if can?(:manage_tags, Spree.user_class) %>
               <%= bulk_action_link(
                 Spree.t("admin.bulk_ops.users.title.add_tags"),
@@ -36,7 +38,6 @@
                 url: spree.bulk_remove_tags_admin_users_path
               ) %>
             <% end %>
-            <%= bulk_operations_counter %>
             <%= bulk_operations_close_button %>
           </div>
         </div>
