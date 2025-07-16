@@ -41,7 +41,7 @@ module Spree
           button_tag(raw(selected_option), class: 'btn btn-light btn-sm', data: { toggle: 'dropdown', expanded: false }) +
             content_tag(:div, class: 'dropdown-menu') do
               per_page_options.map do |option|
-                link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option == selected_option}"
+                link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option.to_i == selected_option.to_i}"
               end.join.html_safe
             end
         end

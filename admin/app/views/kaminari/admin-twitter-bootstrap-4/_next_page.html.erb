@@ -6,8 +6,7 @@
     per_page:      number of items to fetch per page
     remote:        data-remote -%>
 
-<% unless current_page.last? %>
-  <li class="next_page page-item">
-    <%= link_to_unless current_page.last?, icon('chevron-right', class: 'text-dark'), url, rel: 'next', remote: remote, class: 'page-link', 'aria-label': 'Next page' %>
-  </li>
-<% end %>
+<li class="next page-item <%= current_page.last? ? 'disabled' : '' %>">
+  <%= link_to icon('chevron-right', class: 'text-dark'), url, rel: 'next', remote: remote, class: 'page-link', 'aria-label': 'Next page' %>
+</li>
+

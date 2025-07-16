@@ -6,8 +6,6 @@
     per_page:      number of items to fetch per page
     remote:        data-remote -%>
 
-<% unless current_page.last? %>
-  <li class="last next page-item"><%# "next" class present for border styling in twitter bootstrap %>
-    <%= link_to_unless current_page.last?, icon('double-chevron-right', class: 'mb-0'), url, remote: remote, class: 'page-link', 'aria-label': 'Last page' %>
-  </li>
-<% end %>
+<li class="last next page-item <%= current_page.last? ? 'disabled' : '' %>">
+  <%= link_to icon('double-chevron-right', class: 'text-dark'), url, remote: remote, class: 'page-link', 'aria-label': 'Last page' %>
+</li>
