@@ -183,6 +183,14 @@
       "created_at": "2025-07-15T04:02:51Z",
       "repoId": 3314,
       "pullRequestNo": 12946
+    },
+    {
+      "name": "kyryloliinyk",
+      "id": 15015507,
+      "comment_id": 3084617630,
+      "created_at": "2025-07-17T16:03:51Z",
+      "repoId": 3314,
+      "pullRequestNo": 12953
     }
   ]
 }
