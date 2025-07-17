@@ -1,0 +1,58 @@
+---
+title: Admin Panel Authentication
+sidebarTitle: Authentication
+description: How to customize the Spree admin panel authentication
+---
+
+By default Spree uses the same model for the admin panel as the storefront. However you can customize it to use a different model.
+
+Let's assume you have an existing `AdminUser` model in your application and you're using Devise for authentication.
+
+In `config/initializers/spree.rb` file, add the following line:
+
+```ruby
+Spree.admin_user_class = 'AdminUser'
+```
+
+This will tell Spree to use your `AdminUser` model for the admin panel. You will also need to add the following line in that model file:
+
+```ruby
+include Spree::UserMethods
+```
+
+In your `config/initializers/routes.rb` file, you will need define devise routes for the 2nd model:
+
+```ruby
+Spree::Core::Engine.routes.prepend_routes do
+  # Admin authentication
+  devise_for(
+    Spree.admin_user_class.model_name.singular_route_key,
+    class_name: Spree.admin_user_class.to_s,
+    controllers: {
+      sessions: 'spree/admin/user_sessions',
+      passwords: 'spree/admin/user_passwords'
+    },
+    skip: :registrations,
+    path: :admin_user,
+    router_name: :spree
+  )
+end
+```
+
+And now in your `lib/spree/authentication_helpers.rb` file, please replace the following lines: 
+
+```diff
+     def spree_admin_login_path(opts = {})
+-      spree_login_path(opts)
++      new_admin_user_session_path(opts)
+     end
+
+     def spree_admin_logout_path(opts = {})
+-      spree_logout_path(opts)
++      destroy_admin_user_session_path(opts)
+     end
+```
+
+Now when attempting to access the admin panel, you will be redirected to the dedicated admin panel login page.
+
+![Admin panel login page](/images/developer/admin/admin_panel_login.png)
