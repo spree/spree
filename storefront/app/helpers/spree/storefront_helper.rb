@@ -72,8 +72,8 @@ module Spree
         'uk' => 'ua'
       }
 
-      normilized_code = country_code.to_s.downcase
-      final_country_code = language_to_country.fetch(normilized_code, normilized_code)
+      normalized_code = country_code.to_s.downcase
+      final_country_code = language_to_country.fetch(normalized_code, normalized_code)
 
       tag.span(class: "fi fi-#{final_country_code}")
     end
