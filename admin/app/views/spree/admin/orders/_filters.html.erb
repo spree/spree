@@ -95,8 +95,13 @@
       <div class="col-12 col-lg-4">
         <div class="form-group">
           <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+          <% payment_state_options = Spree::Order::PAYMENT_STATES.map { |state| [Spree.t("payment_states.#{state}"), state] } %>
+          <% payment_state_options += [
+               [Spree.t('payment_states.refunded'), 'refunded'],
+               [Spree.t('payment_states.partially_refunded'), 'partially_refunded']
+             ] %>
           <%= f.select :payment_state_eq,
-                       Spree::Order::PAYMENT_STATES.map { |state| [Spree.t("payment_states.#{state}"), state] },
+                       payment_state_options,
                        { include_blank: true },
                        { class: "custom-select", data: { filters_target: :input } } %>
         </div>

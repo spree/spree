@@ -48,40 +48,52 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(assigns(:orders).to_a).to include(shipped_order)
     end
 
-    it "returns all fulfilled orders" do
+    it 'returns all fulfilled orders' do
       get :index, params: { q: { shipment_state_eq: :shipped } }
 
       expect(assigns(:orders).to_a).to eq([shipped_order])
     end
 
-    it "returns all cancelled orders" do
+    it 'returns all cancelled orders' do
       get :index, params: { q: { state_eq: :canceled } }
 
       expect(assigns(:orders).to_a).to eq([cancelled_order])
     end
 
-    it "returns all refunded orders" do
+    it 'returns all refunded orders' do
       get :index, params: { q: { refunded: '1' } }
 
       expect(assigns(:orders).to_a).to eq([shipped_order])
     end
 
-    it "returns all partially refunded orders" do
+    it 'returns all partially refunded orders' do
       get :index, params: { q: { partially_refunded: '1' } }
 
       expect(assigns(:orders).to_a).to eq([order])
     end
 
-    it "returns all paid orders" do
+    it 'returns all paid orders' do
       get :index, params: { q: { payment_state_eq: :paid } }
 
-      expect(assigns(:orders).to_a).to match_array([paid_order, cancelled_order])
+      expect(assigns(:orders).to_a).to contain_exactly(paid_order, cancelled_order)
     end
 
-    it "returns all orders with balance due" do
+    it 'returns all orders with balance due' do
       get :index, params: { q: { payment_state_eq: :balance_due } }
 
-      expect(assigns(:orders).to_a).to match_array([order, shipped_order])
+      expect(assigns(:orders).to_a).to contain_exactly(order, shipped_order)
+    end
+
+    it 'returns all refunded orders via payment_state filter' do
+      get :index, params: { q: { payment_state_eq: :refunded } }
+
+      expect(assigns(:orders).to_a).to eq([shipped_order])
+    end
+
+    it 'returns all partially refunded orders via payment_state filter' do
+      get :index, params: { q: { payment_state_eq: :partially_refunded } }
+
+      expect(assigns(:orders).to_a).to eq([order])
     end
 
     context 'filtering by date' do
@@ -210,7 +222,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     context 'for a completed order' do
       let!(:order) { create(:order_ready_to_ship, with_payment: true, store: store) }
 
-      it "won't delete a completed order" do
+      it 'does not delete a completed order' do
         expect { subject }.not_to change(Spree::Order, :count)
 
         expect(flash[:error]).to eq Spree.t(:authorization_failure)
@@ -224,7 +236,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       it 'deletes an order' do
         expect { subject }.to change(Spree::Order, :count).by(-1)
 
-        expect(flash[:success]).to eq "Order has been successfully removed!"
+        expect(flash[:success]).to eq 'Order has been successfully removed!'
         expect(response).to redirect_to spree.admin_checkouts_path
       end
     end

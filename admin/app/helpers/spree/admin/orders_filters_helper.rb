@@ -14,39 +14,48 @@ module Spree
 
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
-                                            # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
-                                            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
-                                          rescue StandardError
-                                            ''
-                                          end
+            # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
+            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
+          rescue StandardError
+            ''
+          end
         end
 
         if search_params[:created_at_lt].present?
           search_params[:created_at_lt] = begin
-                                            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
-                                          rescue StandardError
-                                            ''
-                                          end
+            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         if search_params[:completed_at_gt].present?
           search_params[:completed_at_gt] = begin
-                                            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
-                                          rescue StandardError
-                                            ''
-                                          end
+            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
+          rescue StandardError
+            ''
+          end
         end
 
         if search_params[:completed_at_lt].present?
           search_params[:completed_at_lt] = begin
-                                            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
-                                          rescue StandardError
-                                            ''
-                                          end
+            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
+          rescue StandardError
+            ''
+          end
         end
 
         search_params[:vendor_orders_vendor_id_eq] = vendor.id if vendor.present?
         search_params[:user_id_eq] = user.id if user.present?
+
+        # Handle refunded and partially_refunded payment state filters
+        if search_params[:payment_state_eq] == 'refunded'
+          search_params[:refunded] = '1'
+          search_params.delete(:payment_state_eq)
+        elsif search_params[:payment_state_eq] == 'partially_refunded'
+          search_params[:partially_refunded] = '1'
+          search_params.delete(:payment_state_eq)
+        end
 
         search_params
       end
