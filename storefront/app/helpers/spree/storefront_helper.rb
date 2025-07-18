@@ -66,9 +66,16 @@ module Spree
     end
 
     def svg_country_icon(country_code)
-      country_code = :us if country_code.to_s.downcase == 'en'
-      country_code = :jp if country_code.to_s.downcase == 'ja'
-      tag.span(class: "fi fi-#{country_code.downcase}")
+      language_to_country = {
+        'en' => 'us',
+        'ja' => 'jp',
+        'uk' => 'ua'
+      }
+
+      normalized_code = country_code.to_s.downcase
+      final_country_code = language_to_country.fetch(normalized_code, normalized_code)
+
+      tag.span(class: "fi fi-#{final_country_code}")
     end
 
     def show_account_pane?
