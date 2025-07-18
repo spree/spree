@@ -25,7 +25,7 @@
 
       <% if action_name == 'edit' && @object %>
         <% class_name = defined?(model_class) ? model_class.to_s : @object.class.name %>
-        <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_#{class_name.demodulize.underscore}_#{@object.id}" %>
+        <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_#{class_name.demodulize.underscore}_#{@object.id}", data: { admin_target: 'save' } %>
       <% end %>
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>

@@ -1,7 +1,7 @@
 <% destroy_url = defined?(destroy_url) && destroy_url ? destroy_url : object_url(f.object) %>
 
 <div class="form-actions">
-  <%= turbo_save_button_tag Spree.t('actions.update') %>
+  <%= turbo_save_button_tag Spree.t('actions.update'), data: { admin_target: 'save' } %>
   <% if f.object.can_be_deleted? && can?(:delete, f.object) %>
     <%= link_to Spree.t('actions.destroy'), destroy_url, data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: defined?(turbo_frame) ? turbo_frame : '_top' }, class: 'btn btn-danger ml-auto' %>
   <% end %>

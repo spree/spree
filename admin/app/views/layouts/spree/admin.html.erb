@@ -5,7 +5,10 @@
     <%= render "spree/admin/shared/custom_head" %>
   </head>
 
-  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>">
+  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>"
+    data-controller="admin"
+    data-action="keydown.esc->admin#close keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
+  >
     <%= render_admin_partials(:body_start_partials) %>
 
     <%= render "spree/admin/shared/header" %>

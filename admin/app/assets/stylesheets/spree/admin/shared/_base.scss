@@ -721,3 +721,10 @@ code {
   border-radius: $border-radius-sm;
   padding: 0.25rem 0.5rem;
 }
+
+kbd {
+  @extend .badge;
+  @extend .badge-light;
+  text-transform: lowercase;
+  box-shadow: $box-shadow-xs;
+}
