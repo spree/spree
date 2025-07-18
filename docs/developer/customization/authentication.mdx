@@ -86,12 +86,4 @@ end
 
 ## Admin Panel authentication
 
-By default Spree uses the same model for the admin panel as the storefront. However you can customize it to use a different model.
-
-To do this, you need to add the following code to your `config/initializers/spree.rb` file:
-
-```ruby
-Spree.admin_user_class = 'AdminUser'
-```
-
-This will tell Spree to use the `AdminUser` model for the admin panel. You will need to create this model in your application and ensure that it includes the necessary Spree fields.
+Please refer to the [Admin Panel Authentication](/developer/admin/authentication) page for more details.

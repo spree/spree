@@ -38,6 +38,7 @@ module Spree
       opts[:skip_spring] = true
       opts[:skip_test] = true
       opts[:skip_bootsnap] = true
+      opts[:skip_asset_pipeline] = true # skip installing propshaft, we're still using sprockets as a dependency
 
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,

@@ -63,6 +63,7 @@
                     "icon": "gauge",
                     "pages": [
                       "developer/admin/admin",
+                      "developer/admin/authentication",
                       "developer/admin/extending-ui",
                       "developer/admin/navigation",
                       "developer/admin/permissions",

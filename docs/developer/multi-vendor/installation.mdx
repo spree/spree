@@ -42,12 +42,12 @@ description: Learn how to setup a multi-vendor marketplace with Spree
     bundle install
     ```
 
-3. Run generator:
+3. Run generators:
 
     ```bash
-    bundle exec rails spree_multi_vendor:install
+    bundle exec rails g spree_enterprise:install && bundle exec rails g spree_multi_vendor:install
     ```
 
     <Info>
-      This will copy and run migrations for `spree_multi_vendor` gem.
+      This will copy and run migrations for `spree_enterprise` and `spree_multi_vendor` gems.
     </Info>

@@ -93,12 +93,12 @@ Spree.admin_user_class = "Spree::AdminUser"
     bundle install
     ```
 
-3. Run generator:
+3. Run generators:
 
     ```bash
-    bundle exec rails spree_multi_tenant:install
+    bundle exec rails g spree_enterprise:install && bundle exec rails g spree_multi_tenant:install
     ```
 
     <Info>
-      This will copy and run migrations for `spree_multi_tenant` gem.
+      This will copy and run migrations for `spree_enterprise` and `spree_multi_tenant` gems.
     </Info>
