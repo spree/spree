@@ -43,6 +43,7 @@ import Sortable from 'stimulus-sortable'
 import { Tabs } from 'tailwindcss-stimulus-components'
 
 import ActiveStorageUpload from 'spree/admin/controllers/active_storage_upload_controller'
+import AdminController from 'spree/admin/controllers/admin_controller'
 import AssetUploaderController from 'spree/admin/controllers/asset_uploader_controller'
 import AutocompleteSelectController from 'spree/admin/controllers/autocomplete_select_controller'
 import BetterSliderController from 'spree/admin/controllers/better_slider_controller'
@@ -87,6 +88,7 @@ import EnableButtonController from 'spree/core/controllers/enable_button_control
 application.register('active-storage-upload', ActiveStorageUpload)
 application.register('address-autocomplete', AddressAutocompleteController)
 application.register('address-form', AddressFormController)
+application.register('admin', AdminController)
 application.register('asset-uploader', AssetUploaderController)
 application.register('auto-submit', AutoSubmit)
 application.register('autocomplete-select', AutocompleteSelectController)
