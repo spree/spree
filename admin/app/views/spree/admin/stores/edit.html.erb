@@ -1,5 +1,5 @@
 <%= content_for :page_actions do %>
-  <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_store_#{current_store.id}" %>
+  <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_store_#{current_store.id}", data: { admin_target: 'save' } %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
