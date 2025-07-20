@@ -14,8 +14,7 @@
   url: search_form_path,
   class: "filter-wrap",
   data: {
-    controller: "filters reveal",
-    reveal_hidden_class: "d-none",
+    controller: "filters dropdown",
     filters_url_value: request.url
   } do |f| %>
   <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
@@ -42,7 +41,7 @@
     <%= render "spree/admin/orders/table_filter_dropdown" %>
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-reveal-target="item" class="d-none" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter">
     <%= f.hidden_field :payment_state_eq, value: params.dig(:q, :payment_state_eq) %>
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
@@ -51,57 +50,39 @@
     <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>
 
     <% unless @user %>
-      <div class="row">
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
-            <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
-            <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
-          </div>
-        </div>
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_email_eq, Spree.t(:email) %>
-            <%= f.email_field :email_eq, class: "form-control", data: { filters_target: :input } %>
-          </div>
-        </div>
+      <div class="form-group">
+        <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
+        <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
+        <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :q_email_eq, Spree.t(:email) %>
+        <%= f.email_field :email_eq, class: "form-control", data: { filters_target: :input } %>
       </div>
     <% end %>
-
-    <div class="row">
-
-      <div class="col-12 col-lg-4">
-        <div class="form-group">
-          <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
-          <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { filters_target: :input } %>
-        </div>
-      </div>
-
-      <div class="col-12 col-lg-4">
-        <div class="form-group">
-          <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
-          <%= f.select :promotions_id_in,
-                   Spree::Promotion.applied.pluck(:name, :id),
-                   { include_blank: true },
-                   data: {
-                     controller: "autocomplete-select",
-                     filters_target: :input,
-                   } %>
-        </div>
-      </div>
-
-      <%= render_admin_partials(:orders_filters_partials, f: f) %>
+    <div class="form-group">
+      <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
+      <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { filters_target: :input } %>
     </div>
 
+    <div class="form-group">
+      <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+      <%= f.select :promotions_id_in,
+              Spree::Promotion.applied.pluck(:name, :id),
+              { include_blank: true },
+              data: {
+                controller: "autocomplete-select",
+                filters_target: :input,
+              } %>
+    </div>
+
+    <%= render_admin_partials(:orders_filters_partials, f: f) %>
     <%= render 'spree/admin/shared/filter_submit' %>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
-
   <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
 <% end %>

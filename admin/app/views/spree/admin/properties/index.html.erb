@@ -13,7 +13,7 @@
 <% end if can?(:create, Spree::Property)  %>
 
 <div class="card-lg">
-  <%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters reveal", reveal_hidden_class: "d-none"} do |f| %>
+  <%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters"} do |f| %>
     <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
     <%= render "spree/admin/shared/filter_badge_template" %>
     <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
