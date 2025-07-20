@@ -18,7 +18,7 @@
               <%= Spree.t("report_names.#{report_type}") %>
             </td>
             <td class="text-right w-10">
-              <%= link_to Spree.t(:show_report), spree.new_admin_report_path(type: report_type), class: 'btn btn-light btn-sm', data: { row_link_target: :link } %>
+              <%= link_to Spree.t(:show_report), spree.new_admin_report_path(type: report_type), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
             </td>
           </tr>
         <% end %>

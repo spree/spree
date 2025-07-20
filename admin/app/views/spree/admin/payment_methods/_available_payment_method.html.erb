@@ -15,7 +15,7 @@
   </td>
   <td class="actions w-30">
     <div class="d-flex justify-content-end">
-      <%= link_to_with_icon 'plus', Spree.t(:add), spree.new_admin_payment_method_path(payment_method: { type: payment_method.type }), class: 'btn btn-light btn-sm', data: { row_link_target: :link } %>
+      <%= link_to_with_icon 'plus', Spree.t(:add), spree.new_admin_payment_method_path(payment_method: { type: payment_method.type }), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
     </div>
   </td>
 </tr>

@@ -27,7 +27,7 @@
   </div>
 
   <div class="d-flex align-items-center px-3 ml-3 gap-2">
-    <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon.id), data: { row_link_target: :link }) if can?(:edit, taxon) %>
+    <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon.id), data: { row_link_target: :link, turbo_frame: '_top' }) if can?(:edit, taxon) %>
 
     <div class="dropdown h-100">
       <button class="btn btn-light btn-sm px-1 h-100" type="button" id="dropdownMenuButton-<%= taxon.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

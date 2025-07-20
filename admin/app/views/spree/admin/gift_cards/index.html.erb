@@ -35,7 +35,9 @@
       <%= render 'list' %>
     <% end %>
   <% else %>
-    <%= render 'filters' %>
-    <%= render 'list' %>
+    <%= turbo_frame_tag "gift_cards", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+      <%= render 'filters' %>
+      <%= render 'list' %>
+    <% end %>
   <% end %>
 </div>

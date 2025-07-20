@@ -14,6 +14,6 @@
     <%= option_type.products.count %>
   </td>
   <td class="w-10 actions cursor-pointer">
-    <%= link_to_edit option_type, data: { row_link_target: :link } %>
+    <%= link_to_edit option_type, data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
 </tr>

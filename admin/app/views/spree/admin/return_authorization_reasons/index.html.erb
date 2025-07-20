@@ -30,7 +30,7 @@
               <td class="actions w-10">
                 <% if return_authorization_reason.mutable? %>
                   <%= if can? :edit, return_authorization_reason
-                    link_to_edit(return_authorization_reason, no_text: true, data: { row_link_target: :link })
+                    link_to_edit(return_authorization_reason, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' })
                   end %>
                 <% end %>
               </td>

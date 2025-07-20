@@ -24,7 +24,7 @@
               <td data-action="click->row-link#openLink"><%= shipping_category.name %></td>
               <td class="actions">
                 <span class="d-flex justify-content-end">
-                  <%= link_to_edit(shipping_category, data: { row_link_target: :link }) if can? :edit, shipping_category %>
+                  <%= link_to_edit(shipping_category, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, shipping_category %>
                 </span>
               </td>
             </tr>

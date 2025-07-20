@@ -18,8 +18,10 @@
       <%= render 'spree/admin/orders/list' %>
     <% end %>
   <% else %>
-    <%= render 'spree/admin/orders/filters' %>
-    <%= render 'spree/admin/orders/list' %>
+    <%= turbo_frame_tag "orders", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
       <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Orders %>
+      <%= render 'spree/admin/orders/filters' %>
+      <%= render 'spree/admin/orders/list' %>
+    <% end %>
   <% end %>
 </div>
