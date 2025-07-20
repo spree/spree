@@ -9,6 +9,7 @@
   <% else %>
     <%= render 'filters' %>
     <%= render 'list' %>
+      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Products %>
   <% end %>
 </div>
 

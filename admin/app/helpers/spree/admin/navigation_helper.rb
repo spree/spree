@@ -114,6 +114,13 @@ module Spree
         link_to(text.html_safe, url, options)
       end
 
+      def link_to_export_modal
+        link_to '#', data: { toggle: 'modal', target: '#export-modal' }, class: 'btn btn-light' do
+          icon('table-export', class: 'mr-0 mr-lg-2') +
+          content_tag(:span, Spree.t(:export), class: 'd-none d-lg-inline')
+        end if can?(:create, Spree::Export)
+      end
+
       # renders an active link with an icon, using the active_link_to method from https://github.com/comfy/active_link_to gem
       # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
       # @param text [String] the text of the link

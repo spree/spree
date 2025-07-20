@@ -1,4 +1,4 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :export_modal do %>
   <%= form_for @export, url: spree.admin_exports_path do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>

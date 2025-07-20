@@ -150,7 +150,8 @@ module Spree
 
         Rails.application.config.spree.export_types = [
           Spree::Exports::Products,
-          Spree::Exports::Orders
+          Spree::Exports::Orders,
+          Spree::Exports::Customers
         ]
 
         Rails.application.config.spree.taxon_rules = [
