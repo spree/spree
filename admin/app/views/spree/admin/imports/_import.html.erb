@@ -1,0 +1,56 @@
+<tr>
+  <td class="text-center w-10">
+    <span class="badge badge-light border">
+      <%= Spree.t(import.type.demodulize) %>
+    </span>
+  </td>
+  <td class="text-center w-10">
+    <% if import.processed_at.present? && import.error_details.empty? %>
+      <span class="badge badge-success">
+        <%= icon('check') %>
+        <%= Spree.t(:done) %>
+      </span>
+    <% elsif import.error_details.present? %>
+      <span class="badge badge-error">
+        <%= icon('xbox-x') %>
+        <%= Spree.t(:failure) %>
+      </span>
+    <% else %>
+      <span class="badge badge-warning">
+        <%= icon('progress') %>
+        <%= Spree.t(:pending) %>
+      </span>
+    <% end %>
+  </td>
+
+  <td class="text-center w-10"><%= [import.processed_count, import.total_count].join('/') %></td>
+
+  <td class="w-25">
+    <% if import.user %>
+      <span>
+        <%= import.user.name %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <%= import.attachment.filename %>
+  </td>
+  <td class="w-15"><%= local_time_ago(import.created_at, class: 'with-tip') %></td>
+  <td>
+    <%= number_to_human_size(import.attachment.byte_size) %>
+  </td>
+  <td class="w-15 text-right">
+    <span data-toggle="modal" data-target="#modal">
+      <% if import.error_details.any? %>
+        <%= link_to spree.errors_admin_import_path(import), class: 'btn btn-danger bg-transparent with-tip', title: 'Import data from a CSV file', data: { turbo_frame: :dialog_modal } do %>
+          <%= icon 'note', class: 'mr-1' %>
+          <%= Spree.t(:error_details) %>
+        <% end %>
+      <% end %>
+    </span>
+    <%= link_to spree.admin_import_path(import), class: 'btn btn-sm btn-light mx-auto', target: '_blank' do %>
+      <%= icon 'download', class: 'mr-1' %>
+      <%= Spree.t(:download) %>
+    <% end %>
+  </td>
+</tr>

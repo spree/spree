@@ -15,6 +15,7 @@ module Spree
       :gift_card_attributes,
       :gift_card_batch_attributes,
       :image_attributes,
+      :import_attributes,
       :integration_attributes,
       :inventory_unit_attributes,
       :invitation_attributes,
@@ -110,6 +111,8 @@ module Spree
     @@gift_card_attributes = [:code, :amount, :expires_at, :user_id]
 
     @@gift_card_batch_attributes = [:prefix, :codes_count, :amount, :expires_at]
+
+    @@import_attributes = [:type, :attachment]
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 

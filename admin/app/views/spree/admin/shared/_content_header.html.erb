@@ -20,6 +20,14 @@
           <% end %>
         </span>
       <% end %>
+      <% if action_name == 'index' && defined?(model_class) && model_class && Spree::Import.available_models.include?(model_class) && can?(:create, Spree::Import) %>
+        <span data-toggle="modal" data-target="#modal">
+          <%= link_to spree.new_admin_import_path(import: { type: Spree::Import.type_for_model(model_class) }), class: 'btn btn-light bg-transparent with-tip', title: 'Import data from a CSV file', data: { turbo_frame: :dialog_modal } do %>
+            <%= icon 'table-import', class: 'mr-0 mr-lg-2' %>
+            <span class="d-none d-lg-inline"><%= Spree.t(:import) %></span>
+          <% end %>
+        </span>
+      <% end %>
 
       <%= yield :page_actions if content_for?(:page_actions) %>
 
