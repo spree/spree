@@ -4,7 +4,7 @@
   </td>
   <td class="w-20">
     <% if can?(:manage, stock_item.stock_location) %>
-      <%= link_to stock_item.stock_location.display_name, spree.edit_admin_stock_location_path(stock_item.stock_location) %>
+      <%= link_to stock_item.stock_location.display_name, spree.edit_admin_stock_location_path(stock_item.stock_location), data: { turbo_frame: '_top' } %>
     <% else %>
       <%= stock_item.stock_location.display_name %>
     <% end %>

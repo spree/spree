@@ -7,28 +7,29 @@
 <% end if can?(:create, Spree::Promotion) %>
 
 <div class="card-lg">
-  <%= render 'filters' %>
+  <%= turbo_frame_tag "promotions", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+    <%= render 'filters' %>
 
-  <% if @collection.any? %>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th><%= Spree.t(:name) %></th>
-            <th><%= Spree.t(:code) %></th>
-            <th><%= Spree.t(:kind) %></th>
-            <th><%= Spree.t(:usage_limit) %></th>
-            <th><%= Spree.t(:status) %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render collection: @collection, partial: "spree/admin/promotions/promotion", cached: spree_base_cache_scope %>
-        </tbody>
-      </table>
-    </div>
-    <%= render "spree/admin/shared/index_table_options", collection: @collection %>
-  <% else %>
-    <%= render "spree/admin/shared/no_resource_found" %>
+    <% if @collection.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><%= Spree.t(:name) %></th>
+              <th><%= Spree.t(:code) %></th>
+              <th><%= Spree.t(:kind) %></th>
+              <th><%= Spree.t(:usage_limit) %></th>
+              <th><%= Spree.t(:status) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render collection: @collection, partial: "spree/admin/promotions/promotion", cached: spree_base_cache_scope %>
+          </tbody>
+        </table>
+      </div>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
+    <% else %>
+      <%= render "spree/admin/shared/no_resource_found" %>
+    <% end %>
   <% end %>
 </div>

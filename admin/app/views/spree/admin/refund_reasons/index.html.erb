@@ -29,7 +29,7 @@
               <%= active_badge(refund_reason.mutable) %>
             </td>
             <td class="actions w-10" data-action="click->row-link#openLink">
-              <%= link_to_edit(refund_reason, no_text: true, data: { row_link_target: :link }) if can? :edit, refund_reason %>
+              <%= link_to_edit(refund_reason, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, refund_reason %>
             </td>
           </tr>
         <% end %>

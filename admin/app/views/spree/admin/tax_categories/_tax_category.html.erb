@@ -8,6 +8,6 @@
   <td class="w-40" data-action="click->row-link#openLink"><%= tax_category.description %></td>
   <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(tax_category.is_default?) %></td>
   <td class="w-10 actions">
-    <%= link_to_edit(tax_category, data: { row_link_target: :link }) if can? :edit, tax_category %>
+    <%= link_to_edit(tax_category, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, tax_category %>
   </td>
 </tr>

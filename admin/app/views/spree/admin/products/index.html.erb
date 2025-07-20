@@ -7,8 +7,11 @@
       <%= render 'list' %>
     <% end %>
   <% else %>
-    <%= render 'filters' %>
-    <%= render 'list' %>
+    <%= turbo_frame_tag "products", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Products %>
+      <%= render 'filters' %>
+      <%= render 'list' %>
+    <% end %>
   <% end %>
 </div>
 

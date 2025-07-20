@@ -134,6 +134,10 @@ module Spree
       orders.complete.none?
     end
 
+    def to_csv(_store = nil)
+      Spree::CSV::CustomerPresenter.new(self).call
+    end
+
     private
 
     def check_completed_orders

@@ -120,7 +120,11 @@ module Spree
 
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
-      "Spree::#{type.demodulize.singularize}".constantize
+      if type == 'Spree::Exports::Customers'
+        Spree.user_class
+      else
+        "Spree::#{type.demodulize.singularize}".constantize
+      end
     end
 
     def current_ability

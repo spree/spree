@@ -28,6 +28,6 @@
     <% end %>
   </td>
   <td class="actions w-10">
-    <%= link_to_edit(shipping_method, data: { row_link_target: :link }) if can? :edit, shipping_method %>
+    <%= link_to_edit(shipping_method, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, shipping_method %>
   </td>
 </tr>

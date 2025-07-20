@@ -1,6 +1,6 @@
 <tr data-controller="row-link" id="<%= spree_dom_id(store_credit) %>">
   <td>
-    <%= link_to store_credit.display_amount.to_html, spree.admin_user_store_credit_path(@user, store_credit), data: { row_link_target: :link } %>
+    <%= link_to store_credit.display_amount.to_html, spree.admin_user_store_credit_path(@user, store_credit), data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= store_credit.display_amount_authorized.to_html %></td>
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= store_credit.display_amount_used.to_html %></td>

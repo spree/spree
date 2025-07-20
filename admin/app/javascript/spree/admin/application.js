@@ -34,6 +34,7 @@ if (typeof Stimulus === 'undefined') {
 }
 import AutoSubmit from '@stimulus-components/auto-submit'
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
+import Dropdown from '@stimulus-components/dropdown'
 import TextareaAutogrow from 'stimulus-textarea-autogrow'
 import Notification from 'stimulus-notification'
 import PasswordVisibility from 'stimulus-password-visibility'
@@ -103,6 +104,7 @@ application.register('clipboard', Clipboard)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
 application.register('disable-submit-button', DisableSubmitButtonController)
+application.register('dropdown', Dropdown)
 application.register('enable-button', EnableButtonController)
 application.register('filters', FiltersController)
 application.register('font-picker', FontPickerController)

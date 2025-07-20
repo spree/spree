@@ -33,7 +33,7 @@
                 <%= active_badge(reimbursement_type.mutable) %>
               </td>
               <td class="actions w-10">
-                <%= link_to_edit reimbursement_type, no_text: true, data: { row_link_target: :link } if can?(:edit, reimbursement_type) %>
+                <%= link_to_edit reimbursement_type, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' } if can?(:edit, reimbursement_type) %>
               </td>
             </tr>
           <% end %>

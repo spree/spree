@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id admin_user %>" class="cursor-pointer" data-controller="row-link">
   <td class="w-50" data-action="click->row-link#openLink">
-    <%= link_to spree.admin_admin_user_path(admin_user), data: { row_link_target: :link }, class: 'd-flex align-items-center' do %>
+    <%= link_to spree.admin_admin_user_path(admin_user), data: { row_link_target: :link, turbo_frame: '_top' }, class: 'd-flex align-items-center' do %>
       <%= render_avatar(admin_user, width: 48, height: 48, class: 'mr-3 avatar') %>
       <div class="d-flex flex-column">
         <%= admin_user.name %>

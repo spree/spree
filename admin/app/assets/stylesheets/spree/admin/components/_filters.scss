@@ -11,7 +11,6 @@
 
   .btn {
     height: 2.125rem;
-    border-style: dashed;
   }
 }
 
@@ -22,11 +21,30 @@
 }
 
 #table-filter {
-  padding: 0.75rem;
-  border-radius: $border-radius;
-  border: 1px solid $gray-50;
-  background-color: $gray-25;
+  position: absolute;
+  padding: 1rem;
+  border-radius: $dropdown-border-radius;
+  box-shadow: $dropdown-box-shadow;
+  background-color: $dropdown-bg;
   margin-top: 0.5rem;
+  right: 0.5rem;
+  animation: fadeIn 0.2s ease-in-out;
+  width: 100%;
+  z-index: $zindex-dropdown;
+
+  @include media-breakpoint-up(md) {
+    width: 50%;
+
+    flex-direction: column;
+  }
+
+  &.hidden {
+    display: none !important;
+  }
+  
+  &.d-none {
+    display: none !important;
+  }
 }
 
 

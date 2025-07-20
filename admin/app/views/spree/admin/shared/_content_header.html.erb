@@ -12,15 +12,6 @@
       <%= yield :page_title %>
     </h3>
     <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
-      <% if action_name == 'index' && defined?(model_class) && model_class && Spree::Export.available_models.include?(model_class) && can?(:create, Spree::Export) %>
-        <span data-toggle="modal" data-target="#modal">
-          <%= link_to spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: Spree::Export.type_for_model(model_class) }), class: 'btn btn-light bg-transparent with-tip', title: 'Download records as CSV file', data: { turbo_frame: :dialog_modal } do %>
-            <%= icon 'table-export', class: 'mr-0 mr-lg-2' %>
-            <span class="d-none d-lg-inline"><%= Spree.t(:export) %></span>
-          <% end %>
-        </span>
-      <% end %>
-
       <%= yield :page_actions if content_for?(:page_actions) %>
 
       <% if action_name == 'edit' && @object %>
