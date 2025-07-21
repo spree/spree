@@ -3,6 +3,7 @@
 <% end %>
 
 <%= content_for :page_actions do %>
+  <%= render_admin_partials(:themes_actions_partials) %>
   <%= link_to_with_icon 'eye', Spree.t(:view_your_store), current_store.formatted_url_or_custom_domain, class: 'btn btn-light bg-transparent', target: '_blank' %>
 <% end %>
 
@@ -25,6 +26,8 @@
     </div>
   <% end %>
 <% end %>
+
+<%= render_admin_partials(:themes_header_partials) %>
 
 <div class="card-lg">
   <div class="table-responsive rounded-lg">

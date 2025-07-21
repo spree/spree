@@ -2,7 +2,12 @@
   <%= Spree.t(:shipping) %>
 <% end %>
 
-<%= render partial: 'spree/admin/shipping_methods/actions' %>
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:shipping_methods_actions_partials) %>
+  <% if can?(:create, Spree::ShippingMethod) %>
+    <%= link_to_with_icon 'plus', Spree.t(:new_shipping_method), new_object_url, class: "btn btn-primary" %>
+  <% end %>
+<% end %>
 <%= render partial: 'spree/admin/shared/shipping_nav' %>
 
 <% content_for :page_alerts do %>
@@ -10,6 +15,8 @@
     Shipping methods are options that the customer sees when they reach the checkout, they are the carriers and services used to send your products.
   </div>
 <% end %>
+
+<%= render_admin_partials(:shipping_methods_header_partials) %>
 
 <div class="card-lg">
   <% if @collection.any? %>

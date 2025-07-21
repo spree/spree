@@ -3,6 +3,7 @@
 <%= content_for(:title, Spree.t('admin.oauth_applications.list')) %>
 
 <% content_for :page_actions do %>
+  <%= render_admin_partials(:oauth_applications_actions_partials) %>
   <%= link_to_with_icon 'plus', Spree.t('admin.oauth_applications.new'), new_object_url, class: "btn btn-primary" %>
 <% end if can? :create, Spree::OauthApplication %>
 
@@ -14,6 +15,8 @@
     </p>
   </div>
 <% end %>
+
+<%= render_admin_partials(:oauth_applications_header_partials) %>
 
 <div class="card-lg">
   <% if @collection.any? %>

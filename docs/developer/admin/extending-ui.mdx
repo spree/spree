@@ -134,7 +134,29 @@ Here's a list of all places you can inject your custom code:
 ### Orders
 
 <AccordionGroup>
-  <Accordion title="Orders List Filters">
+  <Accordion title="Orders Actions">
+    `orders_actions_partials`
+
+    Injects code into the page actions area (top right of the page) for the orders list page. This is useful for adding custom buttons, export options, or other actions.
+
+    ```erb
+    <%= link_to "Export to ERP", export_orders_to_erp_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Orders Header">
+    `orders_header_partials`
+
+    Injects code between the page header and the main content area for the orders list page. This is useful for adding notifications, alerts, or additional information.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Processing:</strong> Orders are automatically processed and shipped within 24 hours.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Orders Filters">
     `orders_filters_partials`
 
     <Frame>
@@ -293,10 +315,1158 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 </AccordionGroup>
 
+### Customers
+
+<AccordionGroup>
+  <Accordion title="Customers Actions">
+    `users_actions_partials`
+
+    Injects code into the page actions area (top right of the page) for the customers list page. This is useful for adding custom buttons, export options, or other actions.
+
+    ```erb
+    <%= link_to "Sync with CRM", sync_customers_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Customers Header">
+    `users_header_partials`
+
+    Injects code between the page header and the main content area for the customers list page. This is useful for adding notifications, alerts, or additional information.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Note:</strong> Customer data is synced with CRM every hour.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Customers Filters">
+    `users_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the customers list filters. This partial has access to the `f` variable, which is the form builder for the filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :custom_field_eq, "Customer Type" %>
+      <%= f.select :custom_field_eq, options_for_select([["VIP", "vip"], ["Regular", "regular"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    ```
+
+    <Tip>
+    * Use [ransack](https://activerecord-hackery.github.io/ransack/) search syntax for filter field names
+    * Include `data: { filters_target: :input }` for proper integration with the Stimulus Filters controller
+    </Tip>
+  </Accordion>
+</AccordionGroup>
+
+### Stock Items
+
+<AccordionGroup>
+  <Accordion title="Stock Items Actions">
+    `stock_items_actions_partials`
+
+    Injects code into the page actions area for the stock items list page.
+
+    ```erb
+    <%= link_to "Export to WMS", export_stock_to_wms_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Stock Items Header">
+    `stock_items_header_partials`
+
+    Injects code between the page header and the main content area for the stock items list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Warning:</strong> Low stock items require attention.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Stock Items Filters">
+    `stock_items_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the stock items list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :count_on_hand_lt, "Stock Below" %>
+      <%= f.number_field :count_on_hand_lt, class: "form-control", data: { filters_target: :input } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Admin Users
+
+<AccordionGroup>
+  <Accordion title="Admin Users Actions">
+    `admin_users_actions_partials`
+
+    Injects code into the page actions area for the admin users list page.
+
+    ```erb
+    <%= link_to "Export Users", export_admin_users_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Admin Users Header">
+    `admin_users_header_partials`
+
+    Injects code between the page header and the main content area for the admin users list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Security:</strong> Review admin access regularly.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Classifications
+
+<AccordionGroup>
+  <Accordion title="Classifications Actions">
+    `classifications_actions_partials`
+
+    Injects code into the page actions area for the classifications list page.
+
+    ```erb
+    <%= link_to "Bulk Update", bulk_update_classifications_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Classifications Header">
+    `classifications_header_partials`
+
+    Injects code between the page header and the main content area for the classifications list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Tip:</strong> Use drag and drop to reorder classifications.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Coupon Codes
+
+<AccordionGroup>
+  <Accordion title="Coupon Codes Actions">
+    `coupon_codes_actions_partials`
+
+    Injects code into the page actions area for the coupon codes list page.
+
+    ```erb
+    <%= link_to "Generate Bulk Codes", bulk_generate_coupons_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Coupon Codes Header">
+    `coupon_codes_header_partials`
+
+    Injects code between the page header and the main content area for the coupon codes list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Notice:</strong> Expired codes will be automatically cleaned up.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Custom Domains
+
+<AccordionGroup>
+  <Accordion title="Custom Domains Actions">
+    `custom_domains_actions_partials`
+
+    Injects code into the page actions area for the custom domains list page.
+
+    ```erb
+    <%= link_to "Verify All Domains", verify_all_domains_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Custom Domains Header">
+    `custom_domains_header_partials`
+
+    Injects code between the page header and the main content area for the custom domains list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>SSL:</strong> SSL certificates are automatically managed.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Customer Returns
+
+<AccordionGroup>
+  <Accordion title="Customer Returns Actions">
+    `customer_returns_actions_partials`
+
+    Injects code into the page actions area for the customer returns list page.
+
+    ```erb
+    <%= link_to "Export Returns Report", export_returns_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Customer Returns Header">
+    `customer_returns_header_partials`
+
+    Injects code between the page header and the main content area for the customer returns list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Processing:</strong> Returns are processed within 3-5 business days.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Customer Returns Filters">
+    `customer_returns_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the customer returns list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :reason_eq, "Return Reason" %>
+      <%= f.select :reason_eq, options_for_select([["Damaged", "damaged"], ["Wrong Item", "wrong_item"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Digital Assets
+
+<AccordionGroup>
+  <Accordion title="Digital Assets Actions">
+    `digital_assets_actions_partials`
+
+    Injects code into the page actions area for the digital assets list page.
+
+    ```erb
+    <%= link_to "Bulk Upload", bulk_upload_assets_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Digital Assets Header">
+    `digital_assets_header_partials`
+
+    Injects code between the page header and the main content area for the digital assets list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Storage:</strong> Assets are stored in cloud storage with CDN.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Exports
+
+<AccordionGroup>
+  <Accordion title="Exports Actions">
+    `exports_actions_partials`
+
+    Injects code into the page actions area for the exports list page.
+
+    ```erb
+    <%= link_to "Schedule Export", new_scheduled_export_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Exports Header">
+    `exports_header_partials`
+
+    Injects code between the page header and the main content area for the exports list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Retention:</strong> Export files are kept for 30 days.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Gift Cards
+
+<AccordionGroup>
+  <Accordion title="Gift Cards Actions">
+    `gift_cards_actions_partials`
+
+    Injects code into the page actions area for the gift cards list page.
+
+    ```erb
+    <%= link_to "Bulk Generate", bulk_generate_gift_cards_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Gift Cards Header">
+    `gift_cards_header_partials`
+
+    Injects code between the page header and the main content area for the gift cards list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Security:</strong> Gift card codes are encrypted at rest.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Gift Cards Filters">
+    `gift_cards_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the gift cards list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :balance_gt, "Balance Greater Than" %>
+      <%= f.number_field :balance_gt, step: 0.01, class: "form-control", data: { filters_target: :input } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Integrations
+
+<AccordionGroup>
+  <Accordion title="Integrations Actions">
+    `integrations_actions_partials`
+
+    Injects code into the page actions area for the integrations list page.
+
+    ```erb
+    <%= link_to "Test All Connections", test_integrations_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Integrations Header">
+    `integrations_header_partials`
+
+    Injects code between the page header and the main content area for the integrations list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Status:</strong> Check integration health regularly.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Invitations
+
+<AccordionGroup>
+  <Accordion title="Invitations Actions">
+    `invitations_actions_partials`
+
+    Injects code into the page actions area for the invitations list page.
+
+    ```erb
+    <%= link_to "Resend All Pending", resend_pending_invitations_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Invitations Header">
+    `invitations_header_partials`
+
+    Injects code between the page header and the main content area for the invitations list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Expiry:</strong> Invitations expire after 7 days.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### OAuth Applications
+
+<AccordionGroup>
+  <Accordion title="OAuth Applications Actions">
+    `oauth_applications_actions_partials`
+
+    Injects code into the page actions area for the OAuth applications list page.
+
+    ```erb
+    <%= link_to "Security Audit", oauth_security_audit_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="OAuth Applications Header">
+    `oauth_applications_header_partials`
+
+    Injects code between the page header and the main content area for the OAuth applications list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Security:</strong> Review OAuth applications regularly.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Option Types
+
+<AccordionGroup>
+  <Accordion title="Option Types Actions">
+    `option_types_actions_partials`
+
+    Injects code into the page actions area for the option types list page.
+
+    ```erb
+    <%= link_to "Import Options", import_option_types_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Option Types Header">
+    `option_types_header_partials`
+
+    Injects code between the page header and the main content area for the option types list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Variants:</strong> Option types are used to create product variants.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Pages
+
+<AccordionGroup>
+  <Accordion title="Pages Actions">
+    `pages_actions_partials`
+
+    Injects code into the page actions area for the pages list page.
+
+    ```erb
+    <%= link_to "Export Content", export_pages_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Pages Header">
+    `pages_header_partials`
+
+    Injects code between the page header and the main content area for the pages list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>SEO:</strong> Remember to optimize page content for search engines.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Payment Methods
+
+<AccordionGroup>
+  <Accordion title="Payment Methods Actions">
+    `payment_methods_actions_partials`
+
+    Injects code into the page actions area for the payment methods list page.
+
+    ```erb
+    <%= link_to "Test All Gateways", test_payment_gateways_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Payment Methods Header">
+    `payment_methods_header_partials`
+
+    Injects code between the page header and the main content area for the payment methods list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Configuration:</strong> Ensure all payment methods are properly configured.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Post Categories
+
+<AccordionGroup>
+  <Accordion title="Post Categories Actions">
+    `post_categories_actions_partials`
+
+    Injects code into the page actions area for the post categories list page.
+
+    ```erb
+    <%= link_to "Reorder Categories", reorder_post_categories_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Post Categories Header">
+    `post_categories_header_partials`
+
+    Injects code between the page header and the main content area for the post categories list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Organization:</strong> Use categories to organize your blog posts.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Posts
+
+<AccordionGroup>
+  <Accordion title="Posts Actions">
+    `posts_actions_partials`
+
+    Injects code into the page actions area for the posts list page.
+
+    ```erb
+    <%= link_to "Schedule Posts", schedule_posts_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Posts Header">
+    `posts_header_partials`
+
+    Injects code between the page header and the main content area for the posts list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Publishing:</strong> Posts can be scheduled for future publication.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Posts Filters">
+    `posts_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the posts list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :published_eq, "Publication Status" %>
+      <%= f.select :published_eq, options_for_select([["Published", true], ["Draft", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Promotions
+
+<AccordionGroup>
+  <Accordion title="Promotions Actions">
+    `promotions_actions_partials`
+
+    Injects code into the page actions area for the promotions list page.
+
+    ```erb
+    <%= link_to "Clone Selected", clone_promotions_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Promotions Header">
+    `promotions_header_partials`
+
+    Injects code between the page header and the main content area for the promotions list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Scheduling:</strong> Promotions can be scheduled to start and end automatically.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Promotions Filters">
+    `promotions_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the promotions list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :active_eq, "Active Status" %>
+      <%= f.select :active_eq, options_for_select([["Active", true], ["Inactive", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Properties
+
+<AccordionGroup>
+  <Accordion title="Properties Actions">
+    `properties_actions_partials`
+
+    Injects code into the page actions area for the properties list page.
+
+    ```erb
+    <%= link_to "Import Properties", import_properties_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Properties Header">
+    `properties_header_partials`
+
+    Injects code between the page header and the main content area for the properties list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Usage:</strong> Properties are used to add custom attributes to products.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Refund Reasons
+
+<AccordionGroup>
+  <Accordion title="Refund Reasons Actions">
+    `refund_reasons_actions_partials`
+
+    Injects code into the page actions area for the refund reasons list page.
+
+    ```erb
+    <%= link_to "Export Reasons", export_refund_reasons_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Refund Reasons Header">
+    `refund_reasons_header_partials`
+
+    Injects code between the page header and the main content area for the refund reasons list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Analytics:</strong> Track refund reasons to identify common issues.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Reimbursement Types
+
+<AccordionGroup>
+  <Accordion title="Reimbursement Types Actions">
+    `reimbursement_types_actions_partials`
+
+    Injects code into the page actions area for the reimbursement types list page.
+
+    ```erb
+    <%= link_to "Configure Defaults", configure_reimbursement_defaults_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Reimbursement Types Header">
+    `reimbursement_types_header_partials`
+
+    Injects code between the page header and the main content area for the reimbursement types list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Processing:</strong> Define how customers are reimbursed for returns.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Reports
+
+<AccordionGroup>
+  <Accordion title="Reports Actions">
+    `reports_actions_partials`
+
+    Injects code into the page actions area for the reports list page.
+
+    ```erb
+    <%= link_to "Schedule Report", schedule_report_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Reports Header">
+    `reports_header_partials`
+
+    Injects code between the page header and the main content area for the reports list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Automation:</strong> Reports can be scheduled to run automatically.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Return Authorization Reasons
+
+<AccordionGroup>
+  <Accordion title="Return Authorization Reasons Actions">
+    `return_authorization_reasons_actions_partials`
+
+    Injects code into the page actions area for the return authorization reasons list page.
+
+    ```erb
+    <%= link_to "Export Reasons", export_return_reasons_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Return Authorization Reasons Header">
+    `return_authorization_reasons_header_partials`
+
+    Injects code between the page header and the main content area for the return authorization reasons list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Policy:</strong> Define clear return reasons to streamline the process.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Return Authorizations
+
+<AccordionGroup>
+  <Accordion title="Return Authorizations Actions">
+    `return_authorizations_actions_partials`
+
+    Injects code into the page actions area for the return authorizations list page.
+
+    ```erb
+    <%= link_to "Bulk Process", bulk_process_returns_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Return Authorizations Header">
+    `return_authorizations_header_partials`
+
+    Injects code between the page header and the main content area for the return authorizations list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Processing:</strong> Returns are processed in order of submission.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Roles
+
+<AccordionGroup>
+  <Accordion title="Roles Actions">
+    `roles_actions_partials`
+
+    Injects code into the page actions area for the roles list page.
+
+    ```erb
+    <%= link_to "Export Permissions", export_role_permissions_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Roles Header">
+    `roles_header_partials`
+
+    Injects code between the page header and the main content area for the roles list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Security:</strong> Review role permissions regularly for security.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Shipping Categories
+
+<AccordionGroup>
+  <Accordion title="Shipping Categories Actions">
+    `shipping_categories_actions_partials`
+
+    Injects code into the page actions area for the shipping categories list page.
+
+    ```erb
+    <%= link_to "Calculate Rates", calculate_shipping_rates_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Shipping Categories Header">
+    `shipping_categories_header_partials`
+
+    Injects code between the page header and the main content area for the shipping categories list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Organization:</strong> Use categories to group products with similar shipping requirements.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Shipping Methods
+
+<AccordionGroup>
+  <Accordion title="Shipping Methods Actions">
+    `shipping_methods_actions_partials`
+
+    Injects code into the page actions area for the shipping methods list page.
+
+    ```erb
+    <%= link_to "Test Integrations", test_shipping_integrations_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Shipping Methods Header">
+    `shipping_methods_header_partials`
+
+    Injects code between the page header and the main content area for the shipping methods list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Configuration:</strong> Ensure shipping methods are properly configured for all zones.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Stock Locations
+
+<AccordionGroup>
+  <Accordion title="Stock Locations Actions">
+    `stock_locations_actions_partials`
+
+    Injects code into the page actions area for the stock locations list page.
+
+    ```erb
+    <%= link_to "Sync Inventory", sync_all_locations_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Stock Locations Header">
+    `stock_locations_header_partials`
+
+    Injects code between the page header and the main content area for the stock locations list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Management:</strong> Stock locations help manage inventory across multiple warehouses.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Stock Transfers
+
+<AccordionGroup>
+  <Accordion title="Stock Transfers Actions">
+    `stock_transfers_actions_partials`
+
+    Injects code into the page actions area for the stock transfers list page.
+
+    ```erb
+    <%= link_to "Bulk Transfer", bulk_stock_transfer_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Stock Transfers Header">
+    `stock_transfers_header_partials`
+
+    Injects code between the page header and the main content area for the stock transfers list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Tracking:</strong> All stock transfers are logged for audit purposes.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Stock Transfers Filters">
+    `stock_transfers_filters_partials`
+
+    #### Variables
+
+    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
+      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    </ParamField>
+
+    Injects code into the stock transfers list filters.
+
+    ```erb
+    <div class="form-group">
+      <%= f.label :status_eq, "Transfer Status" %>
+      <%= f.select :status_eq, options_for_select([["Pending", "pending"], ["Completed", "completed"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Store Credit Categories
+
+<AccordionGroup>
+  <Accordion title="Store Credit Categories Actions">
+    `store_credit_categories_actions_partials`
+
+    Injects code into the page actions area for the store credit categories list page.
+
+    ```erb
+    <%= link_to "Set Default Category", set_default_credit_category_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Store Credit Categories Header">
+    `store_credit_categories_header_partials`
+
+    Injects code between the page header and the main content area for the store credit categories list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Organization:</strong> Use categories to organize different types of store credits.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Store Credits
+
+<AccordionGroup>
+  <Accordion title="Store Credits Actions">
+    `store_credits_actions_partials`
+
+    Injects code into the page actions area for the store credits list page.
+
+    ```erb
+    <%= link_to "Bulk Issue Credits", bulk_issue_credits_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Store Credits Header">
+    `store_credits_header_partials`
+
+    Injects code between the page header and the main content area for the store credits list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Management:</strong> Store credits can be issued for returns, promotions, or customer service.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Tax Categories
+
+<AccordionGroup>
+  <Accordion title="Tax Categories Actions">
+    `tax_categories_actions_partials`
+
+    Injects code into the page actions area for the tax categories list page.
+
+    ```erb
+    <%= link_to "Update Tax Rates", update_all_tax_rates_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Tax Categories Header">
+    `tax_categories_header_partials`
+
+    Injects code between the page header and the main content area for the tax categories list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Compliance:</strong> Ensure tax categories comply with local regulations.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Tax Rates
+
+<AccordionGroup>
+  <Accordion title="Tax Rates Actions">
+    `tax_rates_actions_partials`
+
+    Injects code into the page actions area for the tax rates list page.
+
+    ```erb
+    <%= link_to "Import Tax Updates", import_tax_updates_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Tax Rates Header">
+    `tax_rates_header_partials`
+
+    Injects code between the page header and the main content area for the tax rates list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Updates:</strong> Tax rates should be reviewed and updated regularly.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Taxonomies
+
+<AccordionGroup>
+  <Accordion title="Taxonomies Actions">
+    `taxonomies_actions_partials`
+
+    Injects code into the page actions area for the taxonomies list page.
+
+    ```erb
+    <%= link_to "Rebuild Tree", rebuild_taxonomy_tree_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Taxonomies Header">
+    `taxonomies_header_partials`
+
+    Injects code between the page header and the main content area for the taxonomies list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Navigation:</strong> Taxonomies are used to create product category navigation.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Themes
+
+<AccordionGroup>
+  <Accordion title="Themes Actions">
+    `themes_actions_partials`
+
+    Injects code into the page actions area for the themes list page.
+
+    ```erb
+    <%= link_to "Preview All", preview_all_themes_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Themes Header">
+    `themes_header_partials`
+
+    Injects code between the page header and the main content area for the themes list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Customization:</strong> Themes control the visual appearance of your storefront.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Webhooks Subscribers
+
+<AccordionGroup>
+  <Accordion title="Webhooks Subscribers Actions">
+    `webhooks_subscribers_actions_partials`
+
+    Injects code into the page actions area for the webhooks subscribers list page.
+
+    ```erb
+    <%= link_to "Test All Webhooks", test_all_webhooks_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Webhooks Subscribers Header">
+    `webhooks_subscribers_header_partials`
+
+    Injects code between the page header and the main content area for the webhooks subscribers list page.
+
+    ```erb
+    <div class="alert alert-warning">
+      <strong>Monitoring:</strong> Monitor webhook delivery status and failures.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
+### Zones
+
+<AccordionGroup>
+  <Accordion title="Zones Actions">
+    `zones_actions_partials`
+
+    Injects code into the page actions area for the zones list page.
+
+    ```erb
+    <%= link_to "Import Zones", import_zones_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Zones Header">
+    `zones_header_partials`
+
+    Injects code between the page header and the main content area for the zones list page.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Geography:</strong> Zones define geographic regions for shipping and taxation.
+    </div>
+    ```
+  </Accordion>
+</AccordionGroup>
+
 ### Products
 
 <AccordionGroup>
-  <Accordion title="Products List Filters">
+  <Accordion title="Products Actions">
+    `products_actions_partials`
+
+    Injects code into the page actions area (top right of the page) for the products list page. This is useful for adding custom buttons, export options, or other actions.
+
+    ```erb
+    <%= link_to "Sync with PIM", sync_products_path, class: "btn btn-secondary" %>
+    ```
+  </Accordion>
+
+  <Accordion title="Products Header">
+    `products_header_partials`
+
+    Injects code between the page header and the main content area for the products list page. This is useful for adding notifications, alerts, or additional information.
+
+    ```erb
+    <div class="alert alert-info">
+      <strong>Inventory:</strong> Product inventory is synced with warehouse systems every 15 minutes.
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Products Filters">
     `products_filters_partials`
 
     <Frame>

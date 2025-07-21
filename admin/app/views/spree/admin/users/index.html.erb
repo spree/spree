@@ -8,10 +8,12 @@
     <%= Spree.t(:export) %>
   <% end if can?(:create, Spree::Export) %>
   
+  <%= render_admin_partials(:users_actions_partials) %>
   <%= render 'extra_actions' %>
-
   <%= link_to_with_icon 'plus', Spree.t(:new_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
 <% end %>
+
+<%= render_admin_partials(:users_header_partials) %>
 
 <div class="card-lg">
   <%= render "spree/admin/users/filters" %>
