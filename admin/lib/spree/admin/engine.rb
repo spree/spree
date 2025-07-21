@@ -4,31 +4,119 @@ module Spree
   module Admin
     class Engine < ::Rails::Engine
       Environment = Struct.new(
-        :head_partials,
-        :body_start_partials,
+        :admin_users_actions_partials,
+        :admin_users_filters_partials,
+        :admin_users_header_partials,
         :body_end_partials,
+        :body_start_partials,
+        :classifications_actions_partials,
+        :classifications_header_partials,
+        :coupon_codes_actions_partials,
+        :coupon_codes_header_partials,
+        :custom_domains_actions_partials,
+        :custom_domains_header_partials,
+        :customer_returns_actions_partials,
+        :customer_returns_filters_partials,
+        :customer_returns_header_partials,
         :dashboard_analytics_partials,
         :dashboard_sidebar_partials,
+        :digital_assets_actions_partials,
+        :digital_assets_header_partials,
+        :exports_actions_partials,
+        :exports_header_partials,
+        :gift_cards_actions_partials,
+        :gift_cards_filters_partials,
+        :gift_cards_header_partials,
+        :head_partials,
+        :integrations_actions_partials,
+        :integrations_header_partials,
+        :invitations_actions_partials,
+        :invitations_header_partials,
+        :oauth_applications_actions_partials,
+        :oauth_applications_header_partials,
+        :option_types_actions_partials,
+        :option_types_header_partials,
+        :order_page_body_partials,
+        :order_page_dropdown_partials,
+        :order_page_header_partials,
+        :order_page_sidebar_partials,
+        :order_page_summary_partials,
+        :orders_actions_partials,
+        :orders_filters_partials,
+        :orders_header_partials,
+        :pages_actions_partials,
+        :pages_header_partials,
+        :payment_methods_actions_partials,
+        :payment_methods_header_partials,
+        :post_categories_actions_partials,
+        :post_categories_header_partials,
+        :posts_actions_partials,
+        :posts_filters_partials,
+        :posts_header_partials,
         :product_dropdown_partials,
         :product_form_partials,
         :product_form_sidebar_partials,
+        :products_actions_partials,
         :products_filters_partials,
-        :order_page_header_partials,
-        :order_page_body_partials,
-        :order_page_summary_partials,
-        :order_page_sidebar_partials,
-        :order_page_dropdown_partials,
-        :orders_filters_partials,
+        :products_header_partials,
+        :promotions_actions_partials,
+        :promotions_filters_partials,
+        :promotions_header_partials,
+        :properties_actions_partials,
+        :properties_header_partials,
+        :refund_reasons_actions_partials,
+        :refund_reasons_header_partials,
+        :reimbursement_types_actions_partials,
+        :reimbursement_types_header_partials,
+        :reports_actions_partials,
+        :reports_header_partials,
+        :return_authorization_reasons_actions_partials,
+        :return_authorization_reasons_header_partials,
+        :return_authorizations_actions_partials,
+        :return_authorizations_header_partials,
+        :roles_actions_partials,
+        :roles_header_partials,
+        :settings_nav_partials,
+        :shipping_categories_actions_partials,
+        :shipping_categories_header_partials,
+        :shipping_method_form_partials,
+        :shipping_methods_actions_partials,
+        :shipping_methods_header_partials,
+        :stock_items_actions_partials,
+        :stock_items_filters_partials,
+        :stock_items_header_partials,
+        :stock_locations_actions_partials,
+        :stock_locations_header_partials,
+        :stock_transfers_actions_partials,
+        :stock_transfers_filters_partials,
+        :stock_transfers_header_partials,
+        :store_credit_categories_actions_partials,
+        :store_credit_categories_header_partials,
+        :store_credits_actions_partials,
+        :store_credits_header_partials,
         :store_form_partials,
         :store_nav_partials,
-        :settings_nav_partials,
-        :shipping_method_form_partials,
-        :store_settings_nav_partials,
         :store_orders_nav_partials,
         :store_products_nav_partials,
+        :store_settings_nav_partials,
         :storefront_nav_partials,
+        :tax_categories_actions_partials,
+        :tax_categories_header_partials,
         :tax_nav_partials,
-        :user_dropdown_partials
+        :tax_rates_actions_partials,
+        :tax_rates_header_partials,
+        :taxonomies_actions_partials,
+        :taxonomies_header_partials,
+        :themes_actions_partials,
+        :themes_header_partials,
+        :user_dropdown_partials,
+        :users_actions_partials,
+        :users_filters_partials,
+        :users_header_partials,
+        :webhooks_subscribers_actions_partials,
+        :webhooks_subscribers_header_partials,
+        :zones_actions_partials,
+        :zones_header_partials
       )
 
       # accessible via Rails.application.config.spree_admin
@@ -82,31 +170,119 @@ module Spree
       end
 
       config.after_initialize do
-        Rails.application.config.spree_admin.head_partials = []
-        Rails.application.config.spree_admin.body_start_partials = []
+        Rails.application.config.spree_admin.admin_users_actions_partials = []
+        Rails.application.config.spree_admin.admin_users_filters_partials = []
+        Rails.application.config.spree_admin.admin_users_header_partials = []
         Rails.application.config.spree_admin.body_end_partials = []
+        Rails.application.config.spree_admin.body_start_partials = []
+        Rails.application.config.spree_admin.classifications_actions_partials = []
+        Rails.application.config.spree_admin.classifications_header_partials = []
+        Rails.application.config.spree_admin.coupon_codes_actions_partials = []
+        Rails.application.config.spree_admin.coupon_codes_header_partials = []
+        Rails.application.config.spree_admin.custom_domains_actions_partials = []
+        Rails.application.config.spree_admin.custom_domains_header_partials = []
+        Rails.application.config.spree_admin.customer_returns_actions_partials = []
+        Rails.application.config.spree_admin.customer_returns_filters_partials = []
+        Rails.application.config.spree_admin.customer_returns_header_partials = []
         Rails.application.config.spree_admin.dashboard_analytics_partials = []
         Rails.application.config.spree_admin.dashboard_sidebar_partials = []
-        Rails.application.config.spree_admin.product_form_partials = []
-        Rails.application.config.spree_admin.product_form_sidebar_partials = []
-        Rails.application.config.spree_admin.product_dropdown_partials = []
-        Rails.application.config.spree_admin.products_filters_partials = []
-        Rails.application.config.spree_admin.order_page_header_partials = []
+        Rails.application.config.spree_admin.digital_assets_actions_partials = []
+        Rails.application.config.spree_admin.digital_assets_header_partials = []
+        Rails.application.config.spree_admin.exports_actions_partials = []
+        Rails.application.config.spree_admin.exports_header_partials = []
+        Rails.application.config.spree_admin.gift_cards_actions_partials = []
+        Rails.application.config.spree_admin.gift_cards_filters_partials = []
+        Rails.application.config.spree_admin.gift_cards_header_partials = []
+        Rails.application.config.spree_admin.head_partials = []
+        Rails.application.config.spree_admin.integrations_actions_partials = []
+        Rails.application.config.spree_admin.integrations_header_partials = []
+        Rails.application.config.spree_admin.invitations_actions_partials = []
+        Rails.application.config.spree_admin.invitations_header_partials = []
+        Rails.application.config.spree_admin.oauth_applications_actions_partials = []
+        Rails.application.config.spree_admin.oauth_applications_header_partials = []
+        Rails.application.config.spree_admin.option_types_actions_partials = []
+        Rails.application.config.spree_admin.option_types_header_partials = []
         Rails.application.config.spree_admin.order_page_body_partials = []
+        Rails.application.config.spree_admin.order_page_dropdown_partials = []
+        Rails.application.config.spree_admin.order_page_header_partials = []
         Rails.application.config.spree_admin.order_page_sidebar_partials = []
         Rails.application.config.spree_admin.order_page_summary_partials = []
-        Rails.application.config.spree_admin.order_page_dropdown_partials = []
+        Rails.application.config.spree_admin.orders_actions_partials = []
         Rails.application.config.spree_admin.orders_filters_partials = []
+        Rails.application.config.spree_admin.orders_header_partials = []
+        Rails.application.config.spree_admin.pages_actions_partials = []
+        Rails.application.config.spree_admin.pages_header_partials = []
+        Rails.application.config.spree_admin.payment_methods_actions_partials = []
+        Rails.application.config.spree_admin.payment_methods_header_partials = []
+        Rails.application.config.spree_admin.post_categories_actions_partials = []
+        Rails.application.config.spree_admin.post_categories_header_partials = []
+        Rails.application.config.spree_admin.posts_actions_partials = []
+        Rails.application.config.spree_admin.posts_filters_partials = []
+        Rails.application.config.spree_admin.posts_header_partials = []
+        Rails.application.config.spree_admin.product_dropdown_partials = []
+        Rails.application.config.spree_admin.product_form_partials = []
+        Rails.application.config.spree_admin.product_form_sidebar_partials = []
+        Rails.application.config.spree_admin.products_actions_partials = []
+        Rails.application.config.spree_admin.products_filters_partials = []
+        Rails.application.config.spree_admin.products_header_partials = []
+        Rails.application.config.spree_admin.promotions_actions_partials = []
+        Rails.application.config.spree_admin.promotions_filters_partials = []
+        Rails.application.config.spree_admin.promotions_header_partials = []
+        Rails.application.config.spree_admin.properties_actions_partials = []
+        Rails.application.config.spree_admin.properties_header_partials = []
+        Rails.application.config.spree_admin.refund_reasons_actions_partials = []
+        Rails.application.config.spree_admin.refund_reasons_header_partials = []
+        Rails.application.config.spree_admin.reimbursement_types_actions_partials = []
+        Rails.application.config.spree_admin.reimbursement_types_header_partials = []
+        Rails.application.config.spree_admin.reports_actions_partials = []
+        Rails.application.config.spree_admin.reports_header_partials = []
+        Rails.application.config.spree_admin.return_authorization_reasons_actions_partials = []
+        Rails.application.config.spree_admin.return_authorization_reasons_header_partials = []
+        Rails.application.config.spree_admin.return_authorizations_actions_partials = []
+        Rails.application.config.spree_admin.return_authorizations_header_partials = []
+        Rails.application.config.spree_admin.roles_actions_partials = []
+        Rails.application.config.spree_admin.roles_header_partials = []
+        Rails.application.config.spree_admin.settings_nav_partials = []
+        Rails.application.config.spree_admin.shipping_categories_actions_partials = []
+        Rails.application.config.spree_admin.shipping_categories_header_partials = []
+        Rails.application.config.spree_admin.shipping_method_form_partials = []
+        Rails.application.config.spree_admin.shipping_methods_actions_partials = []
+        Rails.application.config.spree_admin.shipping_methods_header_partials = []
+        Rails.application.config.spree_admin.stock_items_actions_partials = []
+        Rails.application.config.spree_admin.stock_items_filters_partials = []
+        Rails.application.config.spree_admin.stock_items_header_partials = []
+        Rails.application.config.spree_admin.stock_locations_actions_partials = []
+        Rails.application.config.spree_admin.stock_locations_header_partials = []
+        Rails.application.config.spree_admin.stock_transfers_actions_partials = []
+        Rails.application.config.spree_admin.stock_transfers_filters_partials = []
+        Rails.application.config.spree_admin.stock_transfers_header_partials = []
+        Rails.application.config.spree_admin.store_credit_categories_actions_partials = []
+        Rails.application.config.spree_admin.store_credit_categories_header_partials = []
+        Rails.application.config.spree_admin.store_credits_actions_partials = []
+        Rails.application.config.spree_admin.store_credits_header_partials = []
         Rails.application.config.spree_admin.store_form_partials = []
         Rails.application.config.spree_admin.store_nav_partials = []
-        Rails.application.config.spree_admin.settings_nav_partials = []
-        Rails.application.config.spree_admin.shipping_method_form_partials = []
-        Rails.application.config.spree_admin.store_settings_nav_partials = []
         Rails.application.config.spree_admin.store_orders_nav_partials = []
         Rails.application.config.spree_admin.store_products_nav_partials = []
+        Rails.application.config.spree_admin.store_settings_nav_partials = []
         Rails.application.config.spree_admin.storefront_nav_partials = []
+        Rails.application.config.spree_admin.tax_categories_actions_partials = []
+        Rails.application.config.spree_admin.tax_categories_header_partials = []
         Rails.application.config.spree_admin.tax_nav_partials = []
+        Rails.application.config.spree_admin.tax_rates_actions_partials = []
+        Rails.application.config.spree_admin.tax_rates_header_partials = []
+        Rails.application.config.spree_admin.taxonomies_actions_partials = []
+        Rails.application.config.spree_admin.taxonomies_header_partials = []
+        Rails.application.config.spree_admin.themes_actions_partials = []
+        Rails.application.config.spree_admin.themes_header_partials = []
         Rails.application.config.spree_admin.user_dropdown_partials = []
+        Rails.application.config.spree_admin.users_actions_partials = []
+        Rails.application.config.spree_admin.users_filters_partials = []
+        Rails.application.config.spree_admin.users_header_partials = []
+        Rails.application.config.spree_admin.webhooks_subscribers_actions_partials = []
+        Rails.application.config.spree_admin.webhooks_subscribers_header_partials = []
+        Rails.application.config.spree_admin.zones_actions_partials = []
+        Rails.application.config.spree_admin.zones_header_partials = []
       end
     end
   end

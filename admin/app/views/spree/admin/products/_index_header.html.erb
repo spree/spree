@@ -1,8 +1,0 @@
-<% content_for :page_title do %>
-  <%= plural_resource_name(Spree::Product) %>
-<% end %>
-
-<% content_for :page_actions do %>
-  <%= link_to_export_modal %>
-  <%= link_to_with_icon 'plus', Spree.t(:new_product), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Product) %>
-<% end %>

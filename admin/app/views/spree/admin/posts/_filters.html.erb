@@ -19,6 +19,7 @@
                { include_blank: true },
                { data: { filters_target: :input, controller: 'autocomplete-select' } } %>
     </div>
+    <%= render_admin_partials(:posts_filters_partials, f: f) %>
     <%= render 'spree/admin/shared/filter_submit' %>
   </div>
 

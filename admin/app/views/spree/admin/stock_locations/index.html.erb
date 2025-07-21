@@ -2,8 +2,11 @@
   <%= Spree.t(:stock_locations) %>
 <% end %>
 <% content_for :page_actions do %>
+  <%= render_admin_partials(:stock_locations_actions_partials) %>
   <%= link_to_with_icon 'plus', Spree.t(:new_stock_location), new_object_url, class: "btn btn-primary" %> 
 <% end if can? :create, Spree::StockLocation %>
+
+<%= render_admin_partials(:stock_locations_header_partials) %>
 
 <div class="card-lg">
   <% if @collection.any? %>

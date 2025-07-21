@@ -1,10 +1,9 @@
-<% content_for :head do %>
-  <script type="text/javascript" src="https://cdn.goentri.com/entri.js"></script>
-<% end %>
 <%= content_for(:page_title) do %>
   <%= Spree.t(:domains) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:custom_domains_actions_partials) %>
 <div class="card-lg p-4">
   <h5 class="mb-3">Internal URL</h5>
   <div class="row mb-4">

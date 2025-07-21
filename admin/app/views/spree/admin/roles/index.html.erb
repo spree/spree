@@ -1,8 +1,11 @@
 <%= render 'spree/admin/shared/team_nav' %>
 
 <% content_for :page_actions do %>
-  <%= link_to_with_icon 'plus', Spree.t(:new_role), new_object_url, class: "btn btn-primary" %>
-<% end if can? :create, Spree::Role %>
+  <%= render_admin_partials(:roles_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_role), new_object_url, class: "btn btn-primary" if can? :create, Spree::Role %>
+<% end %>
+
+<%= render_admin_partials(:roles_header_partials) %>
 
 <div class="card-lg">
   <% if @collection.any? %>

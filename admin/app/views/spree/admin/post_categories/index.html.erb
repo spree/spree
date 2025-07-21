@@ -1,8 +1,11 @@
+<%= render 'spree/admin/shared/posts_tabs' %>
+
 <% content_for :page_actions do %>
+  <%= render_admin_partials(:post_categories_actions_partials) %>
   <%= link_to_with_icon 'plus', Spree.t(:new_post_category), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::PostCategory) %>
 <% end %>
 
-<%= render 'spree/admin/shared/posts_tabs' %>
+<%= render_admin_partials(:post_categories_header_partials) %>
 
 <% if @collection.any? %>
   <div class="card-lg">
