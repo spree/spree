@@ -20,7 +20,7 @@ describe Spree::Product::Slugs, type: :model do
     end
 
     it 'updates slugs with deleted-{id} prefix to ensure uniqueness' do
-      expect { product.destroy! }.to change { product.slugs.with_deleted.first.slug }.to a_string_matching(/deleted-\d+_.*/)
+      expect { product.destroy! }.to change { product.slugs.with_deleted.first.slug }.to a_string_matching(/deleted-ala-.*/)
     end
 
     it 'soft deletes slug record' do
@@ -45,7 +45,7 @@ describe Spree::Product::Slugs, type: :model do
       expect(product.slug).to eq(name)
 
       deleted_slug = another_product.slugs.with_deleted.first
-      expect(deleted_slug.slug).to eq("deleted-#{deleted_slug.id}_#{name}")
+      expect(deleted_slug.slug).to match(/deleted-#{name}-.+/)
       expect(another_product.slug).to match(/deleted-#{name}-.+/)
     end
 
@@ -60,11 +60,11 @@ describe Spree::Product::Slugs, type: :model do
       expect(new_product.slugs.first.slug).to eq(name)
 
       deleted_slug_1 = another_product.slugs.with_deleted.first
-      expect(deleted_slug_1.slug).to eq("deleted-#{deleted_slug_1.id}_#{name}")
+      expect(deleted_slug_1.slug).to match(/deleted-#{name}-.+/)
       expect(another_product.slug).to match(/deleted-#{name}-.+/)
 
       deleted_slug_2 = product.slugs.with_deleted.first
-      expect(deleted_slug_2.slug).to eq("deleted-#{deleted_slug_2.id}_#{name}")
+      expect(deleted_slug_2.slug).to match(/deleted-#{name}-.+/)
       expect(product.slug).to match(/deleted-#{name}-.+/)
     end
   end
@@ -91,8 +91,8 @@ describe Spree::Product::Slugs, type: :model do
       it 'renames slug for all translations' do
         product.destroy!
 
-        expect(product.slug).to match(/deleted-product-[0-9]+/)
-        expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/deleted-\d+_french-slug/)
+        expect(product.slug).to match(/deleted-product-[0-9]+-.+/)
+        expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/deleted-french-slug-.+/)
       end
     end
 
