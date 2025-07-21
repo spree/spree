@@ -19,7 +19,7 @@ describe Spree::Product::Slugs, type: :model do
       product.update!(name: 'ala', slug: nil)
     end
 
-    it 'updates slugs withs deleted-{id} prefix to ensure uniqueness' do
+    it 'updates slugs with deleted-{id} prefix to ensure uniqueness' do
       expect { product.destroy! }.to change { product.slugs.with_deleted.first.slug }.to a_string_matching(/deleted-\d+_.*/)
     end
 
@@ -34,15 +34,38 @@ describe Spree::Product::Slugs, type: :model do
 
     let(:name) { 'product-name' }
 
-    it 'can use original slug' do
-      original_slugs_slug = another_product.slugs.first.slug
-      original_product_slug = another_product.slug
-
+    before do
       another_product.destroy!
+    end
+
+    it 'can use original slug' do
       product.save!
 
-      expect(product.slugs.first.slug).to eq(original_slugs_slug)
-      expect(product.slug).to eq(original_product_slug)
+      expect(product.slugs.first.slug).to eq(name)
+      expect(product.slug).to eq(name)
+
+      deleted_slug = another_product.slugs.with_deleted.first
+      expect(deleted_slug.slug).to eq("deleted-#{deleted_slug.id}_#{name}")
+      expect(another_product.slug).to match(/deleted-#{name}-.+/)
+    end
+
+    it 'can delete the product again and then create a new product with the original slug' do
+      product.save!
+      product.destroy!
+
+      new_product = build(:product, name: name)
+      expect(new_product.save!).to eq(true)
+
+      expect(new_product.slug).to eq(name)
+      expect(new_product.slugs.first.slug).to eq(name)
+
+      deleted_slug_1 = another_product.slugs.with_deleted.first
+      expect(deleted_slug_1.slug).to eq("deleted-#{deleted_slug_1.id}_#{name}")
+      expect(another_product.slug).to match(/deleted-#{name}-.+/)
+
+      deleted_slug_2 = product.slugs.with_deleted.first
+      expect(deleted_slug_2.slug).to eq("deleted-#{deleted_slug_2.id}_#{name}")
+      expect(product.slug).to match(/deleted-#{name}-.+/)
     end
   end
 
@@ -56,7 +79,7 @@ describe Spree::Product::Slugs, type: :model do
   context 'when product destroyed' do
     it 'renames slug' do
       product.destroy!
-      expect(product.slug).to match(/deleted-product-[0-9]+/)
+      expect(product.slug).to match(/deleted-product-[0-9]+-.+/)
     end
 
     context 'when more than one translation exists' do
@@ -113,23 +136,32 @@ describe Spree::Product::Slugs, type: :model do
   end
 
   context 'history' do
-    before do
-      @product = create(:product, stores: [store])
+    let(:product) { create(:product, name: 'Product 67345', stores: [store]) }
+
+    context 'when product is destroyed' do
+      before do
+        product.destroy
+      end
+
+      it 'keeps the history' do
+        expect(product.slugs.with_deleted).not_to be_empty
+      end
     end
 
-    it 'keeps the history when the product is destroyed' do
-      @product.destroy
+    context 'when product is restored' do
+      before do
+        product.destroy
+        product.restore(recursive: true)
+      end
 
-      expect(@product.slugs.with_deleted).not_to be_empty
-    end
+      it 'updates the history' do
+        expect(product.slugs).not_to be_empty
+        expect(product.slugs.find_by(slug: 'product-67345')).to be_present
+      end
 
-    it 'updates the history when the product is restored' do
-      @product.destroy
-
-      @product.restore(recursive: true)
-
-      latest_slug = @product.slugs.find_by slug: @product.slug
-      expect(latest_slug).not_to be_nil
+      it 'regenerates the product slug' do
+        expect(product.slug).to eq('product-67345')
+      end
     end
   end
 

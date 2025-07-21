@@ -57,8 +57,6 @@ module Spree
       def slug_candidates
         if defined?(:deleted_at) && deleted_at.present?
           [
-            ['deleted', :name],
-            ['deleted', :name, :sku],
             ['deleted', :name, :uuid_for_friendly_id]
           ]
         else
