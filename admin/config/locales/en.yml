@@ -83,7 +83,6 @@ en:
         prefix: Prefix
       gift_cards:
         active: Active
-        all: All
         all_statuses: All statuses
         code_help_text: If you leave it blank, we will generate code for you
         redeemed: Redeemed

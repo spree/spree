@@ -53,8 +53,9 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[code user_id]
+    self.whitelisted_ransackable_attributes = %w[code user_id state]
     self.whitelisted_ransackable_associations = %w[users orders batch]
+    self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
     auto_strip_attributes :code
 
@@ -127,6 +128,10 @@ module Spree
       else
         state
       end.to_s
+    end
+
+    def to_csv(_store = nil)
+      Spree::CSV::GiftCardPresenter.new(self).call
     end
 
     private

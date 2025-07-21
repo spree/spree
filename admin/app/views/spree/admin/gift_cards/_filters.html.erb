@@ -11,7 +11,7 @@
   <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
 
   <div class="d-flex flex-column flex-lg-row gap-2">
-    <%= render 'spree/admin/shared/filters_search_bar', param: :code_eq, label: Spree.t(:code) %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :code_i_cont, label: Spree.t(:code) %>
     <%= render "table_filter_dropdown" %>
     <%= render "spree/admin/shared/filters_button" %>
   </div>

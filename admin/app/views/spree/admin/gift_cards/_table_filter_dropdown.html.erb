@@ -5,19 +5,19 @@
   </button>
   <div class="dropdown-menu w-100" style="min-width: 200px">
 
-    <%= active_link_to Spree.t('admin.gift_cards.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock_items out_of_stock_items] ).all?(&:blank?) %>
+    <%= active_link_to Spree.t('admin.gift_cards.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {active: nil, expired: nil, redeemed: nil, partially_redeemed: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[active expired redeemed partially_redeemed] ).all?(&:blank?) %>
     
     <%= link_to Spree.t('admin.gift_cards.active'),
-      params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :active}}),
-      class: "dropdown-item #{'active' if params[:q] && params[:q][:status_eq] == 'active'}" %>
+      params.to_unsafe_h.deep_merge({page: nil, q: {active: true, expired: nil, redeemed: nil, partially_redeemed: nil}}),
+      class: "dropdown-item #{'active' if params[:q] && params[:q][:active].present?}" %>
     
-    <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :expired}}),
-      class: "dropdown-item #{'active' if params[:q] && params[:q][:status_eq] == 'expired'}" do %>
+    <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {expired: true, active: nil, redeemed: nil, partially_redeemed: nil}}),
+      class: "dropdown-item #{'active' if params[:q] && params[:q][:expired].present?}" do %>
         <%= Spree.t(:expired) %>
     <% end %>
 
-    <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :redeemed}}),
-      class: "dropdown-item #{'active' if params[:q] && params[:q][:status_eq] == 'redeemed'}" do %>
+    <%= link_to params.to_unsafe_h.deep_merge({page: nil, q: {redeemed: true, active: nil, expired: nil, partially_redeemed: nil}}),
+      class: "dropdown-item #{'active' if params[:q] && params[:q][:redeemed].present?}" do %>
         <%= Spree.t('admin.gift_cards.redeemed') %>
     <% end %>
 

@@ -31,16 +31,11 @@ module Spree
         params[:q][:user_id_eq] = params[:user_id] if params[:user_id].present?
 
         @search = @collection
-
-        @search = @search.expired if params[:q][:status_eq] == 'expired'
-        @search = @search.active if params[:q][:status_eq] == 'active'
-        @search = @search.redeemed if params[:q][:status_eq] == 'redeemed'
-
         @search = @search.ransack(params[:q])
 
         @collection = @search.result.includes(:user, :created_by)
 
-        @collection = @collection.page(params[:page]).per(params[:per_page]) if params[:format] != 'csv'
+        @collection = @collection.page(params[:page]).per(params[:per_page])
 
         @collection
       end
@@ -62,15 +57,14 @@ module Spree
       end
 
       def gift_cards_filter_dropdown_value
-        case params.dig(:q, :status_eq)
-        when 'active'
+        if params.dig(:q, :active).present?
           Spree.t('admin.gift_cards.active')
-        when 'expired'
+        elsif params.dig(:q, :expired).present?
           Spree.t(:expired)
-        when 'redeemed'
+        elsif params.dig(:q, :redeemed).present?
           Spree.t('admin.gift_cards.redeemed')
         else
-          Spree.t('admin.gift_cards.all')
+          Spree.t('admin.gift_cards.all_statuses')
         end
       end
 

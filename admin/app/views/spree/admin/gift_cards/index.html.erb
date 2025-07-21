@@ -4,10 +4,7 @@
   <% end %>
 
   <% content_for :page_actions do %>
-    <%= link_to spree.admin_gift_cards_path(q: params[:q].to_unsafe_hash, per_page: params[:per_page], format: :csv), id: 'gift-card-batch-export-link', class: 'btn btn-light bg-transparent with-tip', title: 'Export gift cards to a CSV file' do %>
-      <%= icon 'table-export', class: 'mr-2' %>
-      <%= Spree.t(:export) %>
-    <% end %>
+    <%= link_to_export_modal %>
 
     <div class="dropdown" id="page_actions_dropdown">
       <%= link_to_with_icon 'plus', Spree.t(:new_gift_card), '#', class: 'text-nowrap btn btn-primary align-self-center', data: { toggle: 'dropdown' }, id: 'more-actions-link' %>
@@ -36,6 +33,7 @@
     <% end %>
   <% else %>
     <%= turbo_frame_tag "gift_cards", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::GiftCards %>
       <%= render 'filters' %>
       <%= render 'list' %>
     <% end %>
