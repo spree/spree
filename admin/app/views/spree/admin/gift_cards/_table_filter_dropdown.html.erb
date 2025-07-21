@@ -5,7 +5,7 @@
   </button>
   <div class="dropdown-menu w-100" style="min-width: 200px">
 
-    <%= active_link_to Spree.t('admin.gift_cards.all_statuses'), params.to_unsafe_h.deep_merge({page: nil}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[active expired redeemed partially_redeemed] ).all?(&:blank?) %>
+    <%= active_link_to Spree.t('admin.gift_cards.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {active: nil, expired: nil, redeemed: nil, partially_redeemed: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[active expired redeemed partially_redeemed] ).all?(&:blank?) %>
     
     <%= link_to Spree.t('admin.gift_cards.active'),
       params.to_unsafe_h.deep_merge({page: nil, q: {active: true, expired: nil, redeemed: nil, partially_redeemed: nil}}),
