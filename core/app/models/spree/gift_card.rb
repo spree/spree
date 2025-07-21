@@ -53,8 +53,9 @@ module Spree
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[code user_id]
+    self.whitelisted_ransackable_attributes = %w[code user_id state]
     self.whitelisted_ransackable_associations = %w[users orders batch]
+    self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
     auto_strip_attributes :code
 

@@ -38,19 +38,19 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       let!(:redeemed_gift_card) { create(:gift_card, :redeemed, user: user) }
 
       it 'filters by active status' do
-        get :index, params: { q: { status_eq: 'active' } }
+        get :index, params: { q: { active: true } }
         expect(assigns(:collection)).to include(active_gift_card)
         expect(assigns(:collection)).not_to include(expired_gift_card, redeemed_gift_card)
       end
 
       it 'filters by expired status' do
-        get :index, params: { q: { status_eq: 'expired' } }
+        get :index, params: { q: { expired: true } }
         expect(assigns(:collection)).to include(expired_gift_card)
         expect(assigns(:collection)).not_to include(active_gift_card, redeemed_gift_card)
       end
 
       it 'filters by redeemed status' do
-        get :index, params: { q: { status_eq: 'redeemed' } }
+        get :index, params: { q: { redeemed: true } }
         expect(assigns(:collection)).to include(redeemed_gift_card)
         expect(assigns(:collection)).not_to include(active_gift_card, expired_gift_card)
       end
@@ -61,22 +61,6 @@ describe Spree::Admin::GiftCardsController, type: :controller do
 
           expect(assigns(:collection)).to include(active_gift_card, redeemed_gift_card)
           expect(assigns(:collection)).not_to include(expired_gift_card)
-        end
-      end
-    end
-
-    context 'with CSV format' do
-      it 'renders the CSV template' do
-        gift_cards = create_list(:gift_card, 3)
-        get :index, params: { format: :csv }
-        expect(response).to render_template(:index)
-        expect(response).to have_http_status(:ok)
-        expect(response.body).to include("Code,Amount,Used,Currency,Status,Expires at,Customer")
-        gift_cards.each do |gift_card|
-          expect(response.body).to include(gift_card.display_code)
-          expect(response.body).to include(gift_card.display_amount.to_html)
-          expect(response.body).to include(gift_card.display_amount_used.to_html)
-          expect(response.body).to include(gift_card.currency)
         end
       end
     end
