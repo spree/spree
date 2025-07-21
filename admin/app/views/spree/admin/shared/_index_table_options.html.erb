@@ -5,7 +5,7 @@
   <% args[:action] = per_page_action %>
 <% end %>
 
-<% if collection.any? %>
+<% if collection.any? && collection.respond_to?(:current_page) %>
   <div class="pagination-container">
     <div class="index-pagination-row d-flex align-items-center">
       <div class="col-6 col-lg-3">
