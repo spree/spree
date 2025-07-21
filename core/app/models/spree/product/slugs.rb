@@ -57,8 +57,6 @@ module Spree
       def slug_candidates
         if defined?(:deleted_at) && deleted_at.present?
           [
-            ['deleted', :name],
-            ['deleted', :name, :sku],
             ['deleted', :name, :uuid_for_friendly_id]
           ]
         else
@@ -91,7 +89,7 @@ module Spree
         set_slug
         update_column(:slug, slug)
 
-        new_slug = ->(rec) { "deleted-#{rec.id}_#{rec.slug}"[..254] }
+        new_slug = ->(rec) { "deleted-#{rec.slug}-#{uuid_for_friendly_id}"[..254] }
 
         translations.with_deleted.each { |rec| rec.update_columns(slug: new_slug.call(rec)) }
         slugs.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
