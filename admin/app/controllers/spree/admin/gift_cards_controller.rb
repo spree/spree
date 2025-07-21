@@ -40,7 +40,7 @@ module Spree
 
         @collection = @search.result.includes(:user, :created_by)
 
-        @collection = @collection.page(params[:page]).per(params[:per_page]) if params[:format] != 'csv'
+        @collection = @collection.page(params[:page]).per(params[:per_page])
 
         @collection
       end

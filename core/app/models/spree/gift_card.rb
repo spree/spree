@@ -129,6 +129,10 @@ module Spree
       end.to_s
     end
 
+    def to_csv(_store = nil)
+      Spree::CSV::GiftCardPresenter.new(self).call
+    end
+
     private
 
     def generate_code

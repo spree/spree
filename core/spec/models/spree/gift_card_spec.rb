@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::GiftCard, type: :model do
+  let(:store) { @default_store }
+
   describe 'Callbacks' do
     describe '#ensure_can_be_deleted' do
       it "ensures a used gift card can't be destroyed" do
@@ -118,6 +120,33 @@ RSpec.describe Spree::GiftCard, type: :model do
       it 'returns active' do
         expect(gift_card.display_state).to eq 'active'
       end
+    end
+  end
+
+  describe '#to_csv' do
+    let(:user) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john@example.com') }
+    let(:gift_card) { create(:gift_card, store: store, user: user, amount: 50.00) }
+
+    subject { gift_card.to_csv }
+
+    it 'returns an array' do
+      expect(subject).to be_an(Array)
+    end
+
+    it 'returns the correct number of fields' do
+      expect(subject.length).to eq(12)
+    end
+
+    it 'includes the gift card code' do
+      expect(subject[0]).to eq(gift_card.display_code)
+    end
+
+    it 'includes the currency' do
+      expect(subject[4]).to eq(gift_card.currency)
+    end
+
+    it 'includes the user email' do
+      expect(subject[7]).to eq(user.email)
     end
   end
 end
