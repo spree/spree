@@ -75,7 +75,13 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
     it 'returns all paid orders' do
       get :index, params: { q: { payment_state_eq: :paid } }
 
-      expect(assigns(:orders).to_a).to contain_exactly(paid_order, cancelled_order)
+      expect(assigns(:orders).to_a).to contain_exactly(paid_order)
+    end
+
+    it 'returns all cancelled orders' do
+      get :index, params: { q: { payment_state_eq: :credit_owed } }
+
+      expect(assigns(:orders).to_a).to contain_exactly(cancelled_order)
     end
 
     it 'returns all orders with balance due' do
