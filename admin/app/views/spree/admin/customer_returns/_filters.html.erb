@@ -3,6 +3,8 @@
     param: :number_cont,
     label: Spree.t(:number) %>
 
+    <%= render_admin_partials(:customer_returns_filters_partials, f: f) %>
+
     <%= render "spree/admin/shared/filter_badge_template" %>
 
     <div data-filters-target="badgesContainer" class="filter-badges-container"></div>

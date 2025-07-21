@@ -2,6 +2,12 @@
   <%= Spree.t(:payment_methods) %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:payment_methods_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:payment_methods_header_partials) %>
+
 <div class="card-lg">
   <div class="table-responsive">
     <table class="table">

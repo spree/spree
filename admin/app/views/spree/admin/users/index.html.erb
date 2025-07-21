@@ -3,12 +3,12 @@
 <% end %>
 
 <% content_for :page_actions do %>
+  <%= render_admin_partials(:users_actions_partials) %>
   <%= link_to_export_modal %>
-  
-  <%= render 'extra_actions' %>
-
   <%= link_to_with_icon 'plus', Spree.t(:new_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
 <% end %>
+
+<%= render_admin_partials(:users_header_partials) %>
 
 <div class="card-lg">
   <%= turbo_frame_tag "customers", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
