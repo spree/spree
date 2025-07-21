@@ -5,7 +5,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let(:store) { create(:store, default: true) }
+  let(:store) { @default_store }
   let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
   let(:shipment) { order.shipments.first }
   let(:shipping_method) { shipment.shipping_method }

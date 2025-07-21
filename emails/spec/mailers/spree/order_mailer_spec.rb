@@ -5,7 +5,7 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let!(:store) { create(:store, name: 'First Store', default: true, default_locale: 'en') }
+  let!(:store) { @default_store }
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: 'en') }
 
   let(:order) do
@@ -87,7 +87,7 @@ describe Spree::OrderMailer, type: :mailer do
     end
 
     it 'has correct subject line' do
-      expect(notification_email.subject).to eq('First Store received a new order')
+      expect(notification_email.subject).to eq("#{store.name} received a new order")
     end
 
     it 'shows the correct heading in email body' do
@@ -272,6 +272,7 @@ describe Spree::OrderMailer, type: :mailer do
     end
 
     context 'with custom domain' do
+      let(:store) { create(:store) }
       let!(:custom_domain) { create(:custom_domain, store: store, url: 'my-store.com') }
 
       it 'uses custom domain for URLs in emails' do
