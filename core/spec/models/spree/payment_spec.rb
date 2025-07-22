@@ -165,6 +165,13 @@ describe Spree::Payment, type: :model do
         payment.source = nil
         expect(payment).not_to be_valid
       end
+
+      context 'when skip_source_requirement is set to true' do
+        it 'does not validate source presence' do
+          payment.skip_source_requirement = true
+          expect(payment).to be_valid
+        end
+      end
     end
 
     it 'returns useful error messages when source is invalid' do

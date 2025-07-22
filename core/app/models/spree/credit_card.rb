@@ -39,7 +39,7 @@ module Spree
     end
 
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
-    scope :capturable, -> { where("gateway_customer_profile_id IS NOT NULL OR gateway_payment_profile_id IS NOT NULL") }
+    scope :capturable, -> { where.not(gateway_customer_profile_id: nil).or(where.not(gateway_payment_profile_id: nil)) }
     scope :default, -> { where(default: true) }
     scope :not_expired, lambda {
       where('CAST(spree_credit_cards.year AS DECIMAL) > ?', Time.current.year).
