@@ -249,7 +249,9 @@ module Spree
     end
 
     def source_required?
-      !skip_source_requirement || payment_method&.source_required?
+      return false if skip_source_requirement
+
+      payment_method&.source_required?
     end
 
     private
