@@ -137,6 +137,12 @@ module Spree
 
         'spree/admin'
       end
+
+      def parse_date_param(date_string)
+        return if date_string.blank?
+
+        date_string.to_date&.in_time_zone(current_timezone)
+      end
     end
   end
 end

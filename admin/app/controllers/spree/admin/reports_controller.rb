@@ -63,12 +63,6 @@ module Spree
         attributes[:date_to] = parse_date_param(attributes[:date_to])&.end_of_day if attributes[:date_to].present?
         attributes
       end
-
-      def parse_date_param(date_string)
-        return if date_string.blank?
-
-        date_string.to_date&.in_time_zone(current_timezone)
-      end
     end
   end
 end
