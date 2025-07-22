@@ -1,0 +1,114 @@
+---
+title: "Super Admin Capabilities"
+description: "Learn how super admins can manage multi-tenant platforms in Spree Enterprise Edition."
+---
+
+Spree Commerce Enterprise Edition gives super admins complete flexibility in managing a multi-tenant platform. When operating such a platform, there are a range of models possible that sit along a “control spectrum” from full centralization (where the super admin manages everything) to full tenant autonomy (where tenants have complete operational control). This flexibility allows you to tailor the platform to your business model and tenant needs.
+
+The features described below highlight examples from both ends of the “control spectrum.” Please note that some use-case-specific features may require additional development on top of the existing multi-tenant platform.
+
+## Tenant Management
+
+Super admins can provision, configure, and monitor tenant stores from a centralized dashboard, ensuring platform-wide consistency or granting tenant-level autonomy:
+
+- **Full Control** - Provision tenant stores manually with centralized settings and limited tenant customization.
+- **Full Freedom** - Enable self-service tenant sign-up and allow full configuration autonomy.
+- **Hybrid** - Offer invitation-only onboarding for some tenants and self-service for others with selective configuration permissions.
+
+## Tenant Onboarding
+
+Manage how tenants join and set up their stores on your platform:
+
+- **Full Control** - Super admin approves applications and provisions stores manually.
+- **Full Freedom** - Tenants register and configure stores independently using an onboarding wizard.
+- **Hybrid** - Automate store setup but require approval for advanced configurations or premium features.
+
+## Master Catalog Options
+
+Define product catalog management across tenants.
+
+- **Full Control** - Curate a master catalog for all tenants to use.
+- **Full Freedom** - Tenants create and manage independent product catalogs.
+- **Hybrid** - Combine a master catalog for core items with tenant-managed supplementary catalogs.
+
+## Payments & Merchant of Record
+
+Determine how payments are processed and who holds financial responsibility.
+
+- **Full Control** - Super admin is the merchant of record, handling all transactions, chargebacks, and refunds.
+- **Full Freedom** - Tenants integrate their own payment gateways and assume financial responsibilities.
+- **Hybrid** - Provide options for tenants to use their own gateways or opt into platform-managed payments with revenue-sharing models.
+
+## Shipping & Fulfillment
+
+Control how fulfillment operations are structured across the platform.
+
+- **Full Control** - Centralized fulfillment from platform warehouses, standard shipping methods, and unified rates.
+- **Full Freedom** - Tenants manage their own shipping carriers, zones, and fulfillment workflows.
+- **Hybrid** - Centralized fulfillment for select tenants or product categories while others fulfill independently.
+
+## Global Analytics & Reporting
+
+Gain insights into tenant performance and platform-wide KPIs.
+
+- **Full Control** - Central dashboard showing detailed analytics for all tenant stores.
+- **Full Freedom** - Tenants access their own isolated analytics, while super admin sees aggregated metrics only.
+- **Hybrid** - Super admin views tenant performance metrics with optional tenant-specific dashboards.
+
+## Branding & White-Label Tools
+
+Customize the platform’s appearance for a seamless white-label experience.
+
+- **Full Control** - Unified branding across all tenant stores for a consistent look and feel.
+- **Full Freedom** - Tenants control their own branding, including themes, colors, and logos.
+- **Hybrid** - Allow tenant branding within predefined global guidelines.
+
+## API Management
+
+Enable secure integrations and programmatic operations.
+
+- **Full Control** - Super admin issues API keys and limits scopes for tenant integrations.
+- **Full Freedom** - Tenants generate and manage their own API credentials.
+- **Hybrid** - Provide tenant APIs but maintain centralized monitoring and access control.
+
+## Tenant Store Management Options
+
+Choose how you manage tenant stores.
+
+- **Full Control** - Admins access each tenant dashboard individually for detailed management.
+- **Full Freedom** - Tenants operate their stores autonomously without super admin intervention.
+- **Hybrid** - Utilize a centralized multi-admin interface for global actions while permitting tenants to manage daily operations.
+
+## Billing & Subscription Models
+
+Decide how tenants are billed for platform usage.
+
+- **Full Control** - Centralized billing with subscription fees, tiered plans, or revenue sharing.
+- **Full Freedom** - Tenants manage their own billing and payment systems independently.
+- **Hybrid** - Offer flexible billing options, combining platform fees with tenant-managed subscriptions.
+
+## Security & Compliance
+
+Maintain platform-wide security and regulatory standards.
+
+- **Full Control** - Enforce global security protocols, GDPR/HIPAA compliance, and vulnerability management.
+- **Full Freedom** - Tenants are responsible for their own security and compliance measures.
+- **Hybrid** - Provide shared security infrastructure with tenant-specific compliance configurations.
+
+<Columns cols={2}>
+  <Card title="Book a Demo" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
+    Schedule a demo to explore the platform and get your questions answered
+  </Card>
+
+  <Card title="Ask for Pricing" icon="dollar-sign" href="https://spreecommerce.org/get-started/" cta="Click here">
+    See Enterprise pricing for your use case
+  </Card>
+</Columns>
+
+## Further Reading
+- [<u>Multi-Tenant Model</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/multi-tenant-model)
+- [<u>Multi-Tenant Capabilities</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/multi-tenant-capabilities)
+- [<u>Tenant Capabilities</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/tenant-capabilities)
+- [<u>Franchises & Reseller Networks</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/franchises-and-reseller-networks)
+- [<u>Multi-Brand Enterprises</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/multi-brand-enterprise-model)
+- [<u>White-Label SaaS</u>](https://spreecommerce.org/docs/use-case/multi-tenant-platform/white-label-saas)

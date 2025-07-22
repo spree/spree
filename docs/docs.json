@@ -63,7 +63,6 @@
                     "icon": "gauge",
                     "pages": [
                       "developer/admin/admin",
-                      "developer/admin/authentication",
                       "developer/admin/extending-ui",
                       "developer/admin/navigation",
                       "developer/admin/permissions",
@@ -98,14 +97,6 @@
                       "developer/multi-tenant/core-concepts",
                       "developer/multi-tenant/configuration"
                     ]
-                  },
-                  {
-                    "group": "Multi-Vendor",
-                    "icon": "shop",
-                    "pages": [
-                      "developer/multi-vendor/quickstart",
-                      "developer/multi-vendor/installation"
-                    ]
                   }
                 ]
               },
@@ -113,7 +104,6 @@
                 "group": "Deployment",
                 "pages": [
                   "developer/deployment/render",
-                  "developer/deployment/aws",
                   "developer/deployment/docker",
                   "developer/deployment/environment_variables",
                   "developer/deployment/emails",
@@ -1032,6 +1022,18 @@
                   "use-case/marketplace/admin-dashboard", 
                   "use-case/marketplace/vendor-dashboard",
                   "use-case/marketplace/customer-ux"  
+                ]
+              },
+              {    
+                "group": "Multi-Tenant Platform",
+                "pages": [
+                  "use-case/multi-tenant-platform/multi-tenant-model",
+                  "use-case/multi-tenant-platform/multi-tenant-capabilities",
+                  "use-case/multi-tenant-platform/super-admin-capabilities", 
+                  "use-case/multi-tenant-platform/tenant-capabilities",
+                  "use-case/multi-tenant-platform/franchises-and-reseller-networks",
+                  "use-case/multi-tenant-platform/multi-brand-enterprise-model",
+                  "use-case/multi-tenant-platform/white-label-saas"
                 ]
               }
             ]
