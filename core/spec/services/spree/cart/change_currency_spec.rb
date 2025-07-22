@@ -5,7 +5,11 @@ module Spree
     subject { described_class.call(order: order, new_currency: new_currency) }
 
     let(:order) { create(:order_with_line_items, store: store, currency: 'USD') }
-    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let(:store) { @default_store }
+
+    before do
+      allow(store).to receive(:supported_currencies).and_return('USD,EUR,GBP')
+    end
 
     context 'when switching to a supported currency' do
       let(:new_currency) { 'EUR' }
@@ -37,15 +41,6 @@ module Spree
           end
         end
       end
-
-      context 'when product does not have a price in given currency' do
-        it 'returns failure' do
-          expect(subject).to be_failure
-          order.reload
-          expect(order.currency).to eq('USD')
-          expect(order.line_items.first.currency).to eq('USD')
-        end
-      end
     end
 
     context 'when switching to an unsupported currency' do
@@ -56,6 +51,16 @@ module Spree
         order.reload
         expect(order.currency).to eq('USD')
         expect(order.line_items.first.currency).to eq('USD')
+      end
+    end
+
+    context 'when there are items that are not available in the new currency' do
+      let(:new_currency) { 'EUR' }
+
+      it 'removes them from the Cart' do
+        expect(order.line_items).not_to be_empty
+        expect(subject).to be_success
+        expect(Spree::Order.find(order.id).line_items).to be_empty
       end
     end
   end

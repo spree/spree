@@ -1,0 +1,9 @@
+<div id="variants_search_results" class="search-results" data-search-picker-target="results">
+  <% if variants.any? %>
+    <%= render collection: variants, partial: 'spree/admin/variants/search_result', as: :variant %>
+  <% else %>
+    <p class="text-muted text-center py-5">
+      <%= Spree.t('admin.variants.search_results.no_variants') %>
+    </p>
+  <% end %>
+</div>

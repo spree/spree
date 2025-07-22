@@ -25,7 +25,7 @@ Doorkeeper.configure do
   end
 
   admin_authenticator do |routes|
-    current_spree_user&.spree_admin? || redirect_to(routes.root_url)
+    current_spree_user&.spree_admin?(Spree::Store.current) || redirect_to(routes.root_url)
   end
 
   grant_flows %w[password client_credentials]
@@ -45,4 +45,6 @@ Doorkeeper.configure do
   # using Bcrupt for token secrets is currently not supported by Doorkeeper
   hash_token_secrets fallback: :plain
   hash_application_secrets fallback: :plain, using: '::Doorkeeper::SecretStoring::BCrypt'
+
+  access_token_expires_in 1.month
 end

@@ -106,19 +106,11 @@ describe Spree do
       end
     end
 
-    context 'when private_storage_service_name is a Integer instance' do
-      it 'raises an error' do
-        described_class.private_storage_service_name = 33
-
-        expect { described_class.private_storage_service_name }.to raise_error(RuntimeError)
-      end
-    end
-
     context 'when private_storage_service_name is set to nil' do
-      it 'returns the private_storage_service_name as nil value' do
+      it 'returns the private_storage_service_name as the default service' do
         described_class.private_storage_service_name = nil
 
-        expect(described_class.private_storage_service_name).to be nil
+        expect(described_class.private_storage_service_name).to eq(Rails.application.config.active_storage.service)
       end
     end
   end

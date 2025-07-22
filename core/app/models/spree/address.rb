@@ -1,18 +1,13 @@
 module Spree
-  class Address < Spree::Base
+  class Address < Spree.base_class
     require 'validates_zipcode'
 
-    include Metadata
-    if defined?(Spree::Webhooks)
+    include Spree::Metadata
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
-    if defined?(Spree::Security::Addresses)
-      include Spree::Security::Addresses
-    end
 
-    if Rails::VERSION::STRING >= '6.1'
-      serialize :preferences, Hash, default: {}
-    end
+    serialize :preferences, type: Hash, coder: YAML, default: {}
 
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
@@ -31,25 +26,46 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
+
+    if defined?(Spree::Security::Addresses)
+      include Spree::Security::Addresses
+    end
 
     scope :not_deleted, -> { where(deleted_at: nil) }
 
+    scope :by_state_name_or_abbr, lambda { |state_name|
+      joins(:state).merge(Spree::State.where(name: state_name).or(Spree::State.where(abbr: state_name)))
+    }
+
+    scope :not_quick_checkout, -> { where(quick_checkout: false) }
+
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :user, class_name: "::#{Spree.user_class}", optional: true
+    belongs_to :user, class_name: Spree.user_class.name, optional: true, touch: true
 
     has_many :shipments, inverse_of: :address
 
+    after_initialize :set_default_values, if: -> { new_record? && user.present? }
+
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
+    before_validation :remove_emoji_and_normalize
+
+    after_create :set_user_attributes, if: -> { user.present? }
+
+    after_commit :async_geocode
 
     with_options presence: true do
-      validates :firstname, :lastname, :address1, :city, :country
+      validates :firstname, :lastname, if: :require_name?
+      validates :address1, if: :require_street?
+      validates :city, :country
       validates :zipcode, if: :require_zipcode?
       validates :phone, if: :require_phone?
     end
 
     validate :state_validate, :postal_code_validate
+    validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
                                     scope: :user_id,
@@ -57,38 +73,48 @@ module Spree
                                     allow_blank: true,
                                     allow_nil: true }
 
+    def address_validators
+      Rails.application.config.spree.validators.addresses.each do |validator|
+        validates_with validator
+      end
+    end
+
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 
-    alias_attribute :first_name, :firstname
-    alias_attribute :last_name, :lastname
+    alias_attribute :postal_code, :zipcode
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
     self.whitelisted_ransackable_associations = %w[country state user]
-
-    def self.build_default
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        `Address#build_default` is deprecated and will be removed in Spree 5.0.
-        Please use standard rails `Address.new(country: current_store.default_country)`
-      DEPRECATION
-      new(country: Spree::Country.default)
-    end
-
-    def self.default(user = nil, kind = 'bill')
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        `Address#default` is deprecated and will be removed in Spree 5.0.
-      DEPRECATION
-      if user && user_address = user.public_send(:"#{kind}_address")
-        user_address.clone
-      else
-        build_default
-      end
-    end
 
     def self.required_fields
       Spree::Address.validators.map do |v|
         v.is_a?(ActiveModel::Validations::PresenceValidator) ? v.attributes : []
       end.flatten
+    end
+
+    def user_default_billing?
+      user.present? && id == user.bill_address_id
+    end
+
+    def user_default_shipping?
+      user.present? && id == user.ship_address_id
+    end
+
+    def first_name
+      firstname
+    end
+
+    def first_name=(value)
+      self.firstname = value
+    end
+
+    def last_name
+      lastname
+    end
+
+    def last_name=(value)
+      self.lastname = value
     end
 
     def full_name
@@ -101,6 +127,10 @@ module Spree
 
     def state_name_text
       state_name.present? ? state_name : state&.name
+    end
+
+    def street
+      [address1, address2].join(' ')
     end
 
     def to_s
@@ -151,15 +181,31 @@ module Spree
     end
 
     def require_zipcode?
-      country ? country.zipcode_required? : true
+      !quick_checkout && (country ? country.zipcode_required? : true)
+    end
+
+    def require_name?
+      !quick_checkout
+    end
+
+    def require_company?
+      false
+    end
+
+    def require_street?
+      !quick_checkout
+    end
+
+    def show_company_address_field?
+      Spree::Store.current.prefers_company_field_enabled?
     end
 
     def editable?
-      new_record? || (shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?)
+      new_record? || Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end
 
     def can_be_deleted?
-      shipments.empty? && !Order.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
+      shipments.empty? && Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).none?
     end
 
     def check
@@ -169,15 +215,36 @@ module Spree
     end
 
     def destroy
+      assign_new_default_address_to_user
+
       if can_be_deleted?
         super
       else
         update_column :deleted_at, Time.current
-        assign_new_default_address_to_user
       end
     end
 
+    def async_geocode
+      Spree::Addresses::GeocodeAddressJob.perform_later(id) if should_geocode?
+    end
+
+    def geocoder_address
+      @geocoder_address ||= [street, city, state_text, country.to_s].compact.map(&:strip).join(', ')
+    end
+
     private
+
+    def should_geocode?
+      Spree::Config[:geocode_addresses] && (
+        saved_changes.key?(:address1) || saved_changes.key?(:city) || saved_changes.key?(:state_id) || saved_changes.key?(:country_id)
+      )
+    end
+
+    def set_default_values
+      self.firstname ||= user.first_name
+      self.lastname ||= user.last_name
+      self.phone ||= user.phone
+    end
 
     def clear_state
       self.state = nil
@@ -193,6 +260,27 @@ module Spree
       elsif state_name.present? && !country.states_required? && country.states.empty?
         clear_state_name
       end
+    end
+
+    def remove_emoji_and_normalize
+      attributes_to_normalize = attributes.slice(*FIELDS_TO_NORMALIZE)
+      normalized_attributes = attributes_to_normalize.compact_blank.deep_transform_values do |value|
+        NormalizeString.remove_emoji_and_normalize(value.to_s).strip
+      end
+
+      normalized_attributes.transform_keys! { |key| key.gsub('original_', '') } if defined?(Spree::Security::Addresses)
+
+      assign_attributes(normalized_attributes)
+    end
+
+    def set_user_attributes
+      if user.name.blank?
+        user.first_name = firstname
+        user.last_name = lastname
+      end
+      user.phone = user.phone.presence || phone.presence
+
+      user.save! if user.changed?
     end
 
     def state_validate
@@ -213,16 +301,14 @@ module Spree
       end
 
       # ensure state_name belongs to country without states, or that it matches a predefined state name/abbr
-      if state_name.present?
-        if country.states.present?
-          states = country.states.find_all_by_name_or_abbr(state_name)
+      if state_name.present? && country.states.present?
+        states = country.states.find_all_by_name_or_abbr(state_name)
 
-          if states.size == 1
-            self.state = states.first
-            clear_state_name
-          else
-            errors.add(:state, :invalid)
-          end
+        if states.size == 1
+          self.state = states.first
+          clear_state_name
+        else
+          errors.add(:state, :invalid)
         end
       end
 
@@ -245,9 +331,18 @@ module Spree
     def assign_new_default_address_to_user
       return unless user
 
-      user.bill_address = user.addresses.last if user.bill_address == self
-      user.ship_address = user.addresses.last if user.ship_address == self
+      user.reload
+      return if user.bill_address != self && user.ship_address != self
+
+      last_address = assign_new_default_address_to_user_scope.find { |address| address.id != id && address.valid? }
+
+      user.bill_address = last_address if user.bill_address == self
+      user.ship_address = last_address if user.ship_address == self
       user.save!
+    end
+
+    def assign_new_default_address_to_user_scope
+      user.addresses.not_quick_checkout.reorder(created_at: :desc)
     end
   end
 end

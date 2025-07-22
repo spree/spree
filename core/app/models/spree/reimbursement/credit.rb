@@ -1,5 +1,5 @@
 module Spree
-  class Reimbursement::Credit < Spree::Base
+  class Reimbursement::Credit < Spree.base_class
     class_attribute :default_creditable_class
     self.default_creditable_class = nil
 

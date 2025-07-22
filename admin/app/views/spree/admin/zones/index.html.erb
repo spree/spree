@@ -1,0 +1,50 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:zones) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:zones_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_zone), new_object_url, class: "btn btn-primary" %>
+<% end if can? :create, Spree::Zone %>
+
+<% content_for :page_alerts do %>
+  <div class="alert alert-info">
+    Zones are geographical groupings, they represent collections of either states or countries.
+  </div>
+<% end %>
+
+<%= render_admin_partials(:zones_header_partials) %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th><%= sort_link @search,:name, Spree.t(:name) %></th>
+          <th>
+            <%= sort_link @search,:description, Spree.t(:description) %>
+          </th>
+          <th><%= Spree.t(:default_tax_zone) %></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |zone| %>
+            <tr id="<%= spree_dom_id zone %>" class="cursor-pointer" data-controller="row-link">
+              <td class="w-25" data-action="click->row-link#openLink"><%= zone.name %></td>
+              <td class="w-40 text-muted text-wrap" data-action="click->row-link#openLink"><%= zone.description %></td>
+              <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(zone.default_tax?) %></td>
+              <td class="w-10 actions">
+                <%= link_to_edit(zone, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, zone %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

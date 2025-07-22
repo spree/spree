@@ -4,9 +4,8 @@ describe 'API v2 Errors spec', type: :request do
   context 'record not found' do
     before { get '/api/v2/storefront/products/product-that-doesn-t-exist' }
 
-    it_behaves_like 'returns 404 HTTP status'
-
     it 'returns proper error message' do
+      expect(response.status).to eq(404)
       expect(json_response['error']).to eq('The resource you were looking for could not be found.')
     end
   end
@@ -23,10 +22,19 @@ describe 'API v2 Errors spec', type: :request do
       patch '/api/v2/storefront/cart/empty', headers: headers_bearer
     end
 
-    it_behaves_like 'returns 403 HTTP status'
-
     it 'returns proper error message' do
+      expect(response.status).to eq(403)
       expect(json_response['error']).to eq('You are not authorized to access this page.')
+    end
+
+    it 'calls error handler' do
+      expect(Rails.error).to receive(:report).with(
+        instance_of(CanCan::AccessDenied),
+        context: { user_id: user.id },
+        source: 'spree.api'
+      )
+
+      patch '/api/v2/storefront/cart/empty', headers: headers_bearer
     end
   end
 

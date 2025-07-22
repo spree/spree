@@ -4,7 +4,7 @@ module Spree
   describe ProductsHelper, type: :helper do
     include ProductsHelper
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
 
     let(:product) { create(:product, stores: [store]) }
     let(:currency) { 'USD' }
@@ -284,59 +284,6 @@ module Spree
         end
 
         it { is_expected.to eq("en/USD/spree/products/new/#{promotion.cache_key}/#{promotion_2.cache_key}") }
-      end
-    end
-
-    context '#available_status' do
-      subject(:status) { helper.available_status(product) }
-
-      let(:product) { create(:product, stores: [store]) }
-
-      context 'product is available' do
-        it 'has available status' do
-          expect(status).to eq(Spree.t(:active))
-        end
-      end
-
-      context 'product was deleted' do
-        before do
-          product.delete
-        end
-
-        it 'has deleted status' do
-          expect(status).to eq(Spree.t(:deleted))
-        end
-      end
-
-      context 'product is discontinued' do
-        before do
-          product.discontinue!
-        end
-
-        it 'has discontinued status' do
-          expect(status).to eq(Spree.t(:archived))
-        end
-      end
-
-      context 'product will be available soon' do
-        before do
-          product.status = 'draft'
-          product.make_active_at = 1.month.from_now
-        end
-
-        it 'has pending sale status' do
-          expect(status).to eq(Spree.t(:pending_sale))
-        end
-      end
-
-      context 'draft product' do
-        before do
-          product.status = 'draft'
-        end
-
-        it 'has draft status' do
-          expect(status).to eq(Spree.t(:draft))
-        end
       end
     end
   end

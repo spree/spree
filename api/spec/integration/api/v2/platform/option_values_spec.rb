@@ -13,7 +13,14 @@ describe 'Option Values API', swagger: true do
   let(:id) { create(:option_value).id }
   let(:option_type) { create(:option_value) }
   let(:records_list) { create_list(:option_value, 2) }
-  let(:valid_create_param_value) { build(:option_value).attributes }
+  let(:valid_create_param_value) do
+    {
+      name: 'option value',
+      presentation: 'Option Value',
+      position: 10,
+      option_type_id: option_type.id
+    }
+  end
   let(:valid_update_param_value) do
     {
       name: 'M'
@@ -22,6 +29,7 @@ describe 'Option Values API', swagger: true do
   let(:invalid_param_value) do
     {
       name: '',
+      presentation: ''
     }
   end
 

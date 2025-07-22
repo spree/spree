@@ -3,9 +3,9 @@ require 'spec_helper'
 describe Spree::Promotion::Rules::Taxon, type: :model do
   let(:rule) { subject }
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
 
-  context '#eligible?(order)' do
+  describe '#eligible?(order)' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:taxon) { create :taxon, name: 'first', taxonomy: taxonomy }
     let(:taxon2) { create :taxon, name: 'second', taxonomy: taxonomy }
@@ -102,6 +102,34 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
 
         it { expect(rule).to be_eligible(order) }
       end
+    end
+  end
+
+  describe '#add_taxons' do
+    let(:promotion) { create(:promotion) }
+    let(:rule) { create(:promotion_rule_taxon, promotion: promotion) }
+    let(:taxons) { create_list(:taxon, 3) }
+
+    it 'adds the taxons to the rule' do
+      rule.taxon_ids_to_add = taxons.map(&:id)
+      rule.save!
+      expect(rule.taxons).to match_array(taxons)
+    end
+
+    it 'removes the taxons from the rule' do
+      rule.taxon_ids_to_add = taxons.map(&:id)
+      rule.save!
+      rule.taxon_ids_to_add = []
+      rule.save!
+      expect(rule.taxons).to be_empty
+    end
+
+    it 'does not remove the taxons when nil is passed' do
+      rule.taxon_ids_to_add = taxons.map(&:id)
+      rule.save!
+      rule.taxon_ids_to_add = nil
+      rule.save!
+      expect(rule.taxons).to match_array(taxons)
     end
   end
 end

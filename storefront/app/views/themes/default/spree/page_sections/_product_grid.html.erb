@@ -1,0 +1,59 @@
+<%= turbo_frame_tag :products_list do %>
+  <div class='page-container'>
+    <div class='flex justify-between'>
+      <div
+        data-controller='slideover'
+        data-slideover-invisible-class='-translate-x-full,opacity-0'
+        data-slideover-visible-class='translate-x-0,opacity-100'
+        data-slideover-active-target='#slideover-filters'
+      >
+        <%= button_tag(
+          type: 'button',
+          class: 'uppercase flex gap-2 text-sm items-center font-semibold py-3',
+          data: {
+            action: 'click->slideover#toggle click@window->slideover#hide'
+          }
+        ) do %>
+          <%= render 'spree/shared/icons/filter' %>
+          <%= Spree.t(:filter) %>
+          <% if products_selected_filters_count > 0 %>
+            <span class="font-normal opacity-50">(<%= products_selected_filters_count %>)</span>
+          <% end %>
+        <% end %>
+        <!-- begin sidebar/slideover -->
+        <div
+          data-slideover-target='overlay'
+          class='fixed inset-0 flex flex-row z-50 transition-opacity hidden'
+        >
+          <div class='fixed inset-0'>
+            <div data-action='click->slideover#toggle' class='absolute inset-0 bg-background opacity-75'></div>
+          </div>
+          <%= render 'spree/products/filters' %>
+        </div>
+        <!-- end sidebar/slideover -->
+      </div>
+
+      <%= render 'spree/products/sort' %>
+    </div>
+  </div>
+
+  <div style="<%= section_styles(section) %>">
+    <div class="page-container">
+      <% if products.any? %>
+        <div class="grid gap-y-8 gap-x-4 grid-cols-2 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-10 mb-7" id="products">
+          <%= render 'spree/shared/products', products: products %>
+        </div>
+
+        <%= render 'spree/products/show_more_button' %>
+        <%= render('spree/products/json_ld_list', products: products) unless turbo_frame_request? %>
+      <% else %>
+        <div class="grid">
+          <div class="text-center py-10">
+            <h2 class="text-xl font-semibold mb-2"><%= Spree.t(:no_products_found) %></h2>
+            <p class="text-sm"><%= Spree.t(:try_removing_filters) %></p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

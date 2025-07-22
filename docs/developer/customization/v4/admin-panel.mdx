@@ -1,0 +1,82 @@
+<Warning>
+  This section is only relevant for Spree 4
+</Warning>
+
+Starting with Spree 4.7, we've introduced a new way of customizing the admin panel, that enables extensions to modify the admin panel UI without depending on the Deface gem. For Spree 4.6 and earlier, please see how to use [deface_overrides_tutorial.md](../advanced/deface_overrides_tutorial.md "mention") overrides.
+
+### Customizing the main menu
+
+When extending Spree with custom features, it's common to add new options to the menu on the left-hand side.
+
+The menu is built with [`Spree::Admin::MainMenu::Section`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/section.rb) and [`Spree::Admin::MainMenu::Item`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/item.rb) objects.
+
+Additionally, there are two builder classes [`Spree::Admin::MainMenu::SectionBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/section_builder.rb) and [`Spree::Admin::MainMenu::ItemBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/item_builder.rb) that make it easier to build more complex sections.
+
+The menu is available under `Rails.application.config.spree_backend.main_menu` and can be modified by both extensions as well as the Rails application code.
+
+#### Example: adding an additional section to the admin panel:
+
+```ruby
+Rails.application.config.after_initialize do
+  Rails.application.config.spree_backend.main_menu.add(
+    Spree::Admin::MainMenu::SectionBuilder.new('subscriptions', 'inbox-fill.svg').
+       with_admin_ability_check(Spree::Subscription).
+       with_items(
+         Spree::Admin::MainMenu::ItemBuilder.new('active', Spree::Core::Engine.routes.url_helpers.admin_active_subsciptions_path).build,
+         Spree::Admin::MainMenu::ItemBuilder.new('expired', Spree::Core::Engine.routes.url_helpers.admin_expired_subsciptions_path).build
+       ).
+       build
+  )
+end
+```
+
+For a more extensive example, take a look at how the [default menu is built](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/main_menu/default_configuration_builder.rb).
+
+### Customizing tabs
+
+In some cases you may need to add a new tab to a page for editing Orders, Products or Users.
+
+![](/images/Screenshot 2023-10-31 at 18.57.13.png)
+
+These tabs are built with [`Spree::Admin::Tabs::Tab`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/tabs/tab.rb). You can also use [`Spree::Admin::Tabs::TabBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/tabs/tab_builder.rb) class to construct new Tab objects. The tabs are attached to `Rails.application.config.spree_backend.tabs` and can be modified via an initializer.
+
+#### Example: adding an additional tab to the product edit admin page
+
+```ruby
+Rails.application.config.after_initialize do
+  Rails.application.config.spree_backend.tabs[:product].add(
+    Spree::Admin::Tabs::TabBuilder.new('discounts', ->(resource) { admin_product_discounts_path(product) }).
+      with_icon_key('view.svg').
+      with_active_check.
+      build
+  )
+end
+```
+
+### Customizing actions
+
+A common case for extensions is to add a new action button in the admin panel.
+
+Action buttons are built with [`Spree::Admin::Actions::Action`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/actions/action.rb) or with a dedicated [`Spree::Admin::Actions::ActionBuilder`](https://github.com/spree/spree_backend/blob/main/app/models/spree/admin/actions/action_builder.rb) class. The action buttons are attached to `Rails.application.config.spree_backend.actions` and can be modified with an initializer.
+
+**Example: adding a new button to the order page**
+
+```ruby
+Rails.application.config.after_initialize do
+  Rails.application.config.spree_backend.actions[:order].add(
+    Spree::Admin::Actions::ActionBuilder.new('generate_export', admin_export_orders_path).
+      with_icon_key('list.svg').
+      with_style(Spree::Admin::Actions::ActionStyle::PRIMARY).
+      with_method(:post).
+      build
+  )
+end
+```
+
+### Customizing existing views and partials
+
+If you need a more extensive customization of any of the admin panel pages, you can just copy their .erb file from the `spree_backend` gem to your `app/views/` directory and modify it there. This allows you to fully override default views provided by the `spree_backend` gem.
+
+<Note>
+  Note: This approach is not recommended for Spree extensions, as it may conflict with other extensions that modify the same view.
+</Note>

@@ -1,8 +1,8 @@
 module Spree
-  class ReturnItem < Spree::Base
+  class ReturnItem < Spree.base_class
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
@@ -11,6 +11,10 @@ module Spree
 
     def return_quantity=(value)
       @_return_quantity = value.to_i
+    end
+
+    def pre_tax_amount=(amount)
+      self[:pre_tax_amount] = Spree::LocalizedNumber.parse(amount)
     end
 
     def return_quantity
@@ -35,6 +39,7 @@ module Spree
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
+    has_one :line_item, through: :inventory_unit
 
     validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order
@@ -62,7 +67,11 @@ module Spree
     scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: { original_return_item_id: nil }).distinct }
     scope :resellable, -> { where resellable: true }
 
-    serialize :acceptance_status_errors
+    if Rails::VERSION::STRING >= '7.1.0'
+      serialize :acceptance_status_errors, coder: YAML
+    else
+      serialize :acceptance_status_errors
+    end
 
     delegate :eligible_for_return?, :requires_manual_intervention?, to: :validator
     delegate :variant, to: :inventory_unit

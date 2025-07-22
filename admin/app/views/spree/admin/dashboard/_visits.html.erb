@@ -1,0 +1,112 @@
+<div class="row row-cols-1 row-cols-md-2">
+  <div class="col mb-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title">
+          Where are visitors coming from?
+        </h5>
+      </div>
+      <% if @top_referrers.any? %>
+        <ul class="list-group list-group-flush small rounded-0">
+          <% @top_referrers.each do |referrer| %>
+            <li class="list-group-item d-flex justify-content-between hover-light">
+              <span><%= referrer.first %></span>
+              <span><%= referrer.second %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="m-5 text-center text-muted">
+          <%= icon 'share', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+          <br />
+          <strong>No data</strong>
+          <br />
+          No data available for this period.
+        </p>
+      <% end %>
+    </div>
+  </div>
+  <div class="col mb-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title">
+          Top landing pages
+        </h5>
+      </div>
+      <% if @top_landing_pages.any? %>
+        <ul class="list-group list-group-flush small rounded-0">
+          <% @top_landing_pages.each do |landing_page| %>
+            <li class="list-group-item d-flex justify-content-between hover-light">
+              <span><%= landing_page.first %></span>
+              <span><%= landing_page.second %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="m-5 text-center text-muted">
+          <%= icon 'pointer', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+          <br />
+          <strong>No data</strong>
+          <br />
+          No data available for this period.
+        </p>
+      <% end %>
+    </div>
+  </div>
+  <div class="col mb-4">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title">
+          Visitor location
+        </h5>
+      </div>
+      <% if @top_locations.any? %>
+        <ul class="list-group list-group-flush small rounded-0">
+          <% @top_locations.each do |location| %>
+            <li class="list-group-item d-flex justify-content-between hover-light">
+              <% cache [*spree_base_cache_key, "visits-country/#{location.first}"] do %>
+                <span>
+                  <span class="mr-1">
+                    <%= flag_emoji(Country.find_by_name(location.first)&.first) %>
+                  </span>
+                  <%= location.first %>
+                </span>
+              <% end %>
+              <span><%= location.second %></span>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="m-5 text-center text-muted">
+          <%= icon 'world', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+          <br />
+          <strong>No data</strong>
+          <br />
+          No data available for this period.
+        </p>
+      <% end %>
+    </div>
+  </div>
+  <div class="col mb-4">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">
+          Visitor devices
+        </h5>
+      </div>
+      <% if @top_devices.count > 0 %>
+        <div class="card-body">
+          <%= pie_chart @top_devices, legend: "bottom", suffix: "%" %>
+        </div>
+      <% else %>
+        <p class="m-5 text-center text-muted">
+          <%= icon 'device-mobile', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+          <br />
+          <strong>No data</strong>
+          <br />
+          No data available for this period.
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

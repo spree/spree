@@ -10,7 +10,64 @@ end
 describe Spree::Product, type: :model do
   it_behaves_like 'metadata'
 
-  let!(:store) { create(:store) }
+  let!(:store) { Spree::Store.default }
+
+  describe 'after_initialize :assign_default_tax_category' do
+    let!(:tax_category_1) { create(:tax_category, is_default: false) }
+    let!(:tax_category_2) { create(:tax_category, is_default: true) }
+
+    context 'when product is new' do
+      let(:product) { described_class.new(stores: [store]) }
+
+      it 'assigns default tax category' do
+        expect(product.tax_category.id).to eq(tax_category_2.id)
+      end
+    end
+
+    context 'when product is persisted' do
+      let(:product) { create(:product, tax_category: nil, stores: [store]) }
+
+      it 'does not assign default tax category' do
+        expect(product.tax_category_id).to be(nil)
+      end
+    end
+  end
+
+  describe 'before_validation :ensure_default_shipping_category' do
+    subject { product.valid? }
+
+    let(:product) { build(:product, shipping_category: nil, stores: [store]) }
+
+    let!(:shipping_category_1) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.digital')) }
+    let!(:shipping_category_2) { create(:shipping_category, name:  I18n.t('spree.seed.shipping.categories.default')) }
+
+    it 'assigns the default shipping category' do
+      subject
+      expect(product.shipping_category).to eq(shipping_category_2)
+    end
+
+    context 'when product has a shipping category' do
+      let(:product) { build(:product, shipping_category: shipping_category_1, stores: [store]) }
+
+      it 'keeps the assigned shipping category' do
+        subject
+        expect(product.shipping_category).to eq(shipping_category_1)
+      end
+    end
+
+    context 'when product is persisted' do
+      let(:product) { create(:product, stores: [store]) }
+
+      before do
+      end
+
+      it 'does not assign the default shipping category' do
+        product.update(shipping_category: nil)
+        expect(subject).to be(false)
+        expect(product.shipping_category).to be(nil)
+      end
+    end
+  end
 
   context 'product instance' do
     let(:product) { create(:product, stores: [store]) }
@@ -26,14 +83,14 @@ describe Spree::Product, type: :model do
             product.master.stock_items.where(variant: product.master).update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
             product.master.stock_items.where(variant: product.master).update_all(count_on_hand: 10) if method_name == 'in_stock'
 
-            expect(product.send("#{method_name}?")).to eq false
+            expect(product.reload.send("#{method_name}?")).to eq false
           end
 
           it "returns true if variant is #{method_name.humanize.downcase}" do
             variant.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
             variant.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
 
-            expect(product.send("#{method_name}?")).to eq true
+            expect(product.reload.send("#{method_name}?")).to eq true
           end
         end
 
@@ -42,31 +99,50 @@ describe Spree::Product, type: :model do
             product.master.stock_items.update_all(backorderable: false) if %w[purchasable backorderable].include?(method_name)
             product.master.stock_items.update_all(count_on_hand: 0) if method_name == 'in_stock'
 
-            expect(product.send("#{method_name}?")).to eq false
+            expect(product.reload.send("#{method_name}?")).to eq false
           end
 
           it "returns true if master is #{method_name.humanize.downcase}" do
             product.master.stock_items.update_all(backorderable: true) if %w[purchasable backorderable].include?(method_name)
             product.master.stock_items.update_all(count_on_hand: 10) if method_name == 'in_stock'
 
-            expect(product.send("#{method_name}?")).to eq true
+            expect(product.reload.send("#{method_name}?")).to eq true
           end
         end
       end
     end
 
-    context '#duplicate' do
+    describe '#duplicate' do
       before do
         allow(product).to receive_messages taxons: [create(:taxon)], stores: [store]
       end
 
       it 'duplicates product' do
-        clone = product.duplicate
-        expect(clone.name).to eq('COPY OF ' + product.name)
-        expect(clone.master.sku).to eq('COPY OF ' + product.master.sku)
+        duplicate_result = product.duplicate
+        expect(duplicate_result).to be_success
+
+        clone = duplicate_result.value
+        expect(clone.name).to eq("COPY OF #{product.name}")
+        expect(clone.slug).to eq("copy-of-#{product.slug}")
+        expect(clone.master.sku).to eq("COPY OF #{product.master.sku}")
         expect(clone.taxons).to eq(product.taxons)
         expect(clone.stores).to eq(product.stores)
         expect(clone.images.size).to eq(product.images.size)
+      end
+
+      context 'when translations exist for another locale' do
+        before do
+          Mobility.with_locale(:fr) { product.name = "french name" }
+          product.save!
+        end
+
+        it 'duplicates translations for all locales' do
+          duplicate_result = product.duplicate
+          expect(duplicate_result).to be_success
+
+          clone = duplicate_result.value
+          expect(clone.name(locale: :fr)).to eq("COPY OF #{product.name(locale: :fr)}")
+        end
       end
 
       it 'calls #duplicate_extra' do
@@ -84,8 +160,8 @@ describe Spree::Product, type: :model do
         end
 
         it 'saves the master' do
-          expect(product.master).to receive(:save!)
           product.save
+          expect(product.master.reload.sku).to eq('Something changed')
         end
       end
 
@@ -117,7 +193,7 @@ describe Spree::Product, type: :model do
     end
 
     context 'product has no variants' do
-      context '#destroy' do
+      describe '#destroy' do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
@@ -131,7 +207,7 @@ describe Spree::Product, type: :model do
         create(:variant, product: product)
       end
 
-      context '#destroy' do
+      describe '#destroy' do
         it 'sets deleted_at value' do
           product.destroy
           expect(product.deleted_at).not_to be_nil
@@ -140,7 +216,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#price' do
+    describe '#price' do
       # Regression test for #1173
       it 'strips non-price characters' do
         product.price = '$10'
@@ -148,7 +224,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#display_price' do
+    describe '#display_price' do
       before { product.price = 10.55 }
 
       it 'shows the amount' do
@@ -168,7 +244,7 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context '#available?' do
+    describe '#available?' do
       it 'is available if status is set to active' do
         product.status = 'active'
         expect(product).to be_available
@@ -178,9 +254,15 @@ describe Spree::Product, type: :model do
         product.destroy
         expect(product).not_to be_available
       end
+
+      it 'is not available when available_on is in the future' do
+        product.available_on = 1.day.from_now
+
+        expect(product).not_to be_available
+      end
     end
 
-    context '#can_supply?' do
+    describe '#can_supply?' do
       it 'is true' do
         expect(product.can_supply?).to be(true)
       end
@@ -217,61 +299,6 @@ describe Spree::Product, type: :model do
       it 'can retrieve stock items' do
         expect(product.master.stock_items.first).not_to be_nil
         expect(product.stock_items.first).not_to be_nil
-      end
-    end
-
-    context 'slugs' do
-      it 'normalizes slug on update validation' do
-        product.slug = 'hey//joe'
-        product.valid?
-        expect(product.slug).not_to match '/'
-      end
-
-      it 'stores old slugs in FriendlyIds history' do
-        expect(product).to receive(:create_slug)
-        # Set it, otherwise the create_slug method avoids writing a new one
-        product.slug = 'custom-slug'
-        product.run_callbacks :save
-      end
-
-      context 'when product destroyed' do
-        it 'renames slug' do
-          expect { product.destroy }.to change(product, :slug)
-        end
-
-        context 'when slug is already at or near max length' do
-          before do
-            product.slug = 'x' * 255
-            product.save!
-          end
-
-          it 'truncates renamed slug to ensure it remains within length limit' do
-            product.destroy
-            expect(product.slug.length).to eq 255
-          end
-        end
-      end
-
-      it 'validates slug uniqueness' do
-        existing_product = product
-        new_product = create(:product, stores: [store])
-        new_product.slug = existing_product.slug
-
-        expect(new_product.valid?).to eq false
-      end
-
-      it "falls back to 'name-sku' for slug if regular name-based slug already in use" do
-        product1 = build(:product, stores: [store])
-        product1.name = 'test'
-        product1.sku = '123'
-        product1.save!
-
-        product2 = build(:product, stores: [store])
-        product2.name = 'test'
-        product2.sku = '456'
-        product2.save!
-
-        expect(product2.slug).to eq 'test-456'
       end
     end
 
@@ -320,19 +347,10 @@ describe Spree::Product, type: :model do
         @product = create(:product, stores: [store])
       end
 
-      it 'keeps the history when the product is destroyed' do
+      it 'keeps translations when product is destroyed' do
         @product.destroy
 
-        expect(@product.slugs.with_deleted).not_to be_empty
-      end
-
-      it 'updates the history when the product is restored' do
-        @product.destroy
-
-        @product.restore(recursive: true)
-
-        latest_slug = @product.slugs.find_by slug: @product.slug
-        expect(latest_slug).not_to be_nil
+        expect(@product.name).not_to be_empty
       end
     end
 
@@ -358,6 +376,35 @@ describe Spree::Product, type: :model do
         expect(product.reload.total_on_hand).to eq corrent_total_on_hand
       end
     end
+
+    context 'when using another locale' do
+      before do
+        product.update!(name: 'EN name')
+
+        Mobility.with_locale(:pl) do
+          product.update!(
+            name: 'PL name',
+            description: 'PL description',
+            meta_title: 'PL meta title',
+            meta_description: 'PL meta description',
+            meta_keywords: 'PL meta keywords'
+          )
+        end
+      end
+
+      let(:product_pl_translation) { product.translations.find_by(locale: 'pl') }
+
+      it 'translates product fields' do
+        expect(product.name).to eq('EN name')
+
+        expect(product_pl_translation).to be_present
+        expect(product_pl_translation.name).to eq('PL name')
+        expect(product_pl_translation.slug).to eq('pl-name')
+        expect(product_pl_translation.description).to eq('PL description')
+        expect(product_pl_translation.meta_title).to eq('PL meta title')
+        expect(product_pl_translation.meta_description).to eq('PL meta description')
+      end
+    end
   end
 
   context 'properties' do
@@ -369,6 +416,18 @@ describe Spree::Product, type: :model do
 
       product.set_property('the_prop', 'value2')
       expect(product.property('the_prop')).to eq('value2')
+
+      I18n.with_locale(:pl) do
+        product.set_property('the_prop', 'translated-value1', 'the_translated_prop')
+        expect(product.property('the_prop')).to eq('translated-value1')
+
+        product.set_property('the_prop', 'translated-value2')
+        expect(product.property('the_prop')).to eq('translated-value2')
+
+        expect(product.properties[0].presentation).to eq('the_translated_prop')
+      end
+
+      expect(product.properties[0].presentation).to eq('the_prop')
     end
 
     it 'does not create duplicate properties when set_property is called' do
@@ -407,7 +466,7 @@ describe Spree::Product, type: :model do
 
     # Regression test for #2455
     it "does not overwrite properties' presentation names" do
-      Spree::Property.where(name: 'foo').first_or_create!(presentation: "Foo's Presentation Name")
+      Spree::Property.create!(name: 'foo', presentation: "Foo's Presentation Name")
       product.set_property('foo', 'value1')
       product.set_property('bar', 'value2')
       expect(Spree::Property.where(name: 'foo').first.presentation).to eq("Foo's Presentation Name")
@@ -415,7 +474,7 @@ describe Spree::Product, type: :model do
     end
 
     # Regression test for #4416
-    context '#possible_promotions' do
+    describe '#possible_promotions' do
       let!(:possible_promotion) { create(:promotion, advertise: true, starts_at: 1.day.ago) }
       let!(:unadvertised_promotion) { create(:promotion, advertise: false, starts_at: 1.day.ago) }
       let!(:inactive_promotion) { create(:promotion, advertise: true, starts_at: 1.day.since) }
@@ -506,9 +565,21 @@ describe Spree::Product, type: :model do
         expect(product.variants.length).to eq(27)
       end
     end
+
+    context 'when track inventory is disabled' do
+      let(:product) { build(:product, track_inventory: false, stores: [store]) }
+
+      it 'creates a default stock item' do
+        product.save
+        expect(product.master.track_inventory?).to eq(false)
+        expect(product.master.stock_items.count).to eq(1)
+        expect(product.master.stock_items.first.count_on_hand).to eq(0)
+        expect(product.master.stock_items.first.backorderable).to eq(false)
+      end
+    end
   end
 
-  context '#images' do
+  describe '#images' do
     let(:product) { create(:product, stores: [store]) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
@@ -548,7 +619,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#total_on_hand' do
+  describe '#total_on_hand' do
     let(:product) { create(:product, stores: [store]) }
 
     it 'is infinite if track_inventory_levels is false' do
@@ -574,7 +645,7 @@ describe Spree::Product, type: :model do
   end
 
   # Regression spec for https://github.com/spree/spree/issues/5588
-  context '#validate_master when duplicate SKUs entered' do
+  describe '#validate_master when duplicate SKUs entered' do
     subject { second_product }
 
     let!(:first_product) { create(:product, sku: 'a-sku', stores: [store]) }
@@ -588,7 +659,7 @@ describe Spree::Product, type: :model do
     expect(product.master.is_master).to be true
   end
 
-  context '#discontinue!' do
+  describe '#discontinue!' do
     let(:product) { create(:product, sku: 'a-sku', stores: [store]) }
 
     it 'sets the discontinued' do
@@ -610,7 +681,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#discontinued?' do
+  describe '#discontinued?' do
     let(:product_live) { build(:product, sku: 'a-sku') }
     let(:product_discontinued) { build(:product, sku: 'a-sku', discontinue_on: Time.now - 1.day) }
 
@@ -623,8 +694,8 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#brand' do
-    let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_brands_name')) }
+  describe '#brand' do
+    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Brand Taxon' do
@@ -632,8 +703,8 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#category' do
-    let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_categories_name')) }
+  describe '#category' do
+    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Category Taxon' do
@@ -641,7 +712,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let!(:product) { create(:product, stores: [store]) }
 
     it 'returns true when out of stock and backorderable' do
@@ -670,7 +741,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context '#default_variant' do
+  describe '#default_variant' do
     let(:product) { create(:product, stores: [store]) }
 
     context 'track inventory levels' do
@@ -687,7 +758,7 @@ describe Spree::Product, type: :model do
           before { variant_2.stock_items.first.adjust_count_on_hand(1) }
 
           it 'returns first non-master in stock variant' do
-            expect(product.default_variant).to eq(variant_2)
+            expect(product.reload.default_variant).to eq(variant_2)
           end
         end
 
@@ -695,13 +766,13 @@ describe Spree::Product, type: :model do
           before { variant_2.stock_items.first.update(backorderable: true) }
 
           it 'returns first non-master backorderable variant' do
-            expect(product.default_variant).to eq(variant_2)
+            expect(product.reload.default_variant).to eq(variant_2)
           end
         end
 
         context 'product without variants in stock or backorerable' do
           it 'returns first non-master variant' do
-            expect(product.default_variant).to eq(variant_1)
+            expect(product.reload.default_variant).to eq(variant_1)
           end
         end
       end
@@ -719,95 +790,90 @@ describe Spree::Product, type: :model do
         after { Spree::Config[:track_inventory_levels] = true }
 
         it 'returns first non-master variant' do
-          expect(product.default_variant).to eq(variant_1)
+          expect(product.reload.default_variant).to eq(variant_1)
         end
       end
 
       context 'product without variants' do
         it 'returns master variant' do
-          expect(product.default_variant).to eq(product.master)
+          expect(product.reload.default_variant).to eq(product.master)
         end
       end
     end
   end
 
-  context '#default_variant_id' do
+  describe '#default_variant_id' do
     let(:product) { create(:product, stores: [store]) }
 
     context 'product has variants' do
       let!(:variant) { create(:variant, product: product) }
 
       it 'returns first non-master variant ID' do
-        expect(product.default_variant_id).to eq(variant.id)
+        expect(product.reload.default_variant_id).to eq(variant.id)
       end
     end
 
     context 'product without variants' do
       it 'returns master variant ID' do
-        expect(product.default_variant_id).to eq(product.master.id)
+        expect(product.reload.default_variant_id).to eq(product.master.id)
       end
     end
   end
 
-  describe '#default_variant_cache_key' do
+  describe '#default_image' do
     let(:product) { create(:product, stores: [store]) }
-    let(:key) { product.send(:default_variant_cache_key) }
+    let!(:image) { create(:image, viewable: product.master) }
 
-    context 'with inventory tracking' do
-      before { Spree::Config[:track_inventory_levels] = true }
+    it 'returns the first image for the product' do
+      expect(product.default_image).to eq(image)
+    end
 
-      it 'returns proper key' do
-        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+    context 'with variants' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image2) { create(:image, viewable: variant) }
+
+      it 'returns the first image for the product' do
+        expect(product.default_image).to eq(image)
       end
-    end
 
-    context 'without invenrtory tracking' do
-      before { Spree::Config[:track_inventory_levels] = false }
+      context 'when master has no images' do
+        let!(:image) { nil }
 
-      it 'returns proper key' do
-        expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
+        it 'returns the first image for the variant' do
+          expect(product.default_image).to eq(image2)
+        end
       end
-    end
-
-    describe '#requires_shipping_category?' do
-      let(:product) { build(:product, shipping_category: nil) }
-
-      it { expect(product.save).to eq(false) }
-    end
-
-    describe '#downcase_slug' do
-      let(:product) { build(:product, slug: 'My-slug') }
-
-      it { expect { product.valid? }.to change(product, :slug).to('my-slug') }
     end
   end
 
   describe '#ensure_store_presence' do
-    let(:valid_record) { build(:product, stores: [create(:store)]) }
-    let(:invalid_record) { build(:product, stores: []) }
+    let(:product) { create(:product, stores: []) }
 
-    it { expect(valid_record).to be_valid }
-    it { expect(invalid_record).not_to be_valid }
+    context 'no store passed' do
+      it 'auto-assigns store' do
+        expect(product.stores).to eq([Spree::Store.default])
+      end
+    end
+
+    context 'store passed' do
+      let(:store) { Spree::Store.default }
+      let(:product) { create(:product, stores: [store]) }
+
+      it 'does not auto-assign store' do
+        expect(product.stores).to eq([store])
+      end
+    end
 
     context 'validation disabled' do
-      context 'method overwrite' do
-        before { allow_any_instance_of(described_class).to receive(:disable_store_presence_validation?).and_return(true) }
-
-        it { expect(valid_record).to be_valid }
-        it { expect(invalid_record).to be_valid }
-      end
-
       context 'preference set' do
         before { Spree::Config[:disable_store_presence_validation] = true }
 
-        it { expect(valid_record).to be_valid }
-        it { expect(invalid_record).to be_valid }
+        it { expect(product.stores).to eq([]) }
       end
     end
   end
 
   describe '#taxons_for_store' do
-    let(:store) { create(:store) }
     let(:store_2) { create(:store) }
     let(:product) { create(:product, stores: [store, store_2], taxons: [taxon, taxon_2]) }
     let(:taxonomy) { create(:taxonomy, store: store) }
@@ -838,7 +904,10 @@ describe Spree::Product, type: :model do
       # makes the stock items available for the before hook
       let!(:variant) { create(:variant, product: product) }
 
-      before { Spree::StockItem.update_all(backorderable: false) }
+      before do
+        Spree::StockItem.update_all(backorderable: false)
+        product.reload
+      end
 
       context 'with at least one non-master variant stock items count_on_hand > 0' do
         before do
@@ -857,7 +926,7 @@ describe Spree::Product, type: :model do
         context 'when all non-master variant stock items have track_inventory = false' do
           before { variant.update(track_inventory: false) }
 
-          it { expect(subject).to eq(true) }
+          it { expect(subject).to be(true) }
         end
 
         context 'when all non-master variant stock items have track_inventory = true' do
@@ -873,16 +942,406 @@ describe Spree::Product, type: :model do
     end
 
     describe '#digital?' do
-      context 'when product is not digital' do
-        let(:product) { create(:product, stores: [store]) }
+      let(:product) { create(:product, stores: [store], shipping_category: shipping_category) }
+      let(:shipping_category) { create(:shipping_category) }
+
+      context 'when product has a shipping method with DigitalDelivery calculator' do
+        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::DigitalDelivery.new, shipping_categories: [shipping_category]) }
+
+        it { expect(product.digital?).to eq(true) }
+      end
+
+      context 'when product does not have a shipping method with DigitalDelivery calculator' do
+        let!(:shipping_method) { create(:shipping_method, calculator: Spree::Calculator::Shipping::FlatRate.new, shipping_categories: [shipping_category]) }
 
         it { expect(product.digital?).to eq(false) }
       end
+    end
+  end
 
-      context 'when product is digital' do
-        let(:product) { create(:product, stores: [store], shipping_category: create(:shipping_category, name: 'Digital')) }
+  describe '#to_csv' do
+    let(:store) { Spree::Store.default }
+    let(:product) { create(:product, stores: [store]) }
+    let(:property) { create(:property, name: 'my-property', position: 1) }
+    let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }
+    let(:taxon) { create(:taxon, name: 'My Taxon') }
 
-        it { expect(product.digital?).to eq(true) }
+    before do
+      product_property
+      product.taxons << taxon
+    end
+
+    context 'when product has no variants' do
+      it 'returns an array with one line of CSV data' do
+        csv_lines = product.to_csv(store)
+        expect(csv_lines.size).to eq(1)
+
+        csv_line = csv_lines.first
+        expect(csv_line).to include(product.name)
+        expect(csv_line).to include(product.master.sku)
+        expect(csv_line.last(5)).to eq([taxon.pretty_name, nil, nil, "my-property", "MyValue"])
+      end
+    end
+
+    context 'when product has variants' do
+      let!(:variant1) { create(:variant, product: product) }
+      let!(:variant2) { create(:variant, product: product) }
+
+      before do
+        product.master.update!(sku: 'test-product-master-sku')
+      end
+
+      it 'returns an array with CSV data for each variant including the master variant' do
+        csv_lines = product.reload.to_csv(store)
+        expect(csv_lines.size).to eq(3)
+
+        expect(csv_lines[0]).to include(product.name)
+        expect(csv_lines[0]).to include('test-product-master-sku')
+
+        expect(csv_lines[1]).not_to include(product.name)
+        expect(csv_lines[1]).to include(variant1.sku)
+
+        expect(csv_lines[2]).not_to include(product.name)
+        expect(csv_lines[2]).to include(variant2.sku)
+      end
+    end
+
+    context 'when store is not provided' do
+      it 'uses default store' do
+        allow(product.stores).to receive(:default).and_return(store)
+        expect(product.to_csv).to be_present
+      end
+
+      it 'falls back to first store if no default' do
+        allow(product.stores).to receive(:default).and_return(nil)
+        allow(product.stores).to receive(:first).and_return(store)
+        expect(product.to_csv).to be_present
+      end
+    end
+  end
+
+  describe '#on_sale?' do
+    subject { product.on_sale?(currency) }
+
+    let(:product) { create(:product) }
+    let(:currency) { 'EUR' }
+    let(:variant_1) { create(:variant, product: product) }
+    let(:variant_2) { create(:variant, product: product) }
+
+    context 'when at least one variant is on sale' do
+      let!(:eur_price_1) { create(:price, variant: variant_1, currency: 'EUR', compare_at_amount: 200.00) }
+
+      it 'returns true' do
+        expect(subject).to be true
+      end
+    end
+
+    context 'when no variant is on sale' do
+      it 'returns false' do
+        expect(subject).to be false
+      end
+    end
+  end
+
+  describe '#first_or_default_variant' do
+    subject { product.first_or_default_variant('USD') }
+
+    let!(:product) { create(:product, stores: [store]) }
+
+    context 'without variants' do
+      it 'returns the default variant' do
+        expect(subject).to eq(product.master)
+      end
+    end
+
+    context 'with a variant in the given currency' do
+      let!(:variant_1) { create(:variant, product: product) }
+      let!(:variant_2) { create(:variant, product: product) }
+
+      before do
+        product.reload.prices.where(currency: 'USD').delete_all
+
+        create(:price, variant: variant_1, currency: 'PLN', amount: 10)
+        create(:price, variant: variant_2, currency: 'USD', amount: 10)
+      end
+
+      it 'returns the available variant in the given currency' do
+        expect(subject).to eq(variant_2)
+      end
+    end
+
+    context 'with all variants in different currencies' do
+      let!(:variant_1) { create(:variant, product: product) }
+      let!(:variant_2) { create(:variant, product: product) }
+
+      before do
+        product.reload.prices.where(currency: 'USD').delete_all
+
+        create(:price, variant: variant_1, currency: 'PLN', amount: 10)
+        create(:price, variant: variant_2, currency: 'GBP', amount: 10)
+      end
+
+      it 'returns the first variant' do
+        expect(subject).to eq(variant_1)
+      end
+    end
+  end
+
+  describe '#first_available_variant' do
+    subject { product.first_available_variant('USD') }
+
+    let!(:product) { create(:product, stores: [store]) }
+
+    let!(:variant_1) { create(:variant, product: product, create_stock: false) }
+    let!(:variant_2) { create(:variant, product: product) }
+    let!(:variant_3) { create(:variant, product: product) }
+    let!(:variant_4) { create(:variant, product: product) }
+    let!(:variant_5) { create(:variant, product: product) }
+
+    before do
+      product.reload.prices.where(currency: 'USD').delete_all
+
+      create(:price, variant: variant_2, currency: 'PLN', amount: 10)
+      create(:price, variant: variant_4, currency: 'USD', amount: 20)
+      create(:price, variant: variant_5, currency: 'USD', amount: 10)
+    end
+
+    it 'returns the first available variant' do
+      expect(subject).to eq(variant_4)
+    end
+  end
+
+  describe '#price_varies?' do
+    subject { product.price_varies?('USD') }
+
+    let!(:product) { create(:product, stores: [store]) }
+
+    let!(:variant_1) { create(:variant, product: product) }
+    let!(:variant_2) { create(:variant, product: product) }
+
+    before do
+      product.reload.prices.where(currency: 'USD').delete_all
+    end
+
+    context 'when all variants have the same price in the given currency' do
+      before do
+        create(:price, variant: variant_1, currency: 'USD', amount: 10)
+        create(:price, variant: variant_1, currency: 'PLN', amount: 15)
+
+        create(:price, variant: variant_2, currency: 'USD', amount: 10)
+        create(:price, variant: variant_2, currency: 'PL', amount: 20)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'when variants have different prices in the given currency' do
+      before do
+        create(:price, variant: variant_1, currency: 'USD', amount: 10)
+        create(:price, variant: variant_2, currency: 'USD', amount: 20)
+      end
+
+      it { is_expected.to be(true) }
+    end
+  end
+
+  describe '#any_variant_available?' do
+    subject { product.any_variant_available?('USD') }
+
+    let!(:product) { create(:product, stores: [store]) }
+
+    context 'without variants' do
+      before do
+        product.master.prices.where(currency: 'USD').delete_all
+        product.master.prices.create(currency: currency, amount: 10)
+      end
+
+      context 'when master variant is available' do
+        let(:currency) { 'USD' }
+        it { is_expected.to be(true) }
+      end
+
+      context 'when master variant is not available' do
+        let(:currency) { 'PLN' }
+        it { is_expected.to be(false) }
+      end
+    end
+
+    context 'with variants' do
+      let!(:variant_1) { create(:variant, product: product) }
+      let!(:variant_2) { create(:variant, product: product) }
+
+      before do
+        product.reload.prices.where(currency: 'USD').delete_all
+
+        create(:price, variant: variant_1, currency: 'PLN', amount: 10)
+        create(:price, variant: variant_2, currency: currency, amount: 10)
+      end
+
+      context 'when all variants are available' do
+        let(:currency) { 'USD' }
+        it { is_expected.to be(true) }
+      end
+
+      context 'when no variants are available' do
+        let(:currency) { 'PLN' }
+        it { is_expected.to be(false) }
+      end
+    end
+  end
+
+  describe '#lowest_price' do
+    subject { product.lowest_price('USD') }
+
+    let!(:product) { create(:product, stores: [store]) }
+
+    let!(:variant_1) { create(:variant, product: product) }
+    let!(:variant_2) { create(:variant, product: product) }
+    let!(:variant_3) { create(:variant, product: product) }
+
+    let(:price_1) { create(:price, variant: variant_1, currency: 'PLN', amount: 10) }
+    let(:price_2) { create(:price, variant: variant_2, currency: 'USD', amount: 20) }
+    let(:price_3) { create(:price, variant: variant_3, currency: 'USD', amount: 18) }
+
+    before do
+      product.reload.prices.where(currency: 'USD').delete_all
+
+      price_1
+      price_2
+      price_3
+    end
+
+    it 'returns the lowest price' do
+      expect(subject).to eq(price_3)
+    end
+  end
+
+  describe 'scopes' do
+    describe '.not_discontinued' do
+      let(:product) { create(:product, stores: [store]) }
+      let(:discontinued_product) { create(:product, stores: [store], discontinue_on: Time.current - 1.day) }
+
+      context 'when nothing is passed as an argument' do
+        it 'returns only not discontinued products' do
+          products = Spree::Product.not_discontinued
+          expect(products).to include(product)
+          expect(products).not_to include(discontinued_product)
+        end
+      end
+
+      context 'when false is passed as an argument' do
+        it 'returns all products' do
+          products = Spree::Product.not_discontinued(false)
+
+          expect(products).to include(product,discontinued_product)
+        end
+      end
+    end
+
+    describe '.available' do
+      let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago, stores: [store]) }
+      let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active', stores: [store]) }
+      let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active', stores: [store]) }
+
+      let!(:prices) do
+        [
+          create(:price, variant: active_product.default_variant, currency: 'USD', amount: 10),
+          create(:price, variant: future_product.default_variant, currency: 'USD', amount: 10),
+          create(:price, variant: discontinued_product.default_variant, currency: 'USD', amount: 10)
+        ]
+      end
+
+      context 'when available_on is specified' do
+        subject(:available_products) { described_class.available(Time.current) }
+
+        it 'returns products available before or on the specified date' do
+          expect(available_products).to contain_exactly(active_product)
+        end
+      end
+
+      context 'when available_on is not specified' do
+        subject(:available_products) { described_class.available }
+
+        it 'returns active, not discontinued products' do
+          expect(available_products).to contain_exactly(active_product, future_product)
+        end
+      end
+
+      context 'when show_products_without_price is false' do
+        subject(:available_products) { described_class.available(nil, 'USD') }
+
+        before do
+          Spree::Config.show_products_without_price = false
+        end
+
+        let!(:active_product_2) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_3) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+
+        before do
+          active_product_2.prices_including_master.where(currency: 'USD').delete_all
+          active_product_3.prices_including_master.where(currency: 'USD').delete_all
+          active_product_4.prices_including_master.where(currency: 'USD').delete_all
+
+          active_product_2.default_variant.prices.create(currency: 'USD', amount: 10)
+          active_product_3.default_variant.prices.create(currency: 'PLN', amount: 10)
+        end
+
+        it 'only returns products with prices in the specified currency' do
+          expect(available_products).to contain_exactly(future_product, active_product, active_product_2)
+        end
+      end
+
+      context 'when show_products_without_price is true' do
+        subject(:available_products) { described_class.available(nil, 'USD') }
+        before do
+          Spree::Config.show_products_without_price = true
+        end
+
+        let(:active_product_2) { create(:product, status: 'active', stores: [store]) }
+        let(:active_product_3) { create(:product, status: 'active', stores: [store]) }
+        let(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+
+        before do
+          active_product_2.default_variant.prices.create(currency: 'USD', amount: 10)
+          active_product_3.default_variant.prices.create(currency: 'PLN', amount: 10)
+        end
+
+        it 'returns products regardless of price' do
+          expect(available_products).to contain_exactly(
+            future_product, active_product, active_product_2, active_product_3, active_product_4
+          )
+        end
+      end
+    end
+  end
+
+  describe 'after_touch :touch_taxons' do
+    subject { product.touch }
+
+    let!(:product) { create(:product, taxons: taxons) }
+
+    context 'without taxons' do
+      let(:taxons) { [] }
+
+      it 'skips enqueuing a job for touching the taxons' do
+        expect { subject }.not_to have_enqueued_job(Spree::Products::TouchTaxonsJob)
+      end
+    end
+
+    context 'with taxons' do
+      let(:taxons) { [taxon_1, taxon_2] }
+
+      let!(:taxon_1) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
+      let!(:taxon_2) { create(:taxon, taxonomy: taxonomy, parent: taxonomy.root) }
+
+      let(:taxonomy) { create(:taxonomy) }
+
+      it 'enqueues a job for touching the taxons' do
+        expect { subject }.to have_enqueued_job(Spree::Products::TouchTaxonsJob).with(
+          [taxonomy.root.id, taxon_1.id, taxon_2.id],
+          [taxonomy.id]
+        )
       end
     end
   end

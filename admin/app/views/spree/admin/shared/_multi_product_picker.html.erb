@@ -1,0 +1,24 @@
+<%= turbo_frame_tag :dialog_modal do %>
+  <div class="modal-content" data-controller="search-picker">
+    <%= modal_header(Spree.t(:add_products)) %>
+    <div class="modal-body border-bottom">
+      <%= form_with url: spree.search_admin_products_path, method: :post, data: { controller: 'auto-submit'} do |form| %>
+        <%= form.hidden_field :omit_ids, value: parent.product_ids.join(',') %>
+        <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+      <% end %>
+    </div>
+    <%= form_with url: url do |form| %>
+      <div class="modal-body p-0">
+        <div id="products_search_results" class="search-results">
+          <p class="text-muted text-center py-5">
+            <%= Spree.t(:start_typing_to_search_for_products) %>
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <%= modal_discard_button %>
+        <%= turbo_save_button_tag Spree.t(:add_selected_products), class: 'btn btn-primary', disabled: true, data: { search_picker_target: :submit } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

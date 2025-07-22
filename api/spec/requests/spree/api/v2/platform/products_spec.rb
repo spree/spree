@@ -31,8 +31,6 @@ describe 'API V2 Platform Products Spec' do
     context 'with no params' do
       before { get '/api/v2/platform/products', headers: bearer_token }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all products' do
         expect(json_response['data'].count).to eq store.products.count
         expect(json_response['data'].first).to have_type('product')
@@ -79,22 +77,18 @@ describe 'API V2 Platform Products Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=price', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by price' do
             expect(json_response['data'].count).to      eq store.products.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.joins(variants_including_master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
           end
         end
 
         context 'descending order' do
           before { get '/api/v2/platform/products?sort=-price', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by price with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
-            expect(json_response['data'].pluck(:id)).to eq store.products.joins(master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq store.products.joins(variants_including_master: :prices).select("#{store.products.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
           end
         end
       end
@@ -102,8 +96,6 @@ describe 'API V2 Platform Products Spec' do
       context 'sorting by name' do
         context 'A-Z' do
           before { get '/api/v2/platform/products?sort=name', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by name' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -113,8 +105,6 @@ describe 'API V2 Platform Products Spec' do
 
         context 'Z-A' do
           before { get '/api/v2/platform/products?sort=-name', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by name with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -127,8 +117,6 @@ describe 'API V2 Platform Products Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=updated_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by updated_at' do
             expect(json_response['data'].count).to      eq store.products.count
             expect(json_response['data'].pluck(:id)).to eq store.products.order(:updated_at).map(&:id).map(&:to_s)
@@ -137,8 +125,6 @@ describe 'API V2 Platform Products Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/products?sort=-updated_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by updated_at with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -151,8 +137,6 @@ describe 'API V2 Platform Products Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=created_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by created_at' do
             expect(json_response['data'].count).to      eq store.products.count
             expect(json_response['data'].pluck(:id)).to eq store.products.order(:created_at).map(&:id).map(&:to_s)
@@ -161,8 +145,6 @@ describe 'API V2 Platform Products Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/products?sort=-created_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by created_at with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -177,8 +159,6 @@ describe 'API V2 Platform Products Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=available_on', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by available_on' do
             expect(json_response['data'].count).to      eq store.products.count
             expect(json_response['data'].pluck(:id)).to eq store.products.order(:available_on).map(&:id).map(&:to_s)
@@ -187,8 +167,6 @@ describe 'API V2 Platform Products Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/products?sort=-available_on', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by available_on with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -203,8 +181,6 @@ describe 'API V2 Platform Products Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/products?sort=make_active_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns products sorted by make_active_at' do
             expect(json_response['data'].count).to      eq store.products.count
             expect(json_response['data'].pluck(:id)).to eq store.products.order(:make_active_at).map(&:id).map(&:to_s)
@@ -213,8 +189,6 @@ describe 'API V2 Platform Products Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/products?sort=-make_active_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns products sorted by make_active_at with descending order' do
             expect(json_response['data'].count).to      eq store.products.count
@@ -228,8 +202,6 @@ describe 'API V2 Platform Products Spec' do
       context 'with specified pagination params' do
         context 'when per_page is between 1 and default value' do
           before { get '/api/v2/platform/products?page=1&per_page=2', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns the default number of products' do
             expect(json_response['data'].count).to eq 2
@@ -275,8 +247,6 @@ describe 'API V2 Platform Products Spec' do
       context 'without specified pagination params' do
         before { get '/api/v2/platform/products', headers: bearer_token }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns specified amount products' do
           expect(json_response['data'].count).to eq store.products.count
         end
@@ -307,6 +277,35 @@ describe 'API V2 Platform Products Spec' do
         end
       end
     end
+
+    context 'filtering' do
+      before { get "/api/v2/platform/products?filter[name_cont]=#{in_stock_product.name}", headers: bearer_token }
+
+      it 'returns line items with correct variant name' do
+        expect(json_response['data'].count).to eq 1
+      end
+    end
+  end
+
+  describe 'products#update' do
+    context 'with metadata' do
+      let(:public_metadata) { { 'foo' => 'bar' } }
+      let(:private_metadata) { { 'baz' => 'qux' } }
+
+      before { put "/api/v2/platform/products/#{product.id}", params: { product: { public_metadata: public_metadata, private_metadata: private_metadata } }, headers: bearer_token }
+
+      it 'returns product with metadata' do
+        expect(json_response['data']['attributes']['public_metadata']).to eq public_metadata
+        expect(json_response['data']['attributes']['private_metadata']).to eq private_metadata
+      end
+
+      it 'does not clear metadata when param is missing' do
+        put "/api/v2/platform/products/#{product.id}", params: { product: { name: 'New name' } }, headers: bearer_token
+
+        expect(json_response['data']['attributes']['public_metadata']).to eq public_metadata
+        expect(json_response['data']['attributes']['private_metadata']).to eq private_metadata
+      end
+    end
   end
 
   describe 'products#show' do
@@ -327,7 +326,6 @@ describe 'API V2 Platform Products Spec' do
       context 'when no image transformation params are passed' do
         let(:image_transformation_params) { '' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns product image data'
 
         it 'returns product image' do
@@ -338,7 +336,6 @@ describe 'API V2 Platform Products Spec' do
       context 'when product image json returned' do
         let(:image_transformation_params) { '&image_transformation[size]=100x50&image_transformation[quality]=50' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns product image data'
 
         it 'returns product image' do

@@ -8,8 +8,6 @@ describe Spree::Api::V2::Platform::VariantSerializer do
   let!(:variant) { create(:variant, price: 10, compare_at_price: 15, images: create_list(:image, 2), tax_category: create(:tax_category)) }
   let!(:digital) { create(:digital, variant: variant) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {
@@ -20,8 +18,10 @@ describe Spree::Api::V2::Platform::VariantSerializer do
             sku: variant.sku,
             barcode: variant.barcode,
             weight: variant.weight,
+            weight_unit: variant.weight_unit,
             height: variant.height,
             depth: variant.depth,
+            dimensions_unit: variant.dimensions_unit,
             deleted_at: variant.deleted_at,
             is_master: variant.is_master,
             cost_price: variant.cost_price,

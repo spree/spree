@@ -19,6 +19,28 @@ describe Spree::Webhooks::Subscriber do
     end
   end
 
+  describe 'before_validation' do
+    subject(:subscriber) { build(:subscriber, secret_key: nil) }
+
+    context 'without a secret key' do
+      it 'generates a new secret key' do
+        expect { subscriber.save }.to change(subscriber, :secret_key).from(nil)
+      end
+    end
+
+    context 'with secret key' do
+      let(:assigned_secret_key) { 'some-secret-key-for-webhooks' }
+
+      before do
+        subscriber.secret_key = assigned_secret_key
+      end
+
+      it 'does not overwrite the assigned secret key' do
+        expect { subscriber.save }.not_to change(subscriber, :secret_key)
+      end
+    end
+  end
+
   describe 'validations' do
     context 'url format (UrlValidator)' do
       it 'is invalid with an invalid url' do

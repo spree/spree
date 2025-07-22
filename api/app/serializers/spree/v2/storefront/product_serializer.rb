@@ -44,6 +44,13 @@ module Spree
           display_compare_at_price(product, params[:currency])
         end
 
+        attribute :localized_slugs do |product, params|
+          product.localized_slugs_for_store(params[:store])
+        end
+
+        attribute :tags, &:tag_list
+        attribute :labels, &:label_list
+
         has_many :variants
         has_many :option_types
         has_many :product_properties

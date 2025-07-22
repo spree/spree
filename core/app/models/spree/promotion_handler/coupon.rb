@@ -1,15 +1,37 @@
 module Spree
   module PromotionHandler
     class Coupon
-      attr_reader :order, :store
+      attr_reader :order, :store, :options
       attr_accessor :error, :success, :status_code
 
-      def initialize(order)
+      def initialize(order, options = {})
         @order = order
         @store = order.store
+        @options = options
       end
 
       def apply
+        if load_gift_card_code
+
+          if @gift_card.expired?
+            set_error_code :gift_card_expired
+            return self
+          elsif @gift_card.redeemed?
+            set_error_code :gift_card_already_redeemed
+            return self
+          end
+
+          result = order.apply_gift_card(@gift_card)
+
+          if result.success?
+            set_success_code(:gift_card_applied)
+          else
+            set_error_code(result.value, result.error.value || {})
+          end
+
+          return self
+        end
+
         if order.coupon_code.present?
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion
@@ -25,10 +47,29 @@ module Spree
       end
 
       def remove(coupon_code)
+        if order.gift_card
+          result = order.remove_gift_card
+
+          if result.success?
+            set_success_code(:gift_card_removed)
+          else
+            set_error_code(result.value)
+          end
+
+          return self
+        end
+
         promotion = order.promotions.with_coupon_code(coupon_code)
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
           order.order_promotions.where(promotion_id: promotion.id).destroy_all
+
+          if promotion.multi_codes?
+            coupon_code = promotion.coupon_codes.find_by(order: order)
+            coupon_code&.remove_from_order
+          else
+            promotion.touch
+          end
 
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)
@@ -46,17 +87,33 @@ module Spree
         @success = Spree.t(code)
       end
 
-      def set_error_code(code)
+      def set_error_code(code, locale_options = {})
         @status_code = code
-        @error = Spree.t(code)
+        @error = Spree.t(code, locale_options)
       end
 
+      # Returns the promotion for the order
+      #
+      # @return [Spree::Promotion]
       def promotion
         @promotion ||= store.promotions.active.includes(
           :promotion_rules, :promotion_actions
         ).with_coupon_code(order.coupon_code)
       end
 
+      # Returns the amount of adjustments for the promotion
+      #
+      # @return [Numeric]
+      def adjustments_amount
+        @adjustments_amount ||=
+          @order.all_adjustments.promotion.eligible.
+          where(source: promotion&.actions).
+          sum(:amount)
+      end
+
+      # Returns true if the code was applied successfully
+      #
+      # @return [Boolean]
       def successful?
         success.present? && error.blank?
       end
@@ -81,10 +138,11 @@ module Spree
       end
 
       def handle_present_promotion
-        return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
         return promotion_applied if promotion_exists_on_order?
+        return set_error_code :coupon_code_used if promotion.coupon_codes.used.where(code: order.coupon_code).exists?
+        return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
 
-        unless promotion.eligible?(order)
+        unless promotion.eligible?(order, options)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)
         end
@@ -115,9 +173,12 @@ module Spree
       end
 
       def determine_promotion_application_result
+        coupon_code = order.coupon_code.downcase
+
         # Check for applied adjustments.
         discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == order.coupon_code.downcase
+          p.source.promotion.code.try(:downcase) == coupon_code ||
+            p.source.promotion.coupon_codes.unused.where(code: coupon_code).exists?
         end
 
         # Check for applied line items.
@@ -128,17 +189,34 @@ module Spree
         end
 
         if discount || created_line_items
+          handle_coupon_code(discount, coupon_code) if discount
+
           order.update_totals
           order.persist_totals
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
-          # if the promotion exists on an order, but wasn't found above,
-          # we've already selected a better promotion
-          set_error_code :coupon_code_better_exists
+          # since CouponCode is disposable...
+          if Spree::CouponCode.used?(order.coupon_code)
+            set_error_code :coupon_code_max_usage
+          else
+            # if the promotion exists on an order, but wasn't found above,
+            # we've already selected a better promotion
+            set_error_code :coupon_code_better_exists
+          end
         else
           # if the promotion was created after the order
           set_error_code :coupon_code_not_found
         end
+      end
+
+      def handle_coupon_code(discount, coupon_code)
+        discount.source.promotion.coupon_codes.unused.find_by(code: coupon_code)&.apply_order!(order)
+      end
+
+      def load_gift_card_code
+        return unless order.coupon_code.present?
+
+        @gift_card = order.store.gift_cards.find_by(code: order.coupon_code.downcase)
       end
     end
   end

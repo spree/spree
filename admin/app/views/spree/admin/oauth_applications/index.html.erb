@@ -1,0 +1,77 @@
+<%= render 'spree/admin/shared/developers_nav' %>
+
+<%= content_for(:title, Spree.t('admin.oauth_applications.list')) %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:oauth_applications_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t('admin.oauth_applications.new'), new_object_url, class: "btn btn-primary" %>
+<% end if can? :create, Spree::OauthApplication %>
+
+<%= content_for :page_alerts do %>
+  <div class="alert alert-info mb-3">
+    <p>
+      Here you can manage API keys to access the <%= link_to 'Platform API', 'https://spreecommerce.org/docs/api-reference/platform/authentication', target: '_blank' %>.
+      For headless storefronts you don't need an API key, please use the <%= link_to 'Storefront API', 'https://spreecommerce.org/docs/api-reference/storefront/authentication', target: '_blank' %>.
+    </p>
+  </div>
+<% end %>
+
+<%= render_admin_partials(:oauth_applications_header_partials) %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th>Client ID</th>
+            <th><%= Spree.t('admin.oauth_applications.scopes') %></th>
+            <th><%= Spree.t('admin.oauth_applications.last_used') %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |application| %>
+            <tr id="<%= spree_dom_id application %>">
+              <td class="w-20"><code><%= application.name %></code></td>
+              <td class="w-40">
+                <div class="input-group" data-controller="password-toggle">
+                  <%= button_tag class: 'btn hover-gray px-1', data: { action: 'click->password-toggle#password' } do %>
+                    <%= icon 'eye', class: 'mr-0' %>
+                  <% end %>
+                  <%= password_field_tag :password, application.uid, class: 'form-control-plaintext', data: { password_toggle_target: 'unhide' }, readonly: true %>
+                </div>
+              </td>
+              <td class="w-15">
+                <% if application.scopes.include?('write') %>
+                  <span class="badge badge-warning">
+                    <%= icon('pencil', class: 'mr-1') %>
+                    <%= Spree.t('admin.oauth_applications.read_and_write') %>
+                  </span>
+                <% else %>
+                  <span class="badge badge-light">
+                    <%= icon('eye', class: 'mr-1') %>
+                    <%= Spree.t('admin.oauth_applications.read_only') %>
+                  </span>
+                <% end %>
+              </td>
+              <td class="w-15">
+                <% if application.last_used_at %>
+                  <%= local_time(application.last_used_at) %>
+                <% else %>
+                  <span class="text-muted"><%= Spree.t('admin.oauth_applications.never') %></span>
+                <% end %>
+              </td>
+              <td class="actions w-10">
+                <%= link_to_edit(application, no_text: true) if can? :edit, application %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', resource_name: 'API keys' %>
+  <% end %>
+</div>

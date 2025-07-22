@@ -4,7 +4,7 @@ require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
-    SPREE_GEMS = %w(spree_backend spree_frontend spree_api spree_emails).freeze
+    SPREE_GEMS = %w(spree_admin spree_storefront spree_api spree_emails).freeze
 
     desc 'Creates blank Rails application, installs Spree and all sample data'
 
@@ -29,20 +29,21 @@ module Spree
       # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
       # object has been known to return nil
       opts = {}.merge(options).slice(*PASSTHROUGH_OPTIONS)
-      opts[:database] = 'postgresql' if opts[:database].blank?
+      opts[:database] = 'sqlite3' if opts[:database].blank?
       opts[:force] = true
       opts[:skip_bundle] = true
-      opts[:skip_gemfile] = true
       opts[:skip_git] = true
       opts[:skip_listen] = true
       opts[:skip_rc] = true
       opts[:skip_spring] = true
       opts[:skip_test] = true
       opts[:skip_bootsnap] = true
+      opts[:skip_asset_pipeline] = true # skip installing propshaft, we're still using sprockets as a dependency
 
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,
         [File.expand_path(dummy_path, destination_root)], opts
+      inject_yaml_permitted_classes
     end
 
     def test_dummy_config
@@ -54,8 +55,8 @@ module Spree
       template 'rails/application.rb', "#{dummy_path}/config/application.rb", force: true
       template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
-      template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
+      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true
     end
 
     def test_dummy_inject_extension_requirements
@@ -110,6 +111,14 @@ rescue LoadError
   # #{requirement} is not available.
 end
       ], before: /require '#{@lib_name}'/, verbose: true
+    end
+
+    def inject_yaml_permitted_classes
+      inside dummy_path do
+        inject_into_file 'config/application.rb', %Q[
+    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess]
+        ], after: /config\.load_defaults.*$/, verbose: true
+      end
     end
 
     def dummy_path

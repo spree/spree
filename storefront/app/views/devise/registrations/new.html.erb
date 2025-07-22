@@ -1,0 +1,27 @@
+<%= turbo_frame_tag :login do %>
+  <div class="card-dialog max-w-xl mx-auto py-10 px-4">
+    <h2 class="text-xl lg:text-2xl font-medium mb-4"><%= Spree.t(:sign_up) %></h2>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), data: { turbo_frame: '_top' }) do |f| %>
+      <%= render "spree/shared/error_messages", target: resource %>
+      <div class="flex flex-col mb-4">
+        <%= f.label :email, Spree.t(:email) %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'text-input', required: true %>
+      </div>
+      <div class="flex flex-col mb-4">
+        <%= f.label :password, Spree.t(:password) %>
+        <% if @minimum_password_length %>
+          <em><%= Spree.t(:minimum_password_length, count: @minimum_password_length) %></em>
+        <% end %>
+        <%= f.password_field :password, autocomplete: "new-password", class: 'text-input', required: true %>
+      </div>
+      <div class="flex flex-col mb-4">
+        <%= f.label :password_confirmation, Spree.t(:confirm_password) %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'text-input', required: true %>
+      </div>
+      <div class="actions">
+        <%= f.submit Spree.t(:sign_up), class: 'btn btn-primary w-full' %>
+      </div>
+    <% end %>
+    <%= render "devise/shared/links" %>
+  </div>
+<% end%>

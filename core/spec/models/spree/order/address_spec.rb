@@ -82,5 +82,35 @@ describe Spree::Order, type: :model do
         expect(@order.bill_address_id).to eq @order.ship_address_id
       end
     end
+
+    context 'when user wants to update firstname of the address with already completed order' do
+      let(:address) { create(:address, user: order.user) }
+      let!(:completed_order) { create(:completed_order_with_totals, user: order.user, ship_address: address) }
+
+      it 'creates new address with updated attributes' do
+        expect(
+          order.update(
+                 bill_address_attributes: {
+                   firstname: 'New name',
+                   **address.attributes.except(
+                     'firstname',
+                     'created_at',
+                     'updated_at',
+                     'deleted_at',
+                     'quick_checkout',
+                     'public_metadata',
+                     'private_metadata',
+                     'latitude',
+                     'longitude',
+                     'preferences'
+                   )
+                 }
+               )
+        ).to be_truthy
+
+        expect(order.bill_address_id).not_to eq address.id
+        expect(order.bill_address.firstname).to eq 'New name'
+      end
+    end
   end
 end

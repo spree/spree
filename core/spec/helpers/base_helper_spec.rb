@@ -3,10 +3,11 @@ require 'spec_helper'
 describe Spree::BaseHelper, type: :helper do
   include described_class
 
-  let(:current_store) { create :store }
+  let(:current_store) { create(:store) }
 
   before do
     allow(controller).to receive(:controller_name).and_return('test')
+    allow(Rails.application.routes).to receive(:default_url_options).and_return(protocol: 'http', port: nil)
   end
 
   context 'available_countries' do
@@ -35,13 +36,13 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'return complete list of countries' do
-        expect(available_countries.count).to eq(Spree::Country.count)
+        expect(available_countries).to contain_exactly(*Spree::Country.all)
       end
     end
   end
 
   describe '#spree_storefront_resource_url' do
-    let!(:store) { create(:store) }
+    let!(:store) { @default_store }
     let!(:taxon) { create(:taxon) }
     let!(:product) { create(:product) }
 
@@ -69,6 +70,32 @@ describe Spree::BaseHelper, type: :helper do
 
         it { expect(helper.spree_storefront_resource_url(product)).to eq("http://www.example.com/fr/products/#{product.slug}") }
       end
+
+      context 'when preview_id is not present' do
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product)).to eq("http://#{current_store.url}/products/#{product.slug}")
+        end
+      end
+
+      context 'when preview_id is present' do
+        it 'returns the product preview url' do
+          expect(spree_storefront_resource_url(product, preview_id: product.id)).to eq("http://#{current_store.url}/products/#{product.slug}?preview_id=#{product.id}")
+        end
+      end
+
+      context 'for product with custom domain' do
+        let!(:custom_domain) { create :custom_domain, store: current_store }
+
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product)).to eq("http://#{custom_domain.url}/products/#{product.slug}")
+        end
+      end
+
+      context 'for product with relative option' do
+        it 'returns the product url' do
+          expect(spree_storefront_resource_url(product, relative: true)).to eq("/products/#{product.slug}")
+        end
+      end
     end
 
     context 'for Taxon URL' do
@@ -93,11 +120,22 @@ describe Spree::BaseHelper, type: :helper do
     let(:product) { build(:product) }
 
     before do
-      Spree::Image.class_eval do
-        styles[:very_strange] = '1x1'
-        styles.merge!(foobar: '2x2')
+      module ImageDecorator
+        module ClassMethods
+          def styles
+            super.merge(
+              very_strange: '1x1',
+              foobar: '2x2'
+            )
+          end
+        end
+
+        def self.prepended(base)
+          base.singleton_class.prepend ClassMethods
+        end
       end
-      allow_any_instance_of(described_class).to receive(:inline_svg_tag).and_return('<svg></svg>')
+
+      Spree::Image.prepend(ImageDecorator)
     end
 
     it 'does not raise errors when style exists' do
@@ -146,12 +184,12 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  context 'base_cache_key' do
+  context 'spree_base_cache_key' do
     let(:current_currency) { 'USD' }
 
     context 'when try_spree_current_user defined' do
       before do
-        I18n.locale = I18n.default_locale
+        allow(I18n).to receive(:locale).and_return(I18n.default_locale)
         allow_any_instance_of(described_class).to receive(:try_spree_current_user).and_return(user)
       end
 
@@ -159,7 +197,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { create(:admin_user) }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', true, true]
+          expect(spree_base_cache_key).to eq [:en, 'USD', true, true]
         end
       end
 
@@ -167,7 +205,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { create(:user) }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', true, false]
+          expect(spree_base_cache_key).to eq [:en, 'USD', true, false]
         end
       end
 
@@ -175,7 +213,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:user) { nil }
 
         it 'returns base cache key' do
-          expect(base_cache_key).to eq [:en, 'USD', false, nil]
+          expect(spree_base_cache_key).to eq [:en, 'USD', false]
         end
       end
     end
@@ -183,10 +221,12 @@ describe Spree::BaseHelper, type: :helper do
     context 'when try_spree_current_user is undefined' do
       let(:current_currency) { 'USD' }
 
-      before { I18n.locale = I18n.default_locale }
+      before do
+        allow(I18n).to receive(:locale).and_return(I18n.default_locale)
+      end
 
       it 'returns base cache key' do
-        expect(base_cache_key).to eq [:en, 'USD', nil, nil]
+        expect(spree_base_cache_key).to eq [:en, 'USD']
       end
     end
   end
@@ -395,7 +435,7 @@ describe Spree::BaseHelper, type: :helper do
       let(:current_store) { create(:store, :with_favicon) }
 
       it do
-        expect(spree_favicon_path).to end_with('favicon.ico')
+        expect(spree_favicon_path).to end_with('thinking-cat.jpg')
         expect(URI.parse(spree_favicon_path).host).to be_present
       end
     end

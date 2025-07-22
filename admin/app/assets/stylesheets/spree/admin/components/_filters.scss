@@ -1,0 +1,95 @@
+.filter-wrap {
+  padding: 0.5rem;
+  border-bottom: 1px solid $table-border-color;
+  gap: 0.5rem;
+  position: sticky;
+  top: $header-height;
+  z-index: 1000;
+  background-color: $card-bg;
+  border-top-left-radius: $border-radius-lg;
+  border-top-right-radius: $border-radius-lg;
+
+  .btn {
+    height: 2.125rem;
+  }
+}
+
+#filters-search-bar {
+  max-width: 300px;
+  margin-right: auto;
+  height: 2.125rem;
+}
+
+#table-filter {
+  position: absolute;
+  padding: 1rem;
+  border-radius: $dropdown-border-radius;
+  box-shadow: $dropdown-box-shadow;
+  background-color: $dropdown-bg;
+  margin-top: 0.5rem;
+  right: 0.5rem;
+  animation: fadeIn 0.2s ease-in-out;
+  width: 100%;
+  z-index: $zindex-dropdown;
+
+  @include media-breakpoint-up(md) {
+    width: 50%;
+
+    flex-direction: column;
+  }
+
+  &.hidden {
+    display: none !important;
+  }
+  
+  &.d-none {
+    display: none !important;
+  }
+}
+
+
+.collapsed .arrow {
+  transform: rotate(-90deg);
+  transition: .3s ease-in-out;
+}
+
+i.js-delete-filter {
+  margin-bottom: 0;
+}
+
+.sort_link {
+  color: $gray-600;
+  padding: 0.25rem;
+  border-radius: $border-radius-sm;
+
+  &:hover {
+    color: theme-color('primary') !important;
+    text-decoration: none !important;
+    background-color: $gray-50;
+  }
+
+  &.asc, &.desc {
+    font-weight: $font-weight-bold;
+    svg {
+      color: $gray-600 !important;
+    }
+  }
+
+  .icon, svg {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  svg.default-filter-arrow {
+    opacity: 0.3;
+  }
+}
+
+.filter-badges-container:has(*) {
+  @extend .mt-3;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}

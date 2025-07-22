@@ -21,7 +21,7 @@
 # total. This allows an adjustment to be preserved if it becomes ineligible so
 # it might be reinstated.
 module Spree
-  class Adjustment < Spree::Base
+  class Adjustment < Spree.base_class
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
       belongs_to :source
@@ -64,6 +64,7 @@ module Spree
     scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
+    scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
     scope :return_authorization, -> { where(source_type: 'Spree::ReturnAuthorization') }
     scope :is_included, -> { where(included: true) }
@@ -87,6 +88,10 @@ module Spree
       source_type == 'Spree::PromotionAction'
     end
 
+    def tax?
+      source_type == 'Spree::TaxRate'
+    end
+
     # Passing a target here would always be recommended as it would avoid
     # hitting the database again and would ensure you're compute values over
     # the specific object amount passed here.
@@ -96,7 +101,10 @@ module Spree
       amount = source.compute_amount(target)
       attributes = { amount: amount, updated_at: Time.current }
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?
+
       update_columns(attributes)
+      source.promotion.touch if promotion?
+
       amount
     end
 

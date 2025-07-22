@@ -88,7 +88,7 @@ module Spree
           end
 
           # if using a user oAuth token we need to check CanCanCan abilities
-          # defined in https://github.com/spree/spree/blob/master/core/app/models/spree/ability.rb
+          # defined in https://github.com/spree/spree/blob/main/core/app/models/spree/ability.rb
           def authorize_spree_user
             return if spree_current_user.nil?
 

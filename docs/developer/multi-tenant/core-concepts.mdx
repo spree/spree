@@ -1,0 +1,86 @@
+---
+title: Multi-Tenant Core Concepts
+sidebarTitle: Core Concepts
+---
+
+## Tenant class
+
+The center of the multi-tenant architecture is the `Spree::Tenant` class. This is the highest level class in the multi-tenant system.
+
+Every tenanted model includes a `tenant_id` column. This is used to identify which tenant a record belongs to. It's row-level multi-tenancy.
+
+After creating a new tenant it will automatically create store and run [Spree seeds](https://github.com/spree/spree/tree/main/core/app/services/spree/seeds) to populate data such as countries, zones, tax rates, etc.
+
+## Tenanted models
+
+All models that are tenanted inherit from `SpreeMultiTenant::Base` class. `spree_multi_tenant` automatically sets the `Spree.base_class` to `SpreeMultiTenant::Base` so all standard Spree models will be tenanted (with an exclusion of `Spree::CustomDomain`).
+
+When creating a new model that you want to be tenanted remember to inherit from `SpreeMultiTenant::Base` and not from `Spree::Base` and add `tenant_id` column to the table, eg.
+
+```bash
+bin/rails g model Spree::NewModel tenant:references name:string
+```
+
+```ruby
+class Spree::NewModel < SpreeMultiTenant::Base
+end
+```
+
+<Info>
+  You don't need to add `belongs_to :tenant` to the model, it's handled by gem.
+</Info>
+
+## Tenant selector
+
+By default the current tenant is selected based on the subdomain or `Spree::CustomDomain`. The selector works in tandem with the default [Spree::Stores::FindCurrent](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb) finder.
+
+First it finds the current store, and later sets the current tenant based on the store's `tenant_id`.
+
+Tenant record is accessible in views and controllers as `current_tenant`. In models you can access it via `SpreeMultiTenant.current_tenant`.
+
+<Info>
+  One tenant can have multiple stores. Calling `Spree::Store.default` will return the default store for the first tenant.
+</Info>
+
+## Code isolation
+
+All code run when `SpreeMultiTenant.current_tenant` is set will be executed in the context of the tenant, what that means:
+
+* all finder queries will always attach `tenant_id = <current_tenant.id>` to the query
+* all writes will automatically set `tenant_id` to the current tenant ID (you don't need to do it manually)
+
+<Warning>
+  [insert_all](https://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-insert_all) / [upsert_all](https://api.rubyonrails.org/classes/ActiveRecord/Relation.html#method-i-upsert_all) methods will require you to manually set `tenant_id` to the desired value.
+</Warning>
+
+## Background jobs
+
+Background jobs enqueued when `SpreeMultiTenant.current_tenant` is set will be executed in the context of the tenant.
+
+## Enforce tenant context
+
+Sometimes when you're not sure if the tenant context is active you can use `SpreeMultiTenant.with_tenant` to enforce it, eg.
+
+```ruby
+SpreeMultiTenant.with_tenant(tenant) do
+  # all operations here will be executed in the context of the tenant
+end
+```
+
+## Excluding tenant context
+
+Sometimes you want to run a piece of code outside of the tenant context, for that you can use `SpreeMultiTenant.without_tenant`
+
+```ruby
+SpreeMultiTenant.without_tenant do
+  # all operations here will be executed outside of the tenant context
+end
+```
+
+## Command line
+
+When using `bin/rails console` or `bin/rails runner` you can set the tenant context by:
+
+```ruby
+SpreeMultiTenant.current_tenant = Spree::Store.find_by(code: 'my_store').tenant
+```

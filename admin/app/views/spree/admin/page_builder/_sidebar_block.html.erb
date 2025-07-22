@@ -1,0 +1,30 @@
+<% if block.persisted? %>
+  <%= turbo_frame_tag dom_id(block), class: 'list-group-item sidebar-page-block px-0 py-0 border-0 rounded',
+                                     data: {
+                                       action: 'mouseover->page-builder#toggleHighlightElement mouseout->page-builder#toggleHighlightElement',
+                                       page_builder_editor_id_param: "block-#{block.id}",
+                                       sortable_update_url: spree.admin_page_section_block_path(block.section, block, format: :turbo_stream)
+                                     } do %>
+    <div class="d-flex align-items-center justify-content-between sidebar-block-title p-1 rounded-sm">
+      <div class="d-flex align-items-center flex-fill">
+        <%= link_to(edit_admin_page_section_block_path(block.section, block),
+          class: 'block-edit-link flex-fill text-dark',
+          data: {
+            turbo_frame: :page_sidebar,
+            action: 'click->page-builder#makeOverlayActive',
+            page_builder_editor_id_param: "block-#{block.id}"
+          }) do %>
+          <%= icon "#{block.icon_name}", class: 'mr-2' if block.icon_name.present? %>
+          <%= block.display_name %>
+        <% end %>
+      </div>
+      <div class="d-flex align-items-center d-none">
+        <% if block.section.can_sort_blocks? %>
+          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 px-1 handle-block">
+            <%= icon('grip-vertical', class: 'mr-0') %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

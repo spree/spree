@@ -19,7 +19,7 @@ module Spree
           end
           return process(:warn, msg("failed for '#{url}'")) if request.failed_request?
 
-          process(:debug, msg("success for URL '#{url}'"))
+          process
         end
 
         private
@@ -30,8 +30,8 @@ module Spree
         delegate :id, :url, to: :subscriber
         delegate :created_at, :id, to: :event, prefix: true
 
-        def process(log_level, msg)
-          Rails.logger.public_send(log_level, msg)
+        def process(log_level = nil, msg = nil)
+          Rails.logger.public_send(log_level, msg) if msg.present? && log_level.present?
           make_request
           update_event(msg)
           nil
@@ -39,7 +39,11 @@ module Spree
 
         def request
           @request ||=
-            Spree::Webhooks::Subscribers::MakeRequest.new(webhook_payload_body: body_with_event_metadata, url: url)
+            Spree::Webhooks::Subscribers::MakeRequest.new(
+              signature: event.signature_for(body_with_event_metadata),
+              url: url,
+              webhook_payload_body: body_with_event_metadata
+            )
         end
         alias make_request request
 
@@ -55,7 +59,7 @@ module Spree
           )
         end
 
-        def update_event(msg)
+        def update_event(msg = nil)
           event.update(
             execution_time: execution_time,
             request_errors: msg,

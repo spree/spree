@@ -1,0 +1,6 @@
+<%= render 'spree/admin/page_builder/color_picker',
+      f: f,
+      field: :preferred_background_color,
+      value: f.object.preferred_background_color.presence,
+      label: Spree.t('admin.page_builder.background_color'),
+      action: 'change->auto-submit#submit' %>

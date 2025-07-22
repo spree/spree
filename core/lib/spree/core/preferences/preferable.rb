@@ -38,6 +38,7 @@ module Spree::Preferences::Preferable
   extend ActiveSupport::Concern
 
   included do
+    serialize :preferences, type: Hash, coder: YAML if defined?(serialize)
     extend Spree::Preferences::PreferableClassMethods
   end
 
@@ -95,20 +96,40 @@ module Spree::Preferences::Preferable
     ]
   end
 
+  def preferences_of_type(type)
+    defined_preferences.find_all { |preference| preference_type(preference) == type.to_sym }
+  end
+
   def clear_preferences
     preferences.keys.each { |pref| preferences.delete pref }
   end
 
+  def restore_preferences_for(preference_keys)
+    preference_keys.each { |pref| preferences[pref] = preference_default(pref) }
+  end
+
+  def preference_change(name, changes_or_previous_changes)
+    preference_changes = changes_or_previous_changes.with_indifferent_access.fetch('preferences', [{}, {}])
+    before_preferences = preference_changes[0] || {}
+    after_preferences = preference_changes[1] || {}
+
+    return if before_preferences[name] == after_preferences[name]
+
+    [before_preferences[name], after_preferences[name]]
+  end
+
   private
 
-  def convert_preference_value(value, type)
+  def convert_preference_value(value, type, nullable: false)
     case type
     when :string, :text
       value.to_s
     when :password
       value.to_s
     when :decimal
-      (value.presence || 0).to_s.to_d
+      decimal_value = value.presence
+      decimal_value ||= 0 unless nullable
+      decimal_value.present? ? decimal_value.to_s.to_d : decimal_value
     when :integer
       value.to_i
     when :boolean

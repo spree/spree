@@ -35,7 +35,7 @@ module Spree
       private
 
       def promotions
-        promotion_scope.find_by_sql("#{order.promotions.active.to_sql} UNION #{promotion_scope.active.where(code: nil, path: nil).to_sql}")
+        promotion_scope.find_by_sql("#{order.promotions.active.to_sql} UNION #{promotion_scope.active.automatic.to_sql}")
       end
 
       def promotion_scope

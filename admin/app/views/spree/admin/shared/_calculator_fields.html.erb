@@ -1,0 +1,34 @@
+<div data-controller="calculator-fields">
+  <% calculators.each do |calculator| %>
+    <template id="<%= calculator.name.demodulize.underscore %>_fields">
+      <div class="calculator-settings">
+        <%= f.fields_for :calculator, calculator.new do |calc_form| %>
+          <%= calc_form.hidden_field :type, value: calculator.name %>
+          <%= preference_fields calculator.new(calculable: @object.dup), calc_form %>
+        <% end %>
+      </div>
+    </template>
+  <% end %>
+
+  <div id="calculator_fields" class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t(:calculator) %>
+      </h5>
+    </div>
+    <div id="preference-settings" class="card-body">
+      <div class="form-group">
+        <%= f.label(:calculator_type, Spree.t(:calculator), for: 'calculator_type') %>
+        <%= select_tag(:calculator_type, options_for_select(calculators.map { |c| [c.description, c.name] }, @object.calculator_type), {id: 'calculator_type', class: 'custom-select', data: { action: 'calculator-fields#replaceFields' }}) %>
+      </div>
+      <div class="form-group" data-calculator-fields-target="container">
+        <div class="calculator-settings">
+          <%= f.fields_for :calculator do |calculator_form| %>
+            <%= calculator_form.hidden_field :type, value: @object.calculator_type %>
+            <%= preference_fields @object.calculator, calculator_form %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

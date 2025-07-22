@@ -10,14 +10,30 @@ Capybara.configure do |config|
   config.match = :smart
   config.ignore_hidden_elements = true
 end
+Capybara.test_id = 'data-test-id'
 
 if ENV['WEBDRIVER'] == 'accessible'
   require 'capybara/accessible'
   Capybara.javascript_driver = :accessible
 end
 
-RSpec.configure do |config|
-  config.before(:each, js: true) do
-    Capybara.page.driver.browser.manage.window.resize_to(1400, 900)
-  end
+Capybara.register_driver :selenium_chrome_headless do |app|
+  options = ::Selenium::WebDriver::Chrome::Options.new
+  options.add_argument '--headless'
+  options.add_argument '--disable-gpu'
+  options.add_argument '--window-size=1440,900'
+  options.add_argument '--disable-search-engine-choice-screen'
+
+  # Disable timers being throttled in background pages/tabs. Useful for parallel test runs.
+  options.add_argument '--disable-background-timer-throttling'
+
+  # Normally, Chrome will treat a 'foreground' tab instead as backgrounded if the surrounding window is occluded (aka
+  # visually covered) by another window. This flag disables that. Useful for parallel test runs.
+  options.add_argument '--disable-backgrounding-occluded-windows'
+
+  # This disables non-foreground tabs from getting a lower process priority. Useful for parallel test runs.
+  options.add_argument '--disable-renderer-backgrounding'
+
+
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end

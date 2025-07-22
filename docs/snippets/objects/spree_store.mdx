@@ -1,0 +1,68 @@
+import SpreeCountry from '/snippets/objects/spree_country.mdx';
+
+<Expandable title="Properties">
+  <ResponseField name="name" type="string">
+    Store name
+    Example: "My Store"
+  </ResponseField>
+
+  <ResponseField name="url" type="string">
+    Store URL
+    Example: `https://mystore.com`
+  </ResponseField>
+
+  <ResponseField name="code" type="string">
+    Unique store identifier
+    Example: `my-store`
+  </ResponseField>
+
+  <ResponseField name="mail_from_address" type="string">
+    Email address used for sending emails
+    Example: `store@example.com`
+  </ResponseField>
+
+  <ResponseField name="default_currency" type="string">
+    Default store currency
+    Example: `USD`
+  </ResponseField>
+
+  <ResponseField name="supported_currencies" type="string">
+    List of supported currencies
+    Example: `USD,EUR,GBP`
+  </ResponseField>
+
+  <ResponseField name="default_locale" type="string">
+    Default store locale
+    Example: `en`
+  </ResponseField>
+
+  <ResponseField name="supported_locales" type="string">
+    List of supported locales
+    Example: `en,es,fr`
+  </ResponseField>
+
+  <ResponseField name="default_country_id" type="integer">
+    Default country ID
+    Example: `1`
+  </ResponseField>
+
+  <ResponseField name="default_country" type="Spree::Country">
+    Default country
+    <SpreeCountry />
+  </ResponseField>
+
+  <ResponseField name="checkout_zone_id" type="integer">
+    Checkout zone ID
+    Example: `2`
+  </ResponseField>
+
+  <ResponseField name="seo_title" type="string">
+    SEO title
+    Example: `My Amazing Store`
+  </ResponseField>
+
+  <ResponseField name="meta_description" type="string">
+    Meta description for SEO
+    Example: `The best products at the best prices`
+  </ResponseField>
+</Expandable>

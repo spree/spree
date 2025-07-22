@@ -1,11 +1,7 @@
 module <%= class_name %>
   VERSION = '0.0.1'.freeze
 
-  module_function
-
-  # Returns the version of the currently loaded <%= class_name %> as a
-  # <tt>Gem::Version</tt>.
-  def version
-    Gem::Version.new VERSION
+  def gem_version
+    Gem::Version.new(VERSION)
   end
 end

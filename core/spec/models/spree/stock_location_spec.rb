@@ -14,7 +14,7 @@ module Spree
 
       it 'creates stock_items for all variants' do
         expect do
-          create(:stock_location, propagate_all_variants: true)
+          perform_enqueued_jobs { create(:stock_location, propagate_all_variants: true) }
         end.to(
           change { Variant.count }.by(0).and(
             change { described_class.count }.from(0).to(1).and(
@@ -169,13 +169,13 @@ module Spree
 
     it 'restocks a variant with a positive stock movement' do
       originator = double
-      expect(subject).to receive(:move).with(variant, 5, originator)
+      expect(subject).to receive(:move).with(variant, 5, originator, persist: true)
       subject.restock(variant, 5, originator)
     end
 
     it 'unstocks a variant with a negative stock movement' do
       originator = double
-      expect(subject).to receive(:move).with(variant, -5, originator)
+      expect(subject).to receive(:move).with(variant, -5, originator, persist: true)
       subject.unstock(variant, 5, originator)
     end
 
@@ -311,6 +311,34 @@ module Spree
 
       context 'active has not changed' do
         it { expect { subject.update(name: 'my other warehouse').to change(variant, :updated_at) } }
+      end
+    end
+
+    describe '#address' do
+      it 'returns Spree::Address instance' do
+        expect(subject.address).to be_an_instance_of(Spree::Address)
+      end
+    end
+
+    describe '#display_name' do
+      it 'returns the name' do
+        expect(subject.display_name).to eq(subject.name)
+      end
+
+      context 'with admin name set' do
+        let(:admin_name) { 'admin name' }
+
+        before { subject.admin_name = admin_name }
+
+        it 'returns the admin name' do
+          expect(subject.display_name).to eq("#{admin_name} / #{subject.name}")
+        end
+      end
+    end
+
+    describe '#country_name' do
+      it 'returns the country name' do
+        expect(subject.country_name).to eq(subject.country.name)
       end
     end
   end

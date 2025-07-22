@@ -6,7 +6,6 @@ module Spree
         include Spree::Core::TokenGenerator
 
         included do
-          before_action :set_token
           if defined?(helper_method)
             helper_method :try_spree_current_user
           end
@@ -18,15 +17,16 @@ module Spree
 
         # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(try_spree_current_user)
+          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(try_spree_current_user, { store: current_store })
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session['spree_user_return_to'] || request.env['HTTP_REFERER'] || default)
-          session['spree_user_return_to'] = nil
+          Spree::Deprecation.warn('redirect_back_or_default is deprecated and will be removed in Spree 5.2. Please use redirect_back(fallback_location: default) instead.')
+          redirect_back(fallback_location: default)
         end
 
         def set_token
+          Spree::Deprecation.warn('set_token is deprecated and will be removed in Spree 5.2. Please use create_token_cookie(token) instead.')
           cookies.permanent.signed[:token] ||= cookies.signed[:guest_token]
           cookies.permanent.signed[:token] ||= {
             value: generate_token,
@@ -44,18 +44,19 @@ module Spree
           @current_oauth_token ||= get_last_access_token.call(user) || create_access_token.call(user)
         end
 
-        def store_location
-          # disallow return to login, logout, signup pages
-          authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
-          disallowed_urls = []
-          authentication_routes.each do |route|
-            disallowed_urls << send(route) if respond_to?(route)
-          end
+        # this will work for devise out of the box
+        # for other auth systems you will need to override this method
+        def store_location(location = nil)
+          return if try_spree_current_user
 
-          disallowed_urls.map! { |url| url[/\/\w+$/] }
-          unless disallowed_urls.include?(request.fullpath)
-            session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
-          end
+          location ||= request.fullpath
+          session_key = store_location_session_key
+
+          session[session_key] = location
+        end
+
+        def store_location_session_key
+          "#{Spree.user_class.model_name.singular_route_key.to_sym}_return_to"
         end
 
         # proxy method to *possible* spree_current_user method
@@ -68,31 +69,6 @@ module Spree
           # This one will be defined by Devise
           elsif respond_to?(:current_spree_user)
             current_spree_user
-          end
-        end
-
-        # Redirect as appropriate when an access request fails.  The default action is to redirect to the login screen.
-        # Override this method in your controllers if you want to have special behavior in case the user is not authorized
-        # to access the requested action.  For example, a popup window might simply close itself.
-        def redirect_unauthorized_access
-          ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-            Core::ControllerHelpers#redirect_unauthorized_access is deprecated and will be removed in Spree 5.0.
-            This method is implemented differently for Storefront and Admin
-          DEPRECATION
-          if try_spree_current_user
-            flash[:error] = Spree.t(:authorization_failure)
-            redirect_to spree.forbidden_path
-          else
-            store_location
-            if Spree.respond_to?(:admin_path) && request.fullpath.match(Spree.admin_path) && defined?(spree.admin_login_path)
-              redirect_to spree.admin_login_path
-            elsif respond_to?(:spree_login_path)
-              redirect_to spree_login_path
-            elsif spree.respond_to?(:root_path)
-              redirect_to spree.root_path
-            else
-              redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
-            end
           end
         end
       end

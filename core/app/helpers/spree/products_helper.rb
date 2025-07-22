@@ -53,7 +53,7 @@ module Spree
     end
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
-      max_updated_at = (products.except(:group, :order).maximum(:updated_at) || Date.today).to_s(:number)
+      max_updated_at = (products.except(:group, :order).maximum(:updated_at) || Date.today).to_formatted_s(:number)
       products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
@@ -72,25 +72,6 @@ module Spree
       return string if string.length <= 450
 
       string.slice(0..449) + '...'
-    end
-
-    # will return a human readable string
-    def available_status(product)
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        `Spree::ProductsHelper#available_status` method from spree/core is deprecated and will be removed.
-        Please use `Spree::Admin::ProductsHelper#available_status` from spree_backend instead.
-      DEPRECATION
-
-      return Spree.t(:archived) if product.discontinued?
-      return Spree.t(:deleted) if product.deleted?
-
-      if product.available?
-        Spree.t(:active)
-      elsif product.make_active_at&.future?
-        Spree.t(:pending_sale)
-      else
-        Spree.t(:draft)
-      end
     end
 
     def product_images(product, variants)
@@ -140,10 +121,7 @@ module Spree
     end
 
     def related_products
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        ProductsHelper#related_products is deprecated and will be removed in Spree 5.0.
-        Please use ProductsHelper#relations from now on.
-      DEPRECATION
+      Spree::Deprecation.warn('ProductsHelper#related_products is deprecated and will be removed in Spree 6.0. Please use ProductsHelper#relations from now on.')
 
       return [] unless @product.respond_to?(:has_related_products?)
 
@@ -155,7 +133,7 @@ module Spree
     end
 
     def common_product_cache_keys
-      base_cache_key + price_options_cache_key
+      spree_base_cache_key + price_options_cache_key
     end
 
     private

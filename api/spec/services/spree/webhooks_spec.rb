@@ -18,15 +18,15 @@ describe Spree::Webhooks do
       allow(queue_requests).to receive(:call).with(any_args)
     end
 
-    after { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
+    after { Spree::Webhooks.disabled = true }
 
-    describe 'the value of DISABLE_SPREE_WEBHOOKS environment variable' do
-      before { ENV['DISABLE_SPREE_WEBHOOKS'] = 'some_value' }
+    describe 'the value of spree_webhooks_disabled request variable' do
+      before { RequestStore.store[:disable_spree_webhooks] = false }
 
       describe 'when an error is not raised' do
         it 'sets it to the original value' do
           described_class.disable_webhooks { variant.discontinue! }
-          expect(ENV['DISABLE_SPREE_WEBHOOKS']).to eq('some_value')
+          expect(RequestStore.store[:disable_spree_webhooks]).to eq(false)
         end
       end
 
@@ -36,13 +36,13 @@ describe Spree::Webhooks do
             described_class.disable_webhooks { raise StandardError }
           rescue StandardError
           end
-          expect(ENV['DISABLE_SPREE_WEBHOOKS']).to eq('some_value')
+          expect(RequestStore.store[:disable_spree_webhooks]).to eq(false)
         end
       end
     end
 
     describe 'when webhooks are already disabled' do
-      before { ENV['DISABLE_SPREE_WEBHOOKS'] = 'true' }
+      before { Spree::Webhooks.disabled = true }
 
       it 'does not emit the event' do
         described_class.disable_webhooks { variant.discontinue! }
@@ -51,11 +51,13 @@ describe Spree::Webhooks do
     end
 
     describe 'when webhooks are enabled' do
+      before { Spree::Webhooks.disabled = false }
+
       describe 'when not using #disable_webhooks' do
         it 'emits the event' do
           expect do
             variant.discontinue!
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, variant)
         end
       end
 

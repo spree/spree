@@ -4,8 +4,9 @@ module Spree
   module Webhooks
     module Subscribers
       class MakeRequest
-        def initialize(url:, webhook_payload_body:)
+        def initialize(signature:, url:, webhook_payload_body:)
           @execution_time_in_milliseconds = 0
+          @signature = signature
           @url = url
           @webhook_payload_body = webhook_payload_body
           @webhooks_timeout = ENV['SPREE_WEBHOOKS_TIMEOUT']
@@ -44,12 +45,12 @@ module Spree
         def http
           http = Net::HTTP.new(uri_host, uri_port)
           http.read_timeout = webhooks_timeout.to_i if custom_read_timeout?
-          http.use_ssl = true if use_ssl?
+          http.use_ssl = use_ssl?
           http
         end
 
         def request
-          req = Net::HTTP::Post.new(uri_path, HEADERS)
+          req = Net::HTTP::Post.new(uri_path, HEADERS.merge('X-Spree-Hmac-SHA256' => @signature))
           req.body = webhook_payload_body
           @request ||= begin
             start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
@@ -70,7 +71,7 @@ module Spree
         end
 
         def use_ssl?
-          !(Rails.env.development? || Rails.env.test?)
+          uri.scheme == 'https'
         end
 
         def uri

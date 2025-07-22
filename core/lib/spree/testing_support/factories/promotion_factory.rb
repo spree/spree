@@ -5,19 +5,21 @@ FactoryBot.define do
     end
 
     after(:create) do |promotion, evaluator|
-      rule = Spree::Promotion::Rules::ItemTotal.create!(
+      Spree::Promotion::Rules::ItemTotal.create!(
+        promotion: promotion,
         preferred_operator_min: 'gte',
         preferred_operator_max: 'lte',
         preferred_amount_min: evaluator.item_total_threshold_amount,
         preferred_amount_max: evaluator.item_total_threshold_amount + 100
       )
-      promotion.rules << rule
-      promotion.save!
     end
   end
 
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
+    sequence :code do |n|
+      "CODE-#{n}"
+    end
 
     before(:create) do |promotion, _evaluator|
       if promotion.stores.empty?
@@ -58,9 +60,7 @@ FactoryBot.define do
       after(:create) do |promotion, evaluator|
         calculator = Spree::Calculator::FlatRate.new
         calculator.preferred_amount = evaluator.weighted_order_adjustment_amount
-        action = Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator)
-        promotion.actions << action
-        promotion.save!
+        Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator, promotion: promotion)
       end
     end
 
@@ -71,9 +71,7 @@ FactoryBot.define do
       name { 'Free Shipping Promotion' }
 
       after(:create) do |promotion|
-        action = Spree::Promotion::Actions::FreeShipping.new
-        action.promotion = promotion
-        action.save
+        Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion)
       end
 
       factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]

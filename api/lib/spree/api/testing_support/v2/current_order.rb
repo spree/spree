@@ -18,8 +18,10 @@ shared_context 'order with a physical line item' do
 end
 
 shared_context 'order with a digital line item' do
-  let!(:digital) { create(:digital) }
-  let!(:variant_digital) { digital.variant }
+  let(:digital_shipping_method) { create(:digital_shipping_method) }
+  let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+  let(:variant_digital) { create(:variant, product: digital_product) }
+  let!(:digital) { create(:digital, variant: variant_digital) }
   let!(:line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
   let!(:headers) { headers_bearer }
 
@@ -30,8 +32,10 @@ shared_context 'order with a digital line item' do
 end
 
 shared_context 'order with a physical and digital line item' do
-  let!(:digital) { create(:digital) }
-  let!(:variant_digital) { digital.variant }
+  let(:digital_shipping_method) { create(:digital_shipping_method) }
+  let(:product_digital) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+  let(:variant_digital) { create(:variant, product: product_digital) }
+  let!(:digital) { create(:digital, variant: variant_digital) }
   let!(:digital_line_item) { create(:line_item, variant: variant_digital, order: order, currency: currency) }
   let!(:physical_line_item) { create(:line_item, order: order, currency: currency) }
 
@@ -87,7 +91,8 @@ shared_examples 'returns valid cart JSON' do
     expect(json_response['data']).to have_attribute(:display_pre_tax_item_amount).with_value(order.display_pre_tax_item_amount.to_s)
     expect(json_response['data']).to have_attribute(:pre_tax_total).with_value(order.pre_tax_total.to_s)
     expect(json_response['data']).to have_attribute(:display_pre_tax_total).with_value(order.display_pre_tax_total.to_s)
-    expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
+    expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments,
+                                                        :promotions)
   end
 end
 

@@ -16,7 +16,13 @@ describe 'Taxons API', swagger: true do
   let!(:taxon_b) { create(:taxon, name: 'Shorts', taxonomy: taxonomy) }
 
   let(:records_list) { create_list(:taxon, 2, taxonomy: taxonomy) }
-  let(:valid_create_param_value) { build(:taxon, taxonomy: taxonomy).attributes }
+  let(:valid_create_param_value) do {
+    parent_id: taxonomy.root.id,
+    position: 0,
+    name: 'new_taxon',
+    taxonomy_id: taxonomy.id
+  }
+  end
   let(:valid_update_param_value) do
     {
       name: 'T-Shirts',

@@ -1,0 +1,19 @@
+<% cache variant do %>
+  <% if variant.is_master? || variant.product.deleted? %>
+    <% variant_url = spree.edit_admin_product_path(variant.product) %>
+  <% else %>
+    <% variant_url = spree.edit_admin_product_variant_path(variant.product, variant) %>
+  <% end %>
+
+  <%= link_to variant_url, id: spree_dom_id(variant), data: { turbo_permanent: true, turbo_frame: :_top }, class: 'd-flex align-items-center justify-content-start text-decoration-none' do %>
+    <%= render "spree/admin/shared/product_image", object: variant %>
+    <div class="ml-3">
+      <strong><%= variant.name %></strong>
+      <% if variant.options_text.present? %>
+        <p class="text-muted my-1 font-size-sm">
+          <%= variant.options_text %>
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

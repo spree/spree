@@ -15,7 +15,7 @@ describe Spree::Webhooks::Event do
       end
     end
 
-    context 'susbcriber' do
+    context 'subscriber' do
       it 'is invalid without a subscriber' do
         event = build(:event, :successful, subscriber_id: nil)
         expect(event.valid?).to be(false)
@@ -26,6 +26,18 @@ describe Spree::Webhooks::Event do
         event = build(:event, :successful, subscriber: create(:subscriber))
         expect(event.valid?).to be(true)
       end
+    end
+  end
+
+  describe '#signature_for' do
+    subject(:signature) { event.signature_for(payload) }
+
+    let(:event) { create(:event) }
+    let(:payload) { { id: 123 }.to_json }
+
+    it 'computes a signature for the JSON payload' do
+      expect(signature).to \
+        eq(Spree::Webhooks::EventSignature.new(event, payload).computed_signature)
     end
   end
 end

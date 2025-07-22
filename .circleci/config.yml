@@ -1,4 +1,4 @@
-version: 2.1 # use CircleCI 2.0
+version: 2.1
 
 defaults: &defaults
   environment: &environment
@@ -7,277 +7,213 @@ defaults: &defaults
     BUNDLE_JOBS: 4
     BUNDLE_RETRY: 3
     BUNDLE_PATH: ~/spree/vendor/bundle
+    DB_HOST: localhost
+    DB: postgres # default value, this will speed up bundle install for all postgres builds
+    DB_USERNAME: postgres
   working_directory: ~/spree
   docker:
-    - image: &ruby_image circleci/ruby:2.7-node-browsers
-    - image: &redis_image circleci/redis:6.2-alpine
+    - image: &ruby_image cimg/ruby:3.3.0-browsers
 
-defaults_3_0: &defaults_3_0
-  <<: *defaults
-  docker:
-    - image: &ruby_3_0_image circleci/ruby:3.0-node-browsers
-    - image: *redis_image
-
-run_tests: &run_tests
-  <<: *defaults
-  parallelism: 3
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-          - spree-bundle-v10-ruby-2-7
-    - run:
-        name: Install libvips
-        command: sudo apt-get install libvips
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
-
-run_tests_3_0: &run_tests_3_0
-  <<: *defaults_3_0
-  parallelism: 3
-  steps:
-    - checkout
-    - restore_cache:
-        keys:
-          - spree-bundle-v10-ruby-3-0-{{ .Branch }}
-          - spree-bundle-v10-ruby-3-0
-    - run:
-        name: Install libvips
-        command: sudo apt-get install libvips
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install
-          ./bin/build-ci.rb install
-    - run:
-        name: Run rspec in parallel
-        command: ./bin/build-ci.rb test
-    - store_artifacts:
-        path: /tmp/test-artifacts
-        destination: test-artifacts
-    - store_artifacts:
-        path: /tmp/test-results
-        destination: raw-test-output
-    - store_test_results:
-        path: /tmp/test-results
-
-jobs:
-  bundle:
-    <<: *defaults
+commands:
+  bundle_install:
     steps:
-      - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v10-ruby-2-7-{{ .Branch }}
-            - spree-bundle-v10-ruby-2-7
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}
+      - install_libvips
+      - run:
+          name: Install global dependencies
+          command: bundle check || bundle install
+      - run:
+          name: Install per-project gem dependencies
+          command: bin/build-ci.rb install
+  install_libvips:
+    steps:
+      - run:
+          name: Fix APT mirrors
+          command: |
+            sudo sed -i 's|http://archive.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
+            sudo sed -i 's|http://security.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
+            sudo apt-get update
       - run:
           name: Install libvips
-          command: sudo apt-get install libvips
-      - run:
-          name: Bundle Install
           command: |
-            bundle check || bundle install
-            ./bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v10-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
-
-  bundle_ruby_3_0:
-    <<: *defaults_3_0
+            sudo apt-get install -y libvips-dev
+  store_all_artifacts:
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v10-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v10-ruby-3-0
-      - run:
-          name: Install libvips
-          command: sudo apt-get install libvips
-      - run:
-          name: Bundle Install
-          command: |
-            bundle check || bundle install
-            ./bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v10-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
-
-  brakeman:
-    <<: *defaults_3_0
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-brakeman-{{ .Branch }}
-            - spree-brakeman
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install
-            ./bin/build-ci.rb install
-      - run:
-          name: Run Brakeman spree/api
-          command: |
-            bundle exec brakeman -p api/ --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
-      - run:
-          name: Run Brakeman spree/core
-          command: |
-            bundle exec brakeman -p core/ --ignore-config core/brakeman.ignore --exit-on-warn --exit-on-error
-      - save_cache:
-          key: spree-brakeman-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ~/spree/vendor/bundle
-
-  tests_postgres: &tests_postgres
-    <<: *run_tests
-    environment: &postgres_environment
-      <<: *environment
-      DB: postgres
-      DB_HOST: localhost
-      DB_USERNAME: postgres
-    docker:
-      - image: *ruby_image
-      - image: *redis_image
-      - image: &postgres_image circleci/postgres:12-alpine
-        environment:
-          POSTGRES_USER: postgres
-
-  tests_postgres_ruby_3_0: &tests_postgres_ruby_3_0
-    <<: *run_tests_3_0
-    environment:
-      <<: *postgres_environment
-    docker:
-      - image: *ruby_3_0_image
-      - image: *postgres_image
-      - image: *redis_image
-
-  tests_postgres_rails_6_1:
-    <<: *tests_postgres
-    environment:
-      <<: *postgres_environment
-      RAILS_VERSION: '~> 6.1.0'
-
-  tests_mysql: &tests_mysql
-    <<: *run_tests
-    environment: &mysql_environment
-      <<: *environment
-      DB: mysql
-      DB_HOST: 127.0.0.1
-      DB_USERNAME: root
-      COVERAGE: true
-      COVERAGE_DIR: /tmp/workspace/simplecov
-    docker:
-      - image: *ruby_image
-      - image: *redis_image
-      - image: &mysql_image circleci/mysql:8-ram
-
-  tests_mysql_ruby_3_0:
-    <<: *run_tests_3_0
-    environment:
-      <<: *mysql_environment
-    docker:
-      - image: *ruby_3_0_image
-      - image: *redis_image
-      - image: *mysql_image
-        command: [--default-authentication-plugin=mysql_native_password]
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v10-ruby-3-0-{{ .Branch }}
-            - spree-bundle-v10-ruby-3-0
-      - run:
-          name: Install libvips
-          command: sudo apt-get install libvips
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install
-            ./bin/build-ci.rb install
-      - run:
-          name: Run rspec in parallel
-          command: ./bin/build-ci.rb test
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts
+      - store_artifacts:
+          path: /tmp/failed_tests
+          destination: failed_tests
       - store_artifacts:
           path: /tmp/test-results
           destination: raw-test-output
       - store_test_results:
           path: /tmp/test-results
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - simplecov
-
-  send_test_coverage:
+jobs:
+  build:
     <<: *defaults
     steps:
       - checkout
+      - bundle_install
+      - save_cache:
+          key: spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          paths:
+            - ~/spree/vendor/bundle
+  test: &test
+    <<: *defaults
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
+    steps: &default_steps
+      - checkout
       - attach_workspace:
-          at: /tmp/workspace
+          at: /tmp
+      - install_libvips
+      - bundle_install
       - run:
-          name:  Download cc-test-reporter
-          command: |
-            mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-            chmod +x ./tmp/cc-test-reporter
+          name: Run tests
+          command: bin/build-ci.rb test
+      - store_all_artifacts
+
+  test_mysql: &test_mysql
+    <<: *test
+    docker:
+      - image: *ruby_image
+      - image: cimg/mysql:8.0
+        command: [--default-authentication-plugin=mysql_native_password]
+        environment:
+          MYSQL_ROOT_PASSWORD: password
+    environment: &mysql_environment
+      <<: *environment
+      DB: mysql
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_HOST: 127.0.0.1
+      RAILS_VERSION: 7.2.0
+
+  # postgres tests
+  test_core_postgres:
+    <<: *test
+    parallelism: 6
+    environment:
+      <<: *environment
+      PROJECTS: core
+  test_api_postgres:
+    <<: *test
+    parallelism: 4
+    environment:
+      <<: *environment
+      PROJECTS: api
+  test_admin_postgres:
+    <<: *test
+    parallelism: 2
+    environment:
+      <<: *environment
+      PROJECTS: admin
+  test_storefront_postgres:
+    <<: *test
+    parallelism: 2
+    environment:
+      <<: *environment
+      PROJECTS: storefront
+  test_other_postgres:
+    <<: *test
+    environment:
+      <<: *environment
+      PROJECTS: emails,sample
+
+  # mysql tests
+  test_core_mysql:
+    <<: *test_mysql
+    parallelism: 6
+    environment:
+      <<: *mysql_environment
+      PROJECTS: core
+  test_api_mysql:
+    <<: *test_mysql
+    parallelism: 4
+    environment:
+      <<: *mysql_environment
+      PROJECTS: api
+  test_admin_mysql:
+    <<: *test_mysql
+    parallelism: 2
+    environment:
+      <<: *mysql_environment
+      PROJECTS: admin
+  test_storefront_mysql:
+    <<: *test_mysql
+    parallelism: 2
+    environment:
+      <<: *mysql_environment
+      PROJECTS: storefront
+  test_other_mysql:
+    <<: *test_mysql
+    environment:
+      <<: *mysql_environment
+      PROJECTS: emails,sample
+
+  # brakeman
+  brakeman:
+    <<: *defaults
+    steps:
+      - checkout
+      - bundle_install
+      - run: bin/brakeman.sh
       - run:
-          name: Setup ENVs
+          name: Move brakeman reports to artifacts directory
           command: |
-            export GIT_BRANCH="$CIRCLE_BRANCH"
-            export GIT_COMMIT_SHA="$CIRCLE_SHA1"
-            export GIT_COMMITTED_AT="$(date +%s)"
-      - run:
-          name: Format test coverage
-          command: |
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.api.json /tmp/workspace/simplecov/api/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.emails.json /tmp/workspace/simplecov/emails/.resultset.json
-      - run:
-          name: Upload coverage results to Code Climate
-          command: |
-            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 3 -o tmp/codeclimate.total.json
-            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman-*.* /tmp/test-artifacts/
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: brakeman-reports
 
 workflows:
-  version: 2
   main:
     jobs:
-      - bundle
-      - bundle_ruby_3_0
+      - build
+      # postgres tests
+      - test_core_postgres:
+          requires:
+            - build
+      - test_api_postgres:
+          requires:
+            - build
+      - test_admin_postgres:
+          requires:
+            - build
+      - test_storefront_postgres:
+          requires:
+            - build
+      - test_other_postgres:
+          requires:
+            - build
+
+      # mysql tests
+      - test_core_mysql:
+          requires:
+            - build
+      - test_api_mysql:
+          requires:
+            - build
+      - test_admin_mysql:
+          requires:
+            - build
+      - test_storefront_mysql:
+          requires:
+            - build
+      - test_other_mysql:
+          requires:
+            - build
+
+      # brakeman
       - brakeman:
           requires:
-            - bundle_ruby_3_0
-      - tests_postgres:
-          requires:
-            - bundle
-      - tests_postgres_ruby_3_0:
-          requires:
-            - bundle_ruby_3_0
-      - tests_postgres_rails_6_1:
-          requires:
-            - bundle
-      - tests_mysql_ruby_3_0:
-          requires:
-            - bundle_ruby_3_0
-      - send_test_coverage:
-          requires:
-            - tests_mysql_ruby_3_0
+            - build

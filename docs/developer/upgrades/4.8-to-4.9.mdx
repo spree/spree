@@ -1,0 +1,28 @@
+---
+title: Upgrading to Spree 4.9
+description: This guide covers upgrading a Spree 4.8 application to Spree 4.9.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 4.8](/developer/upgrades/4.x-to-4.8)
+</Info>
+
+<AccordionGroup>
+  <Accordion title="1. Update gems">
+
+    ```bash
+    bundle update
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.9.0 Release Notes.](https://github.com/orgs/spree/discussions/12123)

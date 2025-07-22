@@ -1,0 +1,11 @@
+<% current_store.reload %>
+
+<%= turbo_stream.replace :setup_progress do %>
+  <%= render 'spree/admin/dashboard/setup_progress' %>
+<% end %>
+
+<%= turbo_stream.replace :setup_tasks do %>
+  <%= render 'spree/admin/dashboard/setup_tasks' %>
+<% end %>
+
+<%= turbo_render_alerts %>

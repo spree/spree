@@ -1,0 +1,20 @@
+<%= form_for section.blocks.new, url: spree.admin_page_section_blocks_path(section), html: { class: 'list-group-item sidebar-page-block px-0 py-1 border-0 rounded'}, data: { controller: 'block-form', block_form_target: :form } do |f| %>
+  <%= f.hidden_field :type, data: { block_form_target: 'type' } %>
+
+  <button class="btn btn-sm btn-link d-flex-inline" data-toggle="dropdown">
+    <%= icon("circle-plus") %>
+    Add block
+  </button>
+  <div class="dropdown-menu p-1">
+    <% section.available_blocks_to_add.each do |block_class| %>
+      <a href="#" class="dropdown-item btn-sm"
+          data-action="click->block-form#addBlock"
+        data-block-form-type-param="<%= block_class %>"
+        >
+        <% block_instance = block_class.new %>
+        <%= icon block_instance.icon_name, height: 18, class: 'mr-2' if block_class.new.icon_name.present? %>
+        <%= block_instance.display_name.presence || block_class.to_s.demodulize.titleize %>
+      </a>
+    <% end %>
+  </div>
+<% end %>

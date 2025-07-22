@@ -1,0 +1,125 @@
+---
+title: 4.5 to 4.6
+description: This guide covers upgrading a 4.5 Spree application to Spree 4.6.
+---
+
+<Warning>
+We recommend [upgrading straight to 4.8](4.x-to-4.8), as we improved how we handle translations in 4.8.
+This also means easier database migration, especially if you have a big product catalog.
+</Warning>
+
+<Note>
+If you're on an older version than 4.5 please follow previous upgrade guides and perform those upgrades incrementally, e.g.
+
+1. [upgrade 4.2 to 4.3](4.2-to-4.3)
+2. [upgrade 4.3 to 4.4](4.3-to-4.4)
+3. [upgrade 4.4 to 4.5](4.4-to-4.5)
+</Note>
+
+## Update gems
+
+Run the following command to update your gems to 4.6:
+
+```bash
+bundle update
+```
+
+## (Optional) Remove spree_globalize
+
+If your application used the spree_globalize extension, you can remove it from your Gemfile, as translations are now supported out-of-the-box with the [Mobility](https://github.com/shioyama/mobility) gem.
+
+We've configured Mobility to use [a strategy that uses a separate table to store translations](https://dejimata.com/2017/3/3/translating-with-mobility#strategy-2), just like how spree_globalize did. This means, you won't need to make any changes to the database structure or migrate data.
+
+During the upgrade process, you may need to review your custom queries that rely on translations, as there are minor differences in how Mobility handles them. Spree 4.6 includes a few [built-in concerns](/developer/core-concepts/i18n#resource-translations-implementation) to make it easier to work with translatable models.
+
+Run the following command to remove spree_globalize from your Gemfile:
+
+```bash
+bundle remove spree_globalize
+```
+
+## Install missing migrations
+
+```bash
+bin/rake spree:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+<Note>
+If you didn't use `spree_globalize` before, this will install migrations that move some columns from `spree_products`, `spree_taxons`, to dedicated translation tables such as `spree_products_translations`, `spree_taxons_translations` etc.
+
+If you're using raw SQL queries (either in the application code, or running in external tools), you may need to review the new structure and update your queries accordingly.
+</Note>
+
+### Run install generators
+
+This will copy some files from `spree_backend` to your application.
+
+```bash
+bin/rails g spree:backend:install
+```
+
+If you're using `spree_frontend` you need to run the frontend install generator as well:
+
+```bash
+bin/rails g spree:frontend:install
+```
+
+## Additional fixes and hints
+
+### Update migrations for translation tables with additional columns
+
+If you want to translate more fields in [translated resources](/developer/core-concepts/i18n#resource-translations), you have to alter copied migrations or add new ones.
+We're using the [Spree::TranslationMigrations](https://github.com/spree/spree/blob/main/core/lib/spree/translation_migrations.rb) to help with migrating data.
+
+### Add or update the behavior of the translated model
+
+Each translated resource has a corresponding `Translation` model, see [here](https://github.com/spree/spree/blob/v4.6.5/core/app/models/spree/product.rb#L44) for reference.
+If you want to add some more behavior to the translation, you need to do it within the `Translation.class_eval` block.
+
+If you overwrote Spree models in your application, you have to define this block yourself. Apart from that, please include these modules: 
+- `Spree::TranslatableResource` - required for all translated models
+- `Spree::TranslatableResourceSlug` - required for translated models with slugs/permalinks
+
+[Read more](/developer/core-concepts/i18n#resource-translations-implementation) how Spree handles resource translations.
+
+### Generating slugs with `friendly_id`
+
+Generating slugs/permalinks in `Spree::Product` and `Spree::Taxon` models is now based on the translated name. If you use the `history` plugin, [read on how to use it](https://github.com/shioyama/friendly_id-mobility?tab=readme-ov-file#slug-history) with the `mobility` gem.
+
+### Resource translations and encryption
+
+Currently, it's not possible to translate encrypted data. If you're already encrypting data that Spree translates, you need to remove that functionality.
+
+### Full text search with pg_search scopes
+
+If you use the [pg_search](https://github.com/Casecommons/pg_search) for the full text search in [translated resources](/developer/core-concepts/i18n#resource-translations), you need to move your scopes to the translated model, eg. from the `Spree::Product` to the `Spree::Product::Translation`. 
+
+If you still want to have the original scope, you need to rewrite it, from:
+
+```ruby
+pg_search_scope :search_by_name, against: :name
+```
+
+to:
+
+```ruby
+self::Translation.class_eval do
+  include PgSearch::Model
+  pg_search_scope :search_by_name, against: :name
+end
+
+scope :search_by_name, lambda { |query|
+  product_ids = Spree::Product::Translation.search_by_name(query).pluck(:spree_product_id)
+  where(id: product_ids)
+}
+```
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.6.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.6.0).

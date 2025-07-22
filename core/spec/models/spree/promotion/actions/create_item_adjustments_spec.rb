@@ -98,7 +98,7 @@ module Spree
               before do
                 order.update_with_updater!
 
-                2.times { create :promotion_with_order_adjustment }
+                2.times { create :promotion_with_order_adjustment, kind: :automatic }
                 Spree::PromotionHandler::Cart.new(order).activate
 
                 allow(action.calculator).to receive(:compute).and_return(3)
@@ -128,8 +128,9 @@ module Spree
         end
 
         context '#destroy' do
-          let!(:action) { CreateItemAdjustments.create! }
-          let(:other_action) { CreateItemAdjustments.create! }
+          let(:other_promotion) { create(:promotion) }
+          let!(:action) { CreateItemAdjustments.create!(promotion: promotion) }
+          let!(:other_action) { CreateItemAdjustments.create!(promotion: other_promotion) }
 
           before { promotion.promotion_actions = [other_action] }
 

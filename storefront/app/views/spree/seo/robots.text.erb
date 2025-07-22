@@ -1,0 +1,31 @@
+User-agent: *
+<% if store && !store.prefers_index_in_search_engines? %>
+Disallow: /
+<% elsif store %>
+Disallow: /checkout
+Disallow: /cart
+Disallow: /orders
+Disallow: /user
+Disallow: /account
+Disallow: /api
+Disallow: /password
+Disallow: /order_status
+Disallow: /auth_redirect
+Disallow: /admin
+Disallow: /forbidden
+Disallow: /unauthorized
+Disallow: /page_sections
+Disallow: /subscribers
+Disallow: /line_items
+Disallow: /themes
+Disallow: /login
+Disallow: /logout
+Disallow: /signup
+Disallow: /search/suggestions
+Disallow: /customer_returns
+Disallow: /shipment_trackings
+Disallow: /locale
+Disallow: /currency
+
+Sitemap: <%= spree.sitemap_url(host: store.formatted_url_or_custom_domain, format: :xml) %>
+<% end %>

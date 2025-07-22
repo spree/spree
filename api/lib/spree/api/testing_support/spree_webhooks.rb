@@ -1,9 +1,9 @@
 RSpec.configure do |config|
   config.before(:each, :spree_webhooks) do
-    ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+    Spree::Webhooks.disabled = false
   end
 
   config.after(:each, :spree_webhooks) do
-    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+    Spree::Webhooks.disabled = true
   end
 end

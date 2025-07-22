@@ -1,0 +1,47 @@
+---
+title: 4.6 to 4.7
+description: This guide covers upgrading a 4.6 Spree application to Spree 4.7.
+---
+
+<Warning>
+We recommend [upgrading straight to 4.8](4.x-to-4.8), as we improved how we handle translations in 4.8.
+This also means easier database migration, especially if you have a big product catalog.
+</Warning>
+
+<Note>
+If you're on an older version than 4.6 please follow previous upgrade guides and perform those upgrades incrementally
+
+1. [upgrade 4.3 to 4.4](4.3-to-4.4)
+2. [upgrade 4.4 to 4.5](4.4-to-4.5)
+3. [upgrade 4.5 to 4.6](4.5-to-4.6)
+</Note>
+
+<AccordionGroup>
+  <Accordion title="1. Update gems">
+
+    ```bash
+    bundle update
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+
+  <Accordion title="3. (Optional) Re-Run Spree Frontend install">
+
+    If you're using [Spree Frontend gem](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+
+    ```bash
+    bin/rails g spree:frontend:install
+    ```
+
+  </Accordion>
+</AccordionGroup>
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.7.0 Release Notes.](https://github.com/spree/spree/releases/tag/v4.7.0)

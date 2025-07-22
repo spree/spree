@@ -1,0 +1,5 @@
+<% if @page_block.can_be_deleted? %>
+  <div class="sidebar-footer">
+    <%= link_to_delete(@page_block, url: spree.admin_page_section_block_path(@page_block.section, @page_block)) %>
+  </div>
+<% end %>

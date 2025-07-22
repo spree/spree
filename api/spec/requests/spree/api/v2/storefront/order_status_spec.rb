@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 OrderStatus spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:order) { create(:order, state: 'complete', completed_at: Time.current, store: store) }
   let(:store_2) { create(:store) }
   let(:order_2) { create(:order, state: 'complete', completed_at: Time.current, store: store_2) }
@@ -35,7 +35,6 @@ describe 'Storefront API v2 OrderStatus spec', type: :request do
       context 'as a guest user with valid token' do
         before { get "/api/v2/storefront/order_status/#{order.number}", headers: headers_order_token }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
       end
     end

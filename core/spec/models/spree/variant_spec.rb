@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Variant, type: :model do
-  let!(:store) { create(:store) }
-  let!(:variant) { create(:variant) }
+  let(:store) { @default_store }
+  let(:variant) { create(:variant, product: create(:base_product, stores: [store])) }
   let(:master_variant) { create(:master_variant) }
 
   it_behaves_like 'default_price'
@@ -72,6 +72,30 @@ describe Spree::Variant, type: :model do
         end
       end
     end
+
+    it 'validates the dimensions unit' do
+      expect(build(:variant, dimensions_unit: nil)).to be_valid
+
+      expect(build(:variant, dimensions_unit: 'mm')).to be_valid
+      expect(build(:variant, dimensions_unit: 'cm')).to be_valid
+      expect(build(:variant, dimensions_unit: 'in')).to be_valid
+      expect(build(:variant, dimensions_unit: 'ft')).to be_valid
+
+      expect(build(:variant, dimensions_unit: 'oz')).to be_invalid
+      expect(build(:variant, dimensions_unit: 'lb')).to be_invalid
+    end
+
+    it 'validates the weight unit' do
+      expect(build(:variant, weight_unit: nil)).to be_valid
+
+      expect(build(:variant, weight_unit: 'g')).to be_valid
+      expect(build(:variant, weight_unit: 'kg')).to be_valid
+      expect(build(:variant, weight_unit: 'lb')).to be_valid
+      expect(build(:variant, weight_unit: 'oz')).to be_valid
+
+      expect(build(:variant, weight_unit: 'mm')).to be_invalid
+      expect(build(:variant, weight_unit: 'ft')).to be_invalid
+    end
   end
 
   context 'after create' do
@@ -105,6 +129,122 @@ describe Spree::Variant, type: :model do
 
         it { expect(product.master).not_to be_in_stock }
       end
+    end
+
+    describe '#create_default_stock_item' do
+      let(:new_variant) { product.variants.create(track_inventory: track_inventory, is_master: true) }
+
+      context 'when not tracking inventory' do
+        let(:track_inventory) { false }
+
+        it 'creates a default stock item' do
+          new_variant
+
+          expect(new_variant.reload.stock_items.count).to eq(1)
+          expect(new_variant.stock_items[0].count_on_hand).to eq(0)
+          expect(new_variant.stock_items[0].backorderable).to eq(false)
+        end
+
+        context 'when variant is created along with a stock item' do
+          let(:new_variant) do
+            product.variants.create(
+              track_inventory: track_inventory,
+              is_master: true,
+              stock_items_attributes: {
+                '0' => {
+                  stock_location_id: create(:stock_location).id,
+                  count_on_hand: 10,
+                  backorderable: true
+                }
+              }
+            )
+          end
+
+          it 'does not create an another stock item' do
+            new_variant
+
+            expect(new_variant.reload.stock_items.count).to eq(1)
+            expect(new_variant.stock_items[0].count_on_hand).to eq(10)
+            expect(new_variant.stock_items[0].backorderable).to eq(true)
+          end
+        end
+      end
+
+      context 'when tracking inventory' do
+        let(:track_inventory) { true }
+
+        it 'does not create a default stock item' do
+          new_variant
+          expect(new_variant.reload.stock_items.count).to eq(0)
+        end
+      end
+
+      context 'existing variant' do
+        let(:variant) { create(:variant, product: product, track_inventory: true) }
+
+        # clear out previous stock items
+        before do
+          variant.stock_items.delete_all
+        end
+
+        it 'creates a default stock item' do
+          expect { variant.update!(track_inventory: false) }.to change(variant.stock_items, :count).by(1)
+        end
+      end
+    end
+  end
+
+  describe 'after_update_commit :handle_track_inventory_change' do
+    let!(:product) { create(:product, stores: [store]) }
+
+    context 'when not tracking inventory' do
+      subject { variant.update!(track_inventory: false) }
+
+      let!(:variant) { create(:variant, product: product, track_inventory: true) }
+      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+
+      it 'updates stock item count on hand to 0' do
+        expect { subject }.to change { stock_item.reload.count_on_hand }.from(110).to(0)
+      end
+    end
+
+    context 'when tracking inventory' do
+      subject { variant.update!(track_inventory: true) }
+
+      let!(:variant) { create(:variant, product: product, track_inventory: false) }
+      let!(:stock_item) { create(:stock_item, variant: variant, count_on_hand: 100) }
+
+      it 'keeps stock items' do
+        expect { subject }.not_to change(variant.stock_items, :count)
+      end
+    end
+  end
+
+  describe 'after_commit :remove_prices_from_master_variant' do
+    let(:variant) { build(:variant, product: product) }
+    let(:product) { create(:product, stores: [store]) }
+
+    let(:master) { product.master }
+
+    it 'removes prices from master when variant with price is created' do
+      expect { variant.save! }.to change(product.master.prices, :count).from(1).to(0)
+    end
+  end
+
+  describe 'after_commit :remove_stock_items_from_master_variant' do
+    let(:variant) { build(:variant, product: product) }
+    let(:product) { create(:product, stores: [store]) }
+
+    let(:master) { product.master }
+
+    before do
+      master.stock_items << create(:stock_item, variant: master)
+      expect(master.stock_items.reload.count).to be >= 1
+    end
+
+    it 'removes stock items from master when variant is created' do
+      variant.save!
+      expect(product.master.stock_items.reload.count).to eq(0)
     end
   end
 
@@ -176,6 +316,10 @@ describe Spree::Variant, type: :model do
         end
 
         context 'when price do not have amount' do
+          before do
+            allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
+          end
+
           let!(:price_1) { create(:price, currency: currency, variant: variant, amount: nil) }
 
           it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
@@ -192,6 +336,10 @@ describe Spree::Variant, type: :model do
         end
 
         context 'when price do not have amount' do
+          before do
+            allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
+          end
+
           let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }
 
           it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
@@ -312,14 +460,14 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#cost_price=' do
+  describe '#cost_price=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.cost_price = '1,599.99'
     end
   end
 
-  context '#in_stock_or_backorderable?' do
+  describe '#in_stock_or_backorderable?' do
     subject { variant.in_stock_or_backorderable? }
 
     let!(:variant) { create(:variant) }
@@ -365,34 +513,34 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#price=' do
+  describe '#price=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.price = '1,599.99'
     end
   end
 
-  context '#weight=' do
+  describe '#weight=' do
     it 'uses LocalizedNumber.parse' do
       expect(Spree::LocalizedNumber).to receive(:parse).with('1,599.99')
       subject.weight = '1,599.99'
     end
   end
 
-  context '#currency' do
+  describe '#currency' do
     it 'returns the globally configured currency' do
       expect(variant.currency).to eql 'USD'
     end
   end
 
-  context '#display_amount' do
+  describe '#display_amount' do
     it 'returns a Spree::Money' do
       variant.price = 21.22
       expect(variant.display_amount.to_s).to eql '$21.22'
     end
   end
 
-  context '#cost_currency' do
+  describe '#cost_currency' do
     context 'when cost currency is nil' do
       before { variant.cost_currency = nil }
 
@@ -403,11 +551,11 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '.price_in' do
+  describe '#price_in' do
     subject { variant.price_in(currency).display_amount }
 
     before do
-      variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
+      create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
 
     context 'when currency is not specified' do
@@ -431,6 +579,70 @@ describe Spree::Variant, type: :model do
 
       it 'returns the value in the USD' do
         expect(subject.to_s).to eql '$19.99'
+      end
+    end
+
+    context 'when there is no price with present amount in given currency' do
+      let(:currency) { 'GBP' }
+
+      before do
+        variant.prices.create(currency: 'GBP', amount: nil)
+      end
+
+      it 'returns 0' do
+        expect(subject.to_s).to eql '£0.00'
+      end
+    end
+  end
+
+  describe '#on_sale?' do
+    subject { variant.on_sale?(currency) }
+
+    let!(:eur_price) { create(:price, variant: variant, currency: 'EUR', amount: 100.00, compare_at_amount: eur_compare_at_amount) }
+    let!(:gbp_price) { create(:price, variant: variant, currency: 'GBP', amount: 100.00, compare_at_amount: gbp_compare_at_amount) }
+    let(:usd_compare_at_amount) { nil }
+    let(:eur_compare_at_amount) { nil }
+    let(:gbp_compare_at_amount) { nil }
+
+    before do
+      variant.prices.where(currency: 'USD').take.update(amount: 100.00, compare_at_amount: usd_compare_at_amount)
+    end
+
+    context 'when existing currency is passed' do
+      let(:currency) { 'GBP' }
+      let(:gbp_compare_at_amount) { 200.00 }
+
+      it 'checks if variant is discounted in that currency' do
+        expect(subject).to be true
+      end
+
+      context 'when variant is discounted' do
+        let(:currency) { 'EUR' }
+        let(:eur_compare_at_amount) { 200.00 }
+        let(:gbp_compare_at_amount) { nil }
+
+        it 'returns true' do
+          expect(subject).to be true
+        end
+      end
+
+      context 'when variant is not discounted' do
+        let(:currency) { 'EUR' }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+    end
+
+    context 'when passed currency does not exist' do
+      let(:currency) { 'NON_EXISTING_CURRENCY' }
+      let(:usd_compare_at_amount) { 200.00 }
+      let(:eur_compare_at_amount) { 200.00 }
+      let(:gbp_compare_at_amount) { 200.00 }
+
+      it 'returns false' do
+        expect(subject).to be false
       end
     end
   end
@@ -467,11 +679,35 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe '#options' do
+    let(:product) { create(:product, option_types: [option_type, option_type2]) }
+    let(:variant) { create(:variant, product: product, option_values: [option_value, option_value2]) }
+    let!(:option_type2) { create(:option_type, name: 'material') }
+    let!(:option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size') }
+    let(:option_value) { create(:option_value, name: 'medium', presentation: 'M', option_type: option_type) }
+    let(:option_value2) { create(:option_value, name: 'wool', presentation: 'Wool', option_type: option_type2) }
+
+    it 'returns an array of hashes with option type name, value, and presentation orderd by option type position' do
+      expect(variant.options).to eq([
+                                      {
+                                        name: 'size',
+                                        value: 'medium',
+                                        presentation: 'M'
+                                      },
+                                      {
+                                        name: 'material',
+                                        value: 'wool',
+                                        presentation: 'Wool'
+                                      }
+                                    ])
+    end
+  end
+
   describe '#options_text' do
+    subject(:options_text) { variant.options_text }
+
     let(:variant) { build :variant }
     let(:fake_presenter) { double :fake_presenter }
-
-    subject(:options_text) { variant.options_text }
 
     before do
       allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
@@ -597,6 +833,8 @@ describe Spree::Variant, type: :model do
     end
 
     describe '#can_supply?' do
+      before { variant }
+
       it 'calls out to quantifier' do
         expect(Spree::Stock::Quantifier).to receive(:new).and_return(quantifier = double)
         expect(quantifier).to receive(:can_supply?).with(10)
@@ -736,16 +974,18 @@ describe Spree::Variant, type: :model do
 
     context 'when tax category is deleted also in product' do
       let(:tax_category) { create(:tax_category) }
-      let!(:default_tax_category) { create(:tax_category, is_default: true) }
-      let(:product) { create(:product, tax_category: tax_category) }
-      let(:variant) { build(:variant, product: product, tax_category: tax_category) }
-
-      before do
-        tax_category.destroy
-        product.reload
-      end
+      let!(:product) { create(:product, tax_category: tax_category) }
+      let!(:variant) { create(:variant, product: product, tax_category: tax_category) }
 
       context 'with default tax category' do
+        let!(:default_tax_category) { create(:tax_category, is_default: true) }
+
+        before do
+          tax_category.destroy
+          product.reload
+          variant.reload
+        end
+
         it 'returns the default tax category' do
           expect(variant.tax_category).to eq(default_tax_category)
         end
@@ -753,11 +993,13 @@ describe Spree::Variant, type: :model do
 
       context 'without default tax category' do
         before do
-          default_tax_category.destroy
+          tax_category.destroy
+          product.reload
+          variant.reload
         end
 
         it 'returns nil' do
-          expect(variant.tax_category).to eq(nil)
+          expect(variant.reload.tax_category).to eq(nil)
         end
       end
     end
@@ -840,7 +1082,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#volume' do
+  describe '#volume' do
     let(:variant_zero_width) { create(:variant, width: 0) }
     let(:variant) { create(:variant) }
 
@@ -854,7 +1096,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#dimension' do
+  describe '#dimension' do
     let(:variant) { create(:variant) }
 
     it 'return the dimension if the dimension parameters are different of zero' do
@@ -863,7 +1105,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#discontinue!' do
+  describe '#discontinue!' do
     let(:variant) { create(:variant) }
 
     it 'sets the discontinued' do
@@ -879,7 +1121,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#discontinued?' do
+  describe '#discontinued?' do
     let(:variant_live) { build(:variant) }
     let(:variant_discontinued) { build(:variant, discontinue_on: Time.now - 1.day) }
 
@@ -940,97 +1182,84 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  describe '#check_price' do
-    let(:variant) { create(:variant) }
-    let(:variant2) { create(:variant) }
+  describe 'validate :check_price' do
+    subject { variant.save }
 
-    context 'require_master_price set false' do
-      before { Spree::Config.set(require_master_price: false) }
+    let(:currency) { store.default_currency }
 
-      context 'price present and currency present' do
-        it { expect(variant.send(:check_price)).to be(nil) }
+    context 'when variant has a default price' do
+      let(:variant) { build(:variant, product: product, default_price: default_price) }
+
+      let(:product) { create(:product, master: master) }
+      let(:master) { create(:master_variant, price: 11.11, currency: currency) }
+
+      let(:default_price) { build(:price, amount: 12.34, currency: currency) }
+
+      it 'keeps the default price' do
+        expect(subject).to be(true)
+        expect(variant.price_in(currency).amount).to eq(12.34)
       end
 
-      context 'price present and currency nil' do
-        before { variant.currency = nil }
+      context 'when the default price is invalid' do
+        let(:default_price) { build(:price, amount: nil, currency: currency) }
 
-        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
-      end
-
-      context 'price nil and currency present' do
-        before { variant.price = nil }
-
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-
-      context 'price nil and currency nil' do
-        before { variant.price = nil }
-
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-    end
-
-    context 'require_master_price set true' do
-      before { Spree::Config.set(require_master_price: true) }
-
-      context 'price present and currency present' do
-        it { expect(variant.send(:check_price)).to be(nil) }
-      end
-
-      context 'price present and currency nil' do
-        before { variant.currency = nil }
-
-        it { expect(variant.send(:check_price)).to eq(Spree::Store.default.default_currency) }
-      end
-
-      context 'product and master_variant present and equal' do
-        context 'price nil and currency present' do
-          before { variant.price = nil }
-
-          it { expect(variant.send(:check_price)).to be(nil) }
-
-          context 'check variant price' do
-            before { variant.send(:check_price) }
-
-            it { expect(variant.price).to eq(variant.product.master.price) }
-          end
+        it 'infers price from the default variant' do
+          expect(subject).to be(true)
+          expect(variant.price_in(currency).amount).to eq(11.11)
         end
 
-        context 'price nil and currency nil' do
-          before do
-            variant.price = nil
-            variant.send(:check_price)
-          end
+        context 'when there is no default variant' do
+          let(:product) { nil }
 
-          it { expect(variant.price).to eq(variant.product.master.price) }
-          it { expect(variant.currency).to eq(Spree::Config[:currency]) }
-        end
-      end
-
-      context 'product not present' do
-        context 'product not present' do
-          before { variant.product = nil }
-
-          context 'price nil and currency present' do
-            before { variant.price = nil }
-
-            it 'adds absence of master error' do
-              variant.send(:check_price)
-              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-            end
-          end
-
-          context 'price nil and currency nil' do
-            before { variant.price = nil }
-
-            it 'adds absence of master error' do
-              variant.send(:check_price)
-              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
-            end
+          it 'adds an error' do
+            expect(subject).to be(false)
+            expect(variant.errors[:base]).to contain_exactly(
+              I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+            )
           end
         end
       end
     end
+
+    context 'when variant has no default price' do
+      let(:variant) { build(:variant, :with_no_price, product: product) }
+
+      let(:product) { create(:product, master: master) }
+      let(:master) { create(:master_variant, price: 11.11, currency: currency) }
+
+      it 'infers price from the default variant' do
+        expect(subject).to be(true)
+        expect(variant.price_in(currency).amount).to eq(11.11)
+      end
+
+      context 'when there is no default variant' do
+        let(:product) { nil }
+
+        it 'adds an error' do
+          expect(subject).to be(false)
+          expect(variant.errors[:base]).to contain_exactly(
+            I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+          )
+        end
+      end
+    end
+
+    context 'when variant has prices' do
+      let(:variant) { build(:variant, :with_no_price, prices: [price_1, price_2]) }
+
+      let(:price_1) { build(:price, amount: 10, currency: 'PLN') }
+      let(:price_2) { build(:price, amount: 11, currency: 'GBP') }
+
+      it 'keeps the prices' do
+        expect(subject).to be(true)
+
+        expect(variant.prices.count).to eq(2)
+        expect(variant.price_in('PLN').amount).to eq(10)
+        expect(variant.price_in('GBP').amount).to eq(11)
+      end
+    end
+
+    context 'when variant price '
   end
 
   describe '#created_at' do
@@ -1045,7 +1274,7 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let!(:variant) { create(:variant) }
 
     it 'returns true when out of stock and backorderable' do
@@ -1078,7 +1307,9 @@ describe Spree::Variant, type: :model do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 2) }
     let!(:line_item_2) { create(:line_item, order: order, variant: variant, quantity: 3) }
 
-    before { variant.update(track_inventory: false) }
+    before do
+      variant.update(track_inventory: false)
+    end
 
     it 'schedules RemoveFromIncompleteOrdersJob' do
       expect(Spree::Variants::RemoveFromIncompleteOrdersJob).to receive(:perform_later).with(variant)
@@ -1086,9 +1317,39 @@ describe Spree::Variant, type: :model do
     end
 
     it 'deletes the line items from the order' do
-      variant.destroy
-      expect(order.reload.line_items).to be_empty
+      perform_enqueued_jobs { variant.destroy }
+      expect(order.line_items.reload).to be_empty
       expect(order.total).to eq(0)
+    end
+  end
+
+  describe '#default_image' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+
+    it 'returns the first image for the variant' do
+      expect(variant.default_image).to eq(image)
+    end
+  end
+
+  describe '#secondary_image' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image2) { create(:image, position: 2, viewable: variant) }
+
+    it 'returns the second image for the variant' do
+      expect(variant.secondary_image).to eq(image2)
+    end
+  end
+
+  describe '#additional_images' do
+    let(:variant) { create(:variant) }
+    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image2) { create(:image, position: 2, viewable: variant) }
+    let!(:image3) { create(:image, position: 3, viewable: variant) }
+
+    it 'returns the additional images for the variant' do
+      expect(variant.additional_images).to eq([image2, image3])
     end
   end
 end

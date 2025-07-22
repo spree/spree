@@ -6,7 +6,7 @@ module Spree
       scope :active, -> { where(active: true) }
       default_scope { order(Arel.sql("LOWER(#{table_name}.name)")) }
 
-      include UniqueName
+      include Spree::UniqueName
     end
   end
 end

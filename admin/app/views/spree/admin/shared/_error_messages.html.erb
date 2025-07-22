@@ -1,0 +1,22 @@
+<% only_for ||= [] %>
+
+<% if target && target.errors.any? && (only_for.empty? || (target.errors.to_hash.keys & only_for).any?) %>
+  <div class="alert alert-danger">
+    <p>
+      <strong><%= Spree.t(:errors_prohibited_this_record_from_being_saved, count: target.errors.size) %>:</strong><br>
+    </p>
+    <ul class="list-unstyled mb-0">
+      <% if only_for.any? %>
+        <% only_for.each do |attribute_name| %>
+          <% target.errors.full_messages_for(attribute_name).each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        <% end %>
+      <% else %>
+        <% target.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

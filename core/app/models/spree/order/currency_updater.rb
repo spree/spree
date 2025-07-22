@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module CurrencyUpdater
       extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 
@@ -26,10 +26,10 @@ module Spree
       def update_line_item_price!(line_item)
         price = price_from_line_item(line_item)
 
-        if price
+        if price&.currency && price.amount
           line_item.update!(currency: price.currency, price: price.amount)
         else
-          raise "no #{currency} price found for #{line_item.product.name} (#{line_item.variant.sku})"
+          line_item.destroy
         end
       end
     end

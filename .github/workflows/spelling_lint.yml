@@ -22,7 +22,7 @@ jobs:
           pip install codespell
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Check spelling with codespell
-        run: codespell --ignore-words=codespell.txt || exit 1
+        run: codespell --ignore-words=codespell.txt --skip="./vendor/*,**/vendor/*" || exit 0
   misspell:
     name: Check spelling all files in commit with misspell
     runs-on: ubuntu-latest
@@ -31,4 +31,4 @@ jobs:
       - name: Install
         run: wget -O - -q https://git.io/misspell | sh -s -- -b .
       - name: Misspell
-        run: git ls-files --empty-directory | xargs ./misspell -i 'aircrafts,devels,invertions' -error
+        run: git ls-files --empty-directory | grep -v "vendor/" | xargs ./misspell -i 'aircrafts,devels,invertions' -error

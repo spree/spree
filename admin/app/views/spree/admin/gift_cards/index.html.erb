@@ -1,0 +1,44 @@
+<% unless turbo_frame_request? %>
+  <% content_for :page_title do %>
+    <%= Spree.t(:gift_cards) %>
+  <% end %>
+
+  <% content_for :page_actions do %>
+    <%= render_admin_partials(:gift_cards_actions_partials) %>
+    <%= link_to_export_modal %>
+
+    <div class="dropdown" id="page_actions_dropdown">
+      <%= link_to_with_icon 'plus', Spree.t(:new_gift_card), '#', class: 'text-nowrap btn btn-primary align-self-center', data: { toggle: 'dropdown' }, id: 'more-actions-link' %>
+      <div class="dropdown-menu dropdown-menu-right">
+        <%= link_to spree.new_admin_gift_card_path,
+              class: 'text-left dropdown-item'  do %>
+          <%= icon 'add' %>
+          <%= Spree.t(:gift_card) %>
+        <% end %>
+
+        <%= link_to spree.new_admin_gift_card_batch_path,
+              class: 'text-left dropdown-item'  do %>
+          <%= icon 'add' %>
+          <%= Spree.t(:gift_card_batch) %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%= render_admin_partials(:gift_cards_header_partials) %>
+
+<div class="card-lg p-0">
+  <% if params[:frame_name].present? %>
+    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+      <%= render 'filters', frame_name: params[:frame_name] %>
+      <%= render 'list' %>
+    <% end %>
+  <% else %>
+    <%= turbo_frame_tag "gift_cards", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::GiftCards %>
+      <%= render 'filters' %>
+      <%= render 'list' %>
+    <% end %>
+  <% end %>
+</div>

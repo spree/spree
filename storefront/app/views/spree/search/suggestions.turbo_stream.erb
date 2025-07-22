@@ -1,0 +1,8 @@
+<%= turbo_stream.update 'search-suggestions-content' do %>
+  <%= render 'spree/search/suggestions',
+    loaded: true,
+    products: @products,
+    taxons: @taxons,
+    query: query
+  %>
+<% end %>

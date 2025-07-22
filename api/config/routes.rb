@@ -14,7 +14,7 @@ Spree::Core::Engine.add_routes do
           delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
           patch  :set_quantity
           patch  :apply_coupon_code
-          delete 'remove_coupon_code/:coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code
+          delete 'remove_coupon_code/:coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code, constraints: { coupon_code: /[^\/]+/ }
           delete 'remove_coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code_without_code
           get :estimate_shipping_rates
           patch :associate
@@ -31,6 +31,7 @@ Spree::Core::Engine.add_routes do
           get :payment_methods
           get :shipping_rates
           patch :select_shipping_method
+          post :validate_order_for_payment
         end
 
         resource :account, controller: :account, only: %i[show create update]
@@ -45,6 +46,7 @@ Spree::Core::Engine.add_routes do
         get '/countries/:iso', to: 'countries#show', as: :country
         get '/order_status/:number', to: 'order_status#show', as: :order_status
         resources :products, only: %i[index show]
+        get '/products/:id/variants', to: 'variants#index', as: :product_variants
         resources :taxons,   only: %i[index show], id: /.+/
         get '/stores/:code', to: 'stores#show', as: :store
         get '/store', to: 'stores#current', as: :current_store
@@ -59,6 +61,8 @@ Spree::Core::Engine.add_routes do
             post :add_item
             patch 'set_item_quantity/:item_id', to: 'wishlists#set_item_quantity', as: :set_item_quantity
             delete 'remove_item/:item_id', to: 'wishlists#remove_item', as: :remove_item
+            post :add_items
+            delete :remove_items
           end
         end
 
@@ -169,14 +173,6 @@ Spree::Core::Engine.add_routes do
 
         resources :roles
 
-        # Menu API
-        resources :menus
-        resources :menu_items do
-          member do
-            patch :reposition
-          end
-        end
-
         # CMS
         resources :cms_pages
         resources :cms_sections
@@ -196,6 +192,9 @@ Spree::Core::Engine.add_routes do
         # Store API
         resources :stores
 
+        # Data Feeds API
+        resources :data_feeds
+
         # Configurations API
         resources :payment_methods
         resources :shipping_categories
@@ -206,6 +205,14 @@ Spree::Core::Engine.add_routes do
           resources :events, only: :index
           resources :subscribers
         end
+
+        # Gift Cards API
+        resources :gift_cards
+      end
+
+      namespace :data_feeds do
+        # google data feed API
+        get '/google/:slug', to: 'google#rss_feed'
       end
     end
   end

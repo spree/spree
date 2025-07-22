@@ -1,0 +1,9 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.label :name, Spree.t(:name) %>
+      <%= f.text_field :name, class: 'form-control', autofocus: f.object.new_record?, required: true %>
+      <%= f.error_message_on :name %>
+    </div>
+  </div>
+</div>

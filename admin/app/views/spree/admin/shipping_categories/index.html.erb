@@ -1,0 +1,41 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:shipping) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:shipping_categories_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_shipping_category), new_object_url, class: "btn btn-primary" %>
+<% end if can? :create, Spree::ShippingCategory %>
+
+<%= render_admin_partials(:shipping_categories_header_partials) %>
+
+<%= render partial: 'spree/admin/shared/shipping_nav' %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |shipping_category| %>
+            <tr id="<%= spree_dom_id shipping_category %>" class="cursor-pointer" data-controller="row-link">
+              <td data-action="click->row-link#openLink"><%= shipping_category.name %></td>
+              <td class="actions">
+                <span class="d-flex justify-content-end">
+                  <%= link_to_edit(shipping_category, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, shipping_category %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

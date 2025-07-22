@@ -1,9 +1,9 @@
 module Spree
-  class CustomerReturn < Spree::Base
+  class CustomerReturn < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
-    include NumberIdentifier
-    include Metadata
-    if defined?(Spree::Webhooks)
+    include Spree::NumberIdentifier
+    include Spree::Metadata
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
@@ -45,12 +45,25 @@ module Spree
     # Temporarily tie a customer_return to one order
     def order
       return nil if return_items.blank?
+      return nil if return_items.first.inventory_unit.blank?
 
       return_items.first.inventory_unit.order
     end
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
+    end
+
+    def can_create_reimbursement?
+      !fully_reimbursed? && completely_decided? && no_pending_reimbursements?
+    end
+
+    def no_pending_reimbursements?
+      if association(:reimbursements).loaded?
+        reimbursements.select(&:pending?).empty?
+      else
+        reimbursements.where(reimbursement_status: :pending).none?
+      end
     end
 
     private

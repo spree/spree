@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_integrations_path %>
+  <%= Spree.t('actions.connect') %> <%= @integration.name %>
+<% end %>
+
+<%= form_for @integration, as: :integration, url: spree.admin_integrations_path do |form| %>
+  <%= form.hidden_field :type %>
+  <%= form.hidden_field :active, value: true %>
+
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @integration } %>
+      <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    </div>
+  </div>
+<% end %>

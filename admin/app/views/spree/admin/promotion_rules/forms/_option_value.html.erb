@@ -1,0 +1,9 @@
+<div class="form-group">
+  <%= tom_select_tag "promotion_rule[preferred_eligible_values][]",
+    placeholder: Spree.t(:type_to_search),
+    url: spree.admin_search_option_values_path,
+    remote_search: true,
+    remote_search_active_option: active_options_for_option_value_promotion_rule(f.object),
+    multiple: true,
+    class: 'w-100 mr-2' %>
+</div>

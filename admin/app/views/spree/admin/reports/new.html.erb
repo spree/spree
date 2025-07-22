@@ -1,0 +1,39 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_reports_path  %>
+  <%= Spree.t("report_names.#{params[:type]}") %>
+<% end %>
+
+<%= content_for :page_actions do %>
+  <%= form_for @report, url: spree.admin_reports_path, as: :report, html: { class: 'd-inline-block' } do |f| %>
+    <%= f.hidden_field :type %>
+    <%= f.hidden_field :date_from %>
+    <%= f.hidden_field :date_to %>
+    <%= f.hidden_field :currency %>
+    <button class="btn btn-primary with-tip" title="Export report as CSV file">
+      <%= icon('table-export') %>
+      <%= Spree.t(:export) %>
+    </button>
+  <% end %>
+<% end if can?(:create, Spree::Export) %>
+
+<div class="mb-2">
+  <%= form_tag spree.new_admin_report_path, method: :get, data: { controller: 'auto-submit' } do %>
+    <%= hidden_field_tag :type, params[:type] %>
+
+    <div class="d-flex gap-2">
+      <%= render 'spree/admin/shared/calendar_range_picker',
+        date_from_value: @report.date_from,
+        date_to_value: @report.date_to,
+        css_classes: 'custom-select d-flex cursor-default bg-transparent' %>
+
+      <div class="form-group">
+        <%= select_tag :currency,
+          options_for_select(current_store.supported_currencies_list, @report.currency),
+          class: 'custom-select bg-transparent',
+          data: { action: 'change->auto-submit#submit' } %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%= render @report %>

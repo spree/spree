@@ -1,0 +1,104 @@
+---
+title: Spree Multi Tenant Installation
+sidebarTitle: Installation
+description: Learn how to setup a multi-tenant eCommerce (SaaS) with Spree
+---
+
+<Warning>
+  This installation instructions assume you have a clean Spree Starter installation and you've purchased the [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
+  
+  For migrating existing application from single-tenant to multi-tenant, please contact us at [support@spreecommerce.org](mailto:support@spreecommerce.org).
+</Warning>
+
+## Prerequisites
+
+* You need to be on Spree 5.1+, we recommend using [spree_starter](https://github.com/spree/spree_starter) as a base for your application
+* You need to have 2 environment variables set:
+  * `KEYGEN_ACCOUNT_ID`
+  * `KEYGEN_LICENSE_KEY`
+* We support both PostgreSQL and MySQL databases
+
+<Info>
+  Environment variables will be provided to you after purchasing the [Spree Enterprise Edition license](https://spreecommerce.org/pricing).
+</Info>
+
+<Warning>
+  You will need to add these environment variables to your CI/CD pipeline and production environments.
+</Warning>
+
+## Customer User Class
+
+Please follow [Authentication](/docs/developer/customization/authentication) documentation to create a new user class.
+
+Now we will need to make slight adjustments to the generated user class so it can work in a multi-tenant environment.
+
+If you're using Devise, you will need to remove `:validatable` module. This module is responsible for validating the user's email uniqueness. We need to change it to validate it in the scope of the tenant.
+
+Spree Multi-Tenant gem injects `SpreeMultiTenant::CustomerUserConcern` that handles that instead.
+
+## Admin User Class
+
+For our multi-tenant setup we will need a separate Admin user class. Our standard User class will be only used for customer accounts which will be isolated by tenant. 
+Admin user classes will be shared across tenants allowing them to manage multiple tenants from a single admin panel.
+
+Let's create a new model with Devise (unless you already have one):
+
+```bash
+rails g devise Spree::AdminUser
+```
+
+Replace the generated Devise code with the following:
+
+```ruby
+class Spree::AdminUser < Spree::Base
+  # Include default devise modules. Others available are:
+  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  devise :database_authenticatable, :registerable,
+        :recoverable, :rememberable, :validatable
+
+  # Spree modules
+  include Spree::UserMethods
+end
+```
+
+If you already have a custom Admin user class, you can add the following code to it:
+
+```ruby
+  # Spree modules
+  include Spree::UserMethods
+```
+
+This will make sure that the Admin user class works well with Spree ecosystem.
+
+Register new model in `config/initializers/spree.rb`:
+
+```ruby
+Spree.admin_user_class = "Spree::AdminUser"
+```
+
+## Installing gems
+
+1. Add the following code to your `Gemfile`:
+
+    ```ruby
+    source "https://license:#{ENV['KEYGEN_LICENSE_KEY']}@rubygems.pkg.keygen.sh/#{ENV['KEYGEN_ACCOUNT_ID']}" do
+      gem 'spree_enterprise'
+      gem 'spree_multi_tenant'
+    end
+    ```
+
+2. Install gems:
+
+    ```bash
+    bundle install
+    ```
+
+3. Run generators:
+
+    ```bash
+    bundle exec rails g spree_enterprise:install && bundle exec rails g spree_multi_tenant:install
+    ```
+
+    <Info>
+      This will copy and run migrations for `spree_enterprise` and `spree_multi_tenant` gems.
+    </Info>

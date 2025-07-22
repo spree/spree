@@ -1,0 +1,96 @@
+.bulk-panel-container {
+  display: inline-flex;
+  align-items: center;
+  border-radius: $border-radius-lg;
+  background-color: $white;
+  box-shadow: $dropdown-box-shadow;
+  animation: bounceInUp;
+  animation-duration: 0.5s;
+
+  .btn {
+    border-width: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 2.75rem;
+    border-radius: 0;
+  }
+
+  > * {
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:first-child {
+      border-top-left-radius: $border-radius-lg;
+      border-bottom-left-radius: $border-radius-lg;
+
+      .btn {
+        border-top-left-radius: $border-radius-lg;
+        border-bottom-left-radius: $border-radius-lg;
+      }
+    }
+
+    &:last-child {
+      border-top-right-radius: $border-radius-lg;
+      border-bottom-right-radius: $border-radius-lg;
+
+      .btn {
+        border-top-right-radius: $border-radius-lg;
+        border-bottom-right-radius: $border-radius-lg;
+      }
+    }
+
+    &:after {
+      content: '';
+      display: block;
+      width: 1px;
+      height: 100%;
+      background-color: $gray-50;
+    }
+
+    &:last-child:after {
+      display: none;
+    }
+  }
+
+  .btn-close {
+    width: 2.5rem;
+  }
+}
+
+#bulk-panel {
+  position: fixed;
+  width: 100%;
+  text-align: center;
+  bottom: 1rem;
+  left: 0;
+  z-index: 1020;
+}
+
+@include media-breakpoint-up(lg) {
+  #bulk-panel {
+    left: 25%;
+    width: 75%;
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  #bulk-panel {
+    left: 16.66666667%;
+    width: 83.33333333%;
+  }
+}
+
+.bulk-operations-counter {
+  padding-left: 1rem;
+  padding-right: 0;
+
+  .bulk-operations-counter-label {
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}

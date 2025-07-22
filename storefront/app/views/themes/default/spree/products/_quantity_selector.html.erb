@@ -1,0 +1,32 @@
+<% selected_variant ||= nil %>
+<p class="quantity-selector-label text-sm tracking-widest uppercase py-2"><%= Spree.t(:quantity) %></p>
+<div class="inline-block">
+  <div class="quantity-picker" data-controller="quantity-picker">
+    <%= button_tag class: 'decrease-quantity',
+                     type: 'button',
+                     data: { action: 'click->quantity-picker#decrease',
+                            'quantity-picker-target': 'decrease' } do %>
+      <%= render 'spree/shared/icons/minus' %>
+    <% end %>
+    <%= number_field_tag :quantity, 1,
+                          min: 1,
+                          max: selected_variant&.backorderable? ? nil : selected_variant&.total_on_hand,
+                          class: 'quantity-input',
+                          'aria-label': 'Quantity',
+                          data: { 'quantity-picker-target': 'quantity' } %>
+    <%= button_tag class: 'increase-quantity',
+                     type: 'button',
+                     data: { action: 'click->quantity-picker#increase',
+                            'quantity-picker-target': 'increase' } do %>
+      <%= render 'spree/shared/icons/plus' %>
+    <% end %>
+  </div>
+</div>
+<%= hidden_field_tag :variant_id, selected_variant&.id %>
+<% if selected_variant && !selected_variant.backorderable? %>
+  <% if selected_variant.total_on_hand.between?(1, 4) %>
+    <p class="text-red-500 text-center text-sm mt-1" style="width: 117px">
+      <%= Spree.t(:only_left, count: selected_variant.total_on_hand) %>
+    </p>
+  <% end %>
+<% end %>

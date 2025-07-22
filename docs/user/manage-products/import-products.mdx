@@ -1,0 +1,102 @@
+---
+title: "Import Products"
+description: "How to import products in the Spree open-source eCommerce dashboard"
+---
+
+Adding products one at a time can be very time consuming, especially if you have hundreds or even thousands of products to upload.
+
+You can save a lot of that time by making use of the product import feature which allows you to upload products in bulk from a CSV or Excel file.
+
+<Note>It’s strongly recommended that you pre-format your product file so that the columns match the internal values in Spree. To learn more about formatting your product files, please refer to a separate support article.</Note>
+
+To import a product file, navigate to the Products tab of the admin dashboard and locate the ‘Import’ button in the top right corner.
+
+<img alt="Products Tab" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.1_Product_Imports_-_Products_Tab_g67bxn.png" />
+
+Clicking on ‘Import’ will open up a window to begin the process of importing a product file.
+
+<img alt="Product Import Window" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926797/docs/Manage%20Products/Import%20Products/2.2.3.1.2_Product_Imports_-_Import_Window_m9syrc.png" />
+
+You’ll be greeted by two options:
+
+1. Upload file - choose an existing file to automatically import to your store
+
+2. Manually enter data - create a file by entering all the necessary product data manually
+
+First, lets take a look at uploading a file
+
+## Upload File
+
+When clicking on ‘Upload file’, you’ll be prompted to select a file from your device.
+
+Select the file you want to upload and click Open.
+
+<img alt="Choose A Product File" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.3_Product_Imports_-_Choose_A_File_pse9jm.png" />
+
+This will automatically extract the product data from the file.
+
+### Map Fields
+
+Next, you’ll be directed to the field mapping step, which allows you to match the incoming fields from the CSV with the internal fields in your store.
+
+<img alt="Map Imported Product Fields" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926794/docs/Manage%20Products/Import%20Products/2.2.3.1.4_Product_Imports_-_Map_Fields_autpcg.png" />
+
+Hovering over the rows with the cursor will show a preview of the incoming data.
+
+<img alt="Imported Field Previews" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.5_Product_Imports_-_Field_Previews_x2kg27.png" />
+
+In the ‘Destination Fields’ column, you can select the internal field that the incoming field should be mapped to.
+
+<Note> If you preformatted your CSV file to match the internal naming conventions, most if not all of these fields will be automatically matched.</Note>
+
+<img alt="Import Destination Fields" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.6_Product_Imports_-_Destination_Fields_ef25ee.png" />
+
+Once you’re happy with the mapping of the fields, click ‘Continue’ in the top right corner of the window.
+
+### Review and Submit
+
+On the next screen, can review the data to be uploaded and submit it for upload provided there are no errors.
+
+<img alt="Import Review Step" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926799/docs/Manage%20Products/Import%20Products/2.2.3.1.7_Product_Imports_-_Review_Step_yoru5g.png" />
+
+In the above example, there are some errors - two rows have a matching SKU.
+
+To fix this error, you can simply click on one of the fields and edit the data and click Enter.
+
+<Note> You can edit all of the other data fields in the file, error or not, in the same manner.</Note>
+
+<img alt="Fix Product Import Errors" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926798/docs/Manage%20Products/Import%20Products/2.2.3.1.8_Product_Imports_-_Fix_Errors_nncqes.png" />
+
+Once you’ve fixed all the errors and updated any other fields you want to change, click Submit Data in the top right corner of the window.
+
+<img alt="Submit Product Import Data" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.9_Product_Imports_-_Submit_Data_s9n9fh.png" />
+
+### Import Processing
+
+Once you’ve submitted the data, you’ll be redirected to another page where you can watch the monitor the progress of the import process.
+
+<img alt="Product Import Processing" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926801/docs/Manage%20Products/Import%20Products/2.2.3.1.10_Product_Imports_-_Import_Processing_sx7rzx.png" />
+
+When the import is complete, the status of the import at the top of the page will be marked as ‘Processed’.
+
+<img alt="Product Import Processed" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.11_Product_Imports_-_Import_Processed_ffowr9.png" />
+
+The products will now manageable in the Products tab of the admin dashboard.
+
+<img alt="Products Uploaded" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926800/docs/Manage%20Products/Import%20Products/2.2.3.1.12_Product_Imports_-_Products_Uploaded_b5ucnj.png" />
+
+## Manually Enter Data
+
+If you don’t have an existing file to upload, you can manually enter the product data directly into the product importer, which you may find more convenient than adding products one by one using the product editor.
+
+Simply fill in all of the necessary fields following the Product File Format guidelines.
+
+<img alt="Manually Enter Data" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.13_Product_Imports_-_Manually_Enter_Data_dd3xxa.png" />
+
+Once you’ve added all the relevant product data, click ‘Submit data’ in the top right corner of the window and the products will be imported.
+
+## Import Auditing
+
+You can audit past imports by navigating to Settings > Audit Trail and clicking on ‘Imports’ at the top of the page.
+
+<img alt="Audit Product Imports" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926799/docs/Manage%20Products/Import%20Products/2.2.3.1.14_Product_Imports_-_Audit_Imports_eof5xv.png" />

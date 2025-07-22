@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Stores spec', type: :request do
-  let!(:store) { create(:store, default_country: create(:country)) }
+  let(:store) { @default_store }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::StoresController).to receive(:current_store).and_return(store)
+  end
 
   describe 'stores#show' do
     context 'with code param' do
@@ -34,13 +38,44 @@ describe 'Storefront API v2 Stores spec', type: :request do
           let!(:store) { create(:store, :with_favicon) }
 
           it 'returns store favicon path' do
-            expect(json_response.dig(:data, :attributes, :favicon_path)).to end_with('favicon.ico')
+            expect(json_response.dig(:data, :attributes, :favicon_path)).to end_with('thinking-cat.jpg')
           end
         end
+      end
+    end
 
-        context 'with no favicon attached' do
-          it { expect(json_response['data']).to have_attribute(:favicon_path).with_value(nil) }
+    context 'with locale set to pl' do
+      let!(:store) do
+        localized_store = create(:store, default_country: create(:country))
+        localized_store.supported_locales = 'en,pl'
+        localized_store.save
+
+        Mobility.with_locale(:pl) do
+          localized_store.update(
+            name: 'Test Store PL',
+            meta_description: 'Meta Desc PL',
+            meta_keywords: 'meta, keywords, pl',
+            seo_title: 'SEO Title PL'
+          )
         end
+
+        localized_store
+      end
+
+      before do
+        get "/api/v2/storefront/stores/#{store.code}?locale=pl"
+      end
+
+      after do
+        I18n.locale = :en
+        store.update!(supported_locales: 'en')
+      end
+
+      it 'return store with translated attributes' do
+        expect(json_response['data']).to have_attribute(:name).with_value('Test Store PL')
+        expect(json_response['data']).to have_attribute(:meta_description).with_value('Meta Desc PL')
+        expect(json_response['data']).to have_attribute(:meta_keywords).with_value('meta, keywords, pl')
+        expect(json_response['data']).to have_attribute(:seo_title).with_value('SEO Title PL')
       end
     end
 
@@ -54,7 +89,6 @@ describe 'Storefront API v2 Stores spec', type: :request do
 
     describe 'stores#current_store' do
       before do
-        allow_any_instance_of(Spree::Api::V2::Storefront::StoresController).to receive(:current_store).and_return(store)
         get "/api/v2/storefront/store"
       end
 

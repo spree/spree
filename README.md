@@ -1,64 +1,203 @@
-<a href="https://getvendo.com?utm_source=spree_github">
-   <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/54abf615c5280eda8f2308de96d6290f72c1fb1b/spree_vendo_user_doc.png" alt="Spree Commerce - a headless open-source ecommerce platform for multi-store, marketplace, or B2B global brands" />
-</a>
+<p align="center">
+  <a href="https://spreecommerce.org">
+    <img alt="Spree Commerce - an open source eCommerce platform" src="https://github.com/spree/spree/assets/12614496/ff5372a4-e906-458e-83b6-7927ba0629c1">
+  </a>
 
-# [Spree Commerce](https://spreecommerce.org) [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
+  <h1 align="center">Spree Commerce</h2>
 
-**Spree** is a headless open source e-commerce platform for global brands.
+  <p align="center">
+    An <a href="https://spreecommerce.org/" alt="open-source eCommerce platform">open-source eCommerce platform</a> giving you full control and customizability.
+    <br />
+    Build any eCommerce solution that your business requires.
+    <br />
+    <br />
+    <a href="https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/">Spree 5</a>
+    ·
+    <a href="https://spreecommerce.org">Website</a>
+    ·
+    <a href="https://spreecommerce.org/docs/">Documentation</a>
+    ·
+    <a href="https://slack.spreecommerce.org">Slack</a>
+    ·
+    <a href="https://github.com/spree/spree_starter/">Starter</a>
+    ·
+    <a href="https://demo.spreecommerce.org">Demo</a>
+    ·
+    <a href="https://spreecommerce.org/pricing/">Pricing</a>
+    ·
+    <a href="https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open">Roadmap</a>
+  </p>
+</p>
 
-* [Success Stories](https://spreecommerce.org/stories/)
-* [Integrations](https://spreecommerce.org/integrations/)
-* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
-* [Join our Slack community](http://slack.spreecommerce.org/)
+<p align="center">
+  <a href="https://rubygems.org/gems/spree">
+    <img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" />
+  </a>
+  <a href="https://slack.spreecommerce.org">
+    <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-6.5K-blue" />
+  </a>
+</p>
 
-## Key Features
+## Getting Started
 
-* **[Headless Commerce](https://spreecommerce.org/use-cases/headless-ecommerce-api/)** - build mobile apps or custom storefronts in any technology, [JS/TS SDK available](https://github.com/spree/spree-storefront-api-v2-js-sdk)
-* **[PWA](https://spreecommerce.org/use-cases/spree-pwa-progressive-web-application/)** - offline shopping experiences like native mobile apps
-* **[Global Commerce](https://spreecommerce.org/use-cases/international-sales-demo/)** - multi currency and multi language support out of the box, different shipping methods / costs for different regions, advanced tax calculation
-* **Multi-Store** - host multiple brands / stores on one Spree instance with different branding, configuration, payment methods, shipping options, product catalogs etc
-* **[Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)** - run your own marketplace with multiple suppliers with dedicated Supplier Dashboard
-* **Responsive Admin Panel** - manage and curate products, users, orders, returns, shipments & more
-* **Orders** - robust system for orders, shipments, returns and refunds
-* **Carts** -  comprehensive and advanced discounts system
-* **Payments** - over 30 payment provider integration out of the box plus API to integrate any other gateway
-* **Run everywhere** - cloud, VPS, Docker, Kubernetes
+Visit the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart) to set up Spree in 5 minutes.
+
+Make sure to check out the latest [Spree 5 release announcement](https://github.com/spree/spree#spree-5-announcement--demo) and demo.
+
+If you like what you see, consider giving Spree a GitHub star :star:
+
+Thank you for supporting Spree open-source :heart:
+
+## Spree 5 Announcement & Demo
+
+[![Spree Commerce 5 version](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742985405/docs/github/Spree_Commerce_open-source_eCommerce_myzurl.jpg)](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/)
+
+We’re thrilled to unveil [Spree 5](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/
+) — the most powerful and feature-packed open-source release in Spree Commerce’s history, including:
+- A completely revamped Admin Dashboard experience: boost your team's productivity 
+- A Mobile-First, No-code Customizable Storefront: raise conversions and loyalty
+- New integrations: a native [Stripe integration](https://github.com/spree/spree_stripe), and also Stripe Connect, Klaviyo integrations available with the Enterprise Edition
+- Enterprise Edition Admin Features: Audit Log, [Multi-Vendor Marketplace](https://spreecommerce.org/marketplace-ecommerce/), [Multi-tenant / White-label SaaS eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/)
+
+Read the [full Spree 5 announcement here](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/).
+
+Check out the [Spree 5 demo](https://demo.spreecommerce.org/) for yourself.
+
+
+## Enterprise support
+
+[Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
+  * expert delivery of your Spree application,
+  * migrations and upgrades,
+  * optimizing your Spree stack.
+
+## Enterprise Edition 
+
+Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+
+To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
+
+## Features
+### Customizable and modular
+  * pick and choose parts you want to use
+  * customize everything else (storefront, order processing, API, etc)
+<img alt="Spree Commerce - Storefront customization" src="https://github.com/spree/spree/assets/12614496/1a000452-6716-4fab-90ca-a4c28fc138a7">
+
+### Composable and API-first
+  * connect with your existing ecosystem, build custom workflows with ease
+  * [Storefront and Admin API](https://spreecommerce.org/docs/api-reference/introduction)
+  * Webhooks
+<img alt="Spree Commerce - API   Integrations" src="https://github.com/spree/spree/assets/12614496/18e98e8e-15cd-4b74-8e58-80e5b3f281d8">
+
+### Cart and Checkout for any use case
+  * advanced cart functionality
+  * over 30 payment provider integrations out of the box
+  * API to integrate any other payment gateway
+  * robust discounts system
+  * store credits, gift cards
+<img alt="Spree Commerce - Cart   Checkout" src="https://github.com/spree/spree/assets/12614496/05399a8f-a57a-4907-a8ea-a4e58285a55d">
+<img alt="Spree Commerce - Payments   Refunds" src="https://github.com/spree/spree/assets/12614496/0911073c-a681-409e-810c-f7e8daa4daac">
+
+### [Global Commerce](https://spreecommerce.org/multi-region-ecommerce/) ready
+  * multi-currency
+  * multi-language
+  * full translation support for products, categories, and more
+  * different shipping methods / costs for different regions
+  * advanced tax calculation
+<img alt="Spree Commerce - Multi-region   Multi-store" src="https://github.com/spree/spree/assets/12614496/e9c2edce-b80c-47ad-817b-a00a4ba54495">
+<img alt="Spree Commerce - Multi-region" src="https://github.com/spree/spree/assets/12614496/f8678baf-4efa-4de7-b092-b01ef3a4d8ea">
+
+### [Multi-Store](https://spreecommerce.org/multi-store-ecommerce/) ready
+  * host multiple brands / stores on a single Spree instance
+  * each with different branding, configuration, payment methods, shipping options, product catalogs etc
+<img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
+
+### Responsive Admin Panel
+Manage and curate products, users, orders, returns, shipments & more
+<img alt="Spree Commerce - Inventory management" src="https://github.com/spree/spree/assets/12614496/cdc7af4d-41ba-44f2-9595-efc948865107">
+
+### Orders & Post-purchase management
+Manage orders, shipments, returns and refunds
+<img alt="Spree Commerce - Order   Return management" src="https://github.com/spree/spree/assets/12614496/b1dffa8c-24d4-4629-a026-02951b5a80d7">
+<img alt="Spree Commerce - Order Fulfillment" src="https://github.com/spree/spree/assets/12614496/2212ec6d-bfd0-4940-9aae-f0ceea0b4e4d">
+
+### Why developers love it
+* **Runs anywhere** - cloud, VPS, Docker, Kubernetes
 * **Battle Tested** - used by thousands of merchants around the globe in all categories since 2007!
-* **Fully customizable** - pick and choose parts you want to use and customize everything else (storefront, order processing, API, etc) to create unique solutions that your business requires
-* **More features available via extensions** - dozens of extensions built by community, ready for use for free!
+* **Extensions available** adding new features to Spree
 
-## Sponsored by
+## What you can build with Spree
+Use Spree for any use case. Innovate beyond what's out there.
 
-<a href="https://getvendo.com?utm_source=spree_github">
-  <img src="https://raw.githubusercontent.com/spree/spree-dev-docs/master/.gitbook/assets/spree_vendo_user_doc_2.png"a />
-</a>
+### A [headless eCommerce](https://spreecommerce.org/headless-ecommerce/) micro-service
+Capture orders and payments for whatever you're selling - physical or digital, products or services
 
-> [Vendo][vendo] is a great fit for marketplaces of all sizes - either with own fulfillment and multiple warehouses or in a dropshipping model. Vendo **automates everything** from **vendor onboarding**, accepting buyer **payments in over 135 currencies**, to supplier **payouts in 50 countries**. 
+<img alt="Spree Commerce - headless open-source eCommerce" src="https://github.com/spree/spree/assets/12614496/2bca9fdf-5ae2-4433-83aa-431105906fc8">
 
-> Vendo ensures excellent buyer experience with smooth product discovery and search, a multitude of payment methods and optimal shipping cost calculation. Vendo keeps suppliers happy with easy onboarding, automated products sync using their preferred method and easy payouts.
+### A [Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)
+Run your own marketplace with multiple suppliers, each with a dedicated supplier dashboard
+<img alt="Spree Commerce - Marketplace" src="https://github.com/spree/spree/assets/12614496/c4ddd118-df4c-464e-b1fe-d43862e5cf25">
 
-> [Start your 14-day free trial](https://app.getvendo.com/users/new?typeform-source=spree_github)
+### A [B2B eCommerce](https://spreecommerce.org/use-cases/headless-b2b-ecommerce/)
+Start capturing 6+ figure orders from resellers with safe payments and a checkout process that fits your business model
+<img alt="Spree Commerce - B2B eCommerce" src="https://github.com/spree/spree/assets/12614496/e0a184f6-31ad-4f7f-b30b-6f8a501b6f63">
 
----
+### [Wholesale eCommerce](https://spreecommerce.org/use-cases/wholesale-ecommerce/)
+Run your wholesale operation the way your retail partners expect
+<img alt="Spree Commerce - Wholesale" src="https://github.com/spree/spree/assets/12614496/bac1e551-f629-47d6-a983-b385aa65b1bd">
 
-## Documentation
+### A [white-label SaaS or multi-tenant eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/) platform
+Launch a [multi-tenant eCommerce platform](https://spreecommerce.org/multi-tenant-white-label-ecommerce/) for your customers, resellers, affiliates in any configuration, eg. B2B2B, B2B2C, B2B2E
 
-* [Getting Started](https://dev-docs.spreecommerce.org/getting-started/installation)
-* [Developer Documentation](https://dev-docs.spreecommerce.org/)
+<img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
 
-## API
-
-* [API Reference](https://api.spreecommerce.org/)
-* [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
-
-## Contributing
+## Community & Contributing
 
 Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
 
-Please review the [Contributing Guide](https://dev-docs.spreecommerce.org/contributing/index)
+Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contributing/quickstart)
+
+[Join our Slack](https://slack.spreecommerce.org) to meet other community members.
+
+## Contact
+
+[Contact us](https://spreecommerce.org/contact/) and let's go! 
+
+## Developed by
+
+Spree is developed and maintained by
+
+<a href="https://getvendo.com">
+<img alt="Vendo" src="https://avatars.githubusercontent.com/u/89416582?s=96&v=4" />
+</a>
+
+> Vendo is the commercial entity behind Spree Commerce and in particular the latest, unprecedented investment into Spree 5 and following versions as well as its integrations. We've been the Spree core team since 2016 and led numerous Spree projects while supporting the community. Learn more at: https://www.getvendo.com/
 
 ## License
 
-Spree is released under the [New BSD License](https://github.com/spree/spree/blob/main/license.md).
+Spree Commerce is a free, open-source eCommerce framework giving you full control and customizability.
 
-[vendo]:https://getvendo.com?utm_source=spree_github
+For Spree Commerce versions 4.10 and later in the [spree/spree](https://github.com/spree/spree) repository two licenses apply simultaneously and users are required to comply with the terms of these two licenses at the same time:
+
+* [AGPL-3.0](https://opensource.org/license/agpl-v3) - for all contributions from version 4.10 onwards
+
+* [BSD-3-Clause](https://opensource.org/license/bsd-3-clause) - for all other contributions predating version 4.10
+
+Effectively, for versions 4.10 and upwards **AGPL-3.0** license applies.
+
+Spree Commerce versions 4.9 and earlier in the [spree/spree](https://github.com/spree/spree) repository are available under the BSD-3-Clause license and users are required to comply with its terms.
+
+Please note:
+* [Spree under AGPLv3 may be used privately](https://spreecommerce.org/spree-under-agplv3-may-be-used-privately/) 
+
+* [Spree Commerce Developer Covenant](https://spreecommerce.org/spree-commerce-developer-covenant/) 
+
+If you’d like to use Spree Commerce without the AGPL-3.0 restrictions e.g. for a SaaS business, please talk to us about obtaining a [Commercial License](https://github.com/spree/spree/blob/main/license.md#commercial-license).
+
+All third party components incorporated into this software are licensed under the original license provided by the owner of the applicable component.
+
+Please refer to our [Licensing FAQ](https://spreecommerce.org/why-spree-is-changing-its-open-source-license-to-agpl-3-0-and-introducing-a-commercial-license/) in case of questions
+
+If you like what you see, consider giving Spree a GitHub star :star:
+
+Thank you for supporting Spree open-source :heart:

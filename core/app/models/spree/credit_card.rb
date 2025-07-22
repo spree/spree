@@ -1,8 +1,10 @@
 module Spree
-  class CreditCard < Spree::Base
+  class CreditCard < Spree.base_class
     include ActiveMerchant::Billing::CreditCardMethods
-    include Metadata
-    if defined?(Spree::Webhooks)
+    include Spree::Metadata
+    include Spree::PaymentSourceConcern
+
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::CreditCards)
@@ -12,8 +14,9 @@ module Spree
     acts_as_paranoid
 
     belongs_to :payment_method
-    belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id',
-                      optional: true
+    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id', optional: true
+    belongs_to :gateway_customer, class_name: 'Spree::GatewayCustomer', optional: true
+
     has_many :payments, as: :source
 
     before_save :set_last_digits
@@ -99,12 +102,14 @@ module Spree
     def cc_type=(type)
       self[:cc_type] = case type
                        when 'mastercard', 'maestro' then 'master'
-                       when 'amex' then 'american_express'
+                      when 'amex' then 'american_express'
                        when 'dinersclub' then 'diners_club'
                        when '' then try_type_from_number
                        else type
                        end
     end
+
+    alias_method :brand=, :cc_type=
 
     def verification_value=(value)
       @verification_value = value.to_s.gsub(/\s/, '')
@@ -130,30 +135,6 @@ module Spree
 
     def display_brand
       brand.present? ? brand.upcase : Spree.t(:no_cc_type)
-    end
-
-    def actions
-      %w{capture void credit}
-    end
-
-    # Indicates whether its possible to capture the payment
-    def can_capture?(payment)
-      payment.pending? || payment.checkout?
-    end
-
-    # Indicates whether its possible to void the payment.
-    def can_void?(payment)
-      !payment.failed? && !payment.void?
-    end
-
-    # Indicates whether its possible to credit the payment.  Note that most gateways require that the
-    # payment be settled first which generally happens within 12-24 hours of the transaction.
-    def can_credit?(payment)
-      payment.completed? && payment.credit_allowed > 0
-    end
-
-    def has_payment_profile?
-      gateway_customer_profile_id.present? || gateway_payment_profile_id.present?
     end
 
     # ActiveMerchant needs first_name/last_name because we pass it a Spree::CreditCard and it calls those methods on it.

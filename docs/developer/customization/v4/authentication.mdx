@@ -1,0 +1,196 @@
+---
+title: Authentication
+description: Learn how to use a custom authentication setup with Spree
+version: v4
+---
+
+This guide covers using a custom authentication setup with Spree, such as one provided by your own application. This is ideal in situations where you want to handle the sign-in or sign-up flow of your application uniquely, outside the realms of what would be possible with Spree or you have an existing authentication with user accounts present.
+
+This guide assumes that you have a pre-existing model inside your application that represents the users of your application already. This model could be provided by gems such as [Devise](https://github.com/plataformatec/devise). This guide also assumes that the application that this `User` model exists in is already a Spree application.
+
+<Note>
+This model **does not** need to be called `User`, but for the purposes of this guide the model we will be referring to **will** be called `User`. If your model is called something else, do some mental substitution wherever you see `User`.
+</Note>
+
+To use your own authentication system with Spree, please follow these steps:
+
+<AccordionGroup>
+  <Accordion title="1. Change the Spree.user_class">
+    To begin using your custom `User` class, you must first edit Spree's initializer located at `config/initializers/spree.rb` by changing this line:
+
+    ```ruby
+    Spree.user_class = 'Spree::User'
+    ```
+
+    To this:
+
+    ```ruby
+    Spree.user_class = 'User'
+    ```
+  </Accordion>
+
+  <Accordion title="2. Update User model">
+    Next, you need to run the custom user generator for Spree which will create a migration that will add the necessary Spree fields to your users table.
+
+    Run this generator with this command:
+
+    ```bash
+    bin/rails g spree:custom_user User
+    ```
+
+    This will tell the generator that you want to use the `User` class as the class that represents users in Spree. Run the new migration by running this:
+
+    ```bash
+    bin/rails db:migrate
+    ```
+
+    This generator will also create a file at `lib/spree/current_user_helpers.rb` which will be automatically included in your application's controllers allowing you to override the `spree_current_user` method to return the current user of the request.
+  </Accordion>
+  <Accordion title="3. Include User concerns in your User model">
+    In your User Model please include the following lines:
+
+    ```ruby
+    include Spree::UserMethods
+    include Spree::UserAddress
+    include Spree::UserPaymentSource
+    ```
+
+    The first of these methods are the ones added for the `has_and_belongs_to_many` association called `spree_roles`. This association will retrieve all the roles that a user has for Spree.
+
+    The second of these is the `spree_orders` association. This will return all orders associated with the user in Spree. There's also a `last_incomplete_spree_order` method which will return the last incomplete spree order for the user. This is used internal to Spree to persist order data across a user's login sessions.
+
+    The third and fourth associations are for address information for a user. When a user places an order, the address information for that order will be linked to that user so that it is available for subsequent orders.
+
+    The next method is one called `has_spree_role?` which can be used to check if a user has a specific role. This method is used internally to Spree to check if the user is authorized to perform specific actions, such as accessing the admin section. Admin users of your system should be assigned the Spree admin role, like this:
+
+    ```ruby
+    user = User.find_by(email: 'master@example.com')
+    user.spree_roles << Spree::Role.where(name: 'admin').first_or_create
+    ```
+
+    To test that this has worked, use the `has_spree_role?` method, like this:
+
+    ```ruby
+    user.has_spree_role?('admin')
+    ```
+
+    If this returns `true`, then the user has admin permissions within Spree.
+  </Accordion>
+  <Accordion title="4. Customize Spree Authentication Helpers (Optional)">
+    <Note>
+      This step is required if you're using **`spree_backend`** and/or `spree_frontend` gems.
+    </Note>
+
+    Run a generator to create a file at `lib/spree/authentication_helpers.rb` which will contain the following code to help you do that:
+
+    ```bash
+    bin/rails g spree:custom_authentication
+    ```
+
+    This will create a file at `lib/spree/authentication_helpers.rb` which will contain the following code to help you do that:
+
+    ```ruby
+    module Spree
+      module AuthenticationHelpers
+        def self.included(receiver)
+          receiver.helper_method(
+            :spree_current_user,
+            :spree_login_path,
+            :spree_signup_path,
+            :spree_logout_path,
+            :spree_forgot_password_path,
+            :spree_edit_password_path,
+            :spree_admin_login_path,
+            :spree_admin_logout_path,
+          )
+        end
+
+        def spree_current_user
+          current_user
+        end
+
+        def spree_login_path(opts = {})
+          main_app.login_path(opts)
+        end
+
+        def spree_signup_path(opts = {})
+          main_app.signup_path(opts)
+        end
+
+        def spree_logout_path(opts = {})
+          main_app.logout_path(opts)
+        end
+
+        def spree_forgot_password_path(opts = {})
+          main_app.forgot_password_path(opts)
+        end
+
+        def spree_edit_password_path(opts = {})
+          main_app.edit_password_path(opts)
+        end
+
+        def spree_admin_login_path(opts = {})
+          main_app.admin_login_path(opts)
+        end
+
+        def spree_admin_logout_path(opts = {})
+          main_app.admin_logout_path(opts)
+        end
+      end
+    end
+    ```
+
+    Each of the methods defined in this module return values that are the most common in Rails applications today, but you may need to customize them. In order, they are:
+
+    * `spree_current_user` Used to tell Spree what the current user of a request is.
+    * `spree_login_path` The location of the login/sign in form in your application.
+    * `spree_signup_path` The location of the sign up form in your application.
+    * `spree_logout_path` The location of the logout feature of your application.
+    * `spree_forgot_password_path` The location to reset a user's password.
+    * `spree_edit_password_path` The location to edit a user's password.
+    * `spree_admin_login_path` The location of the login/sign in form for the admin panel.
+    * `spree_admin_logout_path` The location of the logout feature for the admin panel.
+
+     URLs inside the helpers **must** have `main_app` prefixed if they are inside your application. This is because Spree will otherwise attempt to route these paths to the Spree engine, which does not exist. By prefixing with `main_app`, you tell it to look at the application's routes.
+
+    You will need to define the `login_path`, `signup_path` and `logout_path` routes yourself, by using code like this inside your application's `config/routes.rb` if you're using Devise:
+
+    ```ruby
+    devise_for :users
+    devise_scope :user do
+      get '/login', to: "devise/sessions#new"
+      get '/signup', to: "devise/registrations#new"
+      delete '/logout', to: "devise/sessions#destroy"
+      get '/forgot_password', to: "devise/passwords#new"
+      get '/edit_password', to: "devise/registrations#edit"
+    end
+    ```
+
+    Of course, this code will be different if you're not using Devise. Simply **do not** use the `devise_scope` method and change the controllers and actions for these routes.
+
+    You can also customize these methods inside `lib/spree/authentication_helpers.rb` to use the routing helper methods already provided by the authentication setup you have, if you wish.
+
+     Any modifications made to `lib/spree/authentication_helpers.rb` while the server is running will require a restart, as with any other modification to other files in `lib`.
+  </Accordion>
+  <Accordion title="5. Remove Auth Devise gem">
+    The `spree_auth_devise` gem is not needed when using an existing application authentication unless the goal is to have two separate authentication methods.
+
+    You can remove the `spree_auth_devise` gem by running this command:
+
+    ```bash
+    bundle remove spree_auth_devise
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Admin Panel authentication
+
+By default Spree uses the same model for the admin panel as the storefront. However you can customize it to use a different model.
+
+To do this, you need to add the following code to your `config/initializers/spree.rb` file:
+
+```ruby
+Spree.admin_user_class = 'AdminUser'
+```
+
+This will tell Spree to use the `AdminUser` model for the admin panel. You will need to create this model in your application and ensure that it includes the necessary Spree fields.

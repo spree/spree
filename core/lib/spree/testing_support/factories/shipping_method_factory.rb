@@ -18,5 +18,14 @@ FactoryBot.define do
     factory :free_shipping_method, class: Spree::ShippingMethod do
       association(:calculator, factory: :shipping_no_amount_calculator, strategy: :build)
     end
+
+    factory :digital_shipping_method, class: Spree::ShippingMethod do
+      association(:calculator, factory: :digital_shipping_calculator, strategy: :build)
+
+      before(:create) do |shipping_method|
+        shipping_method.shipping_categories.delete_all
+        shipping_method.shipping_categories << create(:digital_shipping_category)
+      end
+    end
   end
 end

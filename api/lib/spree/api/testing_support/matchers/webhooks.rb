@@ -26,7 +26,7 @@
 # isn't added to the matcher definition, because it acts in a different
 # way depending on what's the resource being tested.
 #
-RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
+RSpec::Matchers.define :emit_webhook_event do |event_to_emit, record = nil|
   match do |block|
     queue_requests = instance_double(Spree::Webhooks::Subscribers::QueueRequests)
 
@@ -36,7 +36,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
     with_webhooks_enabled { Timecop.freeze { block.call } }
 
     expect(queue_requests).to(
-      have_received(:call).with(event_name: event_to_emit, webhook_payload_body: webhook_payload_body.to_json).once
+      have_received(:call).with(event_name: event_to_emit, webhook_payload_body: webhook_payload_body.to_json, record: record).once
     )
   end
 
@@ -61,7 +61,7 @@ RSpec::Matchers.define :emit_webhook_event do |event_to_emit|
 end
 
 def with_webhooks_enabled
-  ENV['DISABLE_SPREE_WEBHOOKS'] = nil
+  Spree::Webhooks.disabled = false
   yield
-  ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+  Spree::Webhooks.disabled = true
 end

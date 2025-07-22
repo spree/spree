@@ -1,0 +1,117 @@
+<%= turbo_frame_tag :checkout_summary, id: 'summary' do %>
+  <div class="checkout-content-summary text-sm">
+    <% cache [*spree_base_cache_scope.call(order.cache_key_with_version), order.state] do %>
+      <div data-hook="order_summary">
+        <div class="flex justify-between items-center mb-2">
+          <span><%= Spree.t(:subtotal) %>:</span>
+          <span><%= order.display_item_total.to_html %></span>
+        </div>
+        <div class="d-table-cell text-right font-weight-bold"></div>
+
+        <% cache spree_base_cache_scope.call(order.line_item_adjustments.nonzero.cache_key_with_version) do %>
+          <% if order.line_item_adjustments.nonzero.exists? %>
+            <% order.line_item_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+              <div class="flex justify-between items-center mb-2">
+                <span class="max-w-[250px] truncate">
+                  <%= label %>
+                </span>
+                <span>
+                  <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+                </span>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if order.state != 'address' && order.shipments.any? %>
+          <% if order.has_free_shipping? %>
+            <div class="flex justify-between items-center mb-2">
+              <span><%= Spree.t(:shipping) %>:</span>
+              <span><%= Spree.t(:free) %></span>
+            </div>
+          <% else %>
+            <div class="flex justify-between items-center mb-2">
+              <span><%= Spree.t(:shipping) %>:</span>
+              <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
+              <span>
+                <%= order.ship_total <= 0 ? Spree.t(:free) : shipping_total.to_html %>
+              </span>
+            </div>
+
+            <% if order.shipment_adjustments.nonzero.exists? %>
+              <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+                <div class="flex justify-between items-center mb-2">
+                  <span>
+                    <%= label %>:
+                  </span>
+                  <span>
+                    <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+                  </span>
+                </div>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% elsif order.state == 'address' %>
+          <div class="flex justify-between items-center mb-2">
+            <span><%= Spree.t(:shipping) %>:</span>
+            <span class="text-xs text-gray-500"><%= Spree.t('storefront.checkout.calculated_at_next_step') %></span>
+          </div>
+        <% end %>
+
+        <% if order.payment? || order.completed? %>
+          <% cache spree_base_cache_scope.call(order.all_adjustments.nonzero.tax.eligible.cache_key_with_version) do %>
+            <% order.all_adjustments.nonzero.tax.eligible.group_by(&:label).each do |label, adjustments| %>
+              <div class="flex justify-between items-center mb-2">
+                <span><%= label %></span>
+
+                <% tax_total = Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
+                <span><%= tax_total.to_html %></span>
+              </div>
+            <% end %>
+          <% end %>
+        <% end %>
+
+        <% if order.adjustments.nonzero.non_tax.eligible.exists? %>
+          <% order.adjustments.nonzero.non_tax.eligible.each do |adjustment| %>
+            <div class="flex justify-between items-center mb-2">
+                <span>
+                  <%= adjustment.label %>:
+                </span>
+              <span>
+                  <%= adjustment.display_amount.to_html %>
+                </span>
+            </div>
+          <% end %>
+        <% end %>
+
+        <% if order.respond_to?(:gift_card) && order.gift_card.present? %>
+          <div class="flex justify-between items-center mb-2">
+            <span><%= Spree.t(:gift_card) %>:</span>
+            <span>-<%= order.display_gift_card_total %></span>
+          </div>
+        <% elsif order.using_store_credit? %>
+          <div class="flex justify-between items-center mb-2">
+            <span><%= Spree.t(:store_credit_name) %>:</span>
+            <span><%= order.display_total_applied_store_credit %></span>
+          </div>
+        <% end %>
+
+        <div>
+          <div class="flex justify-between items-center">
+            <span class="font-bold text-lg"><%= Spree.t(:total) %></span>
+            <div class="">
+              <span class="text-xs mr-1"><%= order.currency.upcase %></span>
+              <span class="font-semibold text-lg inline" id='summary-order-total' data-currency="<%= Money::Currency.find(order.currency).symbol %>">
+                  <%= order.display_total_minus_store_credits.to_html %>
+                </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div id="checkout-message" class="mt-8">
+      <%= current_store.checkout_message if current_store.checkout_message.present? %>
+    </div>
+  </div>
+<% end %>

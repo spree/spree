@@ -1,0 +1,32 @@
+<div
+  class="st-accordion"
+  data-controller='accordion'
+  data-accordion-close-others-value="false">
+  <% availability_filter_opened = permitted_products_params.dig(:filter, :purchasable).present? || permitted_products_params.dig(:filter, :out_of_stock).present? %>
+  <%= link_to "#availability_filter", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if availability_filter_opened}", data: { action: 'accordion#toggle:prevent' } do %>
+    <%= Spree.t(:availability).capitalize %>
+    <%= render 'spree/shared/icons/chevron_down' %>
+  <% end %>
+  <div class='st-accordion__content' data-accordion-id='availability_filter'>
+    <ul class="flex flex-col px-4 lg:px-10">
+      <li>
+        <label class="flex items-center gap-2 cursor-pointer group text-sm h-10">
+          <%= f.check_box "filter[purchasable]", { checked: permitted_products_params.dig(:filter, :purchasable).present?, class: "input-checkbox group-focus-within:outline", id: nil }, true, nil %>
+          <%= Spree.t(:in_stock) %>
+          <span class="opacity-50">
+            (<%= filter_stock_count[:in_stock] %>)
+          </span>
+        </label>
+      </li>
+      <li>
+        <label class="flex items-center gap-2 cursor-pointer group text-sm h-10">
+          <%= f.check_box "filter[out_of_stock]", { checked: permitted_products_params.dig(:filter, :out_of_stock).present?, class: "input-checkbox group-focus-within:outline", id: nil }, true, nil %>
+          <%= Spree.t(:out_of_stock) %>
+          <span class="opacity-50">
+            (<%= filter_stock_count[:out_of_stock] %>)
+          </span>
+        </label>
+      </li>
+    </ul>
+  </div>
+</div>

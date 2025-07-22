@@ -29,6 +29,9 @@ en:
         digitals:
           missing_file: 'Missing Digital Item: attachment'
           unauthorized: Error, you are not authorized to access this asset
+        gift_card:
+          amount_not_valid: Gift card amount is not valid
+          not_found: Gift card is not found
         metadata:
           invalid_params: Public and private metadata parameters should be objects
         wishlist:

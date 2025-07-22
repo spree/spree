@@ -1,1 +1,3 @@
-Please visit [Contributing section](https://dev-docs.spreecommerce.org/contributing/index) of Spree Guides. Thank you!
+# Contributing
+
+Please visit [Contributing section](https://docs.spreecommerce.org/developer/contributing) of Spree Guides. Thank you!

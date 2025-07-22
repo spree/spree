@@ -54,7 +54,7 @@ describe Spree::Order do
     end
 
     let!(:free_shipping_promotion) {
-      create(:free_shipping_promotion, code: 'freeship')
+      create(:free_shipping_promotion, code: 'freeship', kind: :coupon_code)
     }
 
     before do

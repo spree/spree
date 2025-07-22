@@ -4,7 +4,9 @@ module Spree
       class UserSerializer < BaseSerializer
         set_type :user
 
-        attributes :email, :first_name, :last_name, :public_metadata
+        attributes :email, :first_name, :selected_locale, :last_name, :public_metadata
+
+        attribute :tags, &:tag_list
 
         attribute :store_credits do |user|
           user.total_available_store_credit
@@ -15,16 +17,16 @@ module Spree
         end
 
         has_one :default_billing_address,
-          id_method_name: :bill_address_id,
-          object_method_name: :bill_address,
-          record_type: :address,
-          serializer: :address
+                id_method_name: :bill_address_id,
+                object_method_name: :bill_address,
+                record_type: :address,
+                serializer: :address
 
         has_one :default_shipping_address,
-          id_method_name: :ship_address_id,
-          object_method_name: :ship_address,
-          record_type: :address,
-          serializer: :address
+                id_method_name: :ship_address_id,
+                object_method_name: :ship_address,
+                record_type: :address,
+                serializer: :address
       end
     end
   end

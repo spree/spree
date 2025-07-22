@@ -83,6 +83,52 @@ module Spree
             end
           end
         end
+
+        context 'when order is passed' do
+          let(:result) { subject.call(user: user, address_params: address_params, order: order) }
+
+          let(:order) { create(:order, user: user, state: 'delivery', ship_address: address, bill_address: address) }
+          let(:address) { create(:address, user: user) }
+
+          it 'assigns a new ship address to the order' do
+            result
+
+            expect(order.reload.ship_address).to eq(value)
+            expect(order.bill_address).to eq(address)
+          end
+
+          it 'updates order to address state' do
+            expect { result }.to change { order.reload.state }.from('delivery').to('address')
+          end
+        end
+
+        context 'when default billing is passed' do
+          let(:result) { subject.call(user: user, address_params: address_params, default_billing: true) }
+
+          let!(:user) { create(:user) }
+          let!(:address) { create(:address, user: user) }
+
+          before { user.update!(bill_address: address) }
+
+          it 'updates user\'s bill address' do
+            result
+            expect(user.reload.bill_address).to eq(value)
+          end
+        end
+
+        context 'when default shipping is passed' do
+          let(:result) { subject.call(user: user, address_params: address_params, default_shipping: true) }
+
+          let!(:user) { create(:user) }
+          let!(:address) { create(:address, user: user) }
+
+          before { user.update!(ship_address: address) }
+
+          it 'updates user\'s ship address' do
+            result
+            expect(user.reload.ship_address).to eq(value)
+          end
+        end
       end
 
       context 'with invalid params' do
@@ -99,7 +145,6 @@ module Spree
             country: ["can't be blank"],
             firstname: ["can't be blank"],
             lastname: ["can't be blank"],
-            phone: ["can't be blank"],
             zipcode: ["can't be blank"]
           )
         end

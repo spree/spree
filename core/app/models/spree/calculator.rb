@@ -1,5 +1,5 @@
 module Spree
-  class Calculator < Spree::Base
+  class Calculator < Spree.base_class
     acts_as_paranoid
 
     belongs_to :calculable, polymorphic: true, optional: true, inverse_of: :calculator

@@ -1,0 +1,21 @@
+<h1>
+  <%= Spree.t('invitation_mailer.greeting', user_name: @invitation.invitee&.first_name || @invitation.email) %>
+</h1>
+<p>
+  <%= Spree.t('invitation_mailer.invitation_email.body', inviter_name: @invitation.inviter.name, resource_name: @invitation.resource.name) %>
+</p>
+<p>
+  <%= Spree.t('invitation_mailer.invitation_email.link_description') %>
+</p>
+
+<% if spree.respond_to?(:admin_invitation_url) %>
+  <p>
+    <%= link_to Spree.t('invitation_mailer.invitation_email.link_text'), spree.admin_invitation_url(@invitation, token: @invitation.token, host: @invitation.store.formatted_url) %>
+  </p>
+<% end %>
+
+<p>
+  <%= Spree.t('invitation_mailer.thanks') %><br />
+  <%= current_store.name %>
+</p>
+

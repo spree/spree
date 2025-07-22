@@ -21,7 +21,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[emails api core sample].map(&method(:new)).freeze
+  ALL = %w[emails api core sample admin storefront].freeze
   CORE_GEMS = %w[api core].freeze
 
   # Install subproject
@@ -106,7 +106,7 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system("bundle exec rspec #{rspec_arguments.join(' ')}")
+    system("circleci tests glob \"spec/**/*_spec.rb\" | circleci tests run --command=\"xargs bundle exec rspec #{rspec_arguments.join(' ')}\" --split-by=timings")
   end
 
   def rspec_arguments(custom_name = name)
@@ -168,7 +168,7 @@ class Project
   #
   # @return [Array<Project>]
   def self.current_projects
-    NODE_INDEX.step(ALL.length - 1, NODE_TOTAL).map(&ALL.method(:fetch))
+    ENV.fetch('PROJECTS', ALL.join(',')).split(',').map(&method(:new))
   end
   private_class_method :current_projects
 

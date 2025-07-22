@@ -1,0 +1,20 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:return_authorizations) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:return_authorizations_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:return_authorizations_header_partials) %>
+
+<div class="card-lg">
+  <%= render "spree/admin/return_authorizations/filters" %>
+  <%= render "spree/admin/return_authorizations/list" %>
+
+  <%= render partial: "spree/admin/shared/index_table_options",
+  locals: {
+    collection: @collection,
+    per_page_action: :return_authorizations,
+  } %>
+</div>

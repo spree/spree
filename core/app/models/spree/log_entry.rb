@@ -1,5 +1,5 @@
 module Spree
-  class LogEntry < Spree::Base
+  class LogEntry < Spree.base_class
     if defined?(Spree::Security::LogEntries)
       include Spree::Security::LogEntries
     end
@@ -15,7 +15,11 @@ module Spree
     end
 
     def parsed_details
-      @details ||= YAML.safe_load(details, [ActiveMerchant::Billing::Response])
+      @details ||= if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
+                     YAML.safe_load(details, permitted_classes: [ActiveMerchant::Billing::Response])
+                   else
+                     YAML.safe_load(details, [ActiveMerchant::Billing::Response])
+                   end
     end
   end
 end

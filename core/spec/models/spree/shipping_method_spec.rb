@@ -11,6 +11,41 @@ describe Spree::ShippingMethod, type: :model do
 
   it_behaves_like 'metadata'
 
+  describe 'scopes' do
+    let!(:shipping_methods) { create_list(:shipping_method, 2, display_on: 'both') }
+    let!(:frontend_shipping_methods) { create_list(:shipping_method, 2, display_on: 'front_end') }
+    let!(:backend_shipping_methods) { create_list(:shipping_method, 2, display_on: 'back_end') }
+
+    describe '.available' do
+      subject { described_class.available }
+
+      it { is_expected.to match_array(shipping_methods) }
+    end
+
+    describe '.available_on_front_end' do
+      subject { described_class.available_on_front_end }
+
+      it { is_expected.to match_array(shipping_methods + frontend_shipping_methods) }
+    end
+
+    describe '.available_on_back_end' do
+      subject { described_class.available_on_back_end }
+
+      it { is_expected.to match_array(shipping_methods + backend_shipping_methods) }
+    end
+  end
+
+  describe '#requires_zone_check?' do
+    it 'returns true if the shipping method is not digital' do
+      expect(shipping_method.requires_zone_check?).to be_truthy
+    end
+
+    it 'returns false if the shipping method is digital' do
+      shipping_method = create(:digital_shipping_method)
+      expect(shipping_method.requires_zone_check?).to be_falsey
+    end
+  end
+
   context 'calculators' do
     it "rejects calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
@@ -78,7 +113,7 @@ describe Spree::ShippingMethod, type: :model do
     end
   end
 
-  context 'generating tracking URLs' do
+  describe '#build_tracking_url' do
     context 'shipping method has a tracking URL mask on file' do
       let(:tracking_url) { 'https://track-o-matic.com/:tracking' }
 
@@ -86,13 +121,23 @@ describe Spree::ShippingMethod, type: :model do
 
       context 'tracking number has spaces' do
         let(:tracking_numbers) { ['1234 5678 9012 3456', 'a bcdef'] }
-        let(:expectations) { %w[https://track-o-matic.com/1234%205678%209012%203456 https://track-o-matic.com/a%20bcdef] }
+        let(:expectations) { %w[https://track-o-matic.com/1234%205678%209012%203456 https://track-o-matic.com/A%20BCDEF] }
 
         it "returns a single URL with '%20' in lieu of spaces" do
           tracking_numbers.each_with_index do |num, i|
             expect(subject.build_tracking_url(num)).to eq(expectations[i])
           end
         end
+      end
+    end
+
+    context 'shipping method does not have a tracking URL mask on file' do
+      let(:usps_tracking_number) { '1Z879E930346834440' }
+
+      before { allow(subject).to receive(:tracking_url) { nil } }
+
+      it 'uses tracking number gem to build tracking url' do
+        expect(subject.build_tracking_url(usps_tracking_number)).to eq('https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z879E930346834440')
       end
     end
   end
@@ -131,5 +176,47 @@ describe Spree::ShippingMethod, type: :model do
     it { expect(frontend_shipping_method.send(:backend?)).to be false }
     it { expect(backend_shipping_method.send(:backend?)).to be true }
     it { expect(front_and_back_end_shipping_method.send(:backend?)).to be true }
+  end
+
+  describe '#delivery_range' do
+    context 'without set estimated_transit_business_days_min and estimated_transit_business_days_max' do
+      it { expect(shipping_method.delivery_range).to be_nil }
+    end
+
+    context 'with set estimated_transit_business_days_min and estimated_transit_business_days_max' do
+      let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 2) }
+
+      it { expect(shipping_method.delivery_range).to eq('1-2') }
+    end
+
+    context 'when both are the same' do
+      let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1, estimated_transit_business_days_max: 1) }
+
+      it { expect(shipping_method.delivery_range).to eq('1') }
+    end
+
+    context "when only one transit day value is set" do
+      context "when only minimum day is set" do
+        let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_min: 1) }
+
+        it { expect(shipping_method.delivery_range).to eq('1') }
+      end
+
+      context "when only maximum day is set" do
+        let(:shipping_method) { build(:shipping_method, estimated_transit_business_days_max: 2) }
+
+        it { expect(shipping_method.delivery_range).to eq('2') }
+      end
+    end
+  end
+
+  describe '#display_estimated_price' do
+    it { expect(shipping_method.display_estimated_price).to eq('Flat rate: Free') }
+
+    context 'with calculator' do
+      let(:shipping_method) { build(:shipping_method, calculator: create(:shipping_calculator)) }
+
+      it { expect(shipping_method.display_estimated_price).to eq('Flat rate: $10.00') }
+    end
   end
 end

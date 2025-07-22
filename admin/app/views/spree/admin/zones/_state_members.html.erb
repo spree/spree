@@ -1,0 +1,21 @@
+<div id="state_members">
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t(:states) %>
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <div class="form-group">
+        <%= label_tag :states_country_id, Spree.t(:country) %>
+        <%= tom_select_tag :states_country_id, class: 'w-100', options: Spree::Country.joins(:states).to_tom_select_json, active_option: @selected_country&.id, select_data: {action: "auto-submit#submit"} %>
+      </div>
+
+      <div class="form-group">
+        <%= zone_form.label :state_ids, Spree.t(:states) %>
+        <%= tom_select_tag 'zone[state_ids]', multiple: true, class: 'w-100', options: @states.to_tom_select_json, active_option: @zone.state_ids %>
+      </div>
+    </div>
+  </div>
+</div>

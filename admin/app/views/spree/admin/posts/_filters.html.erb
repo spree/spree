@@ -1,0 +1,29 @@
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters dropdown"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :search_by_title, label: Spree.t(:title) %>
+
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-dropdown-target="menu" id="table-filter">
+    <div class="form-group">
+      <%= f.label :author_id_eq, Spree.t(:author) %>
+      <%= f.select :author_id_eq,
+               options_for_select(post_authors_select_options, params.dig(:q, :author_id_eq)),
+               { include_blank: true },
+               { data: { filters_target: :input, controller: 'autocomplete-select' } } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :post_category_id_eq, Spree.t(:category) %>
+      <%= f.select :post_category_id_eq,
+               options_for_select(@post_categories.pluck(:title, :id), params.dig(:q, :post_category_id_eq)),
+               { include_blank: true },
+               { data: { filters_target: :input, controller: 'autocomplete-select' } } %>
+    </div>
+    <%= render_admin_partials(:posts_filters_partials, f: f) %>
+    <%= render 'spree/admin/shared/filter_submit' %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

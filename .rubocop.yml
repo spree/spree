@@ -1,19 +1,19 @@
 require: rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.0
   Exclude:
-    - '**/sandbox/**/*'
-    - '**/db/migrate/*'
-    - '**/Gemfile'
-    - '**/Gemfile.lock'
-    - '**/Rakefile'
-    - '**/rails'
-    - '**/*.gemspec'
-    - '**/dummy/**/*'
-    - '**/vendor/**/*'
-    - '**/spec_helper.rb'
-    - '**/templates/**/*'
+    - "**/sandbox/**/*"
+    - "**/db/migrate/*"
+    - "**/Gemfile"
+    - "**/Gemfile.lock"
+    - "**/Rakefile"
+    - "**/rails"
+    - "**/*.gemspec"
+    - "**/dummy/**/*"
+    - "**/vendor/**/*"
+    - "**/spec_helper.rb"
+    - "**/templates/**/*"
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
@@ -29,7 +29,7 @@ Metrics/ModuleLength:
   CountComments: false
   Max: 250
   Exclude:
-    - '**/spec/**/*'
+    - "**/spec/**/*"
 
 Style/Documentation:
   Enabled: false
@@ -37,7 +37,7 @@ Style/Documentation:
 Layout/LineLength:
   Max: 150
   Exclude:
-    - '**/spec/**/*'
+    - "**/spec/**/*"
 
 Metrics/MethodLength:
   CountComments: false
@@ -47,13 +47,14 @@ Metrics/BlockLength:
   CountComments: false
   Max: 50
   Exclude:
-    - '**/spec/**/*'
-    - '**/*.rake'
-    - '**/factories/**/*'
-    - '**/config/routes.rb'
+    - "**/spec/**/*"
+    - "**/*.rake"
+    - "**/factories/**/*"
+    - "**/config/routes.rb"
+    - "**/lib/**/testing_support/**/*"
 
 Metrics/AbcSize:
- Max: 45
+  Max: 45
 
 Style/StringLiterals:
   EnforcedStyle: single_quotes
@@ -64,15 +65,15 @@ Layout/DotPosition:
 
 Layout/SpaceInsideArrayLiteralBrackets:
   Exclude:
-    - 'api/spec/integration/**/*.rb'
-    - 'api/lib/spree/api/testing_support/v2/platform_contexts.rb'
+    - "api/spec/integration/**/*.rb"
+    - "api/lib/spree/api/testing_support/v2/platform_contexts.rb"
 
 Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/ClassVars:
   Exclude:
-    - 'core/lib/spree/permitted_attributes.rb'
+    - "core/lib/spree/permitted_attributes.rb"
 
 Style/RegexpLiteral:
   Enabled: false
@@ -85,7 +86,7 @@ Style/SymbolArray:
 
 Style/SymbolProc:
   Exclude:
-    - '**/app/serializers/**/*'
+    - "**/app/serializers/**/*"
 
 Style/GuardClause:
   Enabled: false
@@ -131,7 +132,7 @@ Style/ClassAndModuleChildren:
 
 Style/AndOr:
   Exclude:
-    - '**/*controller.rb'
+    - "**/*controller.rb"
 
 Style/HashEachMethods:
   Enabled: false
@@ -142,12 +143,15 @@ Style/HashTransformKeys:
 Style/HashTransformValues:
   Enabled: false
 
+Style/Alias:
+  Enabled: false
+
 RSpec/NestedGroups:
   Max: 7
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
-    - '**/spec/**/*'
+    - "**/spec/**/*"
 
 Style/NumericLiterals:
   Enabled: false
@@ -183,9 +187,6 @@ RSpec/NamedSubject:
   Enabled: false
 
 RSpec/MultipleExpectations:
-  Enabled: false
-
-RSpec/FilePath:
   Enabled: false
 
 RSpec/LetSetup:

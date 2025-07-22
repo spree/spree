@@ -31,18 +31,16 @@ describe Spree::Taxonomy, type: :model do
 
     context 'when Taxonomy name is updated' do
       it 'changes the root Taxon name to match' do
-        @taxonomy.update(name: 'Soft Goods')
-        @taxonomy.save!
+        @taxonomy.update!(name: 'Soft Goods')
         @taxonomy.reload
 
-        expect(@taxonomy.root.name).to eq('Soft Goods')
+        expect(@taxonomy.root.reload.name).to eq('Soft Goods')
       end
     end
 
     context 'when Taxonomy position is updated' do
       it 'does not change the root Taxon name' do
-        @taxonomy.update(position: 2)
-        @taxonomy.save!
+        @taxonomy.update!(position: 2)
         @taxonomy.reload
 
         expect(@taxonomy.root.name).to eq('Clothing')

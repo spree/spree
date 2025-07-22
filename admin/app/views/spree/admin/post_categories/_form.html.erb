@@ -1,0 +1,15 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.label :title, Spree.t(:title) %>
+      <%= f.text_field :title, class: "form-control", required: true, autofocus: f.object.new_record? %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :description, Spree.t(:description) %>
+      <div class="trix-container">
+        <%= f.rich_text_area :description %>
+      </div>
+    </div>
+  </div>
+</div>

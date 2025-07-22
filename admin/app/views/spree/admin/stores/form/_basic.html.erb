@@ -1,0 +1,176 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:store_details) %>
+<% end %>
+
+<%= content_for(:page_actions_dropdown) do %>
+  <%= link_to_edit_translations(@store) %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          <%= Spree.t(:store_name_help) %>
+        </p>
+        <div class="form-group">
+          <%= f.label :name, Spree.t(:name) %>
+          <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
+          <%= f.error_message_on :name %>
+        </div>
+        <div class="form-group mb-0">
+          <%= f.label :logo do %>
+            <%= Spree.t(:logo) %>
+            <%= help_bubble("Used in the admin dashboard") %>
+          <% end %>
+          <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :contact_phone, Spree.t(:contact_phone) %>
+          <%= f.text_field :contact_phone, class: 'form-control' %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :address, Spree.t(:address) %>
+          <%= f.text_area :address, rows: 5, class: 'form-control', data: { controller: 'textarea-autogrow' } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          <%= Spree.t(:standards_and_formats_help) %>
+        </p>
+        <div class="form-group mb-3">
+          <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
+          <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
+        </div>
+        <div data-controller="unit-system">
+          <div class="form-group mb-3">
+            <%= label_tag :preferred_unit_system, raw(Spree.t(:unit_system) + required_span_tag) %>
+            <%= select_tag 'store[preferred_unit_system]', options_for_select(unit_systems, @store.preferred_unit_system), {class: 'custom-select', data: {unit_system_target: "body", action: "change->unit-system#unitSystemHandler"}} %>
+            <p class="text-muted form-text mt-2 mb-0">
+              <%= Spree.t(:unit_system_help) %>
+            </p>
+          </div>
+          <div class="form-group">
+            <%= label_tag :preferred_weight_unit, raw(Spree.t(:weight_unit) + required_span_tag) %>
+            <%= select_tag 'store[preferred_weight_unit]', options_for_select(weight_units(@store), @store.preferred_weight_unit), {class: 'custom-select', data: {unit_system_target: "weightUnit"}} %>
+            <p class="text-muted form-text mt-2 mb-0">
+              <%= Spree.t(:weight_unit_help) %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:countries) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          <%= Spree.t(:currency_and_country_help) %>
+        </p>
+        <div class="form-group">
+          <%= f.label :default_currency, Spree.t(:default_currency) %>
+          <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
+          <%= f.error_message_on :default_currency %>
+        </div>
+        <div class="form-group">
+          <%= f.label :supported_currencies, Spree.t(:supported_currencies) %>
+          <%= f.select :supported_currencies,
+          currency_options(@store.supported_currencies&.split(',')),
+          { prompt: false },
+          { multiple: true, data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :supported_currencies %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :default_country_iso, Spree.t(:default_country) %>
+          <%= f.collection_select :default_country_iso, Spree::Country.pluck(:iso, :name), :first, :last, { include_blank: false }, { data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :default_country_iso %>
+        </div>
+        <div class="form-group">
+          <%= f.label :checkout_zone_id, Spree.t(:shipping_zone) %>
+          <%= f.select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { }, { data: { controller: 'autocomplete-select' } } %>
+          <small class="form-text text-muted mt-2">
+            <%= Spree.t(:shipping_zone_help) %>
+            <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path %>
+          </small>
+          <%= f.error_message_on :checkout_zone_id %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :default_locale, Spree.t(:default_locale) %>
+          <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :default_locale %>
+        </div>
+        <div class="form-group">
+          <%= f.label :supported_locales, Spree.t(:supported_locales) %>
+          <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, data: { controller: 'autocomplete-select' } } %>
+          <%= f.error_message_on :supported_locales %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          <%= Spree.t(:digital_assets_help) %>
+        </p>
+        <div class="custom-control custom-checkbox mb-3">
+          <%= f.check_box :preferred_limit_digital_download_days,
+                      class: "custom-control-input" %>
+          <%= f.label :preferred_limit_digital_download_days, class: "custom-control-label" %>
+          <%= f.error_message_on :preferred_limit_digital_download_days %>
+        </div>
+        <div class="form-group">
+          <%= f.label :preferred_digital_asset_authorized_days %>
+          <%= f.number_field :preferred_digital_asset_authorized_days,
+                         class: "form-control",
+                         min: 1 %>
+          <%= f.error_message_on :preferred_digital_asset_authorized_days %>
+        </div>
+
+        <div class="custom-control custom-checkbox mb-3">
+          <%= f.check_box :preferred_limit_digital_download_count,
+                      class: "custom-control-input" %>
+          <%= f.label :preferred_limit_digital_download_count, class: "custom-control-label" %>
+          <%= f.error_message_on :preferred_limit_digital_download_count %>
+        </div>
+        <div class="form-group">
+          <%= f.label :preferred_digital_asset_authorized_clicks %>
+          <%= f.number_field :preferred_digital_asset_authorized_clicks,
+                         class: "form-control",
+                         min: 1 %>
+          <%= f.error_message_on :preferred_digital_asset_authorized_clicks %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render_admin_partials(:store_form_partials, f: f, store: @store) %>

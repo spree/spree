@@ -4,7 +4,7 @@ module Spree
       'spree_webhooks_'
     end
 
-    class Base < Spree::Base
+    class Base < Spree.base_class
       self.abstract_class = true
     end
   end

@@ -47,11 +47,17 @@ FactoryBot.define do
         without_line_items     { false }
         shipment_cost          { 100 }
         shipping_method_filter { Spree::ShippingMethod::DISPLAY_ON_FRONT_END }
+        variants               { [] }
       end
 
       after(:create) do |order, evaluator|
-        unless evaluator.without_line_items
+        if evaluator.variants.empty? && !evaluator.without_line_items
           create_list(:line_item, evaluator.line_items_count, order: order, price: evaluator.line_items_price)
+          order.line_items.reload
+        end
+
+        if evaluator.variants.any?
+          evaluator.variants.each { |variant| create(:line_item, order: order, product: variant.product, variant: variant, price: evaluator.line_items_price) }
           order.line_items.reload
         end
 
@@ -89,8 +95,13 @@ FactoryBot.define do
           payment_state  { 'paid' }
           shipment_state { 'ready' }
 
-          after(:create) do |order|
-            create(:payment, amount: order.total, order: order, state: 'completed')
+          transient do
+            with_payment { true }
+          end
+
+          after(:create) do |order, evaluator|
+            create(:payment, amount: order.total, order: order, state: 'completed') if evaluator.with_payment
+
             order.shipments.each do |shipment|
               shipment.inventory_units.update_all state: 'on_hand'
               shipment.update_column('state', 'ready')

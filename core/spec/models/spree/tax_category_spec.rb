@@ -25,7 +25,14 @@ describe Spree::TaxCategory, type: :model do
     end
   end
 
-  context '#destroy' do
+  describe '.default' do
+    it 'returns the default tax category' do
+      tax_category = create(:tax_category, is_default: true)
+      expect(Spree::TaxCategory.default).to eq(tax_category)
+    end
+  end
+
+  describe '#destroy' do
     let!(:tax_category) { create(:tax_category) }
     let!(:tax_rate) { create(:tax_rate, tax_category: tax_category) }
     let!(:product) { create(:product, tax_category: tax_category) }

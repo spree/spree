@@ -23,7 +23,7 @@ module Spree
         # leaving this method in public scope so it's still possible to modify
         # those params to support non-standard non-JSON API parameters
         def collection_permitted_params
-          params.permit(:format, :page, :per_page, :sort, :include, fields: {}, filter: {})
+          params.permit(:format, :page, :per_page, :sort, :include, :locale, fields: {}, filter: {})
         end
 
         private

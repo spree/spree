@@ -35,6 +35,17 @@ describe Spree::Shipment, type: :model do
         shipment.ship!
         expect(shipment_id).to eq(shipment.id)
       end
+
+      context 'when send_consumer_transactional_emails store setting is set to false' do
+        before do
+          allow(shipment.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
+        end
+
+        it 'does not trigger the shipment mailer to be sent' do
+          expect(Spree::ShipmentMailer).not_to receive(:shipped_email)
+          shipment.ship!
+        end
+      end
     end
   end
 end

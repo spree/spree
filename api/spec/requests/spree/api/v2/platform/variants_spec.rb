@@ -7,12 +7,10 @@ describe 'API V2 Platform Variants Spec' do
 
   let(:product) { create(:product, stores: [store]) }
   let!(:variants) { create_list(:variant, 5, product: product) }
-  
+
   describe 'variants#index' do
     context 'with no params' do
       before { get '/api/v2/platform/variants', headers: bearer_token }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns all variants' do
         expect(json_response['data'].count).to eq store.variants.count
@@ -41,7 +39,7 @@ describe 'API V2 Platform Variants Spec' do
         let(:product_2) { create(:product, stores: [store], name: 'Vendo T-shirt') }
         let!(:variant) { create(:variant, product: product_2) }
 
-        before { get "/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_name_cont]=vendo&filter[is_master_eq]=false', headers: bearer_token }
 
         it 'returns variant with a specified name' do
           expect(json_response['data'].count).to eq 1
@@ -52,7 +50,7 @@ describe 'API V2 Platform Variants Spec' do
       xcontext 'by price' do
         let!(:variant) { create(:variant, price: 100) }
 
-        before { get "/api/v2/platform/variants?filter[product_price_between]=100,200", headers: bearer_token }
+        before { get '/api/v2/platform/variants?filter[product_price_between]=100,200', headers: bearer_token }
 
         it 'returns variants with price greater than or equal to the given price' do
           expect(json_response['data'].count).to eq 1
@@ -66,8 +64,6 @@ describe 'API V2 Platform Variants Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/variants?sort=updated_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns variants sorted by updated_at' do
             expect(json_response['data'].count).to      eq store.variants.count
             expect(json_response['data'].pluck(:id)).to eq store.variants.order(:updated_at).map(&:id).map(&:to_s)
@@ -76,8 +72,6 @@ describe 'API V2 Platform Variants Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/variants?sort=-updated_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by updated_at with descending order' do
             expect(json_response['data'].count).to      eq store.variants.count
@@ -90,8 +84,6 @@ describe 'API V2 Platform Variants Spec' do
         context 'ascending order' do
           before { get '/api/v2/platform/variants?sort=created_at', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns variants sorted by created_at' do
             expect(json_response['data'].count).to      eq store.variants.count
             expect(json_response['data'].pluck(:id)).to eq store.variants.order(:created_at).map(&:id).map(&:to_s)
@@ -100,8 +92,6 @@ describe 'API V2 Platform Variants Spec' do
 
         context 'descending order' do
           before { get '/api/v2/platform/variants?sort=-created_at', headers: bearer_token }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns variants sorted by created_at with descending order' do
             expect(json_response['data'].count).to      eq store.variants.count
@@ -116,18 +106,10 @@ describe 'API V2 Platform Variants Spec' do
         context 'when per_page is between 1 and default value' do
           before { get '/api/v2/platform/variants?page=1&per_page=2', headers: bearer_token }
 
-          it_behaves_like 'returns 200 HTTP status'
-
-          it 'returns the default number of variants' do
+          it 'returns proper pagination data' do
             expect(json_response['data'].count).to eq 2
-          end
-
-          it 'returns proper meta data' do
             expect(json_response['meta']['count']).to       eq 2
             expect(json_response['meta']['total_count']).to eq store.variants.count
-          end
-
-          it 'returns proper links data' do
             expect(json_response['links']['self']).to include('/api/v2/platform/variants?page=1&per_page=2')
             expect(json_response['links']['next']).to include('/api/v2/platform/variants?page=2&per_page=2')
             expect(json_response['links']['prev']).to include('/api/v2/platform/variants?page=1&per_page=2')
@@ -138,18 +120,10 @@ describe 'API V2 Platform Variants Spec' do
       context 'without specified pagination params' do
         before { get '/api/v2/platform/variants', headers: bearer_token }
 
-        it_behaves_like 'returns 200 HTTP status'
-
-        it 'returns specified amount variants' do
+        it 'returns proper pagination data' do
           expect(json_response['data'].count).to eq store.variants.count
-        end
-
-        it 'returns proper meta data' do
           expect(json_response['meta']['count']).to       eq json_response['data'].count
           expect(json_response['meta']['total_count']).to eq store.variants.count
-        end
-
-        it 'returns proper links data' do
           expect(json_response['links']['self']).to include('/api/v2/platform/variants')
           expect(json_response['links']['next']).to include('/api/v2/platform/variants?page=1')
           expect(json_response['links']['prev']).to include('/api/v2/platform/variants?page=1')

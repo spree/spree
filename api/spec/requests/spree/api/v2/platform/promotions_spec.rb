@@ -5,9 +5,9 @@ describe 'Promotion API v2 spec', type: :request do
   include_context 'Platform API v2'
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
-  let!(:store) { Spree::Store.default }
-  let!(:second_store) { create(:store) }
-  let!(:third_store) { create(:store) }
+  let!(:store) { @default_store }
+  let(:second_store) { create(:store) }
+  let(:third_store) { create(:store) }
 
   let(:promotion_rule) { create(:promotion_rule) }
   let(:existing_promotion) { create(:promotion_with_item_adjustment, promotion_rules: [promotion_rule]) }
@@ -82,7 +82,7 @@ describe 'Promotion API v2 spec', type: :request do
       it 'creates and returns a promotion' do
         # promotion
         expect(json_response['data']).to have_attribute(:name).with_value(new_promotion_attributes[:name])
-        expect(json_response['data']).to have_attribute(:code).with_value(new_promotion_attributes[:code])
+        expect(json_response['data']).to have_attribute(:code).with_value(new_promotion_attributes[:code].downcase)
         expect(json_response['data']).to have_attribute(:match_policy).with_value(new_promotion_attributes[:match_policy])
         expect(json_response['data']).to have_attribute(:type).with_value(new_promotion_attributes[:type])
         expect(json_response['data']).to have_attribute(:description).with_value(new_promotion_attributes[:description])
@@ -117,7 +117,7 @@ describe 'Promotion API v2 spec', type: :request do
       it 'updates and returns a promotion' do
         # promotion
         expect(json_response['data']).to have_attribute(:name).with_value(update_promotion_attributes[:name])
-        expect(json_response['data']).to have_attribute(:code).with_value(update_promotion_attributes[:code])
+        expect(json_response['data']).to have_attribute(:code).with_value(update_promotion_attributes[:code].downcase)
         expect(json_response['data']).to have_attribute(:match_policy).with_value(update_promotion_attributes[:match_policy])
         expect(json_response['data']).to have_attribute(:type).with_value(update_promotion_attributes[:type])
         expect(json_response['data']).to have_attribute(:description).with_value(update_promotion_attributes[:description])

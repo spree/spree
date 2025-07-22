@@ -1,0 +1,145 @@
+---
+title: Assets
+icon: "images"
+---
+
+Spree uses [Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) to handle file uploads (eg. product images). By default, Active Storage uses local disk storage for attachments. This isn't suitable for production environments.
+
+For production environments, we recommend using a cloud storage service such as [AWS S3](https://aws.amazon.com/s3/) or [Cloudflare R2](https://www.cloudflare.com/r2/).
+
+## AWS S3
+
+To use Amazon S3 as your storage service, you need to configure the storage in the `config/storage.yml` file.
+
+```yaml
+amazon:
+  service: S3
+  access_key_id: <%= ENV.fetch("AWS_ACCESS_KEY_ID", "") %>
+  secret_access_key: <%= ENV.fetch("AWS_SECRET_ACCESS_KEY", "") %>
+  region: <%= ENV.fetch("AWS_REGION", "") %>
+  bucket: <%= ENV.fetch("AWS_BUCKET", "spree-#{Rails.env}") %>
+```
+
+You will also need to add the `aws-sdk-s3` gem to your Gemfile.
+
+```ruby
+gem "aws-sdk-s3", require: false
+```
+
+And run `bundle install`.
+
+Now you need to switch the storage service in your `config/environments/production.rb` file.
+
+```ruby
+config.active_storage.service = :amazon
+```
+
+Now you will need to grab the credentials from your AWS S3 bucket and set them as environment variables used in the `config/storage.yml` file on your hosting provider.
+
+To test them locally you can put them in the `.env` file.
+
+### CORS Configuration
+
+Spree Admin Dashboard uses direct uploads to handle file uploads. For this to work properly, you need to configure CORS on your S3 bucket.
+
+1. Go to your S3 bucket in AWS Console
+2. Click on "Permissions" tab
+3. Scroll down to "Cross-origin resource sharing (CORS)"
+4. Click "Edit" and paste the following configuration:
+
+```json
+[
+  {
+    "AllowedMethods": ["GET", "PUT", "POST"],
+    "AllowedOrigins": ["https://myspreestore.com"],
+    "AllowedHeaders": ["*"],
+    "ExposeHeaders": ["ETag"]
+  }
+]
+```
+
+<Info>
+`myspreestore.com` should be replaced with your domain name which you access your Spree Admin Dashboard.
+</Info>
+
+## Cloudflare R2
+
+Cloudflare R2 is an S3-compatible, zero egress-fee, object storage with a built-in CDN. We strongly recommend using it as your storage service.
+
+To use Cloudflare R2 as your storage service, you need to configure the storage in the `config/storage.yml` file.
+
+```yaml
+cloudflare:
+  service: S3
+  endpoint: <%= ENV.fetch("CLOUDFLARE_ENDPOINT", "") %>
+  access_key_id: <%= ENV.fetch("CLOUDFLARE_ACCESS_KEY_ID", "") %>
+  secret_access_key: <%= ENV.fetch("CLOUDFLARE_SECRET_ACCESS_KEY", "") %>
+  region: auto
+  bucket: <%= ENV.fetch("CLOUDFLARE_BUCKET", "spree-#{Rails.env}") %>
+  request_checksum_calculation: "when_required"
+  response_checksum_validation: "when_required"
+```
+
+You will also need to add the `aws-sdk-s3` gem to your Gemfile.
+
+```ruby
+gem "aws-sdk-s3", require: false
+```
+
+<Info>
+aws-sdk-s3 version 1.178.0 introduced a modification to the default checksum behavior from the client that is currently incompatible with R2 APIs.
+
+To mitigate, users can use 1.177.0 or add the following to their s3 client instantiation:
+
+```yaml
+request_checksum_calculation: "when_required"
+response_checksum_validation: "when_required"
+```
+</Info>
+
+And run `bundle install`.
+
+Now you need to switch the storage service in your `config/environments/production.rb` file.
+
+```ruby
+config.active_storage.service = :cloudflare
+```
+
+Now you will need to grab the credentials from your Cloudflare R2 bucket and set them as environment variables used in the `config/storage.yml` file on your hosting provider.
+To test them locally you can put them in the `.env` file.
+
+### CORS Configuration
+
+Spree Admin Dashboard uses direct uploads to handle file uploads. For this to work properly, you need to configure CORS on your R2 bucket.
+
+1. Go to your R2 bucket in Cloudflare Console
+2. Click on "Settings" tab
+3. Scroll down to "CORS policy"
+4. Click "Edit CORS policy" and paste the following configuration:
+
+```json
+[
+  {
+    "AllowedOrigins": [
+      "https://myspreestore.com"
+    ],
+    "AllowedMethods": [
+      "PUT"
+    ],
+    "AllowedHeaders": [
+      "*"
+    ],
+    "ExposeHeaders": [
+      "Origin",
+      "Content-Type",
+      "Content-MD5",
+      "Content-Disposition"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]
+```
+
+<Info>
+`myspreestore.com` should be replaced with your domain name which you access your Spree Admin Dashboard.
+</Info>

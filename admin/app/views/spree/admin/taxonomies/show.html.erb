@@ -1,0 +1,28 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_taxonomies_path %>
+  <%= @taxonomy.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_taxon), spree.new_admin_taxonomy_taxon_path(@taxonomy), class: 'btn btn-primary' %>
+<% end if can?(:create, Spree::Taxon) %>
+
+<% content_for :page_actions_dropdown do %>
+  <%= link_to_edit(@taxonomy.root, url: spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id), class: 'text-left dropdown-item') %>
+<% end if can?(:edit, @taxonomy) %>
+
+<div id="sortableTreeArea">
+  <% if @taxonomy.root.present? %>
+    <div data-controller="sortable-tree" data-sortable-tree-handle-value=".move-handle">
+      <div data-sortable-tree-parent-id-value="<%= @taxonomy.root.id %>">
+        <% if @taxonomy.root.children.present? %>
+          <% @taxonomy.root.children.includes({ image_attachment: :blob, square_image_attachment: :blob }).each do |root_children| %>
+            <%= build_sortable_tree(@taxonomy, root_children) %>
+          <% end %>
+        <% else %>
+          <%= render 'spree/admin/shared/no_resource_found', resource_name: Spree.t(:taxons), new_object_url: spree.new_admin_taxonomy_taxon_path(@taxonomy) %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

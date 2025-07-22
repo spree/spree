@@ -36,4 +36,10 @@ describe Spree::Core::ControllerHelpers::StrongParameters, type: :controller do
       expect(controller.permitted_product_attributes.class).to eq Array
     end
   end
+
+  describe '#permitted_store_attributes' do
+    it 'returns Array class' do
+      expect(controller.permitted_store_attributes.class).to eq Array
+    end
+  end
 end

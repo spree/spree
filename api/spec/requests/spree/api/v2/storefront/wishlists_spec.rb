@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
-  let!(:store) { Spree::Store.default }
-  let!(:other_store) { create(:store) }
-  let!(:other_user) { create(:user) }
+  let(:store) { create(:store) }
+  let(:other_store) { create(:store) }
 
-  let(:wishlist) { create(:wishlist) }
+  let(:wishlist) { create(:wishlist, store: store) }
   let(:user) { wishlist.user }
+  let(:other_user) { create(:user) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::WishlistsController).to receive(:current_store).and_return(store)
+  end
 
   include_context 'API v2 tokens'
 
@@ -55,9 +59,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#index' do
-    let!(:wishlists) { create_list(:wishlist, 30, user: user) }
-    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user) }
-    let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store) }
+    let!(:wishlists) { create_list(:wishlist, 30, user: user, store: store) }
 
     it 'must return a list of wishlists paged' do
       get '/api/v2/storefront/wishlists', headers: headers_bearer
@@ -82,8 +84,8 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#show' do
-    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true) }
-    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false) }
+    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true, store: store) }
+    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false, store: store) }
 
     let!(:wished_item) do
       wishlist.wished_items.create({ variant: create(:variant) })
@@ -328,6 +330,269 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
 
         expect(response.status).to eq(403)
       end
+    end
+  end
+
+  describe '#add_items' do
+    subject(:post_add_item) do
+      post "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/add_items", headers: headers_bearer, params: params
+    end
+
+    let!(:variant) { create(:variant) }
+    let!(:wished_item) { nil }
+    let!(:wished_item_1) { nil }
+    let!(:wished_item_2) { nil }
+    let!(:wished_item_3) { nil }
+
+    before { post_add_item }
+
+    let(:params) do
+      {
+        wished_items: [
+          { variant_id: variant.id.to_s, quantity: 3 }
+        ]
+      }
+    end
+
+    it 'returns wishlist in response' do
+      expect(json_response['data']['type']).to eql ('wishlist')
+      expect(json_response['data']['id']).to eql wishlist.id.to_s
+
+      expect(json_response['data']['attributes']['token']).to eq wishlist.token
+      expect(json_response['data']['attributes']['name']).to eq wishlist.name
+      expect(json_response['data']['attributes']['is_private']).to be true
+      expect(json_response['data']['attributes']['is_default']).to be false
+      expect(json_response['data']['attributes']['variant_included']).to be false
+
+      expect(json_response['data']['relationships']['wished_items']).not_to be_empty
+    end
+
+    it 'creates wished item' do
+      expect(user.wishlists.reload.first.wished_items.take.quantity).to eq 3
+    end
+
+    context 'when many variants are passed' do
+      let(:params) do
+        {
+          wished_items: [
+            { variant_id: variant.id.to_s, quantity: 1 },
+            { variant_id: variant_1.id.to_s, quantity: 2 },
+            { variant_id: variant_2.id.to_s, quantity: 3 },
+            { variant_id: variant_3.id.to_s, quantity: 4 }
+          ]
+        }
+      end
+      let(:variant_1) { create(:variant) }
+      let(:variant_2) { create(:variant) }
+      let(:variant_3) { create(:variant) }
+
+      it 'creates many wished items' do
+        expect(user.wishlists.reload.first.wished_items.count).to eq 4
+      end
+
+      context 'when some variants are already in the wishlist' do
+        let!(:wished_item_1) { create(:wished_item, wishlist: user.wishlists.first, variant: variant_1, quantity: 1) }
+        let!(:wished_item_2) { create(:wished_item, wishlist: user.wishlists.first, variant: variant_2, quantity: 1) }
+        let!(:wished_item_3) { create(:wished_item, wishlist: user.wishlists.first, variant: variant_3, quantity: 1) }
+
+        it 'updates them accordingly' do
+          expect(wished_item_1.reload.quantity).to eq 2
+          expect(wished_item_2.reload.quantity).to eq 3
+          expect(wished_item_3.reload.quantity).to eq 4
+        end
+      end
+
+      context 'when some of params is invalid' do
+        let(:params) do
+          {
+            wished_items: [
+              { variant_id: variant.id.to_s, quantity: 1 },
+              { variant_id: create(:variant).id.to_s, quantity: 0 }
+            ]
+          }
+        end
+
+        it 'does not create any wished item' do
+          expect(user.wishlists.reload.first.wished_items).to be_empty
+        end
+      end
+    end
+
+    context 'when a variant is already in the wishlist' do
+      let!(:wished_item) { create(:wished_item, wishlist: user.wishlists.first, variant: wished_variant, quantity: 2) }
+      let(:wished_variant) { create(:variant) }
+
+      context 'when quantity is passed' do
+        let(:params) do
+          {
+            wished_items: [
+              { variant_id: wished_variant.id.to_s, quantity: 3 }
+            ]
+          }
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'updates quantity' do
+          expect(wished_item.reload.quantity).to eq 3
+        end
+      end
+
+      context 'when quantity is not passed' do
+        let(:params) do
+          {
+            wished_items: [
+              { variant_id: wished_variant.id.to_s }
+            ]
+          }
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'updates quantity to 1' do
+          expect(wished_item.reload.quantity).to eq 1
+        end
+      end
+
+      context 'when passed quantity is 0' do
+        let(:params) do
+          {
+            wished_items: [
+              { variant_id: wished_variant.id.to_s, quantity: 0 }
+            ]
+          }
+        end
+
+        it 'does not create wished item' do
+          expect(user.wishlists.reload.first.wished_items.count).to eq 1
+        end
+
+        it 'returns error message' do
+          expect(response.status).to eq(422)
+          expect(json_response['error']).to eq 'Quantity must be greater than 0'
+        end
+      end
+    end
+
+    context 'when quantity is not passed' do
+      let(:params) do
+        {
+          wished_items: [
+            { variant_id: variant.id.to_s }
+          ]
+        }
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'creates wished item with quantity 1' do
+        expect(user.wishlists.reload.first.wished_items.count).to eq 1
+        expect(user.wishlists.first.wished_items.take.quantity).to eq 1
+      end
+    end
+
+    context 'when variant_id is not passed' do
+      let(:params) do
+        {
+          wished_items: [
+            { quantity: 3 }
+          ]
+        }
+      end
+
+      it_behaves_like 'returns 422 HTTP status'
+
+      it 'does not create wished item' do
+        expect(user.wishlists.reload.first.wished_items).to be_empty
+      end
+    end
+
+    context 'when passed quantity is 0' do
+      let(:params) do
+        {
+          wished_items: [
+            { variant_id: variant.id.to_s, quantity: 0 }
+          ]
+        }
+      end
+
+      it 'does not create wished item' do
+        expect(user.wishlists.reload.first.wished_items).to be_empty
+      end
+
+      it 'returns error message' do
+        expect(response.status).to eq(422)
+        expect(json_response['error']).to eq 'Quantity must be greater than 0'
+      end
+    end
+  end
+
+  describe '#remove_items' do
+    subject(:remove_items) do
+      delete "/api/v2/storefront/wishlists/#{user.wishlists.first.token}/remove_items", params: { wished_items_ids: wished_items_ids }, headers: headers_bearer
+    end
+
+    let!(:wished_item_1) { create(:wished_item, wishlist: user.wishlists.first, variant: create(:variant), quantity: 1) }
+    let!(:wished_item_2) { create(:wished_item, wishlist: user.wishlists.first, variant: create(:variant), quantity: 2) }
+    let!(:wished_item_3) { create(:wished_item, wishlist: user.wishlists.first, variant: create(:variant), quantity: 3) }
+    let!(:wished_item_4) { create(:wished_item, wishlist: user.wishlists.first, variant: create(:variant), quantity: 4) }
+
+    context 'when wished item is removed' do
+      before { remove_items }
+
+      let(:wished_items_ids) { [wished_item_2.id] }
+
+      it 'returns wishlist in response' do
+        expect(json_response['data']['type']).to eql ('wishlist')
+        expect(json_response['data']['id']).to eql wishlist.id.to_s
+
+        expect(json_response['data']['attributes']['token']).to eq wishlist.token
+        expect(json_response['data']['attributes']['name']).to eq wishlist.name
+        expect(json_response['data']['attributes']['is_private']).to be true
+        expect(json_response['data']['attributes']['is_default']).to be false
+        expect(json_response['data']['attributes']['variant_included']).to be false
+
+        expect(json_response['data']['relationships']['wished_items']).not_to be_empty
+      end
+
+      context 'when there is one wished item to remove' do
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'removes wished item' do
+          expect(wishlist.wished_items).to match_array([wished_item_1, wished_item_3, wished_item_4])
+        end
+      end
+
+      context 'when there are many wished items to remove' do
+        let(:wished_items_ids) { [wished_item_2.id, wished_item_3.id] }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'removes wished items' do
+          expect(wishlist.wished_items).to match_array([wished_item_1, wished_item_4])
+        end
+      end
+    end
+
+    context 'when wished item is not removed' do
+      let(:wished_items_ids) { [wished_item_2.id] }
+
+      before do
+        allow_any_instance_of(ActiveRecord::RecordNotDestroyed).to receive_message_chain(:record, :errors, :full_messages, :to_sentence).and_return('some error')
+        allow_any_instance_of(Spree::WishedItem).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed)
+        remove_items
+      end
+
+      it_behaves_like 'returns 422 HTTP status'
+    end
+
+    context 'user not authorised to access this action' do
+      let(:headers_bearer) { {} }
+      let(:wished_items_ids) { [wished_item_2.id] }
+
+      before { remove_items }
+
+      it_behaves_like 'returns 403 HTTP status'
     end
   end
 end

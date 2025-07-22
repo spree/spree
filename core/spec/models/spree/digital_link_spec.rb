@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::DigitalLink, type: :model do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let(:digital) { create(:digital) }
   let(:variant) { digital.variant }
   let(:line_item) { create(:line_item, variant: variant) }
@@ -72,7 +72,7 @@ describe Spree::DigitalLink, type: :model do
       let(:digital_link) { create(:digital_link) }
 
       before do
-        digital_link.line_item.order.store.update(limit_digital_download_days: false)
+        digital_link.line_item.order.store.preferred_limit_digital_download_days = false
         digital_link.line_item.order.store.save!
         digital_link.line_item.order.store.reload
       end
@@ -104,7 +104,7 @@ describe Spree::DigitalLink, type: :model do
       let(:digital_link) { create(:digital_link) }
 
       before do
-        digital_link.line_item.order.store.update(limit_digital_download_count: false)
+        digital_link.line_item.order.store.preferred_limit_digital_download_count = false
         digital_link.line_item.order.store.save!
         digital_link.line_item.order.store.reload
       end
@@ -136,7 +136,7 @@ describe Spree::DigitalLink, type: :model do
       let(:digital_link) { create(:digital_link) }
 
       before do
-        digital_link.line_item.order.store.update(limit_digital_download_count: false)
+        digital_link.line_item.order.store.preferred_limit_digital_download_count = false
         digital_link.line_item.order.store.save!
         digital_link.line_item.order.store.reload
       end
@@ -166,7 +166,7 @@ describe Spree::DigitalLink, type: :model do
       let(:digital_link) { create(:digital_link) }
 
       before do
-        digital_link.line_item.order.store.update(limit_digital_download_days: false)
+        digital_link.line_item.order.store.preferred_limit_digital_download_days = false
         digital_link.line_item.order.store.save!
         digital_link.line_item.order.store.reload
       end

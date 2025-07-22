@@ -26,6 +26,8 @@ module Spree
           end
         end
 
+        order.update_with_updater!
+
         success(order)
       end
 

@@ -1,0 +1,20 @@
+<div class="row pt-3">
+  <div class="col-lg-8 offset-lg-2 mb-4">
+    <h2 class="page-header-title">
+      <%= Spree.t('admin.getting_started') %>
+    </h2>
+    <p>
+      <%= Spree.t('admin.dashboard.getting_started.description') %>
+    </p>
+
+    <%= turbo_frame_tag :onboarding_tasks do %>
+      <% if defined?(current_vendor) && current_vendor %>
+        <%= render 'vendor_onboarding_progress', vendor: current_vendor %>
+        <%= render 'vendor_onboarding_tasks', vendor: current_vendor %>
+      <% else %>
+        <%= render 'setup_progress' %>
+        <%= render 'setup_tasks' %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

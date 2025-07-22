@@ -1,0 +1,34 @@
+<%= render 'spree/admin/shared/audit_nav' %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:exports_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:exports_header_partials) %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:number) %></th>
+            <th class="text-center"><%= Spree.t(:kind) %></th>
+            <th class="text-center"><%= Spree.t(:status) %></th>
+            <th><%= Spree.t(:user) %></th>
+            <th><%= Spree.t(:filename) %></th>
+            <th><%= Spree.t(:date) %></th>
+            <th><%= Spree.t(:size) %></th>
+            <th class="text-center"><%= Spree.t(:download) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'export', collection: @collection, cached: true %>
+        </tbody>
+      </table>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+  <% end %>
+</div>

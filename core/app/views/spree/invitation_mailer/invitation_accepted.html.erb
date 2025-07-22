@@ -1,0 +1,12 @@
+<h1>
+  <%= Spree.t('invitation_mailer.greeting', user_name: @invitation.inviter.first_name) %>
+</h1>
+<p>
+  <%= Spree.t('invitation_mailer.invitation_accepted.body', invitee_name: @invitation.invitee&.name, resource_name: @invitation.resource.name) %>
+</p>
+
+<p>
+  <%= Spree.t('invitation_mailer.thanks') %><br />
+  <%= current_store.name %>
+</p>
+

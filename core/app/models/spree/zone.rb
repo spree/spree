@@ -1,7 +1,7 @@
 module Spree
-  class Zone < Spree::Base
-    include UniqueName
-    if defined?(Spree::Webhooks)
+  class Zone < Spree.base_class
+    include Spree::UniqueName
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
@@ -74,7 +74,7 @@ module Spree
     end
 
     def self.default_checkout_zone
-      ActiveSupport::Deprecation.warn('Spree::Zone.default_checkout_zone is deprecated and will be removed in Spree 5')
+      Spree::Deprecation.warn('Spree::Zone.default_checkout_zone is deprecated and will be removed in Spree 5')
 
       first
     end

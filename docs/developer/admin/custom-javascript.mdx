@@ -1,0 +1,107 @@
+---
+title: Custom JavaScript for Admin Dashboard
+sidebarTitle: Custom JavaScript
+description: Learn how to add custom JavaScript to your Spree Admin Dashboard
+---
+
+## Extending Admin Dashboard with JavaScript
+
+Spree Admin Dashboard can be easily extended with custom JavaScript. Most of the JavaScript in the Admin Dashboard is powered by a framework called [Stimulus.js](https://stimulus.hotwired.dev/) which is the Ruby on Rails default. It's a very simple and minimalistic framework only enhancing our server-side rendered HTML with a bit of interactivity.
+
+### 3rd party JavaScript libraries
+
+Spree Admin Dashboard comes with a few 3rd party JavaScript libraries already included.
+
+Main libraries we're using:
+
+* [Stimulus.js](https://stimulus.hotwired.dev/)
+* [Turbo](https://turbo.hotwired.dev/)
+* [EasyPick](https://easepick.com/) (date picker)
+* [TomSelect](https://tom-select.js.org/) (autocomplete/dropdowns)
+* [Sortable.js](https://github.com/SortableJS/Sortable) - sortable drag and drop lists
+* [Uppy](https://uppy.io/) - file uploader
+
+You can find them in the [app/assets/javascripts/vendor](https://github.com/spree/spree/blob/main/admin/vendor/javascript) directory.
+
+### Managing JavaScript dependencies
+
+You're probably wondering why these libraries are in the `vendor` directory, and not in `node_modules`.
+
+That's because we're not using Node.js at all. So no Yarn or npm. We're using a different approach to manage dependencies.
+
+We're using a tool called [Importmaps](https://github.com/rails/importmap-rails) to manage dependencies which is the Ruby on Rails default.
+
+<Info>
+If you want to use a different JavaScript package manager you can do so by using [jsbundling-rails](https://github.com/rails/jsbundling-rails) gem.
+</Info>
+
+#### Install dependencies
+
+To install dependencies you need to run the following command:
+
+```bash
+bin/rails importmap pin react
+```
+
+This will install the dependencies, download the files to your `vendor/javascript` directory and add them to your `config/importmap.rb` file, eg.
+
+```ruby
+pin "react" # @19.1.0
+```
+
+Now you can just import the library in your application entry point, eg. `application.js`:
+
+```js
+import "react";
+```
+
+### Application entry point
+
+Mentioned above, the application entry point is the `application.js` file. It's located in the `app/javascript` directory.
+
+If you want to add custom JavaScript to your Spree Admin Dashboard, you can do so by adding a new file to the `app/javascript` directory.
+
+### Stimulus Controllers
+
+Stimulus controllers are a way to add interactivity to your Spree Admin Dashboard. Admin Dashboard controllers can be found in the Spree repository in the [Admin Dashboard/app/javascript/spree/admin/controllers](https://github.com/spree/spree/tree/main/admin/app/javascript/spree/admin/controllers) directory.
+
+You can find more information about Stimulus controllers in the [Stimulus.js documentation](https://stimulus.hotwired.dev/handbook/controllers).
+
+To add a new controller you need to create a new file in the `app/javascript/controllers` directory. It will be automatically picked up by the application.
+
+```js
+// app/javascript/controllers/hello_controller.js
+import { Controller } from '@hotwired/stimulus'
+
+export default class extends Controller {
+  connect() {
+    console.log("Hello Spree Commerce Stimulus!", this.element);
+  }
+}
+```
+
+To use the controller in your HTML you need to add the `data-controller` attribute to your element, eg.
+
+```html
+<div data-controller="hello">
+  Hello Spree Commerce Stimulus!
+</div>
+```
+
+## JavaScript snippets
+
+If you need to add a small piece of JavaScript code (eg. tracking, marketing, analytics, customer service etc.) you can do this by:
+
+1. Declaring a new head partial in the `config/initializers/spree.rb` file, eg.
+
+    ```ruby
+    Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/my_tracking_code'
+    ```
+
+2. Creating a new file in the `app/views/spree/admin/shared/my_tracking_code.html.erb`, where you can add your tracking code, eg.
+
+    ```erb
+    <script>
+      console.log("I'm a spy!");
+    </script>
+    ```

@@ -1,8 +1,8 @@
 module Spree
-  class Promotion < Spree::Base
-    include MultiStoreResource
-    include Metadata
-    if defined?(Spree::Webhooks)
+  class Promotion < Spree.base_class
+    include Spree::MultiStoreResource
+    include Spree::Metadata
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::Promotions)
@@ -14,32 +14,64 @@ module Spree
 
     attr_reader :eligibility_errors, :generate_code
 
-    belongs_to :promotion_category, optional: true
+    #
+    # Magic methods
+    #
+    auto_strip_attributes :code, :path, :name
 
+    #
+    # Enums
+    #
+    enum :kind, { coupon_code: 0, automatic: 1 }
+
+    #
+    # Associations
+    #
+    belongs_to :promotion_category, optional: true
     has_many :promotion_rules, autosave: true, dependent: :destroy
     alias rules promotion_rules
-
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias actions promotion_actions
-
+    has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
-
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :stores, class_name: 'Spree::Store', through: :store_promotions
-
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
-    validates_associated :rules
+    #
+    # Callbacks
+    #
+    before_validation :set_code_to_nil, if: -> { multi_codes? || automatic? }
+    before_validation :set_number_of_codes_to_nil, if: -> { automatic? || !multi_codes? }
+    before_validation :set_usage_limit_to_nil, if: -> { multi_codes? }
+    before_validation :set_kind
+    before_validation :downcase_code, if: -> { code.present? }
+    before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
+    after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
+    after_commit :remove_coupons, unless: -> { multi_codes? }, on: :update
+    before_destroy :not_used?
 
+    #
+    # Validations
+    #
+    validates_associated :rules
     validates :name, presence: true
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
+    validates :code, presence: true, if: -> { coupon_code? && !multi_codes? }
+    validates :number_of_codes, numericality: {
+      only_integer: true,
+      greater_than: 0,
+      less_than_or_equal_to: Spree::Config.coupon_codes_total_limit
+    }, if: -> { multi_codes? }
 
-    auto_strip_attributes :code, :path, :name
-
-    scope :coupons, -> { where.not(code: nil) }
+    #
+    # Scopes
+    #
+    scope :expired, -> { where('expires_at < ?', Time.current) }
+    scope :coupons, -> { where(kind: :coupon_code) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
       joins(<<-SQL).distinct
@@ -48,12 +80,22 @@ module Spree
       SQL
     }
 
-    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+    #
+    # Ransack
+    #
+    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code', 'starts_at', 'expires_at']
+    self.whitelisted_ransackable_associations = %w[coupon_codes]
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
-        includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
-        last
+      return nil unless coupon_code.present?
+
+      coupon_code = coupon_code.strip.downcase
+
+      coupons.includes(:promotion_actions).
+        where.not(spree_promotion_actions: { id: nil }).
+        where(code: coupon_code).or(
+          where(id: Spree::CouponCode.where(code: coupon_code).select(:promotion_id))
+        ).last
     end
 
     def self.active
@@ -71,8 +113,20 @@ module Spree
       end
     end
 
+    def active?
+      starts_at.present? && starts_at < Time.current && (expires_at.blank? || !expired?)
+    end
+
+    def inactive?
+      !active?
+    end
+
     def expired?
       !!(starts_at && Time.current < starts_at || expires_at && Time.current > expires_at)
+    end
+
+    def all_codes_used?
+      coupon_codes.used.count == coupon_codes.count
     end
 
     def activate(payload)
@@ -128,10 +182,10 @@ module Spree
     end
 
     # called anytime order.update_with_updater! happens
-    def eligible?(promotable)
+    def eligible?(promotable, options = {})
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
 
-      !!eligible_rules(promotable, {})
+      !!eligible_rules(promotable, options)
     end
 
     # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
@@ -209,7 +263,74 @@ module Spree
         where(spree_adjustments: { source_type: 'Spree::PromotionAction', eligible: true }).any?
     end
 
+    def name_for_order(order)
+      if coupon_code?
+        code_for_order(order)
+      else
+        name
+      end.to_s.upcase
+    end
+
+    def code_for_order(order)
+      if multi_codes?
+        coupon_codes.find_by(order: order)&.code
+      else
+        code
+      end
+    end
+
     private
+
+    def not_used?
+      return true if orders.empty?
+
+      errors.add(:base, Spree.t('promotion_already_used'))
+      throw(:abort)
+    end
+
+    def set_kind
+      if (code.present? || (multi_codes? && number_of_codes.present?)) && kind == 'automatic'
+        self.kind = :coupon_code
+      end
+    end
+
+    def downcase_code
+      self.code = code.downcase.strip
+    end
+
+    def set_code_to_nil
+      self.code = nil
+    end
+
+    def set_usage_limit_to_nil
+      self.usage_limit = nil
+    end
+
+    def set_number_of_codes_to_nil
+      self.number_of_codes = nil
+      self.code_prefix = nil
+      self.multi_codes = false
+    end
+
+    def set_starts_at_to_current_time
+      self.starts_at = Time.current
+    end
+
+    def generate_coupon_codes
+      return if number_of_codes.nil?
+      return if number_of_codes <= coupon_codes.count
+      return unless saved_change_to_number_of_codes?
+
+      if number_of_codes > Spree::Config.coupon_codes_web_limit
+        Spree::CouponCodes::BulkGenerateJob.perform_later(id, number_of_codes - coupon_codes.count)
+      else
+        Spree::CouponCodes::BulkGenerate.call(promotion: self, quantity: number_of_codes - coupon_codes.count)
+      end
+    end
+
+    def remove_coupons
+      coupon_codes.where(deleted_at: nil).update_all(deleted_at: Time.current)
+    end
 
     def blacklisted?(promotable)
       case promotable

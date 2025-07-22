@@ -1,0 +1,81 @@
+<div class="row" data-controller="slug-form seo-form">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :title, Spree.t(:title) %>
+          <%= f.text_field :title,
+                class: "form-control",
+                required: true,
+                autofocus: true,
+                data: {
+                  seo_form_target: 'sourceTitleInput',
+                  slug_form_target: 'name',
+                  action: 'slug-form#updateUrlFromName'
+                } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :content, Spree.t(:content) %>
+          <div class="trix-container mb-0">
+            <%= f.rich_text_area :content, class: 'overflow-auto', style: 'height: 300px', data: { seo_form_target: 'sourceDescriptionInput' } %>
+          </div>
+        </div>
+
+        <div class="form-group mb-0">
+          <%= f.label :excerpt, Spree.t(:excerpt) %>
+          <%= help_bubble('Add a summary of the post') %>
+
+          <div class="trix-container mb-0">
+            <%= f.rich_text_area :excerpt, class: 'overflow-auto', style: 'height: 100px', data: { seo_form_target: 'sourceExcerptInput' } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :image, Spree.t(:featured_image) %>
+          <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1200, height: 600, crop: true, css: 'flex-col' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :author_id, Spree.t(:author) %>
+          <%= f.select :author_id, options_for_select(post_authors_select_options, @post.author_id || try_spree_current_user.id), {}, { data: { controller: 'autocomplete-select' } } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :post_category_id, Spree.t(:category) %>
+          <%= f.select :post_category_id, options_for_select(@post_categories.pluck(:title, :id), @post.post_category_id), { include_blank: true }, { data: { controller: 'autocomplete-select' } } %>
+        </div>
+
+        <div class="form-group">
+          <%= f.label :published_at, Spree.t(:published_at) %>
+          <%= help_bubble('Marks when the post will be published, leave it blank to hide it') %>
+          <%= f.datetime_field :published_at, class: 'form-control' %>
+        </div>
+
+        <div class="form-group mb-0">
+          <%= f.label :tag_list, Spree.t(:tags) %>
+          <%= tom_select_tag 'post[tag_list]', multiple: true, class: 'w-100', options: post_tags_json_array, active_option: @post.tag_list, value_field: :name, create: true %>
+        </div>
+      </div>
+    </div>
+
+    <%= render 'spree/admin/shared/seo',
+          f: f,
+          title: @post.title,
+          meta_title: @post.meta_title,
+          description: @post.content,
+          slug: @post.slug,
+          slug_path: 'posts',
+          placeholder: 'Add a title and content to see how this post might appear in a search engine listing' %>
+  </div>
+</div>

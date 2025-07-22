@@ -1,0 +1,88 @@
+<div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
+  <div class="bulk-panel-container">
+    <%= bulk_operations_counter %>
+
+    <% if can?(:activate, Spree::Product) %>
+      <%= bulk_action_link(
+        Spree.t("admin.bulk_ops.products.title.set_status", status: :active),
+        spree.bulk_modal_admin_products_path(kind: :set_status, status: :active),
+        icon: "circle-check",
+        url: spree.bulk_status_update_admin_products_path(status: :active)
+      ) %>
+    <% end %>
+
+    <%= bulk_action_link(
+      Spree.t("admin.bulk_ops.products.title.set_status", status: :draft),
+      spree.bulk_modal_admin_products_path(kind: :set_status, status: :draft),
+      icon: "circle-dotted",
+      url: spree.bulk_status_update_admin_products_path(status: :draft)
+    ) %>
+
+    <div class="dropdown dropup" role="group">
+      <button
+        type="button"
+        data-display="static"
+        class="btn btn-light"
+        data-placement="bottom"
+        data-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <%= icon('dots-vertical', class: "mr-0") %>
+      </button>
+      <div
+        class="dropdown-menu dropdown-menu-left"
+        aria-labelledby="btnGroupDrop1"
+      >
+        <%= bulk_action_link(
+          Spree.t("admin.bulk_ops.products.title.set_status", status: :archived),
+          spree.bulk_modal_admin_products_path(kind: :set_status, status: :archived),
+          icon: "archive",
+          url: spree.bulk_status_update_admin_products_path(status: :archived),
+          class: "dropdown-item"
+        ) %>
+
+        <% if can?(:manage, Spree::Classification) %>
+          <div class="dropdown-divider"></div>
+
+          <%= bulk_action_link(
+            Spree.t("admin.bulk_ops.products.title.add_to_taxons"),
+            spree.bulk_modal_admin_products_path(kind: :add_to_taxons),
+            icon: "category-plus",
+            url: spree.bulk_add_to_taxons_admin_products_path,
+            class: "dropdown-item"
+          ) %>
+
+          <%= bulk_action_link(
+            Spree.t("admin.bulk_ops.products.title.remove_from_taxons"),
+            spree.bulk_modal_admin_products_path(kind: :remove_from_taxons),
+            icon: "category-minus",
+            url: spree.bulk_remove_from_taxons_admin_products_path,
+            class: "dropdown-item"
+          ) %>
+        <% end %>
+
+        <% if can?(:manage_tags, Spree::Product) %>
+          <div class="dropdown-divider"></div>
+
+          <%= bulk_action_link(
+            Spree.t("admin.bulk_ops.products.title.add_tags"),
+            spree.bulk_modal_admin_products_path(kind: :add_tags),
+            icon: "tag-plus",
+            url: spree.bulk_add_tags_admin_products_path,
+            class: "dropdown-item"
+          ) %>
+
+          <%= bulk_action_link(
+            Spree.t("admin.bulk_ops.products.title.remove_tags"),
+            spree.bulk_modal_admin_products_path(kind: :remove_tags),
+            icon: "tag-minus",
+            url: spree.bulk_remove_tags_admin_products_path,
+            class: "dropdown-item"
+          ) %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= bulk_operations_close_button %>
+  </div>
+</div>

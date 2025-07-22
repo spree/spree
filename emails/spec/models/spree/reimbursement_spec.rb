@@ -9,7 +9,7 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_rate)               { nil }
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:order)                   { create(:shipped_order, line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0, store: store) }
     let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }
@@ -33,6 +33,17 @@ describe Spree::Reimbursement, type: :model do
     it 'triggers the reimbursement mailer to be sent' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
       subject
+    end
+
+    context 'when send_consumer_transactional_emails store setting is set to false' do
+      before do
+        allow_any_instance_of(Spree::Store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
+      end
+
+      it 'does not trigger the reimbursement mailer to be sent' do
+        expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
+        subject
+      end
     end
   end
 end

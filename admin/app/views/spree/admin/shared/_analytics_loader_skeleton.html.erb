@@ -1,0 +1,76 @@
+  <div class="card mb-4">
+    <div class="card-header d-block border-0 h-auto p-2">
+      <div class="row">
+        <div class="col-6 col-lg-4 pr-1">
+          <div class="analytics-card-tab active" style="min-height: 82px;">
+            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
+              <span class="font-size-sm text-muted">Total Sales</span>
+              <span class="font-size-lg text-dark font-weight-bold mt-1">
+                <%= @sales_total %>
+              </span>
+              <div>
+                <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2 pl-0 pr-2">
+          <div class="analytics-card-tab" >
+            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
+              <span class="font-size-sm text-muted">Avg. Order Value</span>
+              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_average %></span>
+              <div>
+                <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2 pl-0 pr-2">
+          <div class="analytics-card-tab" >
+            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
+              <span class="font-size-sm text-muted">Total Orders</span>
+              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_total  %></span>
+              <div>
+                <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% if defined?(Ahoy) %>
+          <div class="col-6 col-lg-2 pl-0 pr-2">
+            <div class="analytics-card-tab" >
+              <div class="d-flex justify-content-center flex-column">
+                <span class="font-size-sm text-muted">Visits</span>
+                <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @visits_total %></span>
+                <div>
+                  <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="col-6 col-lg-2 pl-0">
+          <div class="analytics-card-tab" >
+            <div class="d-flex justify-content-center flex-column">
+              <span class="font-size-sm text-muted">Sign-ups</span>
+              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>
+              <div>
+                <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="card-body p-2">
+    <div class="tab-content d-flex align-items-center justify-content-center" id="pills-tabContent" style="height: 300px">
+      <div class="spinner-border text-muted align-middle opacity-50" role="status">
+        <span class="sr-only"><%= Spree.t(:loading) %>...</span>
+      </div>
+    </div>
+  </div>
+  <!-- End Body -->
+</div>

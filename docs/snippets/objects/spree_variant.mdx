@@ -1,0 +1,101 @@
+<Expandable title="properties">
+  <ResponseField name="id" type="integer">
+    Variant ID
+    Example: 123
+  </ResponseField>
+
+  <ResponseField name="sku" type="string">
+    Stock Keeping Unit - unique identifier for the variant
+    Example: "ABC-123"
+  </ResponseField>
+
+  <ResponseField name="name" type="string">
+    Name of the variant (inherited from product)
+    Example: "Basic T-Shirt"
+  </ResponseField>
+
+  <ResponseField name="options_text" type="string">
+    Formatted string of option values
+    Example: "Size: Large, Color: Blue"
+  </ResponseField>
+
+  <ResponseField name="descriptive_name" type="string">
+    Full descriptive name including master status or options
+    Example: "Basic T-Shirt - Size: Large, Color: Blue"
+  </ResponseField>
+
+  <ResponseField name="price" type="decimal">
+    Base price of the variant
+    Example: 29.99
+  </ResponseField>
+
+  <ResponseField name="display_price" type="string">
+    Formatted price with currency
+    Example: "$29.99"
+  </ResponseField>
+
+  <ResponseField name="weight" type="decimal">
+    Weight of the variant
+    Example: 1.5
+  </ResponseField>
+
+  <ResponseField name="height" type="decimal">
+    Height of the variant
+    Example: 10.0
+  </ResponseField>
+
+  <ResponseField name="width" type="decimal">
+    Width of the variant
+    Example: 5.0
+  </ResponseField>
+
+  <ResponseField name="depth" type="decimal">
+    Depth of the variant
+    Example: 2.0
+  </ResponseField>
+
+  <ResponseField name="is_master" type="boolean">
+    Whether this is the master variant of the product
+    Example: false
+  </ResponseField>
+
+  <ResponseField name="position" type="integer">
+    Display order position
+    Example: 1
+  </ResponseField>
+
+  <ResponseField name="track_inventory" type="boolean">
+    Whether inventory tracking is enabled for this variant
+    Example: true
+  </ResponseField>
+
+  <ResponseField name="available?" type="boolean">
+    Whether the variant is available for purchase (not discontinued and product is available)
+    Example: true
+  </ResponseField>
+
+  <ResponseField name="in_stock?" type="boolean">
+    Whether the variant currently has stock available
+    Example: true
+  </ResponseField>
+
+  <ResponseField name="tax_category_id" type="integer">
+    ID of the associated tax category
+    Example: 1
+  </ResponseField>
+
+  <ResponseField name="cost_price" type="decimal">
+    Cost price of the variant
+    Example: 15.00
+  </ResponseField>
+
+  <ResponseField name="cost_currency" type="string">
+    Currency of the cost price
+    Example: "USD"
+  </ResponseField>
+
+  <ResponseField name="product_id" type="integer">
+    ID of the associated product
+    Example: 456
+  </ResponseField>
+</Expandable>

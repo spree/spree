@@ -1,0 +1,127 @@
+---
+title: 4.3 to 4.4
+description: This guide covers upgrading a 4.3 Spree application to Spree 4.4.
+---
+
+<Note>
+If you're on an older version than 4.3 please follow previous upgrade guides and perform those upgrades incrementally, eg.
+
+1. [upgrade 4.0 to 4.1](4.0-to-4.1)
+2. [upgrade 4.1 to 4.2](4.1-to-4.2)
+3. [upgrade 4.2 to 4.3](4.2-to-4.3)
+</Note>
+
+## Update Gems
+
+Run the following command to update your gems to 4.4:
+
+```bash
+bundle update
+```
+
+to install the new gems.
+
+## Remove gems merged into Spree Core
+
+These gems were merged into Spree Core in version 4.4. All of their functionality is now included in the `spree` gem so you can remove them.
+
+### (Optional) Remove Spree Digital
+
+If you used that gem in the past you need to remove it. Digital products are now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_digital` from your `Gemfile`
+
+### (Optional) Remove Spree Wishlist
+
+If you used that gem in the past you need to remove it. Wishlists are now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_wishlist` from your `Gemfile`
+2. (Optional) Remove `//= require spree/frontend/spree_wishlist` from `vendor/assets/javascripts/spree/frontend/all.js`
+3. (Optional) Remove `*= require spree/frontend/spree_wishlist` from `vendor/assets/stylesheets/spree/frontend/all.css`
+
+## Update gems
+
+```bash
+bundle update
+```
+
+## Install missing migrations
+
+```bash
+bin/rake spree:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+## Run install generators
+
+This will copy some files from `spree_backend` to your application.
+
+```bash
+bin/rails g spree:backend:install
+```
+
+If you're using `spree_frontend` you need to run the frontend install generator as well:
+
+```bash
+bin/rails g spree:frontend:install
+```
+
+## Additional fixes and hints
+
+### Make sure that Node is available in your cloud environment
+
+On Heroku, you need to add the node buildpack - [https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks](https://devcenter.heroku.com/articles/buildpacks#using-multiple-buildpacks)
+
+### Add Spree ActiveJob queues to your Sidekiq config
+
+Spree uses ActiveJob for processing long running operations to not interrupt your web server performance.
+
+If you're using [Sidekiq](https://github.com/mperham/sidekiq) you need to update your `config/sidekiq.yml` file and 2 new queues:
+
+* `spree_stock_location_stock_items`
+* `spree_webhooks`
+
+### Disabling webhooks
+
+Spree 4.4 introduces webhook events for most of the Spree resources (Products, Orders, Customers, etc). If you wish to disable this globally you can set the environment variable:
+
+```bash
+DISABLE_SPREE_WEBHOOKS=true
+```
+
+If you would like to disable firing webhooks for certain elements of your application you can wrap these methods in a block:
+
+```ruby
+Spree::Webhooks.disable_webhooks do
+  ... run your code here ...
+end
+```
+
+Webhooks do not fire on touch events. Webhooks also do not do anything until there is a first webhook subscriber created which can be done in the Admin Dashboard or via Platform API.
+
+### Update Spree Dependencies that was renamed
+
+Please change in your codebase:
+
+```ruby
+Spree::Dependencies.account_update_address_service
+```
+
+to
+
+```ruby
+Spree::Dependencies.address_update_service
+```
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [CHANGELOG](https://github.com/spree/spree/releases/tag/v4.4.0).
+
+## More info
+
+If you have any questions or suggestions feel free to [contact us via email](https://spreecommerce.org/contact) or through [Spree slack channels](http://slack.spreecommerce.org/)

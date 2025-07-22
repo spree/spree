@@ -4,7 +4,7 @@ module Spree
       class CreditCardSerializer < BaseSerializer
         set_type :credit_card
 
-        attributes :cc_type, :last_digits, :month, :year, :name, :default, :public_metadata
+        attributes :cc_type, :last_digits, :month, :year, :name, :default, :gateway_payment_profile_id, :public_metadata
 
         belongs_to :payment_method
       end

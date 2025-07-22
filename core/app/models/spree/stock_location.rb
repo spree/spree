@@ -1,7 +1,7 @@
 module Spree
-  class StockLocation < Spree::Base
-    include UniqueName
-    if defined?(Spree::Webhooks)
+  class StockLocation < Spree.base_class
+    include Spree::UniqueName
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
     if defined?(Spree::Security::StockLocations)
@@ -10,6 +10,8 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
+
+    acts_as_paranoid
 
     has_many :shipments
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
@@ -25,6 +27,8 @@ module Spree
     after_create :create_stock_items, if: :propagate_all_variants?
     after_save :ensure_one_default
     after_update :conditional_touch_records
+
+    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
 
     def state_text
       state.try(:abbr) || state.try(:name) || state_name
@@ -71,6 +75,11 @@ module Spree
       stock_item(variant_id) || propagate_variant(variant)
     end
 
+    # Returns the count on hand number for the variant
+    #
+    # @param variant Variant instance
+    #
+    # @return [Integer]
     def count_on_hand(variant)
       stock_item(variant).try(:count_on_hand)
     end
@@ -79,8 +88,8 @@ module Spree
       stock_item(variant).try(:backorderable?)
     end
 
-    def restock(variant, quantity, originator = nil)
-      move(variant, quantity, originator)
+    def restock(variant, quantity, originator = nil, persist: true)
+      move(variant, quantity, originator, persist: persist)
     end
 
     def restock_backordered(variant, quantity, _originator = nil)
@@ -91,13 +100,18 @@ module Spree
       )
     end
 
-    def unstock(variant, quantity, originator = nil)
-      move(variant, -quantity, originator)
+    def unstock(variant, quantity, originator = nil, persist: true)
+      move(variant, -quantity, originator, persist: persist)
     end
 
-    def move(variant, quantity, originator = nil)
-      stock_item_or_create(variant).stock_movements.create!(quantity: quantity,
-                                                            originator: originator)
+    def move(variant, quantity, originator = nil, persist: true)
+      stock_item = stock_item_or_create(variant)
+
+      if persist
+        stock_item.stock_movements.create!(quantity: quantity, originator: originator)
+      else
+        originator.stock_movements << stock_item.stock_movements.build(quantity: quantity)
+      end
     end
 
     def fill_status(variant, quantity)
@@ -117,6 +131,42 @@ module Spree
       end
     end
 
+    def address
+      Spree::Address.new(
+        address1: address1,
+        address2: address2,
+        company: company,
+        city: city,
+        state: state,
+        state_name: state_name,
+        country: country,
+        zipcode: zipcode,
+        phone: phone
+      )
+    end
+
+    # needed for address form
+    def require_name?
+      false
+    end
+
+    # needed for address form
+    def require_company?
+      false
+    end
+
+    def require_phone?
+      false
+    end
+
+    def show_company_address_field?
+      true
+    end
+
+    def display_name
+      @display_name ||= [admin_name, name].delete_if(&:blank?).join(' / ')
+    end
+
     private
 
     def create_stock_items
@@ -126,6 +176,7 @@ module Spree
     def ensure_one_default
       if default
         StockLocation.where(default: true).where.not(id: id).update_all(default: false)
+        StockLocation.where.not(id: id).update_all(updated_at: Time.current)
       end
     end
 

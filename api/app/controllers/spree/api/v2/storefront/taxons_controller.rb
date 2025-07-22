@@ -22,7 +22,7 @@ module Spree
           end
 
           def resource
-            @resource ||= scope.find_by(permalink: params[:id]) || scope.find(params[:id])
+            @resource ||= find_with_fallback_default_locale { scope.find_by(permalink: params[:id]) } || scope.find(params[:id])
           end
 
           def model_class
@@ -30,13 +30,14 @@ module Spree
           end
 
           def scope_includes
-            node_includes = %i[icon parent taxonomy]
+            node_includes = %i[icon parent taxonomy translations]
 
             {
               parent: node_includes,
               children: node_includes,
               taxonomy: [root: node_includes],
-              icon: [attachment_attachment: :blob]
+              icon: [attachment_attachment: :blob],
+              translations: []
             }
           end
 

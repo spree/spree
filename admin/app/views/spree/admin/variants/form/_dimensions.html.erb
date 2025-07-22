@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group mb-3">
+      <%= f.label :width %>
+      <%= f.text_field :width, value: number_with_precision(f.object.width, precision: 2), class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :height %>
+      <%= f.text_field :height, value: number_with_precision(f.object.height, precision: 2), class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="form-group mb-3">
+      <%= f.label :depth %>
+      <%= f.text_field :depth, value: number_with_precision(f.object.depth, precision: 2), class: 'form-control' %>
+    </div>
+
+    <div class="form-group mb-3">
+      <%= f.label :dimensions_unit, Spree.t(:unit) %>
+      <%= f.select :dimensions_unit, options_for_select(dimension_units(current_store), f.object.dimensions_unit), { include_blank: false }, { class: 'custom-select' } %>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <%= f.label :weight %>
+  <div class="form-control d-flex align-items-center py-0 focus-border focus-shadow">
+    <%= f.text_field :weight, value: number_with_precision(f.object.weight, precision: 2), class: 'form-control-plaintext pl-0' %>
+    <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'form-control-plaintext w-auto border-left' } %>
+  </div>
+</div>

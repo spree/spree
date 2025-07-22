@@ -1,0 +1,55 @@
+.search-results {
+  @extend .overflow-y-auto;
+
+  height: 250px;
+  overflow-x: hidden;
+  padding-left: 1.25rem;
+  padding-right: 0.25rem;
+  margin-right: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.search-picker__option {
+  position: relative;
+  margin-bottom: 0.5rem;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+  padding-right: 2rem;
+
+  label {
+    margin-bottom: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    display: none;
+  }
+
+  &:hover {
+    background-color: $gray-25;
+  }
+
+  &:has(input:checked) {
+    background-color: theme-color('action');
+    border: 1px solid theme-color('action-border');
+
+    &::after {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      right: 0.5rem;
+      width: 24px;
+      height: 24px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-primary"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
+    }
+  }
+}

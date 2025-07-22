@@ -15,7 +15,7 @@ plugins:
         enabled: false
     config:
       file: .rubocop.yml
-    channel: "rubocop-1-10-0"
+    channel: "rubocop-1-50-3"
 exclude_patterns:
   - "**/bin/"
   - "**/script/"

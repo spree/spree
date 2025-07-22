@@ -1,0 +1,102 @@
+---
+title: 4.4 to 4.5
+description: This guide covers upgrading a 4.4 Spree application to Spree 4.5
+---
+
+<Warning>
+We recommend [upgrading straight to 4.8](4.x-to-4.8), as we improved how we handle translations in 4.8.
+This also means easier database migration, especially if you have a big product catalog.
+</Warning>
+
+<Note>
+If you're on an older version than 4.4 please follow previous upgrade guides and perform those upgrades incrementally, eg.
+
+1. [upgrade 4.1 to 4.2](4.1-to-4.2)
+2. [upgrade 4.2 to 4.3](4.2-to-4.3)
+3. [upgrade 4.3 to 4.4](4.3-to-4.4)
+</Note>
+
+## Upgrade Rails
+
+<Warning>
+Rails 6.0 is no longer supported - if you haven’t already, you’ll need to upgrade to **Rails 6.1 or 7.x**. 
+</Warning>
+
+The effort to upgrade to Rails 6.1 is relatively low and brings a lot of improvements around ActiveStorage and handling of CDNs. See the Rails docs [for upgrading from 6.0 to 6.1](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-0-to-rails-6-1), and for [upgrading from 6.1 to 7.0](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-6-1-to-rails-7-0).
+
+<Note>
+If using Rails 7, you will need to [install libvips](https://www.libvips.org/install.html) on your cloud environment, as Rails 7 uses vips as its default variant processor. You can still use imagemagick, but you’ll need to manually set it in your [Rails config](https://edgeapi.rubyonrails.org/classes/ActiveStorage/Variant.html).
+</Note>
+
+### Rails 7 specific changes
+
+#### Update Spree Config
+
+If you're upgrading your app to Rails 7, you'll need to make a slight update to your spree config initializer. In `config/initializers/spree.rb`, wrap the `Spree.config` block in a `Rails.application.config.after_initialize` block, like so:
+
+```ruby
+Rails.application.config.after_initialize do
+  Spree.config do |config|
+    # config settings initialized here
+  end
+end
+```
+
+If you don't perform this update to the code, you may expect to get the following error:
+
+```ruby
+/lib/spree/core/preferences/store.rb:96:in `should_persist?': 
+uninitialized constant Spree::Preference (NameError)
+```
+
+#### Update other initializers
+
+Just like with `Spree::Config`, you may need to [update other intializers in your application, that use autoloadable constants](https://rubyonrails.org/2021/9/3/autoloading-in-rails-7-get-ready).
+
+For example, if you use `spree_auth_devise`, you'll need to update `config/initializers/devise.rb` and wrap the configuration in `Rails.application.config.after_initialize` block:
+
+```ruby
+Rails.application.config.after_initialize do
+  if defined?(Spree::Auth)
+    Spree::Auth::Config.signout_after_password_change = false
+  end
+end
+```
+
+## Update gems
+
+Run the following command to update your gems to 4.4:
+
+```bash
+bundle update
+```
+
+Legacy REST API v1 was extracted from the spree gem in 4.4. If your application depends on the Spree v1 API, you'll have to include it as a gem in your `Gemfile`:
+
+```bash
+bundle add spree_api_v1
+```
+
+## Install missing migrations
+
+```bash
+bin/rake spree:install:migrations
+```
+
+## Run migrations
+
+```bash
+bin/rails db:migrate
+```
+
+## Run Additional Commands for Frontend
+
+If using [Spree Frontend](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+
+```bash
+bin/rails g spree:frontend:install
+```
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.5.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.5.0).

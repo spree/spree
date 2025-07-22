@@ -16,14 +16,14 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a swagger_doc tag to the
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
-    'v2/platform/index.yaml' => {
+    '../docs/api-reference/platform.yaml' => {
       openapi: '3.0.3',
       info: {
         title: 'Platform API',
         contact: {
-          name: 'Spark Solutions',
-          url: 'https://sparksolutions.co',
-          email: 'we@sparksolutions.co',
+          name: 'Vendo Connect Inc.',
+          url: 'https://getvendo.com',
+          email: 'sales@getvendo.com',
         },
         description: 'Spree Platform API',
         version: 'v2'
@@ -31,7 +31,7 @@ RSpec.configure do |config|
       paths: {},
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: 'http://{defaultHost}',
           variables: {
             defaultHost: {
               default: 'localhost:3000'
@@ -44,18 +44,15 @@ RSpec.configure do |config|
         { name: 'Adjustments' },
         { name: 'Classifications' },
         { name: 'Countries' },
-        { name: 'CMS Pages' },
-        { name: 'CMS Sections' },
         { name: 'Digital Assets' },
         { name: 'Digital Links' },
         { name: 'Line Items' },
-        { name: 'Menus' },
-        { name: 'Menu Items' },
         { name: 'Option Types' },
         { name: 'Option Values' },
         { name: 'Orders' },
         { name: 'Payments' },
         { name: 'Payment Methods' },
+        { name: 'Products' },
         { name: 'Promotions' },
         { name: 'Promotion Actions' },
         { name: 'Promotion Categories' },
@@ -64,6 +61,7 @@ RSpec.configure do |config|
         { name: 'Shipments' },
         { name: 'Shipping Categories' },
         { name: 'Shipping Methods' },
+        { name: 'States' },
         { name: 'Stock Items' },
         { name: 'Stock Locations' },
         { name: 'Store Credit Categories' },
@@ -74,11 +72,11 @@ RSpec.configure do |config|
         { name: 'Taxons' },
         { name: 'Taxonomies' },
         { name: 'Users' },
+        { name: 'Variants' },
         { name: 'Webhook Events' },
         { name: 'Webhook Subscribers' },
         { name: 'Wishlists' },
         { name: 'Wished Items' },
-        { name: 'Variants' },
         { name: 'Zones' }
       ],
       components: {
@@ -110,7 +108,7 @@ RSpec.configure do |config|
                   firstname: { type: :string, example: 'John' },
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
-                  company: { type: :string, example: 'Vendo Cloud Inc' },
+                  company: { type: :string, example: 'Vendo Connect Inc' },
                   user_id: { type: :string },
                   public_metadata: { type: :object, example: { 'distance_from_nearest_city_in_km' => 10, 'location_type' => 'building' } },
                   private_metadata: { type: :object, example: { 'close_to_shop' => true } }
@@ -118,7 +116,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[address],
-            'x-internal': true
+            'x-internal': false
           },
           update_address_params: {
             type: :object,
@@ -138,7 +136,7 @@ RSpec.configure do |config|
                   firstname: { type: :string, example: 'John' },
                   lastname: { type: :string, example: 'Snow' },
                   label: { type: :string, example: 'My home address' },
-                  company: { type: :string, example: 'Vendo Cloud Inc' },
+                  company: { type: :string, example: 'Vendo Connect Inc' },
                   user_id: { type: :string },
                   public_metadata: { type: :object, example: { 'distance_from_city_in_km' => 10, 'location_type' => 'building' } },
                   private_metadata: { type: :object, example: { 'close_to_shop' => true } }
@@ -146,7 +144,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[address],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Adjustment
@@ -172,7 +170,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[adjustment],
-            'x-internal': true
+            'x-internal': false
           },
           update_adjustment_params: {
             type: :object,
@@ -195,7 +193,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[adjustment],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Classification
@@ -213,7 +211,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[classification],
-            'x-internal': true
+            'x-internal': false
           },
           update_classification_params: {
             type: :object,
@@ -228,429 +226,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[classification],
-            'x-internal': true
-          },
-
-          # CMS Page
-          create_standard_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                required: %w[title locale type],
-                properties: {
-                  title: { type: :string, example: 'About Us', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage'], description: 'Set the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'The text content of a standard page, this can be HTML from a rich text editor.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Create a Standard Page',
-            'x-internal': true
-          },
-          create_homepage_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                required: %w[title locale type],
-                properties: {
-                  title: { type: :string, example: 'Our Flash Homepage', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::Homepage'], description: 'Set the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Set a meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Create a Homepage',
-            'x-internal': true
-          },
-          create_feature_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                required: %w[title locale type],
-                properties: {
-                  title: { type: :string, example: 'Featured Product', description: 'Give your page a title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::FeaturePage'], description: 'Set the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Set the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Set a meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Set a slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'The language this page is written in.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Create a Feature Page',
-            'x-internal': true
-          },
-          update_standard_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                properties: {
-                  title: { type: :string, example: 'About Us', description: 'Update the page title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About Super-Shop', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
-                  content: { type: :string, nullable: true, example: "Lot's of text..", description: 'Update the text content of a standard page, this can be HTML from a rich text editor.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us on this page here...', description: 'Update the meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Update the slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Update a Standard Page',
-            'x-internal': true
-          },
-          update_homepage_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                properties: {
-                  title: { type: :string, example: 'Our Flash Homepage', description: 'Update the page title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Visit Our Store - Great Deals', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Discover great new products that we sell in this store...', description: 'Update the meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Update a Homepage',
-            'x-internal': true
-          },
-          update_feature_cms_page_params: {
-            type: :object,
-            properties: {
-              cms_page: {
-                type: :object,
-                properties: {
-                  title: { type: :string, example: 'Featured Product', description: 'Update the page title.' },
-                  type: { type: :string, enum: ['Spree::Cms::Pages::StandardPage', 'Spree::Cms::Pages::Homepage', 'Spree::Cms::Pages::FeaturePage'], description: 'Change the type of page.' },
-                  meta_title: { type: :string, nullable: true, example: 'Learn More About This Featured Product', description: 'Update the meta title for this page, this appears in the title bar of the browser.' },
-                  meta_description: { type: :string, nullable: true, example: 'Learn more about us this amazing product that we sell right here...', description: 'Update the meta description, used for SEO and displayed in search results.' },
-                  visible: { type: :boolean, enum: [true, false], description: 'This page is publicly visible when set to `true`.' },
-                  slug: { type: :string, nullable: true, example: 'about-us', description: 'Update the slug for this page.' },
-                  locale: { type: :string, example: 'en-US', description: 'Update the language of this page.' }
-                }
-              }
-            },
-            required: %w[cms_page],
-            title: 'Update a Feature Page',
-            'x-internal': true
-          },
-
-          # CMS Section
-          create_hero_image_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage'], example: 'Spree::Cms::Sections::HeroImage', description: 'Set the section type.' },
-                  linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the resource type that this section links to.' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Set the ID of the resource that you would like this section to link to.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  button_text: { type: :string, example: 'Click Here', description: 'Set the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Create a title for the Hero Section.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create a Hero Image Section',
-            'x-internal': true
-          },
-          create_product_carousel_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::ProductCarousel'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Set the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Set the ID of the Taxon that you would like displayed as a Product Carousel.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create a Product Carousel Section',
-            'x-internal': true
-          },
-          create_side_by_side_images_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::SideBySideImages'], example: 'Spree::Cms::Sections::SideBySideImages', description: 'Set the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Set the resource type that image one links to.' },
-                  link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Set the resource type that image two links to.' },
-                  link_one: { type: :string, example: 'men/shirts', nullable: true, description: 'Set the slug or path that image two links to.' },
-                  link_two: { type: :string, example: 'white-shirt', nullable: true, description: 'Set the slug or path that image two links to.' },
-                  title_one: { type: :string, example: "Shop Men's Shirts", nullable: true, description: 'Set the title used in image one.' },
-                  title_two: { type: :string, example: "Buy This Men's Shirt", nullable: true, description: 'Set the title used in image two.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image one.' },
-                  subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Set the subtitle used in image two.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create a Side-by-Side Image Section',
-            'x-internal': true
-          },
-          create_image_gallery_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::ImageGallery'], example: 'Spree::Cms::Sections::ImageGallery', description: 'Set the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Set the resource type that image one links to.' },
-                  link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Set the resource type that image two links to.' },
-                  link_type_three: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Set the resource type that image three links to.' },
-                  link_one: { type: :string, example: 'men/shirts', nullable: true, description: 'Set the slug or path that image two links to.' },
-                  link_two: { type: :string, example: 'white-shirt', nullable: true, description: 'Set the slug or path that image two links to.' },
-                  link_three: { type: :string, example: 'red-shirt', nullable: true, description: 'Set the slug or path that image three links to.' },
-                  title_one: { type: :string, example: "Shop Men's Shirts", nullable: true, description: 'Set the title used in image one.' },
-                  title_two: { type: :string, example: "Buy This Men's Shirt", nullable: true, description: 'Set the title used in image two.' },
-                  title_three: { type: :string, example: "Buy This Women's Skirt", nullable: true, description: 'Set the title used in image three.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
-                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create an Image Gallery Section',
-            'x-internal': true
-          },
-          create_featured_article_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::FeaturedArticle'], example: 'Spree::Cms::Sections::FeaturedArticle', description: 'Set the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the resource type that this section links to.' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Set the ID of the resource that you would like this section to link to.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  button_text: { type: :string, example: 'Click Here', description: 'Set the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Create a title for the Section.' },
-                  subtitle: { type: :string, example: 'Save Big!', description: 'Create a subtitle for the Section.' },
-                  rte_content: { type: :string, example: 'Lots of text and content goes here.', description: 'Set the content, here, this can be rich text editor content.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create a Featured Article Section',
-            'x-internal': true
-          },
-          create_rich_text_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                required: %w[name cms_page_id type],
-                properties: {
-                  name: { type: :string, description: 'Give this section a name.' },
-                  cms_page_id: { type: :string, description: 'Set the `cms_page` ID that this section belongs to.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::RichTextContent', description: 'Set the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  rte_content: { type: :string, example: 'Lots of text and content goes here.', description: 'Set the content, here, this can be rich text editor content.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Create a Rich Text Section',
-            'x-internal': true
-          },
-          update_hero_image_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Update the resource type that this section links to.' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Set the ID of the resource that you would like this section to link to.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  button_text: { type: :string, example: 'Click Here', description: 'Update the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Update the title for this section.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update a Hero Image Section',
-            'x-internal': true
-          },
-          update_product_carousel_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Change this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Update the ID of the Taxon that you would like displayed as a Product Carousel.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update a Product Carousel Section',
-            'x-internal': true
-          },
-          update_side_by_side_images_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image one links to.' },
-                  link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image two links to.' },
-                  link_one: { type: :string, example: 'men/shirts', nullable: true, description: 'Update the slug or path that image two links to.' },
-                  link_two: { type: :string, example: 'white-shirt', nullable: true, description: 'Update the slug or path that image two links to.' },
-                  title_one: { type: :string, example: "Shop Men's Shirts", nullable: true, description: 'Update the title used in image one.' },
-                  title_two: { type: :string, example: "Buy This Men's Shirt", nullable: true, description: 'Update the title used in image two.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  subtitle_one: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image one.' },
-                  subtitle_two: { type: :string, example: 'Save 50% today', nullable: true, description: 'Update the subtitle used in image two.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update a Side-by-Side Image Section',
-            'x-internal': true
-          },
-          update_image_gallery_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  link_type_one: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image one links to.' },
-                  link_type_two: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image two links to.' },
-                  link_type_three: { type: :string, example: 'Spree::Taxon', enum: ['Spree::Taxon', 'Spree::Product'], description: 'Update the resource type that image three links to.' },
-                  link_one: { type: :string, example: 'men/shirts', nullable: true, description: 'Update the slug or path that image two links to.' },
-                  link_two: { type: :string, example: 'white-shirt', nullable: true, description: 'Update the slug or path that image two links to.' },
-                  link_three: { type: :string, example: 'red-shirt', nullable: true, description: 'Update the slug or path that image three links to.' },
-                  title_one: { type: :string, example: "Shop Men's Shirts", nullable: true, description: 'Update the title used in image one.' },
-                  title_two: { type: :string, example: "Buy This Men's Shirt", nullable: true, description: 'Update the title used in image two.' },
-                  title_three: { type: :string, example: "Buy This Women's Skirt", nullable: true, description: 'Update the title used in image three.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  layout_style: { type: :string, example: 'Default', enum: ['Default', 'Reversed'], description: 'This value is used by front end developers for styling the order the images appear.' },
-                  display_labels: { type: :string, example: 'Show', enum: ['Show', 'Hide'], description: 'This value is used by front end developers for showing and hiding the label on the images.' },
-                  'cms_section[image_one]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_two]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' },
-                  'cms_section[image_three]': { type: :string, format: :binary, description: 'Use a `multipart/form-data` request to upload assets.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update an Image Gallery Section',
-            'x-internal': true
-          },
-          update_featured_article_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  linked_resource_type: { type: :string, example: 'Spree::Taxon', nullable: true, enum: ['Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the resource type that this section links to.' },
-                  linked_resource_id: { type: :string, example: '1', nullable: true, description: 'Change the ID of the resource that you would like this section to link to.' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  gutters: { type: :string, example: 'No Gutters', enum: ['Gutters', 'No Gutters'], description: 'This value is used by front end developers for styling the section padding.' },
-                  button_text: { type: :string, example: 'Click Here', description: 'Update the text value of the button used in this section.' },
-                  title: { type: :string, example: 'Shop Today', description: 'Update the title for the Section.' },
-                  subtitle: { type: :string, example: 'Save Big!', description: 'Update the subtitle for the Section.' },
-                  rte_content: { type: :string, example: 'Lots of text and content goes here.', description: 'Update the content here, this can be rich text editor content.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update a Featured Article Section',
-            'x-internal': true
-          },
-          update_rich_text_cms_section_params: {
-            type: :object,
-            properties: {
-              cms_section: {
-                type: :object,
-                properties: {
-                  name: { type: :string, description: 'Update this section name.' },
-                  type: { type: :string, enum: ['Spree::Cms::Sections::HeroImage', 'Spree::Cms::Sections::FeaturedArticle', 'Spree::Cms::Sections::ProductCarousel', 'Spree::Cms::Sections::ImageGallery', 'Spree::Cms::Sections::SideBySideImages', 'Spree::Cms::Sections::RichTextContent'], example: 'Spree::Cms::Sections::ProductCarousel', description: 'Change the section type.' },
-                  position: { type: :integer, example: 2, description: 'Pass the position that you want this section to appear in. (The list is not zero indexed, so the first item is position: `1`)' },
-                  fit: { type: :string, example: 'Screen', enum: ['Screen', 'Container'], description: 'This value is used by front end developers to set CSS classes for content that fits the screen edge-to-edge, or stays within the boundaries of the central container.' },
-                  rte_content: { type: :string, example: 'Lots of text and content goes here.', description: 'Update the content, here, this can be rich text editor content.' }
-                }
-              }
-            },
-            required: %w[cms_section],
-            title: 'Update a Rich Text Section',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Digital
@@ -661,7 +237,7 @@ RSpec.configure do |config|
               "digital[variant_id]": { type: :string, example: '123' }
             },
             required: ['digital[attachment]', 'digital[variant_id]'],
-            'x-internal': true
+            'x-internal': false
           },
           update_digital_params: {
             type: :object,
@@ -670,7 +246,7 @@ RSpec.configure do |config|
               "digital[variant_id]": { type: :string, example: '123' }
             },
             required: ['digital[attachment]', 'digital[variant_id]'],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Digital Link
@@ -688,7 +264,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[digital_link],
-            'x-internal': true
+            'x-internal': false
           },
           update_digital_link_params: {
             type: :object,
@@ -703,7 +279,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[digital_link],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Line Item
@@ -723,7 +299,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[line_item],
-            'x-internal': true
+            'x-internal': false
           },
           # TODO: Check these are correct.
           update_line_item_params: {
@@ -738,103 +314,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[line_item],
-            'x-internal': true
-          },
-
-          # Menu
-          create_menu_params: {
-            type: :object,
-            properties: {
-              menu: {
-                type: :object,
-                required: %w[name location locale],
-                properties: {
-                  name: { type: :string, example: 'Main Menu', description: 'Give this Menu a name.' },
-                  location: { type: :string, enum: ['header', 'footer'], description: 'Set the location this menu appears in the website.' },
-                  locale: { type: :string, example: 'en-US', description: 'Set the language of this menu.' }
-                }
-              }
-            },
-            required: %w[menu],
-            'x-internal': true
-          },
-          update_menu_params: {
-            type: :object,
-            properties: {
-              menu: {
-                type: :object,
-                properties: {
-                  name: { type: :string, example: 'Main Menu', description: 'Update this Menu name.' },
-                  location: { type: :string, enum: ['header', 'footer'], description: 'Update the location this menu appears in the website.' },
-                  locale: { type: :string, example: 'en-US', description: 'Change the language of this menu.' }
-                }
-              }
-            },
-            required: %w[menu],
-            'x-internal': true
-          },
-
-          # Menu Item
-          create_menu_item_params: {
-            type: :object,
-            properties: {
-              menu_item: {
-                type: :object,
-                required: %w[name menu_id],
-                properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'The name of this Menu Item' },
-                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'Give this Menu Item a code to identify this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
-                  subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
-                  destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
-                  menu_id: { type: :integer, example: 1, description: 'Specify the ID of the Menu this item belongs to.' },
-                  new_window: { type: :boolean, description: 'When set to `true` the link will be opened in a new tab or window.' },
-                  item_type: { type: :string, enum: ['Link', 'Container'], description: 'Links are standard links, where as Containers are used to group links.' },
-                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Set the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
-                  linked_resource_id: { type: :integer, example: 1, nullable: true, description: 'The ID of the resource you are linking to.' }
-                }
-              }
-            },
-            required: %w[menu_item],
-            title: 'Create a Menu Item',
-            'x-internal': true
-          },
-          update_menu_item_params: {
-            type: :object,
-            properties: {
-              menu_item: {
-                type: :object,
-                properties: {
-                  name: { type: :string, example: 'T-Shirts', description: 'Update the name of this Menu Item' },
-                  code: { type: :string, nullable: true, example: 'MEN-TS', description: 'The Menu Item a code to identifies this Menu Item from others. This is especially useful when using Container type Menu Items to group items.' },
-                  subtitle: { type: :string, nullable: true, example: "Shop men's T-Shirts", description: 'Set an optional subtitle for the Menu Item, this is useful if your menu has promotional links that require more than just a link name.' },
-                  destination: { type: :string, nullable: true, example: 'https://getvendo.com', description: 'Used when the linked_resource_type is set to: URL' },
-                  menu_id: { type: :integer, example: 1, description: 'Specify the ID of the Menu this item belongs to.' },
-                  new_window: { type: :boolean, description: 'When set to `true` the link will be opened in a new tab or window.' },
-                  item_type: { type: :string, enum: ['Link', 'Container'], description: 'Links are standard links, where as Containers are used to group links.' },
-                  linked_resource_type: { type: :string, enum: ['URL', 'Spree::Taxon', 'Spree::Product', 'Spree::CmsPage'], description: 'Change the type of resource you want to link to, or set to: URL to use the destination field for an external link.' },
-                  linked_resource_id: { type: :integer, example: 1, nullable: true, description: 'The ID of the resource you are linking to.' }
-                }
-              }
-            },
-            required: %w[menu_item],
-            title: 'Update a Menu Item',
-            'x-internal': true
-          },
-          menu_item_reposition: {
-            type: :object,
-            properties: {
-              menu_item: {
-                type: :object,
-                required: %w[new_parent_id new_position_idx],
-                properties: {
-                  new_parent_id: { type: :integer, example: 1, description: 'The ID of the new target parent Menu Item.' },
-                  new_position_idx: { type: :integer, example: 1, description: 'The new index position of the Menu Item within its parent' }
-                }
-              }
-            },
-            required: %w[menu_item],
-            title: 'Reposition a Menu Item',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Option Type
@@ -853,7 +333,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_type],
-            'x-internal': true
+            'x-internal': false
           },
           update_option_type_params: {
             type: :object,
@@ -869,7 +349,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Option Value
@@ -888,7 +368,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_value],
-            'x-internal': true
+            'x-internal': false
           },
           update_option_value_params: {
             type: :object,
@@ -904,7 +384,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[option_value],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Order
@@ -957,7 +437,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[order],
-            'x-internal': true
+            'x-internal': false
           },
           update_order_params: {
             type: :object,
@@ -1008,7 +488,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[order],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Payment Method
@@ -1039,7 +519,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true
+            'x-internal': false
           },
           update_payment_method_params: {
             type: :object,
@@ -1067,7 +547,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true,
+            'x-internal': false,
             title: 'Update Payment Method'
           },
           update_payment_method_params_bogus_gateway: {
@@ -1083,7 +563,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[payment_method],
-            'x-internal': true,
+            'x-internal': false,
             title: 'Update Bogus Gateway'
           },
 
@@ -1124,7 +604,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[product],
-            'x-internal': true
+            'x-internal': false
           },
           update_product_params: {
             type: :object,
@@ -1161,7 +641,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[product],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion
@@ -1192,7 +672,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Create a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_params: {
             type: :object,
@@ -1220,7 +700,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_add_rule_params: {
             type: :object,
@@ -1244,7 +724,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Add a Rule to a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_update_rule_params: {
             type: :object,
@@ -1269,7 +749,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update an existing Rule',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_add_action_params: {
             type: :object,
@@ -1292,7 +772,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Add an Action to a Promotion',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_action_calculator_params: {
             type: :object,
@@ -1322,7 +802,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Update an Action Calculator',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_change_calculator_params: {
             type: :object,
@@ -1350,7 +830,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Change an Action Calculator',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_change_action_params: {
             type: :object,
@@ -1374,7 +854,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion],
             title: 'Change an Action Type',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Action
@@ -1392,7 +872,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_action],
             title: 'Create a Promotion Action',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_action_params: {
             type: :object,
@@ -1406,7 +886,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_action],
             title: 'Create a Promotion Action',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Category
@@ -1423,7 +903,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[promotion_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_category_params: {
             type: :object,
@@ -1438,7 +918,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[promotion_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Promotion Rule
@@ -1456,7 +936,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_rule],
             title: 'Create a Promotion Rule',
-            'x-internal': true
+            'x-internal': false
           },
           update_promotion_rule_params: {
             type: :object,
@@ -1470,7 +950,7 @@ RSpec.configure do |config|
             },
             required: %w[promotion_rule],
             title: 'Create a Promotion Rule',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Role
@@ -1486,7 +966,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
           update_role_params: {
             type: :object,
@@ -1499,7 +979,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Shopment
@@ -1518,7 +998,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipment_params: {
             type: :object,
@@ -1531,7 +1011,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           add_item_shipment_params: {
             type: :object,
@@ -1546,7 +1026,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           remove_item_shipment_params: {
             type: :object,
@@ -1561,7 +1041,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           # Shipping Category
           create_shipping_category_params: {
@@ -1576,7 +1056,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipping_category_params: {
             type: :object,
@@ -1590,7 +1070,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Shipping Method
@@ -1622,7 +1102,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_method],
-            'x-internal': true
+            'x-internal': false
           },
           update_shipping_method_params: {
             type: :object,
@@ -1651,7 +1131,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[shipping_method],
-            'x-internal': true
+            'x-internal': false
           },
           shipping_calculator_params: {
             type: :object,
@@ -1659,7 +1139,7 @@ RSpec.configure do |config|
               type: { type: :string, example: 'Spree::Calculator::Shipping::FlatPercentItemTotal', enum: ['Spree::Calculator::Shipping::DigitalDelivery', 'Spree::Calculator::Shipping::FlatPercentItemTotal', 'Spree::Calculator::Shipping::FlatRate', 'Spree::Calculator::Shipping::FlexiRate', 'Spree::Calculator::Shipping::PerItem', 'Spree::Calculator::Shipping::PriceSack'] }
             },
             required: %w[type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Stock Item
@@ -1678,7 +1158,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_item],
-            'x-internal': true
+            'x-internal': false
           },
           update_stock_item_params: {
             type: :object,
@@ -1695,7 +1175,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_item],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Stock Location
@@ -1724,7 +1204,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_location],
-            'x-internal': true
+            'x-internal': false
           },
           update_stock_location_params: {
             type: :object,
@@ -1751,7 +1231,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[stock_location],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit Category
@@ -1767,7 +1247,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_category_params: {
             type: :object,
@@ -1781,7 +1261,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit Type
@@ -1798,7 +1278,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_type],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_type_params: {
             type: :object,
@@ -1812,7 +1292,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit_type],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Store Credit
@@ -1841,7 +1321,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit],
-            'x-internal': true
+            'x-internal': false
           },
           update_store_credit_params: {
             type: :object,
@@ -1868,7 +1348,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[store_credit],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Tax Category
@@ -1887,7 +1367,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_category],
-            'x-internal': true
+            'x-internal': false
           },
           update_tax_category_params: {
             type: :object,
@@ -1904,7 +1384,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_category],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Tax Rate
@@ -1935,7 +1415,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_rate],
-            'x-internal': true
+            'x-internal': false
           },
           update_tax_rate_params: {
             type: :object,
@@ -1964,7 +1444,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[tax_rate],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Taxon
@@ -1984,7 +1464,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxon],
-            'x-internal': true
+            'x-internal': false
           },
           update_taxon_params: {
             type: :object,
@@ -2001,7 +1481,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxon],
-            'x-internal': true
+            'x-internal': false
           },
           taxon_reposition: {
             type: :object,
@@ -2017,7 +1497,7 @@ RSpec.configure do |config|
             },
             required: %w[taxon],
             title: 'Reposition a Taxon',
-            'x-internal': true
+            'x-internal': false
           },
 
           # Taxonomies
@@ -2036,7 +1516,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxonomy],
-            'x-internal': true
+            'x-internal': false
           },
           update_taxonomy_params: {
             type: :object,
@@ -2052,7 +1532,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[taxonomy],
-            'x-internal': true
+            'x-internal': false
           },
 
           # User
@@ -2076,7 +1556,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[user],
-            'x-internal': true
+            'x-internal': false
           },
           update_user_params: {
             type: :object,
@@ -2097,7 +1577,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[user],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Webhook
@@ -2124,7 +1604,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[subscriber],
-            'x-internal': true
+            'x-internal': false
           },
           update_webhook_subscriber_params: {
             type: :object,
@@ -2149,7 +1629,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[subscriber],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Wishlist
@@ -2168,7 +1648,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wishlist],
-            'x-internal': true
+            'x-internal': false
           },
           update_wishlist_params: {
             type: :object,
@@ -2184,7 +1664,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wishlist],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Wished Item
@@ -2205,7 +1685,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wished_item],
-            'x-internal': true
+            'x-internal': false
           },
           update_wished_item_params: {
             type: :object,
@@ -2224,7 +1704,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[wished_item],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Zones
@@ -2243,7 +1723,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
           update_zone_params: {
             type: :object,
@@ -2259,7 +1739,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[zone],
-            'x-internal': true
+            'x-internal': false
           },
 
           # Nested Parameters
@@ -2268,7 +1748,7 @@ RSpec.configure do |config|
             properties: {
               amount: { type: :number }
             },
-            'x-internal': true
+            'x-internal': false
           },
 
           coupon_code_param: {
@@ -2276,7 +1756,7 @@ RSpec.configure do |config|
             properties: {
               coupon_code: { type: :string }
             },
-            'x-internal': true
+            'x-internal': false
           },
           resources_list: {
             type: :object,
@@ -2311,7 +1791,7 @@ RSpec.configure do |config|
               }
             },
             required: %w[data meta links],
-            'x-internal': true
+            'x-internal': false
           },
           resource_properties: {
             type: :object,
@@ -2322,7 +1802,7 @@ RSpec.configure do |config|
               relationships: { type: :object }
             },
             required: %w[id type attributes],
-            'x-internal': true
+            'x-internal': false
           },
           resource: {
             type: :object,
@@ -2330,7 +1810,7 @@ RSpec.configure do |config|
               data: { '$ref' => '#/components/schemas/resource_properties' },
             },
             required: %w[data],
-            'x-internal': true
+            'x-internal': false
           },
           error: {
             type: :object,
@@ -2338,7 +1818,7 @@ RSpec.configure do |config|
               error: { type: :string },
             },
             required: %w[error],
-            'x-internal': true
+            'x-internal': false
           },
           validation_errors: {
             type: :object,
@@ -2347,7 +1827,7 @@ RSpec.configure do |config|
               errors: { type: :object }
             },
             required: %w[error errors],
-            'x-internal': true
+            'x-internal': false
           }
         }
       }

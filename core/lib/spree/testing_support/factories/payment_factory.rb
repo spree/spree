@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :payment, class: Spree::Payment do
-    order
+    order         { create(:order, total: amount) }
     amount        { 45.75 }
     state         { 'checkout' }
     response_code { '12345' }
@@ -14,11 +14,16 @@ FactoryBot.define do
         create(:refund, amount: 5, payment: payment)
       end
     end
+
+    factory :custom_payment, class: Spree::Payment do
+      payment_method { create(:custom_payment_method, stores: [order.store]) }
+      source { create(:payment_source, user: order.user, payment_method: payment_method) }
+    end
   end
 
   factory :check_payment, class: Spree::Payment do
     amount { 45.75 }
-    order
+    order  { create(:order, total: 45.75) }
 
     association(:payment_method, factory: :check_payment_method)
   end

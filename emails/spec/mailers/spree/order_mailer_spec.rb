@@ -5,15 +5,14 @@ describe Spree::OrderMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let(:first_store) { create(:store, name: 'First Store') }
-  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
+  let!(:store) { @default_store }
+  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com', default_locale: 'en') }
 
   let(:order) do
-    order = create(:completed_order_with_totals, email: 'test@example.com')
+    order = create(:completed_order_with_totals, email: 'test@example.com', store: store)
     product = create(:product, name: %{The "BEST" product})
     variant = create(:variant, product: product)
     price = create(:price, variant: variant, amount: 5.00)
-    store = first_store
     line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
@@ -23,7 +22,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = create(:completed_order_with_totals, email: 'test2@example.com')
+    order = create(:completed_order_with_totals, email: 'test2@example.com', store: second_store)
     product = create(:product, name: %{The "BESTEST" product})
     variant = create(:variant, product: product)
     price = create(:price, variant: variant, amount: 15.00)
@@ -39,18 +38,18 @@ describe Spree::OrderMailer, type: :mailer do
   context ':from not set explicitly' do
     it 'uses store mail from address' do
       message = described_class.confirm_email(order)
-      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      expect(message.from).to eq([store.mail_from_address])
       message = described_class.cancel_email(order)
-      expect(message.from).to eq([Spree::Store.default.mail_from_address])
+      expect(message.from).to eq([store.mail_from_address])
     end
   end
 
   context ':reply_to not set explicitly' do
     it 'uses store mail from address' do
       message = described_class.confirm_email(order)
-      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+      expect(message.reply_to).to eq([store.mail_from_address])
       message = described_class.cancel_email(order)
-      expect(message.reply_to).to eq([Spree::Store.default.mail_from_address])
+      expect(message.reply_to).to eq([store.mail_from_address])
     end
   end
 
@@ -88,7 +87,7 @@ describe Spree::OrderMailer, type: :mailer do
     end
 
     it 'has correct subject line' do
-      expect(notification_email.subject).to eq('First Store received a new order')
+      expect(notification_email.subject).to eq("#{store.name} received a new order")
     end
 
     it 'shows the correct heading in email body' do
@@ -103,14 +102,14 @@ describe Spree::OrderMailer, type: :mailer do
   context 'when order does not have customer\'s name' do
     before { allow(order).to receive(:name).and_return nil }
 
-    specify 'shows Dear Customer in confirm_email body' do
+    specify 'shows Hey Customer in confirm_email body' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email).to have_body_text('Dear Customer')
+      expect(confirmation_email).to have_body_text('Hey Customer')
     end
 
-    specify 'shows Dear Customer in cancel_email body' do
+    specify 'shows Hey Customer in cancel_email body' do
       confirmation_email = described_class.cancel_email(order)
-      expect(confirmation_email).to have_body_text('Dear Customer')
+      expect(confirmation_email).to have_body_text('Hey Customer')
     end
   end
 
@@ -119,12 +118,12 @@ describe Spree::OrderMailer, type: :mailer do
 
     specify 'shows order\'s user name in confirm_email body' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email).to have_body_text('Dear Test User')
+      expect(confirmation_email).to have_body_text('Hey Test User')
     end
 
     specify 'shows order\'s user name in cancel_email body' do
       confirmation_email = described_class.cancel_email(order)
-      expect(confirmation_email).to have_body_text('Dear Test User')
+      expect(confirmation_email).to have_body_text('Hey Test User')
     end
   end
 
@@ -172,7 +171,16 @@ describe Spree::OrderMailer, type: :mailer do
         pt_br_cancel_mail = { spree: { order_mailer: { cancel_email: { order_summary_canceled: 'Resumo da Pedido [CANCELADA]' } } } }
         I18n.backend.store_translations :'pt-BR', pt_br_confirm_mail
         I18n.backend.store_translations :'pt-BR', pt_br_cancel_mail
-        first_store.update(default_locale: 'pt-BR')
+
+        I18n.backend.store_translations :'pt-BR', {
+          spree: {
+            default_post_categories: {
+              articles: 'Artigos',
+              news: 'Notícias',
+              resources: 'Recursos'
+            }
+          }
+        }
       end
 
       after do
@@ -196,13 +204,33 @@ describe Spree::OrderMailer, type: :mailer do
       end
 
       context 'via I18n' do
-        before { I18n.locale = :'pt-BR' }
+        before do
+          # We need to create the order record before changing locales for translations
+          # Since I18n.default_locale is "en" in specs
+          order
+
+          I18n.locale = :'pt-BR'
+          store.update(default_locale: 'pt-BR')
+        end
+
+        after do
+          I18n.locale = :en
+          store.update(default_locale: 'en')
+        end
 
         it_behaves_like 'translates emails'
       end
 
       context 'via Store locale' do
-        before { order.store.update!(default_locale: 'pt-BR') }
+        before do
+          order
+          order.store.update!(default_locale: 'pt-BR')
+        end
+
+        after do
+          I18n.locale = :en
+          order.store.reload.update(default_locale: 'en')
+        end
 
         it_behaves_like 'translates emails'
       end
@@ -220,8 +248,8 @@ describe Spree::OrderMailer, type: :mailer do
   context 'confirm_email comes with data of the store where order was made' do
     it 'shows order store data' do
       confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email.from).to include(first_store.mail_from_address)
-      expect(confirmation_email.subject).to include(first_store.name)
+      expect(confirmation_email.from).to include(store.mail_from_address)
+      expect(confirmation_email.subject).to include(store.name)
     end
 
     it 'shows order store data #2' do
@@ -233,15 +261,45 @@ describe Spree::OrderMailer, type: :mailer do
 
   context 'emails contain only urls of the store where the order was made' do
     it 'shows proper host url in email content' do
-      ActionMailer::Base.default_url_options[:host] = order.store.url
+      ActionMailer::Base.default_url_options = { host: 'localhost' }
       described_class.confirm_email(order).deliver_now
       expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
     end
 
     it 'shows proper host url in email content #2' do
-      ActionMailer::Base.default_url_options[:host] = second_order.store.url
       described_class.confirm_email(second_order).deliver_now
       expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
+    end
+
+    context 'with custom domain' do
+      let(:store) { create(:store) }
+      let!(:custom_domain) { create(:custom_domain, store: store, url: 'my-store.com') }
+
+      it 'uses custom domain for URLs in emails' do
+        email = described_class.confirm_email(order).deliver_now
+        expect(ActionMailer::Base.default_url_options[:host]).to eq('my-store.com')
+        # testing HTML body
+        expect(email.body.parts.last.body).to include('my-store.com')
+        expect(email.body.parts.last.body).not_to include(store.url)
+      end
+    end
+  end
+
+  describe '#payment_link_email' do
+    let(:payment_link_email) { described_class.payment_link_email(order_for_payment.id) }
+
+    let(:order_for_payment) { create(:order_with_line_items, store: store) }
+    let(:payment_url) { "http://shop.com/checkout/#{order_for_payment.token}/payment" }
+
+    before do
+      allow(Spree::Core::Engine.routes.url_helpers).to receive(:checkout_state_url).and_return(payment_url)
+    end
+
+    it 'sends an email with the payment link' do
+      expect(payment_link_email.from).to contain_exactly(store.mail_from_address)
+      expect(payment_link_email.to).to contain_exactly(order_for_payment.email)
+      expect(payment_link_email.subject).to eq("Payment link for order ##{order_for_payment.number}")
+      expect(payment_link_email.body).to include(payment_url)
     end
   end
 end

@@ -1,0 +1,155 @@
+---
+title: 3.7 to 4.0
+section: upgrades
+order: 2
+description: This guide covers upgrading a 3.7 Spree application to Spree 4.0.
+---
+
+
+<Note>
+If you're on an older version than 3.7 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+
+1. [upgrade 3.4 to 3.5](3.4-to-3.5)
+2. [upgrade 3.5 to 3.6](3.5-to-3.6)
+3. [upgrade 3.6 to 3.7](3.6-to-3.7)
+</Note>
+
+## Update your Ruby version to 2.5 or later
+
+Spree 4.0 requires Ruby 2.5 so you need to change the ruby version in your project's `Gemfile` and `.ruby-version` files. And of course you need to install Ruby 2.5 or later. If you're using RVM you can do it like this:
+
+```bash
+rvm install 2.5
+rvm use 2.5
+```
+
+## Migrate from Paperclip to ActiveStorage
+
+In Spree 3.6 we deprecated [Paperclip support in favor of ActiveStorage](https://guides.spreecommerce.org/release_notes/3_6_0.html#active-storage-support). Paperclip gem itself isn't maintained anymore and it is recommended to move to ActiveStorage as it is the default Rails storage engine since Rails 5.2 release.
+
+In Spree 4.0 we've removed Paperclip support in favor of ActiveStorage.
+
+Please remove also any occurrences of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` from your codebase.
+
+Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING).
+
+## Remove `spree_address_book` extension
+
+If you're using the [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it as this feature was merged into [core Spree](https://github.com/spree/spree/releases/tag/v4.0.0).
+
+1. Remove this line from `Gemfile`
+
+    ```bash
+    bundle remove spree_address_book
+    ```
+
+2. Remove this line from `vendor/assets/javascripts/spree/frontend/all.js`
+
+   ```text
+    //= require spree/frontend/spree_address_book
+   ```
+
+3. Remove this line from `vendor/assets/stylesheets/spree/frontend/all.css`
+
+   ```text
+    //= require spree/frontend/spree_address_book
+   ```
+
+## Update your `Gemfile`
+
+```ruby
+gem 'spree', '~> 4.0'
+gem 'spree_auth_devise', '~> 4.0'
+gem 'spree_gateway', '~> 3.6'
+```
+
+and run
+
+```bash
+bundle update
+```
+
+## Replace `class_eval` with `Module.prepend` only for Rails 6
+
+Rails 6.0 ships with a [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
+
+Old decorator syntax:
+
+```ruby
+Spree::Order.class_eval do
+  has_many :new_custom_model
+
+  def some_method
+     # ...
+  end
+end
+```
+
+Replaced with:
+
+```ruby
+module Spree
+  module OrderDecorator
+    def self.prepended(base)
+      base.has_many :new_custom_model
+    end
+
+    def some_method
+      # ...
+    end
+  end
+
+  Order.prepend(OrderDecorator)
+end
+```
+
+When migrating a class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example:
+
+```ruby
+module Spree::BaseDecorator
+  def spree_base_scopes
+    # custom implementation
+  end
+end
+
+Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
+```
+
+Please also consider other options for [Logic Customization](/developer/customization).
+
+We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
+
+## Update Bootstrap 3 to 4 or stay at Bootstrap 3
+
+Spree 4 uses Bootstrap 4 for both Storefront and Admin Panel. You have two options:
+
+### Stay at Bootstrap 3
+
+As we know this is a big portion of work you can still use Bootstrap 3 for your Storefront.
+
+1. Copy all remaining views by running `bundle exec spree:frontend:copy_views`
+2. Add `bootstrap-sass` gem to your `Gemfile`
+
+   ```ruby
+    gem 'bootstrap-sass', '~> 3.4.1'
+   ```
+
+### Move to Bootstrap 4
+
+[Follow the official Bootstrap 3 to 4 migration guide](https://getbootstrap.com/docs/4.0/migration/)
+
+## Install missing migrations
+
+```bash
+rake railties:install:migrations
+```
+
+## Run migrations
+
+```bash
+rails db:migrate
+```
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [4.0.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.0.0)

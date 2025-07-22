@@ -5,13 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          if Spree.public_storage_service_name
-            has_one_attached :attachment, service: Spree.public_storage_service_name
-          else
-            has_one_attached :attachment
-          end
-
-          validates :attachment, content_type: /\Aimage\/.*\z/
+          validates :attachment, content_type: Rails.application.config.active_storage.web_image_content_types
 
           default_scope { includes(attachment_attachment: :blob) }
 

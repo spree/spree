@@ -4,7 +4,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
   let(:rule) { Spree::Promotion::Rules::Product.new(rule_options) }
   let(:rule_options) { {} }
 
-  context '#eligible?(order)' do
+  describe '#eligible?(order)' do
     let(:order) { Spree::Order.new }
     let!(:products) { create_list(:product, 3) }
     let(:product1) { products.first }
@@ -147,6 +147,34 @@ describe Spree::Promotion::Rules::Product, type: :model do
 
         it { is_expected.to be_truthy }
       end
+    end
+  end
+
+  describe '#add_products' do
+    let(:promotion) { create(:promotion) }
+    let(:rule) { create(:promotion_rule_product, promotion: promotion) }
+    let(:products) { create_list(:product, 3) }
+
+    it 'adds the products to the rule' do
+      rule.product_ids_to_add = products.map(&:id)
+      rule.save!
+      expect(rule.products).to match_array(products)
+    end
+
+    it 'removes the products from the rule' do
+      rule.product_ids_to_add = products.map(&:id)
+      rule.save!
+      rule.product_ids_to_add = []
+      rule.save!
+      expect(rule.products).to be_empty
+    end
+
+    it 'does not remove the products when nil is passed' do
+      rule.product_ids_to_add = products.map(&:id)
+      rule.save!
+      rule.product_ids_to_add = nil
+      rule.save!
+      expect(rule.products).to match_array(products)
     end
   end
 end

@@ -203,18 +203,26 @@ describe Spree::Adjustment, type: :model do
         end
 
         context "the promotion is eligible" do
-          it "sets the adjustment elgiible to true" do
+          it "sets the adjustment eligible to true" do
             subject
             expect(adjustment.eligible).to eq true
+          end
+
+          it 'touches the promotion' do
+            expect { subject }.to change { promotion.reload.updated_at }
           end
         end
 
         context "the promotion is not eligible" do
           before { promotion.update!(starts_at: 1.day.from_now) }
 
-          it "sets the adjustment elgiible to false" do
+          it "sets the adjustment eligible to false" do
             subject
             expect(adjustment.eligible).to eq false
+          end
+
+          it 'touches the promotion' do
+            expect { subject }.to change { promotion.reload.updated_at }
           end
         end
       end

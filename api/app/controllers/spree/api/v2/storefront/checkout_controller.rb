@@ -17,7 +17,9 @@ module Spree
           def advance
             spree_authorize! :update, spree_current_order, order_token
 
-            result = advance_service.call(order: spree_current_order)
+            check_if_quick_checkout
+
+            result = advance_service.call(order: spree_current_order, state: params[:state], shipping_method_id: params[:shipping_method_id])
 
             render_order(result)
           end
@@ -36,7 +38,7 @@ module Spree
             result = update_service.call(
               order: spree_current_order,
               params: params,
-              # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
+              # defined in https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes,
               request_env: request.headers.env
             )
@@ -89,7 +91,24 @@ module Spree
           end
 
           def payment_methods
-            render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
+            render_serialized_payload { serialize_payment_methods(spree_current_order.collect_frontend_payment_methods) }
+          end
+
+          def validate_order_for_payment
+            messages = []
+
+            if spree_current_order.present?
+              validated_order, messages = Spree::Cart::RemoveOutOfStockItems.call(order: spree_current_order).value
+              messages << Spree.t(:cart_state_changed) if !validated_order.payment? && params[:skip_state].blank?
+            end
+
+            if messages.any?
+              render_serialized_payload(422) do
+                serialized_current_order.deep_merge({ meta: { messages: messages } })
+              end
+            else
+              render_serialized_payload { serialized_current_order }
+            end
           end
 
           private
@@ -152,6 +171,10 @@ module Spree
               params: serializer_params,
               include: [:shipping_rates, :stock_location, :line_items]
             ).serializable_hash
+          end
+
+          def check_if_quick_checkout
+            spree_current_order.ship_address&.quick_checkout = params[:quick_checkout] if params[:quick_checkout]
           end
         end
       end

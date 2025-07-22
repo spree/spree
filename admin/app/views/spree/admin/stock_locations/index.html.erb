@@ -1,0 +1,34 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:stock_locations) %>
+<% end %>
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:stock_locations_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_stock_location), new_object_url, class: "btn btn-primary" %> 
+<% end if can? :create, Spree::StockLocation %>
+
+<%= render_admin_partials(:stock_locations_header_partials) %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:country) %></th>
+            <th><%= Spree.t(:active) %>?</th>
+            <% if can?(:mark_as_default, Spree::StockLocation) %>
+              <th><%= Spree.t(:default) %>?</th>
+            <% end %>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/stock_locations/stock_location', collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

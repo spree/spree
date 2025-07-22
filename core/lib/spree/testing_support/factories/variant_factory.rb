@@ -12,19 +12,41 @@ FactoryBot.define do
     is_master       { 0 }
     track_inventory { true }
 
-    product       { |p| p.association(:base_product, stores: [create(:store)]) }
+    product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
     option_values { [create(:option_value)] }
 
-    # ensure stock item will be created for this variant
-    before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
+    transient do
+      create_stock { true }
+    end
 
-    after(:create) do |variant|
-      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(variant) }
+    # ensure stock item will be created for this variant
+    before(:create) do |variant, evaluator|
+      create(:stock_location) if evaluator.create_stock && !Spree::StockLocation.any?
+    end
+
+    after(:create) do |variant, evaluator|
+      if evaluator.create_stock
+        Spree::StockLocation.all.each do |stock_location|
+          next if stock_location.stock_item(variant).present?
+
+          stock_location.propagate_variant(variant)
+        end
+      end
     end
 
     factory :variant do
       # on_hand 5
-      product { |p| p.association(:product, stores: [create(:store)]) }
+      product { |p| p.association(:product, stores: [Spree::Store.default]) }
+
+      factory :with_image_variant do
+        images { create_list(:image, 1) }
+      end
+
+      trait :with_no_price do
+        price { nil }
+        cost_price { nil }
+        currency { nil }
+      end
     end
 
     factory :master_variant do

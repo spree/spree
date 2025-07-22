@@ -1,0 +1,34 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:reports) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:reports_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:reports_header_partials) %>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:name) %></th>
+          <th class="text-right"><%= Spree.t(:action) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% Spree.t(:report_names).keys.each do |report_type| %>
+          <tr data-controller="row-link">
+            <td class="cursor-pointer w-90" data-action="click->row-link#openLink">
+              <%= Spree.t("report_names.#{report_type}") %>
+            </td>
+            <td class="text-right w-10">
+              <%= link_to Spree.t(:show_report), spree.new_admin_report_path(type: report_type), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

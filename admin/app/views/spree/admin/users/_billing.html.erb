@@ -1,0 +1,78 @@
+<div class="card" id="user-bill-address" data-controller="reveal">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title"><%= Spree.t(:billing_address) %></h5>
+
+    <% if @user.billing_address.present? %>
+      <button data-action="click->reveal#toggle" data-reveal-target="item" type="button" class="btn btn-light btn-sm">
+        <%= icon('edit', class: 'icon icon-edit') %>
+        <%= Spree.t(:edit) %>
+      </button>
+
+      <button data-action="click->reveal#toggle" data-reveal-target="item" type="button" class="btn btn-light btn-sm hidden">
+        <%= Spree.t('actions.discard') %>
+      </button>
+    <% else %>
+      <%= link_to_with_icon 'plus', Spree.t(:add),
+        spree.new_admin_address_path(user_id: @user.id, default_billing: true, type: 'billing'),
+        class: 'btn btn-light btn-sm',
+        data: { turbo_frame: :new_address_billing } if can?(:create, Spree::Address) && can?(:update, @user) %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <% if @user.billing_address %>
+      <div data-reveal-target="item">
+        <% if @user.billing_address == @user.shipping_address %>
+          <div class="text-muted">
+            <%= Spree.t(:same_as_shipping_address) %>
+          </div>
+        <% else %>
+          <%= render 'spree/admin/shared/address', address: @user.billing_address %>
+        <% end %>
+      </div>
+
+      <div data-reveal-target="item" class="hidden">
+        <% if @user.billing_address == @user.shipping_address %>
+          <%= turbo_frame_tag :new_address_billing do %>
+            <div class="custom-control custom-radio mb-1">
+              <%= radio_button_tag :bill_address_id, @user.ship_address_id, @user.billing_address == @user.shipping_address,
+                id: 'user_bill_address_id',
+                class: 'custom-control-input',
+                data: { action: 'click->reveal#toggle' } %>
+              <%= label_tag :user_bill_address_id, Spree.t(:use_shipping_address), class: 'custom-control-label' %>
+            </div>
+
+            <div class="custom-control custom-radio">
+              <%= link_to spree.new_admin_address_path(user_id: @user.id, default_billing: true, type: 'billing'), data: { turbo_frame: :new_address_billing } do %>
+                <%= radio_button_tag :user_bill_address_id, nil, false,
+                  id: 'user_bill_address_id_new_address',
+                  class: 'custom-control-input' %>
+                <%= label_tag :user_bill_address_id_new_address, Spree.t(:add_new_address), class: 'custom-control-label' %>
+              <% end %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= form_for [:admin, @user], as: :user, url: spree.admin_user_path(@user), method: :put, data: { controller: 'auto-submit' } do |f| %>
+            <div class="custom-control custom-radio mb-4">
+              <%= f.radio_button :bill_address_id, @user.ship_address_id,
+                checked: false,
+                id: 'user_bill_address_id',
+                class: 'custom-control-input',
+                data: { action: 'click->auto-submit#submit' } %>
+              <%= f.label :bill_address_id, Spree.t(:use_shipping_address), class: 'custom-control-label' %>
+            </div>
+          <% end %>
+
+          <%= turbo_frame_tag :edit_address_billing, src: spree.edit_admin_address_path(@user.billing_address, type: 'billing'), loading: :lazy do %>
+            <%= render 'spree/admin/shared/spinner', id: 'edit-address-billing-spinner' %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <%= turbo_frame_tag :new_address_billing do %>
+        <div class="text-center p-5 text-muted">
+          <%= Spree.t(:not_available) %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

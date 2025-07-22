@@ -1,0 +1,14 @@
+<%# locals: (f:, resource:, locale:) %>
+
+<% resource.class.translatable_fields.each do |field| %>
+  <% next if field == :pretty_name %>
+
+  <% case field %>
+  <% when :description %>
+    <%= render "spree/admin/translations/translation_rows/rich_textarea_row", f: f, field: field, locale: locale %>
+  <% when :permalink %>
+    <%= render "spree/admin/translations/translation_rows/permalink_field_row", f: f, field: field, locale: locale %>
+  <% else %>
+    <%= render "spree/admin/translations/translation_rows/text_field_row", f: f, field: field, locale: locale %>
+  <% end %>
+<% end %>

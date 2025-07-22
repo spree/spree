@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Spree::Promotion, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { create(:store) }
-  let(:promotion) { create(:promotion) }
+  let(:store) { @default_store }
+  let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'validations' do
-    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [create(:store)]) }
+    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
 
     it 'valid_promotion is valid' do
       expect(valid_promotion).to be_valid
@@ -69,11 +69,33 @@ describe Spree::Promotion, type: :model do
     end
   end
 
+  describe 'callbacks' do
+    describe 'set_usage_limit_to_nil' do
+      let(:promotion) { create(:promotion, kind: :coupon_code, usage_limit: 100) }
+
+      context 'when promo has one code for all customers' do
+        it 'does not change usage_limit' do
+          promotion.multi_codes = false
+
+          expect{ promotion.save }.not_to change{ promotion.usage_limit }
+        end
+      end
+
+      context 'when promo has unique codes' do
+        it 'sets usage_limit to nil' do
+          promotion.multi_codes = true
+
+          expect{ promotion.save }.to change{ promotion.usage_limit }.from(100).to(nil)
+        end
+      end
+    end
+  end
+
   describe 'scopes' do
     describe '.coupons' do
       subject { described_class.coupons }
 
-      let!(:promotion_without_code) { create :promotion,  name: 'test', code: '' }
+      let!(:promotion_without_code) { create :promotion,  name: 'test', code: nil, kind: :automatic }
       let!(:promotion_with_code) { create :promotion,  name: 'test1', code: 'code' }
 
       it 'is expected to not include promotion without code' do
@@ -88,10 +110,10 @@ describe Spree::Promotion, type: :model do
     describe '.applied' do
       subject { described_class.applied }
 
-      let!(:promotion_not_applied) { create :promotion,  name: 'test', code: '' }
+      let!(:promotion_not_applied) { create :promotion,  name: 'test', kind: :automatic }
       let(:order) { create(:order) }
       let!(:promotion_applied) do
-        promotion = create(:promotion, name: 'test1', code: '')
+        promotion = create(:promotion, name: 'test1', kind: :automatic)
         promotion.orders << order
         promotion
       end
@@ -108,8 +130,8 @@ describe Spree::Promotion, type: :model do
     describe '.advertised' do
       subject { described_class.advertised }
 
-      let!(:promotion_not_advertised) { create :promotion,  name: 'test', advertise: false }
-      let!(:promotion_advertised) { create :promotion,  name: 'test1', advertise: true }
+      let!(:promotion_not_advertised) { create :promotion,  name: 'test', advertise: false, kind: :automatic }
+      let!(:promotion_advertised) { create :promotion,  name: 'test1', advertise: true, kind: :automatic }
 
       it 'is expected to not include promotion not advertised' do
         expect(subject).not_to include(promotion_not_advertised)
@@ -122,26 +144,39 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#destroy' do
-    let(:promotion) { create(:promotion, name: 'delete me') }
+    let(:promotion) { create(:promotion, name: 'delete me', kind: :automatic) }
 
     before do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
       promotion.rules << Spree::Promotion::Rules::FirstOrder.new
       promotion.save!
-      promotion.destroy
     end
 
     it 'deletes actions' do
+      promotion.destroy!
+
       expect(Spree::PromotionAction.count).to eq(0)
     end
 
     it 'deletes rules' do
+      promotion.destroy!
+
       expect(Spree::PromotionRule.count).to eq(0)
+    end
+
+    context 'if promotion was already used' do
+      it 'does not destroy the promotion' do
+        promotion.orders << create(:order)
+        promotion.destroy
+
+        expect(promotion.reload.errors).to be_present
+        expect(promotion.errors.full_messages).to eq [Spree.t('promotion_already_used')]
+      end
     end
   end
 
   describe '#save' do
-    let(:promotion) { create(:promotion, name: 'delete me') }
+    let(:promotion) { create(:promotion, name: 'delete me', kind: :automatic) }
 
     before do
       promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
@@ -154,20 +189,62 @@ describe Spree::Promotion, type: :model do
       promotion.save!
       expect(Spree::Calculator.first.preferred_flat_percent).to eq(10)
     end
+
+    it 'allows to change promotion type from automatic to single discount code' do
+      promotion.kind = :coupon_code
+      promotion.code = 'abc'
+      promotion.multi_codes = false
+
+      promotion.save!
+
+      expect(promotion.kind).to eq 'coupon_code'
+      expect(promotion.code).to eq 'abc'
+      expect(promotion.multi_codes).to eq false
+    end
+
+    it 'allows to change promotion type from automatic to multiple discount codes' do
+      promotion.kind = :coupon_code
+      promotion.multi_codes = true
+      promotion.number_of_codes = 10
+
+      promotion.save!
+
+      expect(promotion.kind).to eq 'coupon_code'
+      expect(promotion.multi_codes).to eq true
+      expect(promotion.number_of_codes).to eq 10
+    end
+
+    it 'allows to change promotion type from single discount code to automatic' do
+      promotion = create(:promotion, code: 'ABC', multi_codes: false, kind: :coupon_code)
+
+      promotion.kind = :automatic
+      promotion.save
+
+      expect(promotion.kind).to eq 'automatic'
+    end
+
+    it 'allows to change promotion type from multiple discount codes to automatic' do
+      promotion = create(:promotion, multi_codes: true, number_of_codes: 10, kind: :coupon_code)
+
+      promotion.kind = :automatic
+      promotion.save
+
+      expect(promotion.kind).to eq 'automatic'
+    end
   end
 
   describe '#activate' do
-    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create! }
-    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create! }
+    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
+    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:payload) { { order: order, user: user } }
-    
+
     before do
       allow(action1).to receive_messages perform: true
       allow(action2).to receive_messages perform: true
+      allow(promotion).to receive(:actions).and_return([action1, action2])
 
-      promotion.promotion_actions = [action1, action2]
       promotion.created_at = 2.days.ago
     end
 
@@ -198,22 +275,33 @@ describe Spree::Promotion, type: :model do
       expect(promotion.activate(payload)).to be true
     end
 
-    context 'keeps track of the orders' do
-      context 'when activated' do
-        it 'assigns the order' do
-          expect(promotion.orders).to be_empty
-          expect(promotion.activate(payload)).to be true
-          expect(promotion.orders.first).to eql order
-        end
+    context 'when activated' do
+      it 'assigns the order' do
+        expect(promotion.orders).to be_empty
+        expect(promotion.activate(payload)).to be true
+        expect(promotion.orders.first).to eql order
       end
 
-      context 'when not activated' do
-        it 'will not assign the order' do
-          order.state = 'complete'
-          expect(promotion.orders).to be_empty
-          expect(promotion.activate(payload)).to be_falsey
-          expect(promotion.orders).to be_empty
-        end
+      it 'touches the promotion' do
+        previous_updated_at = promotion.updated_at
+        expect(promotion.activate(payload)).to be true
+        expect(promotion.reload.updated_at).not_to eq(previous_updated_at)
+      end
+    end
+
+    context 'when not activated' do
+      before { order.state = 'complete' }
+
+      it "doesn't assign the order" do
+        expect(promotion.orders).to be_empty
+        expect(promotion.activate(payload)).to be_falsey
+        expect(promotion.orders).to be_empty
+      end
+
+      it "doesn't the promotion" do
+        previous_updated_at = promotion.updated_at
+        expect(promotion.activate(payload)).to be_falsey
+        expect(promotion.reload.updated_at).to eq(previous_updated_at)
       end
     end
   end
@@ -356,7 +444,7 @@ describe Spree::Promotion, type: :model do
 
   context '#products' do
     let(:product) { create(:product, stores: [store]) }
-    let(:promotion) { create(:promotion) }
+    let(:promotion) { create(:promotion, kind: :automatic) }
 
     context 'when it has product rules with products associated' do
       let(:promotion_rule) { create(:promotion_rule, promotion: promotion, type: 'Spree::Promotion::Rules::Product') }
@@ -458,8 +546,8 @@ describe Spree::Promotion, type: :model do
     end
 
     context "with 'all' match policy" do
-      let(:promo1) { Spree::PromotionRule.create! }
-      let(:promo2) { Spree::PromotionRule.create! }
+      let(:promo1) { Spree::PromotionRule.create!(promotion: promotion) }
+      let(:promo2) { Spree::PromotionRule.create!(promotion: promotion) }
 
       before { promotion.match_policy = 'all' }
 
@@ -503,12 +591,12 @@ describe Spree::Promotion, type: :model do
     end
 
     context "with 'any' match policy" do
-      let(:promotion) { create(:promotion, name: 'Promo', match_policy: 'any') }
+      let(:promotion) { create(:promotion, name: 'Promo', match_policy: 'any', kind: :automatic) }
       let(:promotable) { double('Promotable') }
 
       it 'has eligible rules if any of the rules are eligible' do
         allow_any_instance_of(Spree::PromotionRule).to receive_messages(applicable?: true)
-        true_rule = Spree::PromotionRule.create(promotion: promotion)
+        true_rule = Spree::PromotionRule.create!(promotion: promotion)
         allow(true_rule).to receive_messages(eligible?: true)
         allow(promotion).to receive_messages(rules: [true_rule])
         allow(promotion).to receive_message_chain(:rules, :for).and_return([true_rule])
@@ -516,7 +604,7 @@ describe Spree::Promotion, type: :model do
       end
 
       context 'when none of the rules are eligible' do
-        let(:promo) { Spree::PromotionRule.create! }
+        let(:promo) { Spree::PromotionRule.create!(promotion: promotion) }
         let(:errors) { double ActiveModel::Errors, empty?: false }
 
         before do
@@ -602,7 +690,7 @@ describe Spree::Promotion, type: :model do
   # admin form posts the code and path as empty string
   describe 'normalize blank values for code & path' do
     it 'will save blank value as nil value instead' do
-      promotion = create(:promotion, name: 'A promotion', code: '', path: '')
+      promotion = create(:promotion, name: 'A promotion', code: '', path: '', kind: :automatic)
       expect(promotion.code).to be_nil
       expect(promotion.path).to be_nil
     end
@@ -631,12 +719,25 @@ describe Spree::Promotion, type: :model do
         expect(described_class.with_coupon_code('MY-COUPON-123')).to eq(promotion_with_actions_2)
       end
     end
+
+    context 'coupon from coupon code batch' do
+      let(:coupon_code) { promotion.coupon_codes.first }
+      let(:promotion) { create(:promotion, :with_order_adjustment, code: nil, multi_codes: true, number_of_codes: 1) }
+
+      it 'finds the code with lowercase' do
+        expect(described_class.with_coupon_code(coupon_code.code.downcase)).to eql promotion
+      end
+
+      it 'finds the code with uppercase' do
+        expect(described_class.with_coupon_code(coupon_code.code.upcase)).to eql promotion
+      end
+    end
   end
 
   describe '#used_by?' do
     subject { promotion.used_by? user, [excluded_order] }
 
-    let(:promotion) { create :promotion, :with_order_adjustment }
+    let(:promotion) { create :promotion, :with_order_adjustment, kind: :automatic }
     let(:user) { create :user }
     let(:order) { create :order_with_line_items, user: user }
     let(:excluded_order) { create :order_with_line_items, user: user }
@@ -711,6 +812,7 @@ describe Spree::Promotion, type: :model do
     end
   end
 
+  # this is a legacy method
   describe '#generate_code' do
     let(:promotion) { create(:promotion, code: 'spree123') }
 
@@ -724,6 +826,37 @@ describe Spree::Promotion, type: :model do
     context 'without generate_code' do
       it 'has a generated code' do
         expect(promotion.code).to eq 'spree123'
+      end
+    end
+  end
+
+  describe '#generate_coupon_codes' do
+    let(:promotion) { create(:promotion, code: nil, multi_codes: true, number_of_codes: 1) }
+
+    it 'has a generated code' do
+      expect(promotion.coupon_codes.count).to eq 1
+    end
+
+    it 'generates new codes when number_of_codes is changed' do
+      promotion.update(number_of_codes: 2)
+      expect(promotion.coupon_codes.count).to eq 2
+    end
+
+    context 'with prefix' do
+      let(:promotion) { create(:promotion, code: nil, multi_codes: true, number_of_codes: 1, code_prefix: 'ABC') }
+
+      it 'has a generated code with prefix' do
+        expect(promotion.coupon_codes.first.display_code).to start_with('ABC')
+      end
+    end
+
+    context 'when number of codes is greater than the web limit', :job do
+      let(:promotion) { create(:promotion, code: nil, multi_codes: true, number_of_codes: 10) }
+
+      it 'generates the codes in a background job' do
+        expect {
+          promotion.update(number_of_codes: 501)
+        }.to enqueue_job(Spree::CouponCodes::BulkGenerateJob).with(promotion.id, 501 - promotion.coupon_codes.count)
       end
     end
   end

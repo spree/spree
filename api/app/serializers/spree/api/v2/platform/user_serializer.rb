@@ -5,7 +5,7 @@ module Spree
         class UserSerializer < BaseSerializer
           set_type :user
 
-          attributes :email, :first_name, :last_name, :created_at, :updated_at, :public_metadata, :private_metadata
+          attributes :email, :first_name, :last_name, :created_at, :updated_at, :public_metadata, :private_metadata, :selected_locale
 
           attribute :average_order_value do |user, params|
             price_stats(user.report_values_for(:average_order_value, params[:store]))

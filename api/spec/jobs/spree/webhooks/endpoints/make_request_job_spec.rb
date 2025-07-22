@@ -7,7 +7,7 @@ describe Spree::Webhooks::Subscribers::MakeRequestJob do
   let(:webhook_payload_body) { {} }
 
   it 'enqueues a HTTP request using Spree::Webhooks::Subscribers::HandleRequest', :job do
-    expect { described_class.perform_later(webhook_payload_body, event, subscriber, 1) }.to have_enqueued_job.on_queue(queue)
+    expect { described_class.perform_later(webhook_payload_body, event, subscriber) }.to have_enqueued_job.on_queue(queue)
   end
 
   it 'does not raise if used with the expected arguments', :job do

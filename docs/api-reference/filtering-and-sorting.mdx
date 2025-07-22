@@ -1,0 +1,53 @@
+## Filtering
+
+You can filter out collection results by applying filter parameters to your API calls, eg.
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products' \
+     --header 'Accept: application/vnd.api+json' \
+     --data-urlencode 'filter[skus]=classic-varsity-top-large'
+```
+
+You can combine multiple filters to find only records that match both criteria:
+
+```http
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products' \
+     --header 'Accept: application/vnd.api+json' \
+     --data-urlencode 'filter[price]=10,100' \
+     --data-urlencode 'filter[name]=Classic Varsity'
+```
+
+[Products list endpoint ](https://developers.spreecommerce.org/reference/products-list) covers how to filter by these attributes in more detail.
+
+## Sorting
+
+Sorting is being performed by supplying `sort` parameter in your API calls.
+
+Ascending sort, eg.
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products?sort=price' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+Descending sort is performed by adding `-` before the column name, eg:
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products?sort=-price' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+You can also combine multiple attributes:
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products' \
+     --data-urlencode 'sort=-price,updated_at' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+Each endpoint includes a list of attributes you can sort by. The default ones are always `id`, `created_at`, `updated_at` and `name`.

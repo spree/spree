@@ -144,6 +144,17 @@ describe Spree::CustomerReturn, type: :model do
     it "returns the order associated with the return item's inventory unit" do
       expect(subject).to eq return_item.inventory_unit.order
     end
+
+    context 'return item without inventory unit' do
+      before do
+        return_item.inventory_unit.destroy
+        return_item.reload
+      end
+
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
   end
 
   describe '#order_id' do
@@ -199,7 +210,11 @@ describe Spree::CustomerReturn, type: :model do
     end
 
     context 'to a different stock location' do
-      let(:new_stock_location) { create(:stock_location, name: 'other', propagate_all_variants: true) }
+      let!(:new_stock_location) { create(:stock_location, name: 'other', propagate_all_variants: true) }
+
+      before do
+        perform_enqueued_jobs
+      end
 
       it 'updates the stock item counts in new stock location' do
         expect do

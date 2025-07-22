@@ -1,0 +1,132 @@
+---
+title: Upgrading to Spree 5.0
+description: This guide covers upgrading a Spree 4.10 application to Spree 5.0.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 4.10](/developer/upgrades/4.9-to-4.10)
+</Info>
+
+<Warning>
+  This guide is a work in progress. If you find any issues, please [report them](https://github.com/spree/spree/issues). If you want to contribute to this guide, please click "Suggest edits" at the bottom of this page. Thank you!
+</Warning>
+
+Spree 5.0 is a major upgrade that introduces many breaking changes. The major changes are:
+
+- Dropped support for Rails < 7.2
+- Dropped support for Spree Auth Devise gem (now using Devise gem directly via generator)
+- Completely new modern mobile-friendly Storefront (old customizations won't work)
+- Completely new Admin Dashboard (old customizations won't work)
+- Completely new native Stripe extension
+
+## Prerequisites
+
+Before upgrading, please ensure you have the following prerequisites:
+
+- Ruby 3.2 or later
+- Rails 7.2 - [Upgrade guide for Rails 7.2](https://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-7-1-to-rails-7-2)
+
+
+## Upgrade steps
+
+<AccordionGroup>
+  <Accordion title="1. Remove old frontend/backend Spree gems">
+
+    ```bash
+    bundle remove spree_auth_devise spree_backend spree_frontend
+    ```
+    <Warning>
+      Remove any code referencing `Spree::Backend`, `Spree::Fronted` or `Spree::Auth` from your application, especially from `config/initializers/spree.rb`.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="2. Update main Spree gem">
+
+    ```bash
+    bundle update spree
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+
+  <Accordion title="3. Add new Spree gems">
+
+    ```bash
+    bundle add spree_storefront spree_admin spree_stripe
+    ```
+
+    And run the following generators:
+
+    ```bash
+    bin/rails g spree:storefront:install
+    bin/rails g spree:admin:install
+    bin/rails g spree_stripe:install
+    ```
+  </Accordion>
+
+  <Accordion title="4. Migrate from Spree Auth Devise gem">
+    If you previously used the `spree_auth_devise` gem, you will need to run some commands to create User and connect it to Spree. We don't use the `spree_auth_devise` gem anymore to allow you more control over the authentication and access to all Devise options directly in your application.
+
+    First, install Devise and run the Devise generator:
+
+    ```bash
+    bundle add devise
+    bin/rails g devise:install
+    ```
+
+    Create `Spree::User` model:
+
+    ```bash
+    mkdir -p app/models/spree && touch app/models/spree/user.rb
+    ```
+
+    Add the following code to your `Spree::User` model:
+
+    ```ruby
+    module Spree
+      class User < ApplicationRecord
+        devise :database_authenticatable # if you want to use the database_authenticatable feature
+        devise :recoverable # if you want to use the recoverable feature
+        devise :registerable # if you want to use the registerable feature
+        devise :confirmable # if you want to use the confirmable feature
+        devise :validatable # if you want to use the validatable feature
+
+        devise :rememberable, :trackable, :encryptable, encryptor: 'authlogic_sha512'
+
+        acts_as_paranoid
+      end
+    end
+    ```
+
+    In you `config/initializers/spree.rb` file, add the following code:
+
+    ```ruby
+    Spree.user_class = "Spree::User"
+    ```
+
+    Now run the new authentication generator to connect your `Spree::User` model to Spree:
+
+    ```bash
+    bin/rails g spree:authentication:devise
+    ```
+
+    And if you're using the default spree storefront, please run the following generator:
+
+    ```bash
+    bin/rails g spree:storefront:devise
+    ```
+
+    This will add devise routes and create controllers for the storefront.
+
+    And that's it! You can now login to the admin panel and storefront using your existing users.
+  </Accordion>
+</AccordionGroup>
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 5.0 Release Notes.](https://github.com/orgs/spree/discussions/12604)

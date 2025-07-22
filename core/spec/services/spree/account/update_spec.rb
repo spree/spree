@@ -108,19 +108,6 @@ module Spree
             end
           end
         end
-
-        context 'when no params are given' do
-          let(:user_params) do
-            {}
-          end
-
-          it_behaves_like 'user not created'
-          it_behaves_like 'successful response'
-
-          it 'does not change user data at all' do
-            expect(value).to have_attributes(user.attributes)
-          end
-        end
       end
     end
   end

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::FirstOrder, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:rule) { described_class.new }
   let(:user) { create(:user) }
 

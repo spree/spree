@@ -14,6 +14,19 @@ module Spree
       expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
+    context 'when `discard_merged` is false' do
+      it 'keeps the other order' do
+        subject.merge!(order_2, discard_merged: false)
+        expect { order_2.reload }.not_to raise_error
+      end
+
+      it 'does not change the other order' do
+        expect {
+          subject.merge!(order_2, discard_merged: false)
+        }.not_to change(order_2, :attributes)
+      end
+    end
+
     it 'persist the merge' do
       expect(subject).to receive(:persist_merge)
       subject.merge!(order_2)
@@ -127,6 +140,38 @@ module Spree
         variant_2.destroy!
         subject.merge!(order_2)
         expect(order_1.errors.full_messages).not_to be_empty
+      end
+    end
+
+    context 'merging an order with addresses assigned to an other complete order' do
+      let!(:complete_order) { create(:order_ready_to_ship) }
+
+      before do
+        order_2.update!(ship_address: complete_order.ship_address, bill_address: complete_order.bill_address)
+      end
+
+      it 'destroys the other order' do
+        subject.merge!(order_2)
+        expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'merging an order with a gift card' do
+      let(:order_1) { create(:order, total: 20) }
+      let(:order_2) { create(:order, gift_card: gift_card, total: 20) }
+      let(:gift_card) { create(:gift_card, amount: 20, amount_used: 20) }
+      let(:store_credit_payment_method) { create(:store_credit_payment_method) }
+      let(:store_credit) { create(:store_credit, originator: gift_card, amount: 20) }
+      let!(:payment) { create(:payment, order: order_2, payment_method: store_credit_payment_method, amount: 20, source: store_credit) }
+
+      it 'merges the gift card' do
+        subject.merge!(order_2)
+
+        order_1.reload.tap do |merged|
+          expect(merged.gift_card).to eq(gift_card)
+          expect(merged.payments.store_credits.count).to eq(1)
+          expect(merged.total_applied_store_credit).to eq(20)
+        end
       end
     end
   end

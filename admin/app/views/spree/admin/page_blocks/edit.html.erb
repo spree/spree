@@ -1,0 +1,46 @@
+<%= turbo_frame_tag :page_sidebar do %>
+  <% tab_selected ||= :content %>
+  <h6 class="sidebar-header">
+    <%= link_to spree.edit_admin_theme_path(@theme, page_id: @page&.id),  data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray px-2' do %>
+      <%= icon 'chevron-left', class: 'mr-0' %>
+    <% end %>
+    <%= @page_block.display_name %>
+  </h6>
+  <div class="px-3 pb-5 mb-5 edit-block" style="margin-bottom: 6rem;">
+    <%= form_for @page_block, url: spree.admin_page_section_block_path(@page_block.section, @page_block), data: { controller: 'auto-submit' }, as: :page_block do |f| %>
+      <div data-controller="bootstrap-tabs">
+        <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="btn nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>" data-action="bootstrap-tabs#change" data-bootstrap-tabs-tab-param="content">Content</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="btn nav-link w-100 <%= tab_selected == :design ? 'active' : '' %>" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="<%= tab_selected == :design %>" data-action="bootstrap-tabs#change" data-bootstrap-tabs-tab-param="design">Design</button>
+          </li>
+        </ul>
+        <%= hidden_field_tag :tab_selected, tab_selected, data: { bootstrap_tabs_target: "input" } %>
+      </div>
+      <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade <%= tab_selected == :content ? 'show active' : '' %>" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+          <%= render "spree/admin/page_blocks/forms/#{@page_block.type.demodulize.underscore}", f: f  %>
+          <%= render 'spree/admin/page_blocks/form_tab_buttons', tab: :content %>
+        </div>
+        <div class="tab-pane fade <%= tab_selected == :design ? 'show active' : '' %>" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+          <%= render 'spree/admin/page_sections/fields/top_padding', f: f %>
+          <%= render 'spree/admin/page_sections/fields/bottom_padding', f: f %>
+          <% if @page_block.respond_to?(:preferred_text_color) %>
+            <%= render 'spree/admin/page_sections/fields/text_color', f: f %>
+          <% end %>
+          <% if @page_block.respond_to?(:preferred_background_color) %>
+            <%= render 'spree/admin/page_sections/fields/background_color', f: f %>
+          <% end %>
+          <%= render 'spree/admin/page_sections/fields/button', f: f %>
+          <%= yield(:design_tab) %>
+
+          <div class="sidebar-footer">
+            <%= link_to_delete(@page_block, url: spree.admin_page_section_block_path(@page_block.section, @page_block)) %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

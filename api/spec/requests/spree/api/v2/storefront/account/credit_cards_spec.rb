@@ -14,6 +14,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       expect(json_response['data'][0]).to have_attribute(:month)
       expect(json_response['data'][0]).to have_attribute(:year)
       expect(json_response['data'][0]).to have_attribute(:name)
+      expect(json_response['data'][0]).to have_attribute(:gateway_payment_profile_id)
       expect(json_response['data'][0]).to have_attribute(:public_metadata)
     end
   end
@@ -46,7 +47,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       context 'user has credit cards that are not available on the front end' do
         let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id, payment_method: payment_method) }
         let(:payment_method) { create(:credit_card_payment_method, display_on: display_on, stores: stores) }
-        let(:stores) { [Spree::Store.default] }
+        let(:stores) { [@default_store] }
         let(:display_on) { :none }
 
         it 'does not return any' do

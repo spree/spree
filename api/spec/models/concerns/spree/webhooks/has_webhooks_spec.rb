@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Webhooks::HasWebhooks do
   let(:images) { create_list(:image, 2) }
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:variant_with_images) { create(:variant, images: images) }
   let(:variant) { build(:variant) }
   let(:product) do
@@ -12,7 +12,6 @@ describe Spree::Webhooks::HasWebhooks do
       stores: [store]
     )
   end
-  let(:store) { create(:store) }
   let!(:webhook_subscriber) { create(:webhook_subscriber, :active, subscriptions: ['*']) }
 
   context 'with DISABLE_SPREE_WEBHOOKS equals "true" (set in spec_helper)' do
@@ -55,40 +54,25 @@ describe Spree::Webhooks::HasWebhooks do
 
     context 'after_create_commit' do
       let(:event_name) { 'product.create' }
-      it { expect { product.save }.to emit_webhook_event('product.create') }
+      it { expect { product.save }.to emit_webhook_event('product.create', product) }
     end
 
     context 'after_destroy_commit' do
       before { product.save }
 
-      it { expect { product.destroy }.to emit_webhook_event('product.delete') }
+      it { expect { product.destroy }.to emit_webhook_event('product.delete', product) }
     end
 
     context 'after_update_commit' do
       before { product.save }
 
-      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update') }
-    end
-
-    context 'with a class name with multiple words' do
-      let(:webhook_payload_body) do
-        Spree::Api::V2::Platform::CmsPageSerializer.new(
-          cms_page,
-          include: Spree::Api::V2::Platform::CmsPageSerializer.relationships_to_serialize.keys
-          ).serializable_hash
-      end
-      let(:cms_page) { create(:cms_homepage, store: store, locale: 'en') }
-      let(:event_name) { 'cms_page.create' }
-
-      it 'underscorizes the event name' do
-        expect { cms_page }.to emit_webhook_event(event_name)
-      end
+      it { expect { product.update(name: 'updated') }.to emit_webhook_event('product.update', product) }
     end
 
     context 'when only timestamps change' do
       let(:event_name) { 'product.update' }
 
-      before { product.save }
+      before { product.save! }
 
       context 'on created_at change' do
         it do
@@ -101,7 +85,7 @@ describe Spree::Webhooks::HasWebhooks do
       context 'on updated_at change' do
         it do
           expect do
-            product.update(updated_at: Date.yesterday)
+            product.update!(updated_at: Date.yesterday)
           end.not_to emit_webhook_event(event_name)
         end
       end
@@ -120,14 +104,14 @@ describe Spree::Webhooks::HasWebhooks do
         it do
           expect do
             product.touch(:available_on)
-          end.to emit_webhook_event(event_name)
+          end.to emit_webhook_event(event_name, product)
         end
       end
     end
 
     context 'on touch events from callbacks' do
       let!(:store2) { create(:store) }
-      let!(:cms_page) { create(:cms_homepage, store: store2, locale: 'en') }
+      let!(:taxonomy) { create(:taxonomy, store: store2) }
       let(:body) do
         Spree::Api::V2::Platform::StoreSerializer.new(
           store2,
@@ -138,7 +122,7 @@ describe Spree::Webhooks::HasWebhooks do
       before { store2.changes_applied }
 
       it 'does not emit the touched model\'s update event' do
-        expect { cms_page.update(title: 'Homepage #1') }.not_to emit_webhook_event('store.update')
+        expect { taxonomy.update(name: 'Updated Taxonomy') }.not_to emit_webhook_event('store.update')
       end
     end
 

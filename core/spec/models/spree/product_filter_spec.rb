@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spree/core/product_filters'
 
 describe 'product filters', type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
 
   # Regression test for #1709
   context 'finds products filtered by brand' do

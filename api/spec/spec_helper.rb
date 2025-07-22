@@ -11,7 +11,9 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/lib/spree/api/testing_support/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/api" if ENV['COVERAGE_DIR']
+    coverage_dir "#{ENV['COVERAGE_DIR']}/api_"+ ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
+    command_name "test_" + ENV.fetch('CIRCLE_NODE_INDEX', 0)
+
   end
 end
 
@@ -26,6 +28,7 @@ rescue LoadError
 end
 
 require 'rspec/rails'
+require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 require 'i18n/tasks'
@@ -35,13 +38,13 @@ require 'i18n/tasks'
 Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
 
 require 'spree/testing_support/factories'
+require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
 require 'spree/testing_support/next_instance_of'
 require 'spree/testing_support/rspec_retry_config'
 
-require 'spree/api/testing_support/caching'
-require 'spree/api/testing_support/jobs'
 require 'spree/api/testing_support/serializers'
 require 'spree/api/testing_support/spree_webhooks'
 require 'spree/api/testing_support/matchers/webhooks'
@@ -74,16 +77,26 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
 
-  config.before do
-    ENV['DISABLE_SPREE_WEBHOOKS'] = 'true'
+  config.before(:suite) do
+    # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
-    Rails.cache.clear
+  config.before do
+    Spree::Webhooks.disabled = true
     reset_spree_preferences
 
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA', states_required: true)
-    create(:store, default: true, default_country: country, default_currency: 'USD')
+    # Request specs to paths with ?locale=xx don't reset the locale afterwards
+    # Some tests assume that the current locale is :en, so we ensure it here
+    I18n.locale = :en
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.order = :random
-  Kernel.srand config.seed
 end

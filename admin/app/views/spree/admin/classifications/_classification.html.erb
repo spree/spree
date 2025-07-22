@@ -1,0 +1,38 @@
+<div class="row mx-0 hover-light rounded" id="<%= spree_dom_id(classification) %>" data-sortable-update-url="<%= spree.admin_taxon_classification_path(classification.taxon_id, classification, format: :turbo_stream) %>">
+  <% if classification.taxon.manual_sort_order? %>
+    <div class="col-1 text-center align-self-center">
+      <span class="rounded p-2 hover-gray with-tip move-handle cursor-grab">
+        <%= icon('grip-vertical', class: 'mr-0') %>
+      </span>
+    </div>
+  <% end %>
+
+  <div class="<%= classification.taxon.manual_sort_order? ? 'col-6' : 'col-7' %>">
+    <%= link_to spree.edit_admin_product_path(classification.product), data: { 'turbo-frame': '_top' }, class: "d-flex align-items-center text-dark hover-none #{classification.taxon.manual_sort_order? ? 'py-3' : 'p-3'}" do  %>
+      <%= render 'spree/admin/shared/product_image', object: classification.product %>
+      <span class="ml-3">
+        <%= classification.product.name %>
+      </span>
+    <% end %>
+  </div>
+  <div class="col-2 text-center align-self-center">
+    <%= product_status(classification.product) %>
+  </div>
+  <div class="col-2 text-center align-self-center">
+    <% if classification.product.in_stock? %>
+      <span class="badge badge-success">
+        <%= Spree.t(:in_stock) %>
+      </span>
+    <% else %>
+      <span class="badge badge-pending">
+        <%= Spree.t(:out_of_stock) %>
+      </span>
+    <% end %>
+  </div>
+
+  <div class="col-1 text-center align-self-center">
+    <%= button_to spree.admin_taxon_classification_path(classification.taxon_id, classification), class: 'btn btn-danger btn-sm with-tip', method: :delete, data: { turbo_confirm: Spree.t(:are_you_sure) } do %>
+      <%= icon 'trash', class: 'mr-0', style: 'pointer-events: none' %>
+    <% end if classification.taxon.manual? && can?(:delete, classification) %>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 module Spree
-  class Asset < Spree::Base
+  class Asset < Spree.base_class
     module Support
       module ActiveStorage
         extend ActiveSupport::Concern

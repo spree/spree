@@ -1,0 +1,36 @@
+<% edit_link =
+  if can?(:edit, return_authorization)
+    spree.edit_admin_order_return_authorization_path(
+      @order,
+      return_authorization,
+    )
+  else
+    spree.admin_order_return_authorization_path(@order, return_authorization)
+  end %>
+
+<tr
+  id="<%= spree_dom_id(return_authorization) %>"
+  data-controller="row-link"
+  class="cursor-pointer"
+>
+  <td data-action="click->row-link#openLink" class="font-weight-bolder">
+    <%= link_to return_authorization.number, edit_link %>
+  </td>
+  <td data-action="click->row-link#openLink">
+    <small class="badge badge-<%= return_authorization.state %>">
+      <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
+    </small>
+  </td>
+  <td data-action="click->row-link#openLink"><%= return_authorization.display_pre_tax_total.to_html %></td>
+  <td data-action="click->row-link#openLink"><%= local_time(return_authorization.created_at) %></td>
+  <td data-action="click->row-link#openLink" class="text-right">
+    <%= link_to_edit(
+      return_authorization,
+      no_text: true,
+      data: {
+        row_link_target: :link,
+      },
+      url: edit_link,
+    ) %>
+  </td>
+</tr>

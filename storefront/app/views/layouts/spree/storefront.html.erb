@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <%= render 'spree/shared/head' %>
+    <%= render 'spree/shared/custom_head' %>
+    <%= render 'spree/shared/json_ld' %>
+    <%= current_store.storefront_custom_code_head&.html_safe %>
+  </head>
+  <body class="theme-<%= current_theme.class.name.demodulize.underscore %> bg-background w-full text-text <%= current_page&.slug %>-page <% if current_theme_preview.present? %>inside-page-builder<% end %>">
+    <%= render_storefront_partials(:body_start_partials) %>
+    <%= current_store.storefront_custom_code_body_start&.html_safe %>
+
+    <% if theme_layout_sections.empty? %>
+      <%= render template: 'errors/500' %>
+    <% else %>
+      <%= render_section(theme_layout_sections['announcement_bar']) if theme_layout_sections['announcement_bar'].present? %>
+      <%= render_section(theme_layout_sections['header']) if theme_layout_sections['header'].present? %>
+
+      <%= turbo_frame_tag :flash do %>
+        <%= render('spree/shared/flashes') %>
+      <% end %>
+
+      <%= yield %>
+
+      <%= render_section(theme_layout_sections['newsletter']) if  theme_layout_sections['newsletter'].present? %>
+      <%= render_section(theme_layout_sections['footer']) if theme_layout_sections['footer'].present? %>
+    <% end %>
+
+    <%= current_store.storefront_custom_code_body_end&.html_safe %>
+    <%= render_storefront_partials(:body_end_partials) %>
+  </body>
+</html>
+
+<% unless Rails.env.test? %>
+  <template id="csrf_meta_tags">
+    <%= csrf_meta_tags %>
+  </template>
+<% end %>

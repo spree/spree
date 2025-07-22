@@ -1,10 +1,11 @@
 module Spree
-  class Reimbursement < Spree::Base
+  class Reimbursement < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
-    include NumberIdentifier
-    if defined?(Spree::Webhooks)
+    include Spree::NumberIdentifier
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
+    include Spree::Reimbursement::Emails
 
     class IncompleteReimbursementError < StandardError; end
 
@@ -18,6 +19,8 @@ module Spree
       has_many :credits, class_name: 'Spree::Reimbursement::Credit'
       has_many :return_items
     end
+
+    belongs_to :performed_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     validates :order, presence: true
     validate :validate_return_items_belong_to_same_order
@@ -103,10 +106,10 @@ module Spree
       total - paid_amount
     end
 
-    def perform!
+    def perform!(performer = nil)
       reimbursement_tax_calculator.call(self)
       reload
-      update!(total: calculated_total)
+      update!(total: calculated_total, performed_by: performer)
 
       reimbursement_performer.perform(self)
 
@@ -139,12 +142,6 @@ module Spree
       if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }
         errors.add(:base, :return_items_order_id_does_not_match)
       end
-    end
-
-    def send_reimbursement_email
-      # you can overwrite this method in your application / extension to send out the confirmation email
-      # or use `spree_emails` gem
-      # YourEmailVendor.deliver_reimbursement_email(id) # `id` = ID of the Reimbursement being sent, you can also pass the entire object using `self`
     end
 
     # If there are multiple different reimbursement types for a single

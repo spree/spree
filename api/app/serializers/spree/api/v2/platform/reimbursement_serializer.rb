@@ -7,6 +7,7 @@ module Spree
 
           belongs_to :order
           belongs_to :customer_return
+          belongs_to :performed_by, serializer: Spree::Api::V2::Platform::AdminUserSerializer
 
           has_many :refunds
           has_many :reimbursement_credits, object_method_name: :credits, id_method_name: :credit_ids

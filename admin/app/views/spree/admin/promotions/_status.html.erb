@@ -1,0 +1,16 @@
+<% if promotion.active? %>
+  <span class="badge badge-success">
+    <%= icon('check', class: 'mr-1') %>
+    <%= Spree.t(:active) %>
+  </span>
+<% elsif promotion.expired? %>
+  <span class="badge badge-danger">
+    <%= icon('clock-x', class: 'mr-1') %>
+    <%= Spree.t(:expired) %>
+  </span>
+<% else %>
+  <span class="badge badge-light">
+    <%= icon('clock-pause', class: 'mr-1') %>
+    <%= Spree.t(:inactive) %>
+  </span>
+<% end %>

@@ -1,6 +1,6 @@
 module Spree
-  class WishedItem < Spree::Base
-    if defined?(Spree::Webhooks)
+  class WishedItem < Spree.base_class
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 

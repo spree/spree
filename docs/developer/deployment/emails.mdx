@@ -1,0 +1,39 @@
+---
+title: Sending out Emails
+sidebarTitle: Emails
+icon: "envelope"
+description: Learn how to send transactional emails from your Spree application.
+---
+
+Spree uses [ActionMailer](https://guides.rubyonrails.org/action_mailer_basics.html) to send transactional emails (eg. order confirmation, password reset, etc.) under the hood. You can use any SMTP server to send emails from your application. For production use we recommend using a service like [SendGrid](https://sendgrid.com/).
+
+## Configuring SendGrid
+
+Spree Starter comes with SendGrid pre-configured out of the box and you will need to set the following environment variables:
+
+* `SENDGRID_API_KEY` - Your SendGrid API key. Can be found in the [SendGrid dashboard](https://app.sendgrid.com/settings/api_keys).
+* `SENDGRID_DOMAIN` - The domain you want to use for sending emails that was verified in SendGrid, eg. `mystore.com`.
+
+If you're not using Spree Starter you will need to add these code in your `config/environments/production.rb` file:
+
+```ruby
+  if ENV['SENDGRID_API_KEY'].present?
+    ActionMailer::Base.smtp_settings = {
+      user_name: 'apikey', # This is the string literal 'apikey', NOT the ID of your API key
+      password: ENV['SENDGRID_API_KEY'], # This is the secret sendgrid API key which was issued during API key creation
+      domain: ENV.fetch('SENDGRID_DOMAIN', Rails.application.routes.default_url_options[:host]),
+      address: 'smtp.sendgrid.net',
+      port: 587,
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
+  end
+```
+
+<Warning>
+Remember to verify the email address in SendGrid, you intend to use for sending emails, otherwise emails will be rejected.
+
+[Read more about SendGrid sender verification](https://www.twilio.com/docs/sendgrid/ui/sending-email/sender-verification)
+</Warning>
+
+That's it! You can now send emails from your application.

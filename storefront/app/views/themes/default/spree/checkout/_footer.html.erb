@@ -1,0 +1,10 @@
+<% cache spree_base_cache_scope.call(current_store) do %>
+  <div class="flex flex-col gap-4 text-sm">
+    <ul class="flex justify-center flex-wrap gap-4">
+      <%= link_to Spree.t(:privacy_policy), "/policies/privacy_policy", target: '_blank' if legal_policy('privacy_policy').present? %>
+      <%= link_to Spree.t(:terms_of_service), "/policies/terms_of_service", target: '_blank' if legal_policy('terms_of_service').present? %>
+      <%= link_to Spree.t(:returns_policy), "/policies/returns_policy", target: '_blank' if legal_policy('returns_policy').present? %>
+      <%= link_to Spree.t(:shipping_policy), "/policies/shipping_policy", target: '_blank' if legal_policy('shipping_policy').present? %>
+    </ul>
+  </div>
+<% end %>

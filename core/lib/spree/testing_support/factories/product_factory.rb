@@ -10,18 +10,13 @@ FactoryBot.define do
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
     status            { 'active' }
+    stores            { [Spree::Store.default] }
 
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in
-    before(:create) do |product|
+    before(:create) do |_product|
       create(:stock_location) unless Spree::StockLocation.any?
-
-      if product.stores.empty?
-        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store)
-
-        product.stores << [store]
-      end
+      create(:store, default: true) unless Spree::Store.any?
     end
     after(:create) do |product|
       Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) unless stock_location.stock_items.exists?(variant: product.master) }
@@ -51,6 +46,17 @@ FactoryBot.define do
 
       factory :product_with_option_types do
         after(:create) { |product| create(:product_option_type, product: product) }
+      end
+      factory :product_with_properties do
+        after(:create) do |product|
+          create(:property, :brand, id: 10)
+          create(:product_property, product: product, property_id: 10, value: 'Epsilon')
+        end
+      end
+
+      factory :digital_product do
+        track_inventory { false }
+        shipping_category { |r| Spree::ShippingCategory.digital || r.association(:digital_shipping_category) }
       end
     end
   end

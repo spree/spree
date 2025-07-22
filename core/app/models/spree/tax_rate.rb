@@ -1,11 +1,11 @@
 module Spree
-  class TaxRate < Spree::Base
+  class TaxRate < Spree.base_class
     acts_as_paranoid
 
     include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
     include Spree::Metadata
-    if defined?(Spree::Webhooks)
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
@@ -115,11 +115,13 @@ module Spree
 
     def amount_for_label
       return '' unless show_rate_in_label?
+      return '' if amount.zero?
 
       ' ' + ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
         amount * 100,
         locale: I18n.locale,
-        strip_insignificant_zeros: true
+        strip_insignificant_zeros: true,
+        precision: 2
       )
     end
   end

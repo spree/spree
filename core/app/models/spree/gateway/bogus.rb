@@ -10,9 +10,14 @@ module Spree
     attr_accessor :test
 
     preference :dummy_key, :string, default: 'PUBLICKEY123'
+    preference :dummy_secret_key, :password, default: 'SECRETKEY123'
 
     def provider_class
       self.class
+    end
+
+    def show_in_admin?
+      false
     end
 
     def create_profile(payment)

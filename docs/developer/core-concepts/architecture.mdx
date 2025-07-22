@@ -1,0 +1,43 @@
+---
+title: Architecture
+description: Learn about the Spree architecture
+icon: "code"
+---
+
+Spree is a modular full-stack platform that can be used to build a wide range of e-commerce applications. It includes:
+
+<CardGroup>
+  <Card title="Core" icon="code">
+    <p>Core is the foundation of Spree, such as models, services, and the backend logic necessary to run an e-commerce business.</p>
+  </Card>
+  <Card title="Admin Dashboard" icon="gauge">
+    <p>The Admin Dashboard is the control center for your Spree store. It allows you to manage products, orders, customers, and more.</p>
+  </Card>
+  <Card title="Storefront" icon="store">
+    <p>The Storefront is the public-facing part of your Spree store where customers can browse products, add them to their cart, and complete purchases.</p>
+  </Card>
+  <Card title="Emails" icon="envelope">
+    <p>Spree includes built-in support for sending transactional emails to customers, such as order confirmations and shipping notifications.</p>
+  </Card>
+  <Card title="Storefront API" icon="cart-shopping" href="/api-reference/storefront">
+    <p>The Storefront API allows developers to interact with the Spree store programmatically, enabling custom front-end experiences and integrations.</p>
+  </Card>
+  <Card title="Platform API" icon="server" href="/api-reference/platform">
+    <p>The Platform API provides a comprehensive set of endpoints for managing all aspects of the Spree store, including products, orders, and customers.</p>
+  </Card>
+  <Card title="Webhooks" icon="webhook">
+    <p>Webhooks allow your Spree store to send real-time notifications to external systems when certain events occur, such as order creation or payment completion.</p>
+  </Card>
+</CardGroup>
+
+### Code Conventions
+
+Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. As an example let's look at the Product model.
+
+* the model itself is located in [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) and is named `Spree::Product`
+* the controller is located in [app/controllers/spree/products_controller.rb](https://github.com/spree/spree/blob/main/storefront/app/controllers/spree/products_controller.rb) and is named `Spree::ProductsController`
+* views for that controller are located in [app/views/spree/products](https://github.com/spree/spree/tree/main/storefront/app/views/spree/products) directory
+
+<Info>
+All Spree code is prefixed with `Spree` namespace. Thanks to this convention, it's easy to identify Spree code in a Rails application and we will not have any conflicts with your application code or other libraries.
+</Info>

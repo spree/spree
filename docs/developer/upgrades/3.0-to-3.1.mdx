@@ -1,0 +1,47 @@
+---
+title: 3.0 to 3.1
+section: upgrades
+order: 9
+description: 'This guide covers upgrading a 3.0 Spree store, to a 3.1 store'
+---
+
+## Update gems
+
+```bash
+bundle update
+```
+
+## Copy and run migrations
+
+Copy over the migrations from Spree and any other engine and run them using these commands:
+
+```bash
+rake railties:install:migrations
+rake db:migrate
+```
+
+## Additional information
+
+### Make sure to v1 namespace custom rabl templates & overrides.
+
+If your rabl templates reference others with extend you'll need to add the v1 namespace.
+
+For example:
+
+```ruby
+extends 'spree/api/zones/show'
+```
+
+Becomes:
+
+```ruby
+extends 'spree/api/v1/zones/show'
+```
+
+### Remove `Spree::Config.check_for_spree_alerts`
+
+If you were disabling the alert checks you'll now want to remove this preference from `config/initializers/spree.rb` as it's no longer used.
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [3.1.0 Release Notes](https://github.com/spree/spree/releases/tag/v3.1.0).

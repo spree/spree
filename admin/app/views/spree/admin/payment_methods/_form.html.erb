@@ -1,0 +1,64 @@
+<% if @object.respond_to?(:configuration_guide_partial_name) %>
+  <%= render "spree/admin/payment_methods/configuration_guides/#{@object.configuration_guide_partial_name}", f: f %>
+<% end %>
+
+<% if !preference_fields(@object, f).empty? || @object.respond_to?(:custom_form_fields_partial_name) %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t(:payment_provider_settings) %></h5>
+    </div>
+    <div class="card-body">
+      <%= preference_fields(@object, f) unless preference_fields(@object, f).empty? %>
+
+      <% if @object.respond_to?(:custom_form_fields_partial_name) %>
+        <%= render "spree/admin/payment_methods/custom_form_fields/#{@object.custom_form_fields_partial_name}", f: f %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <%= label_tag :payment_method_name, Spree.t(:name) %>
+      <%= text_field :payment_method, :name, class: 'form-control' %>
+      <span class="text-muted form-text mt-2">
+        This name will be used to identify the payment method on the storefront
+      </span>
+
+      <%= error_message_on :payment_method, :name %>
+    </div>
+
+    <% if can?(:manage, Spree::Store) && available_stores.count > 1 %>
+      <div class="form-group">
+        <%= label_tag :payment_method_stores, Spree.t(:stores) %>
+        <%= f.collection_check_boxes :store_ids, available_stores, :id, :name do |b| %>
+          <div class="custom-control custom-checkbox mb-1">
+            <%= b.check_box(class: 'custom-control-input') %>
+            <%= b.label(class: 'custom-control-label') %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= label_tag :payment_method_display_on, Spree.t(:display) %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select' } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %>
+      <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes).to_s, true], [Spree.t(:say_no).to_s, false]], {}, {class: 'custom-select'}) %>
+    </div>
+
+    <div class="form-group">
+      <label><%= Spree.t(:active) %></label>
+      <div class="custom-control custom-switch">
+        <%= f.check_box :active, class: 'custom-control-input' %>
+        <%= f.label :active, '&nbsp;'.html_safe, class: 'custom-control-label' %>
+      </div>
+    </div>
+  </div>
+</div>

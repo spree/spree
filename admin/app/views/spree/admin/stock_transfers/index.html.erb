@@ -1,0 +1,41 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:stock) %>
+<% end %>
+<% content_for :page_tabs do %>
+  <%= render "spree/admin/shared/stock_nav" %>
+<% end %>
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:stock_transfers_actions_partials) %>
+  <%= if can?(:create, Spree::StockTransfer)
+    link_to_with_icon 'plus', Spree.t(:new_stock_transfer), new_object_url, class: "btn btn-primary"
+  end %>
+<% end %>
+
+<%= render_admin_partials(:stock_transfers_header_partials) %>
+
+<div class="card-lg">
+  <%= render "filters" %>
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table" id="listing_products">
+        <thead>
+          <tr>
+            <th scope="col"><%= Spree.t(:number) %></th>
+            <th scope="col"><%= Spree.t(:reference) %></th>
+            <th scope="col"><%= Spree.t(:source) %></th>
+            <th scope="col"><%= Spree.t(:destination) %></th>
+            <th scope="col"><%= Spree.t(:variants_count) %></th>
+            <th scope="col"><%= Spree.t(:created_at) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render collection: @collection, partial: 'stock_transfer' %>
+        </tbody>
+      </table>
+    </div>
+    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

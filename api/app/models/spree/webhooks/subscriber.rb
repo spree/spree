@@ -5,10 +5,16 @@ module Spree
         include Spree::VendorConcern
       end
 
+      if Rails::VERSION::STRING >= '7.1.0'
+        has_secure_token :secret_key, on: :save
+      else
+        has_secure_token :secret_key
+      end
+
+
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
-
       validate :check_uri_path
 
       self.whitelisted_ransackable_attributes = %w[active subscriptions url]
@@ -19,6 +25,10 @@ module Spree
 
       before_save :parse_subscriptions
 
+      def latest_event_at
+        events.order(:created_at).last&.created_at
+      end
+
       def self.with_urls_for(event)
         where(
           case ActiveRecord::Base.connection.adapter_name
@@ -26,16 +36,22 @@ module Spree
             ["('*' MEMBER OF(subscriptions) OR ? MEMBER OF(subscriptions))", event]
           when 'PostgreSQL'
             ["subscriptions @> '[\"*\"]' OR subscriptions @> ?", [event].to_json]
+          when 'SQLite'
+            ["subscriptions LIKE '%\"*\"%' OR subscriptions LIKE ?", "%#{event}%"]
           end
         )
       end
 
       def self.supported_events
-        Spree::Base.descendants.
-          select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
-          to_h do |model|
-          model_name = model.name.demodulize.underscore.to_sym
-          [model_name, model.supported_webhook_events]
+        @supported_events ||= begin
+          Rails.application.eager_load! if Rails.env.development?
+          Spree::Base.descendants.
+            select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
+            sort_by { |model| model.name.demodulize.underscore }.
+            to_h do |model|
+              model_name = model.name.demodulize.underscore.to_sym
+              [model_name, model.supported_webhook_events]
+            end
         end
       end
 

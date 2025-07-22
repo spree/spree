@@ -32,15 +32,16 @@ module Spree
       end
 
       def self.property_conditions(property)
-        properties = Property.table_name
+        properties_table = Property.table_name
+
         case property
-        when Property then { "#{properties}.id" => property.id }
-        when Integer  then { "#{properties}.id" => property }
+        when Property then { "#{properties_table}.id" => property.id }
+        when Integer  then { "#{properties_table}.id" => property }
         else
           if Property.column_for_attribute('id').type == :uuid
-            ["#{properties.name} = ? OR #{properties.id} = ?", property, property]
+            ["#{properties_table}.name = ? OR #{properties_table}.id = ?", property, property]
           else
-            { "#{properties}.name" => property }
+            { "#{properties_table}.name" => property }
           end
         end
       end
@@ -48,11 +49,11 @@ module Spree
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
-        order("#{price_table_name}.amount ASC")
+        order(price_table_name => { amount: :asc })
       end
 
       add_search_scope :descend_by_master_price do
-        order("#{price_table_name}.amount DESC")
+        order(price_table_name => { amount: :desc })
       end
 
       add_search_scope :price_between do |low, high|
@@ -60,11 +61,11 @@ module Spree
       end
 
       add_search_scope :master_price_lte do |price|
-        where("#{price_table_name}.amount <= ?", price)
+        where(Price.table_name => { amount: ..price })
       end
 
       add_search_scope :master_price_gte do |price|
-        where("#{price_table_name}.amount >= ?", price)
+        where(Price.table_name => { amount: price.. })
       end
 
       add_search_scope :in_stock do
@@ -132,9 +133,17 @@ module Spree
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
       add_search_scope :with_property_value do |property, value|
-        joins(:properties).
-          where("#{ProductProperty.table_name}.value = ?", value).
-          where(property_conditions(property))
+        if Spree.use_translations?
+          joins(:properties).
+            join_translation_table(Property).
+            join_translation_table(ProductProperty).
+            where(ProductProperty.translation_table_alias => { value: value }).
+            where(property_conditions(property))
+        else
+          joins(:properties).
+            where(ProductProperty.table_name => { value: value }).
+            where(property_conditions(property))
+        end
       end
 
       add_search_scope :with_property_values do |property_filter_param, property_values|
@@ -151,7 +160,7 @@ module Spree
         elsif OptionType.column_for_attribute('id').type == :uuid
           joins(:option_types).where(spree_option_types: { name: option }).or(Product.joins(:option_types).where(spree_option_types: { id: option }))
         else
-          joins(:option_types).where(spree_option_types: { name: option })
+          joins(:option_types).where(OptionType.table_name => { name: option })
         end
       end
 
@@ -163,6 +172,7 @@ module Spree
                            if OptionType.column_for_attribute('id').type == :uuid
                              OptionType.where(id: option).or(OptionType.where(name: option))&.first&.id
                            else
+                             OptionType.where(name: option)&.first&.id
                              OptionType.where(name: option)&.first&.id
                            end
                          end
@@ -236,7 +246,7 @@ module Spree
 
       def self.not_discontinued(only_not_discontinued = true)
         if only_not_discontinued != '0' && only_not_discontinued
-          where.not(status: 'archived')
+          where(discontinue_on: [nil, Time.current..])
         else
           all
         end
@@ -253,11 +263,11 @@ module Spree
 
       # Can't use add_search_scope for this as it needs a default argument
       def self.available(available_on = nil, currency = nil)
-        if available_on
-          scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
-        else
-          scope = where(status: 'active')
-        end
+        scope = if available_on
+                  not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+                else
+                  not_discontinued.where(status: 'active')
+                end
 
         unless Spree::Config.show_products_without_price
           currency ||= Spree::Store.default.default_currency
@@ -296,18 +306,10 @@ module Spree
       if defined?(PgSearch)
         include PgSearch::Model
 
-        if defined?(SpreeGlobalize)
-          pg_search_scope :search_by_name, associated_against: { translations: :name }, using: { tsearch: { any_word: true, prefix: true } }
-        else
-          pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
-        end
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       else
         def self.search_by_name(query)
-          if defined?(SpreeGlobalize)
-            joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
-          else
-            where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
-          end
+          i18n { name.lower.matches("%#{query.downcase}%") }
         end
       end
       search_scopes << :search_by_name
@@ -339,7 +341,10 @@ module Spree
           case t
           when ApplicationRecord then t
           else
-            Taxon.where(Taxon.arel_table[:name].eq(t)).or(Taxon.where(Taxon.arel_table[:id].eq(t))).or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
+            Taxon.where(name: t).
+              or(Taxon.where(Taxon.arel_table[:id].eq(t))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("%/#{t}/"))).
+              or(Taxon.where(Taxon.arel_table[:permalink].matches("#{t}/"))).first
           end
         end.compact.flatten.uniq
       end

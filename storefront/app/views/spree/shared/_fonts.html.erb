@@ -1,0 +1,14 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<% cache_unless page_builder_enabled?, current_theme do %>
+  <%= google_fonts_link_tag %>
+
+  <style type="text/css">
+    <%= font_styles %>
+  </style>
+
+  <% if current_theme_or_preview.preferred_custom_font_code.present? %>
+    <%= raw(current_theme_or_preview.preferred_custom_font_code) %>
+  <% end %>
+<% end %>

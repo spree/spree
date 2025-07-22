@@ -3,6 +3,69 @@ require 'spec_helper'
 describe Spree::Address, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'before_validation :remove_emoji_and_normalize' do
+    let(:address) do
+      create(:address,
+        firstname: 'Jan 👋',
+        lastname: 'Масник',
+        phone: '1234567😃89',
+        alternative_phone: '😊 234567890',
+        company: 'общество',
+        address1: 'Default Street 123🌴',
+        address2: '🎂Apartment 6',
+        city: 'Варшава',
+        zipcode: '35005 👋 '
+      )
+    end
+
+    it 'normalizes the address and removes emojis' do
+      expect(address.firstname).to eq('Jan')
+      expect(address.lastname).to eq('Masnik')
+      expect(address.phone).to eq('123456789')
+      expect(address.alternative_phone).to eq('234567890')
+      expect(address.company).to eq('obshchestvo')
+      expect(address.address1).to eq('Default Street 123')
+      expect(address.address2).to eq('Apartment 6')
+      expect(address.city).to eq('Varshava')
+    end
+  end
+
+  describe 'after_commit :async_geocode' do
+    let(:address) { build(:address) }
+
+
+    it 'geocodes the address in the background' do
+      expect { address.save! }.
+        to have_enqueued_job(Spree::Addresses::GeocodeAddressJob).
+        on_queue(Spree.queues.addresses).
+        exactly(:once)
+
+      job = Spree::Addresses::GeocodeAddressJob.queue_adapter.enqueued_jobs.last
+      expect(job['arguments']).to contain_exactly(address.id)
+    end
+
+    context "when geocoding data didn't change" do
+      before { address.save! }
+
+      it 'skips geocoding' do
+        expect { address.update!(company: 'New Test Company') }.to_not have_enqueued_job(Spree::Addresses::GeocodeAddressJob)
+      end
+    end
+  end
+
+  context 'default values' do
+    context 'with user' do
+      let(:user) { create(:user, first_name: 'John', last_name: 'Snow') }
+      let(:address) { Spree::Address.new(user: user) }
+
+      it 'sets user_id and first/last name from user' do
+        expect(address.user_id).to eq(user.id)
+        expect(address.firstname).to eq('John')
+        expect(address.lastname).to eq('Snow')
+      end
+    end
+  end
+
   describe 'clone' do
     it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
       state = create(:state)
@@ -48,7 +111,7 @@ describe Spree::Address, type: :model do
 
   describe 'delegated method' do
     context 'Country' do
-      let(:country) { Spree::Store.default.default_country }
+      let(:country) { @default_store.default_country }
       let(:address) { create(:address, country: country) }
 
       context '#country_name' do
@@ -161,10 +224,20 @@ describe Spree::Address, type: :model do
       expect(address).to be_valid
     end
 
-    it 'requires phone' do
+    it 'does not require phone' do
+      Spree::Config.set address_requires_state: false
       address.phone = ''
-      address.valid?
-      expect(address.errors['phone']).to eq(["can't be blank"])
+      expect(address).to be_valid
+    end
+
+    context 'when phone is required' do
+      before { Spree::Config.set address_requires_phone: true }
+
+      it 'validates presence of the phone' do
+        address.phone = ''
+        address.valid?
+        expect(address.errors['phone']).to eq(["can't be blank"])
+      end
     end
 
     it 'requires zipcode' do
@@ -200,7 +273,21 @@ describe Spree::Address, type: :model do
         expect(address.errors['zipcode']).not_to include('is invalid')
       end
 
+      it 'accepts an unformatted zip code' do
+        allow(address.country).to receive(:iso).and_return('GB')
+        address.zipcode = '	AL38QE'
+        address.valid?
+        expect(address.errors['zipcode']).not_to include('is invalid')
+      end
+
       context 'does not validate' do
+        it 'is for quick checkout' do
+          address.zipcode = 'abc'
+          address.quick_checkout = true
+          address.valid?
+          expect(address.errors['zipcode']).not_to include('is invalid')
+        end
+
         it 'does not have a country' do
           address.country = nil
           address.valid?
@@ -260,41 +347,14 @@ describe Spree::Address, type: :model do
     end
   end
 
-  xcontext '.default' do
-    context 'no user given' do
-      before do
-        @default_country_id = Spree::Config[:default_country_id]
-        new_country = create(:country)
-        Spree::Config[:default_country_id] = new_country.id
-      end
+  describe 'after create' do
+    context 'when user is assigned and it has default name' do
+      it 'should assign address name to the user' do
+        user = create(:user, first_name: nil, last_name: nil)
+        create(:address, user: user, firstname: 'John', lastname: 'Doe')
 
-      after do
-        Spree::Config[:default_country_id] = @default_country_id
-      end
-
-      it 'sets up a new record with Spree::Config[:default_country_id]' do
-        expect(Spree::Address.default.country).to eq(Spree::Country.find(Spree::Config[:default_country_id]))
-      end
-
-      # Regression test for #1142
-      it 'uses the first available country if :default_country_id is set to an invalid value' do
-        Spree::Config[:default_country_id] = '0'
-        expect(Spree::Address.default.country).to eq(Spree::Country.first)
-      end
-    end
-
-    context 'user given' do
-      let(:bill_address) { Spree::Address.new(phone: Time.current.to_i) }
-      let(:ship_address) { double('ShipAddress') }
-      let(:user) { double('User', bill_address: bill_address, ship_address: ship_address) }
-
-      it 'returns a copy of that user bill address' do
-        expect(Spree::Address.default(user).phone).to eq bill_address.phone
-      end
-
-      it 'falls back to build default when user has no address' do
-        allow(user).to receive_messages(bill_address: nil)
-        expect(Spree::Address.default(user)).to eq Spree::Address.build_default
+        expect(user.reload.first_name).to eq 'John'
+        expect(user.reload.last_name).to eq 'Doe'
       end
     end
   end
@@ -354,7 +414,7 @@ describe Spree::Address, type: :model do
   context 'defines require_phone? helper method' do
     let(:address) { create(:address) }
 
-    specify { expect(address.instance_eval { require_phone? }).to be true }
+    specify { expect(address.instance_eval { require_phone? }).to be(false) }
   end
 
   context '#clear_state' do
@@ -470,17 +530,13 @@ describe Spree::Address, type: :model do
     end
   end
 
-  describe '.build_default' do
-    let(:_address) { described_class.build_default }
-
-    it { expect(_address.country).to eq(Spree::Country.default) }
-  end
-
   context 'editable & destroy' do
     subject(:destroy_address) { address.destroy }
 
     let(:address) { create(:address, user: user) }
     let(:address2) { create(:address, user: user) }
+    let(:address3) { create(:address, user: user) }
+
     let(:order) { create(:completed_order_with_totals) }
     let(:user) { create(:user) }
 
@@ -506,6 +562,10 @@ describe Spree::Address, type: :model do
       expect(address2).to_not be_can_be_deleted
     end
 
+    it 'can be deleted when there is an incomplete associated order' do
+      expect(address3).to be_can_be_deleted
+    end
+
     it 'is destroyed without saving used' do
       address.destroy
       expect(Spree::Address.where(['id = (?)', address.id])).to be_empty
@@ -517,31 +577,105 @@ describe Spree::Address, type: :model do
       expect(Spree::Address.not_deleted.where(['id = (?)', address2.id])).to be_empty
     end
 
-    context 'when address can not be deleted' do
-      let!(:order) { create(:completed_order_with_totals, bill_address: address, ship_address: address) }
+    context 'when saving user raises error' do
+      before do
+        user.update(ship_address: address2, bill_address: address2)
+        user.reload
+        allow_any_instance_of(Spree::LegacyUser).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new)
+      end
 
-      context 'when address is default user address' do
-        before { user.update(bill_address: address, ship_address: address) }
+      it 'does not set deleted_at attribute for address' do
+        expect { address2.destroy }.to raise_error(ActiveRecord::RecordInvalid)
+        expect(address2.reload.deleted_at).to be_nil
+      end
+    end
 
-        context 'when user have many addresses' do
+    describe '#assign_new_default_address_to_user' do
+      shared_examples 'default address' do
+        context 'when 2 addresses are available' do
+          let!(:address2_quick_checkout) { create(:address, user: user, quick_checkout: true) }
+          let!(:address3) { create(:address, user: user) }
+
           it 'assigns last available address as default to bill and ship address' do
+            user.update!(bill_address: address, ship_address: address)
             destroy_address
+            expect(user.bill_address).to eq(address3)
+            expect(user.ship_address).to eq(address3)
 
-            expect(user.reload.bill_address_id).to eq address2.id
-            expect(user.reload.ship_address_id).to eq address2.id
+            address3.destroy
+
+            expect(user.bill_address).to eq(address2)
+            expect(user.ship_address).to eq(address2)
           end
         end
 
-        context 'when deleted address was the only one' do
-          before { address2.destroy }
+        context 'when the only address left is invalid' do
+          before do
+            address2.update_columns(address1: nil, city: nil, zipcode: nil, phone: nil)
+            user.update_columns(bill_address_id: address.id, ship_address_id: address.id)
+          end
 
-          it 'does not assign any address' do
-            destroy_address
-
-            expect(user.reload.bill_address_id).to be nil
-            expect(user.reload.ship_address_id).to be nil
+          it 'does not raise errors and sets addresses to nil' do
+            expect { destroy_address }.not_to raise_error
+            expect(user.bill_address).to be_nil
+            expect(user.ship_address).to be_nil
           end
         end
+
+        context 'when the only address left is soft-deleted' do
+          before do
+            address2.update_columns(deleted_at: Time.current)
+          end
+
+          it 'does not raise errors and sets addresses to nil' do
+            expect { destroy_address }.not_to raise_error
+            expect(user.bill_address).to be_nil
+            expect(user.ship_address).to be_nil
+          end
+        end
+
+        context 'when deleted address was not assigned to the user' do
+          before { address.update(user: nil) }
+
+          it 'does not touch user' do
+            expect{ destroy_address }.not_to change{ user.reload.updated_at }
+          end
+        end
+
+        context 'when deleted address was not default' do
+          before do
+            user.update_columns(bill_address_id: address2.id, ship_address_id: address2.id)
+            user.reload
+          end
+
+          it 'does not change user bill address' do
+            expect{ destroy_address }.not_to change{ user.reload.bill_address_id }
+          end
+
+          it 'does not change user ship address' do
+            expect{ destroy_address }.not_to change{ user.reload.ship_address_id }
+          end
+        end
+      end
+
+      context 'when address is deleted' do
+        it 'is deleted' do
+          destroy_address
+          expect(Spree::Address.find_by(id: address.id)).to be_nil
+        end
+
+        it_behaves_like 'default address'
+      end
+
+      context 'when address is soft deleted' do
+        let!(:order) { create(:completed_order_with_totals, bill_address: address, ship_address: address) }
+
+        it 'is soft deleted' do
+          destroy_address
+          expect(Spree::Address.find_by(id: address.id).deleted_at).to be_present
+        end
+
+        it_behaves_like 'default address'
       end
     end
   end
@@ -563,6 +697,14 @@ describe Spree::Address, type: :model do
 
         expect(address.to_s).not_to include(dangerous_string)
       end
+    end
+  end
+
+  context 'address validators' do
+    it 'runs through all configured validators during validation' do
+      address = create(:address)
+      expect_any_instance_of(Spree::Addresses::PhoneValidator).to receive(:validate).with(address)
+      address.valid?
     end
   end
 end

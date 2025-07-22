@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_reimbursement_types_url %>
+  <%= @reimbursement_type.name %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6 offset-lg-3">
+    <%= form_with model: @reimbursement_type, :url => object_url, :method => :put, scope: :reimbursement_type do |reimbursement_form| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @reimbursement_type } %>
+      <%= render partial: 'form', locals: { f: reimbursement_form } %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: reimbursement_form %>
+    <% end %>
+  </div>
+</div>

@@ -4,6 +4,14 @@ module Spree
       ::Spree::StoreCredit
     end
 
+    def method_type
+      'store_credit'
+    end
+
+    def description_partial_name
+      'store_credit'
+    end
+
     def can_capture?(payment)
       ['checkout', 'pending'].include?(payment.state)
     end
@@ -94,7 +102,7 @@ module Spree
     end
 
     def available_for_order?(order)
-      order.could_use_store_credit?
+      order.gift_card.present? || order.could_use_store_credit?
     end
 
     private
@@ -110,7 +118,7 @@ module Spree
             authorization: auth_code || response
           )
         else
-          ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.join, {}, {})
+          ActiveMerchant::Billing::Response.new(false, store_credit.errors.full_messages.to_sentence, {}, {})
         end
       end
     end

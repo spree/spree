@@ -1,0 +1,35 @@
+<% cache [*spree_base_cache_scope.call(address), address.user] do %>
+  <div class="text-sm">
+    <div class="mb-1"><%= address.full_name %></div>
+    <% unless address.company.blank? %>
+      <div class="org">
+        <%= address.company %>
+      </div>
+    <% end %>
+    <div class="adr">
+      <div class="street-address-line">
+        <%= address.street %>
+      </div>
+      <div class="local">
+        <span class="locality"><%= address.city %></span>,
+        <span class="region"><%= address.state_text %></span>
+        <span class="postal-code"><%= address.zipcode %></span>
+        <span class="country-name"><%= address.country.try(:iso3) %></span>
+      </div>
+    </div>
+    <% if address.user %>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <% if address.id == address.user.ship_address_id %>
+          <div class="bg-accent border border-default rounded-full px-3 py-2 text-xs">
+            <%= Spree.t(:default_shipping_address) %>
+          </div>
+        <% end %>
+        <% if address.id == address.user.bill_address_id %>
+          <div class="bg-accent border border-default rounded-full px-3 py-2 text-xs">
+            <%= Spree.t(:default_billing_address) %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

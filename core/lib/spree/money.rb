@@ -5,8 +5,15 @@ Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
+    include Comparable
+
     class << self
       attr_accessor :default_formatting_rules
+
+      def from_cents(amount_in_cents, options = {})
+        money = ::Money.from_cents(amount_in_cents, options[:currency])
+        new(money.to_d, options)
+      end
     end
 
     self.default_formatting_rules = {
@@ -17,11 +24,11 @@ module Spree
 
     attr_reader :money
 
-    delegate    :cents, :currency, to: :money
+    delegate    :cents, :currency, :to_d, :positive?, :zero?, to: :money
 
     def initialize(amount, options = {})
-      use_default_currency
-      @money   = Monetize.parse([amount, (options[:currency] || Spree::Store.default.default_currency)].join)
+      ::Money.default_currency ||= Spree::Store.default.default_currency || 'USD'
+      @money   = Monetize.parse(amount, (options[:currency] || Spree::Store.default.default_currency))
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
 
@@ -29,8 +36,16 @@ module Spree
       (cents / currency.subunit_to_unit.to_f * 100).round
     end
 
+    def abs
+      self.class.new(money.abs, options)
+    end
+
     def to_s
       money&.format(options)
+    end
+
+    def inspect
+      "#{self.class}(cents: #{cents}, currency: #{currency})"
     end
 
     # 1) prevent blank, breaking spaces
@@ -65,9 +80,27 @@ module Spree
       money == obj.money
     end
 
-    def use_default_currency
-      currency = Spree::Store.default.default_currency
-      ::Money.default_currency = currency
+    def +(other)
+      result_money = money + other.money
+      self.class.new(result_money.to_s, options)
+    end
+
+    def -(other)
+      result_money = money - other.money
+      self.class.new(result_money.to_s, options)
+    end
+
+    def *(value)
+      result_money = money * value
+      self.class.new(result_money.to_s, options)
+    end
+
+    def <=>(other)
+      money <=> other.money
+    end
+
+    def -@
+      self.class.new((-money).to_s, options)
     end
 
     private

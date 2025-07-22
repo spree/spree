@@ -1,0 +1,78 @@
+<% record = @object || @customer_return || @order || @product || @vendor || @user || @admin_user || @taxon || @store_credit %>
+<% record = nil if @user&.is_a?(Spree.admin_user_class) %>
+
+<% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
+<% content_for(:page_subtitle) do %>
+  <%= local_time record.updated_at, class: 'badge badge-light with-tip', title: 'Last update' %>
+<% end if show_record_subtitle && !content_for(:page_subtitle) %>
+
+<% if content_for?(:page_title) %>
+  <header id="page-header" class="container-fluid" data-controller="sticky">
+    <h3 class="page-header-title mb-0 d-flex align-items-center gap-3">
+      <%= yield :page_title %>
+    </h3>
+    <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
+      <%= yield :page_actions if content_for?(:page_actions) %>
+
+      <% if action_name == 'edit' && @object %>
+        <% class_name = defined?(model_class) ? model_class.to_s : @object.class.name %>
+        <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_#{class_name.demodulize.underscore}_#{@object.id}", data: { admin_target: 'save' } %>
+      <% end %>
+
+      <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
+        <div class="dropdown h-100" id="page_actions_dropdown">
+          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 p-2', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
+            <%= icon 'dots-vertical', class: 'mr-0' %>
+          <% end %>
+          <div class="dropdown-menu dropdown-menu-right">
+            <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
+            <% if record %>
+              <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) && defined?(Audited) && can?(:read, Audited.audit_class) %>
+                <a href="<%= spree.admin_audits_path(q: { auditable_id_eq: record.id, auditable_type_eq: record.class.to_s }) %>" target="_blank" class="dropdown-item">
+                  <%= icon 'history' %>
+                  <%= Spree.t('admin.audit_log') %>
+                </a>
+              <% end %>
+              <% if record.respond_to?(:number) %>
+                <div data-controller="clipboard">
+                  <%= hidden_field_tag :record_number, record.number, data: { clipboard_target: 'source' } %>
+                  <button data-action="clipboard#copy" class="text-left dropdown-item">
+                    <%= icon 'copy' %>
+                    <%= 'Copy number' %>
+                  </button>
+                </div>
+              <% end %>
+              <div data-controller="clipboard">
+                <%= hidden_field_tag :record_id, record.id, data: { clipboard_target: 'source' } %>
+                <button data-action="clipboard#copy" class="text-left dropdown-item">
+                  <%= icon 'copy' %>
+                  <%= Spree.t(:copy_id) %>
+                </button>
+              </div>
+
+              <% if defined?(object_url) && %w[show edit].include?(action_name) && record.respond_to?(:can_be_deleted?) && record.can_be_deleted? && can?(:destroy, record) %>
+                <div class="dropdown-divider"></div>
+                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), object_url, class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </header>
+<% end %>
+
+<% if content_for?(:page_tabs) %>
+  <div class="container-fluid" id="page-tabs">
+    <ul class="nav">
+      <%= yield :page_tabs %>
+    </ul>
+  </div>
+<% end %>
+<% if content_for(:page_alerts) %>
+  <div class="container">
+    <div class="page-alerts">
+      <%= yield(:page_alerts) %>
+    </div>
+  </div>
+<% end %>

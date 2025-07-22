@@ -1,0 +1,19 @@
+<% if show_spree_updater_notice? %>
+  <div id="updater-notice" class="mb-3">
+    <%= image_tag 'favicon_256x256.png', alt: 'Spree', width: 32, height: 32 %>
+    <div class="d-flex flex-column">
+      <p class="mb-1">
+        <strong>Spree <%= spree_updater.latest_release['name'] %></strong> is available.
+        <br />Your current version is <strong>Spree <%= spree_updater.current_release %></strong>. 
+      </p>
+
+      <% if spree_updater.latest_release['url'] %>
+        <div>
+          <%= external_link_to "View release notes", spree_updater.latest_release['url'], target: '_blank', class: 'btn btn-sm btn-link' %>
+        </div>
+      <% end %>
+    </div>
+
+    <%= link_to '', spree.admin_dismiss_updater_notice_path, data: { turbo_method: :patch }, class: 'btn-close ml-auto' %>
+  </div>
+<% end %>

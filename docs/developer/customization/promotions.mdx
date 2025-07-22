@@ -1,0 +1,174 @@
+---
+title: Custom Promotions
+icon: "ticket"
+description: >-
+  In this guide we will show you how to create custom promotion rules and actions in Spree.
+---
+
+## Overview
+
+In this guide we will show you how to create custom promotion rules and actions in Spree.
+
+### Custom Promotion Actions
+
+<AccordionGroup>
+  <Accordion title="1. Ensure proper directory structure">
+    Ensure you have the following directory structure:
+    ```bash
+    mkdir -p app/models/spree/promotion/actions
+    ```
+  </Accordion>
+
+  <Accordion title="2. Create a new model file">
+    Create a new file in `app/models/spree/promotion/actions/` directory
+    ```bash
+    touch app/models/spree/promotion/actions/my_promotion_action.rb
+    ```
+  </Accordion>
+
+  <Accordion title="3. Implement your own Logic">
+    Implement your custom logic in the `perform` method.
+    ```ruby
+    module Spree
+      module Promotion
+        module Actions
+          class MyPromotionAction < Spree::PromotionAction
+            def perform(options={})
+              # Implement your custom logic here
+            end
+          end
+        end
+      end
+    end
+    ```
+    <Note>
+      This class needs to inherit from `Spree::PromotionAction` model.
+    </Note>
+    <Info>
+      You can access promotion information using the `promotion` method within any `Spree::PromotionAction`.
+    </Info>
+  </Accordion>
+
+  <Accordion title="4. Register the New Action">
+    Register the new action with Spree.
+    Open `config/initializers/spree.rb` and add the following line:
+    ```ruby
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.promotions.actions << Spree::Promotion::Actions::MyPromotionAction
+    end
+    ```
+    Once this has been registered, it will be available within Spree's interface.
+  </Accordion>
+
+  <Accordion title="5. Add Translations for the Admin Dashboard">
+    To provide translations for the interface, you will need to define them within your locale file. For instance, to define English translations for your new promotion action, use this code within `config/locales/en.yml`:
+
+    ```yaml
+      en:
+        spree:
+          promotion_action_types:
+            my_promotion_action:
+              name: My Promotion Action
+              description: Performs my promotion action.
+    ```
+  </Accordion>
+
+  <Accordion title="6. Restart Your Application">
+    After making these changes, restart your application. Your custom promotion action will now be available within Spree's admin interface, ready for use in your promotions.
+  </Accordion>
+</AccordionGroup>
+
+### Custom Promotion Rules
+
+<AccordionGroup>
+  <Accordion title="1. Ensure proper directory structure">
+    Ensure you have the following directory structure:
+    ```bash
+    mkdir -p app/models/spree/promotion/rules
+    ```
+  </Accordion>
+
+  <Accordion title="2. Create a new model file">
+    Create a new file in `app/models/spree/promotion/rules/` directory:
+
+    ```bash
+    touch app/models/spree/promotion/rules/my_promotion_rule.rb
+    ```
+  </Accordion>
+
+  <Accordion title="3. Implement your own Logic">
+    Implement your logic within this class as shown below:
+
+    ```ruby
+    module Spree
+      class Promotion
+        module Rules
+          class MyPromotionRule < Spree::PromotionRule
+            def applicable?(promotable)
+              promotable.is_a?(Spree::Order)
+            end
+
+            def eligible?(order, options = {})
+              # Your custom eligibility logic here
+            end
+
+            def actionable?(line_item)
+              # Your custom actionability logic here
+            end
+          end
+        end
+      end
+    end
+    ```
+
+    <Note>
+      This class needs to inherit from `Spree::PromotionRule` model.
+    </Note>
+    
+    <Note>
+    The <code>eligible?</code> method should return <code>true</code> or <code>false</code> to indicate if the promotion should be eligible for an order, based on your custom logic. Similarly, define <code>actionable?</code> to evaluate line items against your promotion criteria.
+    </Note>
+  </Accordion>
+
+  <Accordion title="4. Register the Custom Rule">
+    To make your custom rule available, register it within Spree by adding the following block to your `config/initializers/spree.rb` file:
+
+    ```ruby
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
+    end
+    ```
+    
+    This step ensures that your custom rule is recognized and can be utilized within the Spree ecosystem.
+  </Accordion>
+
+  <Accordion title="5. Create Promotion Rule view template">
+
+    Create a partial for your new rule:
+    
+    ```bash
+    touch app/views/spree/admin/promotions/rules/_my_promotion_rule.html.erb
+    ```
+    
+    This file can either be simple or complex based on whether your rule requires parameters for configuration.
+
+    For guidance, refer to existing rule partials in Spree's backend sources to understand how to structure this file.
+  </Accordion>
+
+  <Accordion title="6. Add Translations for the Admin Dashboard">
+    To display your rule within the Spree admin interface, define its name and description in your locale files. For English, edit `config/locales/en.yml` and add:
+
+    ```yaml
+    en:
+      spree:
+        promotion_rule_types:
+          my_promotion_rule:
+            name: "My Promotion Rule"
+            description: "Custom rule for my promotion"
+    ```
+  </Accordion>
+
+  <Accordion title="7. Restart Your Application">
+    After making these changes, restart your application. Your custom promotion rule will now be available within Spree's admin interface, ready for use in your promotions.
+  </Accordion>
+</AccordionGroup>

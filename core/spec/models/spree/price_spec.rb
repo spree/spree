@@ -1,6 +1,87 @@
 require 'spec_helper'
 
 describe Spree::Price, type: :model do
+  describe 'Callbacks' do
+    context 'when compare_at_amount is equal to amount' do
+      let(:variant) { create(:variant) }
+
+      let(:price) do
+        build(
+          :price,
+          amount: 10,
+          compare_at_amount: 10,
+          currency: 'GBP',
+          variant: variant
+        )
+      end
+
+      it 'sets compare_at_amount to nil' do
+        price.save
+        expect(price.compare_at_amount).to be_nil
+      end
+    end
+
+    describe 'after_commit :auto_match_taxons' do
+      context 'when price is discounted' do
+        context 'on create' do
+          let(:price) { build(:price, amount: 10, compare_at_amount: 20, currency: 'GBP') }
+
+          it 'auto matches taxons' do
+            expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons).at_least(:once)
+            price.save
+          end
+        end
+
+        context 'on update' do
+          let!(:price) { create(:price, amount: 10, compare_at_amount: 20, currency: 'GBP') }
+
+          context 'and changed to not be discounted' do
+            it 'auto matches taxons' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+              price.reload.update(compare_at_amount: nil)
+            end
+          end
+
+          context 'and is still discounted' do
+            it 'does not touch shop product' do
+              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_taxons)
+              price.reload.update(amount: 15)
+            end
+          end
+        end
+      end
+
+      context 'when price is not discounted' do
+        let(:price) { build(:price, amount: 10, compare_at_amount: nil, currency: 'GBP') }
+
+        context 'on create' do
+          it 'auto matches taxons' do
+            expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+            price.save
+          end
+        end
+
+        context 'on update' do
+          let!(:price) { create(:price, amount: 10, compare_at_amount: nil, currency: 'GBP') }
+
+          context 'and changed to be discounted' do
+            it 'auto matches taxons' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+              price.reload.update(compare_at_amount: 20)
+            end
+          end
+
+          context 'and is still not discounted' do
+            it 'does not touch shop product' do
+              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_taxons)
+              price.reload.update(amount: 15)
+            end
+          end
+        end
+      end
+    end
+  end
+
   describe '#amount=' do
     let(:price) { build :price }
     let(:amount) { '3,0A0' }
@@ -65,7 +146,17 @@ describe Spree::Price, type: :model do
     context 'when the amount is nil' do
       let(:amount) { nil }
 
-      it { is_expected.to be_valid }
+      context 'legacy behavior' do
+        before do
+          allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
+        end
+
+        it { is_expected.to be_valid }
+      end
+
+      context 'new behavior' do
+        it { is_expected.not_to be_valid }
+      end
     end
 
     context 'when the amount is less than 0' do
@@ -215,6 +306,32 @@ describe Spree::Price, type: :model do
     it 'calls #price_including_vat_for' do
       expect(subject).to receive(:compare_at_price_including_vat_for)
       subject.display_compare_at_price_including_vat_for(nil)
+    end
+  end
+
+  describe '#discounted?' do
+    subject { price.discounted? }
+
+    let(:price) { build(:price, amount: 10, compare_at_amount: compare_at_amount, currency: 'USD') }
+
+    context 'when compare at amount is higher' do
+      let(:compare_at_amount) { 15 }
+      it { is_expected.to be(true) }
+    end
+
+    context 'when compare at amount is lower' do
+      let(:compare_at_amount) { 9 }
+      it { is_expected.to be(false) }
+    end
+
+    context 'when compare at amount is the same' do
+      let(:compare_at_amount) { 10 }
+      it { is_expected.to be(false) }
+    end
+
+    context 'when there is no compare at amount' do
+      let(:compare_at_amount) { nil }
+      it { is_expected.to be(false) }
     end
   end
 end

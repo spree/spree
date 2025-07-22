@@ -5,8 +5,6 @@ describe Spree::Api::V2::Platform::OptionTypeSerializer do
 
   let(:option_type) { create(:option_type, option_values: create_list(:option_value, 2)) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

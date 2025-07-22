@@ -1,0 +1,22 @@
+<div class="card-lg">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <% @report.line_item_class.headers.each do |header| %>
+            <th><%= header[:label] %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @report.line_items.each do |line_item| %>
+          <tr>
+            <% line_item.class.attribute_types.keys.each do |key| %>
+              <td><%= line_item.send(key) %></td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -9,7 +9,7 @@ module Spree
       end
 
       def execute
-        find_available(scope, products_scope)
+        find_available(scope, products_scope).includes(:translations)
       end
 
       private

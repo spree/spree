@@ -4,13 +4,17 @@ module Spree
 
     delegate :authorize, :purchase, :capture, :void, :credit, to: :provider
 
-    validates :type, presence: true
-
-    preference :server, :string, default: 'test'
-    preference :test_mode, :boolean, default: true
+    validates :type, presence: true, inclusion: { in: :valid_providers_list }
 
     def payment_source_class
       CreditCard
+    end
+
+    # Override in the gateway to provide a payment url
+    # eg. for Stripe, this would be the payment intent url
+    # https://dashboard.stripe.com/payments/#{payment.transaction_id}
+    def gateway_dashboard_payment_url(_payment)
+      nil
     end
 
     def provider
@@ -76,6 +80,12 @@ module Spree
           []
         end
       end
+    end
+
+    private
+
+    def valid_providers_list
+      Spree::PaymentMethod.providers.map(&:to_s)
     end
   end
 end

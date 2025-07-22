@@ -10,7 +10,11 @@ module Spree
 
       def total_on_hand
         @total_on_hand ||= if variant.should_track_inventory?
-                             stock_items.sum(:count_on_hand)
+                             if association_loaded?
+                               stock_items.sum(&:count_on_hand)
+                             else
+                               stock_items.sum(:count_on_hand)
+                             end
                            else
                              BigDecimal::INFINITY
                            end
@@ -30,10 +34,24 @@ module Spree
 
       private
 
-      def scope_to_location(collection)
-        return collection.with_active_stock_location if stock_location.blank?
+      def association_loaded?
+        variant.association(:stock_items).loaded? && variant.association(:stock_locations).loaded?
+      end
 
-        collection.where(stock_location: stock_location)
+      def scope_to_location(collection)
+        if stock_location.blank?
+          if association_loaded?
+            return collection.select { |si| si.stock_location&.active? }
+          else
+            return collection.with_active_stock_location
+          end
+        end
+
+        if association_loaded?
+          collection.select { |si| si.stock_location_id == stock_location.id }
+        else
+          collection.where(stock_location: stock_location)
+        end
       end
     end
   end

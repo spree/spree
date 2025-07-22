@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Payment, type: :model do
-  let(:store) { create(:store) }
-  let(:order) { store.orders.create }
+  let(:store) { @default_store }
+  let(:order) { create(:order, store: store, total: 200) }
   let(:refund_reason) { create(:refund_reason) }
 
   let(:gateway) do
@@ -53,7 +53,7 @@ describe Spree::Payment, type: :model do
     it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid void)) }
   end
 
-  describe 'scopes' do
+  describe 'Scopes' do
     describe '.valid' do
       subject { Spree::Payment.valid }
 
@@ -77,6 +77,35 @@ describe Spree::Payment, type: :model do
       it { is_expected.not_to include(failed_payment) }
       it { is_expected.to     include(checkout_payment) }
       it { is_expected.to     include(completed_payment) }
+    end
+  end
+
+  describe 'after_initialize :set_amount' do
+    subject { payment.amount }
+
+    context 'when associated with an order' do
+      let(:order) { create(:order, payment_total: 10, total: 45) }
+      let(:payment) { described_class.new(order: order) }
+
+      it 'sets the amount to the order total minus the payment total' do
+        expect(subject).to eq(order.total - order.payment_total)
+      end
+
+      context 'when the amount is already set' do
+        let(:payment) { described_class.new(order: order, amount: 10) }
+
+        it 'does not set the amount' do
+          expect(subject).to eq(10)
+        end
+      end
+    end
+
+    context 'when not associated with an order' do
+      let(:payment) { described_class.new }
+
+      it 'does not set the amount' do
+        expect(subject).to eq(0)
+      end
     end
   end
 
@@ -121,7 +150,7 @@ describe Spree::Payment, type: :model do
     end
   end
 
-  context 'validations' do
+  describe 'Validations' do
     context 'when payment source is not required' do
       it 'do not validate source presence' do
         allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
@@ -146,6 +175,76 @@ describe Spree::Payment, type: :model do
       expect(cc_errors).to include('Month is not a number')
       expect(cc_errors).to include('Year is not a number')
       expect(cc_errors).to include("Verification Value can't be blank")
+    end
+
+    describe 'amount validation' do
+      subject { payment.valid? }
+
+      let(:payment) { build(:payment, amount: payment_amount, order: order) }
+
+      context 'with an associated order' do
+        let(:order) { create(:order, total: 100) }
+
+        context 'when the amount is greater than the max amount' do
+          let(:payment_amount) { 101 }
+
+          it 'is invalid' do
+            subject
+
+            expect(payment).not_to be_valid
+            expect(payment.errors.full_messages).to include('Amount is greater than the allowed maximum amount of 100.0')
+          end
+        end
+
+        context 'when the amount is less than the max amount' do
+          let(:payment_amount) { 99 }
+
+          it { is_expected.to be(true) }
+        end
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    describe '#update_order' do
+      let(:payment) { create(:payment, order: order, state: 'completed') }
+
+      context 'when destroying completed payment' do
+        it 'updates the order' do
+          expect { payment.destroy }.to change { order.payment_total }.by(-payment.amount)
+        end
+      end
+
+      context 'when voiding a payment' do
+        it 'updates the order' do
+          expect { payment.void! }.to change { order.payment_total }.by(-payment.amount)
+        end
+      end
+    end
+
+    describe '#create_payment_profile' do
+      context 'when payment method supports profiles' do
+        context 'when source is a credit card' do
+          let(:source) { create(:credit_card) }
+          let(:payment) { build(:payment, source: source) }
+
+          it 'creates a payment profile' do
+            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to(/BGS-/)
+          end
+        end
+
+        context 'when source is not a credit card' do
+          let(:user) { create(:user) }
+          let(:order) { create(:order, user: user, total: 100) }
+          let(:gateway) { create(:custom_payment_method) }
+          let(:source) { create(:payment_source, user: user, payment_method: gateway) }
+          let(:payment) { build(:custom_payment, source: source, amount: 100, payment_method: gateway) }
+
+          it 'creates a payment profile' do
+            expect { payment.save! }.to change { source.gateway_customer_profile_id }.from(nil).to("CUSTOMER-#{user.id}")
+          end
+        end
+      end
     end
   end
 
@@ -746,6 +845,27 @@ describe Spree::Payment, type: :model do
       payment.source_attributes = params[:source_attributes]
       expect { payment.dup }.not_to change { payment.source }
     end
+
+    context 'existing card' do
+      let!(:credit_card) { create(:credit_card, number: '4111111111111112', user: order.user, payment_method: gateway, gateway_customer_profile_id: 'BGS-1234567890') }
+
+      let(:params) do
+        {
+          amount: 100,
+          order: order,
+          payment_method: gateway,
+          source_attributes: {
+            id: credit_card.id
+          }
+        }
+      end
+
+      it 'assigns the existing card' do
+        payment = Spree::Payment.new(params)
+        expect(payment.source).to eq(credit_card)
+        expect(payment.source.gateway_customer_profile_id).to eq('BGS-1234567890')
+      end
+    end
   end
 
   describe '#currency' do
@@ -855,12 +975,10 @@ describe Spree::Payment, type: :model do
     context 'when the locale uses a coma as a decimal separator' do
       before do
         I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
-        I18n.locale = :fr
-        subject.amount = amount
-      end
+        allow(I18n).to receive(:locale).and_return(:fr)
+        allow(I18n.config).to receive(:locale).and_return(:fr)
 
-      after do
-        I18n.locale = I18n.default_locale
+        subject.amount = amount
       end
 
       context 'amount is a decimal' do
@@ -983,12 +1101,12 @@ describe Spree::Payment, type: :model do
   context 'state changes' do
     it 'are logged to the database' do
       expect(payment.state_changes).to be_empty
-      expect(payment.process!).to be true
+      expect(payment.process!).to be_a(Spree::PaymentCaptureEvent)
       expect(payment.state_changes.count).to eq(2)
       changes = payment.state_changes.map { |change| { change.previous_state => change.next_state } }
       expect(changes).to match_array([
                                        { 'checkout' => 'processing' },
-                                       { 'processing' => 'pending' }
+                                       { 'processing' => 'completed' }
                                      ])
     end
   end
@@ -1021,6 +1139,51 @@ describe Spree::Payment, type: :model do
       let(:payment) { create(:check_payment) }
 
       it { expect(payment.source).to be_nil }
+    end
+  end
+
+  describe '#display_source_name' do
+    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
+    let(:payment) { build(:payment, payment_method: payment_method) }
+
+    before do
+      allow(payment).to receive(:source).and_return(source)
+    end
+
+    subject { payment.display_source_name }
+
+    context 'for source with display_name' do
+      let(:source) { double('Payment Source', class: double('Payment Source Class', display_name: 'Display 554')) }
+
+      it 'returns the display name of the source class' do
+        expect(subject).to eq('Display 554')
+      end
+    end
+
+    context 'for source without display_name' do
+      let(:source) { double('Payment Source', class: double('Payment Source Class', name: 'MyPaymentMethod')) }
+
+      it 'returns the display name of the source class' do
+        expect(subject).to eq('My Payment Method')
+      end
+    end
+  end
+
+  describe '#gateway_dashboard_payment_url' do
+    it 'returns nil' do
+      expect(payment.gateway_dashboard_payment_url).to be_nil
+    end
+
+    let(:payment) { create(:payment, payment_method: gateway, transaction_id: '123') }
+
+    context 'when implemented' do
+      before do
+        expect(gateway).to receive(:gateway_dashboard_payment_url).with(payment).and_return("https://dashboard.stripe.com/payments/#{payment.transaction_id}")
+      end
+
+      it 'returns the url' do
+        expect(payment.gateway_dashboard_payment_url).to eq("https://dashboard.stripe.com/payments/#{payment.transaction_id}")
+      end
     end
   end
 end

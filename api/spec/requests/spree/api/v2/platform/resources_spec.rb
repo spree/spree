@@ -4,9 +4,9 @@ describe 'Platform API v2 Resources spec', type: :request do
   include_context 'API v2 tokens'
   include_context 'Platform API v2'
 
-  let!(:store) { Spree::Store.default }
-  let!(:store_two) { create(:store) }
-  let!(:store_three) { create(:store) }
+  let!(:store) { @default_store }
+  let(:store_two) { create(:store) }
+  let(:store_three) { create(:store) }
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
   let(:resource_params) { {} }
@@ -16,7 +16,6 @@ describe 'Platform API v2 Resources spec', type: :request do
   let(:user) { create(:user) }
   let(:resource) { create(:address, state: state, country: country, user: user) }
   let(:id) { resource.id }
-  let(:valid_http_status) { 200 }
 
   shared_examples 'returns auth token errors' do
     context 'with missing authorization token' do
@@ -61,8 +60,6 @@ describe 'Platform API v2 Resources spec', type: :request do
     shared_examples 'valid request' do
       before { execute }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns valid JSON' do
         expect(json_response['data'][0]).to have_type(resource.class.json_api_type)
         expect(json_response['data'].count).to eq(resources_count)
@@ -80,8 +77,6 @@ describe 'Platform API v2 Resources spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns proper resources' do
             expect(json_response['data'][0]).to have_type(resource.class.json_api_type)
             expect(json_response['data'].count).to eq(2)
@@ -98,8 +93,6 @@ describe 'Platform API v2 Resources spec', type: :request do
             execute
           end
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns proper resources' do
             expect(json_response['data'][0]).to have_type(resource.class.json_api_type)
             expect(json_response['data'].count).to eq(1)
@@ -113,8 +106,6 @@ describe 'Platform API v2 Resources spec', type: :request do
           let(:params) { { page: 1, per_page: 2 } }
 
           before { execute }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns proper resource count' do
             expect(json_response['data'].count).to eq 2
@@ -166,8 +157,6 @@ describe 'Platform API v2 Resources spec', type: :request do
       context 'without specified pagination params' do
         before { execute }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns specified amount resources' do
           expect(json_response['data'].count).to eq resources.count
         end
@@ -215,8 +204,6 @@ describe 'Platform API v2 Resources spec', type: :request do
 
     shared_examples 'valid request' do
       before { execute }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid JSON' do
         expect(json_response['data']).to have_attribute(:firstname).with_value(resource.firstname)
@@ -312,12 +299,11 @@ describe 'Platform API v2 Resources spec', type: :request do
       before { execute }
 
       it 'returns errors' do
-        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank, and Phone can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, and Zip Code can't be blank")
         expect(json_response['errors']).to eq(
           'city' => ["can't be blank"],
           'zipcode' => ["can't be blank"],
-          'country' => ["can't be blank"],
-          'phone' => ["can't be blank"]
+          'country' => ["can't be blank"]
         )
       end
     end
@@ -326,16 +312,16 @@ describe 'Platform API v2 Resources spec', type: :request do
 
     context '#ensure_current_store' do
       context 'single store resource' do
-        let(:execute) { post '/api/v2/platform/menus', params: menu_resource_params, headers: bearer_token }
-        let(:menu_resource_params) { { menu: build(:menu, name: 'Ensure-MenuTest', location: 'Header', locale: 'en').attributes.symbolize_keys } }
+        let(:execute) { post '/api/v2/platform/taxonomies', params: taxonomy_resource_params, headers: bearer_token }
+        let(:taxonomy_resource_params) { { taxonomy: build(:taxonomy, name: 'Ensure-TaxonomyTest', store: nil).attributes.symbolize_keys } }
 
         before { execute }
 
         it_behaves_like 'returns 201 HTTP status'
 
         it 'adds the current store to the newly created resource' do
-          new_menu = Spree::Menu.find_by(name: 'Ensure-MenuTest')
-          expect(new_menu.store).to eql(store)
+          new_taxonomy = Spree::Taxonomy.find_by(name: 'Ensure-TaxonomyTest')
+          expect(new_taxonomy.store).to eql(store)
         end
       end
 
@@ -416,8 +402,6 @@ describe 'Platform API v2 Resources spec', type: :request do
 
         expect(json_response['data']).to have_relationship(:state).with_data({ 'id' => another_state.id.to_s, 'type' => 'state' })
       end
-
-      it_behaves_like 'returns 200 HTTP status'
     end
 
     context 'application with full access token' do
@@ -496,8 +480,6 @@ describe 'Platform API v2 Resources spec', type: :request do
 
           before { execute_payment_method }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'will not let you remove the current store from the resource' do
             payment_method.reload
             expect(payment_method.stores).to match_array([store])
@@ -520,8 +502,6 @@ describe 'Platform API v2 Resources spec', type: :request do
           end
 
           before { execute_payment_method }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'will add the stores passed in' do
             payment_method.reload

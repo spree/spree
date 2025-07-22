@@ -1,0 +1,100 @@
+<div class="card mb-4" id="order_tab_summary">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:summary) %></h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    <% if @order.canceled? && @order.canceled_at %>
+      <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+        <span><%= Spree.t(:canceled_at) %></span>
+        <span class="text-rightfont-weight-bold">
+          <%= local_time(@order.canceled_at) %>
+        </span>
+      </li>
+      <% if @order.canceler.present? %>
+        <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+          <span><%= Spree.t(:canceler) %></span>
+          <span class="text-rightfont-weight-bold">
+            <%= @order.canceler.name %>
+          </span>
+        </li>
+      <% end %>
+    <% end %>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+      <span data-hook='admin_order_tab_subtotal_title'><%= Spree.t(:subtotal) %></span>
+      <span id='item_total'>
+        <%= @order.display_item_total.to_html %>
+      </span>
+    </li>
+
+    <% if @order.promo_total != 0 %>
+      <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+        <span><%= Spree.t(:discount_amount) %></span>
+        <span class="text-right span" id='date_complete'>
+        <%= @order.display_promo_total.to_html %>
+      </span>
+      </li>
+    <% end %>
+
+    <% if @order.checkout_steps.include?("delivery") && @order.ship_total > 0 %>
+      <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+        <span data-hook='admin_order_tab_ship_total_title'>
+          <%= Spree.t(:ship_total) %>
+        </span>
+        <span id='ship_total'>
+          <%= @order.display_ship_total.to_html %>
+        </span>
+      </li>
+    <% end %>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+      <span data-hook='admin_order_tab_included_tax_title'><%= Spree.t(:tax_included) %></span>
+      <span id='included_tax_total'>
+        <%= @order.display_included_tax_total.to_html %>
+      </span>
+    </li>
+
+    <% tax_lines = order_summary_tax_lines_additional(@order) %>
+
+    <li class="list-group-item border-0">
+      <span class="d-flex justify-content-between align-items-center">
+        <span><%= Spree.t(:tax) %></span>
+        <span id="additional_tax_total">
+          <% if tax_lines.any? %>
+            <%= link_to '#tax-lines-additional', class: 'btn btn-light btn-sm mr-2', data: { toggle: 'collapse' } do %>
+              <%= Spree.t(:show_details) %>
+              <%= icon('selector', height: 12, class: 'mr-0 ml-1') %>
+            <% end %>
+          <% end %>
+
+          <%= @order.display_additional_tax_total.to_html %>
+        </span>
+      </span>
+
+      <%= render 'tax_lines', tax_lines: tax_lines, id: 'tax-lines-additional' %>
+    </li>
+
+    <%= render_admin_partials(:order_page_summary_partials, order: @order) %>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+      <span data-hook='admin_order_tab_total_title'><%= Spree.t(:total) %></span>
+      <span class="font-weight-bold text-capitalize" id='order_total'>
+        <%= @order.display_total.to_html %>
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center border-top bg-gray-25">
+      <span data-hook='admin_order_tab_payment_total_title'><%= Spree.t(:payment_total) %></span>
+      <span id='payment_total'>
+        <%= @order.display_payment_total.to_html %>
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center bg-gray-25">
+      <span data-hook='admin_order_tab_outstanding_balance_title'><%= Spree.t(:outstanding_balance) %></span>
+      <span id='outstanding_balance'>
+        <%= @order.display_outstanding_balance.to_html %>
+      </span>
+    </li>
+  </ul>
+</div>

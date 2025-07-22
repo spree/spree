@@ -38,7 +38,6 @@ shared_context 'Platform API v2' do
     )
   end
 
-
   let(:valid_authorization) { "Bearer #{oauth_token.token}" }
   let(:valid_read_authorization) { "Bearer #{read_oauth_token.token}" }
   let(:valid_user_authorization) { "Bearer #{user_oauth_token.token}" }

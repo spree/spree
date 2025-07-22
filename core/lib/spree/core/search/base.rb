@@ -5,6 +5,8 @@ module Spree
         attr_accessor :properties, :current_user, :current_currency, :current_store, :taxon
 
         def initialize(params)
+          Spree::Deprecation.warn("Spree::Core::Search::Base is deprecated and will be removed in Spree 6. Please use `Spree::Products::Find` finder instead.")
+
           @properties = {}
           @current_store = params[:current_store] || Spree::Store.default
           @current_currency = @current_store.default_currency
@@ -83,7 +85,7 @@ module Spree
         # method should return new scope based on base_scope
         def get_products_conditions_for(base_scope, query)
           unless query.blank?
-            base_scope = base_scope.like_any([:name, :description], [query])
+            base_scope = base_scope.i18n { name.matches("%#{query}%").or(description.matches("%#{query}%")) }
           end
           base_scope
         end

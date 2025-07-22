@@ -1,15 +1,16 @@
 module Spree
-  class Variant < Spree::Base
+  class Variant < Spree.base_class
     acts_as_paranoid
     acts_as_list scope: :product
 
-    include MemoizedData
-    include Metadata
-    if defined?(Spree::Webhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
+    include Spree::MemoizedData
+    include Spree::Metadata
+    include Spree::Variant::Webhooks
 
-    MEMOIZED_METHODS = %w(purchasable in_stock backorderable tax_category options_text compare_at_price)
+    MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
+
+    DIMENSION_UNITS = %w[mm cm in ft]
+    WEIGHT_UNITS = %w[g kg lb oz]
 
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
@@ -57,7 +58,7 @@ module Spree
 
     validate :check_price
 
-    validates :option_values, presence: true, unless: :is_master?
+    validates :option_value_variants, presence: true, unless: :is_master?
 
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
@@ -66,25 +67,32 @@ module Spree
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
+    validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
+    validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
+
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
+    after_commit :clear_line_items_cache, on: :update
+
+    after_save :create_default_stock_item, unless: :track_inventory?
+    after_update_commit :handle_track_inventory_change
+
+    after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
+    after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
-    scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
-    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand > ?", false, 0) }
+    scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
       where(is_master: false).or(
         where(
-          <<-SQL
-            #{Variant.quoted_table_name}.id IN (
-              SELECT MIN(#{Variant.quoted_table_name}.id) FROM #{Variant.quoted_table_name}
-              GROUP BY #{Variant.quoted_table_name}.product_id
-              HAVING COUNT(*) = 1
-            )
-          SQL
+          product_id: Spree::Variant.
+                      select(:product_id).
+                      group(:product_id).
+                      having("COUNT(#{Spree::Variant.table_name}.id) = 1")
         )
       )
     }
@@ -101,13 +109,51 @@ module Spree
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Store.default.default_currency
-      joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
+      joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     end
 
     scope :active, ->(currency = nil) do
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
+
+    scope :with_option_value, lambda { |option_name, option_value|
+      option_type_ids = OptionType.where(name: option_name).ids
+      return none if option_type_ids.empty?
+
+      joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
+    }
+
+    scope :with_digital_assets, -> { joins(:digitals) }
+
+    if defined?(PgSearch)
+      include PgSearch::Model
+
+      pg_search_scope :search_by_sku, against: :sku, using: { tsearch: { prefix: true } }
+
+      pg_search_scope :search_by_sku_or_options,
+                      against: :sku,
+                      using: { tsearch: { prefix: true } },
+                      associated_against: { option_values: %i[presentation] }
+
+      pg_search_scope :search_by_name_sku_or_options, against: :sku, associated_against: {
+        product: %i[name],
+        option_values: %i[presentation]
+      }, using: { tsearch: { prefix: true } }
+
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        search_by_name_sku_or_options(query)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        product_name_or_sku_cont(query)
+      }
+    end
+
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -117,21 +163,56 @@ module Spree
       end
     end
 
+    accepts_nested_attributes_for(
+      :stock_items,
+      reject_if: ->(attributes) { attributes['stock_location_id'].blank? || attributes['count_on_hand'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :prices,
+      reject_if: ->(attributes) { attributes['currency'].blank? || attributes['amount'].blank? },
+      allow_destroy: true
+    )
+
+    accepts_nested_attributes_for(
+      :option_value_variants,
+      reject_if: ->(attributes) { attributes['option_value_id'].blank? },
+      allow_destroy: false
+    )
+
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
-      joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+      sanitized_query = ActiveRecord::Base.sanitize_sql_like(query.to_s.downcase.strip)
+      query_pattern = "%#{sanitized_query}%"
+      sku_condition = arel_table[:sku].lower.matches(query_pattern)
+
+      if Spree.use_translations?
+        translation_arel_table = Product::Translation.arel_table.alias(Product.translation_table_alias)[:name]
+        product_name_condition = translation_arel_table.lower.matches(query_pattern)
+
+        joins(:product).
+          join_translation_table(Product).
+          where(product_name_condition.or(sku_condition))
+      else
+        product_name_condition = Product.arel_table[:name].lower.matches(query_pattern)
+        joins(:product).where(product_name_condition.or(sku_condition))
+      end
     end
 
     def self.search_by_product_name_or_sku(query)
-      if defined?(SpreeGlobalize)
-        joins(product: :translations).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)",
-                                            query: "%#{query}%")
-      else
-        product_name_or_sku_cont(query)
-      end
+      product_name_or_sku_cont(query)
+    end
+
+    def human_name
+      @human_name ||= option_values.
+                      joins(option_type: :product_option_types).
+                      merge(product.product_option_types).
+                      reorder('spree_product_option_types.position').
+                      pluck(:presentation).join('/')
     end
 
     def available?
@@ -170,19 +251,61 @@ module Spree
       !!deleted_at
     end
 
+    # Returns default Image for Variant
+    # @return [Spree::Image]
+    def default_image
+      @default_image ||= if images.size.positive?
+                           images.first
+                         else
+                           product.default_image
+                         end
+    end
+
+    # Returns secondary Image for Variant
+    # @return [Spree::Image]
+    def secondary_image
+      @secondary_image ||= if images.size > 1
+                             images.second
+                           else
+                             product.secondary_image
+                           end
+    end
+
+    # Returns additional Images for Variant
+    # @return [Array<Spree::Image>]
+    def additional_images
+      @additional_images ||= (images + product.images).uniq.find_all { |image| image.id != default_image&.id }
+    end
+
+    # Returns an array of hashes with the option type name, value and presentation
+    # @return [Array<Hash>]
+    def options
+      @options ||= option_values.
+                   includes(option_type: :product_option_types).
+                   merge(product.product_option_types).
+                   reorder('spree_product_option_types.position').
+                   map do |option_value|
+                     {
+                       name: option_value.option_type.name,
+                       value: option_value.name,
+                       presentation: option_value.presentation
+                     }
+                   end
+    end
+
     def options=(options = {})
       options.each do |option|
         next if option[:name].blank? || option[:value].blank?
 
-        set_option_value(option[:name], option[:value])
+        set_option_value(option[:name], option[:value], option[:position])
       end
     end
 
-    def set_option_value(opt_name, opt_value)
+    def set_option_value(opt_name, opt_value, opt_type_position = nil)
       # no option values on master
       return if is_master
 
-      option_type = Spree::OptionType.where(['LOWER(name) = ?', opt_name.downcase.strip]).first_or_initialize do |o|
+      option_type = Spree::OptionType.where(name: opt_name.parameterize).first_or_initialize do |o|
         o.name = o.presentation = opt_name
         o.save!
       end
@@ -191,16 +314,21 @@ module Spree
 
       if current_value.nil?
         # then we have to check to make sure that the product has the option type
-        unless product.option_types.include? option_type
-          product.option_types << option_type
-        end
+        product_option_type = if (existing_prod_ot = product.product_option_types.find { |ot| ot.option_type_id == option_type.id })
+                                existing_prod_ot
+                              else
+                                product_option_type = product.product_option_types.new
+                                product_option_type.option_type = option_type
+                              end
+        product_option_type.position = opt_type_position if opt_type_position
+        product_option_type.save! if product_option_type.new_record? || product_option_type.changed?
       else
-        return if current_value.name.downcase.strip == opt_value.downcase.strip
+        return if current_value.name.parameterize == opt_value.parameterize
 
         option_values.delete(current_value)
       end
 
-      option_value = option_type.option_values.where(['LOWER(name) = ?', opt_value.downcase.strip]).first_or_initialize do |o|
+      option_value = option_type.option_values.where(name: opt_value.parameterize).first_or_initialize do |o|
         o.name = o.presentation = opt_value
         o.save!
       end
@@ -210,28 +338,39 @@ module Spree
     end
 
     def find_option_value(opt_name)
-      option_values.detect { |o| o.option_type.name.downcase.strip == opt_name.downcase.strip }
+      option_values.includes(:option_type).detect { |o| o.option_type.name.parameterize == opt_name.parameterize }
     end
 
-    def option_value(opt_name)
-      find_option_value(opt_name).try(:presentation)
+    def option_value(option_type)
+      if option_type.is_a?(Spree::OptionType)
+        option_values.detect { |o| o.option_type_id == option_type.id }.try(:presentation)
+      else
+        find_option_value(option_type).try(:presentation)
+      end
     end
 
     def price_in(currency)
       currency = currency&.upcase
-      find_or_build_price = lambda do
-        if prices.loaded?
-          prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
-        else
-          prices.find_or_initialize_by(currency: currency)
-        end
+
+      price = if prices.loaded? && prices.any?
+                prices.detect { |p| p.currency == currency }
+              else
+                prices.find_by(currency: currency)
+              end
+
+      if price.nil?
+        return Spree::Price.new(
+          currency: currency,
+          variant_id: id
+        )
       end
 
-      Rails.cache.fetch("spree/prices/#{cache_key_with_version}/price_in/#{currency}") do
-        find_or_build_price.call
-      end
+      price
     rescue TypeError
-      find_or_build_price.call
+      Spree::Price.new(
+        currency: currency,
+        variant_id: id
+      )
     end
 
     def amount_in(currency)
@@ -281,19 +420,23 @@ module Spree
     end
 
     def in_stock?
-      # Issue 10280
-      # Check if model responds to cache version and fall back to updated_at for older rails versions
-      # This makes sure a version is supplied when recyclable cache keys are disabled.
-      version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
-      @in_stock ||= Rails.cache.fetch(in_stock_cache_key, version: version) do
-        total_on_hand > 0
-      end
+      @in_stock ||= if association(:stock_items).loaded? && association(:stock_locations).loaded?
+                      total_on_hand.positive?
+                    else
+                      Rails.cache.fetch(in_stock_cache_key, version: cache_version) do
+                        total_on_hand.positive?
+                      end
+                    end
     end
 
     def backorderable?
       @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
         quantifier.backorderable?
       end
+    end
+
+    def on_sale?(currency)
+      @on_sale ||= price_in(currency)&.discounted?
     end
 
     delegate :total_on_hand, :can_supply?, to: :quantifier
@@ -318,6 +461,12 @@ module Spree
       (width || 0) + (height || 0) + (depth || 0)
     end
 
+    # Returns the weight unit for the variant
+    # @return [String]
+    def weight_unit
+      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
+    end
+
     def discontinue!
       update_attribute(:discontinue_on, Time.current)
     end
@@ -330,9 +479,17 @@ module Spree
       @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
-    # Is this variant to be downloaded by the customer?
+    # Is this variant purely digital? (no physical product)
     def digital?
-      digitals.present?
+      product.digital?
+    end
+
+    def with_digital_assets?
+      digitals.any?
+    end
+
+    def clear_in_stock_cache
+      Rails.cache.delete(in_stock_cache_key)
     end
 
     private
@@ -361,14 +518,18 @@ module Spree
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
-      if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
-        return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
+      return if (has_default_price? && default_price.valid?) || prices.any?
 
-        self.price = product.master.price
-      end
-      if price.present? && currency.nil?
-        self.currency = Spree::Store.default.default_currency
+      infer_price_from_default_variant_if_needed
+      self.currency = Spree::Store.default.default_currency if price.present? && currency.nil?
+    end
+
+    def infer_price_from_default_variant_if_needed
+      if price.nil?
+        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
+
+        # At this point, master can have or have no price, so let's use price from the default variant
+        self.price = product.default_variant.price
       end
     end
 
@@ -386,12 +547,33 @@ module Spree
       "variant-#{id}-in_stock"
     end
 
-    def clear_in_stock_cache
-      Rails.cache.delete(in_stock_cache_key)
-    end
-
     def disable_sku_validation?
       Spree::Config[:disable_sku_validation]
+    end
+
+    def clear_line_items_cache
+      line_items.update_all(updated_at: Time.current)
+    end
+
+    def create_default_stock_item
+      return if stock_items.any?
+
+      Spree::Store.current.default_stock_location.set_up_stock_item(self)
+    end
+
+    def handle_track_inventory_change
+      return unless track_inventory_previously_changed?
+      return if track_inventory
+
+      stock_items.update_all(count_on_hand: 0, updated_at: Time.current)
+    end
+
+    def remove_prices_from_master_variant
+      product.master.prices.delete_all if prices.exists?
+    end
+
+    def remove_stock_items_from_master_variant
+      product.master.stock_items.delete_all
     end
   end
 end

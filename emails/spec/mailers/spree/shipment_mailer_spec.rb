@@ -5,8 +5,7 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  let!(:store) { create(:store) }
-
+  let(:store) { @default_store }
   let(:order) { create(:shipped_order, store: store, email: 'test@example.com', user: nil) }
   let(:shipment) { order.shipments.first }
   let(:shipping_method) { shipment.shipping_method }
@@ -53,6 +52,8 @@ describe Spree::ShipmentMailer, type: :mailer do
 
         after do
           I18n.enforce_available_locales = true
+          I18n.locale = :en
+          store.update(default_locale: 'en')
         end
 
         specify do
@@ -80,14 +81,6 @@ describe Spree::ShipmentMailer, type: :mailer do
 
     specify 'shows order\'s user name in email body' do
       expect(shipped_email).to have_body_text("Dear #{order.name}")
-    end
-  end
-
-  context 'emails contain only urls of the store where the order was made' do
-    it 'shows proper host url in email content' do
-      ActionMailer::Base.default_url_options[:host] = store.url
-      described_class.shipped_email(shipment).deliver_now
-      expect(ActionMailer::Base.default_url_options[:host]).to eq(shipment.order.store.url)
     end
   end
 end

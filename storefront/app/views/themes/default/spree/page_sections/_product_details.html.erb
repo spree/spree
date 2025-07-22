@@ -1,0 +1,102 @@
+<turbo-frame id="main-product-<%= product.id %>" target="_top">
+  <% current_variant = @selected_variant || @variant_from_options || product.first_or_default_variant(current_currency) %>
+  <div class="main-product-container" style="<%= section_styles(section) %>">
+    <div
+      class="page-container lg:mb-16"
+      <%= 'data-controller=product-form' %>
+      data-product-form-required-options-value='<%= product.option_type_ids.map(&:to_s).to_json %>'
+      data-product-form-selected-variant-disabled-value='<%= !@selected_variant&.in_stock? %>'
+      data-product-form-variant-from-options-disabled-value='<%= !@variant_from_options&.in_stock? %>'
+      data-product-form-frame-name-value="main-product-<%= product.id %>"
+      data-product-form-url-value="<%= spree.product_url(product) %>">
+      <template data-product-form-target="spinnerTemplate">
+        <%= render "spree/shared/icons/spinner" %>
+      </template>
+      <%= render 'spree/products/breadcrumbs', product: product, taxons: product_breadcrumb_taxons(product) %>
+      <div id="product-details-page" class="grid grid-cols-1 lg:grid-cols-12 gap-x-14">
+        <div class="lg:hidden">
+          <% if product.brand %>
+            <%= link_to spree.nested_taxons_path(product.brand), title: product.brand_name do %>
+              <h3 class="text-sm lg:mt-0 inline-block mb-1">
+                <%= product.brand_name %>
+              </h3>
+            <% end %>
+          <% end %>
+          <h1 class="text-2xl uppercase tracking-tight mb-4 font-medium">
+            <%= product.name %>
+          </h1>
+          <%= link_to spree.product_path(product), class: "text-2xl uppercase tracking-tight font-medium hidden" do %>
+            <%= product.name %>
+          <% end %>
+          <%=
+            render 'spree/products/price',
+              product: product,
+              use_variant: true,
+              selected_variant: @selected_variant,
+              price_class: "my-4 lg:text-lg lg:font-medium",
+              price_container_class: "w-full"
+          %>
+        </div>
+
+        <div class="lg:col-span-7 relative">
+          <% images = product_media_gallery_images(product, selected_variant: @selected_variant, variant_from_options: @variant_from_options) %>
+
+          <div class="lg:hidden mb-6">
+            <%= render 'spree/products/media_gallery', images: images, product: product %>
+          </div>
+          <div class="hidden lg:block" data-product-form-target="desktopMediaGallery">
+            <%= render 'spree/products/media_gallery', images: images, desktop: true, product: product %>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 lg:col-start-8">
+          <div data-controller='sticky-button' data-product-form-target="productDetails">
+            <div class="hidden lg:block">
+              <% if product.brand %>
+                <%= link_to spree.nested_taxons_path(product.brand), title: product.brand_name do %>
+                  <h3 class="text-sm mt-3 lg:mt-0 inline-block uppercase">
+                    <%= product.brand_name %>
+                  </h3>
+                <% end %>
+              <% end %>
+              <h1 class="text-2xl uppercase tracking-tight mb-4 mt-2 font-medium">
+                <%= product.name %>
+              </h1>
+
+              <%=
+                render 'spree/products/price',
+                  product: product,
+                  use_variant: true,
+                  selected_variant: @selected_variant,
+                  price_class: "my-4 lg:text-lg lg:font-medium"
+              %>
+            </div>
+            <%= render 'spree/products/tags', product: product %>
+            <% show_waitlist_modal = spree.respond_to?(:waitlists_path) && current_variant.present? %>
+            <div
+              <% if show_waitlist_modal %>
+              data-controller="modal"
+              <% end %>
+              data-modal-allow-background-close="true"
+              class="h-full w-full waitlist-modal"
+              data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+              <%= form_with(url: spree.line_items_path, method: :post, data: { controller: "turbo-stream-form", product_form_target: "form" }) do |f| %>
+                <%= render 'spree/products/variant_picker', product: product, selected_variant: @selected_variant %>
+                <%= render 'spree/products/quantity_selector', product: product, selected_variant: @selected_variant  %>
+                <div class="flex w-full my-5">
+                  <%= render 'spree/products/add_to_cart_button', product: product, selected_variant: @selected_variant, sticky_button_classes: "w-full" %>
+                  <%= render 'spree/products/add_to_wishlist', variant: current_variant, css_classes: 'btn-secondary ml-5 h-12 !py-0 !px-3 border-default', icon_size: 24 %>
+                </div>
+              <% end %>
+              <%= render 'spree/products/add_to_waitlist', variant: current_variant if show_waitlist_modal %>
+            </div>
+
+            <%= render 'spree/products/details', product: product %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= render 'spree/products/json_ld', product: product, selected_variant: @selected_variant %>
+</turbo-frame>

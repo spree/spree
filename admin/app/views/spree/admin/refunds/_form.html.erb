@@ -1,0 +1,17 @@
+<% if f.object.new_record? %>
+  <div class="form-group">
+    <%= f.label :amount, Spree.t(:amount) %>
+    <div class="input-group">
+      <%= f.text_field :amount, class: 'form-control', required: true %>
+      <div class="input-group-append">
+        <span class="input-group-text"><%= currency_symbol(@order.currency) %></span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="form-group mb-0">
+  <%= f.label :refund_reason_id, Spree.t(:reason) %>
+  <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, { include_blank: true }, { data: { controller: 'autocomplete-select' }, required: true }) %>
+  <%= f.error_message_on :reason %>
+</div>

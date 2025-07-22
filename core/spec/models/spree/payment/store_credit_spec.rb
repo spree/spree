@@ -4,13 +4,13 @@ describe 'Payment' do
   context '#cancel!' do
     subject { payment.cancel! }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
 
     context 'a store credit' do
       let(:store_credit) { create(:store_credit, amount_used: captured_amount, store: store) }
       let(:auth_code) { '1-SC-20141111111111' }
       let(:captured_amount) { 10.0 }
-      let(:order) { create(:order, store: store) }
+      let(:order) { create(:order, store: store, total: 100) }
       let(:payment) { create(:store_credit_payment, response_code: auth_code, order: order) }
 
       let!(:capture_event) do

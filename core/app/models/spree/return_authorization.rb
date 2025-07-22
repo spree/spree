@@ -1,8 +1,8 @@
 module Spree
-  class ReturnAuthorization < Spree::Base
+  class ReturnAuthorization < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
-    include NumberIdentifier
-    if defined?(Spree::Webhooks)
+    include Spree::NumberIdentifier
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
@@ -13,6 +13,9 @@ module Spree
       has_many :inventory_units
       has_many :customer_returns
     end
+
+    has_many :reimbursements, through: :customer_returns
+    has_many :refunds, through: :reimbursements
 
     belongs_to :stock_location
     belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id

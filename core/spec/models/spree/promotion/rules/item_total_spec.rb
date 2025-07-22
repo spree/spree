@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::ItemTotal, type: :model do
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { @default_store }
   let(:rule) { Spree::Promotion::Rules::ItemTotal.new }
-  let(:order) { double(:order) }
+  let(:order) { build(:order, store: store) }
 
   before do
     rule.preferred_amount_min = 50
@@ -270,6 +270,50 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
           to eq "This coupon code can't be applied to orders higher than $60.00."
+      end
+    end
+  end
+
+  context 'when preferred amount max is not set' do
+    before do
+      rule.preferred_amount_min = 50
+      rule.preferred_amount_max = nil
+      rule.preferred_operator_min = 'gt'
+      rule.preferred_operator_max = 'lt'
+    end
+
+    context 'and item total is higher than preferred minimum amount' do
+      it 'is eligible' do
+        allow(order).to receive_messages item_total: 51
+        expect(rule).to be_eligible(order)
+      end
+    end
+
+    context 'and item total is equal to the preferred minimum amount' do
+      before { allow(order).to receive_messages item_total: 50 }
+
+      it 'is not eligible' do
+        expect(rule).not_to be_eligible(order)
+      end
+
+      it 'set an error message' do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "This coupon code can't be applied to orders less than or equal to $50.00."
+      end
+    end
+
+    context 'and item total is lower than preferred minimum amount' do
+      before { allow(order).to receive_messages item_total: 49 }
+
+      it 'is not eligible' do
+        expect(rule).not_to be_eligible(order)
+      end
+
+      it 'set an error message' do
+        rule.eligible?(order)
+        expect(rule.eligibility_errors.full_messages.first).
+          to eq "This coupon code can't be applied to orders less than or equal to $50.00."
       end
     end
   end

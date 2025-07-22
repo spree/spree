@@ -1,0 +1,26 @@
+Spree APIs allow you to fetch multiple associated resources in one API call, both for singular resources and collections, eg. we can fetch a Product with all of its variants and images:
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products/classic-varsity-top?include=variants%252Cimages' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+This will return a JSON response with `data[relationships]` node (links to what resources connects to which) and `included` node (images and variants JSON responses).
+
+This way you can easily control what resources you want to include in the response and
+avoid making multiple API calls.
+
+## Nested resources
+
+You can also nest resources, eg. fetching Product Variants with their Option Values:
+
+```curl
+curl --request GET \
+     --url 'https://demo.spreecommerce.org/api/v2/storefront/products/classic-varsity-top?include=variants.option_values' \
+     --header 'Accept: application/vnd.api+json'
+```
+
+## Open source libraries to transform JSONApi to a flat JSON response
+
+As you probably noticed the JSON response can sometimes be quite big and hard to follow. To ease working with included resources we recommend checking out [one of the open-source libraries](https://jsonapi.org/implementations/) that can help deserialize responses.

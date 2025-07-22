@@ -13,7 +13,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
   controller(FakesController) {}
 
   describe '#current_store' do
-    let!(:store) { create :store, default: true }
+    let!(:store) { @default_store }
     let!(:store_2) { create :store, url: 'another.com' }
 
     context 'default store' do
@@ -91,7 +91,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
       context 'when no store is present' do
-        object = Spree::Menu.new
+        object = Spree::Taxonomy.new
 
         it 'sets the current_store' do
           controller.ensure_current_store(object)
@@ -101,7 +101,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when an object already has a store assigned' do
-        object = Spree::Menu.new
+        object = Spree::Taxonomy.new
 
         it 'raises an exception' do
           object.store = store_2
@@ -112,7 +112,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when an object already has a store assigned and the same store is re-assigned' do
-        object = Spree::Menu.new
+        object = Spree::Taxonomy.new
 
         it 'no exception is raised' do
           object.store = store
@@ -120,14 +120,6 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
 
           expect { controller.ensure_current_store(object) }.not_to raise_error
         end
-      end
-    end
-
-    context 'when an object that does not have store association is passed in' do
-      object = Spree::CmsSection.new
-
-      it 'returns nil' do
-        expect(controller.ensure_current_store(object)).to be_nil
       end
     end
 
@@ -194,6 +186,41 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
+      end
+    end
+  end
+
+  describe '#raise_record_not_found_if_store_is_not_found' do
+    let(:store) { create :store }
+
+    context 'when the store is not found' do
+      before do
+        allow(controller).to receive(:current_store).and_return(nil)
+      end
+
+      it 'raises an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'with root_domain set' do
+      before do
+        allow(Spree).to receive(:root_domain).and_return('example.com')
+        controller.request.env['SERVER_NAME'] = 'example.com'
+      end
+
+      it 'does not raise an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.not_to raise_error
+      end
+    end
+
+    context 'when store is found' do
+      before do
+        allow(controller).to receive(:current_store).and_return(store)
+      end
+
+      it 'does not raise an exception' do
+        expect { controller.send(:raise_record_not_found_if_store_is_not_found) }.not_to raise_error
       end
     end
   end

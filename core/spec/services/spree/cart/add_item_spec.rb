@@ -4,7 +4,7 @@ module Spree
   describe Cart::AddItem do
     subject { described_class }
 
-    let(:order) { create :order }
+    let(:order) { create :order, total: 100 }
     let(:variant) { create :variant, price: 20 }
     let(:qty) { 1 }
     let(:execute) { subject.call(order: order, variant: variant, quantity: qty) }
@@ -54,7 +54,9 @@ module Spree
     end
 
     context 'with store_credits payment' do
+      let!(:order) { create(:order, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order) }
+
       let(:execute) { subject.call(order: order, variant: variant, quantity: 1) }
 
       it do
@@ -63,7 +65,7 @@ module Spree
     end
 
     context 'running promotions' do
-      let(:promotion) { create(:promotion) }
+      let(:promotion) { create(:promotion, kind: :automatic) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
 
       context 'one active order promotion' do
@@ -229,6 +231,20 @@ module Spree
           order.reload
           expect(order.line_items.first.public_metadata).to eq public_metadata
         end
+      end
+    end
+
+    context 'when variant has price in the cart currency, but with amount set to nil' do
+      let(:call_service) { subject.call(order: order, variant: variant, quantity: 1) }
+
+      before do
+        allow(Spree::Config).to receive(:allow_empty_price_amount).and_return(true)
+        variant.prices.first.update(amount: nil)
+      end
+
+      it 'does not add the item and raises error' do
+        expect(call_service).to be_failure
+        expect(call_service.error).not_to be_nil
       end
     end
   end

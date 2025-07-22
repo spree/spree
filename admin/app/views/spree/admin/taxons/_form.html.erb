@@ -1,0 +1,148 @@
+<div class="row" data-controller="slug-form seo-form">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-body pb-0 pt-3">
+        <div class="form-group">
+          <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+          <%= f.text_field :name,
+                class: 'form-control',
+                required: true,
+                autofocus: @taxon.new_record?,
+                data: {
+                  seo_form_target: 'sourceTitleInput',
+                  slug_form_target: 'name',
+                  action: 'slug-form#updateUrlFromName'
+                } %>
+          <%= f.error_message_on :name %>
+        </div>
+        <div class="form-group">
+          <%= f.label :description, Spree.t(:description) %>
+          <div class="trix-container">
+            <%= f.rich_text_area :description, data: { seo_form_target: 'sourceDescriptionInput' } %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if @taxon.new_record? %>
+      <div class="card mb-4" data-controller="reveal" data-reveal-hidden-class="d-none">
+        <div class="card-header">
+          <h5 class="card-title"><%= Spree.t('admin.taxon_type') %></h5>
+        </div>
+        <div class="card-body">
+          <div class="custom-control custom-radio mb-2">
+            <%= f.radio_button :automatic, false, id: 'customRadio1', class: 'custom-control-input', checked: true, data: { action: 'reveal#hide' } %>
+            <label class="custom-control-label" for="customRadio1"><%= Spree.t('admin.taxon_types.manual') %></label>
+            <br />
+            <span class="text-muted"><%= Spree.t('admin.taxon_types.manual_info') %></span>
+          </div>
+          <div class="custom-control custom-radio">
+            <%= f.radio_button :automatic, true, id: 'customRadio2', class: 'custom-control-input', data: { action: 'reveal#show' } %>
+            <label class="custom-control-label" for="customRadio2"><%= Spree.t('admin.taxon_types.automatic') %></label>
+            <br />
+            <span class="text-muted"><%= Spree.t('admin.taxon_types.automatic_info') %></span>
+          </div>
+        </div>
+        <div class="card-body border-top pt-4 d-none" data-reveal-target="item">
+          <h6><%= Spree.t(:rules) %></h6>
+          <%= render 'spree/admin/taxons/rules_form', f: f %>
+        </div>
+      </div>
+    <% else %>
+      <% if @taxon.automatic? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title"><%= Spree.t(:rules) %></h5>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-3"><%= Spree.t('admin.taxon_types.automatic_info') %></div>
+            <%= render 'spree/admin/taxons/rules_form', f: f %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="card-title">
+            <%= Spree.t(:products) %>
+            <span class="badge badge-info ml-2" id="product_count">
+              <%= @taxon.products.not_archived.count %>
+            </span>
+          </h5>
+
+          <% if @taxon.manual? && can?(:create, Spree::Classification) %>
+            <span data-toggle="modal" data-target="#modal">
+              <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-light btn-sm', data: { turbo_frame: 'dialog_modal' } %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="card-body border-bottom">
+          <div class="d-flex align-items-center">
+            <%= f.label :sort_order, class: 'text-nowrap mr-2 mb-0' %>
+            <%= f.select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto',  data: { action: 'change->auto-submit#submit' } } %>
+          </div>
+        </div>
+
+        <div class="card-body p-2" style="min-height: 300px">
+          <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+            <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id), loading: :lazy do %>
+              <%= render 'spree/admin/shared/spinner' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:images) %></h5>
+      </div>
+      <div class="card-body">
+        <%= f.label :image, Spree.t(:image) %>
+        <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1920, height: 1080 %>
+        <%= f.error_message_on :image %>
+      </div>
+      <div class="card-body">
+        <%= f.label :square_image, Spree.t(:square_image) %>
+        <p class="text-muted form-text">
+          Used for the featured image on the homepage.
+        </p>
+        <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true %>
+        <%= f.error_message_on :square_image %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title">
+          <%= Spree.t(:navigation) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if @taxon.new_record? %>
+          <% disabled = false %>
+        <% else %>
+          <% disabled = @taxon.root? %>
+        <% end %>
+        <div class="form-group">
+          <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
+          <%= f.select :parent_id, nested_set_options(@taxonomy.taxons.includes(:parent), @taxon) {|i| i.pretty_name }, { include_blank: false }, { data: { controller: 'autocomplete-select' }, disabled: disabled  } %>
+          <%= f.error_message_on :parent_id %>
+        </div>
+      </div>
+    </div>
+
+    <%= render 'spree/admin/shared/seo',
+          f: f,
+          title: @taxon.name,
+          meta_title: @taxon.meta_title,
+          description: @taxon.description,
+          slug_attribute_name: :permalink_part,
+          slug: @permalink_part,
+          slug_path: ['t', @parent_permalink.presence].compact.join('/'),
+          placeholder: 'Add a title and description to see how this taxon might appear in a search engine listing' %>
+  </div>
+</div>

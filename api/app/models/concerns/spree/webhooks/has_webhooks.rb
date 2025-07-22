@@ -10,12 +10,15 @@ module Spree
 
         def queue_webhooks_requests!(event_name)
           return if disable_spree_webhooks?
-          return if Spree::Webhooks::Subscriber.active.with_urls_for(event_name).none?
+          return if no_webhooks_subscribers?(event_name)
           return if update_event?(event_name) && updating_only_ignored_attributes?
           return if webhook_payload_body.blank?
 
           Spree::Webhooks::Subscribers::QueueRequests.call(
-            event_name: event_name, webhook_payload_body: webhook_payload_body, **webhooks_request_options
+            record: self,
+            event_name: event_name,
+            webhook_payload_body: webhook_payload_body,
+            **webhooks_request_options
           )
         end
 
@@ -42,7 +45,9 @@ module Spree
       end
 
       def included_relationships
-        if resource_serializer.relationships_to_serialize
+        if self.class.respond_to?(:webhook_included_relationships)
+          self.class.webhook_included_relationships
+        elsif resource_serializer.relationships_to_serialize
           resource_serializer.relationships_to_serialize.keys
         else
           []
@@ -73,7 +78,11 @@ module Spree
       end
 
       def disable_spree_webhooks?
-        ENV['DISABLE_SPREE_WEBHOOKS'] == 'true'
+        Spree::Webhooks.disabled?
+      end
+
+      def no_webhooks_subscribers?(event_name)
+        !Spree::Webhooks::Subscriber.active.with_urls_for(event_name).exists?
       end
 
       def webhooks_request_options

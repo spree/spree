@@ -1,6 +1,9 @@
+plugins:
+  - rubocop-rails
+
 AllCops:
   DisplayCopNames: true
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 3.3
   Include:
     - '**/Gemfile'
     - '**/Rakefile'
@@ -9,10 +12,7 @@ AllCops:
     - 'spec/dummy/**/*'
     - 'lib/generators/**/*'
 
-Rails:
-  Enabled: true
-
-Metrics/LineLength:
+Layout/LineLength:
   Max: 150
 
 # DISABLED

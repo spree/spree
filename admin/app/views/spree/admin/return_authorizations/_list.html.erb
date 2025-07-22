@@ -1,0 +1,21 @@
+<% if @collection.any? %>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:number) %></th>
+          <th><%= Spree.t(:created_at) %></th>
+          <th><%= Spree.t(:customer) %></th>
+          <th class="text-center w-10"><%= Spree.t(:status) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "spree/admin/return_authorizations/return_authorization",
+        collection: @collection,
+        cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+<% end %>

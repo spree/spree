@@ -2,15 +2,15 @@ require 'spec_helper'
 
 module Spree
   describe Products::Find do
-    let!(:product)                   { create(:product, price: 15.99) }
-    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99) }
-    let!(:product_3)                 { create(:variant, price: 19.99).product }
+    let(:store)                      { @default_store }
+    let!(:product)                   { create(:product, price: 15.99, stores: [store]) }
+    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
+    let!(:product_3)                 { create(:product, stores: [store]) }
     let!(:option_value)              { create(:option_value) }
     let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product)      { create(:product, status: 'archived') }
     let!(:in_stock_product)          { create(:product_in_stock) }
     let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder) }
-    let(:store)                      { product.stores.first }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -339,21 +339,6 @@ module Spree
 
         it { expect(products).to match_array [product_2, product_3] }
       end
-
-      context 'products scope is another store' do
-        let!(:scope) { store.products }
-
-        context 'passed store has no taxons' do
-          let(:store) { create(:store) }
-          let(:params) { { store: store, filter: { taxons: parent_taxon.id } } }
-
-          before do
-            parent_taxon.products << product
-          end
-
-          it { expect(products).to be_empty }
-        end
-      end
     end
 
     describe 'filter by prices' do
@@ -560,6 +545,36 @@ module Spree
         ).execute
 
         expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+      end
+    end
+
+    describe 'filter by slug' do
+      subject(:products) { described_class.new(scope: Spree::Product.all, params: params).execute }
+
+      let(:params) { { filter: { slug: 'slug-1' } } }
+
+      before { product.update(slug: 'slug-1') }
+
+      context 'when product with given slug is present' do
+        it 'returns products with the given slug' do
+          expect(products).to contain_exactly(product)
+        end
+      end
+
+      context 'when product with given slug is not present' do
+        let(:params) { { filter: { slug: 'slug-2' } } }
+
+        it 'returns all products' do
+          expect(products).to be_empty
+        end
+      end
+
+      context 'when slug is not present' do
+        let(:params) { { filter: { slug: '' } } }
+
+        it 'returns all products' do
+          expect(products).to contain_exactly(product, product_2, product_3, in_stock_product, not_backorderable_product)
+        end
       end
     end
   end

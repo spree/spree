@@ -1,0 +1,135 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <div class="d-flex gap-3 align-items-center">
+    <%= @customer_return.number %>
+
+    <% if @customer_return.fully_reimbursed? %>
+      <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
+    <% else %>
+      <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
+    <% end %>
+  </div>
+<% end %>
+
+<ul class="list-group bg-white mb-4">
+  <% if @customer_return.order %>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <%= Spree.t(:customer) %>
+      <div>
+        <%= render "spree/admin/orders/customer_summary", order: @customer_return.order %>
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <%= Spree.t(:order) %>
+      <strong><%= link_to @customer_return.order.number,
+        spree.edit_admin_order_path(@customer_return.order) %></strong>
+    </li>
+  <% end %>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:reimbursement_status) %>
+    <% if @customer_return.fully_reimbursed? %>
+      <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
+    <% else %>
+      <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
+    <% end %>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:pre_tax_total) %>
+    <span><%= @customer_return.display_pre_tax_total.to_html %></span>
+  </li>
+</ul>
+<% if @manual_intervention_return_items.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5><%= Spree.t(:manual_intervention_required) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <%= render partial: "return_item_decision",
+      locals: {
+        return_items: @manual_intervention_return_items,
+        show_decision: true,
+      } %>
+    </div>
+  </div>
+<% end %>
+
+<% if @pending_return_items.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5><%= Spree.t(:pending) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <%= render partial: "return_item_decision",
+      locals: {
+        return_items: @pending_return_items,
+        show_decision: true,
+      } %>
+    </div>
+  </div>
+<% end %>
+
+<% if @accepted_return_items.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5><%= Spree.t(:accepted) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <%= render partial: "return_item_decision",
+      locals: {
+        return_items: @accepted_return_items,
+        show_decision: false,
+      } %>
+    </div>
+  </div>
+<% end %>
+
+<% if @rejected_return_items.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5><%= Spree.t(:rejected) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <%= render partial: "return_item_decision",
+      locals: {
+        return_items: @rejected_return_items,
+        show_decision: false,
+      } %>
+    </div>
+  </div>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><%= plural_resource_name(Spree::Reimbursement) %></h5>
+  </div>
+  <div class="card-body p-0">
+
+    <% if @customer_return.reimbursements.any? %>
+      <%= render partial: "reimbursements_table",
+      locals: {
+        reimbursements: @customer_return.reimbursements,
+      } %>
+    <% else %>
+      <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+    <% end %>
+  </div>
+</div>
+
+<% if @customer_return.can_create_reimbursement? && can?(:create, Spree::Reimbursement) %>
+  <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
+    <%= hidden_field_tag :build_from_customer_return_id, @customer_return.id %>
+    <%= f.button class: 'btn btn-primary' do %>
+      <%= icon "plus" %>
+      <%= Spree.t(:create_reimbursement) %>
+    <% end %>
+  <% end %>
+<% end %>
+<% if !@customer_return.fully_reimbursed? && @customer_return.no_pending_reimbursements? && !@customer_return.completely_decided? %>
+  <div
+    class="
+      text-muted p-5 d-flex align-items-center w-100 justify-content-center
+    "
+  >
+    <%= Spree.t(:unable_to_create_reimbursements) %>
+  </div>
+<% end %>

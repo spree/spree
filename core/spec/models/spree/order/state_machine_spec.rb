@@ -14,6 +14,7 @@ describe Spree::Order, type: :model do
     context 'when current state is confirm' do
       before do
         order.state = 'confirm'
+        order.total = 100
         order.run_callbacks(:create)
         allow(order).to receive_messages payment_required?: true
         allow(order).to receive_messages process_payments!: true
@@ -83,7 +84,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    (Spree::Shipment.state_machine.states.keys - [:pending, :backorder, :ready]).each do |shipment_state|
+    (Spree::Shipment.state_machine.states.keys - [:pending, :backorder, :ready, :canceled]).each do |shipment_state|
       it "should be false if shipment_state is #{shipment_state}" do
         allow(order).to receive_messages completed?: true
         order.shipment_state = shipment_state

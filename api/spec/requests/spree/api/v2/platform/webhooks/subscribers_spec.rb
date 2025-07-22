@@ -10,15 +10,13 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
 
   describe '#index' do
     context 'filtering' do
-      let(:data_ids) { json_response['data'].pluck(:id) } 
+      let(:data_ids) { json_response['data'].pluck(:id) }
 
       context 'with no params' do
         before do
           create_list(:subscriber, 2)
           get "/api/v2/platform/webhooks/subscribers", headers: bearer_token
         end
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns all subscribers' do
           expect(json_response['data'].count).to eq(2)
@@ -89,7 +87,7 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
       }.to change {
         Spree::Webhooks::Subscriber.
           all.
-          as_json(except: %i[created_at id preferences updated_at]).
+          as_json(except: %i[created_at id preferences updated_at secret_key]).
           map(&:values)
       }.from([]).to([[url, active, events]])
     end

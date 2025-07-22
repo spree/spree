@@ -1,0 +1,28 @@
+<% content_for :title do %>
+  <%= Spree.t(:store_credits) %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_user_path(@user) %>
+  <%= Spree.t(:new_store_credit) %>
+<% end %>
+
+<%= form_for @store_credit, url: spree.admin_user_store_credits_path(@user, @store_credit) do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">
+            <%= Spree.t(:store_credits) %>
+          </h5>
+        </div>
+
+        <div class="card-body">
+          <%= render 'form', f: f %>
+        </div>
+      </div>
+      <%= render partial: 'spree/admin/shared/new_resource_links', locals: { collection_url: spree.admin_user_store_credits_path(@user) } %>
+    </div>
+  </div>
+<% end %>

@@ -1,12 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Money do
-  before do
-    configure_spree_preferences do |config|
-      config.currency = 'USD'
-    end
-  end
-
+  let(:store) { @default_store }
   let(:money)    { described_class.new(10) }
   let(:currency) { Money::Currency.new('USD') }
 
@@ -78,7 +73,7 @@ describe Spree::Money do
 
   context 'JPY' do
     before do
-      Spree::Store.default.update(default_currency: 'JPY')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('JPY')
     end
 
     it 'formats correctly' do
@@ -87,9 +82,20 @@ describe Spree::Money do
     end
   end
 
+  context 'DKK' do
+    before do
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('DKK')
+    end
+
+    it 'formats correctly' do
+      money = described_class.new(1000, html_wrap: false)
+      expect(money.to_s).to eq('1,000.00 kr.')
+    end
+  end
+
   context 'EUR' do
     before do
-      Spree::Store.default.update(default_currency: 'EUR')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('EUR')
     end
 
     # Regression test for #2634
@@ -101,23 +107,19 @@ describe Spree::Money do
     # rubocop:disable Style/AsciiComments
     it 'formats as HTML if asked (nicely) to' do
       money = described_class.new(10, format: '%n %u')
-      # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC;')
+      expect(money.to_html).to eq('10.00&nbsp;€')
     end
 
     it 'formats as HTML with currency' do
       money = described_class.new(10, format: '%n %u', with_currency: true)
-      # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC; EUR')
+      expect(money.to_html).to eq('10.00&nbsp;€ EUR')
     end
     # rubocop:enable Style/AsciiComments
   end
 
   context 'Money formatting rules' do
     before do
-      configure_spree_preferences do |config|
-        config.currency = 'EUR'
-      end
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('EUR')
     end
 
     after do

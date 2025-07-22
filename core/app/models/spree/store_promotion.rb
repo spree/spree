@@ -1,5 +1,5 @@
 module Spree
-  class StorePromotion < Spree::Base
+  class StorePromotion < Spree.base_class
     self.table_name = 'spree_promotions_stores'
 
     belongs_to :store, class_name: 'Spree::Store', touch: true

@@ -1,0 +1,89 @@
+---
+title: Authentication
+description: Learn how to use a custom authentication setup with Spree
+version: v5
+icon: user
+---
+
+If you installed Spree following the [Quickstart guide](/developer/quickstart), you can completely this step - you are all set and integrated with the [Devise](https://github.com/plataformatec/devise) gem.
+
+However if you're adding Spree to an existing application that has its own authentication system, you will need to follow these steps.
+
+## Using Devise
+
+If you're currently using [Devise](https://github.com/plataformatec/devise) for authentication, you can follow the steps below to integrate Spree with your existing authentication system.
+
+Firstly set your `User` class as `Spree.user_class` in your `config/initializers/spree.rb` file:
+
+```ruby
+Spree.user_class = 'User'
+```
+
+Now, run the generator to setup Spree integration with Devise:
+
+```bash
+bin/rails g spree:authentication:devise
+```
+
+This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You can then use this file to customize the routes to your liking. It should automatically pick up standard Devise routes.
+
+Secondly, this generator will add necessary modules to your `User` model.
+
+```ruby
+# app/models/user.rb
+class User < ApplicationRecord
+  # ... your existing code ...
+
+  include Spree::UserAddress
+  include Spree::UserMethods
+  include Spree::UserPaymentSource
+end
+```
+
+This will ensure that your `User` model can be used as a Spree user.
+
+This generator will also add 2 new lines to your Spree initializer file:
+
+```ruby
+Devise.parent_controller = "Spree::BaseController"
+Devise.parent_mailer = "Spree::BaseMailer"
+```
+
+This ensures that Devise will use Spree storefront layout for login/signup/etc and use Spree mailer layout for sending emails so they'll match your Storefront branding.
+
+If you have more complex setup, you can remove these lines and customize the routes and mailer in your own initializer file.
+
+## Using Custom Authentication
+
+If you're using a custom authentication system, you can follow the steps below to integrate Spree with your existing authentication system.
+
+Firstly set your `User` class as `Spree.user_class` in your `config/initializers/spree.rb` file:
+
+```ruby
+Spree.user_class = 'User'
+```
+
+Now, run the generator to setup Spree integration with your custom authentication system:
+
+```bash
+bin/rails g spree:authentication:custom
+```
+
+This will create the a new file in `lib/spree/authentication_helpers.rb` that serves as a bridge between Spree and your existing authentication system routes. You will need to customize this file to fit your needs.
+
+Secondly, this generator will add necessary modules to your `User` model.
+
+```ruby
+# app/models/user.rb
+class User < ApplicationRecord
+  # ... your existing code ...
+
+  include Spree::UserAddress
+  include Spree::UserMethods
+  include Spree::UserPaymentSource
+end
+```
+
+## Admin Panel authentication
+
+Please refer to the [Admin Panel Authentication](/developer/admin/authentication) page for more details.

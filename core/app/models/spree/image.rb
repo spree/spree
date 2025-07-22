@@ -1,8 +1,10 @@
 module Spree
   class Image < Asset
-    include Configuration::ActiveStorage
+    include Spree::Image::Configuration::ActiveStorage
     include Rails.application.routes.url_helpers
-    include ::Spree::ImageMethods
+    include Spree::ImageMethods
+
+    after_commit :touch_product_variants, if: :should_touch_product_variants?, on: :update
 
     # In Rails 5.x class constants are being undefined/redefined during the code reloading process
     # in a rails development environment, after which the actual ruby objects stored in those class constants
@@ -50,6 +52,21 @@ module Spree
 
     def plp_url
       generate_url(size: self.class.styles[:plp_and_carousel])
+    end
+
+    private
+
+    def touch_product_variants
+      viewable.product.variants.touch_all
+    end
+
+    def should_touch_product_variants?
+      return false unless viewable.is_a?(Spree::Variant)
+      return false unless viewable.is_master?
+      return false unless viewable.product.has_variants?
+      return false unless saved_change_to_position?
+
+      true
     end
   end
 end

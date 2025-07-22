@@ -1,9 +1,12 @@
 FactoryBot.define do
   factory :stock_transfer, class: Spree::StockTransfer do
-    destination_location {}
+    association :source_location, factory: :stock_location
+    association :destination_location, factory: :stock_location
+
+    stock_movements { [build(:stock_movement)] }
+
     number {}
     reference {}
-    source_location {}
     type {}
   end
 end

@@ -1,0 +1,10 @@
+<div class="mb-4 form-group">
+  <div data-controller="better-slider">
+    <label><%= _label %>: <span data-better-slider-target="currentValueLabel"></span><%= unit %></label>
+    <div class="flex flex-row w-full">
+      <span class="mr-2"><%= min %><%= unit %></span>
+      <%= f.range_field field, class: "custom-range", min: min, max: max, step: 1, data: {'better-slider-target': 'rangeInput', action: 'change->auto-submit#submit'} %>
+      <span class="ml-2"><%= max %><%= unit  %></span>
+    </div>
+  </div>
+</div>

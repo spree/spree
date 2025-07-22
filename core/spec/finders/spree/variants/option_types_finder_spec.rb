@@ -1,11 +1,13 @@
 require 'spec_helper'
 
 describe Spree::Variants::OptionTypesFinder do
+  let(:store) { @default_store }
+
   describe '#execute' do
     let(:option_type_1) { create :option_type, position: 2 }
     let(:option_type_2) { create :option_type, position: 1 }
 
-    let(:product) { create :product, option_types: [option_type_1, option_type_2], stores: [create(:store)] }
+    let(:product) { create :product, option_types: [option_type_1, option_type_2], stores: [store] }
 
     let!(:variant_1) { create :variant, product: product, option_values: [option_value_1_1, option_value_2_2] }
     let!(:variant_2) { create :variant, product: product, option_values: [option_value_1_2, option_value_2_1] }

@@ -2,8 +2,11 @@ module Spree
   class Promotion
     module Actions
       class CreateLineItems < PromotionAction
-        has_many :promotion_action_line_items, foreign_key: :promotion_action_id
-        accepts_nested_attributes_for :promotion_action_line_items
+        has_many :promotion_action_line_items, foreign_key: :promotion_action_id, dependent: :destroy
+
+        attribute :promotion_action_line_items_attributes
+
+        after_save :handle_promotion_action_line_items
 
         delegate :eligible?, to: :promotion
 
@@ -78,6 +81,38 @@ module Spree
         def item_available?(item)
           quantifier = Spree::Stock::Quantifier.new(item.variant)
           quantifier.can_supply? item.quantity
+        end
+
+        private
+
+        # Handles the creation and updating of promotion action line items
+        #
+        # This is a hacky replacement for accepts_nested_attributes_for
+        # that allows us to save the PromotionAction and PromotionActionLineItems
+        # at the same time.
+        def handle_promotion_action_line_items
+          return unless promotion_action_line_items_attributes
+
+          # remove the ones marked for destruction
+          ids_for_destruction = promotion_action_line_items_attributes.map { |key, params| params["_destroy"] == "1" ? params["id"] : nil }.compact
+          promotion_action_line_items.where(id: ids_for_destruction).delete_all if ids_for_destruction.present?
+
+          # upsert the rest
+          records_for_upsert = promotion_action_line_items_attributes.map { |key, params| params["_destroy"] != "1" ? params : nil }.compact
+
+          opts = {}
+          opts[:unique_by] = [:promotion_action_id, :variant_id] unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
+          promotion_action_line_items.upsert_all(
+            records_for_upsert.map do |params|
+              {
+                variant_id: params["variant_id"],
+                quantity: params["quantity"],
+                promotion_action_id: id
+              }
+            end,
+            **opts
+          )
         end
       end
     end

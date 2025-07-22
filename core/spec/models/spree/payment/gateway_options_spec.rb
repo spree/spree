@@ -44,6 +44,24 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double Spree::Address, active_merchant_hash: { ship: :address }
   end
 
+  describe '#order' do
+    subject { options.order }
+
+    it { is_expected.to eq order }
+  end
+
+  describe '#payment' do
+    subject { options.payment }
+
+    it { is_expected.to eq payment }
+  end
+
+  describe '#payment_id' do
+    subject { options.payment_id }
+
+    it { is_expected.to eq 'P1566' }
+  end
+
   describe '#email' do
     subject { options.email }
 
@@ -126,6 +144,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         customer_id: 144,
         ip: '0.0.0.0',
         order_id: 'R1444-P1566',
+        payment_id: 'P1566',
         shipping: '1244'.to_d,
         tax: '153'.to_d,
         subtotal: '1511'.to_d,

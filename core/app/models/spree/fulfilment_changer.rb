@@ -92,7 +92,7 @@ module Spree
     end
 
     def get_desired_shipment_inventory_unit(state)
-      desired_shipment.inventory_units.find_or_create_by(state: state) do |unit|
+      desired_shipment.inventory_units.find_or_create_by(state: state, variant: variant) do |unit|
         current_shipment_unit = current_shipment_units.first
         unit.variant_id = current_shipment_unit.variant_id
         unit.order_id = current_shipment_unit.order_id
@@ -109,6 +109,7 @@ module Spree
       end
 
       desired_shipment.refresh_rates
+      desired_shipment.update_amounts
 
       desired_shipment.order.reload
       desired_shipment.order.update_with_updater!

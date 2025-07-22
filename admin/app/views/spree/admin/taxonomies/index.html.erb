@@ -1,0 +1,43 @@
+<% content_for(:page_title) do %>
+  <%= Spree.t(:taxonomies) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:taxonomies_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_taxonomy), new_object_url, class: "btn btn-primary" %>
+<% end if can?(:create, Spree::Taxonomy) %>
+
+<%= render_admin_partials(:taxonomies_header_partials) %>
+
+<div class="card-lg">
+  <%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters"} do |f| %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
+
+    <%= render "spree/admin/shared/filter_badge_template" %>
+    <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
+
+  <% if @taxonomies.present? %>
+    <div class="table-responsive">
+      <table class="table" id='listing_taxonomies'>
+        <thead>
+          <tr data-hook="listing_taxonomies_header">
+            <th class="no-border handel-head"></th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:taxons) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="taxonomy"
+        >
+          <%= render partial: "spree/admin/taxonomies/taxonomy", collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render "spree/admin/shared/no_resource_found" %>
+  <% end %>
+</div>

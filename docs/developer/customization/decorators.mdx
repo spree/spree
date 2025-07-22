@@ -1,0 +1,142 @@
+---
+title: Decorators
+description: Decorators allow you to add or modify behavior of Spree classes in your application.
+icon: "code"
+---
+
+## Overview
+
+All of Spree's models, controllers, services,helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
+
+Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended, eg. for the `Spree::Product` model, create a file called `app/models/spree/product_decorator.rb`.
+
+## Decorating Models
+
+### Changing behavior of existing methods
+
+Changing the behavior of existing methods is the most common use case for decorators. 
+
+Let's say you want to change the behavior of the `available?` in the [Product](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) model.
+
+1. Let's start with creating a file in `app/models/spree/product_decorator.rb`
+
+    ```bash
+    mkdir -p app/models/spree && touch app/models/spree/product_decorator.rb
+    ```
+
+2. And add the following code to the file:
+
+    ```ruby
+    module Spree
+      module ProductDecorator
+        def available?
+          # your code here
+        end
+      end
+
+      Product.prepend(ProductDecorator)
+    end
+    ```
+
+### Adding a new method to the model
+
+You can also add a new method to the model. Or even add custom validations, callbacks, etc.
+
+```ruby
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.before_validation :strip_whitespaces
+    end
+
+    protected
+
+    def strip_whitespaces
+      self.name = name.strip
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Adding new associations to Spree models
+
+Assume you want to add a new model called `Video` associated to `Spree::Product`. Let's start with creating a database migration:
+
+```bash
+bin/rails g migration CreateVideos url:string product:references
+bin/rails db:migrate
+```
+
+In the model code add the association to `Spree::Product`:
+
+```ruby
+class Video < ApplicationRecord
+  belongs_to :product, class_name: 'Spree::Product'
+
+  has_one_attached :video_file
+end
+```
+
+Finally add the association in `ProductDecorator` in `app/models/spree/product_decorator.rb`:
+
+```ruby
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.has_many :videos, class_name: 'Video', foreign_key: 'product_id', dependent: :destroy
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+## Decorating Controllers
+
+Adding a custom action to the [ProductsController](https://github.com/spree/spree/blob/main/frontend/app/controllers/spree/products_controller.rb)
+
+1. Create a file in `app/controllers/spree/products_controller_decorator.rb`
+
+    ```bash
+    mkdir -p app/controllers/spree && touch app/controllers/spree/products_controller_decorator.rb
+    ```
+
+2. Add the following code:
+
+    ```ruby
+    module Spree
+      module ProductsControllerDecorator
+        def some_action
+          # your code here
+        end
+      end
+
+      ProductsController.prepend(ProductsControllerDecorator)
+    end
+    ```
+
+The exact same format can be used to redefine an existing method.
+
+### Accessing Product Data
+
+If you extend the Products controller with a new method, you may very well want to access product data in that method. You can do so by using the `:load_data before_action`.
+
+```ruby
+module Spree
+  module ProductsControllerDecorator
+    def self.prepended(base)
+      base.before_action :load_data, only: :some_action
+    end
+
+    def some_action
+      # your code here
+    end
+  end
+
+  ProductsController.prepend(ProductsControllerDecorator)
+end
+```
+
+`:load_data` will use `params[:id]` to lookup the product by its permalink.

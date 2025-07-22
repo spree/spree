@@ -1,0 +1,40 @@
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th><%= Spree.t(:number) %></th>
+      <th><%= Spree.t(:total) %></th>
+      <th><%= Spree.t(:status) %></th>
+      <th><%= Spree.t(:date) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% reimbursements.each do |reimbursement| %>
+      <tr
+        id="<%= spree_dom_id(reimbursement) %>"
+        data-controller="row-link"
+        class="cursor-pointer"
+      >
+        <td data-action="click->row-link#openLink" class="font-weight-bolder">
+          <%= link_to reimbursement.number,
+          (
+            if reimbursement.reimbursed?
+              url_for([:admin, @order, reimbursement])
+            else
+              url_for([:edit, :admin, @order, reimbursement])
+            end
+          ),
+          data: {
+            row_link_target: "link",
+          } %>
+        </td>
+        <td data-action="click->row-link#openLink"><%= reimbursement.display_total %></td>
+        <td data-action="click->row-link#openLink">
+          <span class="badge badge-<%= reimbursement_status_color(reimbursement) %>">
+            <%= reimbursement.reimbursement_status %>
+          </span>
+        </td>
+        <td data-action="click->row-link#openLink"><%= local_time(reimbursement.created_at) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

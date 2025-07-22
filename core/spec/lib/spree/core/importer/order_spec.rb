@@ -3,9 +3,9 @@ require 'spec_helper'
 module Spree
   module Core
     describe Importer::Order do
-      let(:store) { Spree::Store.default }
-      let!(:country) { store.default_country }
-      let!(:state) { country.states.first || create(:state, country: country) }
+      let(:store) { @default_store }
+      let(:country) { store.default_country || create(:country_us) }
+      let(:state) { country.states.first.presence || create(:state, country: country, name: 'New York', abbr: 'NY') }
       let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
       let(:user) { create(:user) }
@@ -488,6 +488,12 @@ module Spree
 
       it 'builds a payment using state' do
         params = {
+          line_items_attributes: [
+            {
+              variant_id: variant.id,
+              quantity: 5
+            }
+          ],
           payments_attributes: [
             {
               amount: '4.99',
@@ -502,6 +508,12 @@ module Spree
 
       it 'builds a payment using status as fallback' do
         params = {
+          line_items_attributes: [
+            {
+              variant_id: variant.id,
+              quantity: 5
+            }
+          ],
           payments_attributes: [
             {
               amount: '4.99',
@@ -528,6 +540,12 @@ module Spree
 
       it 'build a source payment using years and month' do
         params = {
+          line_items_attributes: [
+            {
+              variant_id: variant.id,
+              quantity: 5
+            }
+          ],
           payments_attributes: [
             {
               amount: '4.99',
@@ -571,6 +589,12 @@ module Spree
       it 'builds a payment with an optional created_at' do
         created_at = 2.days.ago
         params = {
+          line_items_attributes: [
+            {
+              variant_id: variant.id,
+              quantity: 5
+            }
+          ],
           payments_attributes: [
             {
               amount: '4.99',

@@ -1,0 +1,208 @@
+---
+title: Developing Spree
+description: >-
+  This guide covers all the necessary steps to contributing to Spree source
+  code. We're happy you're here!
+---
+
+## Spree codebase
+
+Spree is written in Ruby on Rails framework and is mounted into a Rails application as [a Rails Engine](https://guides.rubyonrails.org/engines.html).
+
+Each of spree components (eg. Storefront) is distributed as a separate gem, eg. `spree_storefront`, inside a subdirectory of the `spree` directory, eg. `spree/storefront`.
+
+### Spree namespace
+
+All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb).
+
+## Forking Spree repo
+
+Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **Fork** button. This will create a copy of the Spree repository on your GitHub account. See [Github Documentation](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) for more information on forking.
+
+## Local setup
+
+1. Clone your fork repository
+
+    ```bash
+    git clone git://github.com/your_github_username/spree.git && cd spree
+    ```
+
+2. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/)
+
+    On MacOS, we recommend using [rbenv](https://github.com/rbenv/rbenv) to install Ruby.
+
+    Firstly, install rbenv itself:
+
+    ```bash
+    curl -fsSL https://rbenv.org/install.sh | bash
+    ```
+
+    Then, install Ruby:
+
+    ```bash
+    rbenv init && rbenv install && rbenv global 3.3.0
+    ```
+
+3. Install required libraries
+
+    You will need SQLite (or PostgreSQL or MySQL) and libvips installed on your system. You can install them using the following commands:
+
+    ```bash
+    brew install vips
+    ```
+
+    If you are using Ubuntu or Windows Linux Subsystem, you can install libvips using the following command:
+
+    ```bash
+    sudo apt-get install libvips
+    ```
+
+    Please refer to the [libvips installation guide](https://libvips.github.io/libvips/install.html) for more information.
+
+4. Install the gem dependencies
+
+    ```bash
+    bundle install
+    ```
+
+## Creating Sandbox application
+
+Bellow command will setup a Rails application with Spree pre-installed with some data seeded:
+
+```bash
+bin/sandbox.sh
+```
+
+By default, Sandbox uses the **SQLite** database. But you can switch to **PostgreSQL** or **MySQL**:
+
+```bash
+DB=postgres DB_PASSWORD=password DB_USERNAME=postgres DB_HOST=localhost bin/sandbox.sh
+```
+
+We recommend sticking to SQLite for development purposes as it doesn't require any additional setup.
+
+## Running the application
+
+Go to the `sandbox` directory:
+
+```bash
+cd sandbox
+```
+
+And run the application using the following command:
+
+```bash
+bin/dev
+```
+
+This will start the web server and all the necessary processes (such as Tailwind CSS compiler).
+
+You can access the application at [http://localhost:3000](http://localhost:3000).
+
+To access the Admin Panel, you can go to [http://localhost:3000/admin](http://localhost:3000/admin).
+
+The default credentials for the Admin Panel are:
+
+```
+Email: spree@example.com
+Password: spree123
+```
+
+### Performance in development mode
+
+You may notice that your Spree store runs slower in development environment. This is caused by disabled caching and automatic reloading of code after each change.
+
+### Caching
+
+Caching is disabled by default. To turn on caching please run:
+
+```bash
+bin/rails dev:cache
+```
+
+You will need to restart rails server after this change.
+
+## Making changes
+
+Create a new branch for your changes. Do not push changes to the main branch. Branch name should be human-readable and informative, eg.
+
+* bug fixes: `fix/order-recalculation-total-bug`
+* features: `feature/my-new-amazing-feature`
+
+## Running Tests
+
+We use [CircleCI](https://circleci.com/) to run the tests for Spree.
+
+You can see the build statuses at [https://circleci.com/gh/spree/spree](https://circleci.com/gh/spree/spree).
+
+Each gem contains its own series of tests, and for each directory, you need to do a quick one-time creation of a test application and then you can use it to run the tests. For example, to run the tests for the core project.
+
+```bash
+cd core
+bundle exec rake test_app
+bundle exec rspec
+```
+
+If you would like to run specs against a particular database you may specify the dummy app's database, which defaults to sqlite3.
+
+```bash
+DB=postgres bundle exec rake test_app
+```
+
+If you want to run specs for only a single spec file
+
+```bash
+cd core
+bundle exec rspec spec/models/spree/state_spec.rb
+```
+
+If you want to run a particular line of spec
+
+```bash
+cd core
+bundle exec rspec spec/models/spree/state_spec.rb:7
+```
+
+### Running integration tests on MacOS (only applicable for Admin Panel/Storefront)
+
+We use chromedriver to run integration tests. To install it please use this command:
+
+```bash
+brew cask install chromedriver
+```
+
+## Submitting Changes
+
+Please keep your commit history meaningful and clear. [This guide](https://about.gitlab.com/blog/2018/06/07/keeping-git-commit-history-clean/) covers it quite well and we recommend reading it, not only for Spree project but for any IT project overall.
+
+1. Push your changes to a topic branch in your fork of the repository.
+
+    ```bash
+    git push -u origin fix/order-recalculation-total-bug
+    ```
+
+2. Create a Pull request - [please follow this guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+
+    If your changes references Github issues, please mark which issue you're fixing by adding `Fixes #<number or url of the issue>` in the commit name or PR title/description. This will automatically mark that issue as closed when your PR will be merged.
+3. Wait for CI to pass
+4. If CI passed wait for Spree Core team code review
+
+    We're aiming to review and leave feedback as soon as possible. We'll leave you a meaningul feedback if needed.
+
+## Troubleshooting
+
+This section will help you troubleshoot common issues with Spree.
+
+#### libvips error
+
+If you are using Spree 4.5 or higher, you may encounter the following libvips error:
+
+```bash
+LoadError: Could not open library 'vips.so.42'
+```
+
+This error is usually an indication that you do not have libvips installed locally on your machine. Check that libvips is installed with `vips -v`, and if it is not installed, follow [installation instructions here](https://www.libvips.org/install.html).
+
+## That's a wrap!
+
+Thank you for participating in Open Source and improving Spree - you're awesome!

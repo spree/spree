@@ -1,0 +1,37 @@
+<%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
+  <%= render 'spree/checkout/order_lock_version', order: @order %>
+
+  <% if @order.respond_to?(:gift_card) %>
+    <%= turbo_frame_tag :gift_card_code_field do %>
+      <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
+      <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+    <% end %>
+  <% end %>
+
+  <% use_shipping = (@order.shipping_eq_billing_address? || @order.bill_address.nil? || @order.bill_address.new_record?) && @order.requires_ship_address? %>
+
+  <div id="billing-address" class="mb-8 max-w-full" data-controller="toggle">
+    <h5 class="mb-3 font-body font-semibold">
+      <%= Spree.t(:billing_address) %>
+    </h5>
+    <% if @order.requires_ship_address? %>
+      <div class="flex items-center">
+        <%= form.check_box :use_shipping, { checked: use_shipping, class: 'checkbox-input', data: { action: 'change->toggle#toggle' } } %>
+        <%= form.label :use_shipping, Spree.t(:use_shipping_address), class: 'ml-1 cursor-pointer select-none' %>
+      </div>
+    <% end %>
+    <%= form.fields_for :bill_address do |address_form| %>
+      <div class="mt-4 <%= 'hidden' if use_shipping %>" data-toggle-target='toggleable'>
+        <%= render partial: 'spree/addresses/form', locals: {
+          address_name: 'bill_address',
+          address_form: address_form,
+          address_type: 'billing',
+          address: @order.bill_address,
+          form: form
+        } %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render 'spree/checkout/payment_methods', form: form %>
+<% end %>

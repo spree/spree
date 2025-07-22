@@ -1,0 +1,42 @@
+<% content_for :title do %>
+  <%= Spree.t(:customer_returns) %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= Spree.t(:customer_returns) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:customer_returns_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:customer_returns_header_partials) %>
+
+<div class="card-lg">
+  <%= render 'filters' %>
+
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr data-hook="rate_header">
+            <th><%= Spree.t(:number) %></th>
+            <th><%= Spree.t(:created_at) %></th>
+            <th><%= Spree.t(:customer) %></th>
+            <th><%= Spree.t(:order) %></th>
+            <th><%= Spree.t(:reimbursement_status) %></th>
+            <th><%= Spree.t(:pre_tax_total) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render collection: @collection,
+          partial: "spree/admin/customer_returns/customer_return",
+          cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>
+  <% end %>
+</div>

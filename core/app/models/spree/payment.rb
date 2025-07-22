@@ -1,19 +1,19 @@
 require_dependency 'spree/payment/processing'
 
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
-    include NumberIdentifier
-    include NumberAsParam
-    include Metadata
-    if defined?(Spree::Webhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
+    include Spree::NumberIdentifier
+    include Spree::NumberAsParam
+    include Spree::Metadata
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments
     end
 
+    extend Spree::DisplayMoney
+
     include Spree::Payment::Processing
+    include Spree::Payment::Webhooks
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -37,20 +37,24 @@ module Spree
 
     before_validation :validate_source
 
+    after_initialize :set_amount, if: -> { new_record? && order.present? && !amount_changed? }
+
+    #
+    # Callbacks
     after_save :create_payment_profile, if: :profiles_supported?
-
     # update the order totals, etc.
-    set_callback :save, :after, :update_order, unless: -> { capture_on_dispatch }
-
+    after_save :update_order, unless: -> { capture_on_dispatch }
     # invalidate previously entered payments
     after_create :invalidate_old_payments
     after_create :create_eligible_credit_event
+    after_destroy :update_order
 
     attr_accessor :source_attributes, :request_env, :capture_on_dispatch
 
     after_initialize :build_source
 
     validates :amount, numericality: true
+    validate :amount_must_be_less_than_or_equal_to_max_amount, if: -> { new_record? || amount_changed? }
 
     delegate :store_credit?, to: :payment_method, allow_nil: true
     delegate :name,          to: :payment_method, allow_nil: true, prefix: true
@@ -67,6 +71,8 @@ module Spree
     scope :processing, -> { with_state('processing') }
     scope :failed, -> { with_state('failed') }
 
+    scope :incomplete, -> { where.not(state: 'completed') }
+
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: INVALID_STATES) }
 
@@ -77,11 +83,12 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[number amount state response_code avs_response cvv_response_code cvv_response_message]
 
     # transaction_id is much easier to understand
-    def transaction_id
-      response_code
-    end
+    alias_attribute :transaction_id, :response_code
 
     delegate :currency, to: :order
+
+    money_methods :amount, :credit_allowed
+    alias money display_amount # for compatibility with older versions of Spree
 
     # order state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :checkout do
@@ -105,11 +112,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: :after_completed
+      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: :after_void
+      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -131,10 +138,18 @@ module Spree
       payment_method.payment_source_class.unscoped { super }
     end
 
-    def money
-      Spree::Money.new(amount, currency: currency)
+    def max_amount
+      return amount if order.nil?
+
+      amount_from_order = order.total - order.payment_total
+
+      if payment_method&.store_credit?
+        store_credits = order.available_store_credits
+        store_credits.any? ? [store_credits.first.amount_remaining, amount_from_order].min : amount_from_order
+      else
+        amount_from_order
+      end
     end
-    alias display_amount money
 
     def amount=(amount)
       self[:amount] =
@@ -158,13 +173,28 @@ module Spree
       credit_allowed > 0
     end
 
+    # we shouldn't allow deleting payments via admin interface
+    def can_be_deleted?
+      false
+    end
+
     # see https://github.com/spree/spree/issues/981
     def build_source
       return unless new_record?
 
       if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
-        self.source = payment_method.payment_source_class.new(source_attributes)
-        source.payment_method_id = payment_method.id
+        self.source = if source_attributes[:id].present? && source_attributes[:id] != :new
+                        payment_method.payment_source_class.find(source_attributes[:id])
+                      else
+                        payment_method.payment_source_class.new(source_attributes)
+                      end
+
+        if source.user_id.present? && source.user_id != order.user_id
+          self.source = nil
+          return
+        end
+
+        source.payment_method_id = payment_method.id if source.respond_to?(:payment_method_id)
         source.user_id = order.user_id if order
       end
     end
@@ -194,6 +224,10 @@ module Spree
       true
     end
 
+    def gateway_dashboard_payment_url
+      payment_method.try(:gateway_dashboard_payment_url, self)
+    end
+
     def captured_amount
       capture_events.sum(:amount)
     end
@@ -206,14 +240,29 @@ module Spree
       checkout? || pending?
     end
 
+    def display_source_name
+      return if source.blank?
+
+      source_class = source.class
+      source_class.respond_to?(:display_name) ? source_class.display_name : source_class.name.demodulize.split(/(?=[A-Z])/).join(' ')
+    end
+
     private
 
+    def set_amount
+      self.amount = order.total - order.payment_total
+    end
+
+    def amount_must_be_less_than_or_equal_to_max_amount
+      errors.add(:amount, :greater_than_max_amount, max_amount: max_amount) if amount > max_amount
+    end
+
     def after_void
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def after_completed
-      # this method is prepended in api/ to queue Webhooks requests
+      # Implement your logic here
     end
 
     def has_invalid_state?
@@ -222,18 +271,10 @@ module Spree
 
     def validate_source
       if source && !source.valid?
-        if Rails::VERSION::STRING >= '6.1'
-          source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
-            next if err[:field].blank? || err[:message].blank?
+        source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
+          next if err[:field].blank? || err[:message].blank?
 
-            add_source_error(err[:field], err[:message])
-          end
-        else
-          source.errors.messages.each do |field, error|
-            next if field.blank? || error.empty?
-
-            add_source_error(field, error.first)
-          end
+          add_source_error(err[:field], err[:message])
         end
       end
       !errors.present?
@@ -261,7 +302,8 @@ module Spree
       # Payment profile cannot be created without source
       return unless source
       # Imported payments shouldn't create a payment profile.
-      return if source.imported
+      # Imported is only available on Spree::CreditCard, non-credit card payments should not have this attribute.
+      return if source.respond_to?(:imported) && source.imported
 
       payment_method.create_profile(self)
     rescue ActiveMerchant::ConnectionError => e

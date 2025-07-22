@@ -1,0 +1,56 @@
+---
+title: Upgrading to Spree 4.8
+description: This guide covers upgrading a Spree 4 application to Spree 4.8.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at Spree 4.4 or later and Rails 6.1 or later.
+</Info>
+
+<AccordionGroup>
+  <Accordion title="1. Update gems">
+
+    ```bash
+    bundle update
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+
+  <Accordion title="3. (Optional) Install importmap-rails gem">
+    We've switched to using [importmap-rails](https://github.com/rails/importmap-rails) for asset management. If you're using the `spree_backend` or `spree_frontend` gem, you'll need to install the `importmap-rails` gem.
+
+    ```bash
+    bundle add importmap-rails
+    ```
+
+    and run generators:
+
+    ```bash
+    bin/rails importmap:install && bin/rails turbo:install && bin/rails stimulus:install
+    ```
+
+    You can also remove the `jsbundling-rails` gem from your `Gemfile`:
+
+    ```bash
+    bundle remove jsbundling-rails
+    ```
+  </Accordion>
+
+  <Accordion title="4. (Optional) Apply fix when upgrading from 4.5/4.6/4.7">
+    If you're upgrading from 4.5/4.6/4.7, you need to set this configuration in your `config/initializers/spree.rb`:
+
+    ```ruby
+    Spree::RuntimeConfig.always_use_translations = true
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [Spree 4.8.0 Release Notes.](https://github.com/spree/spree/releases/tag/v4.8.0)

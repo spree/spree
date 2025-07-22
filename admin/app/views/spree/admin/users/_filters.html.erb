@@ -1,0 +1,65 @@
+<%= search_form_for [:admin, @search], url: spree.admin_users_url, class: "filter-wrap", data: {controller: "filters dropdown"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, placeholder: Spree.t('admin.users.filters.search_placeholder') %>
+
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-dropdown-target="menu" id="table-filter">
+    <div class="form-group">
+      <%= f.label :bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
+      <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :bill_address_lastname_eq, Spree.t(:last_name) %>
+      <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :addresses_country_name_eq, Spree.t(:location) %>
+      <%= tom_select_tag "q[addresses_country_name_eq]",
+      active_option: params[:q][:addresses_country_name_eq],
+      options: Spree::Country.all.to_tom_select_json,
+      value_field: :name,
+      select_class: "w-100",
+      select_data: {
+        filters_target: "input",
+      } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :tags_name_in, Spree.t(:tags) %>
+      <%= tom_select_tag "q[tags_name_in]",
+      active_option: params[:q][:tags_name_in],
+      options: user_tags_json_array,
+      multiple: true,
+      value_field: :name,
+      select_class: "w-100",
+      select_data: {
+        filters_target: "input",
+      } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :accepts_email_marketing_eq, Spree.t(:accepts_email_marketing) %>
+      <%= f.select :accepts_email_marketing_eq,
+                options_for_select([["Yes", true], ["No", false]], params[:q][:accepts_email_marketing_eq]),
+                { include_blank: true },
+                { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
+      <%= tom_select_tag "q[spree_roles_name_in]",
+      active_option: params.dig(:q, :spree_roles_name_in),
+      options: user_roles_json_array,
+      multiple: true,
+      value_field: :name,
+      select_class: "w-100",
+      select_data: {
+        filters_target: "input",
+      } %>
+    </div>
+    <%= render_admin_partials(:users_filters_partials, f: f) %>
+    <%= render 'spree/admin/shared/filter_submit' %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

@@ -1,13 +1,16 @@
 module Spree
   module Orders
     class FindComplete
-      attr_reader :user, :number, :token, :store
+      include Spree::Orders::FinderHelper
 
-      def initialize(user: nil, number: nil, token: nil, store: nil)
+      attr_reader :user, :number, :token, :store, :email
+
+      def initialize(user: nil, number: nil, token: nil, store: nil, email: nil)
         @user = user
         @number = number
         @token = token
         @store = store
+        @email = email
       end
 
       def execute
@@ -15,6 +18,7 @@ module Spree
         orders = by_number(orders)
         orders = by_token(orders)
         orders = by_store(orders)
+        orders = by_email(orders)
 
         orders
       end
@@ -22,7 +26,7 @@ module Spree
       private
 
       def scope
-        user? ? user.orders.complete.includes(scope_includes) : Spree::Order.complete.includes(scope_includes)
+        user? ? user.orders.complete.includes(order_includes) : Spree::Order.complete.includes(order_includes)
       end
 
       def user?
@@ -39,6 +43,10 @@ module Spree
 
       def store?
         store.present?
+      end
+
+      def email?
+        email.present?
       end
 
       def by_user(orders)
@@ -65,16 +73,10 @@ module Spree
         orders.where(store: store)
       end
 
-      def scope_includes
-        {
-          line_items: [
-            variant: [
-              :images,
-              option_values: :option_type,
-              product: :product_properties,
-            ]
-          ]
-        }
+      def by_email(orders)
+        return orders unless email?
+
+        orders.where(email: email.strip.downcase)
       end
     end
   end

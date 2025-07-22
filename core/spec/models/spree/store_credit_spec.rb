@@ -22,38 +22,6 @@ describe Spree::StoreCredit, type: :model do
         expect(store_credit.errors[:amount_used]).to include(validation_message)
       end
     end
-
-    context 'category is a non-expiring type' do
-      let!(:secondary_credit_type) { create(:secondary_credit_type) }
-      let(:store_credit) { build(:store_credit, credit_type: nil) }
-
-      before { allow(store_credit.category).to receive(:non_expiring?).and_return(true) }
-
-      it 'sets the credit type to non-expiring' do
-        subject
-        expect(store_credit.credit_type.name).to eq secondary_credit_type.name
-      end
-    end
-
-    context 'category is an expiring type' do
-      before { allow(store_credit.category).to receive(:non_expiring?).and_return(false) }
-
-      it 'sets the credit type to non-expiring' do
-        subject
-        expect(store_credit.credit_type.name).to eq 'Expiring'
-      end
-    end
-
-    context 'the type is set' do
-      let!(:secondary_credit_type) { create(:secondary_credit_type) }
-      let(:store_credit) { build(:store_credit, credit_type: secondary_credit_type) }
-
-      before { allow(store_credit.category).to receive(:non_expiring?).and_return(false) }
-
-      it "doesn't overwrite the type" do
-        expect { subject }.not_to change(store_credit, :credit_type)
-      end
-    end
   end
 
   describe 'validations' do
@@ -741,7 +709,7 @@ describe Spree::StoreCredit, type: :model do
     end
 
     describe '#store_events' do
-      let(:store) { Spree::Store.default }
+      let(:store) { @default_store }
 
       context 'create' do
         context 'user has one store credit' do

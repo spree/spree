@@ -38,6 +38,57 @@ describe Spree::FulfilmentChanger do
     variant.stock_items.first.update_column(:count_on_hand, 100)
   end
 
+  context 'when the order has multiple line items' do
+    let(:current_shipment_inventory_unit_count) { 3 }
+    let(:second_variant) { create(:variant)}
+    let(:third_variant) { create(:variant)}
+    let(:quantity) { 3 }
+
+
+    let(:order) do
+      create(
+        :completed_order_with_totals,
+        without_line_items: true,
+        line_items_attributes: [
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: variant
+          },
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: second_variant
+          },
+          {
+            quantity: current_shipment_inventory_unit_count,
+            variant: third_variant
+          }
+        ]
+      )
+    end
+
+    it 'can move more than one variant to the desired shipment' do
+      described_class.new(
+        current_stock_location: current_shipment.stock_location,
+        desired_stock_location: desired_shipment.stock_location,
+        current_shipment: current_shipment,
+        desired_shipment: desired_shipment,
+        variant: variant,
+        quantity: quantity
+      ).run!
+      expect(desired_shipment.inventory_units.count).to eq 1
+      described_class.new(
+        current_stock_location: current_shipment.stock_location,
+        desired_stock_location: desired_shipment.stock_location,
+        current_shipment: current_shipment,
+        desired_shipment: desired_shipment,
+        variant: second_variant,
+        quantity: quantity
+      ).run!
+      expect(current_shipment.inventory_units.count).to eq 1
+      expect(desired_shipment.inventory_units.count).to eq 2
+    end
+  end
+
   context 'when the current shipment has enough inventory units' do
     let(:current_shipment_inventory_unit_count) { 3 }
     let(:quantity) { 1 }
@@ -327,6 +378,17 @@ describe Spree::FulfilmentChanger do
 
     it 'adds the desired inventory units to the desired shipment' do
       expect { subject }.to change { Spree::Shipment.count }.by(1)
+    end
+
+    it 'updates desired shipment cost after selecting the shipping rate' do
+      Spree::ShippingMethod.delete_all
+      calculator = Spree::Calculator::Shipping::FlatRate.create!(preferred_amount: 10)
+      shipping_method_that_should_be_selected = create(:shipping_method, calculator: calculator)
+
+      subject
+
+      expect(desired_shipment.reload.shipping_method).to eq(shipping_method_that_should_be_selected)
+      expect(desired_shipment.reload.cost).to eq(10)
     end
 
     context 'if the desired shipment is invalid' do

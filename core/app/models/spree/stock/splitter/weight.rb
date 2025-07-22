@@ -15,7 +15,7 @@ module Spree
         private
 
         def reduce(package)
-          contents = split_package_contents_over_threshold(package).sort { |x, y| y.weight <=> x.weight }
+          contents = split_package_contents_over_threshold(package).sort_by(&:weight).reverse
           # Treat current package as one of the generated packages for convenience and add the heaviest item
           # This also prevents an additional package if no fit is possible
           package.contents.clear

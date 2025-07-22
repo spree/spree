@@ -50,10 +50,6 @@ module Spree
         name.present?
       end
 
-      def name_matcher
-        Spree::Taxon.arel_table[:name].matches("%#{name}%")
-      end
-
       def by_ids(taxons)
         return taxons unless ids?
 
@@ -69,10 +65,12 @@ module Spree
       def by_parent_permalink(taxons)
         return taxons unless parent_permalink?
 
-        if Rails::VERSION::STRING >= '6.1'
-          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
+        if Spree.use_translations?
+          taxons.joins(:parent).
+            join_translation_table(Taxon, 'parents_spree_taxons').
+            where(Taxon.translation_table_alias => { permalink: parent_permalink })
         else
-          taxons.joins("INNER JOIN #{Spree::Taxon.table_name} AS parent_taxon ON parent_taxon.id = #{Spree::Taxon.table_name}.parent_id").where(["parent_taxon.permalink = ?", parent_permalink])
+          taxons.joins(:parent).where(parent: { permalink: parent_permalink })
         end
       end
 
@@ -91,7 +89,10 @@ module Spree
       def by_name(taxons)
         return taxons unless name?
 
-        taxons.where(name_matcher)
+        taxon_name = name
+
+        # i18n mobility scope doesn't automatically get set for query blocks (Mobility issue #599) - set it explicitly
+        taxons.i18n { name.matches("%#{taxon_name}%") }
       end
     end
   end

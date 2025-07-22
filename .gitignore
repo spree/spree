@@ -5,7 +5,6 @@
 *~
 .#*
 .DS_Store
-.bundle
 .dotest
 .idea
 .loadpath
@@ -56,3 +55,4 @@ vendor/bundle
 */vendor/bundle
 .ignore
 TODO
+brakeman-*.*

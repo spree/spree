@@ -1,0 +1,120 @@
+---
+title: Render
+description: Deploy your Spree application to [Render.com](https://render.com) Platform as a Service platform
+icon: "server"
+---
+
+## Overview
+
+Render is a Platform as a Service that makes deploying and hosting Spree applications super easy.
+
+Spree Starter is pre-configured to work with Render out of the box. It includes [render.yaml](https://github.com/spree/spree_starter/blob/main/render.yaml) file that is used to deploy the application.
+
+## Prerequisites
+
+- [Render account](https://render.com) - you will also need to add a credit card to your Render account to be able to deploy the application.
+- [GitHub account](https://github.com)
+
+## Setup repository
+
+Firstly create your own repository based on Spree Starter template.
+
+Go to [Spree Starter repository](https://github.com/spree/spree_starter) and click on "Use this template" button and select "Create a new repository".
+
+<img src="/images/spree_starter_create_repo.png" width="300" />
+
+Supply the repository name and click on "Create repository from template" button.
+
+![Create repository from template](/images/developer/deployment/github_setup_private_repo.png)
+
+Now clone the repository to your local machine.
+
+```bash
+git clone https://github.com/your-username/my_spree_app.git
+```
+
+Now you can start working on your application. Make sure your environment is set up correctly (follow the [Getting Started](/developer/getting-started/quickstart) guide).
+
+Running the `bin/setup` script should set your `SECRET_KEY_BASE` environment variable correctly in the `.env` file.
+
+<Warning>
+Don't share your `.env` file with anyone!
+</Warning>
+
+## Create Render account and connect your repository
+
+Go to [render.com](https://render.com) and create an account. We recommend to use your GitHub account to sign up as it will automatically link your GitHub repositories to Render.
+
+## Create Render blueprint
+
+[Render blueprints](https://render.com/docs/blueprint-spec) are YAML files used to deploy your application to Render. They consist a list of services that are required to run your application.
+
+In the Render dashboard select "New blueprint" from the "+New" button.
+
+<img src="/images/developer/deployment/render_new_blueprint.png" />
+
+Now select your repository from the list of repositories.
+
+![Render select repository](/images/developer/deployment/render_select_repo.png)
+
+You should see the the new blueprint form.
+
+![Render services](/images/developer/deployment/render_deploy_blueprint.png)
+
+1. Set your blueprint name - eg. `Spree App`
+2. Generate a new `SECRET_KEY_BASE` value.
+
+    ```bash
+    bin/rails secret
+    ```
+
+3. Paste it to the `SECRET_KEY_BASE` environment variable for both `web` and `worker` services (it needs to be the same value for both).
+
+After that is done click the "Deploy Blueprint" button. Now wait a few minutes for Render to setup your application.
+
+You should see the following screen with the list of created services.
+
+![Render deploy blueprint](/images/developer/deployment/render_created_services.png)
+
+That's it! Your application is now deployed to Render.
+
+You can now access the admin dashboard of your application at the following URL.
+
+```url
+https://<your-application-name>.onrender.com/admin
+```
+
+The default credentials are:
+
+```
+Email: admin@example.com
+Password: password
+```
+
+<Warning>
+We recommend changing credentials after logging in! You can also do it from the Rails console. In your Render dashboard select your `web` service and click on the "Shell" tab.
+
+<img src="/images/developer/deployment/render_shell.png" width="200" />
+
+Now you can open the Rails console by running `bin/rails console`.
+
+```ruby
+Spree::User.first.update!(email: "<your@email.com>", password: "<your_password>", password_confirmation: "<your_password>")
+```
+</Warning>
+
+<Info>
+Render will automatically any new changes you push to your repository.
+</Info>
+
+## Next steps
+
+Now that your application is deployed, you also need to setup asset storage as Render only provides ephemeral storage.
+
+- [Setup Asset storage](/developer/deployment/assets) (Amazon S3/Cloudflare R2)
+
+Before going to full production, we recommend to also:
+
+- [Set optional environment variables](/developer/deployment/environment_variables)
+- [Setup CDN](/developer/deployment/cdn)
+- [Configure Caching](/developer/deployment/caching)

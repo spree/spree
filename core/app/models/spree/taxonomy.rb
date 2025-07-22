@@ -1,13 +1,18 @@
 module Spree
-  class Taxonomy < Spree::Base
-    include Metadata
-    if defined?(Spree::Webhooks)
+  class Taxonomy < Spree.base_class
+    include Spree::TranslatableResource
+    include Spree::Metadata
+    include Spree::SingleStoreResource
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
 
+    TRANSLATABLE_FIELDS = %i[name].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
     acts_as_list
 
-    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true, scope: :store_id }
+    validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
 
     has_many :taxons, inverse_of: :taxonomy
@@ -15,10 +20,11 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
 
     after_create :set_root
-    after_save :set_root_taxon_name
+    after_update :set_root_taxon_name
 
     default_scope { order("#{table_name}.position, #{table_name}.created_at") }
 
+    self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[root]
 
     private
@@ -28,7 +34,7 @@ module Spree
     end
 
     def set_root_taxon_name
-      return unless saved_change_to_name?
+      return unless saved_changes.key?(:name)
       return if name.to_s == root.name.to_s
 
       root.update(name: name)

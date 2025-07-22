@@ -1,9 +1,11 @@
 module Spree
-  class LineItem < Spree::Base
-    include Metadata
-    if defined?(Spree::Webhooks)
+  class LineItem < Spree.base_class
+    include Spree::Metadata
+    if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
+
+    attribute :quantity, :integer, default: 1
 
     before_validation :ensure_valid_quantity
 
@@ -13,10 +15,11 @@ module Spree
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
 
-    has_one :product, through: :variant
+    has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
     has_many :inventory_units, inverse_of: :line_item
+    has_many :shipments, through: :inventory_units, source: :shipment
     has_many :digital_links, dependent: :destroy
 
     before_validation :copy_price
@@ -27,7 +30,7 @@ module Spree
     # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
-      less_than_or_equal_to: DatabaseTypeUtilities.maximum_value_for(:integer),
+      in: 0..DatabaseTypeUtilities.maximum_value_for(:integer),
       only_integer: true, message: Spree.t('validation.must_be_int')
     }
 
@@ -45,10 +48,12 @@ module Spree
 
     after_create :update_tax_charge
 
-    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, to: :variant
+    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
     delegate :digital?, to: :variant
+
+    scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
     attr_accessor :target_shipment
 
@@ -70,11 +75,7 @@ module Spree
     def update_price
       currency_price = variant.price_in(order.currency)
 
-      self.price = if currency_price.amount.present?
-                     currency_price.price_including_vat_for(tax_zone: tax_zone)
-                   else
-                     0
-                   end
+      self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
     end
 
     def copy_tax_category
@@ -84,7 +85,7 @@ module Spree
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
                   :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
-                  :pre_tax_amount
+                  :pre_tax_amount, :shipping_cost, :tax_total, :compare_at_amount
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -93,10 +94,21 @@ module Spree
       price * quantity
     end
 
+    def compare_at_amount
+      (variant.compare_at_amount_in(currency) || 0) * quantity
+    end
+
     alias subtotal amount
 
     def taxable_amount
       amount + taxable_adjustment_total
+    end
+
+    # returns the total tax amount
+    #
+    # @return [BigDecimal]
+    def tax_total
+      included_tax_total + additional_tax_total
     end
 
     alias discounted_money display_discounted_amount
@@ -104,6 +116,13 @@ module Spree
 
     def final_amount
       amount + adjustment_total
+    end
+
+    # Returns the weight of the line item
+    #
+    # @return [BigDecimal]
+    def item_weight
+      variant.weight * quantity
     end
 
     alias total final_amount
@@ -117,6 +136,41 @@ module Spree
       !sufficient_stock?
     end
 
+    # returns true if any of the inventory units are shipped
+    #
+    # @return [Boolean]
+    def any_shipped?
+      inventory_units.any?(&:shipped?)
+    end
+
+    # returns true if all of the inventory units are shipped
+    #
+    # @return [Boolean]
+    def fully_shipped?
+      inventory_units.all?(&:shipped?)
+    end
+
+    # Returns the shipping cost for the line item
+    #
+    # @return [BigDecimal]
+    def shipping_cost
+      shipments.sum do |shipment|
+        # Skip cancelled shipments
+        return BigDecimal('0') if shipment.canceled?
+
+        # Get all inventory units in this shipment for this line item
+        line_item_units = shipment.inventory_units.where(line_item_id: id).count
+
+        # Get total inventory units in this shipment
+        total_units = shipment.inventory_units.count
+
+        # Calculate proportional shipping cost
+        return BigDecimal('0') if total_units.zero? || line_item_units.zero? || shipment.cost.zero?
+
+        shipment.cost * (line_item_units.to_d / total_units)
+      end
+    end
+
     def options=(options = {})
       return unless options.present?
 
@@ -126,6 +180,17 @@ module Spree
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
+    end
+
+    # Returns the maximum quantity that can be added to the line item
+    #
+    # @return [Integer]
+    def maximum_quantity
+      @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
+    end
+
+    def with_digital_assets?
+      variant.with_digital_assets?
     end
 
     private

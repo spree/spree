@@ -1,0 +1,34 @@
+<% if controller_name == 'orders' %>
+  <div class="dropdown">
+    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+      <span class="text-muted font-weight-normal mr-1">
+        <%= Spree.t(:show) %>
+      </span>
+      <%= order_filter_dropdown_value %>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px">
+      <%= active_link_to Spree.t('admin.orders.all_orders'), params.to_unsafe_h.deep_merge({q: {shipment_state_eq: '', shipment_state_not_in: '', state_eq: '', state_in: '', refunded: '', partially_refunded: '' }}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[payment_state_not_eq shipment_state_not_in shipment_state_eq state_eq state_in refunded partially_refunded] ).all?(&:blank?) %>
+      <%= link_to params.to_unsafe_h.deep_merge({q: {shipment_state_not_in: [:shipped, :canceled], shipment_state_eq: '', state_eq: '', state_in: '', refunded: '', partially_refunded: ''}}),
+                  class: "dropdown-item d-flex align-items-center justify-content-between #{'active' if params[:q][:shipment_state_not_in] == ['shipped', 'canceled']}" do %>
+          <%= Spree.t('admin.orders.unfulfilled') %>
+          <% if ready_to_ship_orders_count&.positive? %>
+            <span class="badge badge-light ml-2">
+              <%= ready_to_ship_orders_count %>
+            </span>
+          <% end %>
+      <% end %>
+      <%= link_to Spree.t('admin.orders.fulfilled'),
+        params.to_unsafe_h.deep_merge({q: {shipment_state_eq: :shipped, shipment_state_not_in: '', state_eq: '', state_in: '', refunded: '', partially_refunded: ''}}),
+        class: "dropdown-item #{'active' if params[:q][:shipment_state_eq] == 'shipped'}" %>
+        <%= link_to Spree.t('admin.orders.canceled'),
+        params.to_unsafe_h.deep_merge({q: {state_eq: nil, state_in: [:canceled, :partially_canceled], shipment_state_not_in: '', shipment_state_eq: '', refunded: '', partially_refunded: ''}}),
+        class: "dropdown-item #{'active' if params[:q][:state_in] == ['canceled','partially_canceled']}" %>
+      <%= link_to Spree.t('admin.orders.refunded'),
+        params.to_unsafe_h.deep_merge({q: {refunded: '1', shipment_state_not_in: '', shipment_state_eq: '', state_eq: '', state_in: '', partially_refunded: ''}}),
+        class: "dropdown-item #{'active' if params.dig(:q, :refunded) && params[:q][:refunded].present?}" %>
+      <%= link_to Spree.t('admin.orders.partially_refunded'),
+        params.to_unsafe_h.deep_merge({q: {partially_refunded: '1', shipment_state_not_in: '', shipment_state_eq: '', state_eq: '', state_in: '', refunded: '' }}),
+        class: "dropdown-item #{'active' if params.dig(:q, :partially_refunded) && params[:q][:partially_refunded].present?}" %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,19 @@
+<li class="list-group-item">
+  <div class="row">
+    <div class="col-8">
+      <%= link_to spree.edit_admin_product_path(line_item.product), class: 'd-flex text-decoration-none' do %>
+        <%= render 'spree/admin/shared/product_image', object: line_item.product %>
+        <span class="ml-3 text-dark">
+          <strong><%= line_item.name %></strong><br />
+          <%= line_item.options_text %>
+        </span>
+      <% end %>
+    </div>
+    <div class="col-2 text-lg-right">
+      x <%= line_item.quantity %>
+    </div>
+    <div class="col-2 text-lg-right">
+      <%= line_item.display_total %>
+    </div>
+  </div>
+</li>

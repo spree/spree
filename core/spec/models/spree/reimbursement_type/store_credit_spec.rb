@@ -18,7 +18,7 @@ module Spree
     end
 
     let!(:primary_credit_type) { create(:primary_credit_type) }
-    let!(:created_by_user) { create(:user, email: Spree::StoreCredit::DEFAULT_CREATED_BY_EMAIL) }
+    let!(:created_by_user) { create(:admin_user) }
     let!(:default_reimbursement_category) { create(:store_credit_category) }
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
