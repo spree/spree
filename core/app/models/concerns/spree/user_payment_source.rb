@@ -9,7 +9,7 @@ module Spree
       end
 
       def payment_sources
-        credit_cards.with_payment_profile.not_expired.where(payment_method: Spree::PaymentMethod.active).not_removed
+        credit_cards.capturable.not_expired.where(payment_method: Spree::PaymentMethod.active).not_removed
       end
 
       def drop_payment_source(source)
