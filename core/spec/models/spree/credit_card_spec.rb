@@ -406,6 +406,20 @@ describe Spree::CreditCard, type: :model do
                                                           outdated_credit_card_four)
       end
     end
+
+    describe '#capturable' do
+      let!(:credit_card_with_profile_id) { create(:credit_card, gateway_customer_profile_id: '123') }
+      let!(:credit_card_with_payment_id) { create(:credit_card, gateway_payment_profile_id: '123') }
+      let!(:credit_card_without_profile_or_payment_id) { create(:credit_card, gateway_customer_profile_id: nil, gateway_payment_profile_id: nil) }
+
+      it 'includes only capturable credit cards' do
+        expect(described_class.capturable).to include(credit_card_with_profile_id, credit_card_with_payment_id)
+      end
+
+      it 'does not include credit cards without profile or payment id' do
+        expect(described_class.capturable).not_to include(credit_card_without_profile_or_payment_id)
+      end
+    end
   end
 
   context '#display_brand' do
