@@ -1027,13 +1027,13 @@
               {    
                 "group": "Multi-Tenant Platform",
                 "pages": [
-                  "use-case/multi-tenant-platform/multi-tenant-model",
-                  "use-case/multi-tenant-platform/multi-tenant-capabilities",
-                  "use-case/multi-tenant-platform/super-admin-capabilities", 
-                  "use-case/multi-tenant-platform/tenant-capabilities",
-                  "use-case/multi-tenant-platform/franchises-and-reseller-networks",
-                  "use-case/multi-tenant-platform/multi-brand-enterprise-model",
-                  "use-case/multi-tenant-platform/white-label-saas"
+                  "use-case/multi-tenant/multi-tenant-model",
+                  "use-case/multi-tenant/multi-tenant-capabilities",
+                  "use-case/multi-tenant/super-admin-capabilities", 
+                  "use-case/multi-tenant/tenant-capabilities",
+                  "use-case/multi-tenant/franchises-and-reseller-networks",
+                  "use-case/multi-tenant/multi-brand-enterprise-model",
+                  "use-case/multi-tenant/white-label-saas"
                 ]
               }
             ]
