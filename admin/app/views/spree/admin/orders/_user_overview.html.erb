@@ -1,0 +1,13 @@
+<% if @order.user.orders.complete.any? %>
+  <div class="alert alert-info mt-2 mb-0">
+    <div>
+      <h6 class="font-weight-bold">
+        <%= icon('magic') %> Assistant
+      </h6>
+      This is a repeat customer that has spent a total of
+      <strong><%= Spree::Money.new(@order.user.orders.complete.sum(:total)) %></strong> across
+      <strong><%= @order.user.orders.complete.count %> orders</strong>, averaging
+      <strong><%= Spree::Money.new(@order.user.orders.complete.average(:total)) %></strong> per order.
+    </div>
+  </div>
+<% end %>

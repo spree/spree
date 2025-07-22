@@ -2,62 +2,7 @@ require 'spec_helper'
 
 describe Spree::UserMethods do
   let(:test_user) { create :user }
-  let(:current_store) { create :store }
-
-  describe '#has_spree_role?' do
-    subject { test_user.has_spree_role? name }
-
-    let(:role) { Spree::Role.create(name: name) }
-    let(:name) { 'test' }
-
-    context 'with a role' do
-      before { test_user.spree_roles << role }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context 'without a role' do
-      it { is_expected.to be_falsy }
-    end
-  end
-
-  describe '#admin?' do
-    it do
-      expect(create(:admin_user).admin?).to be true
-      expect(create(:user).admin?).to be false
-    end
-  end
-
-  describe '#spree_admin?' do
-    it do
-      expect(create(:admin_user).spree_admin?).to be true
-      expect(create(:user).spree_admin?).to be false
-    end
-  end
-
-  describe '.admin_created?' do
-    it 'returns true when admin exists' do
-      create(:admin_user)
-
-      expect(Spree.user_class).to be_admin_created
-    end
-
-    it 'returns false when admin does not exist' do
-      expect(Spree.user_class).to_not be_admin_created
-    end
-  end
-
-  describe '.spree_admin_created?' do
-    it 'returns true when admin exists' do
-      create(:admin_user)
-
-      expect(Spree.user_class).to be_admin_created
-    end
-
-    it 'returns false when admin does not exist' do
-      expect(Spree.user_class).to_not be_admin_created
-    end
-  end
+  let(:current_store) { @default_store }
 
   describe '#last_incomplete_spree_order' do
     subject { test_user.last_incomplete_spree_order(current_store) }
@@ -72,6 +17,12 @@ describe Spree::UserMethods do
       end
 
       it { is_expected.to eq last_incomplete_order }
+    end
+
+    context 'with incomplete canceled order' do
+      let(:canceled_order) { create(:order, user: test_user, created_at: 1.day.ago, store: current_store, state: 'canceled') }
+
+      it { is_expected.to be_nil }
     end
 
     context 'without an incomplete order' do
@@ -154,6 +105,54 @@ describe Spree::UserMethods do
 
     it 'does not include credit cards with inactive payment method' do
       expect(subject).not_to include(credit_card_with_inactive_payment_method)
+    end
+  end
+
+  describe '#scramble_email_and_names' do
+    it 'scramble email and names' do
+      expect { test_user.send(:scramble_email_and_names) }.to change(test_user, :email).and change(test_user, :first_name).and change(test_user, :last_name)
+      expect(test_user.login).to eq(test_user.email)
+      expect(test_user.first_name).to eq('Deleted')
+      expect(test_user.last_name).to eq('User')
+    end
+  end
+
+  describe '#invited_by' do
+    it 'returns the user who invited the current user' do
+      invitation = create(:invitation, invitee: test_user)
+      expect(test_user.invited_by).to eq(invitation.inviter)
+    end
+  end
+
+  describe '.multi_search' do
+    let!(:user_1) { create(:user, email: 'john.doe@example.com', first_name: 'John', last_name: 'Doe') }
+    let!(:user_2) { create(:user, email: 'jane.doe@example.com', first_name: 'Jane', last_name: 'Gone') }
+    let!(:user_3) { create(:user, email: 'mary.moe@example.com', first_name: 'Mary', last_name: 'Moe') }
+
+    it 'returns users based on an email' do
+      expect(Spree.user_class.multi_search('john.doe@example.com')).to eq([user_1])
+      expect(Spree.user_class.multi_search('jane.doe@example.com')).to eq([user_2])
+      expect(Spree.user_class.multi_search('mary.moe@')).to eq([])
+    end
+
+    it 'returns users based on the first name' do
+      expect(Spree.user_class.multi_search('joh')).to eq([user_1])
+      expect(Spree.user_class.multi_search('jan')).to eq([user_2])
+      expect(Spree.user_class.multi_search('greg')).to eq([])
+    end
+
+    it 'returns users based on the last name' do
+      expect(Spree.user_class.multi_search('do')).to eq([user_1])
+      expect(Spree.user_class.multi_search('moe')).to eq([user_3])
+      expect(Spree.user_class.multi_search('smith')).to eq([])
+    end
+
+    it 'returns users based on the full name' do
+      expect(Spree.user_class.multi_search('joh do')).to eq([user_1])
+      expect(Spree.user_class.multi_search('ane gon')).to eq([user_2])
+      expect(Spree.user_class.multi_search('mary moe')).to eq([user_3])
+      expect(Spree.user_class.multi_search('jane moe')).to eq([user_2, user_3])
+      expect(Spree.user_class.multi_search('greg smith')).to eq([])
     end
   end
 end

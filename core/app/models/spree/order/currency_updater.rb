@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module CurrencyUpdater
       extend ActiveSupport::Concern # FIXME: this module is not required to be a concern
 

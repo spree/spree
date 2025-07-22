@@ -31,7 +31,7 @@ describe Spree::InventoryUnit, type: :model do
     end
   end
 
-  context '#backordered_for_stock_item' do
+  describe '#backordered_for_stock_item' do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
       order.completed_at = Time.current
@@ -127,7 +127,7 @@ describe Spree::InventoryUnit, type: :model do
     end
   end
 
-  context '#finalize_units!' do
+  describe '#finalize_units!' do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let (:shipment) { create(:shipment) }
@@ -167,7 +167,7 @@ describe Spree::InventoryUnit, type: :model do
 
       it 'connects return_authorizations' do
         expect(inventory_unit.return_authorizations).to eq [return_item.return_authorization]
-      end 
+      end
     end
 
     context 'no associated return item' do
@@ -248,6 +248,18 @@ describe Spree::InventoryUnit, type: :model do
 
     it 'is the correct amount' do
       expect(subject.included_tax_total).to eq line_item_included_tax_total / quantity
+    end
+  end
+
+  describe '#charged_amount' do
+    subject { build(:inventory_unit, line_item: line_item, quantity: 1) }
+
+    let(:quantity) { 2 }
+    let(:line_item_pre_tax_amount) { 10.00 }
+    let(:line_item) { build(:line_item, quantity: quantity, pre_tax_amount: line_item_pre_tax_amount) }
+
+    it 'is the correct amount' do
+      expect(subject.charged_amount).to eq line_item_pre_tax_amount / quantity
     end
   end
 end

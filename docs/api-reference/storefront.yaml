@@ -39,7 +39,7 @@ paths:
       security:
         - bearerAuth: []
     post:
-      description: 'Creates a new account. This endpoint requires the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem to be installed.'
+      description: 'Creates a new account'
       summary: Create an Account
       tags:
         - Account
@@ -89,7 +89,7 @@ paths:
         '422':
           $ref: '#/components/responses/422UnprocessableEntity'
     patch:
-      description: 'Updates the users account details. This endpoint requires the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem to be installed.'
+      description: 'Updates the users account details'
       summary: Update an Account
       tags:
         - Account
@@ -149,6 +149,12 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/SparseFieldsAddress'
+        - in: query
+          name: 'filter[exclude_quick_checkout]'
+          schema:
+            type: boolean
+          example: true
+          description: 'Exclude addresses that were created during quick checkout'
       tags:
         - Account / Address
     post:
@@ -932,7 +938,7 @@ paths:
 
         To generate shipments you first need to fetch shipping rates via
 
-        [Get Shipping Rates](https://api.spreecommerce.org/docs/api-v2/b3A6MzE0Mjc2MQ-list-shipping-rates) endpoint
+        [Get Shipping Rates](/api-reference/storefront/checkout-shipments/list-shipping-rates) endpoint
       operationId: select-shipping-method
       responses:
         '200':
@@ -973,6 +979,33 @@ paths:
       summary: Selects shipping method for shipment(s)
       tags:
         - Checkout / Shipments
+  /api/v2/storefront/checkout/validate_order_for_payment:
+    post:
+      description: |-
+        Validate an order before placing it. It will respond with an error when:
+        - cart was changed
+        - any order item is out of stock
+        - any order item is discontinued
+      operationId: validate-order-payment
+      responses:
+        '200':
+          $ref: '#/components/responses/Cart'
+        '422':
+          $ref: '#/components/responses/CartWithErrors'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: skip_state
+          description: Set to `true` if the check for cart changes should be skipped
+          schema:
+            type: boolean
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsCart'
+      summary: Validate order payment
+      tags:
+        - Checkout
   /api/v2/storefront/checkout/create_payment:
     post:
       description: |-
@@ -1166,6 +1199,12 @@ paths:
           example: '1,2,3,4,5,6,7,8,9,10,11'
           description: 'Filter Products based on taxons (IDs of categories, brands, etc)'
         - in: query
+          name: 'filter[vendor_ids]'
+          schema:
+            type: string
+          example: 'bb492c7d-c174-4e6b-ba0b-fe98d5c17307,51c35adb-7ab3-4880-8887-35bdc4f6c29f'
+          description: 'Fetch products from specified Vendors (Sellers) - only available in [Enterprise Edition](https://spreecommerce.org/pricing)'
+        - in: query
           name: 'filter[name]'
           schema:
             type: string
@@ -1353,6 +1392,12 @@ paths:
             type: boolean
           example: false
           description: Fetch only root Taxons (Taxonomies)
+        - in: query
+          name: 'filter[vendor_id]'
+          schema:
+            type: string
+          example: '1'
+          description: Fetch only Taxons that have products of a selected Vendor
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/TaxonIncludeParam'
@@ -1500,6 +1545,147 @@ paths:
         in: path
         required: true
         description: The ID of the `menu` you wish to retrieve.
+  /api/v2/storefront/stripe/payment_intents:
+    post:
+      summary: Create a Stripe Payment Intent
+      description: Create a Stripe Payment Intent using provided payment method. It creates a Stripe customer if not exists.
+      tags:
+        - Stripe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_intent:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                      description: The payment amount
+                    stripe_payment_method_id:
+                      type: string
+                      description: Stripe Payment Method ID
+                    off_session:
+                      type: boolean
+                      description: If the payment is off-session (eq. payment method from setup intent)
+              required:
+                - payment_intent
+      operationId: create-stripe-payment-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
+  "/api/v2/storefront/stripe/payment_intents/{id}":
+    get:
+      summary: Return a Stripe Payment Intent
+      description: 'Returns the Payment Intent information'
+      tags:
+        - Stripe
+      operationId: show-stripe-payment-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+    patch:
+      summary: Updates Stripe Payment Intent
+      description: Updates the payment intent with new `amount` and `stripe_payment_method_id`
+      tags:
+        - Stripe
+      operationId: update-stripe-payment-intent
+      security:
+        - orderToken: []
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                payment_intent:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                      description: A new payment amount
+                    stripe_payment_method_id:
+                      type: string
+                      description: A new Stripe Payment Method ID
+              required:
+                - payment_intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+  "/api/v2/storefront/stripe/payment_intents/{id}/confirm":
+    patch:
+      summary: Mark the payment intent as confirmed, and move the order to the complete state
+      description: This endpoint is used to complete the order with succeeded payment intent. First it will check if the payment intent has `status` `succeeded`, if yes, then it will move the order to the complete state.
+      tags:
+        - Stripe
+      operationId: confirm-stripe-payment-intent
+      security:
+        - orderToken: []
+      responses:
+        '200':
+          $ref: '#/components/responses/StripePaymentIntent'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+  /api/v2/storefront/stripe/setup_intents:
+    post:
+      summary: Create a Stripe Setup Intent
+      description: "First, this endpoint creates a customer in Stripe (if it doesn't already exist), then it creates an Ephemeral Key for the customer, and finally, it creates a Setup Intent for the customer."
+      tags:
+        - Stripe
+      operationId: create-stripe-setup-intent
+      responses:
+        '200':
+          $ref: '#/components/responses/StripeSetupIntent'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+  /api/v2/storefront/vendors:
+    get:
+      summary: List all Vendors
+      description: 'Returns a list of Vendors. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)'
+      tags:
+        - Vendors
+      operationId: vendors-list
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/VendorList'
+  '/api/v2/storefront/vendors/{vendor_slug}':
+    get:
+      description: Returns the details of a specified Vendor. Only available in [Enterprise Edition](https://spreecommerce.org/pricing)
+      summary: Retrieve a Vendor
+      tags:
+        - Vendors
+      operationId: show-vendor
+      parameters:
+        - $ref: '#/components/parameters/VendorSlug'
+        - $ref: '#/components/parameters/SparseFieldsVendor'
+      responses:
+        '200':
+          $ref: '#/components/responses/Vendor'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /api/v2/storefront/wishlists:
     get:
       description: 'Returns all wishlists available to the current user, in the current store.'
@@ -1721,7 +1907,7 @@ paths:
         The Add Items to Wishlist endpoint adds variants to an existing wishlist by creating a new `wished_item` objects. A wished item in a wishlist is comparable to a line item in a cart.
 
         Each wished item references a single variant, holds the desired quantity and returns price information determined by the variant price in current currency, and desired quantity.
-      operationId: add-item-to-wishlist
+      operationId: add-items-to-wishlist
       parameters:
         - $ref: '#/components/parameters/Token'
       requestBody:
@@ -1837,7 +2023,7 @@ paths:
     delete:
       description: Removes wished items from a wishlist.
       summary: Delete Items from Wishlist
-      operationId: delete-wished-variant-from-wishlist
+      operationId: delete-wished-variants-from-wishlist
       parameters:
         - $ref: '#/components/parameters/Token'
       requestBody:
@@ -2126,12 +2312,30 @@ components:
             item_total:
               type: string
               example: '19.99'
+            subtotal_cents:
+              type: integer
+              example: 1999
+            store_credit_total_cents:
+              type: integer
+              example: 0
             total:
               type: string
               example: '29.99'
+            total_cents:
+              type: integer
+              example: 2999
+            total_minus_store_credits:
+              type: string
+              example: '29.99'
+            total_minus_store_credits_cents:
+              type: integer
+              example: 2999
             ship_total:
               type: string
-              example: '0.0'
+              example: '5.0'
+            ship_total_cents:
+              type: integer
+              example: 500
             adjustment_total:
               type: string
               example: '10.0'
@@ -2155,6 +2359,9 @@ components:
             tax_total:
               type: string
               example: '10.0'
+            tax_total_cents:
+              type: integer
+              example: 1000
             currency:
               type: string
               example: USD
@@ -2192,6 +2399,9 @@ components:
             promo_total:
               type: string
               example: '-10.0'
+            promo_total_cents:
+              type: integer
+              example: -1000
             display_promo_total:
               type: string
               example: '-$10.00'
@@ -2206,6 +2416,9 @@ components:
               description: Message added by the Customer
               nullable: true
             display_total:
+              type: string
+              example: $29.99
+            display_total_minus_store_credits:
               type: string
               example: $29.99
             pre_tax_item_amount:
@@ -3627,10 +3840,20 @@ components:
               type: boolean
               example: true
               description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+        relationships:
+          type: object
+          properties:
+            shipping_method:
+              type: object
+              description: Shipping method for which this shipping rate belongs to
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
       required:
         - id
         - type
         - attributes
+        - relationships
     StockLocation:
       title: Stock Location
       type: object
@@ -4090,6 +4313,58 @@ components:
                 data:
                   $ref: '#/components/schemas/Relation'
       description: Digital links are accessible in the order includes line_items.digital_links
+    Vendor:
+      title: Vendor
+      description: 'Vendors are Sellers in the marketplace.'
+      type: object
+      x-internal: true
+      properties:
+        id:
+          type: string
+          example: '980a80d5-f51b-4065-b3a0-622fc5cb6bf6'
+        type:
+          type: string
+          default: vendor
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Shoes For Everyone'
+            email:
+              type: string
+              example: 'contact@example.com'
+            slug:
+              type: string
+              example: 'shoes-for-everyone'
+            about_us:
+              type: string
+              example: '<p>We are the #1 shoe store for you.</p>\n<p>Located in 20 countries.</p>'
+              description: Information about the Vendor stored as HTML
+            logo_url:
+              type: string
+              example: 'https://somewebsite.com/our-logo'
+              description: URL of the Logo
+            cover_photo_url:
+              type: string
+              example: 'https://somewebsite.com/our-cover-photo'
+              description: URL of the Cover Photo
+        relationships:
+          type: object
+          properties:
+            products:
+              type: object
+              description: List of active and available products from this vendor
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
   parameters:
     Token:
       name: token
@@ -4408,6 +4683,13 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    SparseFieldsVendor:
+      name: 'fields[vendor]'
+      in: query
+      description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
+      schema:
+        type: string
+      example: 'name,slug,about_us,facebook'
     SparseFieldsWishlist:
       in: query
       name: 'fields[wishlist]'
@@ -4415,6 +4697,14 @@ components:
       description: 'Specify the fields you would like returned in the response body. [More information](https://jsonapi.org/format/#fetching-sparse-fieldsets).'
       schema:
         type: string
+    VendorSlug:
+      name: vendor_slug
+      in: path
+      required: true
+      description: Look for Vendor by ID or their slug
+      schema:
+        type: string
+      example: acme-co
   responses:
     404NotFound:
       description: 404 Not Found - Resource not found.
@@ -4482,7 +4772,13 @@ components:
                     number: R233871560
                     item_total: '0.0'
                     total: '0.0'
+                    subtotal_cents: 0
+                    store_credit_total_cents: 0
+                    total_cents: 0
+                    total_minus_store_credits: '0.0'
+                    total_minus_store_credits_cents: 0
                     ship_total: '0.0'
+                    ship_total_cents: 0
                     adjustment_total: '0.0'
                     created_at: '2021-09-28T22:15:07.471Z'
                     updated_at: '2021-09-28T22:15:07.471Z'
@@ -4492,6 +4788,7 @@ components:
                     display_additional_tax_total: $0.00
                     display_included_tax_total: $0.00
                     tax_total: '0.0'
+                    tax_total_cents: 0
                     currency: USD
                     state: cart
                     token: zTEpsukRq_yEUcXVCSv0uw1632867307450
@@ -4502,9 +4799,11 @@ components:
                     display_tax_total: $0.00
                     promo_total: '0.0'
                     display_promo_total: $0.00
+                    promo_total_cents: 0
                     item_count: 0
                     special_instructions: null
                     display_total: $0.00
+                    display_total_minus_store_credits: $0.00
                     pre_tax_item_amount: '0.0'
                     display_pre_tax_item_amount: $0.00
                     pre_tax_total: '0.0'
@@ -4536,8 +4835,14 @@ components:
                   attributes:
                     number: R823511564
                     item_total: '287.97'
+                    subtotal_cents: 28797
                     total: '316.0'
+                    store_credit_total_cents: 0
+                    total_cents: 31600
+                    total_minus_store_credits: '316.0'
+                    total_minus_store_credits_cents: 31600
                     ship_total: '5.0'
+                    ship_total_cents: 500
                     adjustment_total: '23.03'
                     created_at: '2021-09-28T12:57:15.148Z'
                     updated_at: '2021-09-28T13:06:02.689Z'
@@ -4547,6 +4852,7 @@ components:
                     display_additional_tax_total: $51.83
                     display_included_tax_total: $26.18
                     tax_total: '78.01'
+                    tax_total_cents: 7801
                     currency: USD
                     state: payment
                     token: VDK_6q_NNdWFc81VZRpUfQ1632833835148
@@ -4557,9 +4863,11 @@ components:
                     display_tax_total: $78.01
                     promo_total: '-28.8'
                     display_promo_total: '-$28.80'
+                    promo_total_cents: -2880
                     item_count: 3
                     special_instructions: null
                     display_total: $316.00
+                    display_total_minus_store_credits: 31600
                     pre_tax_item_amount: '261.7909'
                     display_pre_tax_item_amount: $261.79
                     pre_tax_total: '266.7909'
@@ -4605,8 +4913,14 @@ components:
                   attributes:
                     number: R177608027
                     item_total: '474.95'
+                    subtotal_cents: 47495
                     total: '527.45'
+                    store_credit_total_cents: 0
+                    total_cents: 52745
+                    total_minus_store_credits: '527.45'
+                    total_minus_store_credits_cents: 52745
                     ship_total: '5.0'
+                    ship_total_cents: 500
                     adjustment_total: '47.5'
                     created_at: '2021-09-28T22:31:47.401Z'
                     updated_at: '2021-09-28T22:33:20.257Z'
@@ -4625,10 +4939,12 @@ components:
                     display_adjustment_total: $47.50
                     display_tax_total: $47.50
                     promo_total: '0.0'
+                    promo_total_cents: 0
                     display_promo_total: $0.00
                     item_count: 5
                     special_instructions: null
                     display_total: $527.45
+                    display_total_minus_store_credits: 52745
                     pre_tax_item_amount: '474.95'
                     display_pre_tax_item_amount: $474.95
                     pre_tax_total: '479.95'
@@ -4902,7 +5218,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
-                      payment_method_id: 2
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -4935,6 +5251,30 @@ components:
                         data:
                           id: '1'
                           type: stock_location
+    CartWithErrors:
+      description: 422 Unprocessable entity - Returns the `cart` object with errors.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Cart'
+              included:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartIncludes'
+              meta:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      type: string
+                      example: Cart changed
+            required:
+              - data
+              - meta
     CartList:
       description: 200 Success - Returns an array of `cart` objects.
       content:
@@ -4967,8 +5307,14 @@ components:
                     attributes:
                       number: R177608027
                       item_total: '474.95'
+                      subtotal_cents: 47495
                       total: '527.45'
+                      store_credit_total_cents: 0
+                      total_cents: 52745
+                      total_minus_store_credits: '527.45'
+                      total_minus_store_credits_cents: 52745
                       ship_total: '5.0'
+                      ship_total_cents: 500
                       adjustment_total: '47.5'
                       created_at: '2021-09-28T22:31:47.401Z'
                       updated_at: '2021-09-28T22:33:20.257Z'
@@ -4987,10 +5333,12 @@ components:
                       display_adjustment_total: $47.50
                       display_tax_total: $47.50
                       promo_total: '0.0'
+                      promo_total_cents: 0
                       display_promo_total: $0.00
                       item_count: 5
                       special_instructions: null
                       display_total: $527.45
+                      display_total_minus_store_credits: 52745
                       pre_tax_item_amount: '474.95'
                       display_pre_tax_item_amount: $474.95
                       pre_tax_total: '479.95'
@@ -5048,8 +5396,14 @@ components:
                     attributes:
                       number: R177608027
                       item_total: '474.95'
+                      subtotal_cents: 47495
                       total: '527.45'
+                      store_credit_total_cents: 0
+                      total_cents: 52745
+                      total_minus_store_credits: '527.45'
+                      total_minus_store_credits_cents: 52745
                       ship_total: '5.0'
+                      ship_total_cents: 500
                       adjustment_total: '47.5'
                       created_at: '2021-09-28T22:31:47.401Z'
                       updated_at: '2021-09-28T22:33:20.257Z'
@@ -5068,10 +5422,12 @@ components:
                       display_adjustment_total: $47.50
                       display_tax_total: $47.50
                       promo_total: '0.0'
+                      promo_total_cents: 0
                       display_promo_total: $0.00
                       item_count: 5
                       special_instructions: null
                       display_total: $527.45
+                      display_total_minus_store_credits: 52745
                       pre_tax_item_amount: '474.95'
                       display_pre_tax_item_amount: $474.95
                       pre_tax_total: '479.95'
@@ -5272,7 +5628,7 @@ components:
                       number: PN43O2GK
                       cvv_response_code: null
                       cvv_response_message: null
-                      payment_method_id: 2
+                      payment_method_id: "2"
                       payment_method_name: Check
                       state: completed
                     relationships:
@@ -6556,6 +6912,89 @@ components:
                   prev: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
                   last: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=0'
                   first: 'http://localhost:3000/api/v2/storefront/account/credit_cards?page=1'
+    StripeSetupIntent:
+      description: 200 Success - Returns the `customer_id` of the authenticated user, created ephemeral key's secret and client secret of the created setup intent.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              customer_id:
+                type: string
+                description: |
+                  Stripe's customer ID of the authenticated user (or new one if unauthenticated).
+              ephemeral_key_secret:
+                type: string
+                description: |
+                  Secret of the created ephemeral key.
+              setup_intent_client_secret:
+                type: string
+                description: |
+                  Client secret of the created setup intent
+            required:
+              - customer_id
+              - ephemeral_key_secret
+              - setup_intent_client_secret
+          examples:
+            Stripe Setup Intent:
+              value:
+                customer_id: 'cus_Q9uqUz6gVQFku2'
+                ephemeral_key_secret: 'ek_test_YWNjdF8xTGtSb1lJaFIwZ0llZ0llyG1LbFhsVU9XWHY1SlNyMXRKVzNJb0hyQ2JZam1HY28_007lGgvGaA'
+                setup_intent_client_secret: 'seti_1PJb0hIhR0gIegIeZYQQuxpH_secret_Q9uqLuTAvIJQSK1SFS6OaxJMRpe9s7R'
+    StripePaymentIntent:
+      description: 200 Success - Returns the Stripe Payment Intent with the Stripe ID, client key, ephemeral_key, customer_id, amount and Stripe Payment Method ID.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 980a80d5-f51b-4065-b3a0-622fc5cb6bf6
+                  type:
+                    type: string
+                    default: payment_intent
+                  attributes:
+                    type: object
+                    properties:
+                      stripe_id:
+                        type: string
+                        description: The Stripe internal ID of the Payment Intent
+                      client_secret:
+                        type: string
+                        description: |
+                          The client secret can be used to complete a payment from your frontend. It should not be stored, logged, or exposed to anyone other than the customer. Make sure that you have TLS enabled on any page that includes the client secret.
+                      ephemeral_key_secret:
+                        type: string
+                        description: |
+                          Secret of the created ephemeral key.
+                      customer_id:
+                        type: string
+                        description: |
+                          Stripe's customer ID of the authenticated user (or new one if unauthenticated).
+                      amount:
+                        type: number
+                        description: The payment amount
+                      stripe_payment_method_id:
+                        type: string
+                        description: |
+                          This is the same stripe_payment_method_id that was sent in the parameters. It can be used to confirm Stripe intent that was not confirmed before
+          examples:
+            Stripe Payment Intent:
+              value:
+                data:
+                  id: '980a80d5-f51b-4065-b3a0-622fc5cb6bf6'
+                  type: payment_intent
+                  attributes:
+                    stripe_id: 'pi_3QhUuj2ESifGlJez0ADSS4tu'
+                    client_secret: 'pi_3KQRG2DcAgmy0ota09WCW6nf_secret_8XTxRbOyg7oEkvvIOvnP75dRw'
+                    ephemeral_key_secret: 'ek_test_YWNjdF8xTGtSb1lJaFIwZ0llZ0llyG1LbFhsVU9XWHY1SlNyMXRKVzNJb0hyQ2JZam1HY28_007lGgvGaA'
+                    customer_id: 'cus_Q9uqUz6gVQFku2'
+                    amount: '44.0'
+                    stripe_payment_method_id: 'pm_1Qedd42ESifGlJez0IOx5AZ3'
     Product:
       description: 200 Success - Returns the `product` object.
       content:
@@ -8675,75 +9114,75 @@ components:
                         option_values:
                           - id: 4
                             name: black
-                            presentation: '#000000'
+                            presentation: 'Black'
                             position: 4
                           - id: 11
                             name: mint
-                            presentation: '#AAF0D1'
+                            presentation: 'Mint'
                             position: 11
                           - id: 6
                             name: green
-                            presentation: '#228C22'
+                            presentation: 'Green'
                             position: 6
                           - id: 2
                             name: purple
-                            presentation: '#800080'
+                            presentation: 'Purple'
                             position: 2
                           - id: 10
                             name: beige
-                            presentation: '#E1C699'
+                            presentation: 'Beige'
                             position: 10
                           - id: 17
                             name: pink
-                            presentation: '#FFA6C9'
+                            presentation: 'Pink'
                             position: 17
                           - id: 7
                             name: grey
-                            presentation: '#808080'
+                            presentation: 'Grey'
                             position: 7
                           - id: 8
                             name: orange
-                            presentation: '#FF8800'
+                            presentation: 'Orange'
                             position: 8
                           - id: 15
                             name: yellow
-                            presentation: '#FFFF00'
+                            presentation: 'Yellow'
                             position: 15
                           - id: 1
                             name: white
-                            presentation: '#FFFFFF'
+                            presentation: 'White'
                             position: 1
                           - id: 13
-                            name: dark_blue
-                            presentation: '#00008b'
+                            name: 'dark-blue'
+                            presentation: 'Dark Blue'
                             position: 13
                           - id: 19
                             name: ecru
-                            presentation: '#F4F2D6'
+                            presentation: 'Ecru'
                             position: 19
                           - id: 3
                             name: red
-                            presentation: '#FF0000'
+                            presentation: 'Red'
                             position: 3
                           - id: 12
                             name: blue
-                            presentation: '#0000FF'
+                            presentation: 'Blue'
                             position: 12
                           - id: 16
-                            name: light_blue
-                            presentation: '#add8e6'
+                            name: light-blue
+                            presentation: 'Light Blue'
                             position: 16
                           - id: 9
                             name: burgundy
-                            presentation: '#A8003B'
+                            presentation: 'Burgundy'
                             position: 9
                           - id: 14
                             name: khaki
-                            presentation: '#BDB76B'
+                            presentation: 'Khaki'
                             position: 14
                           - id: 5
                             name: brown
-                            presentation: '#8B4513'
+                            presentation: 'Brown'
                             position: 5
                       - id: 2
                         name: length
@@ -15550,8 +15989,13 @@ components:
                       display_cost: $5.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 1
+                      shipping_method_id: "1"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "1"
+                          type: shipping_method
                   - id: '11'
                     type: shipping_rate
                     attributes:
@@ -15563,8 +16007,13 @@ components:
                       display_cost: $10.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 2
+                      shipping_method_id: "2"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "2"
+                          type: "shipping_method"
                   - id: '12'
                     type: shipping_rate
                     attributes:
@@ -15576,8 +16025,13 @@ components:
                       display_cost: $15.00
                       tax_amount: '0.0'
                       display_tax_amount: $0.00
-                      shipping_method_id: 3
+                      shipping_method_id: "3"
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "3"
+                          type: shipping_method
                   - id: '1'
                     type: stock_location
                     attributes:
@@ -15606,12 +16060,17 @@ components:
                       selected: true
                       cost: '5.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 1
                       final_price: '5.0'
+                      shipping_method_id: "1"
                       display_cost: $5.00
                       display_final_price: $5.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          type: shipping_method
+                          id: "1"
                   - id: null
                     type: shipping_rate
                     attributes:
@@ -15619,12 +16078,17 @@ components:
                       selected: false
                       cost: '10.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 2
                       final_price: '10.0'
+                      shipping_method_id: "2"
                       display_cost: $10.00
                       display_final_price: $10.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "2"
+                          type: shipping_method
                   - id: null
                     type: shipping_rate
                     attributes:
@@ -15632,12 +16096,17 @@ components:
                       selected: false
                       cost: '15.0'
                       tax_amount: '0.0'
-                      shipping_method_id: 3
                       final_price: '15.0'
+                      shipping_method_id: "3"
                       display_cost: $15.00
                       display_final_price: $15.00
                       display_tax_amount: $0.00
                       free: false
+                    relationships:
+                      shipping_method:
+                        data:
+                          id: "3"
+                          type: shipping_method
     Menu:
       description: 200 Success - Returns the `menu` object.
       content:
@@ -16754,6 +17223,71 @@ components:
                       name: Check
                       description: Pay by check.
                       preferences: {}
+    Vendor:
+      description: 200 Success - Returns the `vendor` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Vendor'
+            required:
+              - data
+          examples:
+            Single Vendor:
+              value:
+                data:
+                  id: 'e1171601-a4ce-47d2-a795-c96fbdf20029'
+                  type: vendor
+                  attributes:
+                    name: 'Best Shoes'
+                    email: 'contact@example.com'
+                    slug: 'best-shoes'
+                    about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                    logo_url: 'https://assets.com/images/logo_name'
+                    cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+    VendorList:
+      description: 200 Success - Returns an array of `vendor` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vendor'
+              meta:
+                $ref: '#/components/schemas/ListMeta'
+              links:
+                $ref: '#/components/schemas/ListLinks'
+            required:
+              - data
+              - meta
+              - links
+          examples:
+            List of Vendors:
+              value:
+                data:
+                  - id: 'eb261155-1ddc-47e5-8178-8c3da6e607a8'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shoes'
+                      email: 'contact-1@example.com'
+                      slug: 'best-shoes'
+                      about_us: "<p>We are your #1 shoe store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name'
+                      cover_photo_url: 'https://assets.com/images/wide_tree_wzxgak'
+                  - id: '4f46f04f-fa2c-42d0-b69c-ce2b2997f5fd'
+                    type: vendor
+                    attributes:
+                      name: 'Best Shirts'
+                      email: 'contact-2@example.com'
+                      slug: 'best-shirts'
+                      about_us: "<p>We are your #1 shirts store.</p>\n<p>Follow us on social media.</p>"
+                      logo_url: 'https://assets.com/images/logo_name34553'
+                      cover_photo_url: 'https://assets.com/images/coverfn5ig'
 tags:
   - name: Account
   - name: Account / Address
@@ -16768,6 +17302,7 @@ tags:
   - name: Checkout / Shipments
   - name: Checkout / Payments
   - name: Checkout / Store Credit
+  - name: Stripe
   - name: CMS Pages
   - name: Countries
   - name: Digital Downloads
@@ -16777,5 +17312,6 @@ tags:
   - name: Variants
   - name: Stores
   - name: Taxons
+  - name: Vendors
   - name: Wishlists
   - name: Wishlists / Wished Items

@@ -1,12 +1,6 @@
 <!-- You can override this template to design your own header. -->
 <tr>
   <td class="email-masthead">
-    <%= link_to current_store.url, class: 'template-label' do %>
-      <% if logo_path.present? %>
-        <%= image_tag logo_path, class: 'logo', alt: current_store.name, title: current_store.name %>
-      <% else %>
-        <%= current_store.name %>
-      <% end %>
-    <% end %>
+    <%= render 'spree/shared/mailer_logo', logo: current_store.mailer_logo.attached? ? current_store.mailer_logo : current_store.logo %>
   </td>
 </tr>

@@ -1,31 +1,339 @@
 ---
 title: Amazon Web Services (AWS)
-section: deployment
+description: Learn how to deploy your Spree Commerce application on Amazon Web Services (AWS).
+icon: "aws"
 ---
 
-Amazon Web Services offers reliable, scalable, and inexpensive cloud computing services. Free to join, pay only for what you use.
+Amazon Web Services offers reliable, scalable, and inexpensive cloud computing services. AWS is also one of the most popular choices for hosting a Spree application. 
 
-AWS is also one of the most popular choices for hosting a Spree application. There are several services you can use to host Spree on AWS, here we briefly touch upon those options.
+We recommend using AWS ECS Fargate to host your Spree application via [Docker image](/developer/deployment/docker).
 
-## AWS Elastic Beanstalk
+## Required AWS services
 
-The easiest way to run Spree or any other Ruby on Rails application on AWS is through AWS Elastic Beanstalk which is comparable to Heroku PaaS Platform as a Service.
+To fully run your Spree application on AWS, you will need the following services:
 
-This is the recommended approach if you're just starting up. Please follow [Beanstalk Deployment guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/ruby-rails-tutorial.html) for more details.
+| Service | Description |
+|---------|-------------|
+| [AWS ECS Fargate](https://aws.amazon.com/fargate/) | Amazon Elastic Container Service (ECS) is a fully managed container orchestration service that allows you to run and scale containerized applications without managing the underlying infrastructure. |
+| [AWS RDS](https://aws.amazon.com/rds/) | Amazon Relational Database Service makes it easy to set up, operate, and scale a relational database in the cloud. Spree works great with multiple databases: [Amazon Aurora both MySQL and PostgreSQL variants](https://aws.amazon.com/rds/aurora/), [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/), [RDS MySQL](https://aws.amazon.com/rds/mysql/) and [RDS MariaDB](https://aws.amazon.com/rds/mariadb/) |
+| [AWS ElastiCache](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=2&dn=1) | You will need 2 instances of Valkey or Redis: one for the [Active Job background queue](https://guides.rubyonrails.org/active_job_basics.html) and one for the [Spree cache](/developer/deployment/caching). |
+| [AWS S3](https://aws.amazon.com/s3/) | Object storage service to store and read your uploaded files such as Product images, etc. [More information](/developer/deployment/assets#aws-s3). |
+| [AWS CloudFront](https://aws.amazon.com/cloudfront/) | Fast content delivery network CDN to speed up your asset images/stylesheets/javascript delivery. This will greatly enhance your application responsiveness. |
+| [AWS Route 53](https://aws.amazon.com/route53/) | Domain name system (DNS) service to manage your domain names and DNS records. |
+| [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) | AWS Certificate Manager is a service that provides you with SSL/TLS certificates that you can use to secure your application. Spree in production works only with HTTPS. |
+| [AWS ECR](https://aws.amazon.com/ecr/) | Amazon Elastic Container Registry is a fully managed Docker container registry that makes it easy to store, manage, and deploy Docker container images. |
 
-## AWS ECS
+## Docker builds
 
-Another option is [Elastic Container Service](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html) to host and deploy your Docker containers.
+To deploy your Spree application on AWS, you will need to build a Docker image and send it to AWS ECR so that AWS ECS Fargate can pull it and run it.
 
-This is more advanced than Beanstalk and will require DevOps knowledge. For building Docker images we recommend you use [Spree Starter Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile.production).
+[Spree Starter Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) is a good starting point for your Docker build.
 
-## AWS EC2
+You can deploy it to AWS ECR straitgh from GitHub via GitHub Actions, eg:
 
-[EC2](https://aws.amazon.com/ec2/) is the most basic offering, running single or multiple instances of servers. This is the bare bones variant, you need to set up the deployment all by yourself using tools like [Capistrano](https://capistranorb.com/).
+```yaml
+name: Deploy to AWS Fargate
 
-## Recommended AWS services
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
-* [AWS S3](https://aws.amazon.com/s3/) - object storage service to store and read your uploaded files such as Product images, etc. We **do not recommend** keeping your uploads on the same instance as the application.
-* [AWS RDS](https://aws.amazon.com/rds/) - Amazon Relational Database Service Amazon RDS makes it easy to set up, operate, and scale a relational database in the cloud. Spree works great with multiple databases: [Amazon Aurora both MySQL and PostgreSQL variants](https://aws.amazon.com/rds/aurora/), [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/), [RDS MySQL](https://aws.amazon.com/rds/mysql/) and [RDS MariaDB](https://aws.amazon.com/rds/mariadb/)
-* [AWS ElastiCache Redis](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=2&dn=1) - we recommend setting up a Redis database for the [Active Job background queue](https://guides.rubyonrails.org/active_job_basics.html), which we use for sending out transactional emails
-* [AWS CloudFront](https://aws.amazon.com/cloudfront/) - fast content delivery network CDN to speed up your asset images/stylesheets/javascript delivery. This will greatly enhance your application responsiveness.
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: spree-starter
+  ECS_SERVICE_WEB: spree-web
+  ECS_SERVICE_WORKER: spree-worker
+  ECS_CLUSTER: spree-cluster
+  
+jobs:
+  build:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+    
+    outputs:
+      image: ${{ steps.build-image.outputs.image }}
+      image-tag: ${{ steps.build-image.outputs.image-tag }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        # Build a docker container and push it to ECR
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+        echo "image-tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+  
+  deploy-web:
+    name: Deploy Web Service
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def-web
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        ECR_REGISTRY: ${{ needs.build.outputs.image }}
+        IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      with:
+        task-definition: .aws/web-task-definition.json
+        container-name: web
+        image: ${{ needs.build.outputs.image }}
+    
+    - name: Deploy Amazon ECS task definition for web
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-web.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE_WEB }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+  
+  deploy-worker:
+    name: Deploy Worker Service
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def-worker
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      env:
+        ECR_REGISTRY: ${{ needs.build.outputs.image }}
+        IMAGE_TAG: ${{ needs.build.outputs.image-tag }}
+        AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      with:
+        task-definition: .aws/worker-task-definition.json
+        container-name: worker
+        image: ${{ needs.build.outputs.image }}
+    
+    - name: Deploy Amazon ECS task definition for worker
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-worker.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE_WORKER }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    needs: [build, deploy-web]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Run database migrations
+      run: |
+        aws ecs run-task \
+          --cluster ${{ env.ECS_CLUSTER }} \
+          --task-definition spree-web \
+          --overrides '{
+            "containerOverrides": [{
+              "name": "web",
+              "command": ["bundle", "exec", "rails", "db:migrate"]
+            }]
+          }' \
+          --launch-type FARGATE \
+          --network-configuration '{
+            "awsvpcConfiguration": {
+              "subnets": ["'${{ secrets.SUBNET_ID_1 }}'", "'${{ secrets.SUBNET_ID_2 }}'"],
+              "securityGroups": ["'${{ secrets.SECURITY_GROUP_ID }}'"],
+              "assignPublicIp": "ENABLED"
+            }
+          }'
+```
+
+This action requires secrets to be set in your GitHub repository. You can find the full list of secrets in the [AWS ECS Deploy Task Definition](https://github.com/aws-actions/amazon-ecs-deploy-task-definition) GitHub Actions repository.
+
+| Secret | Description |
+|--------|-------------|
+| `AWS_ACCESS_KEY_ID` | AWS access key ID |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret access key |
+| `AWS_ACCOUNT_ID` | AWS account ID |
+| `SUBNET_ID_1` | First subnet ID |
+| `SUBNET_ID_2` | Second subnet ID |
+| `SECURITY_GROUP_ID` | Security group ID |
+
+## Environment variables
+
+For a full list of Docker environment variables, please refer to the [Environment variables](/developer/deployment/environment_variables) page.
+
+## ECS tasks
+
+You will need to create two ECS task definitions: one for the web service and one for the worker service.
+
+### Web service
+
+```json
+{
+  "family": "spree-web",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "web",
+      "image": "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}",
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "RAILS_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "3000"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
+        },
+        {
+          "name": "REDIS_URL",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/redis-url"
+        },
+        {
+          "name": "SECRET_KEY_BASE",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/spree-web",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:3000/up || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
+```
+
+### Worker service
+
+```json
+@ -0,0 +1,52 @@
+{
+  "family": "spree-worker",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "worker",
+      "image": "${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG}",
+      "command": ["bundle", "exec", "sidekiq"],
+      "essential": true,
+      "environment": [
+        {
+          "name": "RAILS_ENV",
+          "value": "production"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/database-url"
+        },
+        {
+          "name": "REDIS_URL",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/redis-url"
+        },
+        {
+          "name": "SECRET_KEY_BASE",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:spree/secret-key-base"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/spree-worker",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "pgrep -f sidekiq || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 60
+      }
+    }
+  ]
+}
+```

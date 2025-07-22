@@ -1,6 +1,7 @@
 module Spree
   class ShipmentHandler
     include Spree::Shipment::Emails
+    include Spree::IntegrationsConcern
 
     class << self
       def factory(shipment)

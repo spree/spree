@@ -1,5 +1,5 @@
 module Spree
-  class PropertyPrototype < Spree::Base
+  class PropertyPrototype < Spree.base_class
     belongs_to :prototype, class_name: 'Spree::Prototype'
     belongs_to :property, class_name: 'Spree::Property'
 

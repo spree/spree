@@ -4,8 +4,8 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   # Regression test for #2844 + #3346
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
-    let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
-    let(:store) { create :store }
+    let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
+    let(:store) { @default_store }
 
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: store) }
     let(:order_2) { create(:order, user: user, created_by: user, store: store) }
@@ -70,10 +70,12 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
 end
 
 describe Spree.user_class, type: :model do
+  subject { create(:user) }
+
   context 'reporting' do
     let!(:orders) { create_list(:order, order_count, user: subject, store: store, total: order_value, completed_at: Date.today, currency: currency) }
     let(:currency) { 'USD' }
-    let(:store) { create :store }
+    let(:store) { @default_store }
     let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
 
@@ -170,7 +172,7 @@ describe Spree.user_class, type: :model do
     context 'user has several associated store credits' do
       subject { user }
 
-      let!(:store) { create(:store, default: true) }
+      let!(:store) { @default_store }
       let!(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
@@ -227,7 +229,7 @@ describe Spree.user_class, type: :model do
   end
 
   describe '#available_store_credits' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
 
     context 'user does not have any associated store credits' do
       subject { create(:user) }

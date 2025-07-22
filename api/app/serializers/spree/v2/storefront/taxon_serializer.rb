@@ -4,8 +4,20 @@ module Spree
       class TaxonSerializer < BaseSerializer
         set_type   :taxon
 
-        attributes :name, :pretty_name, :permalink, :seo_title, :description, :meta_title, :meta_description,
+        attributes :name, :pretty_name, :permalink, :seo_title, :meta_title, :meta_description,
                    :meta_keywords, :left, :right, :position, :depth, :updated_at, :public_metadata
+
+        attribute :description do |taxon|
+          taxon.description.to_plain_text
+        end
+
+        attribute :has_products do |taxon|
+          taxon.active_products_with_descendants.exists?
+        end
+
+        attribute :header_url do |taxon|
+          url_helpers.cdn_image_url(taxon.image.attachment) if taxon.image.present? && taxon.image.attached?
+        end
 
         attribute :is_root do |taxon|
           taxon.root?

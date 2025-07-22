@@ -7,7 +7,8 @@ module Spree
       @order = order
     end
 
-    def merge!(other_order, user = nil)
+    def merge!(other_order, user = nil, discard_merged: true)
+      handle_gift_card(other_order)
       other_order.line_items.each do |other_order_line_item|
         next unless other_order_line_item.currency == order.currency
 
@@ -16,13 +17,17 @@ module Spree
       end
 
       set_user(user)
-      clear_addresses(other_order)
+      clear_addresses(other_order) if discard_merged
       persist_merge
 
-      # So that the destroy doesn't take out line items which may have been re-assigned
-      other_order.line_items.reload
-      other_order.destroy
+      if discard_merged
+        # So that the destroy doesn't take out line items which may have been re-assigned
+        other_order.line_items.reload
+        other_order.destroy
+      end
     end
+
+    private
 
     # Compare the line item of the other order with mine.
     # Make sure you allow any extensions to chime in on whether or
@@ -67,6 +72,15 @@ module Spree
       updater.update_item_count
       updater.update_item_total
       updater.persist_totals
+    end
+
+    def handle_gift_card(other_order)
+      return unless other_order.gift_card.present?
+
+      gift_card = other_order.gift_card
+
+      other_order.remove_gift_card
+      order.apply_gift_card(gift_card)
     end
   end
 end

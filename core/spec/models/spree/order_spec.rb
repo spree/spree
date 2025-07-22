@@ -8,17 +8,18 @@ end
 
 describe Spree::Order, type: :model do
   let(:user) { create(:user) }
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
   before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
 
   it_behaves_like 'metadata'
 
-  describe '.scopes' do
+  describe 'Scopes' do
     let!(:user) { create(:user) }
     let!(:completed_order) { create(:order, user: user, completed_at: Time.current) }
     let!(:incompleted_order) { create(:order, user: user, completed_at: nil) }
+    let!(:canceled_order) { create(:order, user: user, completed_at: nil, state: 'canceled') }
 
     describe '.complete' do
       it { expect(Spree::Order.complete).to include completed_order }
@@ -28,6 +29,93 @@ describe Spree::Order, type: :model do
     describe '.incomplete' do
       it { expect(Spree::Order.incomplete).to include incompleted_order }
       it { expect(Spree::Order.incomplete).not_to include completed_order }
+    end
+
+    describe '.not_canceled' do
+      it { expect(Spree::Order.not_canceled).not_to include canceled_order }
+    end
+
+    describe '.multi_search' do
+      let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
+      let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }
+      let!(:order_3) { create(:order, number: 'R200', user: create(:user, email: 'mary.moe@example.com'), bill_address: create(:address, first_name: 'Mary', last_name: 'Moe')) }
+
+      it 'returns orders based on an email' do
+        expect(described_class.multi_search('don.roe@example.com')).to eq([order_1])
+        expect(described_class.multi_search('jane.gone@example.com')).to eq([order_2])
+        expect(described_class.multi_search('mary.moe@')).to eq([])
+      end
+
+      it 'returns orders based on the first name' do
+        expect(described_class.multi_search('don')).to eq([order_1])
+        expect(described_class.multi_search('jan')).to eq([order_2])
+        expect(described_class.multi_search('greg')).to eq([])
+      end
+
+      it 'returns orders based on the last name' do
+        expect(described_class.multi_search('ro')).to eq([order_1])
+        expect(described_class.multi_search('moe')).to eq([order_3])
+        expect(described_class.multi_search('smith')).to eq([])
+      end
+
+      it 'returns orders based on the full name' do
+        expect(described_class.multi_search('don ro')).to eq([order_1])
+        expect(described_class.multi_search('ane gon')).to eq([order_2])
+        expect(described_class.multi_search('mary moe')).to eq([order_3])
+        expect(described_class.multi_search('jane moe')).to eq([order_2, order_3])
+        expect(described_class.multi_search('greg smith')).to eq([])
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    let(:order) { build(:order, user: user, store: store, ship_address: ship_address) }
+    let(:ship_address) { create(:address, user: user) }
+
+    describe '#clone_shipping_address' do
+      it 'clones the shipping address when use_shipping is true' do
+        order.update!(use_shipping: true)
+        expect(order.reload.bill_address).to eq(ship_address)
+        expect(user.reload.bill_address).to eq(ship_address)
+      end
+
+      it 'does not clone the shipping address when use_shipping is false' do
+        order.update!(use_shipping: false)
+        expect(order.reload.bill_address).not_to eq(order.ship_address)
+      end
+    end
+  end
+
+  describe '#full_name' do
+    subject { order.full_name }
+
+    let(:order) { build(:order, user: user, bill_address: bill_address, email: email) }
+
+    let(:bill_address) { nil }
+    let(:email) { 'john.doe@gmail.com' }
+
+    context 'for an order with user' do
+      let(:user) { build(:user, first_name: 'John', last_name: 'Doe') }
+
+      it { is_expected.to eq('John Doe') }
+
+      context 'without name' do
+        let(:user) { build(:user, first_name: nil, last_name: nil) }
+
+        it { is_expected.to eq('john.doe@gmail.com') }
+      end
+    end
+
+    context 'for a guest order' do
+      let(:user) { nil }
+
+      it { is_expected.to eq('john.doe@gmail.com') }
+
+      context 'with billing address' do
+        let(:bill_address) { build(:address, first_name: 'Jane', last_name: 'Dane') }
+
+        it { is_expected.to eq('Jane Dane') }
+      end
     end
   end
 
@@ -46,7 +134,23 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#cancel' do
+  describe '#allow_cancel?' do
+    context 'when all shipments are canceled or ready' do
+      before do
+        order.update_columns(state: 'complete', completed_at: Time.current)
+        order.shipments.delete_all
+
+        create(:shipment, order: order, state: 'canceled')
+        create(:shipment, order: order, state: 'ready')
+      end
+
+      it 'returns true' do
+        expect(order.reload.allow_cancel?).to eq true
+      end
+    end
+  end
+
+  describe '#cancel' do
     let(:order) { create(:completed_order_with_totals, store: store) }
     let!(:payment) do
       create(
@@ -67,7 +171,37 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#canceled_by' do
+  describe '#after_cancel' do
+    context 'when gift card is present' do
+      let(:gift_card) { create(:gift_card, amount: 110) }
+      let(:order) { create(:completed_order_with_totals, store: store, gift_card: gift_card, total: 110) }
+      let!(:payment) { create(:store_credit_payment, order: order, state: 'completed', amount: 110) }
+
+      it 'handles additional actions' do
+        order.cancel
+        order.reload
+
+        expect(order.shipments).to all(have_attributes(state: 'canceled'))
+        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
+      end
+    end
+
+    context 'when no gift card' do
+      let(:order) { create(:completed_order_with_totals, store: store) }
+      let!(:payment) { create(:payment, order: order, state: 'completed', amount: 10) }
+
+      it 'handles additional actions' do
+        order.cancel
+        order.reload
+
+        expect(order.shipments).to all(have_attributes(state: 'canceled'))
+        expect(order.payments).to all(have_attributes(state: 'void'))
+        expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
+      end
+    end
+  end
+
+  describe '#canceled_by' do
     subject { order.canceled_by(admin_user) }
 
     let(:admin_user) { create :admin_user }
@@ -87,18 +221,31 @@ describe Spree::Order, type: :model do
       expect(order.reload.canceler_id).to eq(admin_user.id)
     end
 
-    it 'saves canceled_at' do
-      subject
-      expect(order.reload.canceled_at).not_to be_nil
-    end
-
     it 'has canceler' do
       subject
       expect(order.reload.canceler).to eq(admin_user)
     end
+
+    context 'when canceled_at is not given' do
+      it 'saves canceled_at to Time.current' do
+        Timecop.freeze(Time.current) do
+          subject
+          expect(order.reload.canceled_at.to_s).to eq Time.current.to_s
+        end
+      end
+    end
+
+    context 'when canceled_at is given' do
+      it 'saves canceled_at to given time' do
+        Timecop.freeze(Time.current) do
+          order.canceled_by(admin_user, Time.current - 1.day)
+          expect(order.reload.canceled_at.to_s).to eq (Time.current - 1.day).to_s
+        end
+      end
+    end
   end
 
-  context '#create' do
+  describe '#create' do
     let(:order) { Spree::Order.create }
 
     it 'assigns an order number' do
@@ -125,7 +272,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#finalize!' do
+  describe '#finalize!' do
     let(:order) { Spree::Order.create(email: 'test@example.com', store: store) }
 
     before do
@@ -312,42 +459,42 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#display_outstanding_balance' do
+  describe '#display_outstanding_balance' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:outstanding_balance).and_return(10.55)
       expect(order.display_outstanding_balance).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_item_total' do
+  describe '#display_item_total' do
     it 'returns the value as a spree money' do
       allow(order).to receive(:item_total).and_return(10.55)
       expect(order.display_item_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_adjustment_total' do
+  describe '#display_adjustment_total' do
     it 'returns the value as a spree money' do
       order.adjustment_total = 10.55
       expect(order.display_adjustment_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_promo_total' do
+  describe '#display_promo_total' do
     it 'returns the value as a spree money' do
       order.promo_total = 10.55
       expect(order.display_promo_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#display_total' do
+  describe '#display_total' do
     it 'returns the value as a spree money' do
       order.total = 10.55
       expect(order.display_total).to eq(Spree::Money.new(10.55))
     end
   end
 
-  context '#currency' do
+  describe '#currency' do
     context 'when object currency is ABC' do
       before { order.currency = 'ABC' }
 
@@ -357,7 +504,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#confirmation_required?' do
+  describe '#confirmation_required?' do
     # Regression test for #4117
     it "is required if the state is currently 'confirm'" do
       order = Spree::Order.new
@@ -453,7 +600,7 @@ describe Spree::Order, type: :model do
   end
 
   # Regression tests for #4072
-  context '#state_changed' do
+  describe '#state_changed' do
     let(:order) { create(:order) }
 
     it 'logs state changes' do
@@ -475,7 +622,7 @@ describe Spree::Order, type: :model do
   end
 
   # Regression test for #4199
-  context '#available_payment_methods' do
+  describe '#collect_frontend_payment_methods' do
     let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true, stores: [store] }
     let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true, stores: [store] }
     let(:methods) { [ok_method, no_method] }
@@ -486,49 +633,46 @@ describe Spree::Order, type: :model do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'front_end',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods).to include(payment_method)
+                                                    stores: [store])
+      expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'both',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods).to include(payment_method)
+                                                    stores: [store])
+      expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
-    it 'does not include a payment method twice if display_on is blank' do
-      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
-                                                    active: true,
-                                                    display_on: 'both',
-                                                    stores: [store]
-                                                   )
-      expect(order.available_payment_methods.count).to eq(1)
-      expect(order.available_payment_methods).to include(payment_method)
+    it 'does not include backend payment method ' do
+      Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end', stores: [store])
+      expect(order.collect_frontend_payment_methods.count).to eq(0)
+    end
+
+    it 'does not include inactive payment methods' do
+      Spree::PaymentMethod.create!(name: 'Fake', active: false, display_on: 'front_end', stores: [store])
+      expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
 
     it 'does not include a payment method that is not suitable for this order' do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
 
-      expect(order.available_payment_methods).to match_array [ok_method]
+      expect(order.collect_frontend_payment_methods).to match_array [ok_method]
     end
 
     it 'does not include a payment method from different stores' do
       payment_method = Spree::PaymentMethod.create!(name: 'Fake',
                                                     active: true,
                                                     display_on: 'both',
-                                                    stores: [store_2]
-                                                   )
-      expect(order.available_payment_methods).not_to include(payment_method)
+                                                    stores: [store_2])
+      expect(order.collect_frontend_payment_methods).not_to include(payment_method)
 
-      expect(order_from_different_store.available_payment_methods).to include(payment_method)
+      expect(order_from_different_store.collect_frontend_payment_methods).to include(payment_method)
     end
   end
 
-  context '#apply_free_shipping_promotions' do
+  describe '#apply_free_shipping_promotions' do
     it 'calls out to the FreeShipping promotion handler' do
       shipment = double('Shipment')
       allow(order).to receive_messages shipments: [shipment]
@@ -544,7 +688,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#products' do
+  describe '#products' do
     let(:variant1) { create(:variant) }
     let(:variant2) { create(:variant) }
     let!(:variant3) { create(:variant) }
@@ -620,9 +764,11 @@ describe Spree::Order, type: :model do
       expect(order.created_by).to eql(created_by)
       expect(order.created_by_id).to eql(created_by.id)
 
-      expect(order.bill_address == bill_address).to be(true) if order.bill_address
+      expect(order.bill_address).to eql(bill_address)
+      expect(order.bill_address_id).to eql(bill_address&.id)
 
-      expect(order.ship_address == ship_address).to be(true) if order.ship_address
+      expect(order.ship_address).to eql(ship_address)
+      expect(order.ship_address_id).to eql(ship_address&.id)
     end
 
     shared_examples_for '#associate_user!' do |persisted = false|
@@ -677,7 +823,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the user is not persisted' do
-      let(:user) { build(:user) }
+      let(:user) { build(:user_with_addreses) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
@@ -722,7 +868,29 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_ship?' do
+  describe '#disassociate_user!' do
+    let(:order) { create(:order_with_line_items) }
+    let(:expected_order_attributes) {
+      {
+        user: nil,
+        user_id: nil,
+        email: nil,
+        created_by: nil,
+        created_by_id: nil,
+        bill_address: nil,
+        bill_address_id: nil,
+        ship_address: nil,
+        ship_address_id: nil
+      }
+    }
+
+    it 'disassociates a user from an order' do
+      order.disassociate_user!
+      expect(order).to have_attributes(expected_order_attributes)
+    end
+  end
+
+  describe '#can_ship?' do
     let(:order) { Spree::Order.create }
 
     it "is true for order in the 'complete' state" do
@@ -751,9 +919,9 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_be_destroyed?' do
+  describe '#can_be_deleted?' do
     shared_examples 'cannot be destroyed' do
-      it { expect(order.can_be_destroyed?).to be false }
+      it { expect(order.can_be_deleted?).to be false }
     end
 
     context 'when order is completed' do
@@ -772,12 +940,12 @@ describe Spree::Order, type: :model do
       let(:order) { create(:order) }
 
       it 'can be destroyed' do
-        expect(order.can_be_destroyed?).to be true
+        expect(order.can_be_deleted?).to be true
       end
     end
   end
 
-  context '#uneditable?' do
+  describe '#uneditable?' do
     let(:order) { create(:order) }
 
     it 'returns true when order is completed' do
@@ -805,7 +973,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#completed?' do
+  describe '#completed?' do
     it 'indicates if order is completed' do
       order.completed_at = nil
       expect(order.completed?).to be false
@@ -815,18 +983,19 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#allow_checkout?' do
+  describe '#allow_checkout?' do
     it 'is true if there are line_items in the order' do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(true)
       expect(order.checkout_allowed?).to be true
     end
+
     it 'is false if there are no line_items in the order' do
       allow(order).to receive_message_chain(:line_items, :exists?).and_return(false)
       expect(order.checkout_allowed?).to be false
     end
   end
 
-  context '#amount' do
+  describe '#amount' do
     before do
       @order = create(:order, user: user)
       @order.line_items = [create(:line_item, price: 1.0, quantity: 2),
@@ -838,7 +1007,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#backordered?' do
+  describe '#backordered?' do
     let(:shipments) { create_list(:shipment, 2) }
 
     before do
@@ -852,7 +1021,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#can_cancel?' do
+  describe '#can_cancel?' do
     it 'is false for completed order in the canceled state' do
       order.state = 'canceled'
       order.shipment_state = 'ready'
@@ -868,7 +1037,7 @@ describe Spree::Order, type: :model do
     end
   end
 
-  context '#tax_total' do
+  describe '#tax_total' do
     it 'adds included tax and additional tax' do
       allow(order).to receive_messages(additional_tax_total: 10, included_tax_total: 20)
 
@@ -928,6 +1097,20 @@ describe Spree::Order, type: :model do
     it 'returns the value as a spree money' do
       allow(order).to receive(:pre_tax_total).and_return(10.55)
       expect(order.display_pre_tax_total).to eq(Spree::Money.new(10.55))
+    end
+  end
+
+  describe '#analytics_subtotal' do
+    let(:order) { create(:order_with_line_items, line_items_count: 2) }
+
+    before do
+      order.update_column(:item_total, 100)
+      order.line_items[0].update_column(:promo_total, 10)
+      order.line_items[1].update_column(:promo_total, 5)
+    end
+
+    it 'returns the subtotal used for analytics integrations' do
+      expect(order.analytics_subtotal).to eq(115)
     end
   end
 
@@ -1112,13 +1295,14 @@ describe Spree::Order, type: :model do
   describe '#promo_code' do
     context 'without promo code' do
       let(:order) { build_stubbed(:order, user: nil, email: nil) }
+
       it 'returns nil' do
         expect(order.promo_code).to be_nil
       end
     end
 
     context 'with promo code' do
-      let(:order) { create(:order_with_line_items, line_items_count: 2, store: Spree::Store.default) }
+      let(:order) { create(:order_with_line_items, line_items_count: 2, store: store) }
       let(:promotion) { create(:free_shipping_promotion, code: 'GWP', kind: :coupon_code) }
 
       context 'with single coupon code' do
@@ -1152,27 +1336,6 @@ describe Spree::Order, type: :model do
           Spree::Cart::RemoveLineItem.call(order: order, line_item: order.line_items.first)
           expect(order.reload.promo_code).to eq(coupon_code.code)
         end
-      end
-    end
-  end
-
-  describe '#validate_payments_attributes' do
-    let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
-    let(:attributes) do
-      [{ amount: 50, payment_method_id: payment_method.id }]
-    end
-
-    context 'with existing payment method' do
-      it "doesn't raise error and returns collection" do
-        expect(order.validate_payments_attributes(attributes)).to eq attributes
-      end
-    end
-
-    context 'not existing payment method' do
-      let(:payment_method) { create(:credit_card_payment_method, display_on: 'backend', stores: [store]) }
-
-      it 'raises RecordNotFound' do
-        expect { order.validate_payments_attributes(attributes) }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -1224,9 +1387,11 @@ describe Spree::Order, type: :model do
     let!(:order) { create(:order_with_line_items, line_items_count: 2) }
     let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store]) }
     let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both', stores: [store]) }
+    let!(:inactive_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both', stores: [store], active: false) }
 
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).not_to include(store_credit_payment_method) }
+    it { expect(order.collect_backend_payment_methods).not_to include(inactive_payment_method) }
   end
 
   describe '#create_shipment_tax_charge!' do
@@ -1345,9 +1510,9 @@ describe Spree::Order, type: :model do
   end
 
   describe '#cart_promo_total' do
-    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
-
     subject { order.reload.cart_promo_total }
+
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
 
     context 'without promotions' do
       it 'returns 0' do
@@ -1474,11 +1639,11 @@ describe Spree::Order, type: :model do
   end
 
   describe 'bill_address_id=' do
+    subject { order.bill_address_id = address.id }
+
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
-
-    subject { order.bill_address_id = address.id }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1497,10 +1662,10 @@ describe Spree::Order, type: :model do
   end
 
   describe '#bill_address_attributes=' do
+    subject { order.bill_address_attributes = address_attributes }
+
     let(:order) { create(:order, user: user) }
     let(:address_attributes) { attributes_for(:address) }
-
-    subject { order.bill_address_attributes = address_attributes }
 
     context 'when user has default bill address' do
       let!(:user) { create(:user_with_addresses) }
@@ -1509,28 +1674,6 @@ describe Spree::Order, type: :model do
         expect(user.bill_address_id).not_to be nil
 
         expect { subject }.to(change { user.bill_address_id })
-      end
-    end
-
-    context 'when user\'s default address is invalid' do
-      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
-      let(:user) { create(:user, bill_address_id: invalid_address.id) }
-
-      before do
-        invalid_address.save(validate: false)
-        user
-        order.reload
-      end
-
-      it 'deletes it and assign new address' do
-        expect(user.bill_address_id).to eq invalid_address.id
-
-        subject
-
-        expect(user.reload.bill_address_id).to be_present
-        expect(user.bill_address_id).to_not eq(invalid_address.id)
-
-        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
 
@@ -1572,11 +1715,11 @@ describe Spree::Order, type: :model do
   end
 
   describe 'ship_address_id=' do
+    subject { order.ship_address_id = address.id }
+
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:address) { create(:address, user: user) }
-
-    subject { order.ship_address_id = address.id }
 
     context 'when assigned address exist' do
       context 'when assigned address belongs to user' do
@@ -1595,38 +1738,16 @@ describe Spree::Order, type: :model do
   end
 
   describe '#ship_address_attributes=' do
+    subject { order.ship_address_attributes = address_attributes }
+
     let(:order) { create(:order, user: user) }
     let(:address_attributes) { attributes_for(:address) }
-
-    subject { order.ship_address_attributes = address_attributes }
 
     context 'when user has default ship address' do
       let!(:user) { create(:user_with_addresses) }
 
       it 'changes user default ship addresss' do
         expect { subject }.to(change { user.ship_address_id })
-      end
-    end
-
-    context 'when user\'s default address is invalid' do
-      let(:invalid_address) { build(:address, firstname: nil, lastname: nil, address1: nil, phone: nil) }
-      let(:user) { create(:user, ship_address_id: invalid_address.id) }
-
-      before do
-        invalid_address.save(validate: false)
-        user
-        order.reload
-      end
-
-      it 'deletes it and assign new address' do
-        expect(user.ship_address_id).to eq invalid_address.id
-
-        subject
-
-        expect(user.reload.ship_address_id).to be_present
-        expect(user.ship_address_id).not_to eq(invalid_address.id)
-
-        expect { invalid_address.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
 
@@ -1833,5 +1954,307 @@ describe Spree::Order, type: :model do
     end
 
     it { expect(subject).to eq(40) }
+  end
+
+  describe '#partially_refunded?' do
+    subject { order.partially_refunded? }
+
+    context 'when orders has refunds' do
+      let!(:order) { create(:order_ready_to_ship) }
+      let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
+
+      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+      let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
+
+      before do
+        order.update_column(:total, 110)
+        order.update_column(:additional_tax_total, 10)
+        order.update_column(:payment_total, 95)
+
+        order.payments.first.update_column(:amount, 95)
+
+        create(:store_credit_payment, amount: 15, order: order)
+      end
+
+      context 'when sum of refunds is less than max amount which could be refunded' do
+        let(:amount) { 50 }
+
+        it 'returns true' do
+          expect(subject).to be true
+        end
+      end
+
+      context 'when sum of refunds is equal to max amount which could be refunded' do
+        let(:amount) { 85 }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+
+      context 'when sum of refunds is greater than max amount which could be refunded' do
+        let(:amount) { 90 }
+
+        it 'returns false' do
+          expect(subject).to be false
+        end
+      end
+    end
+
+    context 'when order does not have refunds' do
+      let(:order) { create(:order) }
+
+      it 'returns false' do
+        expect(subject).to be false
+      end
+    end
+  end
+
+  describe '#payment_method' do
+    subject { order.payment_method }
+
+    let(:order) { create(:order, total: 100) }
+    let(:payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+
+    before do
+      create(:payment, order: order, payment_method: payment_method)
+    end
+
+    it 'returns the payment method' do
+      expect(subject).to eq(payment_method)
+    end
+  end
+
+  describe '#payment_source' do
+    subject { order.payment_source }
+
+    let(:order) { create(:order, total: 100) }
+    let(:payment_source) { create(:credit_card) }
+
+    before do
+      create(:payment, order: order, source: payment_source)
+    end
+
+    it 'returns the payment source' do
+      expect(subject).to eq(payment_source)
+    end
+  end
+
+  describe '#backordered_variants' do
+    subject { order.backordered_variants }
+
+    let(:order) { create(:order) }
+    let(:variant) { create(:variant) }
+    let(:variant_2) { create(:variant) }
+    let(:variant_3) { create(:variant, track_inventory: false) }
+
+    before do
+      create(:line_item, order: order, variant: variant, quantity: 1)
+      variant.stock_items.first.update(count_on_hand: 0, backorderable: true)
+
+      create(:line_item, order: order, variant: variant_2, quantity: 1)
+      variant_2.stock_items.first.update(count_on_hand: 1, backorderable: true)
+
+      create(:line_item, order: order, variant: variant_3, quantity: 1)
+      variant_3.stock_items.first.update(count_on_hand: 0, backorderable: true)
+    end
+
+    it 'returns the backordered variants' do
+      expect(subject).to eq([variant])
+    end
+  end
+
+  describe '#line_items_without_shipping_rates' do
+    subject { order.line_items_without_shipping_rates }
+
+    let(:order) { create(:order_with_line_items) }
+    let(:shipment) { order.shipments.first }
+    let(:line_item) { order.line_items.first }
+
+    context 'when order has no shipments' do
+      it 'returns an empty array' do
+        expect(subject).to eq([])
+      end
+    end
+
+    context 'when order has shipments with no shipping rates' do
+      before do
+        shipment.shipping_rates.destroy_all
+      end
+
+      it 'returns the line items without shipping rates' do
+        expect(subject).to eq([line_item])
+      end
+    end
+
+    context 'when order has shipments with shipping rates' do
+      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+
+      it 'returns an empty array' do
+        expect(subject).to eq([])
+      end
+    end
+  end
+
+  describe '#ensure_available_shipping_rates' do
+    subject { order.send(:ensure_available_shipping_rates) }
+
+    let(:order) { create(:order_with_line_items) }
+    let(:line_item) { order.line_items.first }
+    let(:shipment) { order.shipments.first }
+
+    context 'when order has no shipments' do
+      before do
+        order.shipments.destroy_all
+      end
+
+      it 'returns false and adds an error to the order' do
+        expect(subject).to be false
+        expect(order.errors.full_messages).to include(Spree.t(:items_cannot_be_shipped))
+      end
+    end
+
+    context 'when order has shipments with no shipping rates' do
+      before do
+        shipment.shipping_rates.destroy_all
+      end
+
+      it 'returns false and adds an error to the order' do
+        expect(subject).to be false
+        expect(order.errors.full_messages).to include(Spree.t(:products_cannot_be_shipped, product_names: line_item.name))
+      end
+
+      it 'deletes all the shipments' do
+        expect { subject }.to change(order.shipments, :count).to(0)
+      end
+    end
+
+    context 'when order has shipments with shipping rates' do
+      let!(:shipping_rate) { create(:shipping_rate, shipment: shipment) }
+
+      it 'returns nil and does not add an error to the order' do
+        expect(subject).to be_nil
+        expect(order.errors.full_messages).to be_empty
+      end
+    end
+  end
+
+  describe '#to_csv' do
+    subject { order.to_csv }
+
+    context 'when order has no line items' do
+      let(:order) { create(:order) }
+
+      it 'returns no csv lines' do
+        expect(subject).to eq([])
+      end
+    end
+
+    context 'when order has line items' do
+      let(:order) { create(:order_with_line_items) }
+
+      let(:presenter) { Spree::CSV::OrderLineItemPresenter }
+      let(:presenter_instance) { instance_double(presenter) }
+
+      before do
+        allow(presenter).to receive(:new).and_return(presenter_instance)
+        allow(presenter_instance).to receive(:call).and_return('csv_line')
+      end
+
+      it 'returns the csv lines' do
+        expect(subject).to eq(['csv_line'])
+      end
+    end
+  end
+
+  context 'quick checkout' do
+    let(:digital_shipping_method) { create(:digital_shipping_method) }
+    let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+    let(:digital_variant) { create(:variant, product: digital_product, digitals: [create(:digital)]) }
+    let(:digital_line_item) { create(:line_item, variant: digital_variant, quantity: 1, order: order) }
+    let(:physical_line_item) { create(:line_item, quantity: 1, order: order) }
+    let(:order) { create(:order) }
+
+    describe '#quick_checkout?' do
+      it 'returns false if the order has no shipping address' do
+        expect(order.quick_checkout?).to be false
+      end
+
+      it 'returns false if the order has a shipping address but it is not a quick checkout address' do
+        order.shipping_address = create(:address)
+        expect(order.quick_checkout?).to be false
+      end
+
+      it 'returns true if the order has a quick checkout shipping address' do
+        order.shipping_address = create(:address, quick_checkout: true)
+        expect(order.quick_checkout?).to be true
+      end
+    end
+
+    describe '#quick_checkout_available?' do
+      it 'returns true if the order is fully digital' do
+        digital_line_item
+        order.update_totals
+
+        expect(order.quick_checkout_available?).to be true
+      end
+
+      it 'returns true if the order has no digital products at all' do
+        physical_line_item
+        order.update_totals
+
+        expect(order.quick_checkout_available?).to be true
+      end
+
+      it 'returns false if the order has physical products and some digital products' do
+        physical_line_item
+        digital_line_item
+        order.update_totals
+
+        expect(order.quick_checkout_available?).to be false
+      end
+
+      it 'returns false if order has many shipments' do
+        physical_line_item
+        digital_line_item
+        order.update_totals
+        order.create_proposed_shipments
+
+        expect(order.shipments.count).to eq(2)
+
+        expect(order.quick_checkout_available?).to be false
+      end
+
+      it 'returns false if order does not require payment' do
+        physical_line_item.update(price: 0)
+        order.update_totals
+
+        expect(order.total).to eq(0)
+        expect(order.payment_required?).to be false
+
+        expect(order.quick_checkout_available?).to be false
+      end
+    end
+
+    describe '#quick_checkout_require_address?' do
+      let(:order) { create(:order) }
+
+      it 'returns true if the order is not digital and delivery is required' do
+        expect(order.quick_checkout_require_address?).to be true
+      end
+
+      it 'returns false if the order is digital' do
+        digital_line_item
+        order.update_totals
+
+        expect(order.quick_checkout_require_address?).to be false
+      end
+
+      it 'returns false if the order does not require delivery' do
+        allow(order).to receive(:delivery_required?).and_return(false)
+
+        expect(order.quick_checkout_require_address?).to be false
+      end
+    end
   end
 end

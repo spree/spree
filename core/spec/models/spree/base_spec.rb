@@ -57,11 +57,11 @@ describe Spree::Base do
       expect(Spree::LegacyUser.json_api_columns).to include('email')
     end
 
-    it { expect(Spree::Address.json_api_columns).to contain_exactly('address1', 'address2', 'alternative_phone', 'city', 'company', 'created_at', 'deleted_at', 'firstname', 'label', 'lastname', 'phone', 'state_name', 'updated_at', 'zipcode', 'public_metadata', 'private_metadata') }
+    it { expect(Spree::Address.json_api_columns).to contain_exactly('address1', 'address2', 'alternative_phone', 'city', 'company', 'created_at', 'deleted_at', 'firstname', 'label', 'lastname', 'phone', 'state_name', 'updated_at', 'zipcode', 'public_metadata', 'private_metadata', 'quick_checkout', 'latitude', 'longitude') }
     it { expect(Spree::Address.json_api_columns).not_to include('country_id') }
   end
 
   describe '.json_api_permitted_attributes' do
-    it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'state_name', 'alternative_phone', 'company', 'state_id', 'country_id', 'created_at', 'updated_at', 'user_id', 'deleted_at', 'label', 'public_metadata', 'private_metadata') }
+    it { expect(Spree::Address.json_api_permitted_attributes).to contain_exactly('firstname', 'lastname', 'address1', 'address2', 'city', 'zipcode', 'phone', 'state_name', 'alternative_phone', 'company', 'state_id', 'country_id', 'created_at', 'updated_at', 'user_id', 'deleted_at', 'label', 'public_metadata', 'private_metadata', 'quick_checkout', 'latitude', 'longitude') }
   end
 end

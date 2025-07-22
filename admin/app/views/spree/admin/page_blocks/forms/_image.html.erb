@@ -1,0 +1,10 @@
+<%= render 'active_storage/upload_form', form: f, field_name: :asset, width: 512, height: 512, auto_submit: true %>
+
+<% content_for(:design_tab) do %>
+  <%= render 'spree/admin/page_builder/labeled_range_input',
+    f: f, field: :preferred_height, min: 1, max: 1024, unit: 'px', _label: 'Max image height on desktop'
+  %>
+  <%= render 'spree/admin/page_builder/labeled_range_input',
+    f: f, field: :preferred_mobile_height, min: 1, max: 512, unit: 'px', _label: 'Max image height on mobile'
+  %>
+<% end %>

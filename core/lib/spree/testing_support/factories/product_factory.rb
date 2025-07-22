@@ -10,6 +10,7 @@ FactoryBot.define do
     deleted_at        { nil }
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
     status            { 'active' }
+    stores            { [Spree::Store.default] }
 
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in
@@ -51,6 +52,11 @@ FactoryBot.define do
           create(:property, :brand, id: 10)
           create(:product_property, product: product, property_id: 10, value: 'Epsilon')
         end
+      end
+
+      factory :digital_product do
+        track_inventory { false }
+        shipping_category { |r| Spree::ShippingCategory.digital || r.association(:digital_shipping_category) }
       end
     end
   end

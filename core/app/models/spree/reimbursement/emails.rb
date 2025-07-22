@@ -1,5 +1,5 @@
 module Spree
-  class Reimbursement < Spree::Base
+  class Reimbursement < Spree.base_class
     module Emails
       def send_reimbursement_email
         # you can overwrite this method in your application / extension to send out the confirmation email

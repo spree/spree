@@ -102,6 +102,34 @@ jobs:
       - image: *ruby_image
       - image: &mysql_image cimg/mysql:8.0
 
+  brakeman:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-{{ .Branch }}
+            - spree-bundle
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Ensure bundle Install
+          command: |
+            bundle check || bundle install
+      - run:
+          name: Brakeman
+          command: bundle exec brakeman --exit-on-warn --exit-on-error -o brakeman.json -o brakeman.html
+      - run:
+          name: Move brakeman reports to artifacts directory
+          command: |
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman.json /tmp/test-artifacts/
+            mv brakeman.html /tmp/test-artifacts/
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: brakeman-reports
+
 workflows:
   version: 2
   main:
@@ -111,5 +139,8 @@ workflows:
           requires:
             - bundle
       - tests_mysql:
+          requires:
+            - bundle
+      - brakeman:
           requires:
             - bundle

@@ -27,26 +27,32 @@ rescue LoadError
 end
 
 require 'rspec/rails'
+require 'database_cleaner/active_record'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-require 'database_cleaner/active_record'
 require 'ffaker'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
+require 'spree/api/testing_support/factories'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/jobs'
+require 'spree/testing_support/store'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/admin/testing_support/capybara_utils'
+require 'spree/admin/testing_support/tom_select'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
 
 require 'spree/core/controller_helpers/strong_parameters'
+
+require 'action_text/system_test_helper'
 
 RSpec.configure do |config|
   config.color = true
@@ -59,61 +65,41 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
-  config.before :suite do
+  config.before(:suite) do
     Capybara.match = :smart
-    Capybara.javascript_driver = :selenium_chrome
+    Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
-    DatabaseCleaner.clean_with :truncation
-    # Force jobs to be executed in a synchronous way
-    ActiveJob::Base.queue_adapter = :inline
+    # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before do
-    Rails.cache.clear
-    WebMock.disable!
-    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
-                                 :truncation
-                               else
-                                 :transaction
-                               end
-    # TODO: Find out why open_transactions ever gets below 0
-    # See issue #3428
-    ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
-
-    DatabaseCleaner.start
-    reset_spree_preferences
-
-    country = create(:country, name: 'United States of America', iso_name: 'UNITED STATES', iso: 'US', states_required: true)
-
-    create(:store, default_country: country, default: true)
-  end
-
-  config.after(:each, type: :feature) do |example|
-    if page&.body&.present?
-      missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
-      if missing_translations.any?
-        puts "Found missing translations: #{missing_translations.inspect}"
-        puts "In spec: #{example.location}"
-      end
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
     end
   end
 
-  config.append_after do
-    DatabaseCleaner.clean
+  config.before(:each) do
+    Spree::Webhooks.disabled = true
+    reset_spree_preferences
   end
 
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::Admin::TestingSupport::CapybaraUtils
+  config.include Spree::Admin::TestingSupport::TomSelect
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::ImageHelpers
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
+
+  config.include ActionText::SystemTestHelper, type: :feature
 
   config.order = :random
   Kernel.srand config.seed

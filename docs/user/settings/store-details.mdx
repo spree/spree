@@ -1,0 +1,98 @@
+---
+title: "Store Details"
+description: "In this Spree user doc, you'll learn how to configure important store settings."
+---
+
+The Store Details section allows you to configure key settings that determine how your store is presented to customers and how it operates behind the scenes. 
+
+From your store’s name and logo to currency, locale, time zone, and units of measurement, this section is where you define your store’s identity and core operational preferences.
+
+To configure these settings, navigate to the Store Details tab of the Settings menu.
+
+<img src="/images/user/settings/store-details/1.StoreDetails.png" />
+
+## Name & Logo
+
+<img src="/images/user/settings/store-details/2.NameandLogo.png" />
+
+- **Name**: This is the public-facing name of your store. It will appear in headers, footers, and other storefront areas.
+- **Logo**: Upload a store logo (recommended size: 240x240 px). This image is used only in the admin dashboard. For the storefront logo see Storefront Themes → Theme Editor.
+
+## Currencies & Countries
+
+<img src="/images/user/settings/store-details/3.CurrenciesandCountries.png" />
+
+If you're running a multi-region store (or operate in a country with multiple languages or currencies) this section lets you configure how prices and languages are displayed to your customers, and allows you to limit the regions you ship to:
+
+- **Default currency**: Choose the primary currency used for your store’s pricing and transactions.
+- **Supported currencies**: Select additional currencies, if applicable.
+- **Default country**: Set the primary country where your business is based.
+- **Shipping zones**: Manage zones to define where products can be shipped.
+- **Default locale**: Set the primary language for your storefront.
+- **Default locales**: Define additional locales.
+
+<Note>Currencies and languages are selected from predefined lists, whereas Shipping Zones can be configured in the Zones tabs of the Settings menu.</Note>
+
+If you enable multiple locales or currencies, the storefront will automatically display a language and currency selector to your customers.
+
+<img src="/images/user/settings/store-details/4.Languageandcurrencyselector.png" />
+
+## Standards and Formats
+
+<img src="/images/user/settings/store-details/5.StandardsandFormats.png" />
+
+Here you can set the timezone, unit system, and weight units to match your region and business preferences:
+
+- **Timezone**: Set your store’s timezone for accurate timestamps and order data.
+- **Unit system**: Choose between imperial and metric. This affects how weights and measures are displayed across your storefront. Options include:
+  - Imperial system
+  - Metric system
+- **Weight unit**: Choose the default unit for product weights. Option include:
+  - Pound (lb) - imperial system
+  - Ounce (oz) - imperial system
+  - Kilogram (kg) - metric system
+  - Gram (g) - metric system
+
+## Digital Assets
+
+<img src="/images/user/settings/store-details/6.DigitalAssets.png" />
+
+Here you can control how digital products (e.g., downloads) are handled after purchase:
+
+- **Limit digital links download days**: Set how long download links remain active (in days).
+- **Limit digital links download count**: Restrict the number of download attempts per purchase.
+
+## Enterprise-only Features
+
+<Warning>The following features are only available in Spree Enterprise Edition.</Warning>
+
+### JWT Authentication
+
+<img src="/images/user/settings/store-details/7.JWTAuthentication.png" />
+
+JWT (JSON Web Token) authentication allows secure, stateless communication between your store and external services or frontends. It’s commonly used when integrating with custom storefronts, mobile apps, or third-party platforms, ensuring users can be authenticated without relying on server-side sessions.
+
+If your store uses JWT for authentication, specify the JWKS endpoint here. Ensure the URL includes a valid protocol (e.g., https://).
+
+### Vendor Commission Rate
+
+<img src="/images/user/settings/store-details/8.VendorCommissionRates.png" />
+
+Set a default commission percentage that your platform takes from vendor sales. This ensures consistent and automated revenue sharing across your marketplace.
+
+Different commission rates can be set per vendor when inviting them to join your marketplace. See the support article on Invite a Vendor for more details.
+
+### Vendor Payouts
+
+<img src="/images/user/settings/store-details/9.VendorPayouts.png" />
+
+Here you can configure how and when vendors receive their earnings. Depending on your setup, this may involve automatic payouts via Stripe Connect or manual disbursements. The payout schedule can be:
+
+- Daily
+- Weekly
+- Bi-weekly
+- Monthly
+
+## Save Changes
+
+After making any updates, click Update at the bottom of the page to save your store settings, otherwise any changes you’ve made will not be saved.

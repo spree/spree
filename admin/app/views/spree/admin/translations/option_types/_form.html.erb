@@ -1,0 +1,21 @@
+<%# locals: (f:, resource:, locale:) %>
+
+<% resource.class.translatable_fields.each do |field| %>
+  <%= render "spree/admin/translations/translation_rows/text_field_row", f: f, field: field, locale: locale %>
+<% end %>
+
+<% if resource.option_values.any? %>
+  <tr class="bg-light">
+    <th colspan="3"><%= Spree.t(:option_values) %></th>
+  </tr>
+
+  <%= f.fields_for :option_values do |ff| %>
+    <% ff.object.class.translatable_fields.each do |field| %>
+      <tr>
+        <td><%= Spree.t(field) %></td>
+        <td><%= ff.object.send(field) %></td>
+        <td><%= ff.text_field "#{field}_#{locale}", class: 'form-control' %></td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>

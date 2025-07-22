@@ -7,12 +7,24 @@ class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Locale
 end
 
+class ActionDispatch::Cookies::SignedKeyRotatingCookieJar
+  def fetch_set_cookies
+    @parent_jar.fetch_set_cookies
+  end
+end
+
+class ActionDispatch::Cookies::CookieJar
+  def fetch_set_cookies
+    @set_cookies
+  end
+end
+
 describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user, store: store) }
-  let!(:store) { create(:store, default: true, default_currency: 'USD') }
+  let!(:store) { @default_store }
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
@@ -46,25 +58,90 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           controller.current_order(create_order_if_necessary: true)
         end.to change(Spree::Order, :count).to(1)
       end
-
-      it 'assigns the current_store id' do
-        controller.current_order(create_order_if_necessary: true)
-        expect(Spree::Order.last.store_id).to eq store.id
-      end
     end
 
-    context 'gets using the token' do
-      let!(:order)       { create :order, user: user, store: store }
-      let!(:guest_order) { create :order, user: nil, email: nil, token: 'token', store: store }
+    describe 'creating a token cookie' do
+      let!(:store) { create(:store, default: true, name: 'Test Cookie Store') }
 
-      before do
-        expect(controller).to receive(:current_order_params).and_return(
-          currency: store.default_currency, token: 'token', store_id: guest_order.store_id, user_id: user.id
-        )
+      let(:token_cookie) { request.cookie_jar.signed[:token] }
+      let(:token_cookie_domain) { request.cookie_jar.signed.fetch_set_cookies.dig('token', :domain) }
+
+      context 'for a cart with token' do
+        before do
+          allow(controller).to receive(:current_order_params).and_return(
+            token: 'token-123',
+            currency: 'USD',
+            user_id: user.id
+          )
+        end
+
+        it 'creates a new token cookie' do
+          controller.current_order
+
+          expect(token_cookie).to be_present
+          expect(token_cookie_domain).to eq(store.url)
+        end
+
+        context 'on a custom domain' do
+          let!(:custom_domain) { create(:custom_domain, store: store, url: 'test-cookie-store.com') }
+
+          it 'creates a new token cookie on a custom domain' do
+            controller.current_order
+
+            expect(token_cookie).to be_present
+            expect(token_cookie_domain).to eq('test-cookie-store.com')
+          end
+        end
       end
 
-      specify 'without the guest token being bound to any user yet' do
-        expect(controller.current_order).to eq guest_order
+      context 'for a cart without token' do
+        before do
+          allow(controller).to receive(:current_order_params).and_return(
+            token: nil,
+            currency: 'USD',
+            user_id: user.id
+          )
+        end
+
+        it 'does nothing' do
+          controller.current_order
+          expect(token_cookie).to be_nil
+        end
+      end
+
+      context 'with a checkout token' do
+        before do
+          allow(controller).to receive(:params).and_return(token: 'token-123')
+        end
+
+        it 'creates a new token cookie' do
+          controller.current_order
+
+          expect(token_cookie).to be_present
+          expect(token_cookie_domain).to eq(store.url)
+        end
+
+        context 'on a custom domain' do
+          let!(:custom_domain) { create(:custom_domain, store: store, url: 'test-cookie-store.com') }
+
+          it 'creates a new token cookie on a custom domain' do
+            controller.current_order
+
+            expect(token_cookie).to be_present
+            expect(token_cookie_domain).to eq('test-cookie-store.com')
+          end
+        end
+      end
+
+      context 'for a checkout without token' do
+        before do
+          allow(controller).to receive(:params).and_return(token: nil)
+        end
+
+        it 'does nothing' do
+          controller.current_order
+          expect(token_cookie).to be_nil
+        end
       end
     end
   end
@@ -74,8 +151,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
     end
 
-    context "user's email is blank" do
-      let(:user) { create(:user, email: '') }
+    context "user is blank" do
+      let(:order) { create(:order, user: nil, store: store) }
 
       it 'calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).to receive(:associate_user!)
@@ -84,6 +161,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context "user isn't blank" do
+      let(:order) { create(:order, user: user, store: store) }
+
       it 'does not calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)
         controller.associate_user

@@ -8,8 +8,6 @@ describe Spree::Api::V2::Platform::VariantSerializer do
   let!(:variant) { create(:variant, price: 10, compare_at_price: 15, images: create_list(:image, 2), tax_category: create(:tax_category)) }
   let!(:digital) { create(:digital, variant: variant) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

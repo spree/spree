@@ -1,13 +1,14 @@
 ---
 title: Products
+icon: "box"
 ---
 
 ## Overview
 
-`Product` records track unique products within your store. These differ from [Variants](products#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale. 
+`Product` records track unique products within your store. These differ from [Variants](#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale. 
 
 <Info>
-Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](../customization/i18n#resource-translations)).
+Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](/developer/core-concepts/i18n#resource-translations)).
 </Info>
 
 Products have the following attributes:
@@ -45,7 +46,7 @@ The `name` and `presentation` fields for option types are translatable as of ver
 
 `Variant` records track the individual variants of a `Product`. Variants are of two types: master variants and normal variants.
 
-Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](products#product-properties), which apply to all variants of that product.
+Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](#product-properties), which apply to all variants of that product.
 
 | Attribute          | Description                                                                                   | Example Value          |
 |--------------------|-----------------------------------------------------------------------------------------------|------------------------|
@@ -76,7 +77,7 @@ Master variants are automatically created along with a product and exist for the
 
 ### Regular Variants
 
-Variants which are not the master variant are unique based on a [option type and option value](products#option-types-and-option-values) combinations.
+Variants which are not the master variant are unique based on a [option type and option value](#option-types-and-option-values) combinations.
 
 For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green". For this combination of sizes and colors, you would be able to create 9 unique variants:
 
@@ -132,15 +133,13 @@ Image order is determined by the `position` attribute, which is an integer. By d
 
 <Info>
 Under the hood we use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) to handle image storage and manipulation.
-
-More information about images can be found in the [Images Customization](../customization/images) section.
 </Info>
 
 ## Product Properties
 
 Product properties track individual attributes for a product that don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
 
-A `Property` should not be confused with an [`OptionType`](products#option-types-and-option-values), which is used when defining [Variants](products#variants) for a product.
+A `Property` should not be confused with an [`OptionType`](#option-types-and-option-values), which is used when defining [Variants](#variants) for a product.
 
 You can retrieve the value for a property on a `Product` object by calling the `property` method on it and passing through that property's name:
 
@@ -163,7 +162,7 @@ As of version 4.6, product property `value` fields are translatable.
 
 ## Prices
 
-`Price` objects track a price for a particular currency and variant combination. For instance, a [Variant](products#variants) may be available for $15 (`15 USD`) and €7 (`7 Euro`).
+`Price` objects track a price for a particular currency and variant combination. For instance, a [Variant](#variants) may be available for $15 (`15 USD`) and €7 (`7 Euro`).
 
 `Price` object contains 3 important attributes:
 

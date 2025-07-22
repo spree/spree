@@ -75,7 +75,7 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#order' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:store_credit) { create(:store_credit, store: store) }
 
     context 'there is no associated payment with the event' do
@@ -94,7 +94,7 @@ describe 'StoreCreditEvent' do
       end
 
       let(:authorization_code) { '1-SC-TEST' }
-      let(:order) { create(:order, store: store) }
+      let(:order) { create(:order, store: store, total: 100) }
       let!(:payment) { create(:store_credit_payment, order: order, response_code: authorization_code) }
 
       it 'returns the order associated with the payment' do
@@ -104,11 +104,91 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#store' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:store_credit) { create(:store_credit, store: store) }
 
     subject { build(:store_credit_auth_event, store_credit: store_credit) }
 
     it { expect(subject.store).to eq(store) }
+  end
+
+  describe '#allocation?' do
+    subject { store_credit_event.allocation? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is allocation' do
+      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not allocation' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#credit?' do
+    subject { store_credit_event.credit? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is credit' do
+      let(:action) { Spree::StoreCredit::CREDIT_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not credit' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#captured?' do
+    subject { store_credit_event.captured? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is capture' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not capture' do
+      let(:action) { Spree::StoreCredit::ALLOCATION_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#voided?' do
+    subject { store_credit_event.voided? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is void' do
+      let(:action) { Spree::StoreCredit::VOID_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not void' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#authorized?' do
+    subject { store_credit_event.authorized? }
+
+    let(:store_credit_event) { build(:store_credit_auth_event, action: action) }
+
+    context 'action is authorize' do
+      let(:action) { Spree::StoreCredit::AUTHORIZE_ACTION }
+      it { is_expected.to be true }
+    end
+
+    context 'action is not authorize' do
+      let(:action) { Spree::StoreCredit::CAPTURE_ACTION }
+      it { is_expected.to be false }
+    end
   end
 end

@@ -58,7 +58,7 @@ describe Spree::Image, type: :model do
       let!(:variants) { create_list(:variant, 2, product: product) }
 
       context 'when viewable is a master variant' do
-        let(:viewable) { product.master }
+        let(:viewable) { product.reload.master }
 
         it 'touches product variants' do
           expect(image).to receive(:touch_product_variants)

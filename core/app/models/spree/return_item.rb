@@ -1,5 +1,5 @@
 module Spree
-  class ReturnItem < Spree::Base
+  class ReturnItem < Spree.base_class
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
     if defined?(Spree::Webhooks::HasWebhooks)
@@ -11,6 +11,10 @@ module Spree
 
     def return_quantity=(value)
       @_return_quantity = value.to_i
+    end
+
+    def pre_tax_amount=(amount)
+      self[:pre_tax_amount] = Spree::LocalizedNumber.parse(amount)
     end
 
     def return_quantity
@@ -35,6 +39,7 @@ module Spree
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
+    has_one :line_item, through: :inventory_unit
 
     validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order

@@ -1,0 +1,35 @@
+---
+title: Docker
+description: Learn how to build a Docker image of your Spree application.
+icon: "docker"
+---
+
+Spree (when using Spree Starter template) comes with a Dockerfile that can be used to build a Docker image of your application.
+
+You can find the Dockerfile in the [Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) file in the root of the project or in the Spree Starter repository.
+
+This Dockerfile is pre-configured to run Spree with PostgreSQL database and Redis 7.0+ (or Valkey). That's the only external dependency you need to have installed on your machine to be able to run Spree.
+
+You can later use that image to run your application in a containerized environment eg. AWS ECS, AWS Fargate, Azure Container Instances, etc.
+
+## Building the Docker image
+
+```bash
+docker build -t spree .
+```
+
+## Running the Docker container
+
+```bash
+docker run -p 3000:3000 -e SECRET_KEY_BASE=... -e DATABASE_URL=... -e REDIS_URL=... spree
+```
+
+You will need to supply the following environment variables to run the container:
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `DATABASE_URL` | Database URL, this could be your AWS RDS instance or any other PostgreSQL instance | `postgres://user:pass@localhost:5432/spree` |
+| `REDIS_URL` | Redis/Valkey URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis/Valkey instance | `redis://localhost:6379/0` |
+| `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
+
+This is the bare minimum you need to run Spree Starter. [Learn more about environment variables](/developer/deployment/environment_variables).

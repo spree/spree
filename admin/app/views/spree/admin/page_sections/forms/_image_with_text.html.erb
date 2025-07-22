@@ -1,0 +1,31 @@
+<%= render 'spree/admin/shared/page_section_image', f: f %>
+
+<div class="py-2">
+  <%= f.fields_for :link do |lf| %>
+    <div class="form-group">
+      <%= lf.label :linkable_type, 'Link' %>
+      <%= lf.select :linkable_type, @page_section.allowed_linkable_types, { include_blank: false }, { class: 'custom-select mb-3', data: { action: 'auto-submit#submit' } } %>
+      <div id="linkable_type_dropdown">
+        <%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: lf.object, form_name: 'page_section[link_attributes]' %>
+      </div>
+    </div>
+
+    <div class="custom-control custom-checkbox pb-2">
+      <%= lf.check_box :open_in_new_tab, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+      <%= lf.label :open_in_new_tab, class: 'custom-control-label' %>
+      <span class="text-muted form-text mt-2">Clicking on the image will send the user to the selected page/URL</span>
+    </div>
+  <% end %>
+</div>
+
+<% content_for(:design_tab) do %>
+  <div class="form-group">
+    <%= f.label :preferred_desktop_image_alignment, Spree.t('admin.page_builder.desktop_image_alignment') %>
+    <%= f.select :preferred_desktop_image_alignment, options_for_select(['left', 'right'], @page_section.preferred_desktop_image_alignment), {  }, { class: 'custom-select', data: {  action: 'auto-submit#submit' } } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :preferred_vertical_alignment, Spree.t('admin.page_builder.vertical_alignment') %>
+    <%= f.select :preferred_vertical_alignment, options_for_select([:top, :middle, :bottom], @page_section.preferred_vertical_alignment), {  }, { class: 'custom-select', data: {  action: 'auto-submit#submit' } } %>
+  </div>
+  <hr />
+<% end %>

@@ -1,0 +1,34 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:pages) %>
+<% end %>
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:pages_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:add_new_page), spree.new_admin_page_path, class: "btn btn-primary" if can?(:create, Spree::Page.new) %>
+<% end %>
+
+<%= render_admin_partials(:pages_header_partials) %>
+
+<div class="card-lg">
+  <%= render "spree/admin/pages/filters" %>
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= sort_link @search, :name, Spree.t(:name) %></th>
+            <th><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+            <th><%= sort_link @search, :updated_at, Spree.t(:updated_at) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% default_theme = current_store.default_theme %>
+          <%= render collection: @collection, partial: "spree/admin/pages/page", cached: ->(page) { [*spree_base_cache_scope.call(page), default_theme] } %>
+        </tbody>
+      </table>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

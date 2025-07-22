@@ -1,0 +1,20 @@
+<%= turbo_frame_tag dom_id(@line_item) do %>
+  <div class="order-line-items__form d-flex align-items-center">
+    <div class="w-35">
+      <%= render 'spree/admin/variants/variant', variant: @line_item.variant %>
+    </div>
+    <div class="w-10">
+      <%= @line_item.single_money.to_html %>
+    </div>
+
+    <div class="w-40 border rounded p-2 bg-white shadow-xs mx-auto">
+      <%= form_with model: @line_item, url: spree.admin_order_line_item_path(@order, @line_item), class: "d-flex align-items-center gap-2 justify-content-between" do |f| %>
+        <%= f.label :quantity, Spree.t('quantity'), class: 'm-0' %>
+        <%= f.number_field :quantity, class: 'form-control form-control-sm', required: true, max: @line_item.variant.should_track_inventory? && !@line_item.variant.backorderable? ? @line_item.variant.total_on_hand + @line_item.quantity : nil, min: 1, autofocus: true %>
+
+        <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: '_top' }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
+        <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

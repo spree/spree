@@ -1,0 +1,38 @@
+<div id="scroll-header"></div>
+
+<%= render 'spree/admin/shared/offcanvas_nav' %>
+
+<header id="header" class="sticky-top py-0">
+  <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center pr-3">
+    <div class="d-lg-none pr-3 border-right">
+      <button type="button" class="btn btn-light pull-bs-canvas-left px-2 ml-3 text-decoration-none">
+        <%= icon('menu-2', class: 'mr-0') %>
+      </button>
+    </div>
+
+    <% if settings_active? %>
+      <%= link_to spree.admin_path, class: 'store-dropdown text-decoration-none px-2 justify-content-start with-tip', title: Spree.t('admin.back_to_dashboard'), data: { admin_target: 'close' } do %>
+        <%= icon 'x', class: 'mx-2' %>
+        <kbd>ESC</kbd>
+      <% end %>
+    <% else %>
+      <% if defined?(current_vendor) && current_vendor.present? %>
+        <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>
+      <% else %>
+        <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+      <% end %>
+    <% end %>
+
+    <div class="d-none d-lg-block">
+      <%= render 'spree/admin/shared/breadcrumbs' %>
+    </div>
+
+    <div class="ml-auto d-flex align-items-center">
+      <%= render 'spree/admin/shared/user_dropdown' %>
+    </div>
+  </nav>
+</header>
+
+<div class="d-lg-none py-3 border-bottom">
+  <%= render 'spree/admin/shared/breadcrumbs' %>
+</div>

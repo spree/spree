@@ -1,0 +1,28 @@
+<% date_from_input_name ||= :date_from %>
+<% date_to_input_name ||= :date_to %>
+<% css_classes ||= "btn btn-light d-inline-flex align-items-center dropdown-toggle" %>
+
+<% date_from_value ||= params[date_from_input_name] %>
+<% date_to_value ||= params[date_to_input_name] %>
+
+<% dropdown_direction ||= 'left' %>
+
+<div data-controller="calendar-range" class="dropdown h-100" 
+     data-action="click->calendar-range#open">
+  <div class="<%= css_classes %>" data-toggle="dropdown">
+    <%= icon('calendar', class: 'mr-2') %>
+    <div data-calendar-range-target="label">
+      <% if date_from_value.present? && date_to_value.present? %>
+        <%= date_from_value.to_date %> - <%= date_to_value.to_date %>
+      <% else %>
+        <%= Spree.t(:all_time) %>
+      <% end %>
+    </div>
+  </div>
+  <div class="dropdown-menu dropdown-menu-<%= dropdown_direction %> pb-0 pr-0 pl-1 pt-1" onclick="event.stopPropagation()">
+    <div data-calendar-range-target="picker" class="d-none"></div>
+  </div>
+
+  <%= hidden_field_tag date_from_input_name, date_from_value&.to_date, data: { 'calendar-range-target': 'dateFrom' } %>
+  <%= hidden_field_tag date_to_input_name, date_to_value&.to_date, data: { 'calendar-range-target': 'dateTo' } %>
+</div>

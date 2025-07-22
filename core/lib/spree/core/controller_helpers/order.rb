@@ -11,6 +11,10 @@ module Spree
           end
         end
 
+        def order_token
+          @order_token ||= cookies.signed[:token] || params[:order_token]
+        end
+
         # Used in the link_to_cart helper.
         def simple_current_order
           return @simple_current_order if @simple_current_order
@@ -28,20 +32,28 @@ module Spree
         # The current incomplete order from the token for use in cart and during checkout
         def current_order(options = {})
           options[:create_order_if_necessary] ||= false
-          options[:includes] ||= true
+          options[:includes] ||= false
 
           if @current_order
             @current_order.last_ip_address = ip_address
             return @current_order
           end
 
-          @current_order = find_order_by_token_or_user(options, true)
+          @current_order = find_order_by_token_or_user(options, false)
 
           if options[:create_order_if_necessary] && (@current_order.nil? || @current_order.completed?)
-            @current_order = current_store.orders.create!(current_order_params)
+            @current_order = current_store.orders.create!(current_order_params.except(:token))
             @current_order.associate_user! try_spree_current_user if try_spree_current_user
             @current_order.last_ip_address = ip_address
+
+            create_token_cookie(@current_order.token)
           end
+
+          # There is some edge case where the order doesn't have a token.
+          # but can't reproduce it. So let's generate one on the fly in that case.
+          @current_order.regenerate_token if @current_order && @current_order.token.blank?
+
+          create_token_cookie(@current_order&.token || current_order_params[:token] || params[:token]) if create_cookie_from_token?
 
           @current_order
         end
@@ -56,14 +68,26 @@ module Spree
         def set_current_order
           return unless try_spree_current_user && current_order
 
-          orders_scope = try_spree_current_user.orders.
-                         incomplete.
-                         where.not(id: current_order.id).
-                         where(store_id: current_store.id)
+          orders_scope = user_orders_scope
 
-          orders_scope.each do |order|
-            current_order.merge!(order, try_spree_current_user)
+          orders_to_merge = orders_scope.limit(10)
+          order_ids_to_delete = orders_scope.ids - orders_to_merge.ids
+
+          orders_scope_exists = orders_scope.exists?
+
+          if orders_scope.exists?
+            ActiveRecord::Base.connected_to(role: :writing) do
+              orders_to_merge.find_each do |order|
+                current_order.merge!(order, try_spree_current_user)
+              end
+
+              Spree::Order.where(id: order_ids_to_delete).find_each do |order|
+                Rails.logger.error("Failed to destroy order #{order.id} while merging") unless order.destroy
+              end
+            end
           end
+
+          orders_scope_exists
         end
 
         def ip_address
@@ -72,21 +96,50 @@ module Spree
 
         private
 
+        def user_orders_scope
+          try_spree_current_user.orders.
+            incomplete.
+            not_canceled.
+            where.not(id: current_order.id).
+            where(store_id: current_store.id)
+        end
+
+        def create_cookie_from_token?
+          cookies.signed[:token].blank? &&
+            (current_order_params[:token].present? || params[:token].present?)
+        end
+
+        def checkout_complete_path?
+          request.path == spree.checkout_complete_path(current_order_params[:token] || params[:token])
+        end
+
+        def create_token_cookie(token)
+          cookies.signed[:token] = {
+            value: token,
+            expires: 90.days.from_now,
+            secure: Rails.configuration.force_ssl || Rails.application.config.ssl_options[:secure_cookies],
+            domain: current_store.url_or_custom_domain,
+            httponly: true
+          }
+        end
+
         def last_incomplete_order(includes = {})
           @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order(current_store, includes: includes)
         end
 
         def current_order_params
-          { currency: current_currency, token: cookies.signed[:token], user_id: try_spree_current_user.try(:id) }
+          @current_order_params ||= { currency: current_currency, token: order_token, user_id: try_spree_current_user.try(:id) }
         end
 
         def find_order_by_token_or_user(options = {}, with_adjustments = false)
+          return nil if try_spree_current_user.nil? && order_token.blank?
+
           options[:lock] ||= false
 
           includes = options[:includes] ? order_includes : {}
 
           # Find any incomplete orders for the token
-          incomplete_orders = current_store.orders.incomplete.includes(includes)
+          incomplete_orders = current_store.orders.incomplete.not_canceled.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments
@@ -102,7 +155,20 @@ module Spree
         end
 
         def order_includes
-          { line_items: [variant: [:images, :option_values, :product]] }
+          {
+            line_items: {
+              variant: [
+                :images,
+                :prices,
+                :default_price,
+                :stock_items,
+                :stock_locations,
+                { option_values: :option_type },
+                { stock_items: :stock_location },
+                { product: :master }
+              ]
+            }
+          }
         end
       end
     end

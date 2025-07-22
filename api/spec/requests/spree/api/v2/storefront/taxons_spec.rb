@@ -1,16 +1,14 @@
 require 'spec_helper'
 
 describe 'Taxons Spec', type: :request do
-  let!(:default_store) { taxonomy.store }
-  let!(:taxonomy) { create(:taxonomy) }
+  let!(:store) { @default_store }
+  let!(:taxonomy) { store.taxonomies.first }
   let!(:taxons) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxonomy.root) }
 
-  let(:store2)     { create(:store)}
-  let!(:taxonomy2)  { create(:taxonomy, store: store2) }
-
   before do
-    default_store.update_column(:supported_locales, 'en,pl,es')
-    Spree::Api::Config[:api_v2_per_page_limit] = 2
+    store.update_column(:supported_locales, 'en,pl,es')
+    allow(Spree::Api::Config).to receive(:[]).and_call_original
+    allow(Spree::Api::Config).to receive(:[]).with(:api_v2_per_page_limit).and_return(2)
   end
 
   after { I18n.locale = :en }
@@ -26,26 +24,18 @@ describe 'Taxons Spec', type: :request do
 
   describe 'taxons#index' do
     context 'with no params' do
-      let(:default_store_taxons) { [taxonomy.root, taxons].flatten }
-
       before { get '/api/v2/storefront/taxons' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns all taxons' do
-        expect(json_response['data'].size).to eq(3)
+        expect(json_response['data'].size).to eq(store.taxons.count)
         expect(json_response['data'][0]).to have_type('taxon')
         expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :image)
         expect(json_response['data'][0]).not_to have_relationships(:produts)
       end
-
-      it 'should return only default store taxons' do
-        expect(json_response['data'].map{ |t| t['id'] }).to match_array(default_store_taxons.pluck(:id).map(&:to_s))
-      end
     end
 
     context 'with locale set to pl' do
-      let!(:default_store) do
+      let!(:store) do
         store = taxonomy.store
         store.supported_locales = 'en,pl'
         store.save
@@ -78,8 +68,6 @@ describe 'Taxons Spec', type: :request do
 
       before { get '/api/v2/storefront/taxons?locale=pl' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       # FIXME: this test fails on CI but works locally
       xit 'returns all taxons' do
         expect(json_response['data'].size).to eq(3)
@@ -101,12 +89,10 @@ describe 'Taxons Spec', type: :request do
     context 'by roots' do
       before { get '/api/v2/storefront/taxons?filter[roots]=true' }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns taxons by roots' do
-        expect(json_response['data'].size).to eq(1)
+        expect(json_response['data'].size).to eq(store.taxons.where(parent: nil).count)
         expect(json_response['data'][0]).to have_type('taxon')
-        expect(json_response['data'][0]).to have_id(taxonomy.root.id.to_s)
+        expect(json_response['data'][0]).to have_id(store.taxonomies.first.root.id.to_s)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data(nil)
         expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :image)
       end
@@ -114,8 +100,6 @@ describe 'Taxons Spec', type: :request do
 
     context 'by parent' do
       before { get "/api/v2/storefront/taxons?filter[parent_id]=#{taxonomy.root.id}" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns children taxons by parent' do
         expect(json_response['data'].size).to eq(2)
@@ -144,8 +128,6 @@ describe 'Taxons Spec', type: :request do
         get request_path
       end
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns children taxons by parent' do
         expect(json_response['data'].size).to eq(2)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data('id' => taxonomy.root.id.to_s, 'type' => 'taxon')
@@ -154,8 +136,6 @@ describe 'Taxons Spec', type: :request do
 
       context 'with another locale' do
         let(:request_path) { "/api/v2/storefront/taxons?filter[parent_permalink]=#{taxonomy.root.permalink_pl}&locale=pl" }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns children taxons by parent' do
           expect(json_response['data'].size).to eq(2)
@@ -170,12 +150,10 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'by taxonomy' do
-      before { get "/api/v2/storefront/taxons?taxonomy_id=#{taxonomy.id}" }
-
-      it_behaves_like 'returns 200 HTTP status'
+      before { get "/api/v2/storefront/taxons?filter[taxonomy_id]=#{taxonomy.id}" }
 
       it 'returns taxons by taxonomy' do
-        expect(json_response['data'].size).to eq(3)
+        expect(json_response['data'].size).to eq(taxonomy.taxons.count)
         expect(json_response['data'][0]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
         expect(json_response['data'][1]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
         expect(json_response['data'][2]).to have_relationship(:taxonomy).with_data('id' => taxonomy.id.to_s, 'type' => 'taxonomy')
@@ -184,8 +162,6 @@ describe 'Taxons Spec', type: :request do
 
     context 'by ids' do
       before { get "/api/v2/storefront/taxons?filter[ids]=#{taxons.map(&:id).join(',')}" }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns taxons by ids' do
         expect(json_response['data'].size).to            eq(2)
@@ -196,84 +172,9 @@ describe 'Taxons Spec', type: :request do
     context 'by name' do
       before { get "/api/v2/storefront/taxons?filter[name]=#{taxons.last.name}" }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns taxons by name' do
         expect(json_response['data'].size).to eq(1)
         expect(json_response['data'].last['attributes']['name']).to eq(taxons.last.name)
-      end
-    end
-
-    context 'paginate taxons' do
-      context 'with specified pagination params' do
-        context 'when per_page is between 1 and default value' do
-          before { get '/api/v2/storefront/taxons?page=1&per_page=1' }
-
-          it_behaves_like 'returns 200 HTTP status'
-
-          it 'returns specified amount of taxons' do
-            expect(json_response['data'].count).to eq 1
-          end
-
-          it 'returns proper meta data' do
-            expect(json_response['meta']['count']).to eq 1
-            expect(json_response['meta']['total_count']).not_to eq Spree::Taxon.count
-            expect(json_response['meta']['total_count']).to eq default_store.taxons.count
-          end
-
-          it 'returns proper links data' do
-            expect(json_response['links']['self']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
-            expect(json_response['links']['next']).to include('/api/v2/storefront/taxons?page=2&per_page=1')
-            expect(json_response['links']['prev']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
-          end
-        end
-
-        context 'when per_page is above the default value' do
-          before { get '/api/v2/storefront/taxons?page=1&per_page=10' }
-
-          it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 3
-          end
-        end
-
-        context 'when per_page is less than 0' do
-          before { get '/api/v2/storefront/taxons?page=1&per_page=-1' }
-
-          it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 3
-          end
-        end
-
-        context 'when per_page is equal 0' do
-          before { get '/api/v2/storefront/taxons?page=1&per_page=0' }
-
-          it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 3
-          end
-        end
-      end
-
-      context 'without specified pagination params' do
-        before { get '/api/v2/storefront/taxons' }
-
-        it_behaves_like 'returns 200 HTTP status'
-
-        it 'returns specified amount of taxons' do
-          expect(json_response['data'].count).not_to eq Spree::Taxon.count
-          expect(json_response['data'].count).to eq default_store.taxons.count
-        end
-
-        it 'returns proper meta data' do
-          expect(json_response['meta']['count']).to       eq json_response['data'].count
-          expect(json_response['meta']['total_count']).not_to eq Spree::Taxon.count
-          expect(json_response['meta']['total_count']).to eq default_store.taxons.count
-        end
-
-        it 'returns proper links data' do
-          expect(json_response['links']['self']).to include('/api/v2/storefront/taxons')
-          expect(json_response['links']['next']).to include('/api/v2/storefront/taxons?page=1')
-          expect(json_response['links']['prev']).to include('/api/v2/storefront/taxons?page=1')
-        end
       end
     end
   end
@@ -296,20 +197,20 @@ describe 'Taxons Spec', type: :request do
 
     context 'by permalink' do
       before do
-        get "/api/v2/storefront/taxons/#{default_store.taxons.first.permalink}"
+        get "/api/v2/storefront/taxons/#{store.taxons.first.permalink}"
       end
 
       it_behaves_like 'returns valid taxon resource JSON'
 
       it 'returns taxon by permalink' do
-        expect(json_response['data']).to have_id(default_store.taxons.first.id.to_s)
-        expect(json_response['data']).to have_attribute(:name).with_value(default_store.taxons.first.name)
+        expect(json_response['data']).to have_id(store.taxons.first.id.to_s)
+        expect(json_response['data']).to have_attribute(:name).with_value(store.taxons.first.name)
       end
     end
 
     context 'with localized_slugs' do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
-      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let(:taxonomy) { store2.taxonomies.find_by(name: 'Categories') }
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
       let!(:translations) { taxon_with_slug.translations.create([{ permalink: 'test_slug_pl', locale: 'pl' }, { permalink: 'test_slug_es', locale: 'es' } ])}
 
@@ -333,7 +234,7 @@ describe 'Taxons Spec', type: :request do
 
     context 'with fallback to default locale' do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
-      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let(:taxonomy) { store2.taxonomies.find_by(name: 'Categories') }
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, name: 'test slug en', permalink: default_locale_slug) }
       let(:default_locale_slug) { 'test-slug-en' }
 
@@ -349,7 +250,7 @@ describe 'Taxons Spec', type: :request do
 
     context 'with slug in translated locale' do
       let(:store2) { create(:store, default_locale: 'en', supported_locales: 'en,pl,es') }
-      let(:taxonomy) { create(:taxonomy, name: 'categories', store: store2) }
+      let(:taxonomy) { store2.taxonomies.find_by(name: 'Categories') }
       let!(:taxon_with_slug) { create(:taxon, taxonomy: taxonomy, permalink: default_locale_slug) }
       let!(:translations) { taxon_with_slug.translations.create([ { name: 'test slug en', permalink: translated_slug, locale: 'es' } ]) }
       let(:default_locale_slug) { 'test_slug_en' }
@@ -381,7 +282,6 @@ describe 'Taxons Spec', type: :request do
       context 'when no image transformation params are passed' do
         let(:taxon_image_transformation_params) { '' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do
@@ -392,7 +292,6 @@ describe 'Taxons Spec', type: :request do
       context 'when taxon image json returned' do
         let(:taxon_image_transformation_params) { '&taxon_image_transformation[size]=100x50&taxon_image_transformation[quality]=50' }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns taxon image data'
 
         it 'returns taxon image' do

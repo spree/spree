@@ -1,0 +1,37 @@
+<%= form_for @order, url: spree.update_checkout_path(@order.token, @order.state), data: { controller: 'checkout-delivery' } do |form| %>
+  <div class="mb-5">
+    <%= render 'spree/checkout/order_lock_version', order: @order %>
+    <div id="shipping-method">
+      <%= render 'spree/checkout/delivery_backorder_notice', order: @order %>
+
+      <div id="methods">
+        <%= form.fields_for :shipments do |ship_form| %>
+          <div class="shipment">
+            <h5 class="checkout-content-header mb-3 font-body">
+              <%= Spree.t('storefront.checkout.delivery_method').capitalize %>
+              <% if ship_form.object.stock_location.present? %>
+                <%= Spree.t(:from).downcase %>
+                <strong><%= ship_form.object.stock_location.name %></strong>
+              <% end %>
+            </h5>
+            <ul class="rounded-md list-group mb-4 border border-default border-b-0 text-sm border-default" data-checkout-delivery-target="shippingList">
+              <% ship_form.object.shipping_rates.includes(:shipping_method, :tax_rate).each do |rate| %>
+                <%= render 'spree/checkout/delivery_shipping_rate', ship_form: ship_form, rate: rate %>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end w-full mt-5">
+    <div class="flex justify-end w-full">
+      <%= button_tag Spree.t(:save_and_continue),
+                      class: 'btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4',
+                      data: { action: 'click->checkout-delivery#disableShippingRates',
+                              'checkout-delivery-target': 'submit',
+                              'turbo-submits-with': (render 'button_processing', is_hidden: false)
+                      } %>
+    </div>
+  </div>
+<% end %>

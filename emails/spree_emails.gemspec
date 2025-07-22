@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.0'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_dependency 'spree_core', ">= #{s.version}"

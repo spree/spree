@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Country, type: :model do
-  let(:store) { create(:store, default: true, default_country: america) }
-  let(:america) { create :country }
+  let(:store) { @default_store }
+  let(:america) { store.default_country }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', iso: 'CA', iso3: 'CAN', numcode: '124' }
 
   it 'validates uniqueness' do

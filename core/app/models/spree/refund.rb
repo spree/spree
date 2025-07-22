@@ -1,5 +1,5 @@
 module Spree
-  class Refund < Spree::Base
+  class Refund < Spree.base_class
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
@@ -58,6 +58,13 @@ module Spree
       reimbursement.customer_return&.return_items || reimbursement.return_items
     end
 
+    # Returns true if the refund is editable.
+    #
+    # @return [Boolean]
+    def editable?
+      !payment.order.canceled?
+    end
+
     private
 
     # attempts to perform the refund.
@@ -76,13 +83,17 @@ module Spree
 
     # return an activemerchant response object if successful or else raise an error
     def process!(credit_cents)
+      refund_total_in_cents = calculate_refund_amount(credit_cents)
+
       response = if payment.payment_method.payment_profiles_supported?
-                   payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
+                   payment.payment_method.credit(refund_total_in_cents, payment.source, payment.transaction_id, originator: self)
                  else
-                   payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
+                   payment.payment_method.credit(refund_total_in_cents, payment.transaction_id, originator: self)
                  end
 
-      unless response.success?
+      if response.success?
+        track_order_as_refunded(refund_total_in_cents)
+      else
         Rails.logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
         raise Core::GatewayError, text
@@ -92,6 +103,15 @@ module Spree
     rescue ActiveMerchant::ConnectionError => e
       Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
       raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
+    end
+
+    def calculate_refund_amount(credit_cents)
+      # Overwrite this for more complex calculations
+      credit_cents
+    end
+
+    def track_order_as_refunded(credit_cents)
+      # You can track refunds here
     end
 
     def create_log_entry

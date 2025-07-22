@@ -2,11 +2,17 @@ require 'spec_helper'
 
 module Spree
   describe MailHelper, type: :helper do
+    let(:store) { create(:store) }
+
+    before do
+      allow(helper).to receive(:current_store) { store }
+    end
 
     describe '#variant_image_url' do
       subject { helper.variant_image_url(variant) }
 
-      let(:variant) { create(:variant, images: images) }
+      let(:product) { create(:product, stores: [store]) }
+      let(:variant) { create(:variant, product: product, images: images) }
 
       context 'with no images' do
         let(:images) { [] }
@@ -21,7 +27,7 @@ module Spree
         let(:image) { create(:image) }
 
         specify 'returns proper image path' do
-          expect(subject).to eq main_app.cdn_image_url(image.url(:small))
+          expect(subject).to eq spree_image_url(image, width: 100, height: 100, format: :png)
         end
       end
     end
@@ -29,7 +35,7 @@ module Spree
     describe '#name_for' do
       subject { helper.name_for(order) }
 
-      let(:order) { create(:order, ship_address_id: nil, bill_address_id: nil) }
+      let(:order) { create(:order, ship_address_id: nil, bill_address_id: nil, store: store) }
       let(:address) { create(:address) }
 
       context 'without address' do
@@ -45,45 +51,6 @@ module Spree
 
         it 'shows customer full name' do
           expect(subject).to eq address.full_name
-        end
-      end
-    end
-
-    describe '#logo_path' do
-      subject { helper.logo_path }
-
-      let(:store) { create(:store) }
-
-      before do
-        allow(helper).to receive(:current_store) { store }
-      end
-
-      context 'when @order exists' do
-        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/logo/spree_50.png', __dir__)) }
-
-        before do
-          store.build_mailer_logo
-          store.mailer_logo.attachment.attach(io: logo_image, filename: 'spree_50.png', content_type: 'image/png')
-          store.mailer_logo.attachment.save!
-          @order = create(:order, store: store)
-        end
-
-        it 'shows logo attached to orders store' do
-          expect(subject).to include(store.mailer_logo.attachment.filename.to_s)
-        end
-      end
-
-      context 'when @order does not exist' do
-        let(:logo_image) { File.open(File.expand_path('../../../app/assets/images/noimage/mini.png', __dir__)) }
-
-        before do
-          store.build_mailer_logo
-          store.mailer_logo.attachment.attach(io: logo_image, filename: 'mini.png', content_type: 'image/png')
-          store.mailer_logo.attachment.save!
-        end
-
-        it 'shows logo attached to current store' do
-          expect(subject).to include(store.mailer_logo.attachment.filename.to_s)
         end
       end
     end

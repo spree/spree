@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Spree::Promotion, type: :model do
   it_behaves_like 'metadata'
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:promotion) { create(:promotion, kind: :automatic) }
 
   describe 'validations' do
-    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [create(:store)], kind: :automatic) }
+    let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
 
     it 'valid_promotion is valid' do
       expect(valid_promotion).to be_valid
@@ -234,8 +234,8 @@ describe Spree::Promotion, type: :model do
   end
 
   describe '#activate' do
-    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create! }
-    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create! }
+    let(:action1) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
+    let(:action2) { Spree::Promotion::Actions::CreateAdjustment.create!(promotion: promotion) }
     let(:user) { create(:user) }
     let(:order) { create(:order, user: user) }
     let(:payload) { { order: order, user: user } }
@@ -243,8 +243,8 @@ describe Spree::Promotion, type: :model do
     before do
       allow(action1).to receive_messages perform: true
       allow(action2).to receive_messages perform: true
+      allow(promotion).to receive(:actions).and_return([action1, action2])
 
-      promotion.promotion_actions = [action1, action2]
       promotion.created_at = 2.days.ago
     end
 
@@ -546,8 +546,8 @@ describe Spree::Promotion, type: :model do
     end
 
     context "with 'all' match policy" do
-      let(:promo1) { Spree::PromotionRule.create! }
-      let(:promo2) { Spree::PromotionRule.create! }
+      let(:promo1) { Spree::PromotionRule.create!(promotion: promotion) }
+      let(:promo2) { Spree::PromotionRule.create!(promotion: promotion) }
 
       before { promotion.match_policy = 'all' }
 
@@ -596,7 +596,7 @@ describe Spree::Promotion, type: :model do
 
       it 'has eligible rules if any of the rules are eligible' do
         allow_any_instance_of(Spree::PromotionRule).to receive_messages(applicable?: true)
-        true_rule = Spree::PromotionRule.create(promotion: promotion)
+        true_rule = Spree::PromotionRule.create!(promotion: promotion)
         allow(true_rule).to receive_messages(eligible?: true)
         allow(promotion).to receive_messages(rules: [true_rule])
         allow(promotion).to receive_message_chain(:rules, :for).and_return([true_rule])
@@ -604,7 +604,7 @@ describe Spree::Promotion, type: :model do
       end
 
       context 'when none of the rules are eligible' do
-        let(:promo) { Spree::PromotionRule.create! }
+        let(:promo) { Spree::PromotionRule.create!(promotion: promotion) }
         let(:errors) { double ActiveModel::Errors, empty?: false }
 
         before do

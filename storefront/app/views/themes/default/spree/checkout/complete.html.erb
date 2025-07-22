@@ -1,0 +1,84 @@
+<div id="<%= dom_id(@order) %>" class="text-muted">
+  <p class="text-sm mb-1 mt-3">
+    <%= Spree.t(:order) %> <strong><%= @order.number %></strong>
+  </p>
+  <h4 class="mb-4 text-green-600 font-semibold text-lg font-body">
+    <%= Spree.t('storefront.checkout.thanks_for_your_order', name: @order.bill_address_firstname) %>
+  </h4>
+
+  <div class="border p-3 rounded-md">
+    <h5 class="mb-3 font-semibold pb-3 border-b font-body">
+      <%= Spree.t("storefront.checkout.order_success") %>
+    </h5>
+    <p class="mb-0">
+      <%= Spree.t('storefront.checkout.order_success_message') %>
+    </p>
+  </div>
+
+  <% if @order.payments.valid.any? %>
+    <div class="border p-3 mt-4 rounded-md">
+      <h5 class="mb-3 font-bold pb-3 border-b font-body"><%= Spree.t(:payment) %></h5>
+      <div class="flex mb-3 text-sm gap-4 items-top">
+        <%= render partial: 'spree/shared/payment', collection: @order.payments.valid %>
+      </div>
+      <div class="mt-3 border-t pt-3">
+        <span class="text-sm"><%= Spree.t(:status) %></span>
+        <% if @order.payment_state.present? %>
+          <span class="badge-<%= @order.payment_state %>"><%= Spree.t("payment_states.#{@order.payment_state}") %></span>
+        <% else %>
+          <span class="badge-pending"><%= Spree.t(:pending) %></span>
+        <% end %>
+      </div>
+
+      <% unless @order.payment_state.present? %>
+        <p class="mb-0 mt-3 text-sm"><%= Spree.t('storefront.checkout.payment_processing_message') %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="border p-3 rounded-md mt-4">
+      <h5 class="mb-3 font-bold pb-3 border-b font-body"><%= Spree.t(:contact_information) %></h5>
+      <p class="mb-4"><%= @order.email %></p>
+
+      <div class="flex w-full">
+        <% if @order.ship_address.present? %>
+          <div class="w-1/2">
+            <h6 class="mb-3 font-bold pb-2 border-b font-body"><%= Spree.t(:shipping_address) %></h6>
+            <p class="mb-1 word-break"><%= @order.ship_address.to_s.html_safe %></p>
+            <p class="mb-0"><%= @order.ship_address.phone %></p>
+          </div>
+        <% end %>
+        <% if @order.bill_address.present? %>
+          <div class="w-1/2">
+            <h6 class="mb-3 font-bold pb-2 border-b font-body"><%= Spree.t(:billing_address) %></h6>
+            <p class="mb-1 word-break"><%= @order.bill_address.to_s.html_safe %></p>
+            <p class="mb-0"><%= @order.bill_address.phone %></p>
+          </div>
+        <% end %>
+    </div>
+  </div>
+
+  <% if @order.digital_links.any? %>
+    <div class="border p-3 rounded-md mt-4">
+      <h5 class="mb-3 font-bold pb-3 border-b font-body"><%= Spree.t(:attachments) %></h5>
+
+      <ul class="flex flex-col gap-2">
+        <% @order.digital_line_items.each do |line_item| %>
+          <li class="flex flex-col gap-1">
+            <span class="font-bold"><%= line_item.product.name %></span>
+            <ul class="flex flex-col gap-1">
+              <% line_item.digital_links.each do |digital_link| %>
+                <li>
+                  <%= link_to "#{Spree.t(:download)} #{digital_link.filename}",
+                  spree.digital_link_path(digital_link.token) %>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+</div>
+
+<%= render_storefront_partials(:checkout_complete_partials) if order_just_completed? %>

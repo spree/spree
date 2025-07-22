@@ -4,7 +4,7 @@ describe Spree::Checkout::RemoveStoreCredit, type: :service do
   describe '#call' do
     subject { described_class.call(order: order) }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:order_total) { 500.00 }
     let(:order) { create(:order, user: store_credit.user, total: order_total, store: store) }
 

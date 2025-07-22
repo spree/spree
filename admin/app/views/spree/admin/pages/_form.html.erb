@@ -1,0 +1,23 @@
+<div class="card mb-4">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.label :name, Spree.t(:name) %>
+      <%= f.text_field :name, class: 'form-control', required: true, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName', seo_form_target: 'sourceTitleInput' }, autofocus: true %>
+    </div>
+  </div>
+</div>
+<%= render 'spree/admin/shared/seo',
+      f: f,
+      title: @page.name,
+      meta_title: @page.meta_title,
+      description: nil,
+      slug_attribute_name: "page[slug]",
+      slug: @page.slug,
+      slug_path: 'pages',
+      placeholder: 'Add a title to see how this page might appear in a search engine listing' %>
+

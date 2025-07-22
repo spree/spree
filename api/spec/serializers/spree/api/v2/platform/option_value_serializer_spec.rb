@@ -5,8 +5,6 @@ describe Spree::Api::V2::Platform::OptionValueSerializer do
 
   let(:option_value) { create(:option_value) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {
@@ -17,6 +15,7 @@ describe Spree::Api::V2::Platform::OptionValueSerializer do
             position: option_value.position,
             name: option_value.name,
             presentation: option_value.presentation,
+            display_presentation: option_value.display_presentation,
             created_at: option_value.created_at,
             updated_at: option_value.updated_at,
             public_metadata: {},

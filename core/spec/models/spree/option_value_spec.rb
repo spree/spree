@@ -16,13 +16,13 @@ describe Spree::OptionValue, type: :model do
 
     describe '#touch_all_variants' do
       let!(:option_value) { create(:option_value) }
+      let!(:variant1) { create(:variant, option_values: [option_value]) }
+      let!(:variant2) { create(:variant, option_values: [option_value]) }
 
       it 'touches all variants associated with the option value' do
-        variant1 = create(:variant, option_values: [option_value])
-        variant2 = create(:variant, option_values: [option_value])
-        variant3 = create(:variant)
-
-        expect { option_value.send(:touch_all_variants) }.to change { [variant1.reload.updated_at, variant2.reload.updated_at, variant3.reload.updated_at] }
+        Timecop.travel Time.current + 1.day do
+          expect { option_value.send(:touch_all_variants) }.to change { [variant1.reload.updated_at, variant2.reload.updated_at] }
+        end
       end
     end
 
@@ -41,6 +41,25 @@ describe Spree::OptionValue, type: :model do
       it 'touches all products associated with the option value' do
         expect { option_value.send(:touch_all_products) }.to change { [product1.reload.updated_at, product2.reload.updated_at, product3.reload.updated_at] }
       end
+    end
+  end
+
+  describe '#display_presentation' do
+    let(:option_value) { build(:option_value, name: 'red', presentation: 'Red', option_type: option_type) }
+    let(:option_type) { create(:option_type, name: 'Color', presentation: 'Color') }
+
+    it 'returns the presentation with the option type presentation' do
+      expect(option_value.display_presentation).to eq('Color: Red')
+    end
+  end
+
+  describe '.to_tom_select_json' do
+    let!(:option_value) { create(:option_value, name: 'red', presentation: 'Red') }
+    let!(:option_value2) { create(:option_value, name: 'blue', presentation: 'Blue') }
+    let!(:option_value3) { create(:option_value, name: 'green', presentation: 'Green') }
+
+    it 'returns the option values in the correct format' do
+      expect(Spree::OptionValue.to_tom_select_json).to eq([{ id: 'red', name: 'Red' }, { id: 'blue', name: 'Blue' }, { id: 'green', name: 'Green' }])
     end
   end
 

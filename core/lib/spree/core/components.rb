@@ -16,7 +16,7 @@ module Spree
       end
 
       def self.frontend_available?
-        @@frontend_available ||= ::Rails::Engine.subclasses.map(&:instance).map { |e| e.class.to_s }.include?('Spree::Frontend::Engine')
+        @@frontend_available ||= ::Rails::Engine.subclasses.map(&:instance).map { |e| e.class.to_s }.include?('Spree::Storefront::Engine')
       end
 
       def self.emails_available?

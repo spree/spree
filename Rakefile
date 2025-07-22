@@ -7,7 +7,7 @@ rescue LoadError
   raise "Could not find spree/testing_support/common_rake. You need to run this command using Bundler."
 end
 
-SPREE_GEMS = %w(core api cli emails sample).freeze
+SPREE_GEMS = %w(core api cli emails sample admin storefront).freeze
 
 task default: :test
 
@@ -92,7 +92,7 @@ end
 
 desc "Creates a sandbox application for simulating the Spree code in a deployed Rails app"
 task :sandbox do
-  Bundler.with_clean_env do
+  Bundler.with_unbundled_env do
     exec("bin/sandbox.sh")
   end
 end

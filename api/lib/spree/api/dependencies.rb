@@ -32,6 +32,10 @@ module Spree
         storefront_checkout_get_shipping_rates_service: -> { Spree::Dependencies.checkout_get_shipping_rates_service },
         storefront_checkout_select_shipping_method_service: -> { Spree::Dependencies.checkout_select_shipping_method_service },
 
+        # gift cards
+        storefront_gift_card_apply_service: -> { Spree::Dependencies.gift_card_apply_service },
+        storefront_gift_card_remove_service: -> { Spree::Dependencies.gift_card_remove_service },
+
         # account services
         storefront_account_create_service: -> { Spree::Dependencies.account_create_service },
         storefront_account_update_service: -> { Spree::Dependencies.account_update_service },
@@ -49,10 +53,10 @@ module Spree
         # serializers
         storefront_address_serializer: 'Spree::V2::Storefront::AddressSerializer',
         storefront_cart_serializer: 'Spree::V2::Storefront::CartSerializer',
-        storefront_cms_page_serializer: 'Spree::V2::Storefront::CmsPageSerializer',
+        storefront_cms_page_serializer: 'Spree::V2::Storefront::CmsPageSerializer', # LEGACY
         storefront_credit_card_serializer: 'Spree::V2::Storefront::CreditCardSerializer',
         storefront_country_serializer: 'Spree::V2::Storefront::CountrySerializer',
-        storefront_menu_serializer: 'Spree::V2::Storefront::MenuSerializer',
+        storefront_menu_serializer: 'Spree::V2::Storefront::MenuSerializer', # LEGACY
         storefront_user_serializer: 'Spree::V2::Storefront::UserSerializer',
         storefront_shipment_serializer: 'Spree::V2::Storefront::ShipmentSerializer',
         storefront_taxon_serializer: 'Spree::V2::Storefront::TaxonSerializer',
@@ -85,8 +89,6 @@ module Spree
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
-
-        error_handler: 'Spree::Api::ErrorHandler',
 
         # serializers
         platform_admin_user_serializer: 'Spree::Api::V2::Platform::AdminUserSerializer',

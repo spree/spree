@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_webhooks_subscriber_path(@webhooks_subscriber) %>
+  <%= @webhooks_subscriber.url %>
+<% end %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @webhooks_subscriber } %>
+<%= form_for [:admin, @webhooks_subscriber], html: { id: "edit_subscriber_#{@webhooks_subscriber.id}" } do |f| %>
+  <%= render 'form', f: f %>
+  <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+<% end %>

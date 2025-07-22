@@ -1,69 +1,110 @@
 ---
-title: Quickstart
-description: 'Start building awesome e-commerce applications with Spree'
+title: "Quickstart"
+description: "Start building awesome eCommerce applications with Spree open-source eg. multi-store, multi-vendor, multi-tenant, multi-language, multi-currency. B2B or B2C."
+icon: "rocket"
 ---
 
-<img
-  className="block dark:hidden"
-  alt="Spree Commerce - Open Source e-commerce platform" src="https://github.com/spree/spree/assets/12614496/d6219d0f-4dd4-4ef2-a21a-8ba380cb6a37"
-/>
-<img
-  className="hidden dark:block"
-  alt="Spree Commerce - Open Source e-commerce platform" src="https://github.com/spree/spree/assets/12614496/d6219d0f-4dd4-4ef2-a21a-8ba380cb6a37"
-/>
+<img alt="Spree Commerce - Open Source e-commerce platform" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Spree_Commerce_open_source_eCommerce_platform_Ruby_on_Rails_API_headless_tsnvap.png" />
 
 ## Getting Started with Spree Commerce
 
-Welcome to the Spree Commerce documentation guide. Follow the instructions below to learn how to build and deploy your Spree Commerce store.
-
-<Info>
-  If you want to add Spree to your existing Rails application, you can skip this page and go to the [Adding to an existing Rails app](adding_spree_to_rails_app) section.
-</Info>
+Welcome to the Spree Commerce [open-source eCommerce](https://spreecommerce.org) documentation guide. Follow the instructions below to learn how to build and deploy your Spree Commerce store.
 
 ### 1. Installing Spree
 
 <AccordionGroup>
-  <Accordion icon="github" title="Creating Your Spree Repository">
-
-    To create your Spree store repository please, follow these instructions:
-    
-    [Use Spree starter template](https://github.com/new?template_name=spree_starter&template_owner=spree) to create your own repository
-
-  </Accordion>
-
-  <Accordion icon="rectangle-terminal" title="Setting up Your Development Environment">
+  <Accordion icon="github" title="Getting the Spree Starter template">
+    <Info>
+      [Spree Starter](https://github.com/spree/spree_starter/) is a pre-configured Rails application that comes with Spree Commerce, the official [Stripe gem](https://github.com/spree/spree_stripe/), and some other useful gems installed. It is highly recommended to use Spree Starter to get started with Spree Commerce.
+    </Info>
 
     <Note>
       If you're on Windows remember to [install the Linux subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) before proceeding.
     </Note>
 
-    1. Install [git](https://github.com/git-guides/install-git), [Ruby](https://www.ruby-lang.org/en/documentation/installation) and [Docker Desktop](https://docs.docker.com/get-docker)
+    1. Install [git](https://github.com/git-guides/install-git) if you don't have it already.
 
-    2. Once git is installed, clone your docs repository using 
-    
-        ```basgh
-        git clone <your-repo>
+    2. Clone the Spree starter template:
+
+        ```bash
+        git clone https://github.com/spree/spree_starter.git
         ```
-        
+
+    3. Go to the repository directory:
+
+        ```bash
+        cd spree_starter
+        ```      
+
+  </Accordion>
+
+  <Accordion icon="rectangle-terminal" title="Setting up Your Development Environment">
+    Now that you have the Spree Starter template, you can start setting up your development environment.
+  
+    1. Install required dependencies
+
+        On MacOS you can install the dependencies using [Homebrew package manager](https://brew.sh/):
+
+        ```bash
+        brew install vips libpq
+        ```
+
+        On debian-based systems you can install the dependencies using the package manager:
+
+        ```bash
+        sudo apt-get install libvips-dev libpq-dev
+        ```
+
+    2. Install Ruby
+
+        Spree is based on [Ruby and Rails](https://rubyonrails.org/), hence you need to install Ruby language.
+
+        Install [rbenv (ruby version manager)](https://github.com/rbenv/rbenv):
+
+        ```bash
+        curl -fsSL https://rbenv.org/install.sh | bash
+        ```
+
+        And now install Ruby 3.3:
+
+        Before attempting to install Ruby, check that your build environment has the necessary tools and libraries.(https://github.com/rbenv/ruby-build/wiki#suggested-build-environment)
+
+        ```bash
+        rbenv install 3.3.0 && rbenv global 3.3.0
+        ```
+
+    3. Install [Docker Desktop](https://docs.docker.com/get-docker)
+
+    4. Start Docker Compose services:
+
         <Info>
-        If you haven't set it up yet, now would be a good time to do so with these [SSH keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+          Docker needs to be running before running the setup commands.
         </Info>
 
-    3. Open a terminal and go to the repository directory
-    4. Run setup commands:
-
         ```bash
-        bin/setup
+        docker compose up -d
         ```
-    5. And finally start the development server with:
 
-        ```bash
-        bin/rails s
-        ```
-  </Accordion>  
+        This will start the PostgreSQL database which is required for Spree to work. You can also use other databases like MySQL.
+
+    5. Run setup commands:
+
+       ```bash
+       bin/setup
+       ```
+
+        This will install the necessary gems, run the database migrations and seed the database with some sample data.
+
+    6. And finally start the development server with:
+
+       ```bash
+       bin/dev
+       ```
+
+        This will start the development server on [http://localhost:3000](http://localhost:3000).
+  </Accordion>
 
   <Accordion icon="box" title="Adding sample data">
-
     To add sample data to your store, run:
 
     ```bash
@@ -79,27 +120,45 @@ Welcome to the Spree Commerce documentation guide. Follow the instructions below
 Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
 
 <AccordionGroup>
+  <Accordion icon="palette" title="Browsing Storefront">
+    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+
+    <Frame caption="Spree Storefront">
+      <img src="/images/spree_storefront.png" />
+    </Frame>
+
+    You can learn more about Storefront configuration in the [Storefront](/user/storefront/theme-editor) section.
+  </Accordion>
+
   <Accordion icon="key" title="Logging into the Admin Dashboard">
     Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
-      - login: `spree@example.com`
-      - password: `spree123`
+
+    login: 
+
+    ```
+    spree@example.com
+    ```
+
+    password: 
+
+    ```
+    spree123
+    ```
 
     Upon successful authentication, you should see the admin screen:
 
-    ![](/images/admin_panel_978-2x.jpg)
+    <Frame caption="Spree Admin Dashboard">
+      <img src="/images/spree_admin_dashboard.png" />
+    </Frame>
 
     Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
-  </Accordion>
-
-  <Accordion icon="palette" title="Browsing Storefront">
-  
-    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
-    
-    You can later customize this Storefront or choose another one if you prefer Next.js or Vue.js.
-
   </Accordion>
 </AccordionGroup>
 
 ### All Done!
 
-Congrats! You've set up your Spree Commerce and it's looking amazing! Need support or want to give some feedback? You can join our [community](https://slack.spreecommerce.org/) or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+Congrats! You've set up your Spree Commerce and it's looking amazing!
+
+Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why dont't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
+
+Need support or want to give some feedback? Join our [community](https://slack.spreecommerce.org/) with 6000+ members or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).

@@ -1,5 +1,5 @@
 module Spree
-  class StockItem < Spree::Base
+  class StockItem < Spree.base_class
     module Webhooks
       extend ActiveSupport::Concern
       include Spree::Webhooks::HasWebhooks

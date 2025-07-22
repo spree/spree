@@ -61,12 +61,11 @@ describe 'Spree::Api::V2::Storefront::Account::AddressesController', type: :requ
       it 'returns errors' do
         post_create
 
-        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank, Phone can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank")
         expect(json_response['errors']).to eq(
                                              'city' => ["can't be blank"],
                                              'zipcode' => ["can't be blank"],
-                                             'country' => ["can't be blank"],
-                                             'phone' => ["can't be blank"]
+                                             'country' => ["can't be blank"]
                                            )
       end
 
@@ -206,7 +205,7 @@ describe 'Spree::Api::V2::Storefront::Account::AddressesController', type: :requ
             lastname: 'Doe',
             address1: '51 Guild Street',
             address2: '2nd floor',
-            city: 'London',
+            city: '',
             phone: '079 4721 9458',
             zipcode: 'SE25 3FZ',
             state_name: state.name,
@@ -216,10 +215,8 @@ describe 'Spree::Api::V2::Storefront::Account::AddressesController', type: :requ
         it 'returns errors' do
           patch_update
 
-          expect(json_response['error']).to eq("First Name can't be blank")
-          expect(json_response['errors']).to eq(
-                                               'firstname' => ["can't be blank"]
-                                             )
+          expect(json_response['error']).to eq("City can't be blank")
+          expect(json_response['errors']).to eq('city' => ["can't be blank"])
         end
 
         it 'does not update address' do

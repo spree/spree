@@ -1,0 +1,8 @@
+<div class="card">
+  <div class="card-body">
+    <p>To use translations, configure more than one locale for the store.</p>
+    <% if can?(:edit, current_store) %>
+      <%= link_to_with_icon 'settings', 'Configure store', spree.edit_admin_store_path(section: 'general-settings'), class: 'btn btn-light' %>
+    <% end %>
+  </div>
+</div>

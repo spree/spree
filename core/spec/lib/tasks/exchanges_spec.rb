@@ -26,11 +26,13 @@ describe 'exchanges:charge_unreturned_items' do
       Spree::Shipment.last.ship!
       return_item_1.receive!
       Timecop.travel travel_time
+      Spree::Config[:auto_capture] = false
     end
 
     after do
       Timecop.return
       Spree::Config[:expedited_exchanges] = @original_expedited_exchanges_pref
+      Spree::Config[:auto_capture] = true
     end
 
     context 'fewer than the config allowed days have passed' do

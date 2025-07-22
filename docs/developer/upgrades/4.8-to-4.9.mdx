@@ -4,7 +4,7 @@ description: This guide covers upgrading a Spree 4.8 application to Spree 4.9.
 ---
 
 <Info>
-  Before proceeding to upgrade, please ensure you're at Spree 4.8
+  Before proceeding to upgrade, please ensure you're at [Spree 4.8](/developer/upgrades/4.x-to-4.8)
 </Info>
 
 <AccordionGroup>
@@ -18,7 +18,7 @@ description: This guide covers upgrading a Spree 4.8 application to Spree 4.9.
   <Accordion title="2. Install and run missing migrations">
 
     ```bash
-    bin/rake railties:install:migrations && bin/rails db:migrate
+    bin/rake spree:install:migrations && bin/rails db:migrate
     ```
   </Accordion>
 </AccordionGroup>

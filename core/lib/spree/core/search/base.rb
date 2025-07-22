@@ -5,6 +5,8 @@ module Spree
         attr_accessor :properties, :current_user, :current_currency, :current_store, :taxon
 
         def initialize(params)
+          Spree::Deprecation.warn("Spree::Core::Search::Base is deprecated and will be removed in Spree 6. Please use `Spree::Products::Find` finder instead.")
+
           @properties = {}
           @current_store = params[:current_store] || Spree::Store.default
           @current_currency = @current_store.default_currency

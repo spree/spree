@@ -1,0 +1,78 @@
+import SpreeVariant from '/snippets/objects/spree_variant.mdx';
+
+<Expandable title="properties">
+  <ResponseField name="id" type="integer">
+    Line item ID
+    Example: 123
+  </ResponseField>
+
+  <ResponseField name="quantity" type="integer">
+    Quantity of the variant ordered
+    Example: 2
+  </ResponseField>
+
+  <ResponseField name="price" type="decimal">
+    Unit price of the variant when ordered
+    Example: 29.99
+  </ResponseField>
+
+  <ResponseField name="display_price" type="string">
+    Formatted unit price with currency
+    Example: "$29.99"
+  </ResponseField>
+
+  <ResponseField name="total" type="decimal">
+    Total price for this line item (quantity * price)
+    Example: 59.98
+  </ResponseField>
+
+  <ResponseField name="display_total" type="string">
+    Formatted total price with currency
+    Example: "$59.98"
+  </ResponseField>
+
+  <ResponseField name="adjustment_total" type="decimal">
+    Sum of all adjustments for this line item
+    Example: -5.00
+  </ResponseField>
+
+  <ResponseField name="display_adjustment_total" type="string">
+    Formatted adjustment total with currency
+    Example: "-$5.00"
+  </ResponseField>
+
+  <ResponseField name="additional_tax_total" type="decimal">
+    Sum of additional tax amounts
+    Example: 4.50
+  </ResponseField>
+
+  <ResponseField name="included_tax_total" type="decimal">
+    Sum of included tax amounts
+    Example: 2.75
+  </ResponseField>
+
+  <ResponseField name="promo_total" type="decimal">
+    Sum of promotion adjustments
+    Example: -10.00
+  </ResponseField>
+
+  <ResponseField name="display_promo_total" type="string">
+    Formatted promotion total with currency
+    Example: "-$10.00"
+  </ResponseField>
+
+  <ResponseField name="order_id" type="integer">
+    Associated order ID
+    Example: 456
+  </ResponseField>
+
+  <ResponseField name="variant" type="Spree::Variant">
+    Associated product variant
+    <SpreeVariant />
+  </ResponseField>
+
+  <ResponseField name="currency" type="string">
+    Currency of the line item
+    Example: "USD"
+  </ResponseField>
+</Expandable>

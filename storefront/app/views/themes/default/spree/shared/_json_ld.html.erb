@@ -1,0 +1,32 @@
+<% cache spree_base_cache_scope.call(current_store) do %>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "url": <%= current_store.formatted_url_or_custom_domain.to_json.html_safe %>,
+      "sameAs": <%= current_store.social_links.to_json.html_safe %>,
+    <% if current_store.logo && current_store.logo&.attached? && current_store.logo&.variable? %>
+      "logo": <%= spree_image_url(current_store.logo, width: 250, height: 250).to_json.html_safe %>,
+    <% end %>
+      "name": <%= current_store.name.to_json.html_safe %>,
+      "email": <%= current_store.customer_support_email.to_json.html_safe %>
+    }
+  </script>
+<% end %>
+
+<% if canonical_path.include?('search') %>
+  <% potential_action_target = "#{canonical_href(current_store.url_or_custom_domain)}?q={search_term_string}" %>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": <%= current_store.name.to_json.html_safe %>,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": <%= potential_action_target.to_json.html_safe %>,
+        "query-input": "required name=search_term_string"
+      },
+      "url": <%= current_store.formatted_url_or_custom_domain.to_json.html_safe %>
+    }
+  </script>
+<% end %>

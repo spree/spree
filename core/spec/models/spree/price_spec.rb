@@ -20,6 +20,66 @@ describe Spree::Price, type: :model do
         expect(price.compare_at_amount).to be_nil
       end
     end
+
+    describe 'after_commit :auto_match_taxons' do
+      context 'when price is discounted' do
+        context 'on create' do
+          let(:price) { build(:price, amount: 10, compare_at_amount: 20, currency: 'GBP') }
+
+          it 'auto matches taxons' do
+            expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons).at_least(:once)
+            price.save
+          end
+        end
+
+        context 'on update' do
+          let!(:price) { create(:price, amount: 10, compare_at_amount: 20, currency: 'GBP') }
+
+          context 'and changed to not be discounted' do
+            it 'auto matches taxons' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+              price.reload.update(compare_at_amount: nil)
+            end
+          end
+
+          context 'and is still discounted' do
+            it 'does not touch shop product' do
+              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_taxons)
+              price.reload.update(amount: 15)
+            end
+          end
+        end
+      end
+
+      context 'when price is not discounted' do
+        let(:price) { build(:price, amount: 10, compare_at_amount: nil, currency: 'GBP') }
+
+        context 'on create' do
+          it 'auto matches taxons' do
+            expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+            price.save
+          end
+        end
+
+        context 'on update' do
+          let!(:price) { create(:price, amount: 10, compare_at_amount: nil, currency: 'GBP') }
+
+          context 'and changed to be discounted' do
+            it 'auto matches taxons' do
+              expect_any_instance_of(Spree::Product).to receive(:auto_match_taxons)
+              price.reload.update(compare_at_amount: 20)
+            end
+          end
+
+          context 'and is still not discounted' do
+            it 'does not touch shop product' do
+              expect_any_instance_of(Spree::Product).not_to receive(:auto_match_taxons)
+              price.reload.update(amount: 15)
+            end
+          end
+        end
+      end
+    end
   end
 
   describe '#amount=' do

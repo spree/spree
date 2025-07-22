@@ -1,9 +1,13 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module Emails
       def deliver_order_confirmation_email
-        OrderMailer.confirm_email(id).deliver_later
-        update_column(:confirmation_delivered, true)
+        if completed?
+          OrderMailer.confirm_email(id).deliver_later
+          update_column(:confirmation_delivered, true)
+        else
+          errors.add(:base, Spree.t(:order_email_resent_error))
+        end
       end
 
       # Returns true if:

@@ -31,6 +31,7 @@ Spree::Core::Engine.add_routes do
           get :payment_methods
           get :shipping_rates
           patch :select_shipping_method
+          post :validate_order_for_payment
         end
 
         resource :account, controller: :account, only: %i[show create update]
@@ -172,14 +173,6 @@ Spree::Core::Engine.add_routes do
 
         resources :roles
 
-        # Menu API
-        resources :menus
-        resources :menu_items do
-          member do
-            patch :reposition
-          end
-        end
-
         # CMS
         resources :cms_pages
         resources :cms_sections
@@ -212,6 +205,9 @@ Spree::Core::Engine.add_routes do
           resources :events, only: :index
           resources :subscribers
         end
+
+        # Gift Cards API
+        resources :gift_cards
       end
 
       namespace :data_feeds do

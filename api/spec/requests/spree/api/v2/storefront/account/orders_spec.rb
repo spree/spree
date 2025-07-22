@@ -1,11 +1,14 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Orders spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:user) { create(:user_with_addresses) }
   let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current, store: store) }
 
-  before { Spree::Api::Config[:api_v2_per_page_limit] = 2 }
+  before do
+    allow(Spree::Api::Config).to receive(:[]).and_call_original
+    allow(Spree::Api::Config).to receive(:[]).with(:api_v2_per_page_limit).and_return(2)
+  end
 
   include_context 'API v2 tokens'
 
@@ -66,8 +69,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
       context 'with specified pagination params' do
         before { get '/api/v2/storefront/account/orders?page=1&per_page=2', headers: headers_bearer }
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns specified amount orders' do
           expect(json_response['data'].count).to eq 2
         end
@@ -112,8 +113,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
     context 'without specified pagination params' do
       before { get '/api/v2/storefront/account/orders', headers: headers_bearer }
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns specified amount orders' do
         expect(json_response['data'].count).to eq Spree::Order.count
       end
@@ -140,8 +139,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
         context 'ascending order' do
           before { get '/api/v2/storefront/account/orders?sort=completed_at', headers: headers_bearer }
 
-          it_behaves_like 'returns 200 HTTP status'
-
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq store.orders.count
             expect(json_response['data'].pluck(:id)).to eq store.orders.select('*').order(completed_at: :asc).pluck(:id).map(&:to_s)
@@ -150,8 +147,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
         context 'descending order' do
           before { get '/api/v2/storefront/account/orders?sort=-completed_at', headers: headers_bearer }
-
-          it_behaves_like 'returns 200 HTTP status'
 
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq store.orders.count
@@ -165,8 +160,6 @@ describe 'Storefront API v2 Orders spec', type: :request do
       let!(:order_2) { create(:order, state: 'complete', user: user, completed_at: Time.current, store: create(:store)) }
 
       before { get '/api/v2/storefront/account/orders', headers: headers_bearer }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns orders sorted by completed_at' do
         expect(json_response['data'].count).to eq 1

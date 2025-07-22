@@ -13,17 +13,14 @@ FactoryBot.define do
     twitter                { 'spreecommerce' }
     instagram              { 'spreecommerce' }
     meta_description       { 'Sample store description.' }
-    digital_asset_authorized_clicks { 5 }
-    digital_asset_authorized_days   { 7 }
 
     trait :with_favicon do
-      transient do
-        filepath { Spree::Core::Engine.root.join('spec', 'fixtures', 'favicon.ico') }
-        image_type { 'image/x-icon' }
-      end
-
-      favicon_image do
-        create(:favicon_image, attachment: Rack::Test::UploadedFile.new(filepath, image_type))
+      after(:build) do |store|
+        store.favicon_image.attach(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'thinking-cat.jpg')),
+          filename: 'thinking-cat.jpg',
+          content_type: 'image/jpeg'
+        )
       end
     end
   end

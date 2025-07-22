@@ -23,15 +23,16 @@ module Spree
       abilities.delete(ability)
     end
 
-    def initialize(user)
+    def initialize(user, options = {})
       alias_cancan_delete_action
 
       user ||= Spree.user_class.new
+      store ||= options[:store] || Spree::Current.store
 
-      if user.persisted? && user.try(:spree_admin?)
-        apply_admin_permissions(user)
+      if user.persisted? && user.is_a?(Spree.admin_user_class) && user.try(:spree_admin?, store)
+        apply_admin_permissions(user, options)
       else
-        apply_user_permissions(user)
+        apply_user_permissions(user, options)
       end
 
       # Include any abilities registered by extensions, etc.
@@ -56,14 +57,18 @@ module Spree
       alias_action :create, :update, :destroy, to: :modify
     end
 
-    def apply_admin_permissions(user)
+    def apply_admin_permissions(_user, _options)
       can :manage, :all
+      cannot :cancel, Spree::Order
+      can :cancel, Spree::Order, &:allow_cancel?
+      cannot :destroy, Spree::Order
+      can :destroy, Spree::Order, &:can_be_deleted?
+      cannot [:edit, :update], Spree::RefundReason, mutable: false
+      cannot [:edit, :update], Spree::ReimbursementType, mutable: false
     end
 
-    def apply_user_permissions(user)
+    def apply_user_permissions(user, _options)
       can :read, ::Spree::Country
-      can :read, ::Spree::Menu
-      can :read, ::Spree::CmsPage
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
       can :create, ::Spree::Order
@@ -93,6 +98,7 @@ module Spree
       can [:create, :update, :destroy], ::Spree::WishedItem do |wished_item|
         wished_item.wishlist.user == user
       end
+      can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
     end
 
     def protect_admin_role

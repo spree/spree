@@ -1,5 +1,5 @@
 module Spree
-  class Variant < Spree::Base
+  class Variant < Spree.base_class
     acts_as_paranoid
     acts_as_list scope: :product
 
@@ -8,6 +8,9 @@ module Spree
     include Spree::Variant::Webhooks
 
     MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
+
+    DIMENSION_UNITS = %w[mm cm in ft]
+    WEIGHT_UNITS = %w[g kg lb oz]
 
     belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
@@ -64,13 +67,23 @@ module Spree
     validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false, scope: spree_base_uniqueness_scope },
                     allow_blank: true, unless: :disable_sku_validation?
 
+    validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
+    validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
+
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
+
+    after_save :create_default_stock_item, unless: :track_inventory?
+    after_update_commit :handle_track_inventory_change
+
+    after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
+    after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
+
     after_touch :clear_in_stock_cache
 
-    scope :in_stock, -> { joins(:stock_items).where("#{Spree::StockItem.table_name}.count_on_hand > ? OR #{Spree::Variant.table_name}.track_inventory = ?", 0, false) }
-    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand > ?", false, 0) }
+    scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
@@ -96,7 +109,7 @@ module Spree
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Store.default.default_currency
-      joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
+      joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
     end
 
     scope :active, ->(currency = nil) do
@@ -111,6 +124,36 @@ module Spree
       joins(:option_values).where(Spree::OptionValue.table_name => { name: option_value, option_type_id: option_type_ids })
     }
 
+    scope :with_digital_assets, -> { joins(:digitals) }
+
+    if defined?(PgSearch)
+      include PgSearch::Model
+
+      pg_search_scope :search_by_sku, against: :sku, using: { tsearch: { prefix: true } }
+
+      pg_search_scope :search_by_sku_or_options,
+                      against: :sku,
+                      using: { tsearch: { prefix: true } },
+                      associated_against: { option_values: %i[presentation] }
+
+      pg_search_scope :search_by_name_sku_or_options, against: :sku, associated_against: {
+        product: %i[name],
+        option_values: %i[presentation]
+      }, using: { tsearch: { prefix: true } }
+
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        search_by_name_sku_or_options(query)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank? || query.length < 3
+
+        product_name_or_sku_cont(query)
+      }
+    end
+
     # FIXME: cost price should be represented with DisplayMoney class
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
@@ -119,6 +162,24 @@ module Spree
         self[m] = Spree::LocalizedNumber.parse(argument) if argument.present?
       end
     end
+
+    accepts_nested_attributes_for(
+      :stock_items,
+      reject_if: ->(attributes) { attributes['stock_location_id'].blank? || attributes['count_on_hand'].blank? },
+      allow_destroy: false
+    )
+
+    accepts_nested_attributes_for(
+      :prices,
+      reject_if: ->(attributes) { attributes['currency'].blank? || attributes['amount'].blank? },
+      allow_destroy: true
+    )
+
+    accepts_nested_attributes_for(
+      :option_value_variants,
+      reject_if: ->(attributes) { attributes['option_value_id'].blank? },
+      allow_destroy: false
+    )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
@@ -130,7 +191,9 @@ module Spree
       sku_condition = arel_table[:sku].lower.matches(query_pattern)
 
       if Spree.use_translations?
-        product_name_condition = Product.translation_table[:name].lower.matches(query_pattern)
+        translation_arel_table = Product::Translation.arel_table.alias(Product.translation_table_alias)[:name]
+        product_name_condition = translation_arel_table.lower.matches(query_pattern)
+
         joins(:product).
           join_translation_table(Product).
           where(product_name_condition.or(sku_condition))
@@ -142,6 +205,14 @@ module Spree
 
     def self.search_by_product_name_or_sku(query)
       product_name_or_sku_cont(query)
+    end
+
+    def human_name
+      @human_name ||= option_values.
+                      joins(option_type: :product_option_types).
+                      merge(product.product_option_types).
+                      reorder('spree_product_option_types.position').
+                      pluck(:presentation).join('/')
     end
 
     def available?
@@ -393,7 +464,7 @@ module Spree
     # Returns the weight unit for the variant
     # @return [String]
     def weight_unit
-      attributes['weight_unit'] || Spree::Store.default.weight_unit
+      attributes['weight_unit'] || Spree::Store.default.preferred_weight_unit
     end
 
     def discontinue!
@@ -408,9 +479,13 @@ module Spree
       @backordered ||= !in_stock? && stock_items.exists?(backorderable: true)
     end
 
-    # Is this variant to be downloaded by the customer?
+    # Is this variant purely digital? (no physical product)
     def digital?
-      digitals.present?
+      product.digital?
+    end
+
+    def with_digital_assets?
+      digitals.any?
     end
 
     def clear_in_stock_cache
@@ -443,14 +518,18 @@ module Spree
 
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
-      if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
-        return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
+      return if (has_default_price? && default_price.valid?) || prices.any?
 
-        self.price = product.master.price
-      end
-      if price.present? && currency.nil?
-        self.currency = Spree::Store.default.default_currency
+      infer_price_from_default_variant_if_needed
+      self.currency = Spree::Store.default.default_currency if price.present? && currency.nil?
+    end
+
+    def infer_price_from_default_variant_if_needed
+      if price.nil?
+        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
+
+        # At this point, master can have or have no price, so let's use price from the default variant
+        self.price = product.default_variant.price
       end
     end
 
@@ -474,6 +553,27 @@ module Spree
 
     def clear_line_items_cache
       line_items.update_all(updated_at: Time.current)
+    end
+
+    def create_default_stock_item
+      return if stock_items.any?
+
+      Spree::Store.current.default_stock_location.set_up_stock_item(self)
+    end
+
+    def handle_track_inventory_change
+      return unless track_inventory_previously_changed?
+      return if track_inventory
+
+      stock_items.update_all(count_on_hand: 0, updated_at: Time.current)
+    end
+
+    def remove_prices_from_master_variant
+      product.master.prices.delete_all if prices.exists?
+    end
+
+    def remove_stock_items_from_master_variant
+      product.master.stock_items.delete_all
     end
   end
 end

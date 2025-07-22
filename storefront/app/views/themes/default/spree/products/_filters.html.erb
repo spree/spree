@@ -1,0 +1,45 @@
+<div
+  id="slideover-filters"
+  data-slideover-target="menu"
+  class="sidebar-pane relative flex-1 !flex flex-col w-full pt-4 bg-background md:border-r border-default transition duration-300 -translate-x-full">
+  <div class="flex-shrink-0 flex items-center justify-between pb-4 px-4 border-b border-default">
+    <span class="text-xl uppercase font-medium"><%= Spree.t(:filter) %></span>
+    <%= button_tag type: 'button',
+                   class: "flex items-center justify-center rounded-full focus:outline-none focus:bg-background",
+                   aria: { label: Spree.t(:close_sidebar) },
+                   data: { action: "slideover#toggle" } do %>
+      <%= render 'spree/shared/icons/cross' %>
+    <% end %>
+  </div>
+  <%= form_with url: canonical_path, method: :get, class: "pt-4 lg:pt-10 flex-1 h-0 overflow-y-auto" do |f| %>
+    <%= f.hidden_field :q, value: params[:q] %>
+    <%= f.hidden_field :sort_by, value: params[:sort_by] %>
+    <nav class="flex flex-col justify-between h-full">
+      <div class="flex flex-col gap-4">
+        <%= render 'spree/products/filters/availability', f: f %>
+        <%= render 'spree/products/filters/price', f: f %>
+
+        <% current_store.taxonomies.order(:position).each do |taxonomy|  %>
+          <%= render 'spree/products/filters/taxons', taxonomy: taxonomy, f: f %>
+        <% end %>
+
+        <% Spree::OptionType.filterable.order(:position).includes(:option_values).each do |filter| %>
+          <% if filter.color? %>
+            <%= render 'spree/products/filters/colors', filter: filter, f: f %>
+          <% else %>
+            <%= render 'spree/products/filters/generic', filter: filter, f: f %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="bg-accent p-4 lg:py-6 lg:px-10 flex flex-row justify-between gap-8 sticky bottom-0 left-0 mt-4">
+        <%= f.button Spree.t(:apply), class: "btn-primary block text-center flex-grow", type: "submit" %>
+        <% if current_taxon || params[:filter].present? %>
+          <%= link_to url_for(permitted_products_params.except(:page, :filter)), class: "inline-flex items-center justify-center gap-3 font-semibold text-sm tracking-widest", data: { turbo_method: :get, turbo_frame: "_top" } do %>
+            <span><%= Spree.t(:clear_all) %></span>
+            <%= render 'spree/shared/icons/cross', width: 20, height: 20 %>
+          <% end %>
+        <% end %>
+      </div>
+    </nav>
+  <% end %>
+</div>

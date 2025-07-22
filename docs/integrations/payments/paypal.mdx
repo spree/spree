@@ -1,0 +1,43 @@
+---
+title: "Connect PayPal payments to Spree Commerce"
+sidebarTitle: PayPal
+description: "Learn how to set up and manage Spree's native PayPal integration."
+---
+
+PayPal is an online payment system that allows you to send and receive money around the world. You can link your credit card, debit card, or bank account. You can also set up a PayPal Balance account.
+
+## Installation
+
+Before you can enable PayPal, it must be installed. To do so, you need to run the following command:
+
+```bash
+bundle add spree_paypal_checkout && bundle exec rails g spree_paypal_checkout:install
+```
+
+After that, you need to make sure to restart the server.
+
+## Connect PayPal
+
+Sign in to your Spree admin dashboard and navigate to **Settings → Payments**.
+
+![](/images/integrations/paypal/paypal_payment_method_list.png)
+
+Find PayPal under Available Payment Methods and click **Add**.
+
+This will redirect you to the PayPal setup form.
+
+![](/images/integrations/paypal/paypal_form.png)
+
+You will need Client ID and Client Secret from your [PayPal dashboard credentials page](https://www.paypal.com/mep/merchantapps/setup/checkout/apicredentials). 
+
+<Tip>
+  To get your credentials, go to `Business Tools`, select `Online Checkout`, click `Get Started`, select `Have a custom-built site? -> Get Started`, `PayPal Checkout -> Get Started`.
+</Tip>
+
+![](/images/integrations/paypal/paypal_credentials.png)
+
+You should see your live and sandbox credentials. Copy API key into `Client ID` and Secret into `Client Secret`.
+
+If you wish to test the PayPal payments before going live, copy sandbox credentials and select `Test Mode` option in Spree.
+
+Click **Create** to enable PayPal as a payment method on your store.

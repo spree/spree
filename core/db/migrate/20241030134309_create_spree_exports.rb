@@ -1,4 +1,4 @@
-class CreateSpreeExports < ActiveRecord::Migration[7.2]
+class CreateSpreeExports < ActiveRecord::Migration[6.1]
   def change
     return if table_exists?(:spree_exports)
 

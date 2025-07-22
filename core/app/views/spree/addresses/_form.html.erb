@@ -1,0 +1,58 @@
+<% address_id = address_type.chars.first %>
+<% address ||= address_form.object %>
+
+<div class="inner"
+     data-controller="address-form address-autocomplete"
+     data-address-form-countries-value="<%= available_countries.to_json %>"
+     data-address-form-states-value="<%= available_states.to_json %>"
+     data-address-form-current-state-id-value="<%= address.state_id || address_form.object.state_id %>"
+>
+  <div id="<%= "#{address_id}country" %>">
+    <div class="form-group mb-0">
+      <div id="<%= "#{address_id}country-selection" %>">
+        <%= address_form.label(Spree.t(:country), Spree.t(:country), class: 'block text-xs text-neutral-600 mb-1') %>
+        <%= address_form.select :country_id, options_for_select(available_countries.map { |c| [c.name, c.id, data: { iso: c.iso }] }, address_form.object.country_id || current_store.default_country_id),
+                                            {  },
+                                            { class: 'w-full select-input mb-4',
+                                              data: {
+                                                'address-form-target': 'country',
+                                                'action': "change->address-form#changeCountry",
+                                                'address-autocomplete-target': 'country'
+                                              },
+                                              aria: { label: Spree.t(:country) } } %>
+      </div>
+    </div>
+  </div>
+  <% if address.require_name? %>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= address_field(address_form, :firstname, address_id, true) %>
+      </div>
+      <div>
+        <%= address_field(address_form, :lastname, address_id, true) %>
+      </div>
+    </div>
+  <% end %>
+  <%= address_field(address_form, :company, address_id, address.require_company?) if address.show_company_address_field? %>
+  <div class="mb-4 flex flex-col space-y-2" data-address-autocomplete-target="autocompleteInputContainer" tabindex="-1" >
+    <div class="relative">
+      <div id="<%= address_id %>address1">
+        <% method_name = I18n.t("activerecord.attributes.spree/address.address1") %>
+        <%= address_form.label(method_name, method_name, class: 'block text-xs text-neutral-600 mb-1') %>
+        <%= address_form.text_field :address1, class: 'text-input w-full', placeholder: method_name, required: true, data: {address_autocomplete_target: "address1"}, autocorrect: "off", autocomplete: "shipping-address-line1", aria: {label: method_name, autocomplete: "list", controls: "suggestions-box-options", owns: "suggestions-box-options", haspopup: "listbox", role: "combobox", expanded: "false"} %>
+      </div>
+      <%= render "spree/addresses/suggestions_box" %>
+    </div>
+    <span class="text-sm space-x-2 items-center hidden alert alert-info mt-2 align-items-center" data-address-autocomplete-target="addressWarning">
+      <%= heroicon "exclamation-circle", variant: :outline if defined?(heroicon) %>
+      <%= Spree.t('address_book.add_house_number') %>
+    </span>
+  </div>
+  <%= address_field(address_form, :address2, address_id) %>
+  <div class="grid grid-cols-3 gap-4 address-form max-w-full d-flex row mb-4">
+    <%= address_field(address_form, :city, address_id, true, text_field_attributes: {data: {address_autocomplete_target: "city"}}) %>
+    <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
+    <%= address_field(address_form, :zipcode, address_id) { address_zipcode(address_form, address.country, address_id) } %>
+  </div>
+  <%= address_field(address_form, :phone, address_id, address.require_phone?) %>
+</div>

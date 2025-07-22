@@ -1,0 +1,452 @@
+<Note>
+This section covers the Rails storefront which was extracted to [`spree_frontend`](https://github.com/spree/spree_rails_frontend) ruby gem.
+</Note>
+
+## Styling with SASS variables
+
+Spree 4 under the hood uses [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/theming/) for easy theming with some additional Spree-specific [SASS variables](https://sass-lang.com/documentation/variables).
+
+To make those changes live you need to update SCSS variable files located in your project at `app/assets/stylesheets/spree/frontend/variables/variables.scss`.
+
+### Header
+
+_**$header-background**_ - header background color variable with 2 examples: white and blue one. By default, this is set with a _**$primary-background**_ value but you can replace it with any other value in the variables.scss file.
+
+_**$header-font-color**_- Header font color. By default set with _**$font-color**_ value but you can replace it with any other value in the variables.scss file.
+
+### Footer
+
+_**$footer-background**_ - a variable that overrides $primary-background and allows you to change the footer color. See a white and a blue example below.
+
+_**$footer-font-color**_ - a variable that overrides _**$font-color**_ and allows you to change the footer font color. See black and blue font examples below.
+
+### Meganav menu
+
+_**$meganav-background**_ - a variable that allows you to change the mega nav menu background color. By default the meganav menu is set to a _**$primary-background**_ value but you can replace it with any other value in the variables.scss file.
+
+_**$meganav-font-color**_ - a font color variable in the mega nav menu. By default the mega nav font color is set to a $font-color value but you can replace it with any other value in the variables.scss file.
+
+### Background
+
+_**$primary-background**_ - the main background color across the whole site. There are two examples below, of the white and the black backgrounds. Please note that you can also use an image as a background.
+
+_**$secondary-background**_ - the second background color present across the whole site with examples attached below.
+
+_**$font-color**_ - this variable affects all fonts on the $primary-background. Please see two examples below.
+
+_**$secondary-font-color**_ - this affects all fonts on $secondary-background. By default, it is set with a $font-color value but you can replace it with any other value in the variables.scss file.
+
+### Border color
+
+_**$global-border-style**_ - this affects the border and separator color throughout the whole site
+
+### Fonts
+
+_**$font-family**_ - this sets the font family used across your site. By default, it is in Sans Serif but you can replace it with any other value in the variables.scss file. Check out [these font families](https://websitesetup.org/web-safe-fonts-html-css/) you might use.
+
+### Input fields
+
+_**$input-background**_ - this allows you to set a color for all input field backgrounds across the site. See two examples of a white and a yellow backround below.
+
+_**$second-global-border**_ - this allows you to set a color for all input field borders across the whole site. See an example below with red input field borders.
+
+### Primary color
+
+#### Home page
+
+_**$primary-color**_ variable changes
+
+* The color of the **SHOP NOW** button on the main hero image
+* The color of the **Summer 2019** text and **READ MORE** button
+* The color of the **NEW COLLECTION** and **SUMMER SALE** headers inside the categories section
+
+#### Search results
+
+_**$primary-color**_ variable changes
+
+* The color of the **No results** icon
+
+#### Mega Menu
+
+_**$primary-color**_ variable changes
+
+* The color of **NEW COLLECTION** and **SUMMER SALE** headers inside the banners
+
+#### PDP
+
+_**$primary-color**_ variable changes
+
+* The color of the **IN STOCK** text
+* The color of the **ADD TO CART** button
+
+#### Cart Page
+
+_**$primary-color**_ variable changes
+
+* The color of the **Trash** delete icon for removing items from the cart
+* The color of the **CHECKOUT** button
+
+#### Cart pop-up
+
+_**$primary-color**_ variable changes
+
+* The color of the **CHECKOUT** and **VIEW CART** buttons
+
+#### Cart - empty
+
+_**$primary-color**_ variable changes
+
+* The color of the **CONTINUE SHOPPING** button
+* The color of the **Empty cart** icon
+
+#### Checkout - Registration Step
+
+_**$primary-color**_ variable changes
+
+* The color of the **LOG IN, SIGN UP** and **CONTINUE AS A GUEST** buttons
+
+#### Checkout - Address step
+
+_**$primary-color**_ variable changes
+
+* The color of the **SAVE AND CONTINUE** button (this element remains the same across the whole checkout process)
+* The color of the **Edit** icon
+
+#### Checkout - Payment step
+
+_**$primary-color**_ variable changes
+
+* The color of the **APPLY** button
+
+#### Checkout - Confirm step
+
+_**$primary-color**_ variable changes
+
+* The color of the **PLACE ORDER** button
+
+#### Sign-in page
+
+_**$primary-color**_ variable changes
+
+The color of the **LOG IN** and **SIGN UP** buttons
+
+#### Sign up page
+
+_**$primary-color**_ variable changes
+
+* The color of the **SIGN UP** and **LOG IN** buttons
+
+#### My account page
+
+_**$primary-color**_ variable changes
+
+* The color of the **Edit** and **Trash** icons
+
+#### Edit account page
+
+_**$primary-color**_ variable changes
+
+* The color of the **UPDATE** button
+
+#### Pop-ups
+
+_**$primary-color**_ variable changes
+
+* The color of the **CANCEL** and **OK** buttons
+
+### Secondary color
+
+#### PLP
+
+_**$secondary-color**_ variable changes
+
+* The color of the chosen **color** border variant
+* The color of the chosen **size** border variant
+* The color of the chosen **length** border variant
+* The color of the chosen **price** border variant
+
+#### PDP
+
+_**$secondary-color**_ variable changes
+
+* The color of the chosen **color** border variant
+* The color of the chosen **size** border variant
+* The color of the chosen **length** border variant
+* The color of the chosen **image** border
+
+#### Pop-ups
+
+_**$secondary-color**_ variable changes
+
+* The color of the **Add to bag successfully** icon
+
+Log-in and Sign-in page
+
+_**$secondary-color**_ variable changes
+
+* The color of the **Remember me** checkbox
+* The color of the **input: focus**
+
+#### Checkout
+
+_**$secondary-color**_ variable changes
+
+* The color of **individual steps** (box, name step, and guideline) - this element remains the same across the whole checkout process
+
+#### Checkout - Address step
+
+_**$secondary-color**_ variable changes
+
+* The color of the **Use shipping address** checkbox
+
+#### Checkout - Delivery step
+
+_**$secondary-color**_ variable changes
+
+* The color of delivery type radio buttons
+
+#### Checkout - Payment step
+
+_**$secondary-color**_ variable changes
+
+* The color of payment type radio buttons
+* The color of payment card radio buttons
+
+#### Order confirmation page
+
+_**$secondary-color**_ variable changes
+
+* The color of the **successful checkmark** icon
+
+### Grid breakpoints
+
+[Grid breakpoint variable](https://github.com/spree/spree/blob/main/frontend/app/assets/stylesheets/spree/frontend/variables/bootstrap-overrides.scss) allows you to slightly change element sizes on various devices. These changes are mostly to images and their scale ratio. Feel free to learn more from the [Bootstrap manual](https://getbootstrap.com/docs/4.0/layout/grid/), though we don’t recommend changing these values unless you really need to.
+
+### Rounding for components
+
+_**$enable-rounded**_ - Enable rounding for components.
+
+Possible values: **true** or **false**
+
+**“True” example**
+
+**“False” example**
+
+### Shadows for components
+
+_**$enable-shadows**_ - Enable shadow for components
+
+Possible values: **true** or **false**
+
+### Gradient for components
+
+_**$enable-gradients**_ - Enable gradient for components
+
+_**$enable-gradients**_ - Enable gradient for components
+
+## Templates
+
+### Importing
+
+You can import all templates from spree frontend into your application using this command (in your application root directory):
+
+```bash
+rails g spree:frontend:copy_storefront
+```
+
+All of those views will be added to your `app/views` directory under `spree` folder. You can modify them as you wish.
+
+## Assets
+
+### Spree's Asset Pipeline
+
+Spree applications include an `app/assets` directory. We've taken this one step further by subdividing each top level asset directory (images, JavaScript files, stylesheets) into `frontend` and `backend` directories. This is designed to keep assets from the frontend and backend from conflicting with each other.
+
+A typical assets directory for a Spree application will look like:
+
+```
+app
+|-- assets
+    |-- images
+    |   |-- spree
+    |       |-- frontend
+    |       |-- backend
+    |-- javascripts
+    |   |-- spree
+    |       |-- frontend
+    |       |   |-- all.js
+    |       |-- backend
+    |           |-- all.js
+    |-- stylesheets
+    |   |-- spree
+    |       |-- frontend
+    |       |   |-- all.css
+    |       |-- backend
+    |           |-- all.css
+```
+
+Spree also generates four top level manifests (all.css & all.js, see above) that require all the core extension's and site specific stylesheets / JavaScript files.
+
+### How core extensions (engines) manage assets
+
+All core engines have been updated to provide four asset manifests that are responsible for bundling up all the JavaScript files and stylesheets required for that engine.
+
+For example, Spree provides the following manifests:
+
+```
+vendor
+|-- assets
+    |-- javascripts
+    |   |-- spree
+    |       |-- frontend
+    |       |   |-- all.js
+    |       |-- backend
+    |           |-- all.js
+    |-- stylesheets
+    |   |-- spree
+    |       |-- frontend
+    |       |   |-- all.css
+    |       |-- backend
+    |           |-- all.css
+```
+
+These manifests are included by default by the relevant all.css or all.js in the host Spree application. For example, `vendor/assets/javascripts/spree/backend/all.js` includes:
+
+```javascript
+//= require spree/backend
+
+//= require_tree .
+```
+
+External JavaScript libraries, stylesheets and images have also been relocated into vendor/assets.
+
+### Managing your application's assets
+
+Assets that customize your Spree store should go inside the appropriate directories inside `vendor/assets/images/spree`, `vendor/assets/javascripts/spree`, or `vendor/assets/stylesheets/spree`. This is done so that these assets do not interfere with other parts of your application.
+
+### Overriding Spree's assets
+
+Overriding or replacing any of Spree's internal assets is even easier than before. It's recommended to attempt to replace as little as possible in a given JavaScript or stylesheet file to help ease future upgrade work required.
+
+The methods listed below will work for both applications, extensions and themes with one noticeable difference: Extension & theme asset files will not be automatically included (see above for instructions on how to include asset files from your extensions / themes).
+
+### Overriding individual CSS styles
+
+Say for example you want to replace the following CSS snippet:
+
+```css
+/* spree/app/assets/stylesheets/spree/frontend/screen.css */
+
+div#footer {
+ clear: both;
+}
+```
+
+You can now just create a new stylesheet inside `your_app/vendor/assets/stylesheets/spree/frontend/` and include the following CSS:
+
+```css
+/* vendor/assets/stylesheets/spree/frontend/foo.css */
+
+div#footer {
+ clear: none;
+ border: 1px solid red;
+}
+```
+
+The `frontend/all.css` manifest will automatically include `foo.css` and it will actually include both definitions with the one from `foo.css` being included last, hence it will be the rule applied.
+
+### Overriding entire CSS files
+
+To replace an entire stylesheet as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's or extension's `vendor/assets/stylesheets` directory.
+
+For example, to replace `spree/frontend/all.css` you would save the replacement to `your_app/vendor/assets/stylesheets/spree/frontend/all.css`.
+
+This same method can also be used to override stylesheets provided by third-party extensions.
+
+### Overriding individual JavaScript functions
+
+A similar approach can be used for JavaScript functions. For example, if you wanted to override the `show_variant_images` method:
+
+```javascript
+ // spree/app/assets/javascripts/spree/frontend/product.js
+
+var show_variant_images = function(variant_id) {
+  $('li.vtmb').hide();
+  $('li.vtmb-' + variant_id).show();
+  var currentThumb = $('#' +
+    $("#main-image").data('selectedThumbId'));
+
+  // if currently selected thumb does not belong to current variant,
+  // nor to common images,
+  // hide it and select the first available thumb instead.
+
+  if(!currentThumb.hasClass('vtmb-' + variant_id) &&
+    !currentThumb.hasClass('tmb-all')) {
+   var thumb = $($('ul.thumbnails li:visible').eq(0));
+   var newImg = thumb.find('a').attr('href');
+   $('ul.thumbnails li').removeClass('selected');
+   thumb.addClass('selected');
+   $('#main-image img').attr('src', newImg);
+   $("#main-image").data('selectedThumb', newImg);
+   $("#main-image").data('selectedThumbId', thumb.attr('id'));
+ }
+}
+```
+
+Again, just create a new JavaScript file inside `your_app/vendor/assets/javascripts/spree/frontend` and include the new method definition:
+
+```javascript
+ // your_app/vendor/assets/javascripts/spree/frontend/foo.js
+
+var show_variant_images = function(variant_id) {
+ alert('hello world');
+}
+```
+
+The resulting `frontend/all.js` would include both methods, with the latter being the one executed on request.
+
+### Overriding entire JavaScript files
+
+To replace an entire JavaScript file as provided by Spree you simply need to create a file with the same name and save it to the corresponding path within your application's or extension's `app/assets/javascripts` directory.
+
+For example, to replace `spree/frontend/all.js` you would save the replacement to `your_app/vendor/assets/javascripts/spree/frontend/all.js`.
+
+This same method can be used to override JavaScript files provided by third-party extensions.
+
+## SEO recommendations
+
+### Sitemap
+
+We highly recommend adding a sitemap to your site. It might affect how Google bot crawls your store pages. There is an official extension called [Spree Sitemap](https://github.com/spree-contrib/spree_sitemap) for that exact purpose.
+
+1. Per region, language or currency
+2. Click the **Edit** button (indicated with a pencil icon) for the right store
+3. Enter a title, keywords, and description values for the store homepage
+4. Click the **Update** button at the bottom of the page
+
+To set the title, meta keywords, and description for each store **category page (PLP)**, in the admin panel:
+
+1. Go to **Products > Taxonomies**
+2. Go into the Categories list by pressing the **Edit** button (pencil icon)
+3. Pick the category you’d like to edit by right-clicking (control + click on a Mac) a child in the tree to access the menu for adding, deleting or sorting a child.
+4. Click the **Edit** link for that category
+5. Replace the default values for title, meta keywords, and description with your own
+6. Click the **Update** button at the bottom of the page
+
+You’ll have to edit every category and subcategory to your liking in a similar fashion.
+
+To set the title, meta keywords and description for each **product page (PDP)**, in the admin panel:
+
+1. Go to **Products > Products**
+2. In the product list pick the right one by pressing the **Edit** button (pencil icon)
+3. While in the Details tab, scroll down and input your values for the title, meta keywords, and description
+4. Click the **Update** button at the bottom of the page
+
+### Social sharing and search preview
+
+The new Spree UX has the following social sharing features implemented:
+
+* Facebook sharing with [Open Graph tags](https://ogp.me/) to enable an attractive page preview
+* Google visibility with structured data using [Schema.org](http://schema.org/) with [JSON-DL](https://json-ld.org/)
+
+Feel free to [test the Open Graph tags implementation](https://developers.facebook.com/tools/debug/) and the also [test the Schema.org implementation](https://search.google.com/structured-data/testing-tool/u/0/) for your store.

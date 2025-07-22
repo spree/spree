@@ -1,0 +1,34 @@
+---
+title: Upgrading to Spree 5.1
+description: This guide covers upgrading a Spree 5.0 application to Spree 5.1.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.0](/developer/upgrades/4.10-to-5.0)
+</Info>
+
+## Upgrade steps
+
+<AccordionGroup>
+  <Accordion title="1. Update gems">
+
+    ```bash
+    bundle update
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+
+  <Accordion title="3. Migrate admin user accounts to the new system">
+    Spree 5.1 introduces a new better way of managing admin user accounts. To ensure your existing admin user accounts are migrated to the new system, run the following command:
+
+    ```bash
+    bin/rake db:migrate_admin_users_to_role_users
+    ```
+  </Accordion>
+</AccordionGroup>

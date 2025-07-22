@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Money do
+  let(:store) { @default_store }
   let(:money)    { described_class.new(10) }
   let(:currency) { Money::Currency.new('USD') }
 
@@ -72,7 +73,7 @@ describe Spree::Money do
 
   context 'JPY' do
     before do
-      Spree::Store.default.update!(default_currency: 'JPY')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('JPY')
     end
 
     it 'formats correctly' do
@@ -83,7 +84,7 @@ describe Spree::Money do
 
   context 'DKK' do
     before do
-      Spree::Store.default.update!(default_currency: 'DKK')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('DKK')
     end
 
     it 'formats correctly' do
@@ -94,7 +95,7 @@ describe Spree::Money do
 
   context 'EUR' do
     before do
-      Spree::Store.default.update(default_currency: 'EUR')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('EUR')
     end
 
     # Regression test for #2634
@@ -118,7 +119,7 @@ describe Spree::Money do
 
   context 'Money formatting rules' do
     before do
-      Spree::Store.default.update!(default_currency: 'EUR')
+      allow_any_instance_of(Spree::Store).to receive(:default_currency).and_return('EUR')
     end
 
     after do

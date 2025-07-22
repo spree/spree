@@ -4,23 +4,20 @@
 source 'https://rubygems.org'
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
-gem 'rails', ENV.fetch('RAILS_VERSION', '~> 7.2.0'), require: false
+gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.0.0'), require: false
 
 platforms :jruby do
   gem 'jruby-openssl'
 end
 
 platforms :ruby do
-  if ENV['DB'] == 'mysql'
-    gem 'mysql2'
-  elsif ENV['DB'] == 'postgres'
-    gem 'pg'
-  else
-    gem 'sqlite3', '~> 1.4'
-  end
+  gem 'mysql2' if ENV['DB'] == 'mysql' || ENV['CI']
+  gem 'pg' if ENV['DB'] == 'postgres' || ENV['CI']
+
+  gem 'sqlite3', '>= 2.0'
 end
 
-gem 'sprockets-rails', '>= 2.0.0'
+gem 'sprockets-rails', '>= 3.5.2'
 
 group :test do
   gem 'capybara'
@@ -37,16 +34,20 @@ group :test do
   gem 'rswag-specs'
   gem 'jsonapi-rspec'
   gem 'simplecov'
+  gem 'stackprof'
   gem 'webmock'
   gem 'timecop'
+  gem 'test-prof'
   gem 'rails-controller-testing'
 end
 
 group :test, :development do
   gem 'awesome_print'
   gem 'brakeman'
+  gem 'bundler-audit'
   gem 'gem-release'
   gem 'i18n-tasks'
+  gem 'license_finder'
   gem 'rubocop', '~> 1.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
@@ -55,6 +56,7 @@ group :test, :development do
 end
 
 group :development do
+  gem 'importmap-rails'
   # gem 'github_fast_changelog'
   gem 'solargraph'
   gem 'ruby-lsp'

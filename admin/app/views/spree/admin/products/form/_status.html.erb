@@ -1,0 +1,52 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:status) %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-6">
+        <div class="form-group">
+          <%= f.label :status, Spree.t(:status) %>
+          <%= help_bubble(Spree.t('admin.products.status_form.status')) if show_product_status_help_bubble? %>
+          <% select_html = { 
+                            data: {
+                              controller: 'autocomplete-select',
+                              action: 'change->product-form#switchAvailabilityDatesFields',
+                              'product-form-target': 'status'
+                            } 
+          } %>
+          <%= f.select(:status, available_status_options(@product), { selected: @product.status }, select_html) %>
+          <%= f.error_message_on :status %>
+        </div>
+      </div>
+      <div class="col-6 <% if @product.active? %>d-none<% end %>" data-product-form-target="makeActiveAt">
+        <% if can?(:activate, @product) %>
+          <div class="form-group">
+            <%= f.label :make_active_at, Spree.t(:make_active_at) %>
+            <%= help_bubble(Spree.t('admin.products.status_form.make_active_at')) %>
+            <%= f.error_message_on :make_active_at %>
+            <%= f.datetime_field :make_active_at, class: 'form-control', max: @product.discontinue_on %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="row">
+      <div data-product-form-target="availableOn" class="col-6">
+        <div class="form-group">
+          <%= f.label :available_on, Spree.t(:available_on) %>
+          <%= help_bubble(Spree.t('admin.products.status_form.available_on')) %>
+          <%= f.error_message_on :available_on %>
+          <%= f.datetime_field :available_on, class: 'form-control', max: @product.discontinue_on %>
+        </div>
+      </div>
+      <div data-product-form-target="discontinueOn" class="col-6">
+        <div class="form-group">
+          <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
+          <%= help_bubble(Spree.t('admin.products.status_form.discontinue_on')) %>
+          <%= f.error_message_on :discontinue_on %>
+          <%= f.datetime_field :discontinue_on, class: 'form-control', min: @product.make_active_at %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

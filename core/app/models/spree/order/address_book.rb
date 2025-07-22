@@ -1,13 +1,15 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module AddressBook
       def clone_shipping_address
-        self.bill_address_id = ship_address_id if ship_address_id
+        self.bill_address = ship_address if ship_address
+        user.bill_address = ship_address if should_assign_user_default_address?(ship_address)
         true
       end
 
       def clone_billing_address
-        self.ship_address_id = bill_address_id if bill_address_id
+        self.ship_address = bill_address if bill_address
+        user.ship_address = bill_address if should_assign_user_default_address?(bill_address)
         true
       end
 
@@ -23,12 +25,7 @@ module Spree
 
       def bill_address_attributes=(attributes)
         self.bill_address = update_or_create_address(attributes)
-
-        if should_assign_user_default_address?(bill_address)
-          user_old_address = user&.bill_address
-          user_old_address&.delete unless user_old_address&.valid?
-          user&.update(bill_address: bill_address)
-        end
+        user.bill_address = bill_address if should_assign_user_default_address?(bill_address)
       end
 
       def ship_address_id=(id)
@@ -43,12 +40,8 @@ module Spree
 
       def ship_address_attributes=(attributes)
         self.ship_address = update_or_create_address(attributes)
-
-        if should_assign_user_default_address?(ship_address)
-          user_old_address = user&.ship_address
-          user_old_address&.delete unless user_old_address&.valid?
-          user&.update(ship_address: ship_address)
-        end
+        user.ship_address = ship_address if should_assign_user_default_address?(ship_address)
+        self.ship_address = nil if quick_checkout_address?(attributes[:quick_checkout]) && !ship_address.persisted?
       end
 
       private
@@ -78,7 +71,7 @@ module Spree
       end
 
       def find_existing_address(attributes)
-        address_attributes = attributes.except(:firstname, :state_name)
+        address_attributes = attributes.except(:state_name)
         state_name = attributes[:state_name]
 
         scope = Spree::Address.not_deleted.where(address_attributes)
@@ -86,8 +79,12 @@ module Spree
         scope.first
       end
 
+      def quick_checkout_address?(quick_checkout_param)
+        quick_checkout_param.present? ? quick_checkout_param.to_b : false
+      end
+
       def should_assign_user_default_address?(address)
-        address.present? && address.valid?
+        user.present? && address.present? && address.valid? && address.user == user && !address.quick_checkout?
       end
     end
   end

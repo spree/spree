@@ -1,5 +1,5 @@
 module Spree
-  class ShippingMethod < Spree::Base
+  class ShippingMethod < Spree.base_class
     acts_as_paranoid
     include Spree::CalculatedAdjustments
     include Spree::Metadata
@@ -11,13 +11,13 @@ module Spree
       include Spree::VendorConcern
     end
 
+    extend Spree::DisplayMoney
+
     # Used for #refresh_rates
     DISPLAY_ON_FRONT_END = 1
     DISPLAY_ON_BACK_END = 2
 
     default_scope { where(deleted_at: nil) }
-
-    scope :with_calculator, ->(calculator) { joins(:calculator).where(calculator: { type: calculator.to_s }) }
 
     has_many :shipping_method_categories, dependent: :destroy
     has_many :shipping_categories, through: :shipping_method_categories
@@ -31,15 +31,27 @@ module Spree
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
     validates :name, :display_on, presence: true
-
+    validates :estimated_transit_business_days_min, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
+    validates :estimated_transit_business_days_max, numericality: { greater_than_or_equal_to: 1 }, allow_nil: true
     validate :at_least_one_shipping_category
 
+    scope :digital, lambda {
+                      joins(:calculator).where(spree_calculators: { type: Spree::Calculator::Shipping::DigitalDelivery.to_s })
+                    }
+
+    scope :search_by_name, ->(query) { where(arel_table[:name].lower.matches("%#{query}%")) }
+
     def include?(address)
+      return true unless requires_zone_check?
       return false unless address
 
       zones.includes(:zone_members).any? do |zone|
         zone.include?(address)
       end
+    end
+
+    def requires_zone_check?
+      !calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     def build_tracking_url(tracking)
@@ -72,6 +84,38 @@ module Spree
     def available_to_display?(display_filter)
       (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
         (backend? && display_filter == DISPLAY_ON_BACK_END)
+    end
+
+    def delivery_range
+      return unless estimated_transit_business_days_min || estimated_transit_business_days_max
+
+      if estimated_transit_business_days_min == estimated_transit_business_days_max
+        estimated_transit_business_days_min.to_s
+      else
+        [estimated_transit_business_days_min, estimated_transit_business_days_max].compact.join("-")
+      end
+    end
+
+    def display_estimated_price
+      return unless calculator
+
+      @display_estimated_price ||= begin
+        calculator.description + ': ' +
+
+        if calculator.is_a?(Spree::Calculator::Shipping::FlatRate)
+          if calculator.preferred_amount == 0
+            Spree.t(:free)
+          else
+            Spree::Money.new(calculator.preferred_amount, { currency: calculator.preferred_currency }).to_s
+          end
+        elsif calculator.is_a?(Spree::Calculator::Shipping::FlexiRate)
+          Spree::Money.new(calculator.preferred_first_item, { currency: calculator.preferred_currency }).to_s
+        elsif calculator.is_a?(Spree::Calculator::Shipping::FlatPercentItemTotal)
+          ActionController::Base.helpers.number_to_percentage(calculator.preferred_flat_percent, precision: 2)
+        else
+          ''
+        end
+      end
     end
 
     private

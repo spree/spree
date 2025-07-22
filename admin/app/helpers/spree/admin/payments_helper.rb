@@ -11,20 +11,8 @@ module Spree
         end
       end
 
-      def payment_method_icon_tag(payment_method, opts = {})
-        image_tag "payment_icons/#{payment_method}.svg", opts
-      rescue Sprockets::Rails::Helper::AssetNotFound
-      end
-
-      def payment_source_name(payment)
-        return if payment.source.blank?
-
-        source_class = payment.source.class
-        if source_class.respond_to?(:display_name)
-          source_class.display_name
-        else
-          source_class.name.demodulize.split(/(?=[A-Z])/).join(' ')
-        end
+      def available_payment_methods
+        @available_payment_methods ||= Spree::PaymentMethod.providers.map { |provider| provider.name.constantize.new }.delete_if { |payment_method| !payment_method.show_in_admin? || current_store.payment_methods.pluck(:type).include?(payment_method.type) }.sort_by(&:name)
       end
     end
   end

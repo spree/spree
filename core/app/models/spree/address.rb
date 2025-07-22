@@ -1,20 +1,13 @@
 module Spree
-  class Address < Spree::Base
+  class Address < Spree.base_class
     require 'validates_zipcode'
 
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
-    if defined?(Spree::Security::Addresses)
-      include Spree::Security::Addresses
-    end
 
-    if Rails::VERSION::STRING >= '7.1.0'
-      serialize :preferences, type: Hash, coder: YAML, default: {}
-    else
-      serialize :preferences, Hash, default: {}
-    end
+    serialize :preferences, type: Hash, coder: YAML, default: {}
 
     NO_ZIPCODE_ISO_CODES ||= [
       'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
@@ -34,6 +27,11 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
+
+    if defined?(Spree::Security::Addresses)
+      include Spree::Security::Addresses
+    end
 
     scope :not_deleted, -> { where(deleted_at: nil) }
 
@@ -41,13 +39,22 @@ module Spree
       joins(:state).merge(Spree::State.where(name: state_name).or(Spree::State.where(abbr: state_name)))
     }
 
+    scope :not_quick_checkout, -> { where(quick_checkout: false) }
+
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
     belongs_to :user, class_name: Spree.user_class.name, optional: true, touch: true
 
     has_many :shipments, inverse_of: :address
 
+    after_initialize :set_default_values, if: -> { new_record? && user.present? }
+
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
+    before_validation :remove_emoji_and_normalize
+
+    after_create :set_user_attributes, if: -> { user.present? }
+
+    after_commit :async_geocode
 
     with_options presence: true do
       validates :firstname, :lastname, if: :require_name?
@@ -58,6 +65,7 @@ module Spree
     end
 
     validate :state_validate, :postal_code_validate
+    validate :address_validators, on: [:create, :update]
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
                                     scope: :user_id,
@@ -65,11 +73,15 @@ module Spree
                                     allow_blank: true,
                                     allow_nil: true }
 
+    def address_validators
+      Rails.application.config.spree.validators.addresses.each do |validator|
+        validates_with validator
+      end
+    end
+
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 
-    alias_attribute :first_name, :firstname
-    alias_attribute :last_name, :lastname
     alias_attribute :postal_code, :zipcode
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
@@ -87,6 +99,22 @@ module Spree
 
     def user_default_shipping?
       user.present? && id == user.ship_address_id
+    end
+
+    def first_name
+      firstname
+    end
+
+    def first_name=(value)
+      self.firstname = value
+    end
+
+    def last_name
+      lastname
+    end
+
+    def last_name=(value)
+      self.lastname = value
     end
 
     def full_name
@@ -153,15 +181,23 @@ module Spree
     end
 
     def require_zipcode?
-      country ? country.zipcode_required? : true
+      !quick_checkout && (country ? country.zipcode_required? : true)
     end
 
     def require_name?
-      true
+      !quick_checkout
+    end
+
+    def require_company?
+      false
     end
 
     def require_street?
-      true
+      !quick_checkout
+    end
+
+    def show_company_address_field?
+      Spree::Store.current.prefers_company_field_enabled?
     end
 
     def editable?
@@ -188,7 +224,27 @@ module Spree
       end
     end
 
+    def async_geocode
+      Spree::Addresses::GeocodeAddressJob.perform_later(id) if should_geocode?
+    end
+
+    def geocoder_address
+      @geocoder_address ||= [street, city, state_text, country.to_s].compact.map(&:strip).join(', ')
+    end
+
     private
+
+    def should_geocode?
+      Spree::Config[:geocode_addresses] && (
+        saved_changes.key?(:address1) || saved_changes.key?(:city) || saved_changes.key?(:state_id) || saved_changes.key?(:country_id)
+      )
+    end
+
+    def set_default_values
+      self.firstname ||= user.first_name
+      self.lastname ||= user.last_name
+      self.phone ||= user.phone
+    end
 
     def clear_state
       self.state = nil
@@ -204,6 +260,27 @@ module Spree
       elsif state_name.present? && !country.states_required? && country.states.empty?
         clear_state_name
       end
+    end
+
+    def remove_emoji_and_normalize
+      attributes_to_normalize = attributes.slice(*FIELDS_TO_NORMALIZE)
+      normalized_attributes = attributes_to_normalize.compact_blank.deep_transform_values do |value|
+        NormalizeString.remove_emoji_and_normalize(value.to_s).strip
+      end
+
+      normalized_attributes.transform_keys! { |key| key.gsub('original_', '') } if defined?(Spree::Security::Addresses)
+
+      assign_attributes(normalized_attributes)
+    end
+
+    def set_user_attributes
+      if user.name.blank?
+        user.first_name = firstname
+        user.last_name = lastname
+      end
+      user.phone = user.phone.presence || phone.presence
+
+      user.save! if user.changed?
     end
 
     def state_validate
@@ -265,7 +342,7 @@ module Spree
     end
 
     def assign_new_default_address_to_user_scope
-      user.addresses.reorder(created_at: :desc)
+      user.addresses.not_quick_checkout.reorder(created_at: :desc)
     end
   end
 end

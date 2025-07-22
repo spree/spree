@@ -4,7 +4,7 @@ describe Spree::Variants::OptionTypesPresenter do
   let(:option_type_1) { create :option_type, position: 2 }
   let(:option_type_2) { create :option_type, position: 1 }
 
-  let(:product) { create :product, option_types: [option_type_1, option_type_2], stores: [create(:store)] }
+  let(:product) { create :product, option_types: [option_type_1, option_type_2] }
   let(:product_2) { create :product, option_types: [option_type_1, option_type_2] }
 
   let!(:variant_0) { create :variant, product: product, option_values: [option_value_1_0, option_value_2_0] }
@@ -12,7 +12,7 @@ describe Spree::Variants::OptionTypesPresenter do
   let!(:variant_2) { create :variant, product: product, option_values: [option_value_1_2, option_value_2_1] }
   let!(:variant_3) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_1] }
 
-  let(:variants) { product.variants }
+  let(:variants) { product.reload.variants }
 
   let!(:option_value_1_0) { create :option_value, option_type: option_type_1, position: 0 }
   let!(:option_value_1_1) { create :option_value, option_type: option_type_1, position: 2 }

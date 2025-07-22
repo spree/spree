@@ -3,10 +3,28 @@ require 'spec_helper'
 describe Spree::Admin::ExportsController, type: :controller do
   stub_authorization!
 
-  let(:store) { Spree::Store.default }
+  render_views
+
+  let(:store) { @default_store }
+
+  describe '#index' do
+    let!(:export) { create(:product_export, store: store) }
+
+    subject { get :index }
+
+    it 'renders the index template' do
+      subject
+      expect(response).to render_template(:index)
+    end
+
+    it 'assigns the exports' do
+      subject
+      expect(assigns(:exports)).to eq([export])
+    end
+  end
 
   describe '#new' do
-    subject { get :new, params: { export: { type: 'Spree::Exports::Products', search_params: { name_cont: 'Product' }.as_json } } }
+    subject { get :new, params: { export: { type: 'Spree::Exports::Products', search_params: { name_cont: 'Product' }.to_json } } }
 
     it 'renders the new template' do
       expect(subject).to render_template(:new)
@@ -15,7 +33,7 @@ describe Spree::Admin::ExportsController, type: :controller do
     it 'assigns permitted params' do
       subject
       expect(assigns(:export).type).to eq('Spree::Exports::Products')
-      expect(assigns(:export).search_params).to eq({ 'name_cont' => 'Product' })
+      expect(assigns(:export).search_params).to eq({ 'name_cont' => 'Product' }.to_json)
     end
   end
 
@@ -29,7 +47,7 @@ describe Spree::Admin::ExportsController, type: :controller do
           format: 'csv',
           search_params: {
             name_cont: 'Product'
-          }.as_json,
+          }.to_json,
           record_selection: 'filtered'
         }
       }
@@ -41,7 +59,7 @@ describe Spree::Admin::ExportsController, type: :controller do
       export = Spree::Exports::Products.last
       expect(export.user).to eq(controller.try_spree_current_user)
       expect(export.format).to eq('csv')
-      expect(export.search_params).to eq({ 'name_cont' => 'Product' })
+      expect(export.search_params).to eq({ 'name_cont' => 'Product' }.to_json)
     end
 
     it 'sets a flash message' do

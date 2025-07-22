@@ -1,0 +1,9 @@
+<div class="form-group">
+  <%= label_tag "promotion_rule[taxon_ids_to_add][]", Spree.t('taxon_rule.choose_taxons') %>
+  <%= tom_select_tag "promotion_rule[taxon_ids_to_add][]", 
+    multiple: true, 
+    url: spree.admin_taxons_select_options_path, 
+    active_option: f.object.taxon_ids,
+    preloaded_options: f.object.taxons.pluck(:pretty_name, :id)
+  %>
+</div>

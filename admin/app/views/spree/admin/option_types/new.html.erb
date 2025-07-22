@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_option_types_path %>
+  <%= Spree.t(:new_option_type) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @option_type } %>
+
+<%= form_for [:admin, @option_type], data: { controller: 'nested-form', nested_form_wrapper_selector_value: '.nested-form-wrapper' } do |f| %>
+  <%= render 'form', f: f %>
+  <%= render 'spree/admin/shared/new_resource_links' %>
+<% end %>

@@ -185,16 +185,18 @@ describe Spree::Webhooks::Subscribers::HandleRequest do
         end
 
         it 'adds the event data to the body' do
-          with_webhooks_enabled do
-            allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
-            order.finalize!
-            expect(Spree::Webhooks::Subscribers::MakeRequest).to \
-              have_received(:new).
-              with(
-                signature: event_signature,
-                url: url,
-                webhook_payload_body: body_with_event_metadata
-              )
+          perform_enqueued_jobs(except: Spree::Addresses::GeocodeAddressJob) do
+            with_webhooks_enabled do
+              allow(Spree::Webhooks::Subscribers::MakeRequest).to receive(:new).and_call_original
+              order.finalize!
+              expect(Spree::Webhooks::Subscribers::MakeRequest).to \
+                have_received(:new).
+                with(
+                  signature: event_signature,
+                  url: url,
+                  webhook_payload_body: body_with_event_metadata
+                )
+            end
           end
         end
       end

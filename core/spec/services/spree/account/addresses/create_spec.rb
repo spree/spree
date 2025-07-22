@@ -145,7 +145,6 @@ module Spree
             country: ["can't be blank"],
             firstname: ["can't be blank"],
             lastname: ["can't be blank"],
-            phone: ["can't be blank"],
             zipcode: ["can't be blank"]
           )
         end

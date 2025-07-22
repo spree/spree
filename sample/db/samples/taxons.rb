@@ -1,7 +1,5 @@
 require 'csv'
 
-Spree::Sample.load_sample('taxonomies')
-
 ADDITIONAL_TAXONS = ['Bestsellers', 'Trending', 'Streetstyle', 'Summer Sale'].freeze
 
 SPECIAL_TAXONS = { 'New Collection': "Summer #{Date.today.year}", 'Special Offers': '30% Off' }.freeze

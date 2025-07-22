@@ -1,0 +1,24 @@
+<% if current_store.custom_domains.any? %>
+  <div class="table-responsive rounded mt-3 border">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:name) %></th>
+          <th>Active?</th>
+
+          <% unless entri_enabled? %>
+            <th>Default</th>
+            <th></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render collection: current_store.custom_domains, partial: 'spree/admin/custom_domains/custom_domain', cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
+    You don't have any custom domains set yet.
+  </div>
+<% end %>

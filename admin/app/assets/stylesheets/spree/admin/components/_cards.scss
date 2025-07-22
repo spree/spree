@@ -1,0 +1,125 @@
+.card {
+  > .table,
+  .table-responsive > .table {
+  	border-right: 0;
+  	border-left: 0;
+    margin-bottom: 0;
+
+    &:last-child, &:last-of-type {
+			border-bottom: 0;
+		}
+
+  	td:first-child,
+		th:first-child {
+			border-left: 0;
+		}
+
+  	td:last-child,
+		th:last-child {
+			border-right: 0;
+		}
+
+  	tr:first-child td,
+		tr:first-child th {
+			border-top: 0;
+		}
+
+  	tr:last-child td {
+			border-bottom: 0;
+		}
+	}
+
+  .card-header + .table,
+  .card-header + .table-responsive > .table {
+    border-top: 0;
+	}
+}
+
+.card .card {
+  border-radius: $border-radius;
+}
+
+.card-header, .card-footer {
+  background-color: transparent;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  border-bottom: 1px solid $gray-50;
+
+  .card-title {
+    margin-bottom: 0;
+    font-size: $font-size-plus;
+    font-weight: $font-weight-bold;
+    font-family: $font-family-sans-serif;
+  }
+}
+
+.card-footer.border-top, .card-body.border-top, .card .border-top, .card .border-bottom, .card .list-group-item  {
+  border-color: $gray-50 !important;
+}
+
+.card, .card-lg {
+  box-shadow: $card-box-shadow;
+  background-color: $card-bg;
+  border-radius: $border-radius-lg;
+}
+.card-lg {
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.card-text {
+  overflow-wrap: anywhere;
+}
+
+.card-body .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.card-header .arrow {
+  @extend .w-auto;
+  &:before {
+    transition: .3s transform ease-in-out;
+  }
+}
+.card-header .collapsed .arrow:before {
+  transform: rotate(-90deg);
+}
+
+.collapsable-card {
+  @extend .card;
+  @extend .overflow-hidden;
+
+  .card-header {
+    @extend .p-0;
+  }
+  .card-header a {
+    padding: 0.75rem !important;
+
+    .ti-chevron-down {
+      color: $gray-400;
+    }
+
+    &:hover {
+      text-decoration: none !important;
+
+      .ti-chevron-down {
+        color: $gray-900 !important;
+      }
+    }
+  }
+  &:hover {
+    .card-header a {
+      text-decoration: none !important;
+
+      .ti-chevron-down {
+        color: $gray-500;
+      }
+    }
+  }
+  .card-body {
+    border-top: 1px solid $gray-50;
+  }
+}

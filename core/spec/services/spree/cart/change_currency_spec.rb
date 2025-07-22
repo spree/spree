@@ -5,7 +5,11 @@ module Spree
     subject { described_class.call(order: order, new_currency: new_currency) }
 
     let(:order) { create(:order_with_line_items, store: store, currency: 'USD') }
-    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let(:store) { @default_store }
+
+    before do
+      allow(store).to receive(:supported_currencies).and_return('USD,EUR,GBP')
+    end
 
     context 'when switching to a supported currency' do
       let(:new_currency) { 'EUR' }

@@ -1,0 +1,41 @@
+<% content_for :page_actions_dropdown do %>
+  <%= link_to_edit_translations(@product) %>
+  <%= link_to_with_icon(
+    "files",
+    Spree.t(:digital_assets),
+    spree.admin_product_digital_assets_path(@product),
+    class: "dropdown-item",
+  ) if can?(:manage, Spree::Digital) %>
+
+  <%= render_admin_partials(:product_dropdown_partials, product: @product) %>
+
+  <div class="dropdown-divider"></div>
+
+  <%= external_page_preview_link(@product) %>
+
+  <% if can?(:clone, @product) %>
+    <%= link_to_with_icon(
+      "copy-check",
+      Spree.t(:clone),
+      spree.clone_admin_product_path(@product),
+      class: "dropdown-item",
+      data: {
+        turbo_method: :post,
+      },
+    ) %>
+  <% end %>
+<% end %>
+
+<%= render partial: "spree/admin/shared/error_messages",
+locals: {
+  target: @product,
+} %>
+
+<% content_for :page_title do %>
+  <%= render "spree/admin/products/edit_page_title" %>
+<% end %>
+
+<%= form_for [:admin, @product] do |f| %>
+  <%= render "form", f: f %>
+  <%= render "spree/admin/shared/edit_resource_links", f: f %>
+<% end %>

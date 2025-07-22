@@ -1,0 +1,2 @@
+<%= nav_item(Spree.t(:stock_items), spree.admin_stock_items_path) if can?(:manage, Spree::StockItem) %>
+<%= nav_item(Spree.t(:stock_transfers), spree.admin_stock_transfers_path) if can?(:manage, Spree::StockTransfer) %>

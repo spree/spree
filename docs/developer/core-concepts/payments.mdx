@@ -1,5 +1,6 @@
 ---
 title: Payments
+icon: "credit-card"
 ---
 
 ## Overview
@@ -54,9 +55,7 @@ Here's the list of attributes for the `Spree::Payment` model:
 
 ## Payment Methods
 
-Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment.
-
-There are also third-party extensions that provide support for some other interesting options such as [Spree Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero) for Braintree & PayPal payment methods.
+Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. Gateway providers such as Stripe, Braintree, and PayPal provide a wide range of payment methods, including credit cards, bank transfers, buy-now-pay-later, and digital wallets (Apple Pay, Google Pay, etc.).
 
 A `PaymentMethod` can have the following attributes:
 
@@ -70,7 +69,7 @@ A `PaymentMethod` can have the following attributes:
 | `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
 
 <Info>
-You can decide which Payment Method will appear on which Store. This allows you to create different experiences for your customers in different countries.
+Each payment method is associated to a Store, so you can decide which Payment Method will appear on which Store. This allows you to create different experiences for your customers in different countries.
 </Info>
 
 ## Payment Processing
@@ -166,10 +165,27 @@ payment.log_entries.first.details
 
 ## Supported Gateways
 
-Access to a number of payment gateways is handled with the usage of the [Spree Gateway](https://github.com/spree/spree_gateway) extension. This extension currently supports the following gateways:
+### Spree Team maintained gateways
+
+Spree team maintains several payment gateways integrations. All of these gateways are **fully PCI compliant**, using native gateway SDKs/UIs, meaning no sensitive data is stored or processed through Spree.
+
+<Card title="Stripe" href="/integrations/payments/stripe" icon="link">
+  Stripe integration, supports all Stripe payment methods, including credit cards, bank transfers, Apple Pay, Google Pay, Klarna, Afterpay, and more. Also supports quick checkout.
+</Card>
+
+<Card title="Adyen">
+  We're working on this, stay tuned! If you want to know more, please reach out to us via email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+</Card>
+
+<Card title="PayPal" href="/integrations/payments/paypal" icon="link">
+  Native PayPal integration, supports PayPal, PayPal Credit, and PayPal Pay Later.
+</Card>
+
+### Community maintained gateways
+
+There are also community-maintained extensions for other payment gateways combined in the [Spree Gateway](https://github.com/spree/spree_gateway) gem. This gem currently supports the following gateways:
 
 * Authorize.net
-* Apple Pay via Stripe
 * BanWire
 * Bambora previously Beanstream
 * Braintree
@@ -187,7 +203,6 @@ Access to a number of payment gateways is handled with the usage of the [Spree G
 * sage Pay
 * SecurePay
 * Spreedly
-* Stripe with Stripe Elements
 * USAePay
 * Worldpay previously Cardsave
 
@@ -215,10 +230,6 @@ Rails.application.config.after_initialize do
   Rails.application.config.spree.payment_methods << FancyPaymentMethod
 end
 ```
-
-<Info>
-[Spree Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero) is a good example of a standalone custom gateway.
-</Info>
 
 ## Payment Method visibility
 

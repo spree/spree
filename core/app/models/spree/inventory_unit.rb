@@ -1,5 +1,6 @@
 module Spree
-  class InventoryUnit < Spree::Base
+  class InventoryUnit < Spree.base_class
+    extend Spree::DisplayMoney
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
@@ -29,6 +30,8 @@ module Spree
     end
 
     validates :quantity, numericality: { greater_than: 0 }
+
+    money_methods :charged_amount
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
@@ -113,6 +116,14 @@ module Spree
       original_return_item_id?
     end
 
+    def charged_amount
+      percentage_of_line_item * line_item.pre_tax_amount
+    end
+
+    def percentage_of_line_item
+      quantity / BigDecimal(line_item.quantity)
+    end
+
     private
 
     def allow_ship?
@@ -122,10 +133,6 @@ module Spree
     def fulfill_order
       reload
       order.fulfill!
-    end
-
-    def percentage_of_line_item
-      quantity / BigDecimal(line_item.quantity)
     end
 
     def current_return_item

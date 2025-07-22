@@ -8,20 +8,17 @@ module Spree
           if defined?(helper_method)
             helper_method :current_store
             helper_method :current_price_options
-            helper_method :available_menus
           end
+
+          prepend_before_action :raise_record_not_found_if_store_is_not_found
         end
 
         def current_store
           @current_store ||= current_store_finder.new(url: request.env['SERVER_NAME']).execute
         end
 
-        def available_menus
-          @available_menus ||= current_store.menus
-        end
-
         def store_locale
-          current_store.default_locale
+          @store_locale ||= current_store.default_locale
         end
 
         def ensure_current_store(object)
@@ -68,6 +65,16 @@ module Spree
 
         def current_store_finder
           Spree::Dependencies.current_store_finder.constantize
+        end
+
+        def raise_record_not_found_if_store_is_not_found
+          return if skip_store_lookup?
+
+          raise ActiveRecord::RecordNotFound if current_store.nil?
+        end
+
+        def skip_store_lookup?
+          Spree.root_domain.present? && Spree.root_domain.include?(request.env['SERVER_NAME'])
         end
       end
     end

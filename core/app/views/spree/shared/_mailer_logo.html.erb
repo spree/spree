@@ -1,0 +1,41 @@
+<% logo ||= current_store.mailer_logo.attached? ? current_store.mailer_logo : current_store.logo %>
+<% height ||= 64 %>
+<% logo_css ||= '' %>
+
+<%= link_to current_store.url_or_custom_domain, id: 'site-logo', style: "text-decoration: none;" do %>
+  <span style="display: none;"><%= current_store.name %></span>
+  <% if logo.present? && logo.attached? && logo.variable? %>
+    <% aspect_ratio = spree_asset_aspect_ratio(logo) %>
+    <% logo_style = "aspect-ratio: #{aspect_ratio};" %>
+
+    <% if aspect_ratio.to_f > 10 %>
+      <% logo_height = 16 %>
+    <% elsif aspect_ratio.to_f > 5 %>
+      <% logo_height = 25 %>
+    <% elsif aspect_ratio.to_f < 3 %>
+      <% logo_height = 32 %>
+    <% else %>
+      <% logo_height = 32 %>
+    <% end %>
+
+    <% if defined?(height) && height > 0 %>
+      <% logo_style += "height: #{height}px;" %>
+      <% cdn_height = height %>
+    <% elsif aspect_ratio.to_f < 3 %>
+      <% cdn_height = 64 %>
+      <% logo_style += "height: 64px;" %>
+    <% else %>
+      <% cdn_height = 32 %>
+      <% logo_style += "height: 32px;" %>
+    <% end %>
+
+    <% variant_options = spree_image_variant_options(resize_to_fit: [nil, cdn_height * 3]) %>
+
+    <%= image_tag main_app.cdn_image_url(logo.variant(variant_options)), 
+          style: "#{logo_style} width: auto;", 
+          alt: current_store.name,
+          height: cdn_height %>
+  <% else %>
+    <h1 style="margin: 0; font-size: 22px; font-weight: bold; text-align: center; text-transform: uppercase;"><%= current_store.name %></h1>
+  <% end %>
+<% end %>

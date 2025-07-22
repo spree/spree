@@ -11,6 +11,27 @@ module Spree
       end
 
       def apply
+        if load_gift_card_code
+
+          if @gift_card.expired?
+            set_error_code :gift_card_expired
+            return self
+          elsif @gift_card.redeemed?
+            set_error_code :gift_card_already_redeemed
+            return self
+          end
+
+          result = order.apply_gift_card(@gift_card)
+
+          if result.success?
+            set_success_code(:gift_card_applied)
+          else
+            set_error_code(result.value, result.error.value || {})
+          end
+
+          return self
+        end
+
         if order.coupon_code.present?
           if promotion.present? && promotion.actions.exists?
             handle_present_promotion
@@ -26,6 +47,18 @@ module Spree
       end
 
       def remove(coupon_code)
+        if order.gift_card
+          result = order.remove_gift_card
+
+          if result.success?
+            set_success_code(:gift_card_removed)
+          else
+            set_error_code(result.value)
+          end
+
+          return self
+        end
+
         promotion = order.promotions.with_coupon_code(coupon_code)
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
@@ -59,12 +92,28 @@ module Spree
         @error = Spree.t(code, locale_options)
       end
 
+      # Returns the promotion for the order
+      #
+      # @return [Spree::Promotion]
       def promotion
         @promotion ||= store.promotions.active.includes(
           :promotion_rules, :promotion_actions
         ).with_coupon_code(order.coupon_code)
       end
 
+      # Returns the amount of adjustments for the promotion
+      #
+      # @return [Numeric]
+      def adjustments_amount
+        @adjustments_amount ||=
+          @order.all_adjustments.promotion.eligible.
+          where(source: promotion&.actions).
+          sum(:amount)
+      end
+
+      # Returns true if the code was applied successfully
+      #
+      # @return [Boolean]
       def successful?
         success.present? && error.blank?
       end
@@ -162,6 +211,12 @@ module Spree
 
       def handle_coupon_code(discount, coupon_code)
         discount.source.promotion.coupon_codes.unused.find_by(code: coupon_code)&.apply_order!(order)
+      end
+
+      def load_gift_card_code
+        return unless order.coupon_code.present?
+
+        @gift_card = order.store.gift_cards.find_by(code: order.coupon_code.downcase)
       end
     end
   end

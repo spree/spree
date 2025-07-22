@@ -1,12 +1,12 @@
 <h1>
-  <%= Spree.t('export_mailer.greeting', user_name: @export.user&.firstname) %>
+  <%= Spree.t('export_mailer.greeting', user_name: @export.user&.first_name) %>
 </h1>
 <p>
   <%= Spree.t('export_mailer.export_done.message') %>
 </p>
 <% if spree.respond_to?(:admin_export_url) %>
   <p>
-    <%= link_to @export.attachment.filename, spree.admin_export_url(@export) %>
+    <%= link_to @export.attachment.filename, spree.admin_export_url(@export, host: @current_store.formatted_url) %>
   </p>
 <% end %>
 <p>

@@ -1,0 +1,87 @@
+<div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t(:general_information) %></h5>
+    </div>
+    <div class="card-body" data-controller="slug-form">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :presentation, raw(Spree.t(:presentation) + required_span_tag) %>
+            <%= f.text_field :presentation, class: "form-control", required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
+            <%= f.error_message_on :presentation %>
+            <p class="text-muted form-text mt-2 mb-0">
+              This is used to display the option type on the storefront.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :name, Spree.t(:internal_name) %>
+            <%= f.text_field :name, class: "form-control", data: { slug_form_target: :url } %>
+            <%= f.error_message_on :name %>
+            <p class="text-muted form-text mt-2 mb-0">
+              This is used internally to identify the option type. <strong>It must be unique.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="form-group">
+            <div class="custom-control custom-checkbox mb-3">
+              <%= f.check_box :filterable, class: "custom-control-input", id: "option_type_filterable" %>
+              <%= f.label :filterable, Spree.t(:filterable), class: "custom-control-label", for: "option_type_filterable" %>
+            </div>
+            <small class="form-text text-muted">
+              <%= raw Spree.t('option_type_filterable_info') %>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <template data-nested-form-target="template">
+    <%= f.fields_for :option_values, Spree::OptionValue.new, child_index: 'NEW_RECORD' do |option_value_form| %>
+      <%= render "option_value_fields", f: option_value_form %>
+    <% end %>
+  </template>
+
+  <div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title"><%= Spree.t(:option_values) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr class="border-bottom">
+              <th></th>
+              <th><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
+              <th><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="option_values" data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="option_value" data-sortable-response-kind-value="turbo-stream">
+            <% @option_type.option_values.build if @option_type.option_values.empty? %>
+            <%= f.fields_for :option_values do |option_value_form| %>
+              <%= render partial: 'option_value_fields', locals: { f: option_value_form, option_type: @option_type } %>
+            <% end %>
+
+            <!-- Inserted elements will be injected before that target. -->
+            <tr data-nested-form-target="target"></tr>
+
+            <tr class="hover-none">
+              <td colspan="4" class="text-center p-2">
+                <button type="button" data-action="nested-form#add" class="btn btn-link py-3 w-100" id="add_option_value_button">
+                  <%= icon('plus') %>
+                  <%= Spree.t(:add_one) %>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

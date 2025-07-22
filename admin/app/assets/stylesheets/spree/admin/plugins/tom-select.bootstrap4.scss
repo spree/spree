@@ -1,0 +1,220 @@
+/**
+ * Tom Select bootstrap 4
+ */
+
+//Import Boostrap 4 functions and variables
+
+$state-valid: map-get($form-validation-states,'valid') !default;
+$state-invalid: map-get($form-validation-states,'invalid') !default;
+
+$enable-shadows: true !default;
+$select-font-family: inherit !default;
+$select-font-size: $input-font-size !default;
+$select-line-height: $input-btn-line-height !default; //formerly line-height-computed
+
+$select-color-text: gray("800") !default; //$gray-800
+$select-color-highlight: rgba(255,237,40,0.4) !default;
+$select-color-input: $input-bg !default;
+$select-color-input-full: $input-bg !default;
+$select-color-input-error: map-get($state-invalid,'color') !default;
+$select-color-input-error-focus: darken($select-color-input-error, 10%) !default;
+$select-color-disabled: $input-disabled-bg !default;
+$select-color-item: #efefef !default;
+$select-color-item-border: $border-color !default;
+$select-color-item-active: $component-active-bg !default;
+$select-color-item-active-text: #fff !default;
+$select-color-item-active-border: rgba(0,0,0,0) !default;
+$select-color-optgroup: $dropdown-bg !default;
+$select-color-optgroup-text: $dropdown-header-color !default;
+$select-color-optgroup-border: $dropdown-divider-bg !default;
+$select-color-dropdown: $dropdown-bg !default;
+$select-color-dropdown-border-top: mix($input-border-color, $input-bg, 0.8) !default;
+$select-color-dropdown-item-active: $gray-50 !default;
+$select-color-dropdown-item-active-text: $gray-900 !default;
+$select-color-dropdown-item-create-active-text: $gray-900 !default;
+$select-opacity-disabled: 0.5 !default;
+
+$select-border: 1px solid $input-border-color !default;
+$select-border-radius: $input-border-radius !default;
+
+$select-width-item-border: 0px !default;
+$select-padding-x: $input-btn-padding-x !default;
+$select-padding-y: $input-btn-padding-y !default;
+$select-padding-dropdown-item-x: $input-btn-padding-x !default;
+$select-padding-dropdown-item-y: 3px !default;
+$select-padding-item-x: 5px !default;
+$select-padding-item-y: 1px !default;
+$select-margin-item-x: 3px !default;
+$select-margin-item-y: 3px !default;
+
+$select-arrow-size: 5px !default;
+$select-arrow-color: $select-color-text !default;
+$select-arrow-offset: calc(#{$select-padding-x} + 5px) !default;
+
+
+@import "tom-select";
+@include ts-caret();
+
+.#{$select-ns}-wrapper.form-control,
+.#{$select-ns}-wrapper.form-select{
+	padding:0 !important;
+}
+
+.#{$select-ns}-dropdown,
+.#{$select-ns}-dropdown.form-control {
+	height: auto;
+	padding: 0;
+	z-index: $zindex-dropdown;
+	background: $select-color-dropdown;
+	border: 1px solid $dropdown-border-color; //$dropdown-fallback-border
+	border-radius: $border-radius-lg;
+	box-shadow: 0 6px 12px rgba(0,0,0,.175);
+	top: 110%;
+}
+
+.#{$select-ns}-dropdown {
+	.optgroup-header {
+		font-size: $font-size-sm;
+		line-height: $line-height-base;
+	}
+	.optgroup:first-child:before {
+		display: none;
+	}
+	.optgroup:before {
+		content: ' ';
+		display: block;
+		height: 0;
+		margin: $dropdown-divider-margin-y 0;
+		overflow: hidden;
+		border-top: 1px solid $dropdown-divider-bg;
+		margin-left: $select-padding-dropdown-item-x * -1;
+		margin-right: $select-padding-dropdown-item-x * -1;
+	}
+
+	.create {
+		padding-left: $select-padding-dropdown-item-x;
+	}
+}
+
+.#{$select-ns}-dropdown-content {
+	padding: 5px 0;
+}
+
+.#{$select-ns}-control {
+	min-height: $input-height;
+	@include box-shadow($input-box-shadow);
+	@include transition($input-transition);
+	display:flex;
+	align-items: center;
+
+	.focus & {
+		border-color: $input-focus-border-color;
+		outline: 0;
+		@if $enable-shadows {
+			box-shadow: $input-box-shadow, $input-focus-box-shadow;
+		} @else {
+			box-shadow: $input-focus-box-shadow;
+		}
+	}
+}
+
+.is-invalid .#{$select-ns}-control,
+.was-validated .invalid .#{$select-ns}-control{
+	border-color: $select-color-input-error;
+
+	.focus & {
+		border-color: $select-color-input-error-focus;
+		box-shadow: 0 0 0 $input-focus-width rgba($select-color-input-error, .25);
+	}
+}
+
+.is-valid .#{$select-ns}-control{
+	$_color: map-get($state-valid,'color');
+	//$_icon: map-get($state-valid,'icon');
+
+	border-color: $_color;
+
+	.focus & {
+		border-color: $_color;
+		box-shadow: 0 0 0 $input-focus-width rgba($_color, .25);
+	}
+}
+
+.#{$select-ns}-wrapper {
+
+	.input-group-sm > &,
+	&.form-control-sm{
+
+		.#{$select-ns}-control{
+			min-height: $input-height-sm;
+			padding: 0 .75rem;
+			//padding: $input-padding-y-sm $input-padding-x-sm;
+			@include border-radius($input-border-radius-sm);
+			@include font-size($input-font-size-sm);
+		}
+
+		&.has-items .#{$select-ns}-control{
+			min-height: $input-height-sm !important;
+			font-size: $input-font-size-sm;
+			padding-bottom: 0;
+		}
+	}
+
+
+	.input-group-sm > &.multi.has-items,
+	&.form-control-sm.multi.has-items{
+		.#{$select-ns}-control{
+			// padding-top = ($input-height-sm - border-width - item-height) / 2;
+			// item-height = ($select-line-height * $input-font-size-sm) + ($select-padding-item-y * 2)
+			$border-and-padding: add($input-border-width,$select-padding-item-y) * 2;
+			$ts-select-padding-sm: calc( (#{$input-height-sm} - (#{$select-line-height} * #{$input-font-size-sm}) - #{$border-and-padding})/2);
+			padding-top: $ts-select-padding-sm !important;
+		}
+	}
+
+
+	&.multi {
+		&.has-items .#{$select-ns}-control {
+			padding-left: calc(#{$select-padding-x} - #{$select-padding-item-x});
+			--ts-pr-min: calc(#{$select-padding-x} - #{$select-padding-item-x});
+		}
+		.#{$select-ns}-control > div {
+			border-radius: calc(#{$select-border-radius} - 1px);
+		}
+	}
+
+	.input-group-lg > & >,
+	&.form-control-lg{
+	.#{$select-ns}-control{
+			min-height: $input-height-lg;
+			@include border-radius($input-border-radius-lg);
+			@include font-size($input-font-size-lg);
+		}
+	}
+}
+
+.form-control.#{$select-ns}-wrapper {
+	padding: 0;
+	height: auto;
+	border: none;
+	background: none;
+	//box-shadow: none;
+	border-radius: 0;
+}
+
+.input-group{
+
+	& > .#{$select-ns}-wrapper{
+		flex-grow: 1;
+	}
+
+	& > .#{$select-ns}-wrapper:not(:nth-child(2)) > .#{$select-ns}-control{
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+
+	& > .#{$select-ns}-wrapper:not(:last-child) > .#{$select-ns}-control{
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+	}
+}

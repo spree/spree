@@ -6,7 +6,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   let!(:promo_category) { create(:promotion_category) }
   let!(:calculator) { create(:calculator) }
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:store_2) { create(:store) }
   let!(:promotion) do
     create(:promotion_with_item_total_rule,
@@ -27,7 +27,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
   end
 
   describe '#duplicate' do
-    let(:new_promotion) { subject.duplicate }
+    let!(:new_promotion) { subject.duplicate }
 
     context 'model fields' do
       let(:excluded_fields) { ['code', 'name', 'path', 'id', 'created_at', 'updated_at', 'deleted_at'] }
@@ -54,7 +54,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
 
       it "promotion rule's fields (except promotion_id) are the same" do
         old_rule = promotion.promotion_rules.first
-        new_rule = new_promotion.promotion_rules.first
+        new_rule = new_promotion.reload.promotion_rules.first
 
         old_rule.attributes.each_key do |key|
           expect(old_rule.send(key)).to eq new_rule.send(key) unless excluded_fields.include?(key)

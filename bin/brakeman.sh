@@ -1,7 +1,9 @@
 #!/bin/sh
 
-set -euxo pipefail
+set -eux
 
-./bin/build-ci.rb install
-bundle exec brakeman -p api/ --ignore-config api/brakeman.ignore --skip-files app/controllers/spree/api/v1/ --exit-on-warn --exit-on-error
-bundle exec brakeman -p core/ --ignore-config core/brakeman.ignore --exit-on-warn --exit-on-error
+bundle exec brakeman -p api/ --exit-on-warn --exit-on-error -o brakeman-api.html -o brakeman-api.json
+bundle exec brakeman -p core/ --exit-on-warn --exit-on-error -o brakeman-core.html -o brakeman-core.json
+bundle exec brakeman -p storefront/ --exit-on-warn --exit-on-error -o brakeman-storefront.html -o brakeman-storefront.json
+bundle exec brakeman -p admin/ --exit-on-warn --exit-on-error -o brakeman-admin.html -o brakeman-admin.json
+bundle exec brakeman -p emails/ --exit-on-warn --exit-on-error -o brakeman-emails.html -o brakeman-emails.json

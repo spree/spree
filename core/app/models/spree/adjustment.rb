@@ -21,7 +21,7 @@
 # total. This allows an adjustment to be preserved if it becomes ineligible so
 # it might be reinstated.
 module Spree
-  class Adjustment < Spree::Base
+  class Adjustment < Spree.base_class
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
       belongs_to :source

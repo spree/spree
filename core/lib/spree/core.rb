@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'action_controller/railtie'
 require 'action_view/railtie'
 require 'active_job/railtie'
@@ -16,25 +17,40 @@ require 'acts-as-taggable-on'
 require 'auto_strip_attributes'
 require 'awesome_nested_set'
 require 'cancan'
+require 'countries/global'
 require 'friendly_id'
 require 'kaminari'
 require 'monetize'
 require 'mobility'
+require 'name_of_person'
 require 'paranoia'
 require 'ransack'
 require 'state_machines-activerecord'
 require 'active_storage_validations'
-require 'activerecord-typedstore'
 require 'request_store'
+require 'wannabe_bool'
+require 'geocoder'
+require 'oembed'
+require 'safely_block'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-  mattr_accessor :user_class, :admin_user_class, :private_storage_service_name,
-                 :public_storage_service_name, :cdn_host, :searcher_class,
-                 :queues
+  mattr_accessor :base_class, :user_class, :admin_user_class,
+                 :private_storage_service_name, :public_storage_service_name,
+                 :cdn_host, :root_domain, :searcher_class, :queues,
+                 :google_places_api_key, :screenshot_api_token
+
+  def self.base_class(constantize: true)
+    @@base_class ||= 'Spree::Base'
+    if @@base_class.is_a?(Class)
+      raise 'Spree.base_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@base_class.is_a?(String) || @@base_class.is_a?(Symbol)
+      constantize ? @@base_class.to_s.constantize : @@base_class.to_s
+    end
+  end
 
   def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
@@ -58,9 +74,9 @@ module Spree
     if @@private_storage_service_name
       if @@private_storage_service_name.is_a?(String) || @@private_storage_service_name.is_a?(Symbol)
         @@private_storage_service_name.to_sym
-      else
-        raise 'Spree.private_storage_service_name MUST be a String or Symbol object.'
       end
+    else
+      Rails.application.config.active_storage.service
     end
   end
 
@@ -68,18 +84,29 @@ module Spree
     if @@public_storage_service_name
       if @@public_storage_service_name.is_a?(String) || @@public_storage_service_name.is_a?(Symbol)
         @@public_storage_service_name.to_sym
-      else
-        raise 'Spree.public_storage_service_name MUST be a String or Symbol object.'
       end
+    else
+      Rails.application.config.active_storage.service
     end
+  end
+
+  def self.root_domain
+    @@root_domain ||= Rails.application.routes.default_url_options[:host] || 'lvh.me'
   end
 
   def self.queues
     @@queues ||= OpenStruct.new(
       default: :default,
+      exports: :default,
+      reports: :default,
       variants: :default,
+      taxons: :default,
       stock_location_stock_items: :default,
-      coupon_codes: :default
+      coupon_codes: :default,
+      webhooks: :default,
+      themes: :default,
+      addresses: :default,
+      gift_cards: :default
     )
   end
 
@@ -91,6 +118,14 @@ module Spree
     elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
       constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
     end
+  end
+
+  def self.google_places_api_key
+    @@google_places_api_key
+  end
+
+  def self.screenshot_api_token
+    @@screenshot_api_token
   end
 
   def self.always_use_translations?
@@ -153,6 +188,7 @@ require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/database_type_utilities'
+require 'spree/analytics'
 
 require 'spree/core/importer'
 require 'spree/core/query_filters'
@@ -164,6 +200,7 @@ require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'
 require 'spree/core/controller_helpers/currency'
+require 'spree/core/controller_helpers/turbo'
 
 require 'spree/core/preferences/store'
 require 'spree/core/preferences/scoped_store'

@@ -20,7 +20,7 @@ class FooAbility
 end
 
 describe Spree::Ability, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { build(:user) }
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }

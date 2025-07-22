@@ -1,5 +1,5 @@
 module Spree
-  class Product < Spree::Base
+  class Product < Spree.base_class
     module Webhooks
       extend ActiveSupport::Concern
       include Spree::Webhooks::HasWebhooks

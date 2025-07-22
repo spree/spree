@@ -1,0 +1,13 @@
+ignore:
+  - api/spec/**
+  - core/spec/**
+  - email/spec/**
+  - storefront/spec/**
+  - admin/spec/**
+  - sample/**
+  - cli/**
+  - core/lib/spree/testing_support/**
+  - docs/**
+  - bin/**
+  - sandbox/**
+  - pkg/**

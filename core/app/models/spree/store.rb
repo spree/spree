@@ -1,44 +1,70 @@
+require 'uri'
+
 module Spree
-  class Store < Spree::Base
+  class Store < Spree.base_class
+    RESERVED_CODES = %w(
+      admin default app api www cdn files assets checkout account auth login user
+    )
+
+    include FriendlyId
     include Spree::TranslatableResource
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
-    if defined?(Spree::Security::Stores)
-      include Spree::Security::Stores
-    end
+    include Spree::Metadata
+    include Spree::Stores::Setup
+    include Spree::Stores::Socials
+    include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
+    include Spree::Security::Stores if defined?(Spree::Security::Stores)
+    include Spree::UserManagement
 
+    #
+    # Magic methods
+    #
+    acts_as_paranoid
+    friendly_id :slug_candidates, use: [:slugged, :history], slug_column: :code, routes: :normal
+
+    #
+    # Translations
+    #
     TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
-                             twitter instagram customer_support_email description
-                             address contact_phone new_order_notifications_email].freeze
+                             twitter instagram customer_support_email
+                             address contact_phone].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
-
     self::Translation.class_eval do
       acts_as_paranoid
       # deleted translation values still need to be accessible - remove deleted_at scope
       default_scope { unscope(where: :deleted_at) }
     end
 
-    typed_store :settings, coder: ActiveRecord::TypedStore::IdentityCoder do |s|
-      # Spree Digital Asset Configurations
-      s.boolean :limit_digital_download_count, default: true, null: false
-      s.boolean :limit_digital_download_days, default: true, null: false
-      s.integer :digital_asset_authorized_clicks, default: 5, null: false # number of times a customer can download a digital file.
-      s.integer :digital_asset_authorized_days, default: 7, null: false # number of days after initial purchase the customer can download a file.
-      s.integer :digital_asset_link_expire_time, default: 300, null: false # 5 minutes in seconds
+    #
+    # Preferences
+    #
+    # general preferences
+    preference :timezone, :string, default: Time.zone.name
+    preference :weight_unit, :string, default: 'lb'
+    preference :unit_system, :string, default: 'imperial'
+    # email preferences
+    preference :send_consumer_transactional_emails, :boolean, default: true
+    # SEO preferences
+    preference :index_in_search_engines, :boolean, default: false
+    preference :password_protected, :boolean, default: false
+    # Checkout preferences
+    preference :guest_checkout, :boolean, default: true
+    preference :special_instructions_enabled, :boolean, default: false
+    # Address preferences
+    preference :company_field_enabled, :boolean, default: false
+    # digital assets preferences
+    preference :limit_digital_download_count, :boolean, default: true
+    preference :limit_digital_download_days, :boolean, default: true
+    preference :digital_asset_authorized_clicks, :integer, default: 5
+    preference :digital_asset_authorized_days, :integer, default: 7
+    preference :digital_asset_link_expire_time, :integer, default: 300
 
-      # store configuration
-      s.string :timezone, default: Time.zone.name, null: false
-      s.string :weight_unit, default: 'kg', null: false
-      s.string :unit_system, default: 'metric', null: false
-    end
-
-    attr_accessor :skip_validate_not_last
-
-    acts_as_paranoid
-
+    #
+    # Associations
+    #
+    has_many :checkouts, -> { incomplete }, class_name: 'Spree::Order', inverse_of: :store
     has_many :orders, class_name: 'Spree::Order'
     has_many :line_items, through: :orders, class_name: 'Spree::LineItem'
+    has_many :digital_links, through: :line_items, class_name: 'Spree::DigitalLink'
     has_many :shipments, through: :orders, class_name: 'Spree::Shipment'
     has_many :payments, through: :orders, class_name: 'Spree::Payment'
     has_many :return_authorizations, through: :orders, class_name: 'Spree::ReturnAuthorization'
@@ -46,12 +72,6 @@ module Spree
 
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :payment_methods, through: :store_payment_methods, class_name: 'Spree::PaymentMethod'
-
-    has_many :cms_pages, class_name: 'Spree::CmsPage'
-    has_many :cms_sections, through: :cms_pages, class_name: 'Spree::CmsSection'
-
-    has_many :menus, class_name: 'Spree::Menu'
-    has_many :menu_items, through: :menus, class_name: 'Spree::MenuItem'
 
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :products, through: :store_products, class_name: 'Spree::Product'
@@ -78,15 +98,63 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
+    has_many :reports, class_name: 'Spree::Report'
+    has_many :exports, class_name: 'Spree::Export'
+
+    has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
+    has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
+
+    has_many :posts, class_name: 'Spree::Post'
+    has_many :post_categories, class_name: 'Spree::PostCategory'
+
+    has_many :integrations, class_name: 'Spree::Integration'
+
+    has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
+
+    #
+    # Page Builder associations
+    #
+    has_many :themes, -> { without_previews }, class_name: 'Spree::Theme', dependent: :destroy, inverse_of: :store
+    has_many :theme_previews,
+             -> { only_previews },
+             class_name: 'Spree::Theme',
+             through: :themes,
+             source: :previews,
+             inverse_of: :store,
+             dependent: :destroy
+    has_one :default_theme, -> { without_previews.where(default: true) }, class_name: 'Spree::Theme', inverse_of: :store
+    has_many :theme_pages, class_name: 'Spree::Page', through: :themes, source: :pages
+    has_many :theme_page_previews, class_name: 'Spree::Page', through: :theme_pages, source: :previews
+    has_many :pages, -> { without_previews.custom }, class_name: 'Spree::Pages::Custom', dependent: :destroy, as: :pageable
+    has_many :page_previews, class_name: 'Spree::Pages::Custom', through: :pages, as: :pageable, source: :previews
+
+    #
+    # ActionText
+    #
+    has_rich_text :checkout_message
+    has_rich_text :customer_terms_of_service
+    has_rich_text :customer_privacy_policy
+    has_rich_text :customer_returns_policy
+    has_rich_text :customer_shipping_policy
+
+    #
+    # Virtual attributes
+    #
+    attribute :import_products_from_store_id, :string, default: nil
+    attribute :import_payment_methods_from_store_id, :string, default: nil
+    attr_accessor :skip_validate_not_last
+    store_accessor :private_metadata, :storefront_password
+
+    #
+    # Validations
+    #
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency, :code
+      validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
     end
-
-    validates :digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
-    validates :digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
-    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }
+    validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
+    validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
+    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }, exclusion: RESERVED_CODES
     validates :mail_from_address, email: { allow_blank: false }
-
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&
@@ -94,31 +162,48 @@ module Spree
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
+    validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
 
-    default_scope { order(created_at: :asc) }
+    #
+    # Attachments
+    #
+    has_one_attached :logo, service: Spree.public_storage_service_name
+    has_one_attached :favicon_image, service: Spree.public_storage_service_name
+    has_one_attached :social_image, service: Spree.public_storage_service_name
+    has_one_attached :mailer_logo, service: Spree.public_storage_service_name
 
-    has_one :logo, class_name: 'Spree::StoreLogo', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :logo, reject_if: :all_blank
-
-    has_one :mailer_logo, class_name: 'Spree::StoreMailerLogo', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :mailer_logo, reject_if: :all_blank
-
-    has_one :favicon_image, class_name: 'Spree::StoreFaviconImage', dependent: :destroy, as: :viewable
-    accepts_nested_attributes_for :favicon_image, reject_if: :all_blank
-
+    #
+    # Callbacks
+    before_validation :ensure_default_country
+    before_validation :set_code, on: :create
+    before_validation :set_url
     before_save :ensure_default_exists_and_is_unique
-    before_save :ensure_supported_currencies, :ensure_supported_locales, :ensure_default_country
+    before_save :ensure_supported_currencies, :ensure_supported_locales
+    after_create :ensure_default_taxonomies_are_created
+    after_create :ensure_default_automatic_taxons
+    after_create :ensure_default_post_categories_are_created
+    after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
+    after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
+    after_create :create_default_theme
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
-
-    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
-
     after_commit :clear_cache
+    after_commit :handle_code_changes, on: :update, if: -> { code_previously_changed? }
 
+    #
+    # Scopes
+    #
+    default_scope { order(created_at: :asc) }
+    scope :by_custom_domain, ->(url) { left_joins(:custom_domains).where("#{Spree::CustomDomain.table_name}.url" => url) }
+    scope :by_url, ->(url) { where(url: url).or(where("#{table_name}.url like ?", "%#{url}%")) }
+
+    #
+    # Delegations
+    #
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(url = nil)
-      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
+      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute || Spree::Current.store
     end
 
     # FIXME: we need to drop `or_initialize` in v5
@@ -138,22 +223,34 @@ module Spree
       Spree::Store.all.map(&:supported_locales_list).flatten.uniq
     end
 
-    def default_menu(location)
-      menu = menus.find_by(location: location, locale: default_locale) || menus.find_by(location: location)
+    def default_country_iso=(iso)
+      return if iso.blank?
 
-      menu.root if menu.present?
+      @default_country_iso = iso
+
+      country = Spree::Country.by_iso(iso)
+
+      if country.present?
+        self.default_country = country
+      elsif iso_country = ::Country[iso]
+        new_country = Spree::Country.create!(
+          iso_name: iso_country.local_name&.upcase,
+          iso: iso_country.alpha2,
+          iso3: iso_country.alpha3,
+          name: iso_country.local_name,
+          numcode: iso_country.number,
+          states_required: Spree::Address::STATES_REQUIRED.include?(iso),
+          zipcode_required: !Spree::Address::NO_ZIPCODE_ISO_CODES.include?(iso)
+        )
+
+        self.default_country = new_country
+      end
     end
 
     def supported_currencies_list
-      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
+      @supported_currencies_list ||= ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
-      end.uniq.compact
-    end
-
-    def homepage(requested_locale)
-      cms_pages.by_locale(requested_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
-        cms_pages.by_locale(default_locale).find_by(type: 'Spree::Cms::Pages::Homepage') ||
-        cms_pages.find_by(type: 'Spree::Cms::Pages::Homepage')
+      end.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
     end
 
     def seo_meta_description
@@ -167,7 +264,6 @@ module Spree
     end
 
     def supported_locales_list
-      # TODO: add support of multiple supported languages to a single Store
       @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
     end
 
@@ -176,21 +272,64 @@ module Spree
     end
 
     def formatted_url
-      return if url.blank?
+      @formatted_url ||= begin
+        clean_url = url.to_s.sub(%r{^https?://}, '').split(':').first
 
-      @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
-                           url
-                         else
-                           Rails.env.development? || Rails.env.test? ? "http://#{url}" : "https://#{url}"
-                         end
+        if Rails.env.development? || Rails.env.test?
+          scheme = Rails.application.routes.default_url_options[:protocol] || :http
+          port = Rails.application.routes.default_url_options[:port].presence || (Rails.env.development? ? 3000 : nil)
+
+          if scheme.to_sym == :https
+            URI::HTTPS.build(
+              host: clean_url,
+              port: port
+            ).to_s
+          else
+            URI::HTTP.build(
+              host: clean_url,
+              port: port
+            ).to_s
+          end
+        else
+          URI::HTTPS.build(
+            host: clean_url
+          ).to_s
+        end
+      end
+    end
+
+    def formatted_custom_domain
+      return unless default_custom_domain
+
+      @formatted_custom_domain ||= if Rails.env.development? || Rails.env.test?
+        URI::Generic.build(
+          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
+          host: default_custom_domain.url,
+          port: Rails.application.routes.default_url_options[:port]
+        ).to_s
+      else
+        URI::HTTPS.build(host: default_custom_domain.url).to_s
+      end
+    end
+
+    def url_or_custom_domain
+      default_custom_domain&.url || url
+    end
+
+    def formatted_url_or_custom_domain
+      formatted_custom_domain || formatted_url
     end
 
     def countries_available_for_checkout
-      @countries_available_for_checkout ||= checkout_zone.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
+        checkout_zone.try(:country_list) || Spree::Country.all
+      end
     end
 
     def states_available_for_checkout(country)
-      checkout_zone.try(:state_list_for, country) || country.states
+      Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
+        checkout_zone.try(:state_list_for, country) || country.states
+      end
     end
 
     def checkout_zone_or_default
@@ -199,17 +338,80 @@ module Spree
       @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
-    def favicon
-      return unless favicon_image&.attachment&.attached?
+    def supported_shipping_zones
+      @supported_shipping_zones ||= if checkout_zone_id.present?
+                                      [checkout_zone]
+                                    else
+                                      Spree::Zone.includes(zone_members: :zoneable).all
+                                    end
+    end
 
-      favicon_image.attachment.variant(resize_to_limit: [32, 32])
+    # Returns the default stock location for the store or creates a new one if it doesn't exist
+    # @return [Spree::StockLocation]
+    def default_stock_location
+      @default_stock_location ||= begin
+        stock_location_scope = Spree::StockLocation.where(default: true)
+        stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
+          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
+        end
+      end
+    end
+
+    def admin_users
+      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 6.0. Please use Store#users instead.')
+
+      users
+    end
+
+    def favicon
+      return unless favicon_image.attached? && favicon_image.variable?
+
+      favicon_image.variant(resize_to_limit: [32, 32])
     end
 
     def can_be_deleted?
       self.class.where.not(id: id).any?
     end
 
+    def metric_unit_system?
+      preferred_unit_system == 'metric'
+    end
+
+    def default_shipping_category
+      @default_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Default')
+    end
+
+    def digital_shipping_category
+      @digital_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Digital')
+    end
+
+    def import_products_from_store
+      store = Store.find(import_products_from_store_id)
+      product_ids = store.products.pluck(:id)
+
+      return if product_ids.empty?
+
+      StoreProduct.insert_all(product_ids.map { |product_id| { store_id: id, product_id: product_id } })
+    end
+
+    def import_payment_methods_from_store
+      store = Store.find(import_payment_methods_from_store_id)
+      payment_method_ids = store.payment_method_ids
+
+      return if payment_method_ids.empty?
+
+      StorePaymentMethod.insert_all(payment_method_ids.map { |payment_method_id| { store_id: id, payment_method_id: payment_method_id } })
+    end
+
     private
+
+    def countries_available_for_checkout_cache_key
+      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/countries_available_for_checkout"
+    end
+
+    def states_available_for_checkout_cache_key(country)
+      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
+    end
 
     def ensure_default_exists_and_is_unique
       if default
@@ -254,7 +456,6 @@ module Spree
     end
 
     def ensure_default_country
-      return unless has_attribute?(:default_country_id)
       return if default_country.present? && (checkout_zone.blank? || checkout_zone.country_list.blank? || checkout_zone.country_list.include?(default_country))
 
       self.default_country = if checkout_zone.present? && checkout_zone.country_list.any?
@@ -262,6 +463,82 @@ module Spree
                              else
                                Country.find_by(iso: 'US') || Country.first
                              end
+    end
+
+    def ensure_default_taxonomies_are_created
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_categories_name', default: I18n.t('spree.taxonomy_categories_name', locale: :en)))
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_brands_name', default: I18n.t('spree.taxonomy_brands_name', locale: :en)))
+      taxonomies.find_or_create_by(name: I18n.t('spree.taxonomy_collections_name', default: I18n.t('spree.taxonomy_collections_name', locale: :en)))
+    rescue ActiveRecord::NotNullViolation
+    end
+
+    def ensure_default_automatic_taxons
+      collections_taxonomy = taxonomies.find_by(name: Spree.t(:taxonomy_collections_name))
+
+      if collections_taxonomy.present?
+        on_sale_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.on_sale')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::Sale', value: 'true')
+        end
+
+        new_arrivals_taxon = collections_taxonomy.taxons.automatic.where(name: Spree.t('automatic_taxon_names.new_arrivals')).first_or_create! do |taxon|
+          taxon.parent = collections_taxonomy.root
+          taxon.rules.new(type: 'Spree::TaxonRules::AvailableOn', value: 30)
+        end
+
+        [on_sale_taxon, new_arrivals_taxon]
+      end
+    end
+
+    def ensure_default_post_categories_are_created
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.resources'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.articles'))
+      post_categories.find_or_create_by(title: Spree.t('default_post_categories.news'))
+    end
+
+    # code is slug, so we don't want to generate new slug when code changes
+    # we use friendlyId only for history feature
+    def should_generate_new_friendly_id?
+      false
+    end
+
+    def slug_candidates
+      []
+    end
+
+    def handle_code_changes
+      # implement your custom logic here
+    end
+
+    # This FriendlyId method is overwitten to keep our logic for generating code
+    # there is no option for own format
+    def set_code
+      self.code = if code.present?
+                    code.parameterize.strip
+                  elsif name.present?
+                    name.parameterize.strip
+                  end
+
+      return if self.code.blank?
+
+      # ensure code is unique
+      self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: self.code).exists?
+    end
+
+    # auto-assign internal URL for stores
+    def set_url
+      return if url_changed?
+      return unless code_changed?
+      return unless Spree.root_domain.present?
+
+      self.url = [code, Spree.root_domain].join('.')
+    end
+
+    def create_default_theme
+      themes.find_or_initialize_by(default: true) do |theme|
+        theme.name = Spree.t(:default_theme_name)
+        theme.save!
+      end
     end
   end
 end

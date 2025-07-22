@@ -1,0 +1,13 @@
+<tr id="<%= spree_dom_id tax_category %>" data-controller="row-link" class="cursor-pointer">
+  <td class="w-20" data-action="click->row-link#openLink"><%= tax_category.name %></td>
+  <td class="w-20" data-action="click->row-link#openLink">
+    <% if tax_category.tax_code.present? %>
+      <code><%= tax_category.tax_code %></code>
+    <% end %>
+  </td>
+  <td class="w-40" data-action="click->row-link#openLink"><%= tax_category.description %></td>
+  <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(tax_category.is_default?) %></td>
+  <td class="w-10 actions">
+    <%= link_to_edit(tax_category, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, tax_category %>
+  </td>
+</tr>

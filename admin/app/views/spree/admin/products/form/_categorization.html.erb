@@ -1,0 +1,39 @@
+<% if can?(:manage, Spree::Classification) || can?(:manage, ActsAsTaggableOn::Tag) %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t(:categorization) %>
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <% if can? :manage, Spree::Classification %>
+          <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
+
+          <%= tom_select_tag 'product[taxon_ids]',
+            multiple: true,
+            active_option: @product.taxon_ids,
+            url: spree.admin_taxons_select_options_path(format: :json),
+            class: 'w-100' %>
+        <% elsif @product.taxons.any? %>
+          <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
+
+          <ul class="text_list">
+            <% @product.taxons.manual.pluck(:name).each do |taxon_name| %>
+              <li><%= taxon_name %></li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="alert alert-info"><%= Spree.t(:no_resource_found, resource: :taxons) %></div>
+        <% end %>
+      </div>
+
+      <% if can?(:manage, ActsAsTaggableOn::Tag) %>
+        <div class="form-group">
+          <%= f.label :tag_list, Spree.t(:tags) %>
+          <%= tom_select_tag 'product[tag_list]', multiple: true, class: 'w-100', options: tags_json_array, active_option: @product.tag_list, value_field: :name, create: true %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end%>

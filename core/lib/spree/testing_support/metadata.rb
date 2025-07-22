@@ -38,7 +38,7 @@ shared_examples_for 'metadata' do |factory: described_class.name.demodulize.unde
     expect(subject.public_metadata['additional_data']).to eq(hash.stringify_keys)
   end
 
-  it 'can query records by metadata properties', skip: ENV['DB'] == 'mysql' do
+  it 'can query records by metadata properties', skip: (ENV['DB'].blank? || ENV['DB'] == 'mysql') do
     subject.public_metadata[:color] = 'red'
     subject.public_metadata[:priority] = 1
     subject.public_metadata[:keywords] = ['k1', 'k2']
@@ -50,5 +50,17 @@ shared_examples_for 'metadata' do |factory: described_class.name.demodulize.unde
     expect(described_class.where("public_metadata->>'priority' = ?", '1').count).to eq(1)
     expect(described_class.where("public_metadata -> 'keywords' ? :keyword", keyword: 'k1').count).to eq(1)
     expect(described_class.where("public_metadata -> 'additional_data' ->> 'size' = :size", size: 'big').count).to eq(1)
+  end
+
+  it 'can query records by metadata properties', skip: ENV['DB'] == 'postgres' do
+    subject.public_metadata[:color] = 'red'
+    subject.public_metadata[:priority] = 1
+    subject.public_metadata[:additional_data] = { size: 'big', material: 'wool' }
+
+    subject.save!
+
+    expect(described_class.where("JSON_EXTRACT(public_metadata, '$.color') = ?", 'red').count).to eq(1)
+    expect(described_class.where("JSON_EXTRACT(public_metadata, '$.priority') = 1").count).to eq(1)
+    expect(described_class.where("JSON_EXTRACT(public_metadata, '$.additional_data.size') = :size", size: 'big').count).to eq(1)
   end
 end

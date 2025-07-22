@@ -14,13 +14,16 @@ module Spree
           Roles.call
 
           # additional data
-          DefaultReimbursementTypes.call
+          ReturnsEnvironment.call
           ShippingCategories.call
           StoreCreditCategories.call
+          TaxCategories.call
+          DigitalDelivery.call
 
           # store & stock location
           Stores.call
           StockLocations.call
+          AdminUser.call
 
           # add store resources
           PaymentMethods.call

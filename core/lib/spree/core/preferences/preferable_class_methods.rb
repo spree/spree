@@ -39,6 +39,38 @@ module Spree::Preferences
       define_method preference_deprecated_getter_method(name) do
         deprecated
       end
+
+      define_method prefers_query_method(name) do
+        preferences.fetch(name).to_b
+      end
+
+      define_method preference_change_method(name) do
+        preference_change(name, changes) if respond_to?(:changes)
+      end
+
+      define_method preference_was_method(name) do
+        return unless respond_to?(:changes)
+
+        preference_change(name, changes)&.first || get_preference(name)
+      end
+
+      define_method preference_changed_method(name) do
+        respond_to?(:changes) && preference_change(name, changes).present?
+      end
+
+      define_method preference_previous_change_method(name) do
+        preference_change(name, previous_changes) if respond_to?(:previous_changes)
+      end
+
+      define_method preference_previous_was_method(name) do
+        return unless respond_to?(:previous_changes)
+
+        preference_change(name, previous_changes)&.first
+      end
+
+      define_method preference_previous_changed_method(name) do
+        respond_to?(:previous_changes) && preference_change(name, previous_changes).present?
+      end
     end
 
     def preference_getter_method(name)
@@ -59,6 +91,34 @@ module Spree::Preferences
 
     def preference_type_getter_method(name)
       "preferred_#{name}_type".to_sym
+    end
+
+    def prefers_query_method(name)
+      "prefers_#{name}?".to_sym
+    end
+
+    def preference_change_method(name)
+      "preferred_#{name}_change".to_sym
+    end
+
+    def preference_was_method(name)
+      "preferred_#{name}_was".to_sym
+    end
+
+    def preference_changed_method(name)
+      "preferred_#{name}_changed?".to_sym
+    end
+
+    def preference_previous_change_method(name)
+      "preferred_#{name}_previous_change".to_sym
+    end
+
+    def preference_previous_was_method(name)
+      "preferred_#{name}_previously_was".to_sym
+    end
+
+    def preference_previous_changed_method(name)
+      "preferred_#{name}_previously_changed?".to_sym
     end
   end
 end

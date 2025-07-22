@@ -1,5 +1,6 @@
 ---
 title: Users
+icon: "users"
 ---
 
 In your Spree application you will usually have 2 types of users:
@@ -10,14 +11,14 @@ In your Spree application you will usually have 2 types of users:
 Customers can have:
 
 * **[Addresses](/developer/core-concepts/addresses)**, both billing and shipping
-* **[Orders](orders)** - a list of products that the user has purchased
+* **[Orders](/developer/core-concepts/orders)** - a list of products that the user has purchased
 * **Credit Cards** - used on the checkout page to pay for the order
 * **Store Credits** - assigned by the store owners, to be used to purchase products
 * **Wishlists** - a list of products that the user has marked as a wishlist
 
 ## User model
 
-The default user class is `Spree::User` (which is provided by the [Auth Devise](https://github.com/spree/spree_auth_devise) extension).
+The default user class is `Spree::User` which is generated during Spree installation.
 
 You should however reference Users with an universal `Spree.user_class` to avoid any potential issues, eg.
 

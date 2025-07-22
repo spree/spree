@@ -1,0 +1,51 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:domains) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:custom_domains_actions_partials) %>
+<% end %>
+
+<div class="card-lg p-4">
+  <h5 class="mb-3">Internal URL</h5>
+  <div class="row mb-4">
+    <div class="col-lg-4">
+      <p class="text-muted">
+        This is your internal URL.
+      </p>
+    </div>
+    <div class="col-lg-7 offset-lg-1">
+      <%= form_for current_store, url: spree.admin_store_path(current_store), data: { turbo: false, controller: 'enable-button', 'enable-button-disable-when-not-changed-value': true } do |f| %>
+        <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border mb-3 <% if current_store.custom_domains.any? %>disabled<% end %>">
+          <%= f.text_field :code, class: 'form-control-plaintext pl-0',  data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
+          <span>.<%= Spree.root_domain %></span>
+        </div>
+        <% unless current_store.custom_domains.any? %>
+          <%= turbo_save_button_tag Spree.t('actions.update') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <hr class="my-5" />
+  <h5>Custom domains</h5>
+  <div class="row">
+    <div class="col-lg-4">
+      <p class="text-muted">
+        Connect your domain or subdomain to your store.
+      </p>
+    </div>
+    <div class="col-lg-7 offset-lg-1">
+      <% if entri_enabled? %>
+        <%= render 'setup_domain_entri' %>
+      <% else %>
+        <div class="text-right">
+          <%= link_to Spree.t(:new_domain), spree.new_admin_custom_domain_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+
+      <%= turbo_frame_tag 'admin_custom_domains_index' do %>
+        <%= render 'custom_domains' %>
+      <% end %>
+    </div>
+  </div>
+</div>

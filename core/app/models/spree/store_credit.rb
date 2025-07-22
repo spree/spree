@@ -1,5 +1,5 @@
 module Spree
-  class StoreCredit < Spree::Base
+  class StoreCredit < Spree.base_class
     include Spree::SingleStoreResource
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
@@ -16,13 +16,12 @@ module Spree
     AUTHORIZE_ACTION  = 'authorize'.freeze
     ALLOCATION_ACTION = 'allocation'.freeze
 
-    DEFAULT_CREATED_BY_EMAIL = 'spree@example.com'.freeze
-
+    belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
     belongs_to :category, class_name: 'Spree::StoreCreditCategory', optional: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", foreign_key: 'created_by_id', optional: true
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :originator, polymorphic: true, optional: true
 
     has_many :store_credit_events, class_name: 'Spree::StoreCreditEvent'
     has_many :payments, as: :source, class_name: 'Spree::Payment'
@@ -34,14 +33,16 @@ module Spree
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
 
-    delegate :name, to: :category, prefix: true
-    delegate :email, to: :created_by, prefix: true
+    delegate :name, to: :category, prefix: true, allow_nil: true
+    delegate :email, to: :created_by, prefix: true, allow_nil: true
 
     scope :order_by_priority, -> { includes(:credit_type).order('spree_store_credit_types.priority ASC') }
 
     scope :not_authorized, -> { where(amount_authorized: 0) }
-    scope :not_used, -> { where(amount_authorized: 0) }
+    scope :not_used, -> { where("#{Spree::StoreCredit.table_name}.amount_used < #{Spree::StoreCredit.table_name}.amount") }
     scope :available, -> { not_authorized.not_used }
+    scope :with_gift_card, -> { where(originator_type: 'Spree::GiftCard') }
+    scope :without_gift_card, -> { where(originator_type: [nil, '']).or(where.not(originator_type: 'Spree::GiftCard')) }
 
     after_save :store_event
     before_destroy :validate_no_amount_used
@@ -49,7 +50,7 @@ module Spree
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
     extend Spree::DisplayMoney
-    money_methods :amount, :amount_used
+    money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
     self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
     self.whitelisted_ransackable_associations = %w[type user created_by]
@@ -170,13 +171,23 @@ module Spree
       payment.completed? && payment.credit_allowed > 0
     end
 
+    def editable?
+      amount_used.zero? && amount_authorized.zero?
+    end
+
+    def can_be_deleted?
+      amount_used.zero? && amount_authorized.zero?
+    end
+
     def generate_authorization_code
       "#{id}-SC-#{Time.now.utc.strftime('%Y%m%d%H%M%S%6N')}"
     end
 
     class << self
       def default_created_by
-        Spree.user_class.find_by(email: DEFAULT_CREATED_BY_EMAIL)
+        Spree::Deprecation.warn('StoreCredit#default_created_by is deprecated and will be removed in Spree 6.0. Please use store.users.first instead.')
+
+        Spree::Store.current.users.first
       end
     end
 
@@ -228,7 +239,7 @@ module Spree
       event.update!(
         amount: action_amount || amount,
         authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
-        user_total_amount: user.total_available_store_credit,
+        user_total_amount: user&.total_available_store_credit || 0,
         originator: action_originator
       )
     end

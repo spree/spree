@@ -1,5 +1,5 @@
 module Spree
-  class LogEntry < Spree::Base
+  class LogEntry < Spree.base_class
     if defined?(Spree::Security::LogEntries)
       include Spree::Security::LogEntries
     end

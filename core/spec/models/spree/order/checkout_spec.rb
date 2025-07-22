@@ -2,10 +2,10 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
-  let!(:store) { create(:store, default: true) }
+  let!(:store) { @default_store }
   let(:order) { build(:order, store: store) }
-  let(:country) { create(:country) }
-  let!(:state) { country.states.first || create(:state, country: country) }
+  let(:country) { store.default_country || create(:country_us) }
+  let!(:state) { country.states.first || create(:state, country: country, name: 'New York', abbr: 'NY') }
 
   def assert_state_changed(order, from, to)
     state_change_exists = order.state_changes.where(previous_state: from, next_state: to).exists?
@@ -70,7 +70,7 @@ describe Spree::Order, type: :model do
       expect(order.passed_checkout_step?('delivery')).to be true
     end
 
-    context '#checkout_steps' do
+    describe '#checkout_steps' do
       context 'when confirmation not required' do
         before do
           allow(order).to receive_messages confirmation_required?: false
@@ -235,14 +235,11 @@ describe Spree::Order, type: :model do
 
       context 'cannot transition to delivery' do
         context 'with an existing shipment' do
-          before do
-            line_item = FactoryBot.create(:line_item, price: 10)
-            order.line_items << line_item
-          end
+          let!(:line_item) { create(:line_item, price: 10, order: order) }
 
           context 'if there are no shipping rates for any shipment' do
             it 'raises an InvalidTransitionError' do
-              expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
+              expect { order.next! }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:products_cannot_be_shipped, product_names: line_item.name)}/)
             end
 
             it 'deletes all the shipments' do
@@ -379,9 +376,10 @@ describe Spree::Order, type: :model do
       context 'without confirmation required' do
         before do
           order.email = 'spree@example.com'
+          order.total = 100
           allow(order).to receive_messages confirmation_required?: false
           allow(order).to receive_messages payment_required?: true
-          order.payments << FactoryBot.create(:payment, state: payment_state, order: order)
+          order.payments << FactoryBot.create(:payment, amount: 100, state: payment_state, order: order)
         end
 
         context 'when there is at least one valid payment' do
@@ -452,16 +450,22 @@ describe Spree::Order, type: :model do
     end
 
     context 'default credit card' do
-      let(:digital) { create(:digital) }
+      let(:digital_shipping_method) { create(:digital_shipping_method) }
+      let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+      let(:variant_digital) { create(:variant, product: digital_product) }
+      let(:physical_product_with_digital_asset) { create(:product) }
+      let(:variant_physical_with_digital_asset) { create(:variant, product: physical_product_with_digital_asset, digitals: [create(:digital)]) }
 
       before do
         order.user = FactoryBot.create(:user)
         order.email = 'spree@example.org'
         order.payments << FactoryBot.create(:payment)
+        create(:digital, variant: variant_digital)
 
         # make sure we will actually capture a payment
         allow(order).to receive_messages(payment_required?: true)
-        order.line_items << FactoryBot.create(:line_item, variant: digital.variant)
+        order.line_items << FactoryBot.create(:line_item, variant: variant_digital)
+        order.line_items << FactoryBot.create(:line_item, variant: variant_physical_with_digital_asset)
         Spree::OrderUpdater.new(order).update
 
         order.save!
@@ -476,13 +480,77 @@ describe Spree::Order, type: :model do
       it 'creates a digital_link for the digital line_item' do
         order.next!
         expect(order.state).to eq 'complete'
-        expect(order.line_items.first.digital_links).not_to be_empty
+        expect(order.line_items.find_by(variant: variant_digital).digital_links).not_to be_empty
+      end
+
+      it 'creates a digital_link for the physical line_item if it has a digital asset' do
+        order.next!
+        expect(order.state).to eq 'complete'
+        expect(order.line_items.find_by(variant: variant_physical_with_digital_asset).digital_links).not_to be_empty
       end
 
       it 'does not assign a default credit card if temporary_credit_card is set' do
         order.temporary_credit_card = true
         order.next!
         expect(order.user.reload.default_credit_card).to be_nil
+      end
+
+      context 'when gift card is present' do
+        let(:gift_card) { create(:gift_card, amount: order.total, store: store) }
+        let(:order) { create(:order_with_line_items, store: store, state: 'payment') }
+
+        before do
+          order.apply_gift_card(gift_card)
+        end
+
+        it 'redeems the gift card' do
+          expect(gift_card.redeemed_at).to be_nil
+          expect { order.next! }.to change { gift_card.reload.state }.from('active').to('redeemed')
+          expect(gift_card.amount_used).to eq(order.total)
+          expect(gift_card.amount_remaining).to eq(0)
+          expect(gift_card.redeemed_at).to be_present
+        end
+
+        context 'when gift card has amount bigger than order total' do
+          let(:gift_card) { create(:gift_card, amount: order.total + 1, store: store) }
+
+          it 'partially redeems the gift card' do
+            expect { order.next! }.to change { gift_card.reload.state }.from('active').to('partially_redeemed')
+            expect(gift_card.amount_used).to eq(order.total)
+            expect(gift_card.amount_remaining).to eq(1)
+            expect(gift_card.redeemed_at).to be_nil
+          end
+        end
+      end
+
+      context 'when user is not present' do
+        before do
+          order.user = nil
+          order.email = 'new@customer.com'
+          order.save!
+        end
+
+        context 'with signup_for_an_account set to true' do
+          before do
+            allow(order).to receive(:signup_for_an_account?).and_return(true)
+          end
+
+          it 'creates a new user' do
+            expect { order.next! }.to change { Spree.user_class.count }.by(1)
+            expect(order.user).to be_present
+            expect(order.user.email).to eq(order.email)
+          end
+        end
+
+        context 'with signup_for_an_account set to false' do
+          before do
+            allow(order).to receive(:signup_for_an_account?).and_return(false)
+          end
+
+          it 'does not create a new user' do
+            expect { order.next! }.not_to change { Spree.user_class.count }
+          end
+        end
       end
     end
   end

@@ -1,15 +1,9 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :export_modal do %>
   <%= form_for @export, url: spree.admin_exports_path do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">
-          <%= Spree.t(:export) %>
-          <%= plural_resource_name(@export.model_class) %>
-        </h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-      </div>
+      <%= modal_header(Spree.t(:export) + ' ' + plural_resource_name(@export.model_class)) %>
       <div class="modal-body">
         <%= render 'spree/admin/shared/error_messages', target: @export %>
         <div class="custom-control custom-radio">
@@ -17,7 +11,7 @@
           <%= f.label :record_selection, for: :export_record_selection_filtered, class: 'custom-control-label' do %>
             <%= Spree.t(:filtered_records) %>
             <br />
-            <span class="text-muted font-weight-normal">
+            <span class="text-muted font-weight-normal mr-1">
               <%= Spree.t('admin.export_only_filtered_records') %>
             </span>
           <% end %>
@@ -27,14 +21,14 @@
           <%= f.label :record_selection, for: :export_record_selection_all, class: 'custom-control-label' do %>
             <%= Spree.t(:all) %>
             <br />
-            <span class="text-muted font-weight-normal">
+            <span class="text-muted font-weight-normal mr-1">
               <%= Spree.t('admin.export_all') %>
             </span>
           <% end %>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+      <div class="modal-footer">
+        <%= modal_discard_button %>
         <%= turbo_save_button_tag Spree.t(:export), class: 'btn btn-primary' %>
       </div>
     </div>

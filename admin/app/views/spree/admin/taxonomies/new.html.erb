@@ -1,0 +1,23 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_taxonomies_path %>
+  <%= Spree.t(:new_taxonomy) %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6 offset-lg-3">
+    <%= form_for [:admin, @taxonomy] do |f| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxonomy } %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxonomy } %>
+          <div class="form-group">
+            <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+            <%= f.text_field :name, class: 'form-control', required: true, autofocus: true %>
+            <%= f.error_message_on :name %>
+          </div>
+        </div>
+      </div>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    <% end %>
+  </div>
+</div>

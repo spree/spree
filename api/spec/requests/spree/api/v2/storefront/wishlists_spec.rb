@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request do
-  let!(:store) { Spree::Store.default }
-  let!(:other_store) { create(:store) }
-  let!(:other_user) { create(:user) }
+  let(:store) { create(:store) }
+  let(:other_store) { create(:store) }
 
-  let(:wishlist) { create(:wishlist) }
+  let(:wishlist) { create(:wishlist, store: store) }
   let(:user) { wishlist.user }
+  let(:other_user) { create(:user) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::WishlistsController).to receive(:current_store).and_return(store)
+  end
 
   include_context 'API v2 tokens'
 
@@ -55,9 +59,7 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#index' do
-    let!(:wishlists) { create_list(:wishlist, 30, user: user) }
-    let!(:wishlist_for_other_user) { create_list(:wishlist, 5, user: other_user) }
-    let!(:wishlists_other_store) { create_list(:wishlist, 5, user: user, store: other_store) }
+    let!(:wishlists) { create_list(:wishlist, 30, user: user, store: store) }
 
     it 'must return a list of wishlists paged' do
       get '/api/v2/storefront/wishlists', headers: headers_bearer
@@ -82,8 +84,8 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
   end
 
   describe '#show' do
-    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true) }
-    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false) }
+    let!(:wishlist_private) { create(:wishlist, user: other_user, is_private: true, store: store) }
+    let!(:wishlist_public) { create(:wishlist, user: other_user, is_private: false, store: store) }
 
     let!(:wished_item) do
       wishlist.wished_items.create({ variant: create(:variant) })
@@ -352,8 +354,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       }
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'returns wishlist in response' do
       expect(json_response['data']['type']).to eql ('wishlist')
       expect(json_response['data']['id']).to eql wishlist.id.to_s
@@ -463,13 +463,12 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
           }
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'does not create wished item' do
           expect(user.wishlists.reload.first.wished_items.count).to eq 1
         end
 
         it 'returns error message' do
+          expect(response.status).to eq(422)
           expect(json_response['error']).to eq 'Quantity must be greater than 0'
         end
       end
@@ -506,10 +505,6 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
       it 'does not create wished item' do
         expect(user.wishlists.reload.first.wished_items).to be_empty
       end
-
-      it 'does not create wished item' do
-        expect(user.wishlists.reload.first.wished_items).to be_empty
-      end
     end
 
     context 'when passed quantity is 0' do
@@ -521,13 +516,12 @@ RSpec.describe Spree::Api::V2::Storefront::WishlistsController, type: :request d
         }
       end
 
-      it_behaves_like 'returns 422 HTTP status'
-
       it 'does not create wished item' do
         expect(user.wishlists.reload.first.wished_items).to be_empty
       end
 
       it 'returns error message' do
+        expect(response.status).to eq(422)
         expect(json_response['error']).to eq 'Quantity must be greater than 0'
       end
     end

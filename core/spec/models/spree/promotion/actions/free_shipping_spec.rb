@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Promotion::Actions::FreeShipping, type: :model do
   let(:order) { create(:completed_order_with_totals) }
   let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::FreeShipping.create }
+  let(:action) { Spree::Promotion::Actions::FreeShipping.create!(promotion: promotion) }
   let(:payload) { { order: order } }
 
   it_behaves_like 'an adjustment source'

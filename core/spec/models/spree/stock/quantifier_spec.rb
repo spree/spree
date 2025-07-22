@@ -80,6 +80,7 @@ module Spree
         let!(:stock_location_3) { create :stock_location, active: false, propagate_all_variants: true }
 
         before do
+          perform_enqueued_jobs(only: Spree::StockLocations::StockItems::CreateJob)
           stock_location_2.stock_items.where(variant_id: stock_item.variant).update_all(count_on_hand: 5, backorderable: false)
           stock_location_3.stock_items.where(variant_id: stock_item.variant).update_all(count_on_hand: 5, backorderable: false)
         end

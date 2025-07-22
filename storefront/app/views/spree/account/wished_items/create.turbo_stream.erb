@@ -1,0 +1,9 @@
+<% if flash[:error] %>
+  <%= spree_turbo_update_flashes %>
+<% end %>
+
+<%= turbo_stream.update "wishlist-icon" do %>
+  <%= javascript_tag "wishedVariantIds = #{(current_wishlist.variant_ids).to_json.html_safe};" %>
+  <%= render 'spree/shared/wishlist_icon' %>
+  <%= render_storefront_partials(:add_to_wishlist_partials) %>
+<% end %>

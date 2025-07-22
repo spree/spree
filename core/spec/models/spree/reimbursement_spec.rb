@@ -1,12 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
+  let(:store) { @default_store }
+
   describe '#display_total' do
     subject { reimbursement.display_total }
 
     let(:total)         { 100.50 }
     let(:currency)      { 'USD' }
-    let(:order)         { build(:order) }
+    let(:order)         { build(:order, store: store, currency: currency) }
     let(:reimbursement) { described_class.new(total: total, order: order) }
 
     it 'returns the value as a Spree::Money instance' do
@@ -23,7 +25,6 @@ describe Spree::Reimbursement, type: :model do
 
     let(:total)         { 100.50 }
     let(:currency)      { 'USD' }
-    let(:store)         { create(:store) }
     let(:order)         { build(:order, store: store, currency: currency) }
     let(:reimbursement) { described_class.new(total: total, order: order) }
 
@@ -40,7 +41,7 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_rate)               { nil }
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:order)                   { create(:shipped_order, line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0, store: store) }
     let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }
@@ -86,6 +87,27 @@ describe Spree::Reimbursement, type: :model do
         expect(reimbursement.total).to eq line_item.pre_tax_amount + line_item.additional_tax_total
         expect(Spree::Refund.last.amount).to eq line_item.pre_tax_amount + line_item.additional_tax_total
       end
+    end
+
+    context 'when performer is provided' do
+      let(:performer) { create(:admin_user) }
+
+      it 'sets the performer' do
+        reimbursement.perform!(performer)
+        expect(reimbursement.performed_by).to eq performer
+      end
+
+       it 'refunds the total amount' do
+         subject
+         expect(reimbursement.unpaid_amount).to eq 0
+       end
+
+        it 'creates a refund' do
+          expect do
+            subject
+          end.to change { Spree::Refund.count }.by(1)
+          expect(Spree::Refund.last.amount).to eq order.total
+        end
     end
 
     context 'with included tax' do
@@ -174,7 +196,7 @@ describe Spree::Reimbursement, type: :model do
   describe '.build_from_customer_return' do
     subject { Spree::Reimbursement.build_from_customer_return(customer_return) }
 
-    let(:customer_return) { create(:customer_return, line_items_count: 5) }
+    let(:customer_return) { create(:customer_return, line_items_count: 5, store: store) }
 
     let!(:pending_return_item) { customer_return.return_items.first.tap { |ri| ri.update!(acceptance_status: 'pending') } }
     let!(:accepted_return_item) { customer_return.return_items.second.tap(&:accept!) }
@@ -184,15 +206,9 @@ describe Spree::Reimbursement, type: :model do
 
     let!(:previous_reimbursement) { create(:reimbursement, order: customer_return.order, return_items: [already_reimbursed_return_item]) }
 
-    it 'connects to the accepted return items' do
+    it 'connects data' do
       expect(subject.return_items.to_a).to eq [accepted_return_item]
-    end
-
-    it 'connects to the order' do
       expect(subject.order).to eq customer_return.order
-    end
-
-    it 'connects to the customer_return' do
       expect(subject.customer_return).to eq customer_return
     end
   end

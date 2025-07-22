@@ -1,0 +1,46 @@
+<% if section.persisted? %>
+  <%= turbo_frame_tag dom_id(section), class: 'list-group-item py-0 border-0 sidebar-page-section draggable rounded-sm',
+                                       data: { sortable_update_url: spree.admin_page_section_path(section, format: :turbo_stream) } do %>
+    <div class="d-flex align-items-center justify-content-between sidebar-section-title py-1 rounded"
+         data-action="mouseover->page-builder#toggleHighlightElement mouseout->page-builder#toggleHighlightElement"
+      data-page-builder-editor-id-param="section-<%= section.id %>">
+      <div class="d-flex align-items-center flex-fill py-1 px-2">
+        <%= icon("#{section.icon_name}", height: 18, class: 'mr-2') if section.icon_name.present? %>
+        <%= link_to section.display_name, spree.edit_admin_page_section_path(section),
+            class: 'section-edit-link flex-fill font-weight-bold text-dark',
+            data: {
+              turbo_frame: :page_sidebar,
+              action: 'click->page-builder#makeOverlayActive',
+              page_builder_editor_id_param: "section-#{section.id}"
+            }
+        %>
+      </div>
+      <div class="d-flex align-items-center d-none">
+        <% if section.can_be_sorted? %>
+          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 handle-section">
+            <%= icon('grip-vertical', class: 'mr-0') %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+    <% if section.blocks_available?  %>
+      <div class="d-flex flex-column ml-1 mb-2">
+        <%= turbo_frame_tag [:blocks, section.id].join('_'), class: 'list-group-flush collapse show' do %>
+          <% if section.can_sort_blocks? %>
+          <div data-controller="sortable"
+            data-sortable-handle-value=".handle-block"
+            data-sortable-resource-name-value="page_block"
+            data-sortable-response-kind-value="turbo-stream">
+          <% else %>
+          <div>
+          <% end %>
+            <%= render partial: 'spree/admin/page_builder/sidebar_block', collection: section.blocks.includes(:rich_text_text), as: :block %>
+          </div>
+        <% end %>
+        <% if section.available_blocks_to_add.any? %>
+          <%= render 'spree/admin/page_builder/add_block', section: section %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

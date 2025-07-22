@@ -1,5 +1,5 @@
 module Spree
-  class Price < Spree::Base
+  class Price < Spree.base_class
     include Spree::VatPriceCalculation
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
@@ -31,15 +31,28 @@ module Spree
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }
 
+    validates :currency, presence: true
+
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
+    scope :for_products, ->(products, currency = nil) do
+      currency ||= Spree::Store.default.default_currency
+
+      with_currency(currency).joins(:variant).where(
+        Spree::Variant.table_name => { product_id: products }
+      )
+    end
 
     extend DisplayMoney
     money_methods :amount, :price, :compare_at_amount
     alias display_compare_at_price display_compare_at_amount
 
     self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
+
+    attribute :eligible_for_taxon_matching, :boolean, default: false
+    before_validation -> { self.eligible_for_taxon_matching = new_record? ? discounted? : discounted? != was_discounted? }
+    after_commit -> { variant&.product&.auto_match_taxons }, if: -> { eligible_for_taxon_matching? }
 
     def money
       Spree::Money.new(amount || 0, currency: currency.upcase)

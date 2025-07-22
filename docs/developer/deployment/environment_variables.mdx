@@ -1,0 +1,34 @@
+---
+title: Environment Variables
+icon: "terminal"
+---
+
+[Spree Starter](https://github.com/spree/spree_starter) uses several environment variables to configure the application.
+
+## Required environment variables
+
+This variables are required to run Spree Starter.
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `DATABASE_URL` | Database URL, this could be your AWS RDS instance or any other PostgreSQL instance | `postgres://user:pass@localhost:5432/spree` |
+| `REDIS_URL` | Redis/Valkey URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis/Valkey instance | `redis://localhost:6379/0` |
+| `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` | 
+
+## Optional environment variables
+
+There are also some other environment variables that you can set to customize your Spree application.
+
+| Variable | Description | Default value | Example |
+| --- | --- | --- | --- |
+| `DEVISE_SESSION_TIMEOUT` | Session timeout (in days) | `14` | `30` |
+| `GOOGLE_PLACES_API_KEY` | [Google Places API key](https://developers.google.com/places/web-service/get-api-key) (optional, used on checkout for address autocomplete) |  | `ABCD1234567890` |
+| `PORT` | Web server port | `3000` | `4000` |
+| `RAILS_ENV` | Rails environment (production, development, test) | `production` | `staging` |
+| `RAILS_LOG_LEVEL` | Log level, you can switch it to `debug` to see more detailed logs | `info` | `debug` |
+| `RAILS_MAX_THREADS` | Web server (Puma) threads | `3` | `5` |
+| `REDIS_CACHE_URL` | Redis/Valkey URL, used for caching, this could be your AWS ElastiCache instance or any other Redis/Valkey instance (optional, if not provided will use file based cache) | | `redis://localhost:6379/1` |
+| `SCREENSHOT_API_TOKEN` | [Screenshot API token](https://screenshotapi.net/) (optional, used for screenshot generation) |  | `1234132512341234` |
+| `SENDGRID_API_KEY` | [SendGrid API key](https://docs.sendgrid.com/api-reference/api-keys) (optional, if not provided will not send transactional emails) |  | `SG.1234567890` |
+| `SENDGRID_DOMAIN` | The domain you want to use for sending emails that was verified in SendGrid |  | `mystore.com` |
+| `SENTRY_DSN` | Sentry DSN (optional, if not provided will not send errors to [Sentry](https://sentry.io/)) |  | `https://sentry.io/...` |

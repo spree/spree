@@ -1,0 +1,133 @@
+<% if settings_active? %>
+  <ul class="nav flex-column">
+    <% if can?(:manage, current_store) %>
+      <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>
+    <% end %>
+
+    <% if can?(:manage, Spree.admin_user_class) %>
+      <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users', active: %w[admin_users invitations roles].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, current_store) %>
+      <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
+      <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
+      <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
+      <%= render_admin_partials(:store_settings_nav_partials) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::CustomDomain) %>
+      <%= nav_item(Spree.t(:domains), spree.admin_custom_domains_path, icon: 'world-www') %>
+    <% end %>
+
+    <% if can?(:manage, Spree::PaymentMethod) %>
+      <%= nav_item(Spree.t(:payments), spree.admin_payment_methods_path, icon: 'credit-card') %>
+    <% end %>
+
+    <% if can?(:manage, Spree::Zone) %>
+      <%= nav_item(Spree.t(:zones), spree.admin_zones_path, icon: 'world', active: %w[zones countries states].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::ShippingMethod) %>
+      <%= nav_item(Spree.t(:shipping), spree.admin_shipping_methods_path, icon: 'truck', active: %w[shipping_methods shipping_categories].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::TaxRate) %>
+      <%= nav_item(Spree.t(:tax), spree.admin_tax_rates_path, icon: 'receipt-tax', active: %w[tax_rates tax_categories stripe_tax_registrations].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::ReturnAuthorizationReason) %>
+      <%= nav_item(Spree.t(:returns), spree.admin_return_authorization_reasons_path, icon: 'receipt-refund', active: %w[refund_reasons reimbursement_types return_authorization_reasons].include?(controller_name)) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::StockLocation) %>
+      <%= nav_item(Spree.t(:stock_locations), spree.admin_stock_locations_path, icon: 'map-pin') %>
+    <% end %>
+
+    <% if can?(:manage, Spree::Store) %>
+      <% if spree.respond_to?(:admin_audits_path) %>
+        <%= nav_item(Spree.t('admin.audit_log'), spree.admin_audits_path, icon: 'history', active: %w[audits exports imports].include?(controller_name)) %>
+      <% else %>
+        <li class="nav-item">
+          <%= external_link_to nil, 'https://spreecommerce.org/pricing', class: 'nav-link d-flex align-items-center w-100' do %>
+            <%= icon 'history' %>
+            <%= Spree.t('admin.audit_log') %>
+
+            <span class="badge ml-auto with-tip rounded-pill" title="This feature is part of the Enterprise Edition.">Enterprise</span>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% if can?(:manage, Spree::OauthApplication) %>
+      <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
+    <% end %>
+
+    <%= render_admin_partials(:settings_nav_partials) %>
+  </ul>
+<% else %>
+  <ul class="nav flex-column">
+    <% unless current_store.setup_completed? %>
+      <li class="nav-item">
+        <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
+          <%= icon 'map' %>
+          <%= Spree.t('admin.getting_started') %>
+
+          <span class="badge ml-auto badge-info">
+            <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
+          </span>
+        <% end %>
+      </li>
+    <% end %>
+
+    <li class="nav-item">
+      <%= active_link_to spree.admin_path, class: 'nav-link', active: controller_name == 'dashboard' && action_name == 'show' do %>
+        <%= icon 'home' %>
+        <%= Spree.t(:home) %>
+      <% end %>
+    </li>
+
+    <%= render 'spree/admin/shared/sidebar/orders_nav' %>
+    <%= render 'spree/admin/shared/sidebar/returns_nav' %>
+    <%= render 'spree/admin/shared/sidebar/products_nav' %>
+    <%= render 'spree/admin/shared/sidebar/vendors_nav' %>
+
+    <% if can?(:manage, Spree.user_class) %>
+      <li class="nav-item">
+        <%= active_link_to spree.admin_users_path, class: 'nav-link' do %>
+          <%= icon 'users' %>
+          <%= Spree.t(:customers) %>
+        <% end %>
+      </li>
+    <% end %>
+
+    <%= render 'spree/admin/shared/sidebar/promotions_nav' %>
+
+    <% if can?(:manage, Spree::Report) %>
+      <li class="nav-item">
+        <%= active_link_to spree.admin_reports_path, class: 'nav-link' do %>
+          <%= icon 'chart-bar' %>
+          <%= Spree.t(:reports) %>
+        <% end %>
+      </li>
+    <% end %>
+
+    <%= render 'spree/admin/shared/sidebar/custom_nav' %>
+
+    <%= render_admin_partials(:store_nav_partials) %>
+
+    <li class="nav-item border-top border-top-dashed my-1"></li>
+    <%= render 'spree/admin/shared/sidebar/storefront_nav' %>
+    <%= render 'spree/admin/shared/sidebar/integrations_nav' %>
+  </ul>
+
+  <div class="mt-auto d-flex flex-column">
+    <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
+
+    <ul class="nav flex-column mb-2">
+      <% if can?(:manage, current_store) %>
+        <%= nav_item(Spree.t(:settings), spree.edit_admin_store_path(section: 'general-settings'), icon: 'settings', active: params[:section] == 'general-settings') %>
+        <%= nav_item(Spree.t(:users), spree.admin_admin_users_path, icon: 'users') %>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

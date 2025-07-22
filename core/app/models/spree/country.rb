@@ -1,5 +1,5 @@
 module Spree
-  class Country < Spree::Base
+  class Country < Spree.base_class
     has_many :addresses, dependent: :restrict_with_error
     has_many :states,
              -> { order name: :asc },

@@ -1,0 +1,26 @@
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: { controller: "filters dropdown" } do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :variant_product_name_cont, label: Spree.t(:product_name) %>
+
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-dropdown-target="menu" id="table-filter">
+    <div class="form-group">
+      <%= f.label :variant_sku_cont, Spree.t(:sku) %>
+      <%= f.text_field :variant_sku_cont, size: 15, class: "form-control", data: {filters_target: :input} %>
+    </div>
+    <div class="form-group">
+      <%= f.label :stock_location_id_eq, Spree.t(:stock_location) %>
+      <%= f.select :stock_location_id_eq,
+                available_stock_locations_list,
+                { include_blank: true },
+                data: { controller: 'autocomplete-select' }  %>
+    </div>
+    <%= render_admin_partials(:stock_items_filters_partials, f: f) %>
+    <%= render 'spree/admin/shared/filter_submit' %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

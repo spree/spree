@@ -1,58 +1,43 @@
 ---
 title: Architecture
 description: Learn about the Spree architecture
+icon: "code"
 ---
 
-Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and handful of other libraries. Spree itself is a modular platform consisting of several modules (Ruby gems).
+Spree is a modular full-stack platform that can be used to build a wide range of e-commerce applications. It includes:
 
-As many Rails applications Spree requires a relational database to run. Spree supports both MySQL and PostgreSQL. You can also use SQLite.
+<CardGroup>
+  <Card title="Core" icon="code">
+    <p>Core is the foundation of Spree, such as models, services, and the backend logic necessary to run an e-commerce business.</p>
+  </Card>
+  <Card title="Admin Dashboard" icon="gauge">
+    <p>The Admin Dashboard is the control center for your Spree store. It allows you to manage products, orders, customers, and more.</p>
+  </Card>
+  <Card title="Storefront" icon="store">
+    <p>The Storefront is the public-facing part of your Spree store where customers can browse products, add them to their cart, and complete purchases.</p>
+  </Card>
+  <Card title="Emails" icon="envelope">
+    <p>Spree includes built-in support for sending transactional emails to customers, such as order confirmations and shipping notifications.</p>
+  </Card>
+  <Card title="Storefront API" icon="cart-shopping" href="/api-reference/storefront">
+    <p>The Storefront API allows developers to interact with the Spree store programmatically, enabling custom front-end experiences and integrations.</p>
+  </Card>
+  <Card title="Platform API" icon="server" href="/api-reference/platform">
+    <p>The Platform API provides a comprehensive set of endpoints for managing all aspects of the Spree store, including products, orders, and customers.</p>
+  </Card>
+  <Card title="Webhooks" icon="webhook">
+    <p>Webhooks allow your Spree store to send real-time notifications to external systems when certain events occur, such as order creation or payment completion.</p>
+  </Card>
+</CardGroup>
 
-### Core gems
+### Code Conventions
+
+Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. As an example let's look at the Product model.
+
+* the model itself is located in [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) and is named `Spree::Product`
+* the controller is located in [app/controllers/spree/products_controller.rb](https://github.com/spree/spree/blob/main/storefront/app/controllers/spree/products_controller.rb) and is named `Spree::ProductsController`
+* views for that controller are located in [app/views/spree/products](https://github.com/spree/spree/tree/main/storefront/app/views/spree/products) directory
 
 <Info>
-These gems are the core of Spree and they are the most important part of the Spree platform. They are the building blocks that make Spree possible.
+All Spree code is prefixed with `Spree` namespace. Thanks to this convention, it's easy to identify Spree code in a Rails application and we will not have any conflicts with your application code or other libraries.
 </Info>
-
-<AccordionGroup>
-  <Accordion title="Core">
-    The core module is the heart of Spree, containing the essential components and functionalities that power Spree stores. This includes the models, services, and the backend logic necessary to manage products, orders, payments, shipping, and more.
-  </Accordion>
-  <Accordion title="API">
-    The API module provides a [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) programmable interface to Spree, allowing developers to interact with the Spree store programmatically. This is useful for integrating Spree with other systems, building mobile applications, or customizing the frontend of a Spree store.
-
-    API gem also includes Webhooks which are a way to let Spree know when something happens in the store. For example, when an order is placed, the API gem can send a webhook to a 3rd party service to let them know about the order.
-  </Accordion>
-</AccordionGroup>
-
-### UI gems
-
-<AccordionGroup>
-  <Accordion title="Admin Panel">
-    The Admin Panel module provides a comprehensive backend interface for managing a Spree store. It includes functionalities for product management, order processing, customer service, configuration settings, and more. This module is designed to give store administrators full control over the operations and settings of the store.
-  </Accordion>
-  <Accordion title="Storefront">
-    The Storefront module is the customer-facing part of a Spree store. It includes the presentation layer for displaying products, handling customer carts, and processing checkout operations. This module is built with a focus on user experience, ensuring that customers have a smooth and enjoyable shopping experience.
-  </Accordion>
-</AccordionGroup>
-
-### Optional gems
-
-<AccordionGroup>
-  <Accordion title="Emails">
-    The Emails module handles all aspects of email generation and delivery in Spree. This includes order confirmation emails, shipping notifications, promotional emails, and any other email communications between a Spree store and its customers.
-
-    You can opt-out of the default email functionality and use a 3rd party email service eg. Klaviyo or [Mailchimp](https://github.com/spree-contrib/spree_mailchimp_ecommerce).
-  </Accordion>
-  <Accordion title="Gateway">
-    The Gateway module in Spree is responsible for handling payment processing. It integrates with various payment gateways and providers, allowing Spree stores to accept payments from customers through different methods and channels. This module ensures secure and efficient transaction processing, supporting a wide range of payment options to cater to diverse customer preferences.
-  </Accordion>
-  <Accordion title="Auth Devise">
-    The Auth Devise module leverages the Devise gem for authentication in Spree. It provides a robust and flexible authentication solution for Spree stores, including features such as user registration, login, password recovery, and more. This module is essential for managing user access and ensuring secure user authentication processes within a Spree store.
-  </Accordion>
-</AccordionGroup>
-
-### 3rd party Extensions
-
-Extensions are Spree plugins that add new features or functionality to a Spree store. They are developed and maintained by the Spree community.
-
-You can find a list of Spree extensions on the [Extensions list page](/developer/extending-spree/3rd-party-extensions)

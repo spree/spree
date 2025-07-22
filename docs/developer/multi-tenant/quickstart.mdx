@@ -1,0 +1,20 @@
+---
+title: Building a Multi-Tenant Spree Application
+sidebarTitle: Quickstart
+---
+
+Spree out of the box is a single-tenant application. You can have multiple stores on the same instance of Spree, but they share the same products, admin user accounts and other resources.
+Multi-Store Spree setup is recommended for running multiple brands or multiple language versions of the same brand on the same instance.
+
+If you want to have a true multi-tenant application, you will need to purchase [Enterprise Edition license](https://spreecommerce.org/pricing) which includes `spree_multi_tenant` gem providing full multi-tenant support.
+
+## Multi-Store vs Multi-Tenant
+
+To sum it up:
+
+* Multi-Store setup is recommended for running multiple brands or multiple language versions of the same store
+* Multi-Tenant allows you to create a SaaS application with multiple tenants, each of them with their own Spree instance
+
+## Setup SaaS application
+
+[Follow the installation instructions](/developer/multi-tenant/installation) to setup a multi-tenant Spree application.

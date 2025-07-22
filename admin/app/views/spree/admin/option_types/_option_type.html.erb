@@ -1,0 +1,19 @@
+<tr id="<%= spree_dom_id option_type %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_option_type_path(option_type) %>">
+  <td class="move-handle text-center w-5">
+    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+  </td>
+  <td class="w-20 cursor-pointer" data-action="click->row-link#openLink"><code><%= option_type.name %></code></td>
+  <td class="w-35 cursor-pointer font-weight-bold" data-action="click->row-link#openLink"><%= option_type.presentation %></td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= active_badge(option_type.filterable) %>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= option_type.option_values.count %>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= option_type.products.count %>
+  </td>
+  <td class="w-10 actions cursor-pointer">
+    <%= link_to_edit option_type, data: { row_link_target: :link, turbo_frame: '_top' } %>
+  </td>
+</tr>

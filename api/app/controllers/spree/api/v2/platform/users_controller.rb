@@ -25,6 +25,11 @@ module Spree
           def spree_permitted_attributes
             super + [:password, :password_confirmation]
           end
+
+          # we need to override this method to avoid trying to create user role when creating a user
+          def ensure_current_store(_resource)
+            # do nothing
+          end
         end
       end
     end

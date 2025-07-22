@@ -1,0 +1,45 @@
+<% unless current_store.prefers_index_in_search_engines? %>
+  <meta name="robots" content="noindex, nofollow">
+<% end %>
+
+<% og_title = title.presence || current_store.name %>
+<% og_url = canonical_href(current_store.url_or_custom_domain) %>
+<% og_type = 'website' %>
+<% og_description = page_description.presence || current_store.description.presence || current_store.name %>
+
+<% if @product %>
+  <% og_type = 'product' %>
+<% elsif @article %>
+  <% og_type = 'article' %>
+<% end %>
+
+<meta name="description" content="<%= h(og_description) %>">
+
+<meta property="og:site_name" content="<%= current_store.name %>">
+<meta property="og:url" content="<%= og_url %>">
+<meta property="og:title" content="<%= h(og_title) %>">
+<meta property="og:type" content="<%= og_type %>">
+<meta property="og:description" content="<%= h(og_description) %>">
+
+<% if page_image.present? && page_image.attached? && page_image.variable? %>
+  <% image_url = spree_image_url(page_image, width: 1200, height: 630) %>
+
+  <meta property="og:image" content="<%= image_url %>">
+  <meta property="og:image:secure_url" content="<%= image_url %>">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="<%= title.gsub(current_store.name, '') %>">
+  <meta property="twitter:image" content="<%= image_url %>" />
+<% end %>
+
+<% if @product.present? && @product.price_in(current_currency).present? %>
+  <meta property="og:price:amount" content="<%= @product.price_in(current_currency).amount.to_s %>">
+  <meta property="og:price:currency" content="<%= current_currency %>">
+<% end %>
+
+<% if current_store.twitter.present? %>
+  <meta name="twitter:site" content="<%= '@' + current_store.twitter.split('twitter.com/').last %>">
+<% end %>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="<%= h(og_title) %>">
+<meta name="twitter:description" content="<%= h(og_description) %>">

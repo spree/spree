@@ -1,7 +1,7 @@
 require 'csv'
 
 module Spree
-  class Export < Base
+  class Export < Spree.base_class
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
 
     include Spree::SingleStoreResource
@@ -26,11 +26,7 @@ module Spree
     #
     # Enums
     #
-    if Rails.version >= '7.0'
-      enum :format, SUPPORTED_FILE_FORMATS.each_with_index.to_h
-    else
-      enum format: SUPPORTED_FILE_FORMATS.each_with_index.to_h
-    end
+    enum :format, SUPPORTED_FILE_FORMATS.each_with_index.to_h
 
     #
     # Ransack configuration
@@ -124,11 +120,15 @@ module Spree
 
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
-      "Spree::#{type.demodulize.singularize}".constantize
+      if type == 'Spree::Exports::Customers'
+        Spree.user_class
+      else
+        "Spree::#{type.demodulize.singularize}".constantize
+      end
     end
 
     def current_ability
-      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user)
+      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user, { store: store })
     end
 
     # eg. Spree::Exports::Products => products-store-my-store-code-20241030133348.csv

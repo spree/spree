@@ -1,0 +1,13 @@
+<%# locals: (f:, field:, locale:) %>
+
+<tr>
+  <td><%= Spree.t(field) %></td>
+  <td class="text-wrap">
+    <%= @resource.send(field)%>
+  </td>
+  <td>
+    <div class="trix-container mb-0">
+      <%= f.rich_text_area "#{field}_#{locale}" %>
+    </div>
+  </td>
+</tr>

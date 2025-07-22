@@ -5,7 +5,7 @@ description: Learn how to create a Spree extension.
 
 ## Overview
 
-[Spree Extensions](/extending-spree/3rd-party-extensions) are a way to add new functionality to your Spree store. They are a great way to extend the functionality of Spree and add new features. You can share them with Spree community on Github so anyone can use them, contribute back and share your improvements.
+[Spree Extensions](/developer/customization/extensions) are a way to add new functionality to your Spree store. They are a great way to extend the functionality of Spree and add new features. You can share them with Spree community on Github so anyone can use them, contribute back and share your improvements.
 
 ## Getting Started
 
@@ -78,7 +78,7 @@ bin/rails g spree_simple_sales:install
 
 Now we need to extend `Spree::HomeController` and add an action that selects "on sale" products.
 
- Note for the sake of this example that \`Spree::HomeController\` is only included in spree_frontend so you need to make it a dependency on your extensions \*.gemspec file.
+ Note for the sake of this example that \`Spree::HomeController\` is only included in spree_storefront so you need to make it a dependency on your extensions \*.gemspec file.
 
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
@@ -93,13 +93,13 @@ module SpreeSimpleSales
   module Spree
     module HomeControllerDecorator
       def sale
-        @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+        @products = ::Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
       end
     end
   end
 end
 
-Spree::HomeController.prepend SpreeSimpleSalesSpree::HomeControllerDecorator
+Spree::HomeController.prepend SpreeSimpleSales::Spree::HomeControllerDecorator
 ```
 
 This will select just the products that have a variant with a `sale_price` set.
@@ -156,13 +156,13 @@ module SpreeSimpleSales
     module VariantDecorator
       def price_in(currency)
         return super unless sale_price.present?
-        Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
+        ::Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
       end
     end
   end
 end
 
-Spree::Variant.prepend SpreeSimpleSalesSpree::VariantDecorator
+Spree::Variant.prepend SpreeSimpleSales::Spree::VariantDecorator
 ```
 
 If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in` using `return super`.

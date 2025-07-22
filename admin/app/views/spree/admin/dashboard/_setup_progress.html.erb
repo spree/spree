@@ -1,0 +1,18 @@
+<div class="mb-3 card rounded-lg" id="setup_progress">
+  <div class="card-body">
+    <div class="mb-3">
+      Your overall setup progress
+      <span class="float-right badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %>">
+        <% if current_store.setup_completed? %>
+          <%= icon('check', class: 'text-success') %>
+        <% end %>
+
+        <span>
+          <strong><%= current_store.setup_tasks_done %></strong> of <%= current_store.setup_tasks_total %> steps done
+        </span>
+      </span>
+    </div>
+
+    <%= progress_bar_component(current_store.setup_percentage) %>
+  </div>
+</div>

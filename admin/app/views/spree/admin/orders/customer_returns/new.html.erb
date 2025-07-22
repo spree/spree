@@ -1,0 +1,67 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <%= Spree.t(:new_customer_return) %>
+<% end %>
+
+<% if @rma_return_items.any? %>
+
+  <%= render partial: "spree/admin/shared/error_messages",
+  locals: {
+    target: @customer_return,
+  } %>
+
+  <%= form_for [:admin, @order, @customer_return] do |f| %>
+    <div class="card mb-4" data-controller="checkbox-select-all">
+      <div class="card-header">
+        <h6 class="card-title"><%= Spree.t(:items_in_rmas) %></h6>
+      </div>
+      <div class="card-body p-0">
+        <% if @rma_return_items.any? %>
+          <%= render partial: "return_item_selection",
+          locals: {
+            f: f,
+            return_items: @rma_return_items,
+          } %>
+        <% else %>
+          <div
+            class="
+              text-muted p-5 d-flex align-items-center w-100 justify-content-center
+            "
+          >
+            <%= Spree.t(:none) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="form-group">
+          <%= f.label :stock_location, raw(Spree.t(:stock_location) + required_span_tag) %>
+          <%= f.select :stock_location_id,
+                   available_stock_locations_list,
+                   { include_blank: Spree.t(:select_a_stock_location) },
+                   class: "custom-select" %>
+          <%= f.error_message_on :stock_location %>
+        </div>
+      </div>
+    </div>
+
+    <%= render "spree/admin/shared/new_resource_links" %>
+  <% end %>
+
+<% else %>
+  <div class="card">
+    <div
+      class="
+        card-body text-muted d-flex align-items-center justify-content-center
+        flex-column gap-2
+      "
+    >
+      <%= Spree.t(:all_items_have_been_returned) %>,
+      <%= link_to "#{Spree.t(:get_back_to_the)} #{Spree.t(:order)}",
+      spree.edit_admin_order_path(@order) %>
+    </div>
+  </div>
+
+<% end %>

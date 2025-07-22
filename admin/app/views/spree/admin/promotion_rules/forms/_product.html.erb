@@ -1,0 +1,9 @@
+<div class="form-group">
+  <%= label_tag "promotion_rule[product_ids_to_add][]", Spree.t('product_rule.choose_products') %>
+  <%= tom_select_tag "promotion_rule[product_ids_to_add][]", 
+    multiple: true, 
+    url: spree.select_options_admin_products_path, 
+    active_option: f.object.product_ids,
+    preloaded_options: f.object.products.pluck(:name, :id)
+  %>
+</div>

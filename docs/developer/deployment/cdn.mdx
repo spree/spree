@@ -1,0 +1,40 @@
+---
+title: CDN
+description: >-
+  Learn how to improve performance of your Spree application by using a CDN (Content Delivery Network).
+icon: "cloud"
+---
+
+To improve performance of your Spree application, we recommend using a CDN (Content Delivery Network) to cache images and static files.
+
+We recommend using [Cloudflare](https://www.cloudflare.com/) as your CDN provider. It's free and simple to setup.
+
+After setting up your Cloudflare account and adding your domain name to Cloudflare, you will need to set your cache settings.
+
+Go to your domain name in Cloudflare and click on "Caching" tab and select "Cache Rules".
+
+![Cloudflare Cache Rules](/images/developer/deployment/cloudflare_caching.png)
+
+Click on "Create Rule" and setup the rule as bellow:
+
+![Cloudflare Cache Rule Settings](/images/developer/deployment/cloudflare_cache_rule_1.png)
+
+Supply the first value with
+
+```url
+/rails/active_storage/representations/
+```
+
+and the second value with
+
+```url
+/assets
+```
+
+This will handle caching of both images and static files such as JavaScript and CSS files.
+
+Now scroll down and set the settings as bellow:
+
+![Cloudflare Cache Rule Settings](/images/developer/deployment/cloudflare_cache_rule_2.png)
+
+Finally, click on "Deploy" and you are done!

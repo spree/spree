@@ -6,7 +6,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
   let!(:addresses) { create_list(:address, 3, user_id: user.id) }
   let!(:country) { create(:country, iso: 'GBR') }
   let!(:state) { create(:state, country: country) }
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
 
   shared_examples 'returns valid user addresses resource JSON' do
     it 'returns a valid user addresses resource JSON response' do
@@ -164,12 +164,11 @@ describe 'Storefront API v2 Addresses spec', type: :request do
       before { post '/api/v2/storefront/account/addresses', params: params, headers: headers_bearer }
 
       it 'returns errors' do
-        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank, Phone can't be blank")
+        expect(json_response['error']).to eq("City can't be blank, Country can't be blank, Zip Code can't be blank")
         expect(json_response['errors']).to eq(
           'city' => ["can't be blank"],
           'zipcode' => ["can't be blank"],
-          'country' => ["can't be blank"],
-          'phone' => ["can't be blank"]
+          'country' => ["can't be blank"]
         )
       end
     end

@@ -1,6 +1,8 @@
 ---
 title: Quickstart
+og:title: Spree Customization Quickstart
 description: Learn how to customize every part of the Spree stack
+icon: wrench
 ---
 
 Spree is a very flexible platform allowing you to customize every part of it, to suit your business needs.
@@ -13,47 +15,15 @@ There are several ways you can achieve this:
 
     Changing currency, shipping zones, languages - it's very easy to do.
 
-    Go to `Admin > Configuration > General Settings`
+    Go to **Admin > Settings**
 
     <img src="/images/spree_admin_store_settings.png" alt="Spree Admin Store Settings" />
   </Accordion>
 
   <Accordion title="Configuration">
-    Configuration allows you to tweak Spree's behavior without having to modify the source code.
+    Global application configuration allows you to tweak Spree's behavior without having to modify the source code.
 
-    Spree comes with a handful configuration options you can change:
-
-      | Configuration Key                  | Description                                                                                           | Default Value       |
-      |------------------------------------|-------------------------------------------------------------------------------------------------------|---------------------|
-      | `allow_checkout_on_gateway_error`  | Continues the checkout process even if the payment gateway error failed.                             | `false`             |
-      | `address_requires_phone`            | Determines whether a phone number is required for Addresses. | `true`              |
-      | `alternative_shipping_phone`       | Determines if an alternative phone number should be present for the shipping address on the checkout page. | `false`         |
-      | `allow_guest_checkout`             | Determines if guests can proceed to checkout without creating an account. | `true`              |
-      | `always_include_confirm_step`      | Determines if the confirmation step is always included in the checkout process, regardless of the payment method. | `false`             |
-      | `auto_capture`                     | Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway). | `false` |
-      | `auto_capture_on_dispatch`         | Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized. | `false` |
-      | `company`                          | Determines whether or not a field for "Company" displays on the address form. | `false`            |
-      | `credit_to_new_allocation`         | Determines if a new allocation is created anytime store credit is added. If not set, it will update the store credit's amount in place. | `false`             |
-      | `disable_sku_validation`             | Determines if the built-in SKU uniqueness validation is disabled. | `false`             |
-      | `disable_store_presence_validation` | Determines if Store presence validation for Products and Payment Methods is disabled. | `false`             |
-      | `expedited_exchanges`               | Determines if an exchange shipment is kicked off upon return authorization save. Requires payment profiles to be supported on your gateway and a configured delayed job handler. | `false`             |
-      | `expedited_exchanges_days_window`   | The number of days the customer has to return their item after the expedited exchange is shipped to avoid being charged. | `14`                |
-      | `restock_inventory`                 | Determines if inventory should be restocked when an order is canceled or returned                              | `true`              |
-      | `return_eligibility_number_of_days` | The number of days after purchase within which a return can be initiated. | `365` |
-      | `send_core_emails`                  | Determines if core emails should be sent. This includes order confirmation and shipment tracking emails. | `true`             |
-      | `show_products_without_price`      | Determines if products without a price are shown in the storefront and Storefront API | `false`             |
-      | `tax_using_ship_address`           | Determines if tax information should be based on shipping address, rather than the billing address.  | `true`              |
-      | `track_inventory_levels`           | Determines if inventory levels should be tracked when products are purchased at checkout. This option causes new `InventoryUnit` objects to be created when a product is bought. | `true` |
-
-      To change these you need to edit your `config/initializers/spree.rb` file.
-
-      For example, to disable the `expedited_exchanges` feature, you would add the following line:
-
-      ```ruby
-      Spree.config do |config|
-        config.expedited_exchanges = false
-      end
-      ```
+    Please see [Preferences](/developer/customization/configuration) section for more information.
   </Accordion>
 
   <Accordion title="Authentication">
@@ -62,12 +32,6 @@ There are several ways you can achieve this:
     To do this, you need to create a new authentication system and configure Spree to use it.
 
     You can find more information in the [Authentication](authentication) section.
-  </Accordion>
-
-  <Accordion title="Images">
-    Spree allows you to change the images for products, variants and taxons.
-
-    Please see [Images customization section](images) for more information.
   </Accordion>
 
   <Accordion title="Checkout flow">

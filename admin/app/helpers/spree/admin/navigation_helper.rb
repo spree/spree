@@ -1,20 +1,37 @@
 module Spree
   module Admin
     module NavigationHelper
+      # Creates a navigation item with optional icon
+      # @param [String, SafeBuffer] label The text or HTML to use as the link content
+      # @param [String] url The URL for the link
+      # @param [String, nil] icon Optional icon name to prepend to the label
+      # @param [Boolean, nil] active Whether the link should be marked as active
+      # @return [SafeBuffer] The navigation item HTML
+      def nav_item(label, url, icon: nil, active: nil)
+        content_tag :li, class: 'nav-item', role: 'presentation' do
+          label = icon(icon) + label if icon.present?
+          active_link_to label, url, class: 'nav-link', active: active
+        end
+      end
+
       # the per_page_dropdown is used on index pages like orders, products, promotions etc.
       # this method generates the select_tag
+      # @return [String]
       def per_page_dropdown
-        # there is a config setting for admin_products_per_page, only for the orders page
-        if @products && per_page_default = ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          per_page_options = []
-          5.times do |amount|
-            per_page_options << (amount + 1) * ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          end
-          per_page_options << 250
-        else
-          per_page_default = ENV.fetch('ADMIN_PRODUCTS_PER_PAGE', 25)
-          per_page_options = %w{25 50 75 100 125 250}
-        end
+        per_page_default = if @products
+                             Spree::Admin::RuntimeConfig.admin_products_per_page
+                           elsif @orders
+                             Spree::Admin::RuntimeConfig.admin_orders_per_page
+                           else
+                             Spree::Admin::RuntimeConfig.admin_records_per_page
+                           end
+
+        per_page_options = [
+          per_page_default,
+          per_page_default * 2,
+          per_page_default * 4,
+          per_page_default * 8
+        ]
 
         selected_option = (params[:per_page].try(:to_i) || per_page_default).to_s
 
@@ -24,7 +41,7 @@ module Spree
           button_tag(raw(selected_option), class: 'btn btn-light btn-sm', data: { toggle: 'dropdown', expanded: false }) +
             content_tag(:div, class: 'dropdown-menu') do
               per_page_options.map do |option|
-                link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option == selected_option}"
+                link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option.to_i == selected_option.to_i}"
               end.join.html_safe
             end
         end
@@ -32,33 +49,41 @@ module Spree
 
       # helper method to create proper url to apply per page ing
       # fixes https://github.com/spree/spree/issues/6888
+      # @param per_page [Integer] the number of items per page
+      # @return [Hash] the params to apply per page
       def per_page_dropdown_params(per_page)
-        args = params.permit!.to_h.clone
-        args.delete(:page)
-        args.delete(:per_page)
-        args.merge!(per_page: per_page)
-        args
+        # Keep only safe query params that should survive pagination changes
+        safe_params = request.query_parameters.slice(:q)
+        safe_params.merge(per_page: per_page, page: nil)
       end
 
+      # render a button link to edit a resource
+      # if the current user doesn't have permission to update the resource, the button will not be rendered
+      # @param resource [Spree::Product, Spree::User, Spree::Order] the resource to edit
+      # @param options [Hash] the options for the link
+      # @option options [String] :url the url to edit the resource (optional)
+      # @return [String] the link to edit the resource
       def link_to_edit(resource, options = {})
         url = options[:url] || edit_object_url(resource)
         options[:data] ||= {}
         options[:data][:action] ||= 'edit'
         options[:class] ||= 'btn btn-light btn-sm'
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
+        link_to_with_icon('pencil', Spree.t(:edit), url, options) if can?(:update, resource)
       end
 
-      def link_to_edit_url(url, options = {})
-        options[:data] ||= { action: 'edit' }
-        options[:class] ||= 'btn btn-light btn-sm'
-        link_to_with_icon('pencil', Spree.t(:edit), url, options)
-      end
-
+      # render a button to delete a resource with a confirmation modal
+      # if the current user doesn't have permission to destroy the resource, the button will not be rendered
+      # @param resource [Spree::Product, Spree::User, Spree::Order] the resource to delete
+      # @param options [Hash] the options for the link
+      # @option options [String] :url the url to delete the resource (optional)
+      # @return [String] the link to delete the resource
       def link_to_delete(resource, options = {})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t('actions.destroy')
         options[:class] ||= 'btn btn-danger btn-sm'
         options[:data] ||= { turbo_confirm: Spree.t(:are_you_sure), turbo_method: :delete }
+
+        return unless can?(:destroy, resource)
 
         if options[:no_text]
           link_to_with_icon 'trash', name, url, options
@@ -69,12 +94,12 @@ module Spree
         end
       end
 
-      def link_to_delete_url(url, options = {})
-        options[:data] = { turbo_confirm: Spree.t(:are_you_sure), turbo_method: :delete }
-        options[:class] = 'btn btn-danger btn-sm'
-        link_to_with_icon('trash', Spree.t('actions.destroy'), url, options)
-      end
-
+      # renders a link with an icon
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param text [String] the text of the link
+      # @param url [String] the url of the link
+      # @param options [Hash] the options for the link
+      # @return [String] the link with the icon
       def link_to_with_icon(icon_name, text, url, options = {})
         options[:class] ||= (options[:class].to_s + " with-tip").strip
         options[:title] ||= text if options[:no_text]
@@ -89,6 +114,19 @@ module Spree
         link_to(text.html_safe, url, options)
       end
 
+      def link_to_export_modal
+        link_to '#', data: { toggle: 'modal', target: '#export-modal' }, class: 'btn btn-light' do
+          icon('table-export', class: 'mr-0 mr-lg-2') +
+          content_tag(:span, Spree.t(:export), class: 'd-none d-lg-inline')
+        end if can?(:create, Spree::Export)
+      end
+
+      # renders an active link with an icon, using the active_link_to method from https://github.com/comfy/active_link_to gem
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param text [String] the text of the link
+      # @param url [String] the url of the link
+      # @param options [Hash] the options for the link
+      # @return [String] the active link with the icon
       def active_link_to_with_icon(icon_name, text, url, options = {})
         options[:class] = (options[:class].to_s + " with-tip").strip
         options[:title] = text if options[:no_text]
@@ -103,7 +141,13 @@ module Spree
         active_link_to(text.html_safe, url, options)
       end
 
+      # renders a button with an icon (optional)
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
+      # @param text [String] the text of the button
+      # @param icon_name [String] the name of the icon, eg: 'pencil', see: https://tabler.io/icons
+      # @param button_type [String] the type of the button, eg: 'submit', 'button'
+      # @param options [Hash] the options for the button
+      # @return [String] the button with the icon
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
           text = "#{icon(icon_name, class: "icon icon-#{icon_name}")} #{text}"
@@ -122,6 +166,8 @@ module Spree
       end
 
       def button_link_to(text, url, html_options = {})
+        Spree::Deprecation.warn("button_link_to is deprecated. Use standard link_to instead.")
+
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
@@ -143,36 +189,27 @@ module Spree
         end
       end
 
-      def turbo_link_to(text, url, **options)
-        icon = options[:icon]
-
-        text_components = []
-        text_components << icon(icon) if icon.present?
-        text_components << text
-
-        link_text = text_components.compact.join
-
-        options[:data] ||= {}
-        options[:data][:turbo_method] = options[:method] || :get
-        options[:data][:turbo_confirm] = Spree.t(:are_you_sure) if options[:confirm].present?
-
-        html_options = options.except(:icon, :method, :confirm)
-
-        link_to(link_text.html_safe, url, html_options)
-      end
-
+      # renders a badge (active/inactive)
+      # @param condition [Boolean] the condition to check
+      # @param options [Hash] the options for the badge
+      # @return [String] the badge with the icon
       def active_badge(condition, options = {})
         label = options[:label]
-        label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
+        label ||= condition ? Spree.t(:say_yes).to_s : Spree.t(:say_no).to_s
         label = icon('check') + label if condition
 
         css_class = condition ? 'badge-active' : 'badge-inactive'
 
-        content_tag(:small, class: "badge  #{css_class}") do
+        content_tag(:span, class: "badge  #{css_class}") do
           label
         end
       end
 
+      # renders a back button to the previous page
+      # @param default_url [String] the default url to go back to
+      # @param object [Spree::Product, Spree::User, Spree::Order] the object list to go back to
+      # @param label [String] the label of the back button (optional)
+      # @return [String] the back button
       def page_header_back_button(default_url, object = nil, label = nil)
         url = default_url
 
@@ -181,35 +218,68 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'd-flex align-items-center' do
-          content_tag(:span, inline_svg('icons/chevron-left.svg', height: '1rem'), class: 'btn hover-gray px-1 mr-2 d-flex align-items-center') +
+        link_to url, class: 'd-flex align-items-center text-decoration-none' do
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray px-2 d-flex align-items-center') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end
 
-      def nav_pill_list_item(resource, url: nil, label: Spree.t(resource), active: nil, link_class: 'nav-link')
-        url = spree.send("admin_#{resource.to_s.pluralize}_path") if url.nil?
-        active = request.url.starts_with?(url) || request.fullpath.starts_with?(url) || controller_name == resource.to_s if active.nil?
-        link_class = "#{link_class} active" if active
-
-        content_tag :li, class: 'nav-item', role: 'presentation' do
-          link_to label, url, role: 'tab', 'aria-controls': 'pills-general', class: link_class, 'aria-selected': active
-        end
-      end
-
-      def external_link_to(label, url, opts = {})
+      # renders an external link with an icon (eg. spree documentation website)
+      # @param label [String] the label of the link
+      # @param url [String] the url of the link
+      # @param opts [Hash] the options for the link
+      # @return [String] the external link with the icon
+      def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] = "d-inline-flex align-items-center #{opts[:class]}"
+        opts[:class] ||= "d-inline-flex align-items-center text-blue text-decoration-none"
 
-        link_to url, opts do
-          (label + icon('external-link', class: 'ml-1 mr-0 small')).html_safe
+        if block_given?
+          link_to url, opts, &block
+        else
+          link_to url, opts do
+            (label + icon('external-link', class: 'ml-1 mr-0 small opacity-50')).html_safe
+          end
         end
       end
 
+      # renders a link to preview a resource on the storefront using the spree_storefront_resource_url helper
+      # @param resource [Spree::Product, Spree::Post] the resource to preview
+      # @param options [Hash] the options for the link
+      # @return [String] the link to preview the resource
+      def external_page_preview_link(resource, options = {})
+        resource_name = options[:name] || resource.class.name.demodulize
+
+        url = if [Spree::Product, Spree::Post].include?(resource.class)
+                spree_storefront_resource_url(resource, preview_id: resource.id)
+              else
+                spree_storefront_resource_url(resource)
+              end
+
+        link_to_with_icon(
+          'eye',
+          Spree.t('admin.utilities.preview', name: resource_name),
+          url,
+          class: 'text-left dropdown-item', id: "adminPreview#{resource_name}", target: :blank, data: { turbo: false }
+        )
+      end
+
+      # renders a help bubble with an icon
+      # @param text [String] the text of the help bubble
+      # @param placement [String] the placement of the help bubble
+      # @param css [String] the css class of the help bubble
+      # @return [String] the help bubble with the icon
       def help_bubble(text = '', placement = 'bottom', css: nil)
-        css ||= 'text-muted font-size-base'
-        content_tag :small, icon('help', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+        css ||= 'text-muted opacity-75 cursor-default'
+        content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+      end
+
+      def render_breadcrumb_icon
+        if settings_active?
+          icon('settings')
+        elsif @breadcrumb_icon
+          icon(@breadcrumb_icon)
+        end
       end
     end
   end

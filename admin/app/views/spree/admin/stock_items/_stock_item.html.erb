@@ -1,0 +1,43 @@
+<tr>
+  <td scope="row p-0" class="w-50">
+    <%= render 'spree/admin/variants/variant', variant: stock_item.variant %>
+  </td>
+  <td class="w-20">
+    <% if can?(:manage, stock_item.stock_location) %>
+      <%= link_to stock_item.stock_location.display_name, spree.edit_admin_stock_location_path(stock_item.stock_location), data: { turbo_frame: '_top' } %>
+    <% else %>
+      <%= stock_item.stock_location.display_name %>
+    <% end %>
+  </td>
+  <td class="text-center w-10">
+    <% if can?(:update, stock_item) %>
+       <%= form_for stock_item,
+               url: spree.admin_stock_item_path(stock_item),
+               method: :put,
+               html: { data: { controller: 'auto-submit'}, class: 'd-flex align-items-center justify-content-center' } do |f| %>
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :backorderable, class: 'custom-control-input', id: "stock_item_backorderable_#{stock_item.id}", data: { action: 'auto-submit#submit' } %>
+          <label class="custom-control-label" for="stock_item_backorderable_<%= stock_item.id %>"><span></span></label>
+        </div>
+      <% end %>
+    <% else %>
+      <%= active_badge(stock_item.backorderable?) %>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <% if can?(:update, stock_item) %>
+      <%= turbo_frame_tag stock_item do %>
+        <%= form_for stock_item,
+                    url: spree.admin_stock_item_path(stock_item),
+                    method: :put,
+                    html: { class: 'd-flex' } do |f| %>
+
+          <%= f.number_field :count_on_hand, class: 'form-control mr-2', required: true, min: 0 %>
+          <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary' %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= stock_item.count_on_hand %>
+    <% end %>
+  </td>
+</tr>

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::LineItem, type: :model do
-  let!(:store) { create(:store) }
+  let!(:store) { @default_store }
   let(:order) { create :order_with_line_items, line_items_count: 1, store: store }
   let(:line_item) { order.line_items.first }
 
@@ -464,6 +464,128 @@ describe Spree::LineItem, type: :model do
       let(:promotion_variant) { create(:variant) }
 
       it { is_expected.to be_nil }
+    end
+  end
+  
+  describe '#shipments' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let!(:shipment) { create(:shipment, inventory_units: [inventory_unit]) }
+
+    it 'returns the shipments for the line item' do
+      expect(line_item.shipments).to eq([shipment])
+    end
+  end
+
+  describe '#shipping_cost' do
+    let(:line_item) { create(:line_item) }
+    let(:inventory_unit) { create(:inventory_unit, line_item: line_item) }
+    let(:shipment) { create(:shipment, inventory_units: [inventory_unit], cost: 10) }
+
+    it 'returns the shipping cost for the line item' do
+      shipment
+      expect(line_item.shipping_cost).to eq(10)
+    end
+
+    context 'when the shipment is canceled' do
+      it 'returns 0' do
+        shipment.cancel!
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment is not present' do
+      it 'returns 0' do
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+
+    context 'when the shipment cost is 0' do
+      it 'returns 0' do
+        shipment.update(cost: 0)
+        expect(line_item.shipping_cost).to eq(0)
+      end
+    end
+  end
+
+  describe '#amount' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the amount for the line item' do
+      expect(line_item.amount).to eq(20)
+    end
+  end
+
+  describe '#display_amount' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the amount for the line item' do
+      expect(line_item.display_amount.to_s).to eq('$20.00')
+    end
+  end
+
+  describe '#compare_at_amount' do
+    let(:variant) { create(:variant, compare_at_price: 15) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the compare at amount for the line item' do
+      expect(line_item.compare_at_amount).to eq(30)
+    end
+
+    context 'when compare_at_price is nil' do
+      let(:variant)     { create(:variant, compare_at_price: nil) }
+
+      it 'returns zero' do
+        expect(line_item.compare_at_amount).to eq(0)
+        expect(line_item.display_compare_at_amount.to_s).to eq('$0.00')
+      end
+    end
+
+    context 'when compare_at_price is zero' do
+      let(:variant)   { create(:variant, compare_at_price: 0) }
+
+      it 'returns zero' do
+        expect(line_item.compare_at_amount).to eq(0)
+        expect(line_item.display_compare_at_amount.to_s).to eq('$0.00')
+      end
+    end
+  end
+
+  describe '#display_compare_at_amount' do
+    let(:variant) { create(:variant, compare_at_price: 15) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the compare at amount for the line item' do
+      expect(line_item.display_compare_at_amount.to_s).to eq('$30.00')
+    end
+  end
+
+  describe '#item_weight' do
+    let(:variant) { create(:variant, weight: 10) }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the weight for the line item' do
+      expect(line_item.item_weight).to eq(20)
+    end
+  end
+
+  describe '#dimensions_unit' do
+    let(:variant) { create(:variant, dimensions_unit: 'cm') }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the dimension unit for the line item' do
+      expect(line_item.dimensions_unit).to eq('cm')
+    end
+  end
+
+  describe '#weight_unit' do
+    let(:variant) { create(:variant, weight_unit: 'kg') }
+    let(:line_item) { build(:line_item, variant: variant, quantity: 2) }
+
+    it 'returns the weight unit for the line item' do
+      expect(line_item.weight_unit).to eq('kg')
     end
   end
 end

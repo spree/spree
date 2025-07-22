@@ -28,7 +28,7 @@ module Spree
       def latest_event_at
         events.order(:created_at).last&.created_at
       end
-      
+
       def self.with_urls_for(event)
         where(
           case ActiveRecord::Base.connection.adapter_name
@@ -43,11 +43,15 @@ module Spree
       end
 
       def self.supported_events
-        Spree::Base.descendants.
-          select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
-          to_h do |model|
-          model_name = model.name.demodulize.underscore.to_sym
-          [model_name, model.supported_webhook_events]
+        @supported_events ||= begin
+          Rails.application.eager_load! if Rails.env.development?
+          Spree::Base.descendants.
+            select { |model| model.included_modules.include? Spree::Webhooks::HasWebhooks }.
+            sort_by { |model| model.name.demodulize.underscore }.
+            to_h do |model|
+              model_name = model.name.demodulize.underscore.to_sym
+              [model_name, model.supported_webhook_events]
+            end
         end
       end
 

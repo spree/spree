@@ -1,5 +1,9 @@
 module Spree
   module BaseHelper
+    def spree_dom_id(record)
+      dom_id(record, 'spree')
+    end
+
     def available_countries
       countries = current_store.countries_available_for_checkout
 
@@ -51,27 +55,6 @@ module Spree
         link_to(shipment.tracking, shipment.tracking_url, options)
       else
         content_tag(:span, shipment.tracking)
-      end
-    end
-
-    def logo(image_path = nil, options = {})
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#logo` is deprecated and will be removed in Spree 5.0.
-        Please use `FrontendHelper#logo` instead
-      DEPRECATION
-
-      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.cdn_image_url(current_store.logo.variant(resize_to_limit: [244, 104]))
-                     elsif current_store.logo.attached? && current_store.logo.image?
-                       main_app.cdn_image_url(current_store.logo)
-                     else
-                       'logo/spree_50.png'
-                     end
-
-      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
-
-      link_to path, 'aria-label': current_store.name, method: options[:method] do
-        image_tag image_path, alt: current_store.name, title: current_store.name
       end
     end
 
@@ -127,7 +110,7 @@ module Spree
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.homepage(I18n.locale)&.seo_meta_description || current_store.seo_meta_description))
+                              description: current_store.seo_meta_description)
         end
       end
       meta
@@ -157,11 +140,15 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
+      Spree::Deprecation.warn('BaseHelper#pretty_time is deprecated and will be removed in Spree 6.0. Please add `local_time` gem to your Gemfile and use `local_time(time)` instead')
+
       [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
     end
 
     def pretty_date(date)
       return '' if date.blank?
+
+      Spree::Deprecation.warn('BaseHelper#pretty_date is deprecated and will be removed in Spree 6.0. Please add `local_time` gem to your Gemfile and use `local_date(date)` instead')
 
       [I18n.l(date.to_date, format: :long)].join(' ')
     end
@@ -174,10 +161,27 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    # returns the URL of an object on the storefront
+    # @param resource [Spree::Product, Spree::Post, Spree::Taxon, Spree::Page] the resource to get the URL for
+    # @param options [Hash] the options for the URL
+    # @option options [String] :locale the locale of the resource, defaults to I18n.locale
+    # @option options [String] :store the store of the resource, defaults to current_store
+    # @option options [String] :relative whether to use the relative URL, defaults to false
+    # @option options [String] :preview_id the preview ID of the resource, usually the ID of the resource
+    # @option options [String] :variant_id the variant ID of the resource, usually the ID of the variant (only used for products)
+    # @return [String] the URL of the resource
     def spree_storefront_resource_url(resource, options = {})
-      if defined?(locale_param) && locale_param.present?
-        options.merge!(locale: locale_param)
-      end
+      options.merge!(locale: locale_param) if defined?(locale_param) && locale_param.present?
+
+      store = options[:store] || current_store
+
+      base_url = if options[:relative]
+                   ''
+                 elsif store.formatted_custom_domain.blank?
+                   store.formatted_url
+                 else
+                   store.formatted_custom_domain
+                 end
 
       localize = if options[:locale].present?
                    "/#{options[:locale]}"
@@ -186,34 +190,40 @@ module Spree
                  end
 
       if resource.instance_of?(Spree::Product)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_products_path]}/#{resource.slug}"
-      elsif resource.instance_of?(Spree::Taxon)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_taxons_path]}/#{resource.permalink}"
-      elsif resource.instance_of?(Spree::Cms::Pages::FeaturePage) || resource.instance_of?(Spree::Cms::Pages::StandardPage)
-        "#{current_store.formatted_url + localize}/#{Spree::Config[:storefront_pages_path]}/#{resource.slug}"
+        preview_id = ("preview_id=#{options[:preview_id]}" if options[:preview_id].present?)
+
+        variant_id = ("variant_id=#{options[:variant_id]}" if options[:variant_id].present?)
+
+        params = [preview_id, variant_id].compact_blank.join('&')
+        params = "?#{params}" if params.present?
+
+        "#{base_url + localize}/products/#{resource.slug}#{params}"
+      elsif resource.is_a?(Post)
+        preview_id = options[:preview_id].present? ? "?preview_id=#{options[:preview_id]}" : ''
+        "#{base_url + localize}/posts/#{resource.slug}#{preview_id}"
+      elsif resource.is_a?(Spree::Taxon)
+        "#{base_url + localize}/t/#{resource.permalink}"
+      elsif resource.is_a?(Spree::Page) || resource.is_a?(ActionText::RichText)
+        "#{base_url + localize}#{resource.page_builder_url}"
+      elsif resource.is_a?(Spree::PageLink)
+        resource.linkable_url
       elsif localize.blank?
-        current_store.formatted_url
+        base_url
       else
-        current_store.formatted_url + localize
+        base_url + localize
       end
     end
 
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#default_image_for_product` is deprecated and will be removed in Spree 6.0.
-        Please use `product.default_image` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#default_image_for_product is deprecated and will be removed in Spree 6.0. Please use product.default_image instead')
 
       product.default_image
     end
 
     def default_image_for_product_or_variant(product_or_variant)
-      Spree::Deprecation.warn(<<-DEPRECATION, caller)
-        `BaseHelper#default_image_for_product_or_variant` is deprecated and will be removed in Spree 6.0.
-        Please use `product_or_variant.default_image` instead
-      DEPRECATION
+      Spree::Deprecation.warn('BaseHelper#default_image_for_product_or_variant is deprecated and will be removed in Spree 6.0. Please use product_or_variant.default_image instead')
 
       product_or_variant.default_image
     end
@@ -224,7 +234,7 @@ module Spree
     end
 
     def spree_base_cache_key
-      [
+      @spree_base_cache_key ||= [
         I18n.locale,
         (current_currency if defined?(current_currency)),
         defined?(try_spree_current_user) && try_spree_current_user.present?,
@@ -238,6 +248,11 @@ module Spree
 
     def maximum_quantity
       Spree::DatabaseTypeUtilities.maximum_value_for(:integer)
+    end
+
+    def payment_method_icon_tag(payment_method, opts = {})
+      image_tag "payment_icons/#{payment_method}.svg", opts
+    rescue Sprockets::Rails::Helper::AssetNotFound
     end
 
     private
@@ -255,7 +270,9 @@ module Spree
         img = if image_path.present?
                 create_product_image_tag image_path, product, options, style
               else
-                inline_svg_tag 'noimage/backend-missing-image.svg', class: 'noimage', size: '60%*60%'
+                width = style.to_s.split('x').first.to_i
+                height = style.to_s.split('x').last.to_i
+                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
               end
 
         content_tag(:div, img, class: "admin-product-image-container #{style}-img")
@@ -264,8 +281,9 @@ module Spree
 
     # Returns style of image or nil
     def image_style_from_method_name(method_name)
-      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
-        style if style.in? Spree::Image.styles.with_indifferent_access
+      style = method_name.to_s.sub(/_image$/, '')
+      if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
+        style
       end
     end
 
@@ -274,6 +292,15 @@ module Spree
       return if current_store.seo_robots.blank?
 
       tag('meta', name: 'robots', content: current_store.seo_robots)
+    end
+
+    def legal_policy(policy)
+      current_store.send("customer_#{policy}")&.body&.html_safe
+    end
+
+    I18N_PLURAL_MANY_COUNT = 2.1
+    def plural_resource_name(resource_class)
+      resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
     end
   end
 end

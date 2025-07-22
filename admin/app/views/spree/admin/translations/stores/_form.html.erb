@@ -1,0 +1,14 @@
+<%# locals: (f:, resource:, locale:) %>
+
+<% resource.class.translatable_fields.each do |field| %>
+  <% next if field == :meta_keywords %>
+
+  <% case field %>
+  <% when :description %>
+    <%= render "spree/admin/translations/translation_rows/rich_textarea_row", f: f, field: field, locale: locale %>
+  <% when :address, :meta_description %>
+    <%= render "spree/admin/translations/translation_rows/textarea_row", f: f, field: field, locale: locale %>
+  <% else %>
+    <%= render "spree/admin/translations/translation_rows/text_field_row", f: f, field: field, locale: locale %>
+  <% end %>
+<% end %>

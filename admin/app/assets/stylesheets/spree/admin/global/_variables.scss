@@ -1,0 +1,221 @@
+// https://github.com/twbs/bootstrap/blob/v4.6.2/scss/_variables.scss
+
+$gray-25: #F8F8F9;
+$gray-50: #F3F3F3;
+$gray-100: #E3E3E3 !default;
+$gray-200: #D5D5D5 !default;
+$gray-300: #B3B3B3 !default;
+$gray-400: #999999 !default;
+$gray-500: #808080 !default;
+$gray-600: #666666 !default;
+$gray-700: #4D4D4D !default;
+$gray-800: #333333 !default;
+$gray-900: #1A1A1A !default;
+
+$light: $gray-50 !default;
+
+$primary: #061932 !default;
+$black: #000000 !default;
+$blue: #0090FE !default;
+$white: #FFFFFF !default;
+
+$action: #F4F9FF !default;
+$action-border: #e2ecff !default;
+
+// Override Bootstrap 4.6 breakpoints
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1260px
+) !default;
+$grid-gutter-width: 16px !default;
+
+$theme-colors: (
+  "white": $white,
+  "black": $black,
+  "primary": $primary,
+  "secondary": rgba($blue, 0.1),
+  "action": $action,
+  "action-border": $action-border,
+  "active": $gray-25,
+  "partial": #E2E8F0,
+  "warning": #ffe17d,
+  "danger": #ee4266,
+  "info": #44c1ff,
+  "blue": $blue,
+  "gray-100": $gray-100,
+  "gray-200": $gray-200,
+  "gray-300": $gray-300,
+  "gray-400": $gray-400,
+  "gray-500": $gray-500,
+  "gray-600": $gray-600,
+  "gray-700": $gray-700,
+  "gray-800": $gray-800,
+  "gray-900": $gray-900,
+  "mint": #C7E15A
+);
+
+$body-color: #333 !default;
+$body-bg: $gray-25 !default;
+$enable-shadows: false;
+$enable-responsive-font-sizes: true;
+$font-family-sans-serif: Inter, sans-serif !default;
+$font-size-base:   0.813rem !default;
+$font-size-plus:   0.875rem !default;
+$font-size-sm:    0.75rem !default;
+$font-size-lg:    1rem !default;
+$font-weight-normal: 400 !default;
+$font-weight-bold:            600 !default;
+$headings-font-family: $font-family-sans-serif;
+$line-height-base:            1.5 !default;
+$border-radius: 0.5rem !default;
+$border-radius-sm: 0.4rem !default;
+$border-radius-lg: 0.75rem !default;
+$border-color: $gray-100 !default;
+$input-border-color: $border-color !default;
+$list-group-border-color: $border-color !default;
+$list-group-hover-bg: $gray-25 !default;
+$list-group-active-bg: $action !default;
+$list-group-active-border-color: $action-border !default;
+
+$thumbnail-border-color: $border-color !default;
+$hr-border-color: $border-color !default;
+$table-border-color: $gray-50 !default;
+$card-border-color: $border-color !default;
+$input-btn-focus-width: 0.18rem !default;
+
+$card-spacer-y:                     .75rem !default;
+$card-spacer-x:                     1rem !default;
+
+$component-active-bg:         $blue !default;
+
+$input-placeholder-color: $gray-500;
+$input-padding-y:         .5rem !default;
+$input-disabled-bg: $gray-25 !default;
+$input-focus-border-color: $blue !default;
+$input-box-shadow: none !default;
+$btn-box-shadow: $input-box-shadow !default;
+$custom-select-disabled-bg: $gray-50 !default;
+
+$text-muted: $gray-400 !default;
+
+$link-color: $primary !default;
+$link-hover-decoration:                   underline !default;
+
+$btn-active-box-shadow:       inset 0 3px 5px rgba($black, .025) !default;
+$btn-disabled-opacity: 0.3 !default;
+
+$nav-link-padding-y:                .5rem !default;
+$nav-link-padding-x:                .6rem !default;
+
+$box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
+$box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
+$box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
+
+$card-border-width: 0px !default;
+$card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$card-bg: $white !default;
+$card-border-radius: $border-radius-lg !default;
+
+$tooltip-border-radius: $border-radius !default;
+$tooltip-opacity: 1 !default;
+$tooltip-margin:                    0.25rem 0 !default;
+$tooltip-padding-y:                 .25rem !default;
+$tooltip-padding-x:                 .5rem !default;
+$tooltip-bg: $white !default;
+$tooltip-color: $body-color !default;
+$tooltip-arrow-color: transparent !default;
+$tooltip-max-width: 210px !default;
+
+$transition-base:             all .1s ease-in-out !default;
+$transition-fade:             opacity .15s linear !default;
+$transition-collapse:         height .15s ease !default;
+$transition-collapse-width:   width .15s ease !default;
+
+$badge-font-size:                   0.70rem !default;
+$badge-font-weight:                 500 !default;
+$badge-padding-y:                   .25em !default;
+$badge-padding-x:                   .45em !default;
+$badge-border-radius:               $border-radius-sm !default;
+
+$transition-collapse:         height .15s ease !default;
+
+$link-hover-decoration:                   none !default;
+
+$headings-line-height: 1 !default;
+
+$h1-font-size:                $font-size-base * 2.5 !default;
+$h2-font-size:                $font-size-base * 2 !default;
+$h3-font-size:                1.5rem !default;
+$h4-font-size:                1.25rem !default;
+$h5-font-size:                $font-size-lg !default;
+$h6-font-size:                $font-size-base !default;
+
+$display1-size:               7rem !default;
+$display2-size:               5rem !default;
+$display3-size:               4rem !default;
+$display4-size:               3.5rem !default;
+$display1-weight:             400 !default;
+$display2-weight:             400 !default;
+$display3-weight:             400 !default;
+$display4-weight:             400 !default;
+
+$dropdown-border-width:  0px !default;
+$dropdown-border-radius: $border-radius-lg !default;
+$dropdown-link-hover-bg: $gray-50 !default;
+$dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
+$dropdown-padding-x:    0.25rem !default;
+$dropdown-padding-y:    0.25rem !default;
+$dropdown-divider-bg: $gray-50 !default;
+$dropdown-divider-margin-y: 0.25rem !default;
+$dropdown-header-color: $gray-500 !default;
+$zindex-dropdown: 1050;
+
+$modal-backdrop-bg:                 $body-bg !default;
+$modal-backdrop-opacity:            0.8 !default;
+$modal-content-border-color:        $border-color !default;
+$modal-content-border-width:        0px !default;
+$modal-header-padding: 1rem 1.25rem 1rem 1.25rem !default;
+$modal-inner-padding: 1rem 1.25rem 1rem 1.25rem !default;
+$modal-fade-transform:              translate(0, 0) !default;
+$modal-show-transform:              none !default;
+$modal-transition:                  transform .2s ease-out !default;
+$modal-scale-transform:             scale(1.02) !default;
+$modal-header-border-width: 1px !default;
+$modal-content-box-shadow-xs: $border-color 0px 0px 0px 1px, rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(0, 0, 0, 0.04) 0px 8px 16px -4px, rgba(0, 0, 0, 0.06) 0px 24px 32px -8px !default;
+$modal-content-box-shadow-sm-up: $modal-content-box-shadow-xs !default;
+$modal-footer-margin-between: 0 !default;
+
+$alert-padding-y:                   0.5rem !default;
+$alert-padding-x:                   1rem !default;
+$alert-border-radius: $border-radius-lg;
+
+$breadcrumb-bg: transparent !default;
+$breadcrumb-padding-y: 0 !default;
+$breadcrumb-padding-x: 1rem !default;
+$breadcrumb-margin-bottom: 0 !default;
+
+$embed-responsive-aspect-ratios: (
+    (21 9),
+    (16 9),
+    (9 16),
+    (4 3),
+    (1 1)
+) !default;
+
+// tables
+$table-cell-padding: .75rem .50rem !default;
+
+$code-color: $gray-600 !default;
+$code-bg: $gray-25 !default;
+
+$list-group-bg: transparent !default;
+$list-group-item-padding-x:         1rem !default;
+
+$header-bg: $gray-25 !default;
+$header-height: 60px !default;
+$sidebar-width: 220px !default;
+$sidebar-bg: $gray-25 !default;
+
+$progress-bar-bg: $blue !default;

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order::Webhooks do
-  let(:store) { create(:store, default: true) }
+  let(:store) { @default_store }
   let(:webhook_payload_body) do
     Spree::Api::V2::Platform::OrderSerializer.new(
       order,

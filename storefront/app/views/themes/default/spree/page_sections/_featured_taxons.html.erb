@@ -1,0 +1,70 @@
+<% cache_unless page_builder_enabled?, spree_base_cache_scope.call(section) do %>
+  <div class="page-container py-5" style="<%= section_styles(section) %>">
+    <% heading_size = case section.preferred_heading_size
+                      when 'small' then 'text-base font-medium'
+                      when 'medium' then 'text-lg lg:text-xl font-medium'
+                      when 'large' then 'text-xl lg:text-2xl font-medium'
+                      end
+    %>
+    <h3 class="<%= heading_size %> mb-4 text-<%= section.preferred_heading_alignment %>">
+      <%= section.preferred_heading %>
+    </h3>
+    <div class="gap-6 grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:gap-x-8 mb-7 hidden md:grid">
+      <% section.links.each do |link| %>
+        <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
+          <% if link.linkable.page_builder_image&.attached? && link.linkable.page_builder_image&.variable? %>
+            <div class="flex space-y-2 flex-col">
+              <%= spree_image_tag(link.linkable.page_builder_image, height: 300, width: 300, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
+              <span><%= link.label %></span>
+            </div>
+          <% else %>
+            <div class="aspect-1 w-full group-hover:bg-gray-100 bg-gray-200 rounded-md flex items-center justify-center relative">
+              <span><%= link.label %></span>
+            </div>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="pt-5 flex items-center space-x-2 md:hidden">
+      <button class='swiper-custom-button-prev'>
+        <%= render 'spree/shared/icons/arrow-left' %>
+      </button>
+      <div class="swiper-container overflow-hidden mb-7 relative flex-1" data-controller='carousel' data-carousel-options-value='{
+        "slidesPerView": "auto",
+        "centeredSlides": false,
+        "spaceBetween": 10,
+        "grabCursor": true,
+        "freeMode": true,
+        "navigation": {
+          "nextEl": ".swiper-custom-button-next",
+          "prevEl": ".swiper-custom-button-prev"
+        },
+        "pagination": {
+          "el": ".swiper-pagination"
+        }
+      }'>
+        <div class='swiper-wrapper'>
+          <% section.links.each do |link| %>
+            <div class='swiper-slide w-[200px]'>
+              <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
+                <% if link.linkable.page_builder_image.attached? %>
+                  <div class="flex space-y-2 flex-col">
+                    <%= spree_image_tag(link.linkable.page_builder_image, height: 200, width: 200, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
+                  </div>
+                <% else %>
+                  <div class="aspect-1 w-full group-hover:bg-gray-100 bg-gray-200 flex items-center justify-center relative">
+                    <span><%= link.label %></span>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <div class="swiper-pagination !relative mt-10 items-center flex mx-auto align-center justify-center"></div>
+      </div>
+      <button class='swiper-custom-button-next'>
+        <%= render 'spree/shared/icons/arrow-right' %>
+      </button>
+    </div>
+  </div>
+<% end %>

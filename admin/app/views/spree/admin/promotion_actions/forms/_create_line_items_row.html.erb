@@ -1,0 +1,28 @@
+<tr class="nested-form-wrapper" data-new-record="<%= line_item_fields.object.new_record? %>">
+  <%= line_item_fields.hidden_field :id %>
+  
+  <td class="w-70">
+    <% if line_item_fields.object.new_record? %>
+      <%= tom_select_tag "#{line_item_fields.object_name}[variant_id]",
+            url: spree.admin_variants_search_path,
+            remote_search: true,
+            class: 'w-100',
+            required: true %>
+    <% else %>
+      <%= link_to spree.edit_admin_product_variant_path(line_item_fields.object.variant.product, line_item_fields.object.variant), target: '_blank' do %>
+        <%= line_item_fields.object.variant.descriptive_name %>
+      <% end %>
+      <%= line_item_fields.hidden_field :variant_id %>
+      <%= line_item_fields.hidden_field :promotion_action_id %>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <%= line_item_fields.number_field :quantity, min: 1, max: line_item_fields.object.variant&.total_on_hand, class: 'form-control', required: true %>
+  </td>
+  <td class="w-10 text-right">
+    <button type="button" class="btn btn-danger btn-sm" data-action="nested-form#remove">
+      <%= icon('trash', class: 'mr-0') %>
+    </button>
+    <%= line_item_fields.hidden_field :_destroy %>
+  </td>
+</tr>

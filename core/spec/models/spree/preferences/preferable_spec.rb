@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::Preferences::Preferable, type: :model do
   before :all do
     class A
+      include ActiveModel::Model
       include Spree::Preferences::Preferable
       attr_reader :id
 
@@ -342,6 +343,37 @@ describe Spree::Preferences::Preferable, type: :model do
       @pt1.id = @pt.id
       @pt1.save!
       expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
+    end
+
+    describe 'preference change tracking methods' do
+      it 'tracks changes to preferences' do
+        @pt.preferred_pref_test_pref = 'xyz'
+        expect(@pt.preferred_pref_test_pref_changed?).to be true
+        expect(@pt.preferred_pref_test_pref_change).to eq(['abc', 'xyz'])
+        expect(@pt.preferred_pref_test_pref_was).to eq('abc')
+      end
+
+      it 'tracks previous changes after save' do
+        @pt.preferred_pref_test_pref = 'xyz'
+        @pt.save!
+
+        expect(@pt.preferred_pref_test_pref_previously_changed?).to be true
+        expect(@pt.preferred_pref_test_pref_previous_change).to eq(['abc', 'xyz'])
+        expect(@pt.preferred_pref_test_pref_previously_was).to eq('abc')
+      end
+
+      it 'reports no changes when preference is set to same value' do
+        @pt.preferred_pref_test_pref = 'abc'
+        expect(@pt.preferred_pref_test_pref_changed?).to be false
+        expect(@pt.preferred_pref_test_pref_change).to be_nil
+      end
+
+      it 'tracks changes to array preferences' do
+        @pt.preferred_pref_test_any = [1, 2, 3]
+        expect(@pt.preferred_pref_test_any_changed?).to be true
+        expect(@pt.preferred_pref_test_any_change).to eq([[], [1, 2, 3]])
+        expect(@pt.preferred_pref_test_any_was).to eq([])
+      end
     end
   end
 end

@@ -1,0 +1,115 @@
+
+
+.#{$select-ns}-control {
+
+	border: $select-border;
+	padding: $select-padding-y $select-padding-x;
+	width: 100%;
+	overflow: hidden;
+	position: relative;
+	z-index: 1;
+	box-sizing: border-box;
+	box-shadow: $select-shadow-input;
+	border-radius: $select-border-radius;
+	display: flex;
+	flex-wrap: wrap;
+
+	.#{$select-ns}-wrapper.multi.has-items & {
+		$padding-x: $select-padding-x;
+		$padding-top: calc( #{$select-padding-y} - #{$select-padding-item-y} - #{$select-width-item-border});
+		$padding-bottom: calc( #{$select-padding-y} - #{$select-padding-item-y} - #{$select-margin-item-y} - #{$select-width-item-border});
+		padding: $padding-top $padding-x $padding-bottom;
+	}
+
+	.full & {
+		background-color: $select-color-input-full;
+	}
+
+	.disabled &,
+	.disabled & * {
+		cursor: default !important;
+	}
+
+	.focus & {
+		box-shadow: $select-shadow-input-focus;
+	}
+
+	> * {
+		vertical-align: baseline;
+		display: inline-block;
+	}
+
+	.#{$select-ns}-wrapper.multi & > div {
+		cursor: pointer;
+		margin: 0 $select-margin-item-x $select-margin-item-y 0;
+		padding: $select-padding-item-y $select-padding-item-x;
+		background: $select-color-item;
+		color: $select-color-item-text;
+		border: $select-width-item-border solid $select-color-item-border;
+
+		&.active {
+			background: $select-color-item-active;
+			color: $select-color-item-active-text;
+			border: $select-width-item-border solid $select-color-item-active-border;
+		}
+	}
+
+	.#{$select-ns}-wrapper.multi.disabled & > div {
+		&, &.active {
+			color: lighten(desaturate($select-color-item-text, 100%), $select-lighten-disabled-item-text);
+			background: lighten(desaturate($select-color-item, 100%), $select-lighten-disabled-item);
+			border: $select-width-item-border solid lighten(desaturate($select-color-item-border, 100%), $select-lighten-disabled-item-border);
+		}
+	}
+
+	> input {
+		&::-ms-clear {
+			display: none;
+		}
+
+		flex: 1 1 auto;
+		min-width: 7rem;
+		display: inline-block !important;
+		padding: 0 !important;
+		min-height: 0 !important;
+		max-height: none !important;
+		max-width: 100% !important;
+		margin: 0 !important;
+		text-indent: 0 !important;
+		border: 0 none !important;
+		background: none !important;
+		line-height: inherit !important;
+		user-select: auto !important;
+		box-shadow: none !important;
+		&:focus { outline: none !important; }
+	}
+
+	.has-items & > input{
+		margin: $select-caret-margin !important;
+	}
+
+	&.rtl {
+		text-align: right;
+		&.single .#{$select-ns}-control:after {
+			left: $select-arrow-offset;
+			right: auto;
+		}
+		.#{$select-ns}-control > input {
+			margin: $select-caret-margin-rtl !important;
+		}
+	}
+
+	.disabled & {
+		opacity: $select-opacity-disabled;
+		background-color: $select-color-disabled;
+	}
+
+	// hide input, while retaining its focus, and maintain layout so users can still click on the space to bring the display back
+	// visibility:hidden can prevent the input from receiving focus
+	.input-hidden & > input{
+		opacity: 0;
+		position: absolute;
+		left: -10000px;
+	}
+
+}

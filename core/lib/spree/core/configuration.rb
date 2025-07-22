@@ -25,25 +25,26 @@ module Spree
     class Configuration < Preferences::RuntimeConfiguration
       # Alphabetized to more easily lookup particular preferences
       preference :address_requires_state, :boolean, default: true, deprecated: true # should state/state_name be required
-      preference :address_requires_phone, :boolean, default: true # Determines whether we require phone in address
+      preference :address_requires_phone, :boolean, default: false # Determines whether we require phone in address
       preference :allow_checkout_on_gateway_error, :boolean, default: false
       preference :allow_empty_price_amount, :boolean, default: false
-      preference :allow_guest_checkout, :boolean, default: true # this is only used in the rails frontend, and is not implemented in API
+      preference :allow_guest_checkout, :boolean, default: true, deprecated: true # this is only used in the rails frontend, and is not implemented in API
       preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
       preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
       preference :always_put_site_name_in_title, :boolean, deprecated: true
       preference :always_use_translations, :boolean, default: false
-      preference :auto_capture, :boolean, default: false # automatically capture the credit card (as opposed to just authorize and capture later)
+      preference :auto_capture, :boolean, default: true # automatically capture the credit card (as opposed to just authorize and capture later)
       preference :auto_capture_on_dispatch, :boolean, default: false # Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized.
       preference :binary_inventory_cache, :boolean, default: false, deprecated: true # only invalidate product cache when a stock item changes whether it is in_stock
       preference :checkout_zone, :string, default: nil, deprecated: true # replace with the name of a zone if you would like to limit the countries
-      preference :company, :boolean, default: false # Request company field for billing and shipping addr
+      preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
       preference :expedited_exchanges, :boolean, default: false # NOTE this requires payment profiles to be supported on your gateway of choice as well as a delayed job handler to be configured with activejob. kicks off an exchange shipment upon return authorization save. charge customer if they do not return items within timely manner.
       preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
+      preference :geocode_addresses, :boolean, default: true
       preference :layout, :string, deprecated: 'Please use Spree::Frontend::Config[:layout] instead'
       preference :logo, :string, deprecated: true
       preference :mailer_logo, :string, deprecated: true
@@ -72,6 +73,10 @@ module Spree
       # coupon codes
       preference :coupon_codes_web_limit, :integer, default: 500 # number of coupon codes to be generated in the web process, more than this will be generated in a background job
       preference :coupon_codes_total_limit, :integer, default: 5000 # the maximum number of coupon codes to be generated
+
+      # gift cards
+      preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
+      preference :gift_card_batch_limit, :integer, default: 50_000
 
       attr_writer :searcher_class
     end

@@ -1,5 +1,6 @@
 ---
 title: Stores
+icon: "shop"
 ---
 
 ## Overview
@@ -19,13 +20,12 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 | Attribute                | Description                                                                 | Example Value |
 |--------------------------|-----------------------------------------------------------------------------|---------------|
 | `name`                   | The name of the store, typically displayed in the browser title bar and throughout the site. | Spree Demo Site |
-| `url`                    | The URL or domain associated with the store.                               | shop.example.com |
+| `code`                   | A unique code to identify the store.                                      | `spree-001` |
 | `meta_description`       | A brief description of the store for SEO purposes.                         | An exclusive selection of high-quality products. |
 | `meta_keywords`          | Relevant keywords associated with the store for SEO.                       | fashion, electronics, books |
 | `seo_title`              | A custom SEO title for the store.                                          | Shop the Best Deals Online - Spree Store |
 | `mail_from_address`      | The email address used for sending emails from the store.                  | noreply@example.com |
 | `default_currency`       | The default currency for prices within the store.                          | `USD` |
-| `code`                   | A unique code to identify the store.                                       | `spree-001` |
 | `default`                | Indicates if the store is the default store.                               | `true` |
 | `supported_currencies`   | A list of currencies supported by the store, separated by commas.          | `USD, EUR, GBP` |
 | `supported_locales`      | A list of locales supported by the store, separated by commas.             | `en, fr, de` |
@@ -103,7 +103,7 @@ As of version 4.6, the `Store` resource allows for translating many of its field
 * `contact_phone`
 * `new_order_notifications_email`
 
-Read more about how resource translations work in [Internationalization](../customization/i18n#resource-translations).
+Read more about how resource translations work in [Internationalization](i18n#resource-translations).
 
 ## Checkout configuration
 
@@ -125,3 +125,9 @@ Each Store can have its own resources. For example, a Store can have its own Pro
 | [**Taxonomy**](products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
 | [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
 | **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
+
+## Custom Domains
+
+Spree supports managing custom domains for Stores. This is useful for multi-store setups where each store has its own domain.
+
+In the Admin Panel, you can manage custom domains for each Store in the **Settings -> Domains** page.

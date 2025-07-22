@@ -1,0 +1,20 @@
+<% if order %>
+  <% if order.user %>
+    <span class="d-flex">
+      <% if can?(:manage, order.user) %>
+        <%= link_to order.full_name, spree.admin_user_path(order.user), class: 'text-dark', data: { 'turbo-frame': '_top' } %>
+      <% else %>
+        <%= order.full_name %>
+      <% end %>
+    </span>
+  <% elsif order.email.present? %>
+    <span class="text-muted">
+      <%= order.full_name %>
+    </span>
+    <%= help_bubble('This order was placed by a guest customer') %>
+  <% else %>
+    <span class="text-muted">
+      <%= Spree.t(:not_available) %>
+    </span>
+  <% end %>
+<% end %>

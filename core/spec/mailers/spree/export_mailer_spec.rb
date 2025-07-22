@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ExportMailer, type: :mailer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:export) { create(:product_export, store: store, user: user) }
   let(:spree) { Spree::Core::Engine.routes.url_helpers }

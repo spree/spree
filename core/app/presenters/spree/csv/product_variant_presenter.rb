@@ -1,8 +1,11 @@
 module Spree
   module CSV
     class ProductVariantPresenter
+      include Spree::ImagesHelper
+
       CSV_HEADERS = [
         'product_id',
+        'sku',
         'name',
         'slug',
         'status',
@@ -14,17 +17,18 @@ module Spree
         'meta_keywords',
         'tags',
         'labels',
-        'variant_id',
-        'variant_sku',
         'price',
         'compare_at_price',
         'currency',
         'width',
         'height',
         'depth',
+        'dimensions_unit',
         'weight',
+        'weight_unit',
         'available_on',
         'discontinue_on',
+        'track_inventory',
         'inventory_count',
         'inventory_backorderable',
         'tax_category',
@@ -55,9 +59,21 @@ module Spree
 
       attr_accessor :product, :variant, :index, :properties, :taxons, :store, :currency
 
+      ##
+      # Generates an array representing a CSV row of product variant data.
+      #
+      # For the primary variant row (when the index is zero), product-level details such as name,
+      # slug, status, vendor and brand names, description, meta tags, and tag/label lists are included.
+      # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
+      # availability dates, inventory count, digital flag, tax category, image URLs via original_url,
+      # and the first three option types and corresponding option values) are appended.
+      # Additionally, when the index is zero, associated taxons and properties are added.
+      #
+      # @return [Array] An array containing the combined product and variant CSV data.
       def call
         csv = [
           product.id,
+          variant.sku,
           index.zero? ? product.name : nil,
           index.zero? ? product.slug : nil,
           index.zero? ? product.status : nil,
@@ -69,30 +85,31 @@ module Spree
           index.zero? ? product.meta_keywords : nil,
           index.zero? ? product.tag_list.to_s : nil,
           index.zero? ? product.label_list.to_s : nil,
-          variant.id,
-          variant.sku,
           variant.amount_in(currency).to_f,
           variant.compare_at_price&.to_f,
           currency,
           variant.width,
           variant.height,
           variant.depth,
+          variant.dimensions_unit,
           variant.weight,
+          variant.weight_unit,
           variant.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
-          variant.discontinue_on&.strftime('%Y-%m-%d %H:%M:%S'),
+          (variant.discontinue_on || product.discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
+          variant.track_inventory?,
           variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand,
           variant.backorderable?,
           variant.tax_category&.name,
           variant.digital?,
-          variant.images[0]&.attachment&.url,
-          variant.images[1]&.attachment&.url,
-          variant.images[2]&.attachment&.url,
-          option_type(0)&.name,
-          option_value(option_type(0)),
-          option_type(1)&.name,
-          option_value(option_type(1)),
-          option_type(2)&.name,
-          option_value(option_type(2))
+          spree_image_url(variant.images[0], image_url_options),
+          spree_image_url(variant.images[1], image_url_options),
+          spree_image_url(variant.images[2], image_url_options),
+          index.positive? ? option_type(0)&.presentation : nil,
+          index.positive? ? option_value(option_type(0)) : nil,
+          index.positive? ? option_type(1)&.presentation : nil,
+          index.positive? ? option_value(option_type(1)) : nil,
+          index.positive? ? option_type(2)&.presentation : nil,
+          index.positive? ? option_value(option_type(2)) : nil
         ]
 
         if index.zero?
@@ -108,7 +125,16 @@ module Spree
       end
 
       def option_value(option_type)
-        variant.option_values.find { |ov| ov.option_type == option_type }&.name
+        variant.option_values.find { |ov| ov.option_type == option_type }&.presentation
+      end
+
+      private
+
+      def image_url_options
+        {
+          width: 1000,
+          height: 1000
+        }
       end
     end
   end

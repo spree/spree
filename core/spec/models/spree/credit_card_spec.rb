@@ -12,7 +12,7 @@ describe Spree::CreditCard, type: :model do
       name: 'Spree Commerce'
     }
   end
-  let(:order) { create(:order) }
+  let(:order) { create(:order, total: 100) }
   let(:payment) { create(:payment, amount: 100, order: order) }
   let(:payment_method) { create(:payment_method) }
 

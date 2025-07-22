@@ -1,5 +1,5 @@
 module Spree
-  class OptionType < Spree::Base
+  class OptionType < Spree.base_class
     COLOR_NAMES = %w[color colour].freeze
 
     include Spree::ParameterizableName
@@ -10,12 +10,11 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation].freeze
-      translates(*TRANSLATABLE_FIELDS)
-    else
-      TRANSLATABLE_FIELDS = %i[presentation].freeze
-      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    self::Translation.class_eval do
+      auto_strip_attributes :presentation
     end
 
     #
@@ -23,7 +22,6 @@ module Spree
     #
     self.whitelisted_ransackable_scopes = %w[search_by_name]
     acts_as_list
-    auto_strip_attributes :name, :presentation
 
     #
     # Associations
@@ -47,18 +45,12 @@ module Spree
     scope :colors, -> { where(name: COLOR_NAMES) }
     scope :filterable, -> { where(filterable: true) }
 
-    if defined?(PgSearch)
-      # full text search
-      include PgSearch::Model
-      pg_search_scope :search_by_name, against: %i[name presentation]
-    else
-      scope :search_by_name, ->(query) { where('name LIKE ?', "%#{query}%") }
-    end
-
     #
     # Attributes
     #
-    accepts_nested_attributes_for :option_values, reject_if: ->(ov) { ov[:name].blank? || ov[:presentation].blank? }, allow_destroy: true
+    accepts_nested_attributes_for :option_values, reject_if: lambda { |ov|
+      ov[:id].blank? && (ov[:name].blank? || ov[:presentation].blank?)
+    }, allow_destroy: true
 
     #
     # Callbacks

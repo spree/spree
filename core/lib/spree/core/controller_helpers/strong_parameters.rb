@@ -33,9 +33,14 @@ module Spree
 
         def permitted_product_attributes
           permitted_attributes.product_attributes + [
-            :store_id,
-            product_properties_attributes: permitted_product_properties_attributes
+            variants_attributes: permitted_variant_attributes + ['id', :_destroy],
+            master_attributes: permitted_variant_attributes + ['id'],
+            product_properties_attributes: permitted_product_properties_attributes + ['id', :_destroy]
           ]
+        end
+
+        def permitted_store_attributes
+          permitted_attributes.store_attributes + Spree::Store::SUPPORTED_SOCIAL_NETWORKS.map { |social| "store_#{social}" }
         end
       end
     end

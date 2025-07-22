@@ -32,9 +32,12 @@ module Spree
           end
 
           if classifications_params.any?
+            opts = {}
+            opts[:unique_by] = :index_spree_products_taxons_on_product_id_and_taxon_id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
             Spree::Classification.upsert_all(
               classifications_params,
-              unique_by: :index_spree_products_taxons_on_product_id_and_taxon_id
+              **opts
             )
           end
         end

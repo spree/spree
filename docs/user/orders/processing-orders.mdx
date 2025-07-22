@@ -1,0 +1,84 @@
+---
+title: "Processing Orders"
+description: "Process orders in the Spree Commerce admin dashboard"
+---
+
+If you have any hope of running a successful online business, you won’t get very far without learning how to process orders. 
+
+Processing an order usually involves payment capture and fulfillment, although this depends on your use case and payment method settings.
+
+To process an order, navigate to the Orders tab of the admin dashboard.
+
+<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcDV1oKeAWMj6VMO_Q5UGfxD9zlJj6dcqXr2nYGb2dI7k4FNSEsfl7Ha1kwBdrNAnUZ3I0nZrlFjolj2gNucbsNo0S3pAp9LnQ8TF-0Ezq69lUIDEezUY3nZD_DGdS3ZAc8ec8B?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+Simply click on the order from the list you’d like to process.
+
+<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfpFTSw_TWzZSFsAf2TN2HBzBC5niItuIy1DrWFPUIiBlL66P84UUCoYlCpY6LmKDXePxSOkdUnTeewAtOtxNq3VyyPtSJ6_1lAm3zjKPigUDhcKJLTswaQBDOvoeXQLZqmI3xrVg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+For this example, we’ll look at an order for which the payment has not been captured (i.e., payment status = Balance Due). If you plan to auto-capture all payments on your store, then you can skip directly to Fulfilling Orders.
+
+## Capturing Payments <img height="297" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcWkRR4vU4WAj_Veuqt6l5VozrJCevbthFUonSxJxfUMgGKch_1xE-ViXLJE0C-OaE6s1jXPiMpZiy5ASCgd-5ZoNJhiYXNp_IEx_JiyI2qGS39WDERHrygxWxCVkZZjcMfNpgfrg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+In many cases, ecommerce businesses (B2C especially) choose to auto-capture payments. However, you might choose not to auto-capture payments to allow for order verification, prevent fraud, or ensure stock availability before charging the customer, to name a few.
+
+Whatever the reason, you will eventually need to capture payment for the order and have this recorded in the system.
+
+To capture payment, there are a few options:
+
+### Manually Capture a Payment
+
+If the customer has chosen to pay, e.g., by bank transfer, check, or any other method that requires manual verification, you can manually capture the payment after verification by clicking on the three dots next to the payment and clicking ‘Capture’
+
+<img height="159" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXe78yW8IS7MGXfH9YMqzBId7u89VakN4493OLbvJErTYXMSxZpuSyqFv77u_sT1N0RBkYIGtlbwBCxQokVqbJUDFzwZOJQ6EVttbrFWU640ZsIKQT4w57V2Hy8800_uTs32gvuc?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+After clicking ‘Capture’, the payment status will be updated to ‘Paid’ and you can proceed with fulfilling the order.
+
+<img height="165" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcIOyAfffJMwlJ8aGScaAu3OMCUSsE7aVIF_K_QZQozugZCXNHa2rZAYUDzRvU1rmzZ3_9ikkg2IlPLwMyCkjS5vNEAOGiSEt3mKhT8cnWH5fMx17XVy2DAEu6h03reDo4mDj_hVg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+### &#xA;Create a New Payment
+
+If a customer’s payment failed, if they want to change the payment method, or if the order was created by the admin on behalf of the customer, then you can add a new payment to the order.
+
+To do so, click on the blue ‘+ New Payment Method’ button. This will redirect you to a page where you can create a new payment for the order.
+
+<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXeZy5e69ke2Er2L8QgzC2Dv0VCuhFKJXtbtPlwj1lNVfF51ug6GIdb94VEHrg7Mn_wh3L14revzXVwrC5GWG01CB4Rwjff18XIGrmcuxutMsMSJHuQa8L1q5RbS2qTr7uxYfKNFfg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+Here, you can set:
+
+* Amount - equals total order value by default
+
+* Payment Method - a list of payment methods available on your store
+
+* Payment Source - a list of the customer’s saved cards associated with the payment method
+
+Once you’ve verified the information is correct, click the blue ‘Create’ button to add the payment to the order.
+
+<img height="303" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXftLdWJLWBHMh42_XI89OQrTcGkCiFvzx0J8y4_F97ry6M3fJ8zqLECBYY5Maz05L3Q7G3hZxpv8XQ2gfVjaJwDHas5klSVvPbL0raevKSmQjdo3wiVINjq9ixulR-3LhCMPBsAIw?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+In the above example, we added a Stripe payment method using the customer’s saved card as the payment source.
+
+You can now capture the payment manually as shown before (since the customer’s details are already on record), or send them a payment link to complete the purchase themselves.
+
+## Fulfilling Orders
+
+Before proceeding with order fulfillment in the Spree dashboard, ensure you have the correct tracking number for the shipment and shipping carrier as selected by the customer.
+
+To fulfill an order, first click on the pencil icon on the right of the ‘Add tracking details’ row.
+
+<img height="352" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfrnN3ZPnCQ4D3nOQvneSL7utCaI0sLSKlfX2d0CJFIbwRlDXShrw28CZAjSPSWDVwORghUrBqi1jLZXL46xYQeeaaeLWWFl0GNFI11VtdC7xuGL7DP5b9K1ZWuxx6FYQOCv9xH?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+This will reveal a field where you can insert the tracking number for the shipment.
+
+<img height="352" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfcd88WmiWID1znxdkWgIRFlaQVbebItdpzoljOJhw98AHX7ZvVexj9E99zfNh-lcCN0ERT3fqCIguyJWmpUPLMG0jJrn4eVh4uLObH2n7Wy5nZw1S_QLKSa-H6FxW0fOGJxwhlZw?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+Insert the number and click ‘Save’. This will reveal a new button labelled ‘Ship’.
+
+<img height="401" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfABF_d9HlUvNZxk_w8mhXSJhPy8BQDoH2I85UwuycYOqh97bLbzMVkPVmqiKxu0HemvMAMm8za_E88uWaxB5B6S5nNpmVS-DsgqvEhOofuMNQwhWvN7NOUhYhJiOFVhpn_q-qIug?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+This is your last chance to double check the order to make sure everything is in order.
+
+Once you click ‘Ship’, the order will be marked as ‘Fulfilled’, and the customer will receive an email with the tracking link for their order.
+
+<img height="328" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXftGP6IUqq9nYzu9e0H7PjmW_ZW-Yh1vDoavTvOaF7eGB2CZPPGGkaxEeCSdoCWHLU767dmG7p49Z8FJrj_p729y01BTyszyzjIEj0LDYw1Lo-ARyYriU4f0xtGm9VKnNl_ZAZx?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+
+Congratulations, you’ve just fulfilled your first order!

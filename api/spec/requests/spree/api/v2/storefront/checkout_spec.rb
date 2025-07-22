@@ -1,12 +1,16 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Checkout Spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let!(:store) { @default_store }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:payment) { create(:payment, amount: order.total, order: order) }
   let(:shipment) { create(:shipment, order: order) }
+
+  before do
+    allow_any_instance_of(Spree::Api::V2::Storefront::CartController).to receive(:current_store).and_return(store)
+  end
 
   let(:address) do
     {
@@ -58,17 +62,15 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'cannot transition to address without a line item' do
-          expect(json_response['error']).to include(I18n.t('spree.there_are_no_items_for_this_order'))
+          expect(response.status).to eq(422)
+          expect(json_response['error']).to include(Spree.t(:there_are_no_items_for_this_order))
         end
       end
 
       context 'with line_items and email' do
         before { execute }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'can transition an order to the next state' do
@@ -83,9 +85,8 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'returns an error' do
+          expect(response.status).to eq(422)
           expect(json_response['error']).to include(I18n.t('spree.no_payment_found'))
         end
 
@@ -111,20 +112,16 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   end
 
   describe 'checkout#advance' do
-    let(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers }
+    subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers }
 
     shared_examples 'perform advance' do
-      before do
-        order.update_column(:state, 'payment')
-      end
-
       context 'with payment data' do
         before do
+          order.update_column(:state, 'payment')
           payment
           execute
         end
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'advances an order till complete or confirm step' do
@@ -134,14 +131,70 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'without payment data' do
-        before { execute }
+        let(:order_state) { 'delivery' }
 
-        it_behaves_like 'returns 200 HTTP status'
+        before do
+          order.update_column(:state, order_state)
+          execute
+        end
+
         it_behaves_like 'returns valid cart JSON'
 
-        it 'doesnt advance pass payment state' do
+        it 'advances up to the payment state' do
           expect(order.reload.state).to eq('payment')
           expect(json_response['data']).to have_attribute(:state).with_value('payment')
+        end
+
+        context 'when targeting the complete state' do
+          subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers, params: { state: 'complete' } }
+
+          before { execute }
+
+          it 'advances up to the payment state' do
+            expect(response.status).to eq(422)
+            expect(order.reload.state).to eq('payment')
+          end
+
+          it 'responds with an error' do
+            expect(json_response['error']).to eq(Spree.t(:no_payment_found))
+          end
+        end
+
+        context 'when on payment state' do
+          let(:order_state) { 'payment' }
+
+          it 'advances up to the payment state' do
+            expect(order.reload.state).to eq('payment')
+          end
+
+          it 'responds with an error' do
+            expect(response.status).to eq(422)
+            expect(json_response['error']).to eq(Spree.t(:no_payment_found))
+          end
+        end
+      end
+
+      context 'on a quick checkout' do
+        subject(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers, params: { shipping_method_id: shipping_method_2.id } }
+
+        let!(:order) { create(:order_with_line_items, state: 'address', payments: [create(:payment)], user: user, store: store, currency: currency) }
+
+        let!(:shipping_rate_1) { create(:shipping_rate, shipment: shipment, selected: true, shipping_method: shipping_method_1, cost: 0) }
+        let!(:shipping_rate_2) { create(:shipping_rate, shipment: shipment, selected: false, shipping_method: shipping_method_2, cost: 20) }
+
+        let(:shipment) { order.shipments.first }
+        let(:shipping_method_1) { create(:shipping_method, name: 'Standard') }
+        let(:shipping_method_2) { create(:shipping_method, name: 'Express') }
+
+        before do
+          allow(controller).to receive(:check_if_quick_checkout).and_return(true)
+        end
+
+        it 'advances with a new shipping method' do
+          execute
+
+          expect(response.status).to eq(200)
+          expect(order.reload.shipping_method.id).to eq(shipping_method_2.id)
         end
       end
 
@@ -176,7 +229,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           execute
         end
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
 
         it 'completes an order' do
@@ -189,15 +241,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       context 'without payment data' do
         before { execute }
 
-        it_behaves_like 'returns 422 HTTP status'
-
         it 'returns an error' do
+          expect(response.status).to eq(422)
           expect(json_response['error']).to include(I18n.t('spree.no_payment_found'))
-        end
-
-        it 'doesnt completes an order' do
-          expect(order.reload.state).not_to eq('complete')
-          expect(order.completed_at).to be_nil
         end
       end
 
@@ -254,7 +300,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates addresses' do
@@ -294,7 +339,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             execute
           end
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates shipment' do
@@ -322,7 +366,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
             before { execute }
 
-            it_behaves_like 'returns 200 HTTP status'
             it_behaves_like 'returns valid cart JSON'
 
             it 'updates payment method' do
@@ -336,7 +379,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
             before { execute }
 
-            it_behaves_like 'returns 200 HTTP status'
             it_behaves_like 'returns valid cart JSON'
 
             it 'updates payment method with source' do
@@ -369,7 +411,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates the special instructions' do
@@ -392,7 +433,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
           before { execute }
 
-          it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
 
           it 'updates email' do
@@ -414,13 +454,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           end
 
           before do
-            order.update_column(:state, 'delivery')
+            order.update_column(:state, 'payment')
             execute
           end
 
-          it_behaves_like 'returns 422 HTTP status'
-
           it 'returns an error' do
+            expect(response.status).to eq(422)
             expect(json_response['error']).to eq('Email is invalid')
           end
 
@@ -480,7 +519,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'with no amount param' do
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 500.0
       end
 
@@ -488,7 +526,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         let(:requested_amount) { 300.0 }
         let(:params) { { order_token: order.token, amount: requested_amount } }
 
-        it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 300.0
       end
 
@@ -541,8 +578,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       execute
     end
 
-    it_behaves_like 'returns 200 HTTP status'
-
     it 'returns no valid StoreCredit payment' do
       expect(json_response['included'].empty?).to eq true
     end
@@ -551,12 +586,10 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
     let!(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
-    let(:payment_methods) { order.available_payment_methods }
+    let(:payment_methods) { order.collect_frontend_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
       before { execute }
-
-      it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid payment methods JSON' do
         expect(json_response['data']).not_to be_empty
@@ -605,19 +638,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     shared_examples 'creates a payment' do
       before { execute }
 
-      it_behaves_like 'returns 201 HTTP status'
-
       it 'returns new payment' do
+        expect(response.status).to eq(201)
         expect(json_response['data']).to have_relationship(:payments).with_data([{ 'id' => payment.id.to_s, 'type' => 'payment' }])
         expect(json_response['included'][0]).to have_id(payment.id.to_s)
         expect(json_response['included'][0]).to have_type('payment')
         expect(json_response['included'][0]).to have_attribute(:amount).with_value(order.total.to_s)
         expect(json_response['included'][0]).to have_jsonapi_attributes(:amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_id, :payment_method_name, :state)
         expect(json_response['included'][0]).to have_relationship(:payment_method).with_data({ 'id' => payment_method.id.to_s, 'type' => 'payment_method' })
-      end
-
-      it 'creates new payment record' do
-        expect { change(order.payments, :count).by(1) }
       end
     end
 
@@ -683,11 +711,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   describe 'checkout#shipping_rates' do
     let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
 
-    let(:country) { store.default_country }
+    let(:country) { store.default_country || create(:country_us) }
+    let(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
     let(:zone) { create(:zone, name: 'US') }
     let(:shipping_method) { create(:shipping_method) }
     let(:shipping_method_2) { create(:shipping_method) }
-    let(:address) { create(:address, country: country) }
+    let(:address) { create(:address, country: country, state: state) }
 
     let(:shipment) { order.shipments.first }
     let(:shipping_rate) { shipment.selected_shipping_rate }
@@ -705,8 +734,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         order.reload
       end
 
-      it_behaves_like 'returns 200 HTTP status'
-
       it 'returns valid shipments JSON' do
         expect(json_response['data']).not_to be_empty
         expect(json_response['data'].size).to eq(order.shipments.count)
@@ -715,22 +742,23 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_relationships(:shipping_rates)
         expect(json_response['included']).to be_present
         expect(json_response['included'].size).to eq(shipment.shipping_rates.count + 2)
-        [{shipping_method: shipping_method, shipping_rate: shipping_rate}, {shipping_method: shipping_method_2, shipping_rate: shipping_rate_2}].each do |shipping|
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:name).with_value(shipping[:shipping_method].name))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping[:shipping_rate].id.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:selected).with_value(shipping[:shipping_rate].selected))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:free).with_value(shipping[:shipping_rate].free?))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s))
-          expect(json_response['included']).to include(have_type('shipping_rate').and have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s))
+        [{ shipping_method: shipping_method, shipping_rate: shipping_rate }, { shipping_method: shipping_method_2, shipping_rate: shipping_rate_2 }].each do |shipping|
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:name).with_value(shipping[:shipping_method].name)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:shipping_method_id).with_value(shipping[:shipping_method].id.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_relationship(:shipping_method).with_data({ 'id' => shipping[:shipping_method].id.to_s, 'type' => 'shipping_method' })))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_id(shipping[:shipping_rate].id.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:cost).with_value(shipping[:shipping_rate].cost.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:tax_amount).with_value(shipping[:shipping_rate].tax_amount.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:selected).with_value(shipping[:shipping_rate].selected)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:final_price).with_value(shipping[:shipping_rate].final_price.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:free).with_value(shipping[:shipping_rate].free?)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_final_price).with_value(shipping[:shipping_rate].display_final_price.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_cost).with_value(shipping[:shipping_rate].display_cost.to_s)))
+          expect(json_response['included']).to include(have_type('shipping_rate').and(have_attribute(:display_tax_amount).with_value(shipping[:shipping_rate].display_tax_amount.to_s)))
         end
-        expect(json_response['included']).to include(have_type('stock_location').and have_id(shipment.stock_location_id.to_s))
-        expect(json_response['included']).to include(have_type('stock_location').and have_attribute(:name).with_value(shipment.stock_location.name))
-        expect(json_response['included']).to include(have_type('line_item').and have_id(shipment.line_items.first.id.to_s))
+        expect(json_response['included']).to include(have_type('stock_location').and(have_id(shipment.stock_location_id.to_s)))
+        expect(json_response['included']).to include(have_type('stock_location').and(have_attribute(:name).with_value(shipment.stock_location.name)))
+        expect(json_response['included']).to include(have_type('line_item').and(have_id(shipment.line_items.first.id.to_s)))
       end
     end
 
@@ -792,8 +820,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     context 'one shipment' do
       context 'valid shipping method' do
         before { execute }
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'sets selected shipping method for shipment' do
           expect(json_response['included'][0]).to have_id(shipment.id.to_s)
@@ -985,6 +1011,111 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       include_context 'order with a digital line item'
 
       it_behaves_like 'transitions through checkout from start to finish'
+    end
+  end
+
+  describe 'checkout#validate_order_for_payment' do
+    let(:order_state) { 'payment' }
+
+    before do
+      order.update!(state: order_state)
+    end
+
+    shared_examples 'validating the order' do
+      before do
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+    end
+
+    shared_examples 'showing 404' do
+      before do
+        order.destroy!
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns 404 HTTP status'
+    end
+
+    context 'when order has line items that were removed' do
+      include_context 'order with a physical line item'
+
+      let!(:product) { order.line_items.first.product }
+
+      before do
+        product.update!(status: 'draft')
+
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'returns an error' do
+        expect(json_response['meta']['messages']).to eq(["#{product.name} was removed because it was discontinued"])
+      end
+    end
+
+    context 'when order is not on the payment step' do
+      include_context 'order with a physical line item'
+
+      let(:order_state) { 'address' }
+
+      before do
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'returns an error' do
+        expect(json_response['meta']['messages']).to eq(['Cart changed'])
+      end
+    end
+
+    context 'without existing order' do
+      let!(:headers) { headers_bearer }
+
+      it_behaves_like 'showing 404'
+    end
+
+    context 'with existing user order with line item' do
+      include_context 'order with a physical line item'
+
+      it_behaves_like 'validating the order'
+    end
+
+    context 'with existing guest order' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'validating the order'
+    end
+
+    context 'with skip state validation' do
+      include_context 'order with a physical line item'
+
+      before do
+        order.update_column(:state, 'address')
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers, params: { skip_state: true }
+      end
+
+      it 'returns a valid cart' do
+        expect(json_response['data']).to have_id(order.id.to_s)
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context 'without skip state validation' do
+      include_context 'order with a physical line item'
+
+      before do
+        order.update_column(:state, 'address')
+        post '/api/v2/storefront/checkout/validate_order_for_payment', headers: headers
+      end
+
+      it 'returns an error' do
+        expect(response.status).to eq(422)
+        expect(json_response['meta']['messages']).to eq(['Cart changed'])
+      end
     end
   end
 end

@@ -1,5 +1,5 @@
 module Spree
-  class Taxonomy < Spree::Base
+  class Taxonomy < Spree.base_class
     include Spree::TranslatableResource
     include Spree::Metadata
     include Spree::SingleStoreResource
@@ -12,7 +12,7 @@ module Spree
 
     acts_as_list
 
-    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true, scope: :store_id }
+    validates :name, presence: true, uniqueness: { case_sensitive: false, scope: :store_id }
     validates :store, presence: true
 
     has_many :taxons, inverse_of: :taxonomy
@@ -24,6 +24,7 @@ module Spree
 
     default_scope { order("#{table_name}.position, #{table_name}.created_at") }
 
+    self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[root]
 
     private

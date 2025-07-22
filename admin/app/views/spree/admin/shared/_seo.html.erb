@@ -1,0 +1,39 @@
+<div class="card mb-4 seo-form">
+  <div class="card-header d-flex justify-content-between">
+    <h5 class="card-title"><%= Spree.t(:search_engine_listing) %></h5>
+    <button class="btn btn-light btn-sm ml-auto" data-action="click->seo-form#toggleInputs" type="button">Edit</button>
+  </div>
+  <div class="card-body d-flex flex-column">
+    <div class="seo__preview <% if title.blank? && description.blank? %>d-none<% else %>d-flex flex-column<% end %>" data-seo-form-target="preview">
+      <div class="seo__preview__title h4 font-weight-normal mb-0 text-break" data-seo-form-target="titlePreview">
+        <%= meta_title.presence || title %>
+      </div>
+      <div class="seo__preview__link">
+        <%= current_store.formatted_url_or_custom_domain %>/<%= slug_path %>/<span data-seo-form-target="slugPreview"><%= slug %></span>
+      </div>
+      <div class="seo__preview__description text-break" data-seo-form-target="descriptionPreview"></div>
+    </div>
+    <div class="seo__add-info <% if title.present? || description.present? %>d-none<% end %>" data-seo-form-target="placeholder">
+      <%= placeholder %>
+    </div>
+    <div class="seo__inputs d-none" data-seo-form-target="inputsContainer">
+      <div class="form-group">
+        <%= f.label :meta_title, Spree.t(:meta_title) %>
+        <%= f.text_field :meta_title, class: 'form-control', data: { seo_form_target: 'titleInput', action: 'input->seo-form#updatePreviews' } %>
+      </div>
+      <div class="form-group">
+        <%= f.label :meta_description, Spree.t(:meta_description) %>
+        <%= f.text_area :meta_description, class: 'form-control', rows: 4, data: { seo_form_target: 'descriptionInput', action: 'input->seo-form#updatePreviews' } %>
+      </div>
+      <div class="form-group">
+        <% if defined?(slug_attribute_name) %>
+          <%= label_tag slug_attribute_name, Spree.t(:slug) %>
+          <%= text_field_tag slug_attribute_name, slug, class: 'form-control',  data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
+        <% else %>
+          <%= f.label :slug, Spree.t(:slug) %>
+          <%= f.text_field :slug, class: 'form-control', data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

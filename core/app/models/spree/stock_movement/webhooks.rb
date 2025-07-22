@@ -1,5 +1,5 @@
 module Spree
-  class StockMovement < Spree::Base
+  class StockMovement < Spree.base_class
     module Webhooks
     end
   end

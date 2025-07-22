@@ -1,0 +1,8 @@
+<div class="sidebar-footer">
+  <% if @page_section.can_be_deleted? %>
+    <%= link_to_delete(@page_section, url: spree.admin_page_section_path(@page_section)) %>
+  <% end %>
+  <% if tab == :design %>
+    <%= link_to_with_icon "restore", Spree.t(:restore_defaults), spree.restore_design_settings_to_defaults_admin_page_section_path(@page_section), {data: {turbo_confirm: Spree.t(:are_you_sure), turbo_method: :patch }, class: 'btn btn-light btn-sm ml-auto'} %>
+  <% end %>
+</div>

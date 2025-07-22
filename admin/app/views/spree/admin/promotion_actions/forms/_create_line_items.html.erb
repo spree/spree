@@ -1,0 +1,35 @@
+<% line_items = f.object.promotion_action_line_items.includes(variant: :product) %>
+
+<div data-controller="nested-form">
+  <template data-nested-form-target="template">
+    <%= f.fields_for :promotion_action_line_items, line_items.new, child_index: 'NEW_RECORD' do |line_item_fields| %>
+      <%= render 'spree/admin/promotion_actions/forms/create_line_items_row', line_item_fields: line_item_fields %>
+    <% end %>
+  </template>
+
+  <div class="rounded-lg border">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:variant) %></th>
+          <th><%= Spree.t(:quantity) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :promotion_action_line_items do |line_item_fields| %>
+          <%= render 'spree/admin/promotion_actions/forms/create_line_items_row', line_item_fields: line_item_fields %>
+        <% end %>
+        <!-- Inserted elements will be injected before that target. -->
+        <tr data-nested-form-target="target">
+          <td colspan="3">
+            <button type="button" class="btn btn-link" data-action="nested-form#add">
+              <%= icon('plus', class: 'mr-2') %>
+              <%= Spree.t(:add_one)%>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

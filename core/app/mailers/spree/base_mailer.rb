@@ -3,8 +3,9 @@ module Spree
     helper Spree::MailHelper
 
     def current_store
-      @current_store ||= @order&.store.presence || Spree::Dependencies.current_store_finder.constantize.new.execute
+      @current_store ||= @order&.store.presence || Spree::Store.current || Spree::Store.default
     end
+
     helper_method :current_store
 
     def from_address
@@ -38,8 +39,12 @@ module Spree
     # this is only a fail-safe solution if developer didn't set this in environment files
     # http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views
     def ensure_default_action_mailer_url_host(store_url = nil)
+      host_url = store_url.presence || current_store.try(:url_or_custom_domain)
+
+      return if host_url.blank?
+
       ActionMailer::Base.default_url_options ||= {}
-      ActionMailer::Base.default_url_options[:host] ||= store_url || current_store.url
+      ActionMailer::Base.default_url_options[:host] = host_url
     end
 
     def set_email_locale

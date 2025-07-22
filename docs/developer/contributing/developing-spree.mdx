@@ -1,14 +1,15 @@
 ---
+title: Developing Spree
 description: >-
   This guide covers all the necessary steps to contributing to Spree source
   code. We're happy you're here!
 ---
 
-# Developing Spree
-
 ## Spree codebase
 
-Spree API is written in Ruby on Rails framework and is mounted into a Rails application as [a Rails Engine](https://guides.rubyonrails.org/engines.html).
+Spree is written in Ruby on Rails framework and is mounted into a Rails application as [a Rails Engine](https://guides.rubyonrails.org/engines.html).
+
+Each of spree components (eg. Storefront) is distributed as a separate gem, eg. `spree_storefront`, inside a subdirectory of the `spree` directory, eg. `spree/storefront`.
 
 ### Spree namespace
 
@@ -23,11 +24,25 @@ Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **
 1. Clone your fork repository
 
     ```bash
-     git clone git://github.com/your_github_username/spree.git
-     cd spree
+    git clone git://github.com/your_github_username/spree.git && cd spree
     ```
 
 2. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/)
+
+    On MacOS, we recommend using [rbenv](https://github.com/rbenv/rbenv) to install Ruby.
+
+    Firstly, install rbenv itself:
+
+    ```bash
+    curl -fsSL https://rbenv.org/install.sh | bash
+    ```
+
+    Then, install Ruby:
+
+    ```bash
+    rbenv init && rbenv install && rbenv global 3.3.0
+    ```
+
 3. Install required libraries
 
     You will need SQLite (or PostgreSQL or MySQL) and libvips installed on your system. You can install them using the following commands:
@@ -47,7 +62,7 @@ Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **
 4. Install the gem dependencies
 
     ```bash
-     bundle install
+    bundle install
     ```
 
 ## Creating Sandbox application
@@ -61,7 +76,36 @@ bin/sandbox.sh
 By default, Sandbox uses the **SQLite** database. But you can switch to **PostgreSQL** or **MySQL**:
 
 ```bash
-DB=postgres bin/sandbox.sh
+DB=postgres DB_PASSWORD=password DB_USERNAME=postgres DB_HOST=localhost bin/sandbox.sh
+```
+
+We recommend sticking to SQLite for development purposes as it doesn't require any additional setup.
+
+## Running the application
+
+Go to the `sandbox` directory:
+
+```bash
+cd sandbox
+```
+
+And run the application using the following command:
+
+```bash
+bin/dev
+```
+
+This will start the web server and all the necessary processes (such as Tailwind CSS compiler).
+
+You can access the application at [http://localhost:3000](http://localhost:3000).
+
+To access the Admin Panel, you can go to [http://localhost:3000/admin](http://localhost:3000/admin).
+
+The default credentials for the Admin Panel are:
+
+```
+Email: spree@example.com
+Password: spree123
 ```
 
 ### Performance in development mode
@@ -119,9 +163,7 @@ cd core
 bundle exec rspec spec/models/spree/state_spec.rb:7
 ```
 
-If a large number of tests fail when you run rspec for the first time, confirm that you have Redis installed and running. You can use the command `brew services info redis` to check if Redis is running. If it is not running, start Redis with `brew services start redis`.
-
-### Running integration tests on MacOS (only applicable for Admin Panel)
+### Running integration tests on MacOS (only applicable for Admin Panel/Storefront)
 
 We use chromedriver to run integration tests. To install it please use this command:
 

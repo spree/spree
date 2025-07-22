@@ -4,7 +4,7 @@ module Spree
   describe Cart::SetQuantity do
     subject { described_class }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:order) { create(:order, store: store) }
     let(:line_item) { create(:line_item, order: order) }
 

@@ -16,7 +16,19 @@ module Spree
 
         record_class = records.first.class
 
-        taggings_to_upsert = records.pluck(:id).map do |record_id|
+        taggings_to_upsert = taggings_attributes(tags, records, context: context, record_class: record_class)
+
+        return if taggings_to_upsert.empty?
+
+        ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
+
+        record_class.where(id: records.pluck(:id)).touch_all
+      end
+
+      private
+
+      def taggings_attributes(tags, records, context:, record_class:)
+        records.pluck(:id).map do |record_id|
           tags.map do |tag|
             {
               taggable_id: record_id,
@@ -26,12 +38,6 @@ module Spree
             }
           end
         end.flatten.compact
-
-        return if taggings_to_upsert.empty?
-
-        ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
-
-        record_class.where(id: records.pluck(:id)).touch_all
       end
     end
   end

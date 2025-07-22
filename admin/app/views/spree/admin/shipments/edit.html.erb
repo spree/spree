@@ -1,0 +1,28 @@
+<%= turbo_frame_tag dom_id(@shipment, :shipping_method) do %>
+  <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-100 d-flex justify-content-between align-items-center" do |f| %>
+    <div>
+      <%= f.select :selected_shipping_rate_id, options_for_select(@shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, @shipment.selected_shipping_rate_id),
+        {},  class: 'custom-select', autofocus: true %>
+    </div>
+    <div class="d-flex h-100 align-items-center">
+      <% if can? :update, @shipment %>
+        <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: :_top }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
+        <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+<%= turbo_frame_tag dom_id(@shipment, :tracking) do %>
+  <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-100 py-1 d-flex justify-content-between align-items-center" do |f| %>
+    <div class="form-inline">
+      <%= f.label :tracking, Spree.t(:tracking_number) %>
+      <%= f.text_field :tracking, class: 'form-control ml-3', required: true, autofocus: true %>
+    </div>
+    <div class="d-flex h-100 align-items-center">
+      <% if can? :update, @shipment %>
+        <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: dom_id(@shipment) }, type: :submit, class: 'btn btn-primary text-center mr-2 btn-sm' %>
+        <%= link_to Spree.t('actions.discard'),  spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

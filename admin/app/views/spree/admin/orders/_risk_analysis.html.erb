@@ -1,0 +1,26 @@
+<ul class="list-group mt-3 collapse" id="risk-analysis-<%= payment.id %>">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:avs_response) %>
+    <span class="badge badge-<%= payment.is_avs_risky? ? 'warning' : 'complete' %>">
+      <% if payment.is_avs_risky? %>
+        <%= icon('exclamation-circle') %>
+        <%= "#{Spree.t(:error)}: #{avs_response_code[payment.avs_response]}" %>
+      <% else %>
+        <%= icon('check') %>
+        <%= Spree.t(:success) %>
+      <% end %>
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <%= Spree.t(:cvv_response) %>
+    <span class="badge  badge-<%= payment.is_cvv_risky? ? 'warning' : 'complete' %>">
+      <% if payment.is_cvv_risky? %>
+        <%= icon('exclamation-circle') %>
+        <%= "#{Spree.t(:error)}: #{cvv_response_code[payment.cvv_response_code]}" %>
+      <% else %>
+        <%= icon('check') %>
+        <%= Spree.t(:success) %>
+      <% end %>
+    </span>
+  </li>
+</ul>

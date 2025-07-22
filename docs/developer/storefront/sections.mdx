@@ -1,0 +1,135 @@
+---
+title: "Sections"
+description: "Learn how to utilize sections to build your Spree Storefront"
+---
+
+## Quick Start
+
+Sections are the building blocks of all pages in Spree Storefront.
+
+There are two types of sections:
+
+<CardGroup cols={2}>
+  <Card title="Layout sections">
+    * eg. Header, Footer
+    * Present on all pages
+  </Card>
+  <Card title="Content sections">
+    * eg. Hero, Featured Products
+    * Present on specific pages
+    * can be managed via the Page Builder
+  </Card>
+</CardGroup>
+
+Let's take a look at the page structure of Spree Storefront:
+
+<img src="/images/developer/storefront/page_structure.png" />
+
+As you can see, the page is divided into sections. Each section is a component that is used to create the page.
+Most sections are containers that consist of multiple blocks which you can manage via the Page Builder (add/customize/remove/change their order).
+
+Each section consists of:
+
+| File | Description | Example |
+|------|-------------|---------|
+| ActiveRecord model | Defines the section's preferences | [Spree::PageSections::ImageWithText](https://github.com/spree/spree/blob/main/core/app/models/spree/page_sections/image_with_text.rb) |
+| Storefront view | Renders the section in the storefront - each theme can have its own view | [image_with_text.html.erb](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/page_sections/_image_with_text.html.erb) |
+| Admin page builder form | Configures the section in the admin panel | [image_with_text/_form.html.erb](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/page_sections/forms/_image_with_text.html.erb) |
+
+## Layout Sections
+
+We have two types of layout sections - Header and Footer. As the name suggests, they are rendered at the top and bottom of the page respectively. Between them, we have a main content area that is used to render the page sections.
+
+### Header sections
+
+#### Announcement Bar
+
+<Frame>
+<img src="/images/developer/storefront/announcement_bar.png" />
+</Frame>
+
+A simple announcement bar section that displays a message to the users.
+
+* [Announcement Bar model](https://github.com/spree/spree/blob/main/core/app/models/spree/page_sections/announcement_bar.rb)
+* [Announcement Bar view](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/page_sections/_announcement_bar.html.erb)
+* [Announcement Bar form](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/page_sections/forms/_announcement_bar.html.erb)
+
+#### Header
+
+<Frame>
+<img src="/images/developer/storefront/header.png" />
+</Frame>
+
+Header is one of the most important sections in the storefront. It is used to display the store's logo, navigation menu, search bar, cart icon, and user menu.
+
+Header can have a simple one-level navigation menu or a more complex multi-level menu (aka mega menu)
+
+* [Header model](https://github.com/spree/spree/blob/main/core/app/models/spree/page_sections/header.rb)
+* [Header view](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/page_sections/_header.html.erb)
+* [Header form](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/page_sections/forms/_header.html.erb)
+
+### Footer sections
+
+#### Newsletter
+
+<Frame>
+<img src="/images/developer/storefront/newsletter.png" />
+</Frame>
+
+A newsletter section that allows users to subscribe to the store's newsletter. If you connected your store to a newsletter provider (eg. Klaviyo, Mailchimp, etc.), you can use this section to collect emails and send them to your provider (Only in Spree 5.1+).
+
+* [Newsletter model](https://github.com/spree/spree/blob/main/core/app/models/spree/page_sections/newsletter.rb)
+* [Newsletter view](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/page_sections/_newsletter.html.erb)
+* [Newsletter form](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/page_sections/forms/_newsletter.html.erb)
+
+#### Footer
+
+<Frame>
+<img src="/images/developer/storefront/footer.png" />
+</Frame>
+
+Footer is a section that is used to display the store's footer. It is typically used to display the store's logo, copyright information, store policies, and other important links.
+
+* [Footer model](https://github.com/spree/spree/blob/main/core/app/models/spree/page_sections/footer.rb)
+* [Footer view](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/page_sections/_footer.html.erb)
+* [Footer form](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/page_sections/forms/_footer.html.erb)
+
+## Content Sections
+
+<Warning>Documentation on content sections is coming soon</Warning>
+
+## Architecture
+
+Let's dive into the details of how sections work.
+
+### Active Record Model
+
+Each section's model inherit from [Spree::PageSection](https://github.com/spree/spree/blob/main/core/app/models/spree/page_section.rb) abstract model class.
+
+#### Associations
+
+Each sections has many blocks and links. You can call them via `section.blocks` and `section.links` respectively.
+
+Section belongs to a polymorphic parent model called `pageable` which can be either `Spree::Page` (content sections) or `Spree::Theme` (layout sections).
+
+You can access section's theme by calling `section.theme`.
+
+#### Preferences
+
+Each section has set of default [preferences](/developer/customization/model-preferences)
+
+| Name | Description | Default Value |
+| --- | --- | --- |
+| `text_color` | Color of text in the section | `nil` - uses theme's text color |
+| `background_color` | Background color of the section | `nil` - uses theme's background color |
+| `border_color` | Color of section borders | `nil` - uses theme's border color |
+| `top_padding` | Padding space above section content (in pixels) | `40` |
+| `bottom_padding` | Padding space below section content (in pixels) | `40` |
+| `top_border_width` | Width of top border (in pixels) | `1` |
+| `bottom_border_width` | Width of bottom border (in pixels) | `0` |
+
+Particular sections can introduce their own preferences. For example, `Spree::PageSections::ImageWithText` has `desktop_image_alignment` and `vertical_alignment` preferences.
+
+## Creating a new section
+
+<Warning>Documentation on creating a new section is coming soon</Warning>

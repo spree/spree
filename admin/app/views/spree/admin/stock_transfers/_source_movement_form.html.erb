@@ -1,0 +1,8 @@
+<% location_id ||= 'SOURCE_ID' %>
+
+<div data-source-movement>
+  <%= f.hidden_field :variant_id, value: f.object.variant&.id || 'VARIANT_ID' %>
+  <%= f.hidden_field :stock_item_id, value: f.object.stock_item_id %>
+  <%= f.hidden_field :location_id, data: { stock_transfer_target: "sourceInput" }, value: location_id %>
+  <%= f.hidden_field :quantity, value: f.object.quantity.zero? ? -1 : f.object.quantity, data: { source_quantity: true } %>
+</div>

@@ -1,0 +1,32 @@
+.order-line-items {
+  &__form {
+    padding: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  &__form:last-child {
+    border-bottom: none;
+  }
+
+  &__form {
+    &:hover {
+      background-color: $gray-25;
+    }
+  }
+}
+
+.shipment-line-items {
+  &__row,
+  &__form {
+    display: grid;
+    grid-template-columns: [product_description] 1fr [price] 10% [quantity] 15% [total] 10% [actions] 5%;
+    grid-auto-flow: row;
+    padding-bottom: 0.75rem;
+    padding-top: 0.75rem;
+  }
+
+  &__form {
+    grid-column: 1/-1;
+    row-gap: 0.5rem;
+  }
+}

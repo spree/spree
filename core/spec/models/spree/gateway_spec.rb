@@ -29,9 +29,23 @@ describe Spree::Gateway, type: :model do
     gateway.imaginary_method('foo')
   end
 
+  context 'Validations' do
+    before do
+      allow(Spree::PaymentMethod).to receive(:providers).and_return([TestGateway, Spree::Gateway::Bogus])
+    end
+
+    it 'validates the type' do
+      expect(TestGateway.new.valid?).to be_truthy
+    end
+
+    it 'automatically sets the name' do
+      expect(TestGateway.new.name).to eq('Test')
+    end
+  end
+
   context 'fetching payment sources' do
-    let(:store) { create(:store) }
-    let(:order) { store.orders.create(user_id: 1) }
+    let(:store) { @default_store }
+    let(:order) { store.orders.create(user_id: 1, total: 100) }
 
     let(:has_card) { create(:credit_card_payment_method, stores: [store]) }
     let(:no_card) { create(:credit_card_payment_method, stores: [store]) }
@@ -77,5 +91,24 @@ describe Spree::Gateway, type: :model do
       publishable_preference1: 'public1',
       publishable_preference2: 'public2'
     })
+  end
+
+  describe '#gateway_dashboard_payment_url' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:payment) { create(:payment, payment_method: payment_method, transaction_id: '123') }
+
+    it 'returns nil' do
+      expect(payment_method.gateway_dashboard_payment_url(payment)).to be_nil
+    end
+
+    context 'when implemented' do
+      before do
+        expect(payment_method).to receive(:gateway_dashboard_payment_url).with(payment).and_return("https://dashboard.stripe.com/payments/#{payment.transaction_id}")
+      end
+
+      it 'returns the url' do
+        expect(payment_method.gateway_dashboard_payment_url(payment)).to eq('https://dashboard.stripe.com/payments/123')
+      end
+    end
   end
 end

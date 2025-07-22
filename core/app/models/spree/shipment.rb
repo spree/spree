@@ -1,7 +1,7 @@
 require 'ostruct'
 
 module Spree
-  class Shipment < Spree::Base
+  class Shipment < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
@@ -45,6 +45,7 @@ module Spree
     scope :pending, -> { with_state('pending') }
     scope :ready,   -> { with_state('ready') }
     scope :shipped, -> { with_state('shipped') }
+    scope :ready_or_pending, -> { where(state: %w(ready pending)) }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
@@ -58,7 +59,8 @@ module Spree
                                                  joins(:selected_shipping_rate).
                                                    where(Spree::ShippingRate.arel_table[:shipping_method_id].not_eq(nil)).
                                                    select(Spree::ShippingRate.arel_table[:shipping_method_id])
-                                               }
+                                          }
+    scope :digital_delivery, -> { joins(:shipping_methods).merge(Spree::ShippingMethod.digital) }
 
     delegate :store, :currency, to: :order
     delegate :amount_in_cents, to: :display_cost
@@ -152,7 +154,7 @@ module Spree
     #
     # @return [Boolean]
     def shippable?
-      can_ship? && tracked?
+      can_ship? && (tracked? || digital?)
     end
 
     # Returns true if not all of the shipment's line items are fully shipped
@@ -173,7 +175,7 @@ module Spree
     def determine_state(order)
       return 'canceled' if canceled? || order.canceled?
       return 'pending' unless order.can_ship?
-      return 'pending' if inventory_units.any? &:backordered?
+      return 'pending' if inventory_units.any?(&:backordered?)
       return 'shipped' if shipped?
 
       order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
@@ -195,6 +197,10 @@ module Spree
     def free?
       return true if final_price == BigDecimal(0)
 
+      with_free_shipping_promotion?
+    end
+
+    def with_free_shipping_promotion?
       adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
     end
 
@@ -215,12 +221,38 @@ module Spree
       inventory_units.where(line_item_id: line_item.id, variant_id: line_item.variant_id || variant.id)
     end
 
+    # Returns the total quantity of all line items in the shipment
+    def item_quantity
+      manifest.sum(&:quantity)
+    end
+
+    # Returns the cost of the shipment
+    #
+    # @return [BigDecimal]
     def item_cost
       manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
     end
 
+    # Returns the weight of the shipment
+    #
+    # @return [BigDecimal]
+    def item_weight
+      manifest.map { |m| m.line_item.item_weight }.sum
+    end
+
+    # Returns the weight unit of the shipment
+    #
+    # @return [String]
+    def weight_unit
+      manifest.first.line_item.weight_unit
+    end
+
     def line_items
       inventory_units.includes(:line_item).map(&:line_item).uniq
+    end
+
+    def digital?
+      shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
@@ -406,6 +438,8 @@ module Spree
     end
 
     def can_get_rates?
+      return true unless order.requires_ship_address?
+
       order.ship_address&.valid?
     end
 
@@ -420,7 +454,7 @@ module Spree
     end
 
     def manifest_unstock(item)
-      stock_location.unstock item.variant, item.quantity, self
+      stock_location.unstock(item.variant, item.quantity, self) if item.variant.track_inventory?
     end
 
     def recalculate_adjustments

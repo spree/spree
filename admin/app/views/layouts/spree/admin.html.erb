@@ -1,25 +1,28 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
   <head>
+    <%= render "spree/admin/shared/head" %>
+    <%= render "spree/admin/shared/custom_head" %>
   </head>
-  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>" data-controller="spree">
-    <div class="container-fluid">
-      <div class="row justify-content-center">
-        <div class="col-lg-3 col-xl-2 d-none d-lg-block position-relative px-2">
-          <%= render 'spree/admin/shared/sidebar' %>
-        </div>
-        <div class="col-lg-9 col-xl-10 px-0 pb-5 mb-3 pt-lg-2">
-          <main id="content" class="container">
-            <% if content_for?(:table_filter) || content_for?(:table_filter_dropdown) %>
-              <div class="card-lg p-0 mb-lg-3">
-                <%= yield %>
-              </div>
-            <% else %>
-              <%= yield %>
-            <% end %>
-          </main>
-        </div>
+
+  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>"
+    data-controller="admin"
+    data-action="keydown.esc->admin#close keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
+  >
+    <%= render_admin_partials(:body_start_partials) %>
+
+    <%= render "spree/admin/shared/header" %>
+    <%= render "spree/admin/shared/sidebar" %>
+    <main id="content">
+      <%= render "spree/admin/shared/content_header" %>
+      <div class="container">
+        <%= yield %>
       </div>
-    </div>
+      <%= render "spree/admin/shared/footer" %>
+    </main>
+    <%= render "spree/admin/shared/modal" %>
+    <%= render "spree/admin/shared/alerts" %>
+
+    <%= render_admin_partials(:body_end_partials) %>
   </body>
 </html>

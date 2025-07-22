@@ -20,12 +20,20 @@ sqlite|'')
 esac
 
 rm -rf ./sandbox
+
+mkdir -p sandbox/app/assets/config
+cat <<MANIFEST > sandbox/app/assets/config/manifest.js
+//= link_tree ../images
+//= link_directory ../stylesheets .css
+MANIFEST
+
 bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-bundle \
   --skip-git \
   --skip-keeps \
   --skip-rc \
   --skip-test \
+  --skip-asset-pipeline
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
@@ -35,18 +43,23 @@ fi
 cd ./sandbox
 
 cat <<RUBY >> Gemfile
+gem 'devise'
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
 gem 'spree_sample', path: '../sample'
 gem 'spree_admin', path: '../admin'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'main'
-gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'main'
+gem 'spree_storefront', path: '../storefront'
+gem 'spree_stripe', github: 'spree/spree_stripe', branch: 'main'
+gem 'spree_google_analytics', github: 'spree/spree_google_analytics', branch: 'main'
+gem 'spree_klaviyo', github: 'spree/spree_klaviyo', branch: 'main'
+gem 'spree_paypal_checkout', github: 'spree/spree_paypal_checkout', branch: 'main'
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'main'
 
 group :test, :development do
   gem 'bullet'
   gem 'pry-byebug'
   gem 'awesome_print'
+  gem 'letter_opener'
 end
 RUBY
 
@@ -56,12 +69,12 @@ cat <<RUBY >> config/initializers/bullet.rb
 if Rails.env.development? && defined?(Bullet)
   Bullet.enable = true
   Bullet.rails_logger = true
-  Bullet.stacktrace_includes = [ 'spree_core', 'spree_frontend', 'spree_api', 'spree_backend', 'spree_emails' ]
+  Bullet.stacktrace_includes = [ 'spree_core', 'spree_storefront', 'spree_api', 'spree_admin', 'spree_emails' ]
 end
 RUBY
 
 bundle update
-bundle install --gemfile Gemfile
+bundle install --gemfile Gemfile --path ../vendor/bundle
 
 bin/rails importmap:install
 bin/rails turbo:install
@@ -69,9 +82,27 @@ bin/rails stimulus:install
 
 bin/rails db:drop || true
 bin/rails db:create
-bin/rails g spree:install --auto-accept --user_class=Spree::User --sample=true
-bin/rails g spree:emails:install
-bin/rails g spree:admin:install
-bin/rails g spree:auth:install
-bin/rails g spree_gateway:install
-bin/rake acts_as_taggable_on_engine:install:migrations
+
+# setup devise
+bin/rails g devise:install
+bin/rails g devise Spree::User
+
+# setup spree
+bin/rails g spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true --sample=true
+bin/rails g spree_stripe:install
+bin/rails g spree_google_analytics:install
+bin/rails g spree_klaviyo:install
+bin/rails g spree_paypal_checkout:install
+# setup letter_opener
+cat <<RUBY >> config/environments/development.rb
+Rails.application.config.action_mailer.delivery_method = :letter_opener
+Rails.application.config.action_mailer.perform_deliveries = true
+RUBY
+
+# add web to Procfile.dev
+echo "\nweb: bin/rails s -p 3000" >> Procfile.dev
+
+# add root to config/routes.rb
+sed -i '' -e '$i\
+  root "spree/home#index"\
+' config/routes.rb

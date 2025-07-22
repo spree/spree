@@ -1,0 +1,38 @@
+<tr id="<%= spree_dom_id payment_method %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_payment_method_path(payment_method) %>">
+  <td class="w-10 move-handle text-center">
+    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+  </td>
+  <td class="cursor-pointer w-55 text-wrap" data-action="click->row-link#openLink">
+    <div class="d-flex align-items-center">
+      <div class="bg-light rounded" style="width: 95px; height: 60px;">
+        <% if payment_method_icon_tag(payment_method.payment_icon_name).present? %>
+          <%= payment_method_icon_tag(payment_method.payment_icon_name, height: 60, class: 'with-tip', title: payment_method.name) %>
+        <% end %>
+      </div>
+
+      <div class="mx-3">
+        <% if payment_method.try(:description_partial_name) %>
+          <%= render "spree/admin/payment_methods/descriptions/#{payment_method.description_partial_name}", payment_method: payment_method %>
+        <% else %>
+          <%= payment_method.name %>
+        <% end %>
+      </div>
+    </div>
+  </td>
+  <td class="w-20">
+    <%= form_for payment_method, as: :payment_method, url: spree.admin_payment_method_path(payment_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+    <% end %>
+  </td>
+  <td class="w-10 text-center">
+    <%= form_for payment_method, as: :payment_method, url: spree.admin_payment_method_path(payment_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+      <div class="custom-control custom-switch">
+        <%= f.check_box :active, class: 'custom-control-input', data: { action: 'auto-submit#submit' }, id: "payment_method_active_#{payment_method.id}" %>
+        <%= f.label :active, '&nbsp;'.html_safe, class: 'custom-control-label', for: "payment_method_active_#{payment_method.id}" %>
+      </div>
+    <% end %>
+  </td>
+  <td class="actions w-5">
+    <%= link_to_edit(payment_method, data: { row_link_target: :link, turbo_frame: '_top' }) %>
+  </td>
+</tr>

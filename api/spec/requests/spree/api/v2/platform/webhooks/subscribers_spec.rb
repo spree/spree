@@ -18,8 +18,6 @@ describe 'Platform API v2 Webhooks Subscribers spec', type: :request do
           get "/api/v2/platform/webhooks/subscribers", headers: bearer_token
         end
 
-        it_behaves_like 'returns 200 HTTP status'
-
         it 'returns all subscribers' do
           expect(json_response['data'].count).to eq(2)
           expect(json_response['data'].first).to have_type(type)

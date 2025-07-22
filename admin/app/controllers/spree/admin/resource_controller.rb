@@ -4,10 +4,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
+  after_action :set_return_to, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
-
-  respond_to :html
 
   def new
     invoke_callbacks(:new_action, :before)
@@ -21,20 +20,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     invoke_callbacks(:update, :before)
     if @object.update(permitted_resource_params)
       set_current_store
-      %w[asset image square_image].each do |attachment_type|
-        remove_param = "remove_#{attachment_type}"
-        if params[remove_param] == '1'
-          object = attachment_type == 'asset' ? @page_section : @object
-          attachment = object.public_send(attachment_type)
-          if attachment.attached?
-            attachment.detach
-            attachment.purge_later
-          end
-        end
-      end
+      remove_assets(%w[asset image square_image])
 
       invoke_callbacks(:update, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_update
@@ -47,7 +36,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       end
     else
       invoke_callbacks(:update, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if update_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')
@@ -60,10 +49,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def create
     invoke_callbacks(:create, :before)
+    set_created_by
     @object.attributes = permitted_resource_params
     if @object.save
       invoke_callbacks(:create, :after)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:success] = message_after_create
@@ -71,12 +61,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
         end
         format.html do
           flash[:success] = message_after_create
-          redirect_to location_after_save, status: :see_other
+          redirect_to location_after_create, status: :see_other
         end
       end
     else
       invoke_callbacks(:create, :fails)
-      respond_with(@object) do |format|
+      respond_to do |format|
         if create_turbo_stream_enabled?
           format.turbo_stream do
             flash.now[:error] = @object.errors.full_messages.join(', ')
@@ -196,15 +186,16 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def find_resource
-    if parent_data.present?
-      parent.send(controller_name).find(params[:id])
+    base_scope = if parent_data.present?
+                   parent.send(controller_name)
+                 else
+                   model_class.try(:for_store, current_store) || model_class
+                end
+
+    if model_class.try(:friendly)
+      base_scope.friendly.find(params[:id])
     else
-      base_scope = model_class.try(:for_store, current_store) || model_class
-      if model_class.try(:friendly)
-        base_scope.friendly.find(params[:id])
-      else
-        base_scope.find(params[:id])
-      end
+      base_scope.find(params[:id])
     end
   end
 
@@ -236,6 +227,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     collection_url
   end
 
+  def location_after_create
+    location_after_save
+  end
+
   def location_after_save
     edit_object_url(@object)
   end
@@ -252,6 +247,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     return if @object.nil?
 
     ensure_current_store(@object)
+  end
+
+  def set_created_by
+    return if @object.nil?
+
+    @object.created_by = try_spree_current_user if @object.respond_to?(:created_by_id)
   end
 
   def set_currency
@@ -304,11 +305,13 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   #
   # Other controllers can, should, override it to set custom logic
   def permitted_resource_params
-    params[resource.object_name].present? ? params.require(resource.object_name).permit! : ActionController::Parameters.new
+    raise NotImplementedError, "You must implement the permitted_resource_params method"
   end
 
   def collection_actions
-    [:index]
+    [:index, :select_options, :bulk_modal, :bulk_status_update,
+     :bulk_add_to_taxons, :bulk_remove_from_taxons,
+     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
   end
 
   def member_action?

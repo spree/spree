@@ -1,347 +1,276 @@
+---
 en:
   spree:
     admin:
-      url: URL
-      active: Active
-      name: Name
-      successful: Successful
-      created_at: Created At
-      response_code: Response Code
-      execution_time: Execution Time
-      request_errors: Request Errors
-      filters: Filters
-      kind: Kind
-      home: Home
-      cms:
-        all_pages: All Pages
-        add_new_page: Add New Page
-        add_new_section: Add New Section
-        content: Content
-        click_here: click here
-        draft_mode: Draft Mode
-        full_width: Full width
-        link_to_taxon: Link to Taxon
-        link_to_product: Link to Product
-        title: Title
-        fit: Fit To
-        info_hero_image_body: "<p>The Hero Image section adds a large image with a button and tagline text to your page.</p>
-        <p>The button can link to a Product, Taxon or Page. This section can be set to fit within the central container or to the edges of the screen.</p>
-        <p><b>Tip:</b> Use a hero image with no button text or title, and then set the <b>Fit:</b> to <b>Container</b> and <b>Gutters</b> to <b>Use Gutters</b> this creates an image section that looks great above a Side-by-Side Images section, or an Image Gallery section.</p>
-        <p>Experiment with the settings, and don't be afraid to use more than one Hero Image section per page.</p>"
-        info_image_gallery_body: "<p>The Image Gallery section can be configured in several ways. For example, each image can link to a product or taxon. If you do not provide a link, you can display three images. Additionally, you can also use labels to add text to your images.</p>
-        <p>There are two layout configurations for the Image Gallery section, with the taller image used on the left or the right. You can also set this section to fit the edges of the screen or the central container to match your website's style.</p>"
-        info_product_carousel_body: "<p>Product Carousel is a simple section to use. Search for the taxon you wish to display, save the changes, and the products in your chosen taxon will be displayed on your page.</p>"
-        info_featured_article_body: "<p>The Feature Article section allows you to add rich text to your page with a set title subtitle and linking button.</p>
-        <p>This section can be set to use full screen or container and also use gutters.</p>"
-        info_side_by_side_images_body: "<p>The Side-by-Side Images section can be configured in several ways, you have the option of using them as plane images, images with text, and either of those options can be clickable links if a link is set.</p>
-        <p><b>Tip:</b> You can blow these images out to the edge of the screen and remove the gutters to create a completely different look.</p>"
-        info_rich_text_content_body: "<p>The Rich Text Content section is simply a section that offers nothing more than an area of rich text editor content to be displayed on your page.</p>"
-        brand_bar:
-          uses_menu: This section uses your Spree Menu named <b>%{menu}</b> to manage the images and links,
-          vist_menu_to_edit: to edit this menu.
-        full_width_on_small: Full width on small devices
-        button_text: Button Text
-        go_to_fullscreen_section_manager: Go To Fullscreen Section Manager
-        page_type: Page Type
-        gutters: Gutters
-        you_have_no_pages: You have no Pages, click the <b>+ Add New Page</b> button to get started.
-        new_page: New Page
-        toggle_page_visibility: Toggle page visibility
-        meta_title: Meta Title
-        meta_description: Meta Description
-        page: Page
-        full_screen_mode: '<span class="exit">Exit </span>Full Screen Mode'
-        hero:
-          aspect_ratio: Please use an image with the aspect ratio of 12:5 (2400px x 1000px)
-        select_page_type: Select a page type
-        section_type: Section Type
-        subtitle: Subtitle
-        set_gutters: Set Gutters
-        click_button_to_change_page_type: Click the <b>%{button_type}</b> button to load the options for this page type.
-        more_page_settings: '<span class="more">More</span><span class="less">Less</span> Page Settings'
-        seo_settings: SEO Settings
-        no_sections_found_please_add_one: Add your first section to this page by clicking the <b>+ Add New Section</b> button above.
-        click_create_to_load_new_link: 'Click the <b>Create</b> button below to save your new page section, and load the section settings.'
-        click_update_to_load_new_link: 'Click the <b>Update</b> button below to load the new section settings.'
-        settings_for: 'Options For: <b>%{section}</b>'
-        page_sections: '%{page_name} Sections'
-        page_sections_info: 'The area below represents your %{page_type} displayed in %{store}, add sections and drag them into position'
-        visible: Visible
-        side_by_side:
-          left_image: Left Image
-          right_image: Right Image
-          image_info: 'Please use an image with an aspect ratio of 54:35 (1468px x 952px).'
-        image_gallery:
-          display_labels: Display labels
-          image_a: Image A
-          image_b: Image B
-          image_c: Image C
-          layout_style: Layout Style
-          square_image: Please use an image with an aspect ratio of 18:13 (1080px x 780px).
-          tall_image: Please use an image with an aspect ratio of 27:40 (1080px x 1600px).
+      amount_spent: Amount spent
+      audit_log: Audit Log
+      avg_order_value: Avg. Order Value
+      back_to_dashboard: Back to Dashboard
+      bulk_ops:
+        products:
+          body:
+            add_tags: 'Select tags to add to the products:'
+            add_to_brand: 'Select which brand to add the products to:'
+            add_to_taxons: 'Select which taxons to add the products to:'
+            remove_from_taxons: 'Select which taxons to remove the products from:'
+            remove_tags: 'Select tags to remove from the products:'
+            set_return_rule: Select return rule for products
+            set_status:
+              active: Setting products to active will make those products available on the storefront.
+              archived: Setting products to archived will hide them from storefront.
+              draft: Setting products to draft will hide them from storefront.
+          status_updated: Status updated
+          title:
+            add_tags: Add tags
+            add_to_brand: Add to brand
+            add_to_taxons: Add to taxons
+            remove_from_brand: Remove from brand
+            remove_from_taxons: Remove from taxons
+            remove_tags: Remove tags
+            set_return_rule: Set Return Rule
+            set_size_chart: Set Size Chart
+            set_status: Set as %{status}
+        users:
+          body:
+            add_tags: 'Select tags to add to the customers:'
+            remove_tags: 'Select tags to remove from the customers:'
+          title:
+            add_tags: Add tags
+            remove_tags: Remove tags
+      checkout_settings:
+        checkout_message_description: Visible to your customers on the checkout page in the right sidebar.
+        guest_checkout:
+          description: Allow customers to checkout without creating an account.
+          label: Allow guest checkout
+        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
+        special_instructions:
+          description: Allow customers to add special instructions to their order.
+          label: Display the special instructions field
+      copied: Copied!
+      copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
-      data_feeds:
-        data_feeds: Data Feeds
-        type: Type
-        slug_label: Slug (leave blank to generate)
-        new_data_feed: New Data Feed
-      digitals:
-        digital: Digital
-        add_new_file: Add a new digital asset.
-        digital_assets: Digital Assets
-        reset_download_links: Reset Digital Download Links
-        downloads_reset: Digital Download Links Reset
-        no_digital_assets_added: No digital assets.
-        delete_file_confirmation: "Are you sure you want to delete: %{filename}"
-        upload: Upload
-      export_only_filtered_records: Export only filtered records, matching the search criteria
+      coupon_codes:
+        unused: Unused
+        used: Used
+      created_at: Created At
+      dashboard:
+        getting_started:
+          description: Everything you need to set up to start selling.
+        hi: Hi
+        top_products: Top products
+        view_report: View report
+        whats_happening_on: Here's what's happening on <strong>%{store_name}</strong> today.
+      digital_shipment_fulfillment_note: This shipment will be marked as fulfilled once the user downloads the digital product
+      display_on_options:
+        back_end: Only on admin panel
+        both: On both admin panel & storefront
+        front_end: Only on storefront
+      edit_billing_address: Edit billing address
+      edit_contact_information: Edit contact information
+      edit_profile: Edit Profile
+      edit_shipping_address: Edit shipping address
+      edit_theme: Edit theme
+      errors: Errors
+      execution_time: Execution Time
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
-      linkable:
-        search_for_a_page: Search for a page
-        search_for_a_taxon: Search for a Taxon
-        search_for_a_product: Search for a Product
-      store:
-        digital_settings:
-          digital_asset_settings: Digital Asset Settings
-          limit_digital_download_count: Limit Download Count
-          limit_digital_download_days: Limit Download Days
-          digital_asset_authorized_clicks:
-            authorized_clicks: Authorized Download Count
-            info: Number of times a download link can be clicked.
-          digital_asset_authorized_days:
-            authorized_days: Authorized Download Days
-            info: The number of days a purchase can be downloaded after purchase.
-          digital_asset_link_expire_time:
-            download_link_expire_time: Download Link Expire Time
-            link_expire_time: Set the expire time of each download link. (seconds).
-      product_kinds:
-        physical: Physical
-        digital: Digital
-      tab:
-        configuration: Configuration
-        content: Content
-        option_types: Option Types
-        orders: Orders
-        overview: Overview
-        pages: Pages
-        products: Products
-        promotions: Promotions
-        promotion_categories: Promotion Categories
-        properties: Properties
-        prototypes: Prototypes
-        reports: Reports
-        navigation: Navigation
-        taxonomies: Taxonomies
-        taxons: Taxons
-        users: Users
-        return_authorizations: Return Authorizations
-        stock: Stock
-        customer_returns: Customer Returns
-        apps: Apps
-        applications: Applications
-        integrations: Integrations
-        webhook_subscribers: Webhook Subscribers
-      taxon:
-        nested_under_info: Nest this Taxon within the Taxonomy tree.
-      taxonomies:
-        edit_root_taxonomy: Edit %{name} Taxonomy
-        taxonomies: Taxonomies
-        taxons_belonging_to: "Taxons Belonging To %{taxonomy_name}"
-        submenu: Submenu
-        add_new_taxon: Add a new Taxon
-        no_taxons: '<b>%{taxonomy}</b> has no Taxons. Click the <b>Add a new Taxon</b> button, to begin adding Taxons.'
+      export_only_filtered_records: Export only filtered records, matching the search criteria
+      filters: Filters
+      getting_started: Getting started
+      gift_card_batches:
+        codes_count: Codes count
+        new_gift_card_batch: New Gift Card Batch
+        prefix: Prefix
+      gift_cards:
+        active: Active
+        all_statuses: All statuses
+        code_help_text: If you leave it blank, we will generate code for you
+        redeemed: Redeemed
+        usage: Usage
+      integrations:
+        invalid_integration_type: This integration is not allowed
+        page_subtitle: Connect your store to third-party services to enhance customer experience.
+      manage_currencies: Manage Currencies
+      manage_properties: Manage Properties
+      manage_stock_locations: Manage Stock Locations
+      manage_taxons: Manage Taxons
+      manage_zones: Manage Zones
+      name: Name
+      navigation:
+        nested_under: Nested under
+      not_tracking_inventory: Not tracking inventory
+      notifications: Notifications
+      num_orders: No. of Orders
+      oauth_applications:
+        last_used: Last used
+        list: API keys
+        never: Never
+        new: New API key
+        read_and_write: Read & Write
+        read_only: Read Only
+        scopes: Scopes
       order:
-        changing_store_warning: If you change the store this order belongs to, the order will be reset.
-        once_an_order_is_complete_you_can_not_change_store: 'Sorry, once an order is complete, you can no longer change the store that the order belongs to.'
         events:
           approve: Approve
           cancel: Cancel
-          resume: Resume
           resend: Resend
+          resume: Resume
       orders:
-        all: All
-        unpaid: Unpaid
-        unfulfilled: Unfulfilled
-        cart: Cart
+        add_user_to_this_order: Add customer to this order
         all_orders: All Orders
-        draft_orders: Draft Orders
-        abandoned_checkouts: Abandoned Checkouts
-      oauth_applications:
-        list: oAuth applications
-        new: New oAuth application
-        uid: UID
-        scopes: Scopes
-        documentation_message: 'To learn how to authenticate requests to the Platform API, '
-        documentation_cta: see the documentation
-      reports:
-        for: For %{store_name}
-      return_authorization:
-        product: Product
-      store_form:
-        look_and_feel: Look and feel
-        code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
-        checkout_zone_help: "Selecting zone will limit to which Countries or States products are shipped.
-          For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
-        currencies_help: "You can accept payments in multiple currencies. Each product and product variant can have different price in different currency"
-        locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n' target='_blank' class='alert-link'>Spree I18n extension</a> to add more locales"
-        default_locale_notice: "Warning: Before changing the default locale, ensure that all products, taxons and stores have translations in the new locale"
-        social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
-        default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
-        footer_help: "This content is visible in the footer section of your Store"
-        mail_from_address_help: "This is the email which will be the sender of all your Store emails (Order Confirmation, Shipment notification etc)"
-        customer_support_email_help: "This email is visible to your Store visitors in the Footer section"
-        new_order_notifications_email_help: "If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to"
-        seo_robots: "Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>"
-      user:
-        account: Account
-        addresses: Addresses
-        items: Items
-        items_purchased: Items Purchased
-        order_history: Order History
-        order_num: "Order #"
-        orders: Orders
-        user_information: User Information
-        stores: Stores
-        store_credits: Store Credits
-        no_store_credit: User has no Store Credit available.
-        available_store_credit: User has %{amount} in Store Credit available.
-      navigation:
-        all_menus: All Menus
-        add_new_menu: Add New Menu
-        add_new_item: 'Add New Item'
-        code: Code
-        default_menus_info:
-          title: Default Menus
-          body: "Default menus are menus whose language matches the associated store's default language.<br><br>
-          <h5>Example</h5>If you have a store that uses Spanish as the default language but also offers the options of German and French; your default header menu for this store would be set to use <b>Español (es)</b> for the language and <b>Header</b> as the location.<br><br>
-          <h5>Why Are Default Menus Important?</h5> Default menus are displayed to your visitor if no menu is available in the current language they are browsing. It is recommended that you create a default menu for each menu location within each store.<br><br>
-          <h5>More Information</h5>To learn more about menus, view the official Spree user documentation by <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>clicking here</a>."
-          allow_this_menu_item_to_contain_nested_menu_items: Allow this Menu Item to contain nested items
-        back_to_all_menus: Back To All Menus
-        click_create_to_load_new_link: 'Click the <b>Create</b> button below to change the link field.'
-        click_update_to_load_new_link: 'Click the <b>Update</b> button below to change the link field.'
-        give_your_menu_a_unique_name: 'Use the unique code to identify your menu: spree-eu-main'
-        link_settings: Link Settings
-        link_to: Link To
-        image_alt_text: Add alt text to your image
-        image_asset: Add a Promotion image or Link icon.
-        move_could_not_be_saved: 'ERROR: This move could not be saved.'
-        managing_by_store_title: 'Managing Menus By Store'
-        managing_by_store: <p>You are managing the menus for <b>%{store}</b>. To manage menus for other stores, change the global store using the drop-down in the main navbar found at the top of the screen.</p>
-        new_menu_item: New Menu Item
-        new_menu: New Menu
-        nested_under: Nested under
-        no_menu_items: '<b>%{menu}</b> has no items. Click the <b>Add New Item</b> button to begin adding links to this menu.'
-        nested_under_info: Quickly nest your Menu Item if you already know where it needs to be.
-        item_type: Item Type
-        image_info: '<b>NOTE:</b> You can attach an image to any menu item, but your image will only be displayed in the main menu when nested inside a container with the code <b>promo</b>.<br><br> For best results use images with a width of 540px and height of 350px.'
-        open_link_in_new_window: Open this link in a new window
-        menu_item_type_container_message: "Containers are menu items that do not link to a destination. If you are building the Spree Main Menu
-        create containers with the code: <b>category</b> or <b>promo</b>, and then nest your links inside these containers build out your menu.
-        <br><br> For an indepth guide to building the main menu see the documenttation page <a href='https://guides.spreecommerce.org/user/navigation/building_the_main_menu.html' target='_blank' class='alert-link'>Building The Main Menu</a>"
-        menus: Menus
-        menu_items: '%{menu_name} Items'
-        public_details: Public Details
-        subtitle: Subtitle
-        url_info: 'The URL field can link to an external website using <b>https://example.com</b>, link to an otherwise unreachable internal path using <b>/policies/privacy</b>,
-        launch an email client using <b>mailto:sales@example.com</b> or used to create a clickable phone number with <b>tel:123456789</b>'
-        search_for_a_product: Search for a Product
-        search_for_a_taxon: Search for a Taxon
-        settings: Settings
-        set_a_code: "Adding a code is optional but can be useful if you need to identify this menu item. When building
-        the Spree main menu use the code <b>category</b> or <b>promo</b> to create the containers that organize links and promotions appropriately. To learn more view the documentation by <a href='https://guides.spreecommerce.org/user/navigation/add_menu_items.html' target='_blank' class='alert-link'>clicking here</a>."
-        type: Type
-        used_in: Used In
-        you_have_no_menus: You have no Menus, click the Add New Menu button to create your first Menu.
-        this_link_takes_you_to_your_stores_home_page: This link takes you to your stores home page.
-      settings: Settings
-      utilities:
-        preview: Preview
-      webhooks_subscribers:
-        webhooks_subscribers: Webhooks Subscribers
-        new_webhooks_subscriber: New Webhooks Subscriber
-        webhooks_events: Webhooks Events
-        subscriptions: Subscriptions
-        time_of_last_event: Time of Last Event
-        all_events: All Events
-        no_events: No Events
-        subscribe_to_all_events: Subscribe to all events
-        select_events: Select events
-        addresses: Addresses
-        assets: Assets
-        cms_pages: Cms Pages
-        credit_cards: Credit Cards
-        customer_returns: Customer Returns
-        digital_links: Digital Links
-        digitals: Digitals
-        inventory_units: Inventory Units
-        line_items: Line Items
-        menu_items: Menu Items
-        menus: Menus
-        option_types: Option Types
-        option_values: Option Values
-        orders: Orders
-        payments: Payments
-        payment_capture_events: Payment Capture Events
-        prices: Prices
-        products: Products
-        promotions: Promotions
-        properties: Properties
-        prototypes: Prototypes
-        refunds: Refunds
-        reimbursements: Reimbursements
-        return_authorizations: Return Authorizations
-        return_items: Return Items
-        roles: Roles
-        shipments: Shipments
-        shipping_categories: Shipping Categories
-        shipping_methods: Shipping Methods
-        shipping_rates: Shipping Rates
-        stock_items: Stock Items
-        stock_locations: Stock Locations
-        stock_movements: Stock Movements
-        stock_transfers: Stock Transfers
-        store_credits: Store Credits
-        stores: Stores
-        tax_rates: Tax Rates
-        taxonomies: Taxonomies
-        taxons: Taxons
-        variants: Variants
-        wished_items: Wished Items
-        wishlists: Wishlists
-        zones: Zones
-      display_on:
-        both: All
-        front_end: Storefront
-        back_end: Admin Panel
-      product:
-        all: All
+        canceled: Canceled
+        fulfilled: Fulfilled
+        no_email_present: Please add an email address to send the payment link
+        orders_to_fulfill: Orders to fulfill
+        partially_refunded: Partially Refunded
+        payment_link_sent: Payment link was sent to the customer
+        refunded: Refunded
+        remove_user_from_this_order: Remove customer from this order
+        unfulfilled: Unfulfilled
+      page_builder:
+        background_color: Background color
+        border_bottom_width: Border bottom width
+        border_color: Border color
+        border_top_width: Border top width
+        bottom_padding: Bottom padding
+        button_alignment: Button alignment
+        button_background_color: Button background color
+        button_style: Button style
+        button_text: Button's text
+        button_text_color: Button text color
+        category: Category
+        description: Description
+        description_alignment: Description alignment
+        desktop_image_alignment: Image alignment for desktop
+        desktop_logo_height: Logo height (desktop)
+        heading: Heading
+        heading_alignment: Heading alignment
+        heading_size: Heading size
+        height: Height
+        left_aligned: Left aligned
+        logo_centered: Logo centered
+        max_video_width_on_desktop: Max video width on desktop
+        maximum_posts_to_show: Maximum posts to show
+        maximum_products_to_show: Maximum products to show
+        nav_centered: Nav centered
+        not_set: Not set
+        separated: Separated
+        show_more_button: Show explore category button
+        show_taxon_image: Show taxon image
+        text_color: Text color
+        title: Title
+        top_padding: Top padding
+        use_description_from_admin: Use description from admin
+        vertical_alignment: Vertical alignment
+        youtube_video_url: Youtube video URL
+      personal_details: Personal Details
+      products:
         active: Active
+        all_statuses: All statuses
+        any_stock: Any stock
         archived: Archived
+        by_status: By status
+        by_stock: By stock
         deleted: Deleted
         draft: Draft
-        pre_order: Pre-order
-      getting_started:
-        lets_get_you_started: Let's get you started
+        help_bubble: Draft products aren't available for purchase. Active products are live.
+        in_stock: In Stock
+        inventory:
+          barcode: Barcode (ISBN, UPC, GTIN, etc.)
+          sku: SKU (Stock Keeping Unit)
+        out_of_stock: Out of Stock
+        paused: Paused
+        search_results:
+          no_products: We couldn't find any products matching your search :(
+        seo:
+          placeholder: Add a title and description to see how this product might appear in a search engine listing
+        status_form:
+          available_on: Marks when the product will be released, put a future date to indicate that this is a pre-order
+          discontinue_on: Marks when the product should be automatically taken off from your site
+          make_active_at: Marks when the product should be automatically promoted to "active" state
+          status: Draft products aren't available for purchase. Active products are live.
+        stores:
+          choose_stores: Choose which stores this product should be available in
+        variants:
+          option_types_link: To add more option types please go to <a href="%{link}">Option Types</a>
+      recommended_size: Recommended size
+      report_created: Your report is being generated. You will receive an email with a download link when it is ready!
+      reset_digital_link_download_limits: Reset download limits
+      response_code: Response Code
+      selected: selected
+      send_payment_link: Send Payment Link
+      shipment_transfer:
+        wrong_destination: Wrong destination
+      stock_transfers:
+        add_products_tip: You need to select a destination location first
+      store_credit:
+        amount_remaining_of_total: "<strong>%{amount}</strong> remaining (<strong>%{total}</strong> total)"
+      store_form:
+        company_field:
+          description: It shows the company field on the address form in the My Account section and on the checkout address step.
+          label: Display the company address field
+        customer_support_email_help: This email is visible to your Store visitors in the Footer section
+        new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
+      store_setup_tasks:
+        add_billing_address: Add billing address
         add_products: Add products
-        setup_shipping: Setup shipping
-        setup_payment_method: Setup payment methods
-        setup_taxes: Setup taxes
-        setup_taxes_calculation: Setup tax calculation
-        products_section:
-          message_with_products_html: You have added <strong> %{count} products</strong> so far - good job!</p>
-          message_without_products: You can add products manually or
-          import_message: import them via the API.
-        shipping_section:
-          message_with_shipping: You have setup shipping for
-          message_without_shipping: You can add multiple shipping methods, different for each country, continent or region.
-        payment_methods_section:
-          message_with_payment_method: You're ready to accept payments!
-          message_without_payment_method: You can setup multiple payment methods such as Stripe, PayPal, ApplePay, etc.
-        taxes_section:
-          message_with_taxes: You're tax calculation is setup!
-          message_without_taxes: You can use tax services such as TaxJar or setup tax calculation manually
-      payment_methods:
-        edit:
-          payment_method_configuration: "Payment Method Configuration"
+        payment_methods:
+          copy: In order to collect payments, please setup at least one online payment provider.
+          done: You're all set! You can always manage your Payment Methods on <a href="%{link}" data-turbo-frame="_top">this</a> page.
+          setup: Setup Payment Methods
+          title: Please setup Payment Methods for your store
+        set_customer_support_email: Set customer support email
+        setup_taxes_collection: Setup taxes collection
+        taxes:
+          copy: In order to collect taxes, please setup your tax rates.
+          done: You're all set! You can always manage your taxes on the <a href="%{link}" data-turbo-frame="_top">settings</a> page.
+          setup: Setup Tax Rates
+      storefront: Storefront
+      successful: Successful
+      successfully_reset_digital_links_limit: Download limits have been reset
+      taxon_rules:
+        all_conditions: all conditions
+        any_condition: any condition
+        available_on: Available on
+        match_policies:
+          contains: contains
+          does_not_contain: does not contain
+          is_equal_to: is equal to
+          is_not_equal_to: is not equal to
+        on_sale: On sale
+        products_must_match: 'Products must match:'
+        tag: Product tag
+      taxon_type: Taxon type
+      taxon_types:
+        automatic: Automatic
+        automatic_info: Automatically add products to this taxon if they match the rules you set.
+        manual: Manual
+        manual_info: Curate products manually. You can add or remove them in bulk.
+      upload_new_asset: Upload new asset
+      user:
+        last_order_placed: Last order placed
+        no_store_credit: Customer has no Store Credit available
+      users:
+        filters:
+          search_placeholder: Search customers by email or name
+      utilities:
+        preview: Preview
+      variants:
+        search_results:
+          no_variants: We couldn't find any variants matching your search :(
+      variants_form:
+        add_option:
+          empty: Add options like size or color
+          not_empty: Add another option
+        compare_at_price_description: This price is used to show marked down price on the product page.
+        stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
+        total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
+      webhooks_subscribers:
+        all_events: All Events
+        new_webhooks_subscriber: New Webhooks Subscriber
+        no_events: No Events
+        select_events: Select events
+        subscribe_to_all_events: Subscribe to all events
+        subscriptions: Subscriptions
+        time_of_last_event: Time of Last Event
+        webhooks_events: Webhooks Events

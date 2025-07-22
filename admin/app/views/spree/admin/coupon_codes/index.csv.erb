@@ -1,0 +1,14 @@
+<%- headers = [
+  'Coupon',
+  'State',
+  'Created at'
+  ]
+-%>
+<%= CSV.generate_line(headers).strip %>
+<%- @coupon_codes.pluck(:code, :state, :created_at).each do |coupon_code| -%>
+<%= CSV.generate_line([
+  coupon_code[0].upcase,
+  coupon_code[1],
+  coupon_code[2]
+  ]).strip %>
+<%- end -%>

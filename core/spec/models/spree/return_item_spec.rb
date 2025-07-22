@@ -91,6 +91,19 @@ describe Spree::ReturnItem, type: :model do
     end
   end
 
+  describe '#pre_tax_amount=' do
+    let(:return_item) { build :return_item }
+    let(:amount) { '3,0A0' }
+
+    before do
+      return_item.pre_tax_amount = amount
+    end
+
+    it 'is expected to equal to localized number' do
+      expect(return_item.pre_tax_amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
+  end
+
   describe '.default_refund_amount_calculator' do
     it 'defaults to the default refund amount calculator' do
       expect(Spree::ReturnItem.refund_amount_calculator).to eq Spree::Calculator::Returns::DefaultRefundAmount

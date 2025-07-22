@@ -1,0 +1,22 @@
+<% if done %>
+  <p>
+    Good job, you've added products to your store!
+  </p>
+  <p>
+    Remember you can always add more!
+  </p>
+<% else %>
+  <p>
+    Add products to your store, either your own or invite 3rd party vendors to sell together.
+  </p>
+  <p>
+    You can also import products in bulk from a CSV or Excel file.
+  </p>
+<% end %>
+
+<div class="d-flex gap-3">
+  <%= link_to_with_icon 'plus', Spree.t(:add_product), spree.new_admin_product_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } if can?(:create, Spree::Product) %>
+
+  <%= render 'spree/admin/products/import_button' %>
+  <%= invite_vendor_button(class: 'btn btn-light') if defined?(invite_vendor_button) %>
+</div>

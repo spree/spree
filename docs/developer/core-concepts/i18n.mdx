@@ -1,6 +1,6 @@
 ---
 title: Internationalization
-order: 8
+icon: "language"
 description: >-
   Spree is ready out of the box to make your brand a global one.
 ---
@@ -46,10 +46,6 @@ As of Spree 4.6, resources with user-facing content fields now have built in sup
 
 Our translatable resources are configured with Mobility’s [Table Backend](https://github.com/shioyama/mobility#table-backend-like-globalize) storage strategy. The way this works is that each translatable resource has a corresponding translations table in the database, in which translation values are stored - for example, product translations are stored in `spree_product_translations`.
 
-<Note>
-As of 4.6, data for translatable fields exists solely in the the translation tables so that there is a single source of truth. In the database, the translatable fields on the resource itself will always null. Even if there is only data for a single language, the data for those fields will be stored in the corresponding translations table. In the code, the data will still be accessible via attribute accessors like `.name` and `.description` in the code.
-</Note>
-
 <Info>
 You can read more about how to work with translations by reading [Mobility's usage docs](https://github.com/shioyama/mobility#usage).
 </Info>
@@ -89,6 +85,12 @@ Spree now stores all of the translation information in a separate GitHub project
 
 The project is actually a Spree extension. This extension contains translations files. To translate models (provide translations for Products, Taxons, etc) you will need to install also [Spree Globalize](https://github.com/spree-contrib/spree_globalize).
 
+To install the Spree I18n extension, run the following command:
+
+```bash
+bundle add spree_i18n
+```
+
 ### Translation Files
 
 Each language is stored in a YAML file located in `config/locales`. Each YAML file contains one top level key which is the language code for the translations contained within that file. The following is a snippet showing the basic layout of a locale file:
@@ -118,10 +120,6 @@ You don't need to copy any files from `spree_i18n` or `rails-i18n` for their tra
 
 ## Translating Views
 
-<Note>
-This section is only applicable for  optional`spree_frontend` and `spree_backend` gems
-</Note>
-
 When reviewing the source of any view in Spree you'll notice that all text is rendered by passing a string to a helper method similar to:
 
 ```erb
@@ -138,6 +136,6 @@ en:
 
 ## Localizing Extensions
 
-[Spree extensions](/developer/extending-spree/3rd-party-extensions) can contain their own `config/locales` directory where developers can include YAML files for each language they wish to support.
+[Spree extensions](/developer/customization/extensions) can contain their own `config/locales` directory where developers can include YAML files for each language they wish to support.
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the `Spree.t()` helper method even if they only include a single default language locale file (as other users can simply include the required YAML file and translations in their site extension).

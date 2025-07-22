@@ -1,5 +1,5 @@
 module Spree
-  class Property < Spree::Base
+  class Property < Spree.base_class
     include Spree::FilterParam
     include Spree::Metadata
     include Spree::ParameterizableName
@@ -9,19 +9,13 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation].freeze
-      translates(*TRANSLATABLE_FIELDS)
-    else
-      TRANSLATABLE_FIELDS = %i[presentation].freeze
-      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
-    end
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
       auto_strip_attributes :presentation
     end
 
-    auto_strip_attributes :name, :presentation
     acts_as_list
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'
@@ -36,8 +30,13 @@ module Spree
     scope :sorted, -> { order(:name) }
     scope :filterable, -> { where(filterable: true) }
 
+    KIND_OPTIONS = { short_text: 0, long_text: 1, number: 2, rich_text: 3 }.freeze
+    enum :kind, KIND_OPTIONS
+
+    DEPENDENCY_UPDATE_FIELDS = [:presentation, :name, :kind, :filterable, :display_on, :position].freeze
+
     after_touch :touch_all_products
-    after_update :touch_all_products, if: -> { saved_changes.key?(:presentation) }
+    after_update :touch_all_products, if: -> { DEPENDENCY_UPDATE_FIELDS.any? { |field| saved_changes.key?(field) } }
     after_save :ensure_product_properties_have_filter_params
 
     self.whitelisted_ransackable_attributes = ['presentation', 'filterable']

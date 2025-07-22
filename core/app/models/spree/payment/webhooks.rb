@@ -1,5 +1,5 @@
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     module Webhooks
       extend ActiveSupport::Concern
 

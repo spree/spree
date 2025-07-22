@@ -1,0 +1,292 @@
+---
+title: Quick Checkout with Stripe and Storefront API
+description: This tutorial will show you how to add quick checkout to your headless/composable storefront using Stripe and Spree APIs.
+---
+
+<Warning>
+This guide is aimed at advanced users who have some experience with Spree API and Stripe.
+You also need to install [Spree Stripe](https://github.com/spree/spree_stripe) extension before.
+</Warning>
+
+<Info>
+If you're using the standard Spree Storefront, then you can skip this tutorial as quick checkout is already built in.
+</Info>
+
+## Prerequisites
+
+Assume that you have a cart made with line items in it already.
+
+Quick checkout works by handling 3 different events:
+- Address change
+- Shipping Method/Rate change
+- Confirmation
+
+How you should handle them depends on your platform/language:
+
+- For Web and JS, please review:
+  - [Express Checkout Element](https://docs.stripe.com/elements/express-checkout-element)
+  - We also recommend reviewing the [spree_stripe implementation in Stimulus.js](https://github.com/spree/spree_stripe/blob/main/app/javascript/spree_stripe/controllers/stripe_button_controller.js)
+
+- For iOS, please review:
+  - [StripeApplePay](https://docs.stripe.com/apple-pay)
+  - [STPApplePayContext](https://stripe.dev/stripe-ios/stripeapplepay/documentation/stripeapplepay/stpapplepaycontext#instance-methods)
+
+## Checkout Flow
+
+### Address change
+
+Here we need to send some basic information about the customer's shipping address, and we should move the order to the delivery step (don't forget to replace the placeholders with the customer's data):
+
+<AccordionGroup>
+  <Accordion title="Update the checkout">
+
+    ```bash Update order [expandable]
+    curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+      -H 'Authorization: Bearer <Token>' \
+      -H 'Content-Type: application/json' \
+      -d '{
+        "order": {
+          "ship_address_attributes": {
+            "quick_checkout": true,
+            "firstname": <First name>,
+            "lastname": <Last name>,
+            "city": <City>,
+            "zipcode": <Zip>,
+            "country_iso": <Country>,
+            "state_name": <State>
+          },
+          "bill_address_id": "CLEAR"
+        }
+      }'
+    ```
+
+    <ParamField body="quick_checkout" type="bool" required>
+        `true` indicating that the order is from quick checkout. It is required as the address details you will receive from Apple Pay or Google Pay are not complete and wouldn't be valid for the standard checkout.
+    </ParamField>
+
+    <ParamField body="firstname" type="string">
+      Customer's first name, e.g. John
+    </ParamField>
+
+    <ParamField body="lastname" type="string">
+      Customer's last name, e.g. Doe
+    </ParamField>
+
+    <ParamField body="city" type="string" required>
+      Customer's city, e.g. Mountain View
+    </ParamField>
+
+    <ParamField body="zipcode" type="string">
+      Customer's zip code, e.g. 94043
+    </ParamField>
+
+    <ParamField body="country_iso" type="string" required>
+      Customer's country ISO, e.g. US
+    </ParamField>
+
+    <ParamField body="state_name" type="string" required>
+      Customer's address state, e.g. CA (empty string is also accepted)
+    </ParamField>
+
+    <ParamField body="bill_address_id" type="string" required>
+      Set it to `CLEAR` to clear the existing billing address (this prevents the order from accidentally advancing to the `payment` step).
+    </ParamField>
+
+    [Full documentation](/api-reference/storefront/checkout/update-checkout)
+  </Accordion>
+<Accordion title="Move the order to the delivery step">
+[Endpoint documentation](/api-reference/storefront/checkout-state/advance-checkout)
+
+```bash Advance order to the delivery step
+curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=delivery&include=shipments.shipping_rates' \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "quick_checkout": true,
+    "shipping_method_id": <Shipping Method ID>
+  }'
+```
+
+<ParamField body="quick_checkout" type="bool" required>
+  `true` indicating that the order is from quick checkout
+</ParamField>
+
+<ParamField body="shipping_method_id" type="string">
+  You don't have to send `shipping_method_id` if you don't have it yet, but if you received `Shipping Method/Rate changed` event, and you already have the selected shipping method, then you can send it.
+</ParamField>
+
+This will return you an order response, and you can update the payment element with a new total (you should use `total_minus_store_credits` for total) and shipping rates.
+</Accordion>
+
+</AccordionGroup>
+
+
+### Shipping Method/Rate change
+
+Here we need to send the selected shipping method to the backend and update the total in the payment element
+
+[Endpoint documentation](/api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments)
+
+```bash Select shipping method
+curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/select_shipping_method' \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "shipping_method_id": <Shipping Method ID>
+  }'
+```
+
+<ParamField body="shipping_method_id" type="string" required>
+  Shipping method ID of the selected shipping rate
+</ParamField>
+
+Subsequently, update the payment element with a new total taken from the response's `total_minus_store_credits`
+
+### Confirming the payment
+
+Now you should make several more calls to the backend
+
+<AccordionGroup>
+  <Accordion title="Confirm that the order is ready for the payment">
+    ```bash Validate order for payment
+    curl -X POST '<SHOP URL>/api/v2/storefront/checkout/validate_order_for_payment?skip_state=true' \
+      -H 'Authorization: Bearer <Token>'
+    ```
+    <Info>
+      `200` response code means that the order is ready for the payment.
+    </Info>
+
+    [Endpoint documentation](/api-reference/storefront/checkout/validate-order-payment)
+
+  </Accordion>
+  <Accordion title="Update the address with more data">
+
+  You should have a lot more information about the customer (in previous events, Stripe probably will not provide you information such as customer address), so send them to the backend:
+
+  [Endpoint documentation](/api-reference/storefront/checkout/update-checkout)
+
+  ```bash Update the order [expandable]
+  curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+    -H 'Authorization: Bearer <Token>' \
+    -H 'Content-Type: application/json' \
+    -d '{
+      "order": {
+        "email": <EMAIL>,
+        "ship_address_attributes": {
+          "quick_checkout": true,
+          "firstname": <First name>,
+          "lastname": <Last name>,
+          "address1": <Address>,
+          "address2": <Address 2>,
+          "city": <City>,
+          "zipcode": <Zip>,
+          "country_iso": <Country>,
+          "state_name": <State>,
+          "phone": <Phone>
+        }
+      },
+      "do_not_change_state": true
+    }'
+  ```
+  <ParamField body="email" type="string" required>
+      Customer's email, e.g. email@example.com
+  </ParamField>
+
+  <ParamField body="quick_checkout" type="bool" required>
+      `true` indicating that the order is from quick checkout
+  </ParamField>
+
+  <ParamField body="firstname" type="string">
+    Customer's first name, e.g. John
+  </ParamField>
+
+  <ParamField body="lastname" type="string">
+    Customer's last name, e.g. Doe
+  </ParamField>
+
+  <ParamField body="address1" type="string">
+    Customer's address, e.g. 123 Main St
+  </ParamField>
+
+  <ParamField body="address2" type="string">
+    Customer's address 2, e.g., Apt. 1
+  </ParamField>
+
+  <ParamField body="zipcode" type="string">
+    Customer's zip code, e.g. 94043
+  </ParamField>
+
+  <ParamField body="country_iso" type="string" required>
+    Customer's country ISO, e.g. US
+  </ParamField>
+
+  <ParamField body="state_name" type="string" required>
+    Customer's address state, e.g. CA (empty string is also accepted)
+  </ParamField>
+
+  <ParamField body="phone" type="string">
+    Customer's phone number, e.g. +1234567890
+  </ParamField>
+
+  <ParamField body="do_not_change_state" type="bool" required>
+    Set it to `true` so the order does not advance to the next state
+  </ParamField>
+  </Accordion>
+
+
+  <Accordion title="Move the order to the payment step">
+  [Endpoint documentation](/api-reference/storefront/checkout-state/advance-checkout)
+  ```bash Move the order to the payment step
+  curl -X PATCH '<SHOP URL>/api/v2/storefront/checkout/advance?state=payment' \
+    -H 'Authorization: Bearer <Token>' \
+    -d '{
+      "shipping_method_id": <Shipping Method ID>
+    }'
+  ```
+  <ParamField body="shipping_method_id" type="string" required>
+    Shipping method ID of the selected shipping rate
+  </ParamField>
+  </Accordion>
+</AccordionGroup>
+
+Thereafter, you should confirm the payment intent using the Stripe library; this depends on your platform/language.
+
+<Warning>
+`<PAYMENT INTENT ID>` should be Spree's internal payment intent ID, which you will receive when you create the payment intent. Do not confuse it with Stripe's payment intent ID.
+</Warning>
+
+If you like to redirect the user to Spree's order summary page, then set the `return_url` when confirming the payment intent to `<SHOP URL>/stripe/payment_intents/<PAYMENT INTENT ID>`. This will check if the payment intent is confirmed, move the order to the complete state, and redirect the user to the order summary.
+
+If you like to make the order summary page by yourself, then after confirming the payment intent in Stripe, make this request:
+
+
+```bash Confirm payment intent
+curl -X POST <SHOP URL>/api/v2/storefront/stripe/payment_intents/<PAYMENT INTENT ID>/confirm \
+  -H 'Authorization: Bearer <Token>'
+```
+
+[Endpoint documentation](/api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state)
+
+This will also check if the payment intent is confirmed, and it will move the order to the complete state
+
+### User cancels the payment
+
+If at any point, the user cancels the payment (closes the quick checkout sheet/modal), you will need to handle this event and clear the shipping and billing address from the order as these addresses will not be valid and if someones decides to use standard checkout it could lead to errors.
+
+```bash Reset order addresses
+curl -X PATCH <SHOP URL>/api/v2/storefront/checkout \
+  -H 'Authorization: Bearer <Token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "order": {
+      "ship_address_id": "CLEAR",
+      "bill_address_id": "CLEAR"
+    }
+  }'
+```
+
+[Endpoint documentation](/api-reference/storefront/checkout/update-checkout)
+
+### All Done!
+
+Congrats! Now, your users should be able to pay for orders with quick checkout! Need support or want to give some feedback? You can join our [community](https://slack.spreecommerce.org/) or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).

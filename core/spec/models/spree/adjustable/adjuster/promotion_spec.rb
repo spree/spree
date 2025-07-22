@@ -12,7 +12,8 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
 
   context 'best promotion is always applied' do
     let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
-    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
+    let(:promotion) { create(:promotion) }
+    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion) }
 
     def create_adjustment(label, amount)
       create(:adjustment,
@@ -156,8 +157,8 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       promo_sequences.each do |promo_sequence|
         it 'picks the best line-item-level promo according to current eligibility' do
           # apply both promos to the order, even though only promo1 is eligible
-          line_item_promos[promo_sequence[0]].activate order: order
-          line_item_promos[promo_sequence[1]].activate order: order
+          line_item_promos[promo_sequence[0]].reload.activate order: order
+          line_item_promos[promo_sequence[1]].reload.activate order: order
 
           order.reload
           msg = "Expected one adjustment (using sequence #{promo_sequence})"

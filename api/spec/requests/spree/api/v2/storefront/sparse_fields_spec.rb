@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API v2 JSON API Sparse Fields Spec', type: :request do
-  let(:store) { Spree::Store.default }
+  let(:store) { @default_store }
   let!(:product) { create(:product_with_option_types, stores: [store]) }
 
   shared_examples 'no sparse fields requested' do

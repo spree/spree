@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  class Order < Spree.base_class
     module Checkout
       def self.included(klass)
         klass.class_eval do
@@ -85,12 +85,14 @@ module Spree
                 end
 
                 before_transition to: :complete do |order|
-                  order.create_digital_links if order.some_digital?
+                  order.create_digital_links if order.with_digital_assets?
                 end
 
+                after_transition to: :complete, do: :create_user_record
                 after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
+                before_transition to: :payment, do: :recalculate_store_credit_payment
               end
 
               before_transition from: :cart, do: :ensure_line_items_present
@@ -108,6 +110,7 @@ module Spree
                 before_transition to: :delivery, do: :create_shipment_tax_charge!
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
                 before_transition to: :delivery, do: :apply_unassigned_promotions
+                after_transition to: :delivery, do: :move_to_next_step_if_address_not_required
               end
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_discontinued
@@ -116,6 +119,7 @@ module Spree
 
               after_transition to: :complete, do: :finalize!
               after_transition to: :complete, do: :use_all_coupon_codes
+              after_transition to: :complete, do: :redeem_gift_card
               after_transition to: :resumed, do: :after_resume
               after_transition to: :canceled, do: :after_cancel
 
@@ -270,6 +274,13 @@ module Spree
             end
           end
 
+          def create_user_record
+            return if user.present?
+            return unless signup_for_an_account?
+
+            Spree::Orders::CreateUserAccount.call(order: self, accepts_email_marketing: accept_marketing?)
+          end
+
           def persist_user_credit_card
             return unless !temporary_credit_card && user_id && valid_credit_cards.present?
 
@@ -285,6 +296,12 @@ module Spree
 
           def user_has_valid_default_card?
             user && user.default_credit_card.try(:valid?)
+          end
+
+          def move_to_next_step_if_address_not_required
+            return if requires_ship_address?
+
+            next!
           end
 
           private

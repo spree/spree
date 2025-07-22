@@ -1,0 +1,57 @@
+<% content_for(:page_title) do %>
+  <%= Spree.t(:properties) %>
+<% end %>
+
+<% content_for(:page_alerts) do %>
+  <div class="alert alert-info">
+    Properties allow you to enrich your Product information.
+  </div>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:properties_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_property), new_object_url, class: "btn btn-primary" %>
+<% end if can?(:create, Spree::Property)  %>
+
+<%= render_admin_partials(:properties_header_partials) %>
+
+<div class="card-lg">
+  <%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters"} do |f| %>
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
+    <%= render "spree/admin/shared/filter_badge_template" %>
+    <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+  <% end %>
+
+  <% if @properties.present? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="no-border handel-head"></th>
+            <th><%= Spree.t(:internal_name) %></th>
+            <th><%= Spree.t(:presentation) %></th>
+            <th><%= Spree.t(:kind) %></th>
+            <th><%= Spree.t(:products) %></th>
+            <th><%= Spree.t(:visibility) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="property"
+          data-sortable-response-kind-value="turbo-stream"
+        >
+          <%= render partial: "spree/admin/properties/property", collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
+    </div>
+  <% else %>
+    <%= render "spree/admin/shared/no_resource_found" %>
+  <% end %>
+</div>
+
+<p class="documentation-link-container">
+  <%= external_link_to "Learn more about properties", "https://spreecommerce.org/docs/user/manage-products/product-properties" %>
+</p>

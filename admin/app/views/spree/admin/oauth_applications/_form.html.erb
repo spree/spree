@@ -1,0 +1,11 @@
+<div class="form-group">
+  <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+  <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
+  <%= f.error_message_on :name %>
+</div>
+
+<div class="form-group">
+  <%= f.label :scopes, raw(Spree.t(:scopes) + required_span_tag) %>
+  <%= f.select :scopes, [['Read Only', 'admin read'], ['Read & Write', 'admin write']], { selected: @oauth_application.scopes.to_s }, { class: 'custom-select' } %>
+  <%= f.error_message_on :scopes %>
+</div>

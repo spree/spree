@@ -5,7 +5,7 @@ describe 'API V2 Number Resources Spec' do
 
   let(:bearer_token) { { 'Authorization' => valid_authorization } }
 
-  let(:order) { create(:order, store: store) }
+  let(:order) { create(:order, store: store, total: 100) }
 
   describe 'orders#show' do
     context 'can fetch order by the number' do

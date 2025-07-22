@@ -6,8 +6,6 @@ describe Spree::V2::Storefront::WishedItemSerializer do
   let!(:wishlist) { create(:wishlist) }
   let!(:wished_item) { create(:wished_item, wishlist: wishlist, variant: create(:variant), quantity: 5) }
 
-  it { expect(subject).to be_kind_of(Hash) }
-
   it do
     expect(subject).to eq(
       {

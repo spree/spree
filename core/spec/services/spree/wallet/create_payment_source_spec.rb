@@ -4,7 +4,7 @@ module Spree
   describe Wallet::CreatePaymentSource do
     subject { described_class }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
 
     let(:execute) { subject.call(payment_method: payment_method, params: params) }
     let(:value) { execute.value }
@@ -12,6 +12,7 @@ module Spree
     let(:params) do
       {
         gateway_payment_profile_id: '12345',
+        gateway_customer_profile_id: '67890',
         cc_type: 'visa',
         last_digits: '1111',
         name: 'John',

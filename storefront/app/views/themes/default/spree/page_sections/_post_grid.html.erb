@@ -1,0 +1,11 @@
+<div style="<%= section_styles(section) %>">
+  <% if @posts.any? %>
+    <div class="page-container">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4 auto-rows-fr">
+        <%= render partial: 'spree/posts/post', collection: @posts, cached: true %>
+      </div>
+
+      <%= paginate @posts, theme: 'storefront', outer_window: 1, inner_window: 2 %>
+    </div>
+  <% end %>
+</div>

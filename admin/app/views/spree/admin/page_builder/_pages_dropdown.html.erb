@@ -1,0 +1,17 @@
+<div class="dropdown h-100" id="pages_dropdown">
+  <button class="btn btn-light" type="button" data-toggle="dropdown" aria-expanded="false">
+    <span class="d-flex align-items-center pr-5">
+      <%= icon @page.icon_name, class: 'mr-2' %>
+      <%= @page.display_name %>
+    </span>
+    <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
+  </button>
+  <div class="dropdown-menu" style="min-width: 300px">
+    <% @theme.pages.standard.order(name: :asc).find_all(&:customizable?).each do |page| %>
+      <%= active_link_to spree.edit_admin_theme_path(@theme, theme_preview_id: @theme_preview.id, page_id: page.id), class: 'dropdown-item', active: @page == page do %>
+        <%= icon page.icon_name, class: 'mr-2' %>
+        <%= page.display_name %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

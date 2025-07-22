@@ -1,0 +1,33 @@
+<tr id="<%= spree_dom_id shipping_method %>" class="cursor-pointer" data-controller="row-link">
+  <td data-action="click->row-link#openLink" class="w-15">
+    <strong><%= shipping_method.name %></strong>
+    <% if shipping_method.admin_name.present? %>
+      <span class="badge badge-light border ml-2">
+        <%= shipping_method.admin_name %>
+      </span>
+    <% end %>
+  </td>
+  <td data-action="click->row-link#openLink" class="w-25 text-wrap">
+    <% shipping_method.zones.each do |zone| %>
+      <% if can?(:manage, zone) %>
+        <%= link_to zone.name, spree.edit_admin_zone_path(zone), class: 'badge badge-light border mb-2' %>
+      <% else %>
+        <span class="badge badge-light border mb-2"><%= zone.name %></span>
+      <% end %>
+    <% end %>
+  </td>
+  <td data-action="click->row-link#openLink" class="w-10">
+    <%= Spree.t(:display_delivery_range, delivery_range: shipping_method.delivery_range) if shipping_method.delivery_range.present? %>
+  </td>
+  <td data-action="click->row-link#openLink" class="w-10">
+    <%= shipping_method.display_estimated_price.presence || 'Not set' %>
+  </td>
+  <td class="w-10">
+    <%= form_with model: shipping_method, url: spree.admin_shipping_method_path(shipping_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+    <% end %>
+  </td>
+  <td class="actions w-10">
+    <%= link_to_edit(shipping_method, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, shipping_method %>
+  </td>
+</tr>

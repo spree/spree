@@ -1,0 +1,119 @@
+---
+title: "Payments"
+description: "Learn how to view, add, edit, and remove payment methods in Spree."
+---
+
+Payments are a vital part of any e-commerce store. Spree offers a flexible and modular system for managing payment methods, supporting both out-of-the-box and third-party options. 
+
+<Warning>
+  Not all payment methods are available by default - most require the installation of additional gems by a developer before they can be used in the admin interface.
+</Warning>
+
+To manage payments, navigate to the Payments tab of the Settings menu.
+
+![](/images/user/settings/payments/1.payments.png)
+
+## Payment Methods Overview
+
+![](/images/user/settings/payments/2.payments_overview.png)
+
+Here you can see a list of enabled payment methods, and a list of available payment methods:
+
+### Enabled Payment Methods
+
+![](/images/user/settings/payments/4.enabled_payment_methods.png)
+
+Enabled methods are those that are configured and can be used by customers on checkout.
+
+You can easily modify the display settings of enabled payment methods by changing the visibility and active status.
+
+![](/images/user/settings/payments/3.payments_display.png)
+
+### Available Payment Methods
+
+![](/images/user/settings/payments/5.available_payment_methods.png)
+
+Available payment methods are those that have been installed, but have not been configured yet.
+
+### Default Payment Methods
+
+By default, the following payment methods are available in Spree:
+
+- **Store Credits**: allow customers to pay using store credits issued by the admin, enabled by default
+- **Offsite Payment**: labelled as "Check", not enabled by default
+
+### Third-Party Payment Methods
+
+Additional payment gateways (e.g., Stripe) can be made available by having your developers install the relevant gems. For example, Stripe gateway is free to use, but requires adding the [<u>spree_stripe</u>](https://github.com/spree/spree_stripe) gem to your store's codebase before it becomes available in the admin interface.
+
+For more information about our native Stripe integration, see Integrations → Stripe Gateway.
+
+Once a payment method has been installed, it appears in the Available Payment Methods list. From there, it can be added, configured, or removed as needed.
+
+## Add a Payment Method
+
+To add a payment method, click Add on the corresponding row in the Available Payment Methods list. This will direct you to the payment method creation form for that method.
+
+![](/images/user/settings/payments/6.add_payment_method.png)
+
+Depending on the payment method you’re adding, the sections displayed in the form may differ. The following example covers Stripe which has 2 distinct sections:
+
+### Payment Provider Settings
+
+![](/images/user/settings/payments/7.payment_provider_settings.png)
+
+Simply enter the required credentials into their respective fields.
+
+<Note>
+  This section only applies to third-party payment methods.
+</Note>
+
+<Warning>
+  Different payment providers may require different credentials to be entered.
+</Warning>
+
+### Display Settings
+
+![](/images/user/settings/payments/8.display_settings.png)
+
+Display settings can be configured for all payment methods whether default or third-party.
+
+There are four fields to configure:
+
+- **Name**: The name displayed on the storefront
+- **Display**: Where the method is available for use
+  - On both the admin panel & storefront
+  - Only on storefront
+  - Only on admin panel
+- **Auto Capture**: Determines whether payment is captured automatically at the time of authorization. Use the app default or override it per method.
+- **Status**: Toggle whether the payment method is available for use in orders. Inactive methods are hidden but not deleted.
+
+### Create
+
+Once you’ve entered all the required fields, click Create to add the payment method.
+
+The method will now be listed in your store’s enabled payment methods and will be available to users on checkout (provided it is active and visible).
+
+## Edit a Payment Method
+
+To edit a payment method, click on the corresponding row in the enabled payment methods list. This will direct you to the edit form for that method.
+
+![](/images/user/settings/payments/9.edit_payment_method.png)
+
+Feel free to update any of the display settings for the payment method, but be very cautious when editing payment provider settings.
+
+<Warning>
+  Swapping payment provider accounts on an active store can disrupt payment processing and lead to failed transactions or reporting inconsistencies. Ensure all pending payments are settled and test the new account thoroughly in a staging environment before applying changes in production.
+</Warning>
+
+## Delete a Payment Method
+
+To remove a payment method, simply open the edit form as shown above and click Delete.
+
+<Warning>
+  Once a payment method is associated with an order, it cannot be deleted.
+</Warning>
+
+<Note>
+  Deleting a payment method moves it from the enabled payment methods list back into the available payments list. It does not uninstall the associated gem. A developer would need to remove it from the codebase if complete deactivation is desired.
+</Note>

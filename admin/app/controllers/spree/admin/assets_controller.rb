@@ -1,14 +1,10 @@
 module Spree
   module Admin
     class AssetsController < ResourceController
-      ALLOWED_ASSET_TYPES = ['Spree::Asset', 'Spree::Image'].freeze
+      include Spree::Admin::SessionAssetsHelper
 
       def create
-        if ALLOWED_ASSET_TYPES.include?(asset_type)
-          @asset = asset_type.constantize.new(permitted_resource_params)
-        else
-          raise "Invalid asset type"
-        end
+        @asset = asset_type.new(permitted_resource_params)
 
         # we only should check this for vendor users
         authorize! :update, @asset.viewable if @asset.viewable.present? && current_vendor
@@ -17,12 +13,7 @@ module Spree
           @product = @asset.product || current_store.products.new
 
           # we need to store the asset ids in the session to be able to display them in the product page
-          if @product.new_record?
-            uploaded_asssets_id = session[:uploaded_asset_ids]&.split(',') || []
-            uploaded_asssets_id << @asset.id
-
-            session[:uploaded_asset_ids] = uploaded_asssets_id.join(',')
-          end
+          store_uploaded_asset_in_session(@asset) if @product.new_record?
         else
           flash.now[:error] = @asset.errors.full_messages.to_sentence
           render :create, status: :unprocessable_entity
@@ -50,7 +41,7 @@ module Spree
       private
 
       def permitted_resource_params
-        params.require(:asset).permit(:type, :viewable_id, :viewable_type, :attachment, :alt, :position)
+        params.require(:asset).permit(Spree::PermittedAttributes.asset_attributes)
       end
 
       def create_turbo_stream_enabled?
@@ -61,8 +52,16 @@ module Spree
         true
       end
 
+      def destroy_turbo_stream_enabled?
+        true
+      end
+
       def asset_type
-        permitted_resource_params[:type] || model_class.to_s
+        allowed_asset_types.find { |type| type.to_s == permitted_resource_params[:type] } || model_class
+      end
+
+      def allowed_asset_types
+        [Spree::Asset, Spree::Image]
       end
     end
   end

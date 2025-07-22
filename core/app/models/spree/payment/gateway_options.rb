@@ -1,16 +1,17 @@
 module Spree
-  class Payment < Spree::Base
+  class Payment < Spree.base_class
     class GatewayOptions
       def initialize(payment)
         @payment = payment
+        @order = payment.order
       end
+
+      attr_reader :payment, :order
+      delegate :currency, to: :payment
+      delegate :email, to: :order
 
       def statement_descriptor_suffix
         order.number
-      end
-
-      def email
-        order.email
       end
 
       def customer
@@ -26,7 +27,11 @@ module Spree
       end
 
       def order_id
-        "#{order.number}-#{@payment.number}"
+        "#{order.number}-#{payment.number}"
+      end
+
+      def payment_id
+        payment.number
       end
 
       def shipping
@@ -45,10 +50,6 @@ module Spree
         order.promo_total * exchange_multiplier
       end
 
-      def currency
-        @payment.currency
-      end
-
       def billing_address
         order.bill_address.try(:active_merchant_hash)
       end
@@ -64,6 +65,7 @@ module Spree
           :customer_id,
           :ip,
           :order_id,
+          :payment_id,
           :shipping,
           :tax,
           :subtotal,
@@ -82,12 +84,8 @@ module Spree
 
       private
 
-      def order
-        @payment.order
-      end
-
       def exchange_multiplier
-        @payment.payment_method.try(:exchange_multiplier) || 1.0
+        payment.payment_method.try(:exchange_multiplier) || 1.0
       end
     end
   end

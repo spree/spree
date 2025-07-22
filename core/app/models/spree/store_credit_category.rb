@@ -1,5 +1,5 @@
 module Spree
-  class StoreCreditCategory < Spree::Base
+  class StoreCreditCategory < Spree.base_class
     validates :name, presence: true
 
     before_destroy :validate_not_used
@@ -26,6 +26,10 @@ module Spree
         errors.add(:base, :cannot_destroy_if_used_in_store_credit)
         throw(:abort)
       end
+    end
+
+    def can_be_deleted?
+      !store_credit_category_used?
     end
 
     class << self

@@ -4,7 +4,7 @@ module Spree
   describe DataFeeds::Google::Rss do
     subject { described_class.new }
 
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:data_feed) { create(:google_data_feed, store: store) }
     let(:product) { create(:product, stores: [store]) }
     let!(:variant) { create(:with_image_variant, product: product) }

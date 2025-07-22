@@ -1,5 +1,5 @@
 module Spree
-  class Wishlist < Spree::Base
+  class Wishlist < Spree.base_class
     include Spree::SingleStoreResource
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
@@ -34,6 +34,13 @@ module Spree
     # @return [Integer]
     def wished_items_count
       @wished_items_count ||= variant_ids.count
+    end
+
+    # returns the variant ids in the wishlist
+    #
+    # @return [Array<Integer>]
+    def variant_ids
+      @variant_ids ||= wished_items.pluck(:variant_id)
     end
 
     def self.get_by_param(param)

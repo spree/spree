@@ -5,8 +5,8 @@ FactoryBot.define do
     password              { 'secret' }
     password_confirmation { password }
 
-    first_name { FFaker::Name.first_name } if Spree.user_class.attribute_method?(:first_name)
-    last_name  { FFaker::Name.last_name } if Spree.user_class.attribute_method?(:last_name)
+    first_name { FFaker::Name.first_name }
+    last_name  { FFaker::Name.last_name }
 
     public_metadata { {} }
     private_metadata { {} }
@@ -27,7 +27,22 @@ FactoryBot.define do
     login                 { email }
     password              { 'secret' }
     password_confirmation { password }
+    first_name { FFaker::Name.first_name }
+    last_name  { FFaker::Name.last_name }
 
-    spree_roles { [Spree::Role.find_by(name: 'admin') || create(:role, name: 'admin')] }
+    transient do
+      without_admin_role { false }
+    end
+
+    trait :without_admin_role do
+      without_admin_role { true }
+    end
+
+    after(:create) do |user, evaluator|
+      unless evaluator.without_admin_role
+        admin_role = Spree::Role.default_admin_role
+        create(:role_user, user: user, role: admin_role) unless user.has_spree_role?(admin_role.name)
+      end
+    end
   end
 end

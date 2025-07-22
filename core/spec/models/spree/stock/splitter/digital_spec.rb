@@ -8,13 +8,17 @@ module Spree
 
         let(:packer) { build(:stock_packer) }
 
-        let(:item1) { create(:inventory_unit, variant: create(:digital).variant) }
-        let(:item2) { create(:inventory_unit, variant: create(:variant)) }
-        let(:item3) { create(:inventory_unit, variant: create(:variant)) }
-        let(:item4) { create(:inventory_unit, variant: create(:digital).variant) }
-        let(:item5) { create(:inventory_unit, variant: create(:digital).variant) }
+        let(:digital_shipping_method) { create(:digital_shipping_method) }
+        let(:product1) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
+        let(:product2) { create(:product) }
 
-        it 'splits each package by product' do
+        let(:item1) { create(:inventory_unit, variant: create(:variant, product: product1, digitals: [create(:digital)])) }
+        let(:item2) { create(:inventory_unit, variant: create(:variant, product: product2)) }
+        let(:item3) { create(:inventory_unit, variant: create(:variant, product: product2)) }
+        let(:item4) { create(:inventory_unit, variant: create(:variant, product: product1, digitals: [create(:digital)])) }
+        let(:item5) { create(:inventory_unit, variant: create(:variant, product: product1, digitals: [create(:digital)])) }
+
+        it 'splits each package by product digital status' do
           package1 = Package.new(packer.stock_location)
           package1.add item1, :on_hand
           package1.add item2, :on_hand

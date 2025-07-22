@@ -1,0 +1,37 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:taxes) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:tax_rates_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_tax_rate), new_object_url, class: "btn btn-primary" %>
+<% end if can? :create, Spree::TaxRate %>
+
+<%= render_admin_partials(:tax_rates_header_partials) %>
+
+<%= render 'spree/admin/shared/tax_nav' %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr data-hook="rate_header">
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:tax_category) %></th>
+            <th><%= Spree.t(:zone) %></th>
+            <th><%= Spree.t(:amount) %></th>
+            <th><%= Spree.t(:included_in_price) %></th>
+            <th><%= Spree.t(:show_rate_in_label) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/tax_rates/tax_rate', collection: @collection, cached: spree_base_cache_scope %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

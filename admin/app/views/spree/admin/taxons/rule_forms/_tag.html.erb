@@ -1,0 +1,1 @@
+<%= rule_form.select :value, tags_scope.distinct.pluck(:name, :name), { include_blank: true }, data: { controller: 'autocomplete-select' } %>

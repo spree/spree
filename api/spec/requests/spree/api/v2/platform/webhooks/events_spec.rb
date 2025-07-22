@@ -9,15 +9,13 @@ describe 'Platform API v2 Webhooks Events spec', type: :request do
 
   describe '#index' do
     context 'filtering' do
-      let(:data_ids) { json_response['data'].pluck(:id) } 
+      let(:data_ids) { json_response['data'].pluck(:id) }
 
       context 'with no params' do
         before do
           create_list(:event, 2)
           get "/api/v2/platform/webhooks/events", headers: bearer_token
         end
-
-        it_behaves_like 'returns 200 HTTP status'
 
         it 'returns all events' do
           expect(json_response['data'].count).to eq(2)

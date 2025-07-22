@@ -1,9 +1,9 @@
 <tr>
   <td class="w-10"><%= export.number %></td>
   <td class="text-center w-10">
-    <small class="badge badge-light border">
+    <span class="badge badge-light border">
       <%= Spree.t(export.type.demodulize) %>
-    </small>
+    </span>
   </td>
   <td class="text-center w-10">
     <% if export.done? %>

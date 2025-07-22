@@ -128,8 +128,9 @@ module Spree
         end
 
         context '#destroy' do
-          let!(:action) { CreateItemAdjustments.create! }
-          let(:other_action) { CreateItemAdjustments.create! }
+          let(:other_promotion) { create(:promotion) }
+          let!(:action) { CreateItemAdjustments.create!(promotion: promotion) }
+          let!(:other_action) { CreateItemAdjustments.create!(promotion: other_promotion) }
 
           before { promotion.promotion_actions = [other_action] }
 

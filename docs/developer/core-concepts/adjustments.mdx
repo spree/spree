@@ -1,5 +1,6 @@
 ---
 title: Adjustments
+icon: "pencil"
 ---
 
 ## Overview
@@ -69,7 +70,7 @@ shipment.adjustments.eligible
 
 ## Adjustment Associations
 
-As of Spree 2.2, you are able to retrieve the specific adjustments of an Order, a Line Item or a Shipment.
+You are able to retrieve the specific adjustments of an Order, a Line Item or a Shipment.
 
 An order itself, much like line items and shipments, can have its own individual modifications. For instance, an order with over $100 of line items may have 10% off. To retrieve these adjustments on the order, call the `adjustments` association:
 
@@ -142,4 +143,3 @@ app.config.spree.adjusters = [
 ```
 
 That's it! Your custom adjuster is ready to go.
-

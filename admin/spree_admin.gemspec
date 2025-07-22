@@ -23,23 +23,26 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.0'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_dependency 'spree_core', ">= #{s.version}"
+  s.add_dependency 'spree_api', ">= #{s.version}"
 
   s.add_dependency 'active_link_to'
   s.add_dependency 'bootstrap', '~> 4.6', '>= 4.6.2.1'
-  s.add_dependency 'countries'
-  s.add_dependency 'country_select', '~> 6.0'
+  s.add_dependency 'breadcrumbs_on_rails', '~> 4.1'
+  s.add_dependency 'chartkick', '~> 5.0'
   s.add_dependency 'currency_select'
   s.add_dependency 'dartsass-rails', '~> 0.5'
+  s.add_dependency 'groupdate', '~> 6.2'
+  s.add_dependency 'hightop', '~> 0.3'
   s.add_dependency 'importmap-rails'
-  s.add_dependency 'inline_svg', '~> 1.5'
+  s.add_dependency 'local_time', '~> 3.0'
+  s.add_dependency 'mapkick-rb', '~> 0.1'
   s.add_dependency 'payment_icons'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'
-  s.add_dependency 'responders'
   s.add_dependency 'sprockets', '>= 4.0'
-  s.add_dependency 'tinymce-rails', '~> 7.0'
+  s.add_dependency 'tinymce-rails', '~> 6.8.5'
 end

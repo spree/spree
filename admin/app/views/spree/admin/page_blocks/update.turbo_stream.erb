@@ -1,0 +1,6 @@
+<%= refresh_theme_preview(@page_block.section, @page_block) %>
+<% if @page_block.respond_to?(:link) %>
+  <%= turbo_stream.update :linkable_type_dropdown do %>
+    <%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: @page_block.link, form_name: 'page_block[link_attributes]' %>
+  <% end %>
+<% end %>

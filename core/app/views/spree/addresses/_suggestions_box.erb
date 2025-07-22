@@ -1,0 +1,14 @@
+<div class="absolute position-absolute top-full z-10 z-index-9999 bg-white bg-input-bg w-full w-auto border rounded-md rounded shadow-lg hidden" data-address-autocomplete-target="suggestionsBoxContainer" aria-label="suggestions">
+  <template data-address-autocomplete-target="suggestionsOptionTemplate">
+    <li class="list-group-item list-group-item-action text-input-text opacity-80 hover:bg-sidebar px-4 py-2 suggestions-option-container cursor-pointer aria-selected:bg-accent" role="option" aria-selected="false">
+      <mark class="bg-transparent suggestions-option-marked-text">
+      </mark>
+    </li>
+  </template>
+  <ul class="flex flex-col flex-grow opacity-80 list-group" data-address-autocomplete-target="suggestionsBoxList" role="listbox" id="suggestions-box-options">
+  </ul>
+  <div class="bg-accent px-4 py-2 overflow-hidden text-dark">
+    <%= Spree.t(:powered_by) %>
+    <%= image_tag 'google_on_white_hdpi.png', title: 'Powered by Google', style: 'height: 1rem;' %>
+  </div>
+</div>

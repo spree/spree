@@ -1,24 +1,21 @@
 <%= turbo_frame_tag :dialog_modal_lg do %>
-  <div class="modal-content" >
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabel">
-        <%= Spree.t(:edit) %> <%= Spree.t(:image) %>
-      </h5>
-      <button type="button" class="btn-close" data-dismiss="modal" aria-label="<%= Spree.t(:close) %>" />
-    </div>
+  <div class="modal-content">
+    <%= modal_header(Spree.t(:edit) + ' ' + Spree.t(:image)) %>
     <%= form_with model: @asset, url: spree.admin_asset_path(@asset), method: :put, scope: :asset do |f| %>
       <div class="modal-body pb-0" data-turbo-permanent id="asset-<%= @asset.key.parameterize %>">
         <%= render 'active_storage/upload_form', form: f, field_name: :attachment, width: 200, height: 200, can_delete: false %>
       </div>
-      <div class="modal-body border-bottom pb-3" style="min-height: 200px">
+      <div class="modal-body" style="min-height: 200px">
         <div class="form-group">
           <%= f.label :alt, Spree.t(:alt_text) %>
           <%= f.text_area :alt, rows: 4, class: 'form-control' %>
         </div>
       </div>
-      <div class="modal-footer d-flex justify-content-between">
-        <button type="button" class="btn btn-light" data-dismiss="modal"><%= Spree.t('actions.discard') %></button>
+      <div class="modal-footer">
         <%= turbo_save_button_tag %>
+        <%= link_to Spree.t('actions.destroy'), object_url(@asset),
+            data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: '_top' },
+            class: 'btn btn-danger ml-auto' if can?(:destroy, @asset) %>
       </div>
     <% end %>
   </div>

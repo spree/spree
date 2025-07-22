@@ -2,13 +2,29 @@ module Spree
   class Promotion
     module Rules
       class Taxon < PromotionRule
+        #
+        # Associations
+        #
         has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon',
                                          foreign_key: 'promotion_rule_id',
                                          dependent: :destroy
         has_many :taxons, through: :promotion_rule_taxons, class_name: 'Spree::Taxon'
 
+        #
+        # Preferences
+        #
         MATCH_POLICIES = %w(any all)
         preference :match_policy, default: MATCH_POLICIES.first
+
+        #
+        # Attributes
+        #
+        attr_accessor :taxon_ids_to_add
+
+        #
+        # Callbacks
+        #
+        after_save :add_taxons
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
@@ -39,10 +55,16 @@ module Spree
         end
 
         def taxon_ids_string
+          ActiveSupport::Deprecation.warn(
+            'Please use `taxon_ids=` instead.'
+          )
           taxons.pluck(:id).join(',')
         end
 
         def taxon_ids_string=(s)
+          ActiveSupport::Deprecation.warn(
+            'Please use `taxon_ids=` instead.'
+          )
           ids = s.to_s.split(',').map(&:strip)
           self.taxons = Spree::Taxon.for_stores(stores).find(ids)
         end
@@ -68,6 +90,15 @@ module Spree
 
         def taxons_in_order_including_parents(order)
           order_taxons_in_taxons_and_children(order).inject([]) { |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
+        end
+
+        def add_taxons
+          return if taxon_ids_to_add.nil?
+
+          promotion_rule_taxons.delete_all
+          promotion_rule_taxons.insert_all(
+            taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } }
+          )
         end
       end
     end

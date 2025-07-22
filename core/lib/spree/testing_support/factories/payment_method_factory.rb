@@ -37,4 +37,9 @@ FactoryBot.define do
     active        { true }
     auto_capture  { true }
   end
+
+  factory :custom_payment_method, parent: :payment_method, class: Spree::Gateway::CustomPaymentSourceMethod do
+    type { 'Spree::Gateway::CustomPaymentSourceMethod' }
+    name { 'Custom' }
+  end
 end

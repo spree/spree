@@ -49,11 +49,11 @@ module Spree
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
-        order("#{price_table_name}.amount ASC")
+        order(price_table_name => { amount: :asc })
       end
 
       add_search_scope :descend_by_master_price do
-        order("#{price_table_name}.amount DESC")
+        order(price_table_name => { amount: :desc })
       end
 
       add_search_scope :price_between do |low, high|
@@ -61,11 +61,11 @@ module Spree
       end
 
       add_search_scope :master_price_lte do |price|
-        where("#{price_table_name}.amount <= ?", price)
+        where(Price.table_name => { amount: ..price })
       end
 
       add_search_scope :master_price_gte do |price|
-        where("#{price_table_name}.amount >= ?", price)
+        where(Price.table_name => { amount: price.. })
       end
 
       add_search_scope :in_stock do
@@ -137,11 +137,11 @@ module Spree
           joins(:properties).
             join_translation_table(Property).
             join_translation_table(ProductProperty).
-            where("#{ProductProperty.translation_table_alias}.value = ?", value).
+            where(ProductProperty.translation_table_alias => { value: value }).
             where(property_conditions(property))
         else
           joins(:properties).
-            where("#{ProductProperty.table_name}.value = ?", value).
+            where(ProductProperty.table_name => { value: value }).
             where(property_conditions(property))
         end
       end
@@ -246,7 +246,7 @@ module Spree
 
       def self.not_discontinued(only_not_discontinued = true)
         if only_not_discontinued != '0' && only_not_discontinued
-          not_archived
+          where(discontinue_on: [nil, Time.current..])
         else
           all
         end
@@ -263,11 +263,11 @@ module Spree
 
       # Can't use add_search_scope for this as it needs a default argument
       def self.available(available_on = nil, currency = nil)
-        if available_on
-          scope = not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
-        else
-          scope = where(status: 'active')
-        end
+        scope = if available_on
+                  not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+                else
+                  not_discontinued.where(status: 'active')
+                end
 
         unless Spree::Config.show_products_without_price
           currency ||= Spree::Store.default.default_currency
@@ -305,7 +305,8 @@ module Spree
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
-        pg_search_scope :search_by_name, against: :name, using: { tsearch: { any_word: true, prefix: true } }
+
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       else
         def self.search_by_name(query)
           i18n { name.lower.matches("%#{query.downcase}%") }

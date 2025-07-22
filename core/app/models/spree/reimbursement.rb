@@ -1,5 +1,5 @@
 module Spree
-  class Reimbursement < Spree::Base
+  class Reimbursement < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
     include Spree::NumberIdentifier
     if defined?(Spree::Webhooks::HasWebhooks)
@@ -19,6 +19,8 @@ module Spree
       has_many :credits, class_name: 'Spree::Reimbursement::Credit'
       has_many :return_items
     end
+
+    belongs_to :performed_by, class_name: Spree.admin_user_class.to_s, optional: true
 
     validates :order, presence: true
     validate :validate_return_items_belong_to_same_order
@@ -104,10 +106,10 @@ module Spree
       total - paid_amount
     end
 
-    def perform!
+    def perform!(performer = nil)
       reimbursement_tax_calculator.call(self)
       reload
-      update!(total: calculated_total)
+      update!(total: calculated_total, performed_by: performer)
 
       reimbursement_performer.perform(self)
 

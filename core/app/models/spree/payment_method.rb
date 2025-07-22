@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod < Spree::Base
+  class PaymentMethod < Spree.base_class
     acts_as_paranoid
     acts_as_list
 
@@ -10,12 +10,14 @@ module Spree
       include Spree::Security::PaymentMethods
     end
 
-    scope :active,                 -> { where(active: true).order(position: :asc) }
-    scope :available,              -> { active.where(display_on: [:front_end, :back_end, :both]) }
-    scope :available_on_front_end, -> { active.where(display_on: [:front_end, :both]) }
-    scope :available_on_back_end,  -> { active.where(display_on: [:back_end, :both]) }
+    scope :active,    -> { where(active: true).order(position: :asc) }
+    scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
+    scope :store_credit, -> { where(type: 'Spree::PaymentMethod::StoreCredit') }
+
+    after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
+    auto_strip_attributes :name
 
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
@@ -24,6 +26,8 @@ module Spree
       has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
       has_many :credit_cards, class_name: 'Spree::CreditCard'
     end
+
+    has_many :gateway_customers, class_name: 'Spree::GatewayCustomer'
 
     def self.providers
       Rails.application.config.spree.payment_methods
@@ -46,6 +50,14 @@ module Spree
       type.demodulize.downcase
     end
 
+    def default_name
+      self.class.name.demodulize.titleize.gsub(/Gateway/, '').strip
+    end
+
+    def payment_icon_name
+      type.demodulize.gsub(/(^Spree::Gateway::|Gateway$)/, '').downcase.gsub(/\s+/, '').strip
+    end
+
     def self.find_with_destroyed(*args)
       unscoped { find(*args) }
     end
@@ -55,6 +67,10 @@ module Spree
     end
 
     def source_required?
+      true
+    end
+
+    def show_in_admin?
       true
     end
 
@@ -82,8 +98,8 @@ module Spree
 
     # Custom PaymentMethod/Gateway can redefine this method to check method
     # availability for concrete order.
-    def available_for_order?(_order)
-      true
+    def available_for_order?(order)
+      !order.covered_by_store_credit?
     end
 
     def available_for_store?(store)
@@ -102,6 +118,10 @@ module Spree
 
     def public_preference_keys
       []
+    end
+
+    def set_name
+      self.name ||= default_name
     end
   end
 end

@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Spree::Admin::AssetsController, type: :controller do
   stub_authorization!
 
+  render_views
+
   let(:store) { Spree::Store.default }
   let(:product) { create(:product, stores: [store]) }
 
@@ -18,9 +20,12 @@ describe Spree::Admin::AssetsController, type: :controller do
       it 'creates a new image' do
         expect { subject }.to change(Spree::Asset, :count).by(1)
 
+        expect(response).to have_http_status(:ok)
+
         expect(asset.alt).to eq("some text")
         expect(asset.attached?).to be true
         expect(asset.viewable).to be_nil
+        expect(asset.session_id).to eq(request.session['spree.admin.uploaded_assets.uuid'])
       end
     end
 
@@ -34,7 +39,10 @@ describe Spree::Admin::AssetsController, type: :controller do
       it 'creates a new image' do
         expect { subject }.to change(Spree::Asset, :count).by(1)
 
+        expect(response).to have_http_status(:ok)
+
         expect(asset.viewable).to eq(product.master)
+        expect(asset.session_id).to be_nil
       end
     end
   end
@@ -46,17 +54,20 @@ describe Spree::Admin::AssetsController, type: :controller do
 
     it 'updates the image' do
       subject
+
+      expect(response).to have_http_status(:ok)
       expect(image.reload.alt).to eq('Alt text')
     end
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { id: image.id } }
+    subject { delete :destroy, params: { id: image.id }, format: :turbo_stream }
 
     let!(:image) { create(:image, viewable: product.master) }
 
     it 'deletes the image' do
       expect { subject }.to change(Spree::Asset, :count).by(-1)
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -72,6 +83,7 @@ describe Spree::Admin::AssetsController, type: :controller do
 
     it 'deletes images' do
       expect { subject }.to change(Spree::Asset, :count).by(-2)
+      expect(response).to have_http_status(:ok)
     end
   end
 end

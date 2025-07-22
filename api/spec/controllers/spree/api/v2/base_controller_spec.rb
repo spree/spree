@@ -110,12 +110,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
       it do
         expect(subject).to receive(:index).and_raise(exception)
         expect(subject).to receive(:spree_current_user).at_least(:once).and_return(user)
-        expect_next_instance_of(::Spree::Api::ErrorHandler) do |instance|
-          expect(instance).to receive(:call).with(
-            exception: exception,
-            opts: { user: user }
-          ).and_return(result)
-        end
+        expect(Rails.error).to receive(:report).with(exception, context: { user_id: user.id }, source: 'spree.api')
         get :index, params: { token: 'exception-message' }
         expect(json_response).to eql('error' => 'foo')
       end
@@ -137,7 +132,7 @@ describe Spree::Api::V2::BaseController, type: :controller do
   end
 
   describe '#serializer_params' do
-    let(:store) { Spree::Store.default }
+    let(:store) { @default_store }
     let(:currency) { store.default_currency }
     let(:locale) { store.default_locale }
     let(:user) { nil }

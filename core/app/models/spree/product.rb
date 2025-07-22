@@ -19,52 +19,43 @@
 #
 
 module Spree
-  class Product < Spree::Base
-    extend FriendlyId
+  class Product < Spree.base_class
+    acts_as_paranoid
+    acts_as_taggable_on :tags, :labels
+    auto_strip_attributes :name
+
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
-    include Spree::TranslatableResourceSlug
     include Spree::MemoizedData
     include Spree::Metadata
     include Spree::Product::Webhooks
+    include Spree::Product::Slugs
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
+                          default_image secondary_image
                           purchasable? in_stock? backorderable? has_variants?]
 
-    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_keywords meta_title].freeze
+    STATUS_TO_WEBHOOK_EVENT = {
+      'active' => 'activated',
+      'draft' => 'drafted',
+      'archived' => 'archived'
+    }.freeze
+
+    TRANSLATABLE_FIELDS = %i[name description slug meta_description meta_title].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
-      before_save :set_slug
-      acts_as_paranoid
-      # deleted translation values also need to be accessible for index views listing deleted resources
-      default_scope { unscope(where: :deleted_at) }
-      def set_slug
-        self.slug = generate_slug
-      end
+      if defined?(PgSearch)
+        include PgSearch::Model
 
-      private
-
-      def generate_slug
-        if name.blank? && slug.blank?
-          translated_model.name.to_url
-        elsif slug.blank?
-          name.to_url
-        else
-          slug.to_url
-        end
+        pg_search_scope :search_by_name, against: { name: 'A', meta_title: 'B' }, using: { trigram: { threshold: 0.3, word_similarity: true } }
       end
     end
-
-    friendly_id :slug_candidates, use: [:history, :scoped, :mobility], scope: spree_base_uniqueness_scope
-    acts_as_paranoid
-    auto_strip_attributes :name
-    acts_as_taggable_on :tags, :labels
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -75,9 +66,7 @@ module Spree
     has_many :product_properties, dependent: :destroy, inverse_of: :product
     has_many :properties, through: :product_properties
 
-    has_many :menu_items, as: :linked_resource
-
-    has_many :classifications, dependent: :delete_all, inverse_of: :product
+    has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
     has_many :taxonomies, through: :taxons
 
@@ -119,26 +108,32 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
+    has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
+
+    has_many :prices_including_master, -> { non_zero }, through: :variants_including_master, source: :prices
+
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
 
-    after_create :add_associations_from_prototype
-    after_create :build_variants_from_option_values_hash, if: :option_values_hash
-
-    after_destroy :punch_slug
-    after_restore :update_slug_history
+    has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
 
     after_initialize :ensure_master
+    after_initialize :assign_default_tax_category
+
+    before_validation :validate_master
+    before_validation :ensure_default_shipping_category
+
+    after_create :add_associations_from_prototype
+    after_create :build_variants_from_option_values_hash, if: :option_values_hash
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
-    before_validation :downcase_slug
-    before_validation :normalize_slug, on: :update
-    before_validation :validate_master
+    after_commit :auto_match_taxons, if: :eligible_for_taxon_matching?
 
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
@@ -150,34 +145,114 @@ module Spree
       validates :price, if: :requires_price?
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: spree_base_uniqueness_scope }
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
     scope :draft, -> { where(status: 'draft') }
     scope :archived, -> { where(status: 'archived') }
     scope :not_archived, -> { where.not(status: 'archived') }
+    scope :on_sale, lambda { |currency = nil|
+                      currency ||= Spree::Store.default.default_currency
+                      joins(:prices_including_master).with_currency(currency).
+                        where.not(spree_prices: { compare_at_amount: [nil, 0] }).
+                        where("#{Spree::Price.table_name}.compare_at_amount > #{Spree::Price.table_name}.amount")
+                    }
+
+    if defined?(PgSearch)
+      scope :multi_search, lambda { |query, include_options = false|
+        return none if query.blank?
+
+        product_ids = if Spree.use_translations?
+                        Spree::Product::Translation.search_by_name(query).pluck(:spree_product_id)
+                      else
+                        Spree::Product.search_by_name(query).ids
+                      end
+
+        variant_product_ids = if include_options.present?
+                                Spree::Variant.search_by_sku_or_options(query).pluck(:product_id)
+                              else
+                                Spree::Variant.search_by_sku(query).pluck(:product_id)
+                              end
+
+        where(id: (product_ids + variant_product_ids).uniq.compact)
+      }
+    else
+      scope :multi_search, lambda { |query|
+        return none if query.blank?
+
+        product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
+        where(id: product_ids.uniq.compact)
+      }
+    end
+
+    scope :archivable, -> { where(status: %w[active draft]) }
+    scope :by_source, ->(source) { send(source) }
+    scope :paused, -> { where(status: 'paused') }
+    scope :published, -> { where(status: 'active') }
+    scope :in_stock_items, -> { joins(:variants).merge(Spree::Variant.in_stock_or_backorderable) }
+    scope :out_of_stock_items, lambda {
+      joins(variants_including_master: :stock_items).
+        where(spree_variants: { track_inventory: true }).
+        where.not(id: Spree::Variant.where(track_inventory: false).pluck(:product_id).uniq).
+        where(spree_stock_items: { backorderable: false }).
+        group(:id).
+        having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
+    }
+    scope :out_of_stock, lambda {
+                           joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
+                         }
+
+    scope :by_best_selling, lambda { |order_direction = :desc|
+      left_joins(:orders).
+        select("#{Spree::Product.table_name}.*, COUNT(#{Spree::Order.table_name}.id) AS completed_orders_count, SUM(#{Spree::Order.table_name}.total) AS completed_orders_total").
+        where(Spree::Order.table_name => { id: nil }).
+        or(where.not(Spree::Order.table_name => { completed_at: nil })).
+        group("#{Spree::Product.table_name}.id").
+        order(completed_orders_count: order_direction, completed_orders_total: order_direction)
+    }
 
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp|
+                                                                                         pp[:property_id].blank? || (pp[:id].blank? && pp[:value].blank?)
+                                                                                       }
+    accepts_nested_attributes_for(
+      :variants,
+      allow_destroy: true,
+      reject_if: lambda do |v|
+        v[:option_value_variants_attributes].blank? && v[:stock_items_attributes].blank? && v[:prices_attributes].blank?
+      end
+    )
+    accepts_nested_attributes_for :master, reject_if: :all_blank
+    accepts_nested_attributes_for(
+      :product_option_types,
+      allow_destroy: true,
+      reject_if: ->(pot) { pot[:option_type_id].blank? || pot[:position].blank? }
+    )
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
+                                                   shipping_category classifications option_types properties]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
+                                             multi_search in_stock_items out_of_stock_items]
 
     [
-      :sku, :barcode, :price, :currency, :weight, :height, :width, :depth, :is_master,
-      :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price, :compare_at_amount_in,
-      :dimensions_unit, :weight_unit, :track_inventory
+      :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
 
-    delegate :display_amount, :display_price, :has_default_price?,
-             :display_compare_at_price, :images, to: :find_or_build_master
+    [
+      :price, :price_in, :amount_in, :compare_at_price, :compare_at_amount_in,
+      :currency, :cost_currency, :cost_price, :track_inventory
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :default_variant
+    end
+
+    delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
+             :display_compare_at_price, :images, to: :default_variant
 
     delegate :name, to: :brand, prefix: true, allow_nil: true
 
@@ -200,6 +275,23 @@ module Spree
       after_transition to: :draft, do: [:after_draft, :send_product_drafted_webhook]
     end
 
+    def self.bulk_auto_match_taxons(store, product_ids)
+      return if store.taxons.automatic.none?
+
+      products_to_auto_match_ids = store.products.not_deleted.not_archived.where(id: product_ids).ids
+
+      # for ActiveJob 7.1+
+      if ActiveJob.respond_to?(:perform_all_later)
+        auto_match_taxons_jobs = products_to_auto_match_ids.map do |product_id|
+          Spree::Products::AutoMatchTaxonsJob.new(product_id)
+        end
+
+        ActiveJob.perform_all_later(auto_match_taxons_jobs)
+      else
+        products_to_auto_match_ids.each { |product_id| Spree::Products::AutoMatchTaxonsJob.perform_later(product_id) }
+      end
+    end
+
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
       @purchasable ||= default_variant.purchasable? || variants.in_stock_or_backorderable.any?
@@ -213,6 +305,10 @@ module Spree
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
       default_variant.backorderable? || variants.any?(&:backorderable?)
+    end
+
+    def on_sale?(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.any?(&:discounted?)
     end
 
     def find_or_build_master
@@ -273,6 +369,12 @@ module Spree
                            end
     end
 
+    # Returns the short description for the product
+    # @return [String]
+    def storefront_description
+      property('short_description') || description
+    end
+
     # Returns tax category for Product
     # @return [Spree::TaxCategory]
     def tax_category
@@ -281,6 +383,38 @@ module Spree
 
     # Adding properties and option types on creation based on a chosen prototype
     attr_accessor :prototype_id
+
+    def first_or_default_variant(currency)
+      if !has_variants?
+        default_variant
+      elsif first_available_variant(currency).present?
+        first_available_variant(currency)
+      else
+        variants.first
+      end
+    end
+
+    def first_available_variant(currency)
+      variants.find { |v| v.purchasable? && v.price_in(currency).amount.present? }
+    end
+
+    def price_varies?(currency)
+      prices_including_master.find_all { |p| p.currency == currency && p.amount.present? }.map(&:amount).uniq.count > 1
+    end
+
+    def any_variant_available?(currency)
+      if has_variants?
+        first_available_variant(currency).present?
+      else
+        master.purchasable? && master.price_in(currency).amount.present?
+      end
+    end
+
+    # returns the lowest price for the product in the given currency
+    # prices_including_master are usually already loaded, so this should not trigger an extra query
+    def lowest_price(currency)
+      prices_including_master.find_all { |p| p.currency == currency }.min_by(&:amount)
+    end
 
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
@@ -311,7 +445,7 @@ module Spree
     # deleted products and products with status different than active
     # are not available
     def available?
-      active? && !deleted?
+      active? && !deleted? && (available_on.nil? || available_on <= Time.current)
     end
 
     def discontinue!
@@ -421,7 +555,11 @@ module Spree
                      join_translation_table(Taxonomy).
                      find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
                  else
-                   taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                   if taxons.loaded?
+                     taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                   else
+                     taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                   end
                  end
     end
 
@@ -432,7 +570,11 @@ module Spree
                         order(depth: :desc).
                         find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
                     else
-                      taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                      if taxons.loaded?
+                        taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
+                      else
+                        taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                      end
                     end
     end
 
@@ -447,7 +589,7 @@ module Spree
     end
 
     def any_variant_in_stock_or_backorderable?
-      if variants.any?
+      if has_variants?
         variants_including_master.in_stock_or_backorderable.exists?
       else
         master.in_stock_or_backorderable?
@@ -463,6 +605,16 @@ module Spree
       shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
+    def auto_match_taxons
+      return if deleted?
+      return if archived?
+
+      store = stores.find_by(default: true) || stores.first
+      return if store.nil? || store.taxons.automatic.none?
+
+      Spree::Products::AutoMatchTaxonsJob.perform_later(id)
+    end
+
     def to_csv(store = nil)
       store ||= stores.default || stores.first
       properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
@@ -471,11 +623,13 @@ module Spree
           product_properties.find { |pp| pp.property_id == property.id }&.value
         ]
       end
-      taxons_for_csv ||= taxons.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
+      taxons_for_csv.fill(nil, taxons_for_csv.size...3)
+
       csv_lines = []
 
       if has_variants?
-        variants.each_with_index do |variant, index|
+        variants_including_master.each_with_index do |variant, index|
           csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
         end
       else
@@ -483,6 +637,12 @@ module Spree
       end
 
       csv_lines
+    end
+
+    def page_builder_url
+      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:product_path)
+
+      Spree::Core::Engine.routes.url_helpers.product_path(self)
     end
 
     private
@@ -534,23 +694,8 @@ module Spree
       self.master ||= build_master
     end
 
-    def normalize_slug
-      self.slug = normalize_friendly_id(slug)
-    end
-
-    def punch_slug
-      # punch slug with date prefix to allow reuse of original
-      return if frozen?
-
-      update_column(:slug, "#{Time.current.to_i}_#{slug}"[0..254])
-
-      translations.with_deleted.each do |t|
-        t.update_column :slug, "#{Time.current.to_i}_#{t.slug}"[0..254]
-      end
-    end
-
-    def update_slug_history
-      save!
+    def assign_default_tax_category
+      self.tax_category = Spree::TaxCategory.default if new_record?
     end
 
     def anything_changed?
@@ -599,12 +744,13 @@ module Spree
       end
     end
 
-    # Try building a slug based on the following fields in increasing order of specificity.
-    def slug_candidates
-      [
-        :name,
-        [:name, :sku]
-      ]
+    def ensure_default_shipping_category
+      return if shipping_category.present?
+
+      if new_record?
+        name = I18n.t('spree.seed.shipping.categories.default')
+        self.shipping_category = Spree::ShippingCategory.find_or_create_by!(name: name)
+      end
     end
 
     def run_touch_callbacks
@@ -617,8 +763,11 @@ module Spree
 
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
     def touch_taxons
-      Spree::Taxon.where(id: taxon_and_ancestors.map(&:id)).update_all(updated_at: Time.current)
-      Spree::Taxonomy.where(id: taxonomy_ids).update_all(updated_at: Time.current)
+      if taxons.any?
+        Spree::Products::TouchTaxonsJob.
+          set(wait: 5.seconds).
+          perform_later(taxon_and_ancestors.map(&:id), taxonomy_ids.uniq)
+      end
     end
 
     def ensure_not_in_complete_orders
@@ -647,8 +796,8 @@ module Spree
       true
     end
 
-    def downcase_slug
-      slug&.downcase!
+    def eligible_for_taxon_matching?
+      previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
     end
 
     def after_activate

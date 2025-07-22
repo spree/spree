@@ -1,5 +1,5 @@
 module Spree
-  class OptionValue < Spree::Base
+  class OptionValue < Spree.base_class
     include Spree::ParameterizableName
     include Spree::Metadata
     include Spree::TranslatableResource
@@ -7,19 +7,17 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
-    if Spree.always_use_translations?
-      TRANSLATABLE_FIELDS = %i[name presentation].freeze
-      translates(*TRANSLATABLE_FIELDS)
-    else
-      TRANSLATABLE_FIELDS = %i[presentation].freeze
-      translates(*TRANSLATABLE_FIELDS, column_fallback: true)
+    TRANSLATABLE_FIELDS = %i[presentation].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    self::Translation.class_eval do
+      auto_strip_attributes :presentation
     end
 
     #
     # Magic methods
     #
     acts_as_list scope: :option_type
-    auto_strip_attributes :name, :presentation
     self.whitelisted_ransackable_attributes = ['presentation']
 
     #
@@ -48,8 +46,8 @@ module Spree
     }
 
     scope :for_products, lambda { |products|
-      joins(:variants).
-        where(Variant.table_name => { product_id: products.map(&:id) })
+      # we need to use map(&:id) to avoid SQL errors when merging with other scopes
+      joins(:variants).where(Spree::Variant.table_name => { product_id: products.map(&:id) })
     }
 
     #
@@ -60,6 +58,23 @@ module Spree
     after_touch :touch_all_products
 
     delegate :name, :presentation, to: :option_type, prefix: true, allow_nil: true
+
+    # Using map here instead of pluck, as these values are translatable via Mobility gem
+    # @return [Array<Hash>]
+    def self.to_tom_select_json
+      all.map do |ov|
+        {
+          id: ov.name,
+          name: ov.presentation
+        }
+      end
+    end
+
+    # Returns the presentation with the option type presentation, eg. "Color: Red"
+    # @return [String]
+    def display_presentation
+      @display_presentation ||= "#{option_type.presentation}: #{presentation}"
+    end
 
     private
 

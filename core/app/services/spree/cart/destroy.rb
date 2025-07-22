@@ -14,7 +14,7 @@ module Spree
       private
 
       def check_if_can_be_destroyed(order:)
-        return failure(false, Spree.t(:cannot_be_destroyed)) unless order&.can_be_destroyed?
+        return failure(false, Spree.t(:cannot_be_destroyed)) unless order&.can_be_deleted?
 
         success(order: order)
       end

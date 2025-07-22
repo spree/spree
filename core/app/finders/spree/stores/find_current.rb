@@ -7,7 +7,11 @@ module Spree
       end
 
       def execute
-        by_url(scope) || scope.default
+        store = by_url(scope) || scope.default
+        return if store.nil?
+
+        Spree::Current.store = store
+        store
       end
 
       protected
@@ -17,7 +21,7 @@ module Spree
       def by_url(scope)
         return if url.blank?
 
-        scope.by_url(url).first
+        scope.by_custom_domain(url).or(scope.by_url(url)).first
       end
     end
   end

@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.files         = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files         = Dir.glob(["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"], File::FNM_DOTMATCH).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.bindir        = 'bin'
-  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+  s.executables   = Dir['bin/*'].map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
   s.add_dependency 'thor', '~> 1.0'

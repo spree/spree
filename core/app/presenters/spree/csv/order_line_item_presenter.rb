@@ -1,8 +1,6 @@
 module Spree
   module CSV
     class OrderLineItemPresenter
-      include Spree::Admin::PaymentsHelper
-
       HEADERS = [
         'Number',
         'Email',
@@ -87,7 +85,7 @@ module Spree
           index.zero? ? order.total.to_f : nil,
           index.zero? ? order.shipping_method&.name : nil,
           index.zero? ? order.total_weight.to_f : nil,
-          index.zero? && order.payments.valid.any? ? payment_source_name(order.payments.valid.first) : nil,
+          index.zero? && order.payments.valid.any? ? order.payments.valid.first.display_source_name : nil,
           line_item.product_id,
           line_item.quantity,
           line_item.sku,
@@ -140,7 +138,7 @@ module Spree
       def format_date(date)
         return nil if date.blank?
 
-        date.in_time_zone(order.store.timezone).strftime('%Y-%m-%d %H:%M:%S')
+        date.in_time_zone(order.store.preferred_timezone).strftime('%Y-%m-%d %H:%M:%S')
       end
     end
   end

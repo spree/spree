@@ -1,0 +1,23 @@
+<%= turbo_stream.replace :checkout_summary do %>
+  <%= render 'summary', order: @order %>
+<% end %>
+<%= turbo_stream.replace :checkout_lock_version do %>
+  <%= render 'spree/checkout/order_lock_version', order: @order %>
+<% end %>
+<%= turbo_stream.update 'summary-order-total' do %>
+  <%= @order.display_total.to_html %>
+<% end %>
+<% if @order.line_items_without_shipping_rates.any? && !@order.all_line_items_invalid? %>
+  <%= turbo_stream.append :modal do %>
+    <%= turbo_frame_tag :modal do %>
+      <%= render partial: 'spree/checkout/missing_line_items' %>
+    <% end %>
+  <% end %>
+<% end %>
+<% if @order.line_items_without_shipping_rates.any? && @order.all_line_items_invalid? %>
+  <%= turbo_stream.append :modal do %>
+    <%= turbo_frame_tag :modal do %>
+      <%= render partial: 'spree/checkout/missing_all_line_items' %>
+    <% end %>
+  <% end %>
+<% end %>

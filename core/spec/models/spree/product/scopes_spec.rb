@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Product scopes', type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let!(:product) { create(:product, stores: [store]) }
 
   describe '#available' do
@@ -309,9 +309,10 @@ describe 'Product scopes', type: :model do
 
   describe '#for_store' do
     subject(:products_by_store) { Spree::Product.for_store(store) }
+    let(:another_store) { create(:store) }
 
     before do
-      create_list(:product, 3, stores: [create(:store)])
+      create_list(:product, 3, stores: [another_store])
     end
 
     it 'returns products assigned to a store' do

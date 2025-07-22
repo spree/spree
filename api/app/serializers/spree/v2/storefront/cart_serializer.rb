@@ -24,6 +24,10 @@ module Spree
           cart.display_total_applied_store_credit.abs.amount_in_cents
         end
 
+        attribute :promo_total_cents do |cart|
+          cart.display_promo_total.abs.amount_in_cents
+        end
+
         attribute :tax_total_cents do |cart|
           cart.display_tax_total.amount_in_cents
         end
@@ -54,6 +58,7 @@ module Spree
                    id_method_name: :ship_address_id,
                    serializer: :address,
                    record_type: :address
+        belongs_to :gift_card, serializer: :gift_card
       end
     end
   end

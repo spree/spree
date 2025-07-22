@@ -1,0 +1,220 @@
+---
+title: "Create a Product"
+description: "Learn how to create a new product from scratch in Spree Commerce."
+---
+
+Adding products manually is a crucial part of managing any ecommerce store. Whether you're launching something new, setting up preorders, or testing a market-specific variant, Spree makes it easy to create fully-detailed products through a clean and structured editor.
+
+This guide walks you through each section of the product editor, explaining what each field does and why it matters.
+
+<Warning>
+  Don’t forget to click Create at the bottom of the page before navigating away — changes aren’t saved automatically.
+</Warning>
+
+## Create a New Product
+
+To get started, navigate to the **Products** tab of the admin dashboard.
+
+![](/docs/images/user/products/create-a-product/1.products_tab.png)
+
+Click **New Product** in the top right corner to open the product creation form.
+
+![](/docs/images/user/products/create-a-product/2.new_product.png)
+
+## Name & Description
+
+![](/docs/images/user/products/create-a-product/3.name_description.png)
+
+ 
+
+The first fields at the top of the product form let you enter:
+
+- **Name:** Shown on product listing pages, the PDP, checkout.
+- **Description:** Displayed on the product detail page. Supports rich formatting like bold text, headings, links, and images.
+
+A good name and description helps customers understand what they're buying - they’re also used for SEO if no dedicated meta fields are set.
+
+## Media
+
+![](/docs/images/user/products/create-a-product/4.media.png)
+
+This is where you can add visual media to your product. Click **Upload New Asset** to open the file importer.
+
+![](/docs/images/user/products/create-a-product/5.upload_image.png)
+
+Once your chosen files have been uploaded, you can rearrange the images by dragging and dropping - the left most image is the main image used on product listings.
+
+![](/docs/images/user/products/create-a-product/6.rearrange_images.png)
+
+To edit an image’s alt text, replace it, or delete it entirely, click on the image to open the edit form.
+
+![](/docs/images/user/products/create-a-product/7.edit_image.png)
+
+<Note>
+  You can also use the checkboxes to delete multiple images at once.
+</Note>
+
+## Availability & Status
+
+![](/docs/images/user/products/create-a-product/8.status.png)
+
+This section controls when and how your product appears on the storefront:
+
+- **Status:**
+  - **Active:** visible and purchasable
+  - **Draft:** hidden from customers
+  - **Archived:** stored in the admin, no longer available
+- **Make Active At:** Schedule a future go-live date
+- **Available On:** Set a public release date (commonly used for preorders)
+- **Discontinue On:** Choose a date to automatically unpublish the product
+
+These tools let you prepare seasonal drops, preorders, or time-limited products in advance.
+
+## Categorization
+
+![](/docs/images/user/products/create-a-product/9.categorization.png)
+
+Organizing products properly helps with navigation and merchandising. Here you can add:
+
+- **Taxonomies:** Assign categories, collections, or brands (e.g., Fashion → Women → Tops). Products will appear anywhere the taxon is used on the site.
+
+  ![](/docs/images/user/products/create-a-product/10.taxons.png)
+- **Tags:** Use custom tags like Vegan, Eco-Friendly, or Summer Collection for filtering, related products, or smart merchandising logic.
+
+  ![](/docs/images/user/products/create-a-product/11.tags.png)
+
+There’s no limit to the number of taxons or tags you can apply.
+
+<Note>
+  Taxonomies must be created in **Products → Taxonomies** before they can be assigned to products. Tags, on the other hand, can be created directly in the product editor.
+</Note>
+
+## Pricing
+
+![](/docs/images/user/products/create-a-product/12.pricing.png)
+
+This section controls how much your product sells for:
+
+- **Amount:** The selling price shown on the storefront
+- **Compare At Amount:** Optional field for showing a discounted or original price.
+
+Setting a Compare At amount will add a crossed-out price and a Sale badge to the product wherever it appears on the storefront.
+
+![](/docs/images/user/products/create-a-product/13.compare_at.png)
+
+If your store supports multiple currencies, you’ll see additional rows here to define localized pricing.
+
+![](/docs/images/user/products/create-a-product/14.multi_currency.png)
+
+<Note>
+  Add or manage supported currencies in **Settings → Store Settings**.
+</Note>
+
+## Inventory
+
+![](/docs/images/user/products/create-a-product/15.inventory.png)
+
+This section lets you manage stock levels and tracking:
+
+- **Track Quantity:** Enable this if you want to keep count of stock and prevent overselling.
+- **Quantity:** Set available inventory for each stock location.
+- **Continue Selling When Out of Stock:** Optional override that allows customers to purchase even if stock is zero.
+- **SKU:** Internal identifier for managing stock. Not required, but helpful — must be unique per variant.
+- **Barcode:** Used for scanning in warehouses, syncing with logistics providers, or POS systems. Supports ISBN, UPC, GTIN, etc.
+
+<Note>
+  If quantity tracking is enabled, stock is automatically reduced when orders are placed.
+</Note>
+
+## Variants
+
+![](/docs/images/user/products/create-a-product/16.variants.png)
+
+If your product has multiple sizes, colors, or formats, use the Variants section. To add variants, first click **Add options like size or color** to open the variant form.
+
+![](/docs/images/user/products/create-a-product/17.add_options.png)
+
+Then, simply follow these steps to add variants:
+
+1. Choose an **Option Name** (e.g., Size, Color)
+2. Add **Option Values** (e.g., S, M, L)
+3. Click **Done**
+4. Add more option types if needed
+
+<Note>
+  You can add or manage Options under **Products → Options**.
+</Note>
+
+Once added, you'll see per-variant Price and Inventory fields so you can manage each combination independently.
+
+![](/docs/images/user/products/create-a-product/18.merged_ui.png)
+
+<Note>
+  Keep naming consistent across products (e.g., use S, M, L everywhere - not Small, Medium, Large on some items and initials on others).
+</Note>
+
+## Shipping
+
+![](/docs/images/user/products/create-a-product/19.shipping.png)
+
+If your shipping methods rely on product size or weight, this section is critical.
+
+- **Dimensions & Weight:** Enter the product’s width, height, depth, and weight.
+  - These values can be used to calculate shipping costs automatically
+- **Shipping Category:** Choose the category that determines shipping behavior.
+  - E.g., assign Digital for downloadable products, or Heavy for oversized items.
+
+<Note>
+  You can change the default unit system (metric vs imperial) in **Settings → Store Details → Standards & Formats**.
+</Note>
+
+## Properties
+
+![](/docs/images/user/products/create-a-product/20.properties.png)
+
+Use properties to highlight key details about the product. These appear on the PDP and are often used to help shoppers compare items.
+
+Common property examples:
+
+- **Material:** 100% Organic Cotton
+- **Fit:** Regular
+- **Care:** Machine wash cold
+- **Allergens:** Contains nuts
+
+These are optional, but recommended for apparel, food, and beauty products especially.
+
+<Note>
+  You can add or manage properties under **Products → Properties**.
+</Note>
+
+## Tax
+
+![](/docs/images/user/products/create-a-product/21.tax.png)
+
+Assign a tax category to the product, which determines how taxes are applied based on customer region and store settings. For example:
+
+- Default Tax
+- Tax Exempt
+- Downloadable Goods
+
+## Search Engine Listing
+
+![](/docs/images/user/products/create-a-product/22.seo.png)
+
+This section allows you to control how the product appears in search engine results and on social media.
+
+Click **Edit** to modify:
+
+- **Meta Title:** The page title shown in search results
+- **Meta Description:** Short summary shown beneath the title
+- **Slug:** Controls the product’s URL. If not set, the product name is used (e.g., /black-hoodie)
+
+## Save Changes
+
+Once you’ve filled out all the required and optional fields, scroll to the bottom and click Create to publish the product (or save it as a draft).
+
+You can always return to this page to update or archive the product later.
+
+## 3rd Party Products (Enterprise only)
+
+If you’re running a multi-vendor marketplace with Spree Enterprise Edition, vendors will create or upload their own products during onboarding. You can still review and edit vendor-created products as needed.

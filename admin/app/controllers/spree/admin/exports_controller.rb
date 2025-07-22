@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ExportsController < ResourceController
+      include ActiveStorage::SetCurrent # Needed for ActiveStorage to work on development env
+
       new_action.before :assign_params
       create.before :set_user
 
@@ -38,8 +40,16 @@ module Spree
       end
 
       def assign_params
-        @object.type = params.dig(:export, :type) if Spree::Export.available_types.map(&:to_s).include?(params.dig(:export, :type))
-        @object.search_params = params.dig(:export, :search_params)
+        @object.type = permitted_resource_params[:type] if available_types.map(&:to_s).include?(permitted_resource_params[:type])
+        @object.search_params = permitted_resource_params[:search_params]
+      end
+
+      def permitted_resource_params
+        params.require(:export).permit(permitted_export_attributes)
+      end
+
+      def available_types
+        Spree::Export.available_types + ['Spree::Exports::Customers']
       end
     end
   end

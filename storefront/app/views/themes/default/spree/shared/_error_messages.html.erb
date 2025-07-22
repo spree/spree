@@ -1,0 +1,9 @@
+<% if target && target.errors.any? %>
+  <div id="errorExplanation" class="<%= local_assigns[:class] || 'alert-error text-center mb-4 p-2' %>">
+    <ul>
+      <% target.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
