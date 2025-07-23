@@ -11,10 +11,14 @@ module Spree
         friendly_id :slug_candidates, use: [:history, :slugged, :scoped, :mobility], scope: spree_base_uniqueness_scope, slug_limit: 255
 
         Product::Translation.class_eval do
-          before_save :set_slug
           acts_as_paranoid
           # deleted translation values also need to be accessible for index views listing deleted resources
           default_scope { unscope(where: :deleted_at) }
+
+          before_validation :set_slug
+          before_validation :ensure_slug_is_unique
+
+          validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: true, scope: [*::Spree.base_class.spree_base_uniqueness_scope, :locale] }
 
           private
 
@@ -30,6 +34,11 @@ module Spree
             else
               slug.to_url
             end
+          end
+
+          def ensure_slug_is_unique
+            slug_exists = self.class.where(slug: slug, locale: locale).where.not(id: id).exists?
+            self.slug = [slug, SecureRandom.uuid].join('-') if slug_exists
           end
         end
 
