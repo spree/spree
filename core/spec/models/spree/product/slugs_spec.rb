@@ -261,4 +261,77 @@ describe Spree::Product::Slugs, type: :model do
       end
     end
   end
+
+  describe 'translated slugs' do
+    let(:product) { create(:product, name: 'Red shoes', stores: [store]) }
+
+    describe 'generating slugs' do
+      subject(:save_translation) { translation.save! }
+
+      context 'when a translated product has no name and slug' do
+        let(:translation) { product.translations.build(locale: 'fr', name: nil, slug: nil) }
+
+        it 'generates slug from the product name' do
+          save_translation
+          expect(translation.slug).to eq('red-shoes')
+        end
+      end
+
+      context 'when a translated product has no slug' do
+        let(:translation) { product.translations.build(locale: 'fr', name: 'Chaussures rouges', slug: nil) }
+
+        it 'generates slug from the translated product name' do
+          save_translation
+          expect(translation.slug).to eq('chaussures-rouges')
+        end
+      end
+
+      context 'when a translated product has a slug' do
+        let(:translation) { product.translations.build(locale: 'fr', name: 'Chaussures rouges', slug: 'Custom Slug!') }
+
+        it 'normalizes the existing slug' do
+          save_translation
+          expect(translation.slug).to eq('custom-slug')
+        end
+      end
+    end
+
+    describe 'ensuring slug uniqueness' do
+      subject(:save_translation) { translation.save! }
+
+      let!(:existing_product) { create(:product, stores: [store]) }
+      let!(:existing_product_translation) { existing_product.translations.create!(locale: 'fr', slug: existing_slug) }
+
+      context 'when the slug is unique in the same locale' do
+        let(:translation) { product.translations.build(locale: 'fr', slug: 'unique-slug') }
+        let(:existing_slug) { 'different-slug' }
+
+        it 'keeps the original slug' do
+          save_translation
+          expect(translation.slug).to eq('unique-slug')
+        end
+      end
+
+      context 'when the slug is not unique in the same locale' do
+        let(:translation) { product.translations.build(locale: 'fr', slug: 'duplicate-slug') }
+        let(:existing_slug) { 'duplicate-slug' }
+
+        it 'appends a UUID to make it unique' do
+          save_translation
+          expect(translation.slug).to match(/duplicate-slug-.+/)
+          expect(translation.slug).not_to eq('duplicate-slug')
+        end
+      end
+
+      context 'when the slug is unique in a different locale' do
+        let(:translation) { product.translations.build(locale: 'es', slug: 'same-slug') }
+        let(:existing_slug) { 'same-slug' }
+
+        it 'allows the same slug in different locales' do
+          save_translation
+          expect(translation.slug).to eq('same-slug')
+        end
+      end
+    end
+  end
 end
