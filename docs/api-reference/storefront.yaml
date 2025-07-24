@@ -8,15 +8,13 @@ info:
   version: 2.0.0
   title: Storefront API
   description: |-
-    Storefront API is a modern REST API based on the [JSON API spec](https://jsonapi.org/) which provides you with all the necessary endpoints to build amazing user intefaces either in JavaScript frameworks or native mobile libraries.
-
-    Download [official JavaScript & TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
+    Storefront API is a modern REST API based on the [JSON API spec](https://jsonapi.org/) which provides you with all the necessary endpoints to build amazing user interfaces either in JavaScript frameworks or native mobile libraries.
 
     Import to [Postman](https://raw.githubusercontent.com/spree/spree/main/docs/api-reference/storefront.yaml)
   contact:
     name: Vendo Connect Inc.
-    url: 'https://getvendo.com'
-    email: sales@getvendo.com
+    url: 'https://spreecommerce.org'
+    email: hello@spreecommerce.org
   license:
     name: AGPL-3.0-or-later
     url: 'https://github.com/spree/spree/blob/main/LICENSE.md'
@@ -584,7 +582,7 @@ paths:
         - Cart / Other
   /api/v2/storefront/cart/apply_coupon_code:
     patch:
-      description: Applies a coupon code to the current cart.
+      description: Applies a coupon code or gift card code to the current cart.
       operationId: apply-coupon-code
       responses:
         '200':
@@ -607,18 +605,18 @@ paths:
                 coupon_code:
                   type: string
                   example: DISCOUNT10
-      summary: Apply a Coupon Code
+      summary: Apply a Coupon Code / Gift Card
       tags:
         - Cart / Coupons
   '/api/v2/storefront/cart/remove_coupon_code/{coupon_code}':
     delete:
-      description: Removes a specified coupon code from the current cart.
+      description: Removes a specified coupon code or gift card code from the current cart.
       operationId: remove-coupon-code
       parameters:
         - name: coupon_code
           in: path
           required: true
-          description: Specify the coupon code for removal.
+          description: Specify the coupon code or gift card code for removal.
           schema:
             type: string
           example: DISCOUNT10
@@ -632,7 +630,7 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
-      summary: Remove a Coupon
+      summary: Remove a Coupon / Gift Card
       tags:
         - Cart / Coupons
   /api/v2/storefront/cart/remove_coupon_code:
@@ -4035,7 +4033,7 @@ components:
       schema:
         type: string
       description: 'Specify the related resources you would like to receive in the response body. [More Information](https://jsonapi.org/format/#fetching-includes).'
-      example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+      example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions,gift_card'
     CartCurrencyParam:
       name: currency
       in: query

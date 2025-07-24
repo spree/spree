@@ -247,20 +247,20 @@
                     ]
                   },
                   {
+                    "group": "Cart / Coupons & Gift Cards",
+                    "pages": [
+                      "api-reference/storefront/cart-coupons/apply-a-coupon-code",
+                      "api-reference/storefront/cart-coupons/remove-a-coupon",
+                      "api-reference/storefront/cart-coupons/remove-all-coupons"
+                    ]
+                  },
+                  {
                     "group": "Cart / Other",
                     "pages": [
                       "api-reference/storefront/cart-other/empty-the-cart",
                       "api-reference/storefront/cart-other/list-estimated-shipping-rates",
                       "api-reference/storefront/cart-other/associate-a-cart-with-a-user",
                       "api-reference/storefront/cart-other/change-cart-currency"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Coupons",
-                    "pages": [
-                      "api-reference/storefront/cart-coupons/apply-a-coupon-code",
-                      "api-reference/storefront/cart-coupons/remove-a-coupon",
-                      "api-reference/storefront/cart-coupons/remove-all-coupons"
                     ]
                   },
                   {
