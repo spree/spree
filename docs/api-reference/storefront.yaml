@@ -1571,6 +1571,57 @@ paths:
           $ref: '#/components/responses/StripeSetupIntent'
         '422':
           $ref: '#/components/responses/422UnprocessableEntity'
+  /api/v2/storefront/adyen/payment_sessions:
+    post:
+      summary: Create an Adyen Payment Session
+      description: "Create a new Adyen payment session with the specified amount. Adyen support is currently in private beta. [Please contact us](https://spreecommerce.org/contact) to get access."
+      tags:
+        - Adyen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_session:
+                  type: object
+                  properties:
+                    amount:
+                      type: number
+                      description: The payment amount
+                      example: 80.99
+                  required:
+                    - amount
+              required:
+                - payment_session
+            example:
+              payment_session:
+                amount: 80.99
+      operationId: create-adyen-payment-session
+      responses:
+        '200':
+          $ref: '#/components/responses/AdyenPaymentSession'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
+  "/api/v2/storefront/adyen/payment_sessions/{id}":
+    get:
+      summary: Get Adyen Payment Session
+      description: "Retrieve An Adyen payment session information. Adyen support is currently in private beta. [Please contact us](https://spreecommerce.org/contact) to get access."
+      tags:
+        - Adyen
+      operationId: get-adyen-payment-session
+      responses:
+        '200':
+          $ref: '#/components/responses/AdyenPaymentSession'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
   /api/v2/storefront/vendors:
     get:
       summary: List all Vendors
@@ -5647,6 +5698,105 @@ components:
                     customer_id: 'cus_Q9uqUz6gVQFku2'
                     amount: '44.0'
                     stripe_payment_method_id: 'pm_1Qedd42ESifGlJez0IOx5AZ3'
+    AdyenPaymentSession:
+      description: 200 Success - Returns the Adyen Payment Session with session data and payment amount.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: '3'
+                  type:
+                    type: string
+                    default: adyen_payment_session
+                  attributes:
+                    type: object
+                    properties:
+                      adyen_id:
+                        type: string
+                        description: The Adyen session ID
+                        example: CS3E6B43783787E79B
+                      amount:
+                        type: string
+                        description: The payment amount
+                        example: '80.99'
+                      currency:
+                        type: string
+                        description: The payment currency
+                        example: USD
+                      adyen_data:
+                        type: string
+                        description: The Adyen session data required for payment processing
+                      status:
+                        type: string
+                        description: The status of the payment session
+                        example: initial
+                      expires_at:
+                        type: string
+                        format: date-time
+                        description: The expiration date and time of the payment session
+                        example: '2025-07-24T14:40:45.000Z'
+                  relationships:
+                    type: object
+                    properties:
+                      order:
+                        type: object
+                        properties:
+                          data:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: '4'
+                              type:
+                                type: string
+                                example: cart
+                      payment_method:
+                        type: object
+                        properties:
+                          data:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                                example: '4'
+                              type:
+                                type: string
+                                example: payment_method
+                      user:
+                        type: object
+                        properties:
+                          data:
+                            nullable: true
+          examples:
+            Adyen Payment Session:
+              value:
+                data:
+                  id: '3'
+                  type: adyen_payment_session
+                  attributes:
+                    adyen_id: CS3E6B43783787E79B
+                    amount: '80.99'
+                    currency: USD
+                    adyen_data: 'Ab02b4c0!BQABAgCNxadId3f9NXF6OMYGXsZAoAwcnOdgINKAypoyo8GUq8UqjnT/7J8K4kNhl6tjWOpGY6t+r+4QQVVfo4IHFWtjzNkj2k9dnTS4932UyCznLC+gHbzPHcfN6rNiHBIpQo523a94EvV2Sq1Gh/3j6N2aNCjfV2TDWynQJU11uOhalgwhAnVrD3HmFtbVqM60kGiPRBfE4LwLuQ7f+7S/cdVx8HzWizvafndeRnx5lM3RQNibNRbimJ3G6YZh/HI9FwZYbxkUoq8dQl8dgdquNKAxsSO0BcC6UpTU2Z8d/z3lAsm0UlX1+YiryRut4Ipg9YqJbVt3gnj7Kh4kZFRO1hZM8NDeD9PshE8riBXDpUwJ84m+9I+cfbnwYWgfZaGuxfGG+IiiliQBWIjHefd6ukUATLWsPX6ufUL7BT3rSMx/5QMmdNrE/zMA9B1tFg5Tm8t88S6WQcSZ/vIgOv+peDml5j44OcEth6iEqxRwsmT3T0nZUhYwYUSTEykrpY9+Ly2+NWpTE+sgvXhld6SZubbbG9gIBad6TIwaKkUO0kJOx6Zvk37uU2D0z8mnWIktimBZIqhegsdBXutVyUe93xSighf/C41n69COSjALE3KCcXGCmR4NsdwJ7LesJMYLu1S4gDOObvkuW5IY2k8r6pptUWgsOxcyUvbpPMlQrjRTHAwRPxcnk0SJrSL29HwASnsia2V5IjoiQUYwQUFBMTAzQ0E1MzdFQUVEODdDMjRERDUzOTA5QjgwQTc4QTkyM0UzODIzRDY4REFDQzk0QjlGRjgzMDVEQyJ9JcDZ7NsVaMwwHpvV0vX/5b7P9FS/1TfuFbQRmlFX4vCQOLxSiyAf5P4uN7Hb2Zw4dplBl4oSEBBUvrKk5TCqjGoS1azHS8Fv5LCcl2yCDH6WBtQKzJnT6NmXl29+ILYCxETtyF9K8LwgJyu8sHs2jQnnLujLBqqjIZqDFa8TORtGiwvhtS3UMtagkkg0SkCaaaOjqtZdWrTy7C9Gy9nFZNYEfmurFZmgLRROTB3jRNwmveWvayFJl4TTtub14l+RZJDx2VgjAwqRU8btN/0xnrT9m2kg6LOyW4F9TkauPgAzY3Gu//HQOGW7VDBPq6y83mzP7iNp8Whe14NQSu29i9rBricl0f6RoWin87jRD7AtZx0MxlhNxUF579COCwNHAMhs310nntoSY5U8s13of9Wn2lDcBcg2QmSNOixMMIcBkjHpEQEZAeGzfi8OvJtjoi9TVY0VzrpSbR1dcx8MNjOUeY37H+XlWkdEkd3457zbeOuSlEbjvuDYW7tYHYWipsd4fNllXiMzKW+w6YxL2Kqj0M5B+3ihuEKg7VS3b/XKs+OS7eHGZSImAt9e4tGltEqYzdRHzm4S6pnJytaoPp7+OswEm+JQTi739w4CJeNWxr1t9dot2k9OQw3vZabeI7OTrwBc2IwtUYZ9oPlBVOibMoUwCIVmSPrSgF8nCj9S2RdZgamLNnyg1srQmWnNxtOLMnvTnWedICtoE48rMG2Q+cDrEjy11TCGK3R+LHE+LaqPv96yk3ztsHomOF7XstAvLvUAIH3Z/X5+ePNcDzV7OZkS9xcLkqGqeqR04iHGZZfLw3q4rauZMWLyxb+NkGKfgTtGhe7nq+Z7bGXWxzQh694dJf+59oGCslmfJ44cd8SX3o2JjSZ7Ew7LgQt7fj6z+yif1Bs8SH3QNZN9POsfxJggCwRIhvaPmZR7hsV75+b4jC+wU2LAHik8Nr1pt48NpCxULtKNw6ZPUbJwMVWK7gmZtqa39l7OmIs2PE54vgeZk38XBi6K1UFqoZlV667GrnwOgscob3DFPMcjZhCBYOWJNLjxjqP6pw3zf7OB/ZA1m4F6yv4LVka19rlQk0esAqfTy36KbJggRYNJdGYgDr6u2zz3NblMfZpys5mtpW8ncoBdsOeWlL+cspDGig9HINHT2CnrL9+N7oU='
+                    status: initial
+                    expires_at: '2025-07-24T14:40:45.000Z'
+                  relationships:
+                    order:
+                      data:
+                        id: '4'
+                        type: cart
+                    payment_method:
+                      data:
+                        id: '4'
+                        type: payment_method
+                    user:
+                      data: null
     Product:
       description: 200 Success - Returns the `product` object.
       content:
@@ -15047,6 +15197,7 @@ tags:
   - name: Checkout / Payments
   - name: Checkout / Store Credit
   - name: Stripe
+  - name: Adyen
   - name: Countries
   - name: Digital Downloads
   - name: Order Status

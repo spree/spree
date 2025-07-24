@@ -310,6 +310,13 @@
                     ]
                   },
                   {
+                    "group": "Adyen",
+                    "pages": [
+                      "api-reference/storefront/adyen/create-an-adyen-payment-session",
+                      "api-reference/storefront/adyen/get-adyen-payment-session"
+                    ]
+                  },
+                  {
                     "group": "Products",
                     "pages": [
                       "api-reference/storefront/products/list-all-products",
@@ -319,7 +326,7 @@
                   {
                     "group": "Vendors",
                     "pages": [
-                      "api-reference/storefront/vendors/list-all-vendors-available-on-this-store-marketplace",
+                      "api-reference/storefront/vendors/list-all-vendors",
                       "api-reference/storefront/vendors/retrieve-a-vendor"
                     ]
                   },
@@ -1228,7 +1235,7 @@
                   {
                     "group": "Vendors",
                     "pages": [
-                      "api-reference/storefront/vendors/list-all-vendors-available-on-this-store-marketplace",
+                      "api-reference/storefront/vendors/list-all-vendors",
                       "api-reference/storefront/vendors/retrieve-a-vendor"
                     ]
                   },
