@@ -5,10 +5,6 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <li class="nav-item">
-    <%= active_link_to Spree.t(:settings), spree.admin_promotion_path(@promotion), class: "nav-link", active: controller_name == 'promotions' %>
-  </li>
-  <li class="nav-item">
-    <%= active_link_to Spree.t(:coupon_codes), spree.admin_promotion_coupon_codes_path(@promotion), class: "nav-link" %>
-  </li>
+  <%= nav_item(Spree.t(:settings), spree.admin_promotion_path(@promotion), active: controller_name == 'promotions') %>
+  <%= nav_item(Spree.t(:coupon_codes), spree.admin_promotion_coupon_codes_path(@promotion)) %>
 <% end if @promotion.multi_codes? %>
