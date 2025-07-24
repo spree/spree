@@ -345,20 +345,6 @@
                     ]
                   },
                   {
-                    "group": "CMS Pages",
-                    "pages": [
-                      "api-reference/storefront/cms-pages/list-all-cms-pages",
-                      "api-reference/storefront/cms-pages/retrieve-a-cms-page"
-                    ]
-                  },
-                  {
-                    "group": "Menus",
-                    "pages": [
-                      "api-reference/storefront/menus/list-all-menus",
-                      "api-reference/storefront/menus/retrieve-a-menu"
-                    ]
-                  },
-                  {
                     "group": "Wishlists",
                     "pages": [
                       "api-reference/storefront/wishlists/list-all-wishlists",
@@ -422,26 +408,6 @@
                     ]
                   },
                   {
-                    "group": "CMS Pages",
-                    "pages": [
-                      "api-reference/platform/cms-pages/return-a-list-of-cms-pages",
-                      "api-reference/platform/cms-pages/create-a-cms-page",
-                      "api-reference/platform/cms-pages/return-a-cms-page",
-                      "api-reference/platform/cms-pages/delete-a-cms-page",
-                      "api-reference/platform/cms-pages/update-a-cms-page"
-                    ]
-                  },
-                  {
-                    "group": "CMS Sections",
-                    "pages": [
-                      "api-reference/platform/cms-sections/return-a-list-of-cms-sections",
-                      "api-reference/platform/cms-sections/create-a-cms-section",
-                      "api-reference/platform/cms-sections/return-a-cms-section",
-                      "api-reference/platform/cms-sections/delete-a-cms-section",
-                      "api-reference/platform/cms-sections/update-a-cms-section"
-                    ]
-                  },
-                  {
                     "group": "Countries",
                     "pages": [
                       "api-reference/platform/countries/returns-a-list-of-countries",
@@ -487,27 +453,6 @@
                       "api-reference/platform/line-items/return-a-line-item",
                       "api-reference/platform/line-items/delete-a-line-item",
                       "api-reference/platform/line-items/update-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Menu Items",
-                    "pages": [
-                      "api-reference/platform/menu-items/return-a-list-of-menu-items",
-                      "api-reference/platform/menu-items/create-a-menu-item",
-                      "api-reference/platform/menu-items/return-a-menu-item",
-                      "api-reference/platform/menu-items/delete-a-menu-item",
-                      "api-reference/platform/menu-items/update-a-menu-item",
-                      "api-reference/platform/menu-items/reposition-a-menu-item"
-                    ]
-                  },
-                  {
-                    "group": "Menus",
-                    "pages": [
-                      "api-reference/platform/menus/return-a-list-of-menus",
-                      "api-reference/platform/menus/create-a-menu",
-                      "api-reference/platform/menus/return-a-menu",
-                      "api-reference/platform/menus/delete-a-menu",
-                      "api-reference/platform/menus/update-a-menu"
                     ]
                   },
                   {
@@ -1309,20 +1254,6 @@
                     ]
                   },
                   {
-                    "group": "CMS Pages",
-                    "pages": [
-                      "api-reference/storefront/cms-pages/list-all-cms-pages",
-                      "api-reference/storefront/cms-pages/retrieve-a-cms-page"
-                    ]
-                  },
-                  {
-                    "group": "Menus",
-                    "pages": [
-                      "api-reference/storefront/menus/list-all-menus",
-                      "api-reference/storefront/menus/retrieve-a-menu"
-                    ]
-                  },
-                  {
                     "group": "Wishlists",
                     "pages": [
                       "api-reference/storefront/wishlists/list-all-wishlists",
@@ -1386,26 +1317,6 @@
                     ]
                   },
                   {
-                    "group": "CMS Pages",
-                    "pages": [
-                      "api-reference/platform/cms-pages/return-a-list-of-cms-pages",
-                      "api-reference/platform/cms-pages/create-a-cms-page",
-                      "api-reference/platform/cms-pages/return-a-cms-page",
-                      "api-reference/platform/cms-pages/delete-a-cms-page",
-                      "api-reference/platform/cms-pages/update-a-cms-page"
-                    ]
-                  },
-                  {
-                    "group": "CMS Sections",
-                    "pages": [
-                      "api-reference/platform/cms-sections/return-a-list-of-cms-sections",
-                      "api-reference/platform/cms-sections/create-a-cms-section",
-                      "api-reference/platform/cms-sections/return-a-cms-section",
-                      "api-reference/platform/cms-sections/delete-a-cms-section",
-                      "api-reference/platform/cms-sections/update-a-cms-section"
-                    ]
-                  },
-                  {
                     "group": "Countries",
                     "pages": [
                       "api-reference/platform/countries/returns-a-list-of-countries",
@@ -1451,27 +1362,6 @@
                       "api-reference/platform/line-items/return-a-line-item",
                       "api-reference/platform/line-items/delete-a-line-item",
                       "api-reference/platform/line-items/update-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Menu Items",
-                    "pages": [
-                      "api-reference/platform/menu-items/return-a-list-of-menu-items",
-                      "api-reference/platform/menu-items/create-a-menu-item",
-                      "api-reference/platform/menu-items/return-a-menu-item",
-                      "api-reference/platform/menu-items/delete-a-menu-item",
-                      "api-reference/platform/menu-items/update-a-menu-item",
-                      "api-reference/platform/menu-items/reposition-a-menu-item"
-                    ]
-                  },
-                  {
-                    "group": "Menus",
-                    "pages": [
-                      "api-reference/platform/menus/return-a-list-of-menus",
-                      "api-reference/platform/menus/create-a-menu",
-                      "api-reference/platform/menus/return-a-menu",
-                      "api-reference/platform/menus/delete-a-menu",
-                      "api-reference/platform/menus/update-a-menu"
                     ]
                   },
                   {
