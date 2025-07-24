@@ -53,7 +53,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       before { allow(controller).to receive(:current_store).and_return(store) }
 
       context 'when the object has no stores associated' do
-        object = Spree::Product.new
+        let(:object) { build(:product, stores: []) }
 
         it 'associates the object with the current_store' do
           controller.ensure_current_store(object)
@@ -63,24 +63,18 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when the object has a store pre assigned' do
-        object = Spree::Product.new
+        let(:object) { create(:product, stores: [store_2]) }
 
-        it 'adds the new store without removing the orgional store' do
-          object.stores << store_2
-          object.save
-
+        it 'adds the new store without removing the original store' do
           controller.ensure_current_store(object)
           expect(object.stores).to contain_exactly(store, store_2)
         end
       end
 
       context 'when the object has a store and the same store is attempted to be added' do
-        object = Spree::Product.new
+        let(:object) { create(:product, stores: [store]) }
 
         it 'object is not changed' do
-          object.stores << store
-          object.save
-
           controller.ensure_current_store(object)
           expect(object.stores).to contain_exactly(store)
         end
