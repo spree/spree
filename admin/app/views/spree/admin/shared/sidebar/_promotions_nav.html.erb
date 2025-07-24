@@ -1,17 +1,7 @@
 <% if can?(:manage, Spree::Promotion) %>
   <% discounts_active = %w[promotions gift_cards gift_card_batches coupon_codes].include?(controller_name) && @user.nil? %>
-  <li class="nav-item">
-    <%= active_link_to spree.admin_promotions_path, class: 'nav-link', active: discounts_active do %>
-      <%= icon 'discount' %>
-      <%= Spree.t(:promotions) %>
-    <% end %>
-
-    <% if discounts_active && defined?(Spree::GiftCard) && spree.respond_to?(:admin_gift_cards_path) && can?(:manage, Spree::GiftCard) %>
-      <ul class="nav-submenu">
-        <li class="nav-item">
-          <%= active_link_to Spree.t(:gift_cards), spree.admin_gift_cards_path, class: 'nav-link', active: %w[gift_cards gift_card_batches].include?(controller_name) %>
-        </li>
-      </ul>
-    <% end %>
-  </li>
+  <%= nav_item(Spree.t(:promotions), spree.admin_promotions_path, icon: 'discount', active: discounts_active) %>
+  <ul class="nav-submenu <% unless discounts_active %>d-none<% end %>">
+    <%= nav_item(Spree.t(:gift_cards), spree.admin_gift_cards_path, active: %w[gift_cards gift_card_batches].include?(controller_name)) %>
+  </ul>
 <% end %>

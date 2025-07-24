@@ -67,24 +67,16 @@
 <% else %>
   <ul class="nav flex-column">
     <% unless current_store.setup_completed? %>
-      <li class="nav-item">
-        <%= active_link_to spree.admin_getting_started_path, class: 'nav-link'  do %>
-          <%= icon 'map' %>
-          <%= Spree.t('admin.getting_started') %>
-
-          <span class="badge ml-auto badge-info">
-            <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
-          </span>
-        <% end %>
-      </li>
+      <%= nav_item(nil, spree.admin_getting_started_path, icon: 'map') do %>
+        <%= icon 'map' %>
+        <%= Spree.t('admin.getting_started') %>
+        <span class="badge ml-auto badge-info">
+          <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
+        </span>
+      <% end %>
     <% end %>
 
-    <li class="nav-item">
-      <%= active_link_to spree.admin_path, class: 'nav-link', active: controller_name == 'dashboard' && action_name == 'show' do %>
-        <%= icon 'home' %>
-        <%= Spree.t(:home) %>
-      <% end %>
-    </li>
+    <%= nav_item(Spree.t(:home), spree.admin_path, icon: 'home', active: controller_name == 'dashboard' && action_name == 'show') %>
 
     <%= render 'spree/admin/shared/sidebar/orders_nav' %>
     <%= render 'spree/admin/shared/sidebar/returns_nav' %>
@@ -92,26 +84,14 @@
     <%= render 'spree/admin/shared/sidebar/vendors_nav' %>
 
     <% if can?(:manage, Spree.user_class) %>
-      <li class="nav-item">
-        <%= active_link_to spree.admin_users_path, class: 'nav-link' do %>
-          <%= icon 'users' %>
-          <%= Spree.t(:customers) %>
-        <% end %>
-      </li>
+      <%= nav_item(Spree.t(:customers), spree.admin_users_path, icon: 'users') %>
     <% end %>
 
     <%= render 'spree/admin/shared/sidebar/promotions_nav' %>
 
     <% if can?(:manage, Spree::Report) %>
-      <li class="nav-item">
-        <%= active_link_to spree.admin_reports_path, class: 'nav-link' do %>
-          <%= icon 'chart-bar' %>
-          <%= Spree.t(:reports) %>
-        <% end %>
-      </li>
+      <%= nav_item(Spree.t(:reports), spree.admin_reports_path, icon: 'chart-bar') %>
     <% end %>
-
-    <%= render 'spree/admin/shared/sidebar/custom_nav' %>
 
     <%= render_admin_partials(:store_nav_partials) %>
 
