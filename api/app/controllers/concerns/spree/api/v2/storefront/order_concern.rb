@@ -18,7 +18,7 @@ module Spree
           end
 
           def order_token
-            request.headers['X-Vendo-Order-Token'] || request.headers['X-Spree-Order-Token'] || params[:order_token]
+            request.headers['X-Spree-Order-Token'] || params[:order_token]
           end
 
           def spree_current_order
