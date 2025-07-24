@@ -8,6 +8,7 @@
       <% if can?(:manage, Spree::ReturnAuthorization) %>
         <%= nav_item(Spree.t(:return_authorizations), spree.admin_return_authorizations_path) %>
       <% end %>
+      <%= render_admin_partials(:returns_nav_partials) %>
     </ul>
   <% end %>
 <% end %>
