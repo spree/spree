@@ -21,7 +21,7 @@
 
     <%= invite_vendor_button(class: 'dropdown-item') if defined?(invite_vendor_button) %>
 
-    <% if can?(:create, Spree::Store) %>
+    <% if can?(:create, Spree::Store) && Spree.root_domain.present? %>
       <div class="dropdown-divider"></div>
 
       <span data-toggle="modal" data-target="#modal-lg">

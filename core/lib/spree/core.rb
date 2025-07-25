@@ -91,7 +91,7 @@ module Spree
   end
 
   def self.root_domain
-    @@root_domain ||= Rails.application.routes.default_url_options[:host] || 'lvh.me'
+    @@root_domain
   end
 
   def self.queues

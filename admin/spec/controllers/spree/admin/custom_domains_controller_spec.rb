@@ -7,6 +7,26 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
 
   let(:store) { Spree::Store.default }
 
+  describe '#index' do
+    subject { get :index, format: :html }
+
+    it 'renders index template' do
+      subject
+      expect(response).to have_http_status(:ok)
+      expect(response).to render_template(:index)
+    end
+
+    context 'with custom domains' do
+      let!(:custom_domain) { create(:custom_domain, store: store) }
+
+      it 'renders index template' do
+        subject
+        expect(response).to have_http_status(:ok)
+        expect(response).to render_template(:index)
+      end
+    end
+  end
+
   describe '#new' do
     subject { get :new, format: :html }
 

@@ -8,6 +8,7 @@ describe 'Store admin', type: :feature, js: true do
   let!(:zone) { create(:zone, name: 'EU_VAT') }
 
   before do
+    allow(Spree).to receive(:root_domain).and_return('lvh.me')
     allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(admin_user)
   end
 

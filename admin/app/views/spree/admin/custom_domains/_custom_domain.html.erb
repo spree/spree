@@ -4,10 +4,8 @@
     <%= active_badge(custom_domain.active?) %>
   </td>
 
-  <% unless entri_enabled? %>
-    <td><%= active_badge(custom_domain.default?) %></td>
-    <td class="actions">
-      <%= link_to_edit(custom_domain, no_text: true, url: spree.edit_admin_custom_domain_path(custom_domain), data: { turbo: false }) %>
-    </td>
-  <% end %>
+  <td><%= active_badge(custom_domain.default?) %></td>
+  <td class="actions">
+    <%= link_to_edit(custom_domain, no_text: true, url: spree.edit_admin_custom_domain_path(custom_domain), data: { turbo: false }) %>
+  </td>
 </tr>
