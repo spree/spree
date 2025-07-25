@@ -15,6 +15,8 @@ describe Spree::Admin::StoresController do
 
     store.add_user(user)
     store.add_user(user2)
+
+    allow(Spree).to receive(:root_domain).and_return('lvh.me')
   end
 
   describe 'POST #create' do
