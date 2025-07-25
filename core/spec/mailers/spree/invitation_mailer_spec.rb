@@ -32,6 +32,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
     end
 
     it 'includes the invitation link in the body' do
+      expect(mail.body.encoded).to include(Spree.t(:accept))
       expect(mail.body.encoded).to include("http://test.com/admin/invitations/#{invitation.id}?token=#{invitation.token}")
     end
   end

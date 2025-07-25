@@ -10,7 +10,7 @@
 
 <% if spree.respond_to?(:admin_invitation_url) %>
   <p>
-    <%= link_to Spree.t('invitation_mailer.invitation_email.link_text'), spree.admin_invitation_url(@invitation, token: @invitation.token, host: @invitation.store.formatted_url) %>
+    <%= link_to Spree.t(:accept), spree.admin_invitation_url(@invitation, token: @invitation.token, host: @invitation.store.formatted_url) %>
   </p>
 <% end %>
 
