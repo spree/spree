@@ -4,12 +4,9 @@
       <thead>
         <tr>
           <th><%= Spree.t(:name) %></th>
-          <th>Active?</th>
-
-          <% unless entri_enabled? %>
-            <th>Default</th>
-            <th></th>
-          <% end %>
+          <th><%= Spree.t(:active) %>?</th>
+          <th><%= Spree.t(:default) %>?</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -18,7 +15,5 @@
     </table>
   </div>
 <% else %>
-  <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
-    You don't have any custom domains set yet.
-  </div>
+  <%= render 'spree/admin/shared/no_resource_found' %>
 <% end %>
