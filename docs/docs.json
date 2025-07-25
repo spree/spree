@@ -65,6 +65,7 @@
                       "developer/admin/admin",
                       "developer/admin/extending-ui",
                       "developer/admin/navigation",
+                      "developer/admin/authentication",
                       "developer/admin/permissions",
                       "developer/admin/helper-methods",
                       "developer/admin/custom-javascript",
@@ -97,6 +98,14 @@
                       "developer/multi-tenant/core-concepts",
                       "developer/multi-tenant/configuration"
                     ]
+                  },
+                  {
+                    "group": "Multi-Vendor",
+                    "icon": "shop",
+                    "pages": [
+                      "developer/multi-vendor/quickstart",
+                      "developer/multi-vendor/installation"
+                    ]
                   }
                 ]
               },
@@ -104,6 +113,7 @@
                 "group": "Deployment",
                 "pages": [
                   "developer/deployment/render",
+                  "developer/deployment/aws",
                   "developer/deployment/docker",
                   "developer/deployment/environment_variables",
                   "developer/deployment/emails",
