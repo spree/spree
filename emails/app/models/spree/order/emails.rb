@@ -3,7 +3,7 @@ module Spree
     module Emails
       def deliver_order_confirmation_email
         if completed?
-          OrderMailer.confirm_email(id).deliver_later
+          OrderMailer.confirm_email(id).deliver_later if store.prefers_send_consumer_transactional_emails?
           update_column(:confirmation_delivered, true)
         else
           errors.add(:base, Spree.t(:order_email_resent_error))

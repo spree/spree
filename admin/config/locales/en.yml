@@ -212,6 +212,7 @@ en:
           label: Display the company address field
         customer_support_email_help: This email is visible to your Store visitors in the Footer section
         new_order_notifications_email_help: If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to
+        send_consumer_transactional_emails_help: When unchecked, transactional emails like order confirmations and shipment notifications will not be sent to customers
       store_setup_tasks:
         add_billing_address: Add billing address
         add_products: Add products

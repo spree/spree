@@ -1855,6 +1855,7 @@ en:
     select_stores: Select Store(s)
     select_user: Select customer
     selected_quantity_not_available: selected of %{item} is not available.
+    send_consumer_transactional_emails: Send Customer Transactional Emails
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     send_message: Send message
