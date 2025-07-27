@@ -35,7 +35,7 @@
                   </button>
                 <% end%>
                 <div class="w-100">
-                  <div class="d-flex justify-content-between">
+                  <div class="d-flex justify-content-between align-items-center">
                     <h6 data-slot="optionName"><%= option_type.presentation %></h6>
                     <% if can?(:manage_option_types, @product) %>
                       <button class="btn btn-light btn-sm" type="button" data-action="variants-form#editOption" data-variants-form-option-id-param="<%= option_type.id %>"><%= Spree.t(:edit) %></button>

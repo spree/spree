@@ -27,7 +27,8 @@
     &__option {
       display: flex;
       border-bottom: 1px solid $border-color;
-      padding: 1rem 0rem;
+      padding: 0.5rem 0.5rem 1rem 0;
+      margin-bottom: 0.5rem;
 
       .label {
         margin-bottom: 0.5rem;
@@ -57,6 +58,9 @@
 
       &--new {
         padding-left: calc(1.13px + 3.25rem);
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0.5rem;
 
         .values-inputs {
           display: flex;
