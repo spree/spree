@@ -261,7 +261,7 @@ module Spree
 
     @@tax_category_attributes = [:name, :tax_code,:description, :is_default]
 
-    @@tax_rate_attributes = [:name, :amount, :zone_id, :tax_category_id, :included_in_price, :show_rate_in_label, :calculator_type, calculator_attributes: {}]
+    @@tax_rate_attributes = [:name, :amount, :amount_percentage, :zone_id, :tax_category_id, :included_in_price, :show_rate_in_label, :calculator_type, calculator_attributes: {}]
 
     @@taxon_attributes = [
       :name, :parent_id, :position, :icon, :description, :permalink, :hide_from_nav,

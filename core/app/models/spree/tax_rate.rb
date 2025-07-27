@@ -33,6 +33,17 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[amount zone_id tax_category_id included_in_price name]
 
+    # Virtual attribute for percentage display in admin forms
+    def amount_percentage
+      return nil if amount.nil?
+
+      (amount * 100).round(2)
+    end
+
+    def amount_percentage=(value)
+      self.amount = value.present? ? (value.to_f / 100) : nil
+    end
+
     # Gets the array of TaxRates appropriate for the specified tax zone
     def self.match(order_tax_zone)
       return [] unless order_tax_zone

@@ -4,7 +4,8 @@
       "Bash(rm:*)",
       "Bash(find:*)",
       "Bash(bundle exec rspec:*)",
-      "Bash(bundle exec rails c:*)"
+      "Bash(bundle exec rails c:*)",
+      "Bash(ruby test:*)"
     ],
     "deny": []
   }
