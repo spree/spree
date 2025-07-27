@@ -19,6 +19,17 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
+    context 'when send_consumer_transactional_emails store setting is set to false' do
+      before do
+        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
+      end
+
+      it 'does not send order confirmation email to customer' do
+        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+        order.finalize!
+      end
+    end
+
     it 'sets confirmation delivered when finalizing' do
       expect(order.confirmation_delivered?).to be false
       order.finalize!
@@ -46,6 +57,40 @@ describe Spree::Order, type: :model do
         mail_message = double 'Mail::Message'
         expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
         order.finalize!
+      end
+    end
+  end
+
+  describe '#deliver_order_confirmation_email' do
+    let(:order) { create(:completed_order_with_totals, email: 'test@example.com', store: store) }
+
+    context 'when send_consumer_transactional_emails store setting is enabled' do
+      before do
+        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(true)
+      end
+
+      it 'sends order confirmation email' do
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return(mail_message)
+        expect(mail_message).to receive(:deliver_later)
+        order.deliver_order_confirmation_email
+      end
+    end
+
+    context 'when send_consumer_transactional_emails store setting is disabled' do
+      before do
+        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
+      end
+
+      it 'does not send order confirmation email' do
+        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+        order.deliver_order_confirmation_email
+      end
+
+      it 'still sets confirmation_delivered to true' do
+        expect(order.confirmation_delivered?).to be false
+        order.deliver_order_confirmation_email
+        expect(order.confirmation_delivered?).to be true
       end
     end
   end

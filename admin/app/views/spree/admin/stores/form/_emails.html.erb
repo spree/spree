@@ -6,6 +6,23 @@
   <div class="col-lg-6 offset-lg-3">
     <div class="card mb-4">
       <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:settings) %></h5>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :preferred_send_consumer_transactional_emails, class: 'custom-control-input' %>
+            <%= f.label :preferred_send_consumer_transactional_emails, Spree.t(:send_consumer_transactional_emails), class: 'custom-control-label' %>
+            <small class="form-text text-muted mt-2">
+              <%= Spree.t('admin.store_form.send_consumer_transactional_emails_help') %>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
         <h5 class="card-title">Email addresses</h5>
       </div>
       <div class="card-body">
