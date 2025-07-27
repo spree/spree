@@ -93,4 +93,46 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
       expect(tax_rate.reload).to be_deleted
     end
   end
+
+  describe 'percentage conversion in forms' do
+    let!(:zone) { create(:zone) }
+    let!(:tax_category) { create(:tax_category) }
+    let!(:calculator) { Spree::TaxRate.calculators.first }
+
+    describe 'POST #create with percentage' do
+      let(:tax_rate_params) do
+        {
+          name: 'Sales Tax',
+          amount_percentage: 8.25,
+          zone_id: zone.id,
+          tax_category_id: tax_category.id,
+          calculator_type: calculator.name
+        }
+      end
+
+      let(:tax_rate) { Spree::TaxRate.last }
+
+      it 'creates tax rate with decimal amount from percentage' do
+        post :create, params: { tax_rate: tax_rate_params }
+
+        expect(response).to redirect_to(spree.edit_admin_tax_rate_path(tax_rate))
+        expect(tax_rate).to be_persisted
+        expect(tax_rate.name).to eq('Sales Tax')
+        expect(tax_rate.amount).to eq(0.0825)
+        expect(tax_rate.amount_percentage).to eq(8.25)
+      end
+    end
+
+    describe 'PUT #update with percentage' do
+      let!(:tax_rate) { create(:tax_rate, amount: 0.05) }
+
+      it 'updates tax rate amount from percentage' do
+        put :update, params: { id: tax_rate.id, tax_rate: { amount_percentage: 10.5 } }
+
+        expect(response).to redirect_to(spree.edit_admin_tax_rate_path(tax_rate))
+        expect(tax_rate.reload.amount).to eq(0.105)
+        expect(tax_rate.amount_percentage).to eq(10.5)
+      end
+    end
+  end
 end
