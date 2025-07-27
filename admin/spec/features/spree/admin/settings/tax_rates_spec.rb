@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.feature 'Tax rates', js: true do
+RSpec.feature 'Tax Rates', js: true do
   stub_authorization!
 
   before do
@@ -15,7 +15,7 @@ RSpec.feature 'Tax rates', js: true do
     click_on 'New Tax Rate'
 
     fill_in 'Name', with: 'New Tax Rate'
-    fill_in 'Rate', with: 0.10
+    fill_in 'Rate', with: 10
     check 'Included in Price', allow_label_click: true
     check 'Show rate in label', allow_label_click: true
     select 'Default', from: 'Tax Category'
@@ -55,7 +55,7 @@ RSpec.feature 'Tax rates', js: true do
     click_on 'Edit'
 
     fill_in 'Name', with: 'Updated Tax Rate'
-    fill_in 'Rate', with: 0.20
+    fill_in 'Rate', with: 20
     uncheck 'Included in Price', allow_label_click: true
     uncheck 'Show rate in label', allow_label_click: true
     select 'Default', from: 'Tax Category'
