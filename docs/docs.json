@@ -997,6 +997,15 @@
                   "use-case/multi-tenant/multi-brand-enterprise-model",
                   "use-case/multi-tenant/white-label-saas"
                 ]
+              },
+               {    
+                "group": "B2B Commerce",
+                "pages": [
+                  "use-case/b2b/b2b-commerce-model",
+                  "use-case/b2b/b2b-capabilities",
+                  "use-case/b2b/b2b-admin-capabilities", 
+                  "use-case/b2b/b2b-buyer-capabilities"
+                ]
               }
             ]
           }
