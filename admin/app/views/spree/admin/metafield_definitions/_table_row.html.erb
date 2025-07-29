@@ -1,0 +1,14 @@
+<tr id="<%= spree_dom_id(metafield_definition) %>">
+  <td><code><%= metafield_definition.key %></code></td>
+  <td><%= metafield_definition.name %></td>
+  <td><%= metafield_definition.owner_type.demodulize %></td>
+  <td><span class="badge badge-light"><%= metafield_definition.kind %></span></td>
+  <td>
+    <%= form_with model: metafield_definition, url: admin_metafield_definition_path(metafield_definition), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+    <% end %>
+  </td>
+  <td class="text-right">
+    <%= link_to_edit(metafield_definition) %>
+  </td>
+</tr>

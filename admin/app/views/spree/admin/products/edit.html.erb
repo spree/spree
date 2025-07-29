@@ -1,5 +1,6 @@
 <% content_for :page_actions_dropdown do %>
   <%= link_to_edit_translations(@product) %>
+  <%= link_to_edit_metafields(@product) %>
   <%= link_to_with_icon(
     "files",
     Spree.t(:digital_assets),
