@@ -1,0 +1,195 @@
+---
+title: Adyen Integration Guide for iOS
+description: This guide provides step-by-step instructions for integrating Adyen iOS Drop-in with spree_adyen using session flow and Drop-In component.
+---
+
+<Warning>
+This guide is aimed at advanced users who want to create adyen integration for their custom iOS application.
+You also need to install Spree Adyen extension before.
+</Warning>
+
+## Requirements
+
+- Adyen test account
+- Set up `spree_adyen` spree extension
+
+### return_url
+
+spree_adyen needs to be configured with `return_url`
+Return url tells where shopper should be redirect after the payment from outside your application (for example klarna or most of others buy now pay later systems).
+Use the custom URL for your app, like `my-app://adyen`. Url can contain custom query params however do not include any personally identifiable information (PII) of your customer. Maximum length of the url is 1024 characters.
+
+## Note
+
+The list of available library versions can be found on [Official Adyen Documentation for iOS integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=iOS&integration=Drop-in&version=5.13.1)
+Current newest version available at the moment of writing the tutorial is 5.19.2.
+This doc will be referring to the library version as YOUR_VERSION.
+
+## Resources
+
+- [Official Adyen Documentation for iOS integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=iOS&integration=Drop-in&version=5.19.2)
+- Spree Adyen API docs - [create payment_session](/api-reference/storefront/adyen/create-an-adyen-payment-session) and [get payment_session](/api-reference/storefront/adyen/get-adyen-payment-session)
+- [Official Adyen example for iOS integration](https://github.com/Adyen/adyen-ios/tree/develop/Demo)
+- Apple Developer documentation on [defining custom url scheme](https://developer.apple.com/documentation/xcode/defining-a-custom-url-scheme-for-your-app)
+
+## Overview
+
+The integration consists of two main components:
+
+- **Spree Adyen**: Provides API for your client and receive payment result from Adyen
+- **Your iOS client app**: Shows the Drop-in UI and handles payment flow
+
+## Step 1: Install adyen with Swift Package Manager
+
+repository URL:
+```
+https://github.com/Adyen/adyen-ios
+```
+use at least version 5.0.0
+
+CocoaPods and Carthage instructions are available [here](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=iOS&integration=Drop-in&version=5.19.2&tab=cocoapods_1_2#1-get-adyen-ios).
+```
+
+## Step 2: Create the context
+
+Create the instance of APIContext that includes client key and environment setting.
+
+```swift
+	// Set the client key and environment in an instance of APIContext.
+	let apiContext = APIContext(clientKey: clientKey, environment: Environment.test) // Set the environment to a live one when going live.
+	// Create the amount with the value in minor units and the currency code.
+	let amount = Amount(value: 1000, currencyCode: "EUR")
+	// Create the payment object with the amount and country code.
+	let payment = Payment(amount: amount, countryCode: "NL")
+	// Create an instance of AdyenContext, passing the instance of APIContext, and payment object.
+	let adyenContext = AdyenContext(apiContext: apiContext, payment:payment)
+```
+
+`environment` - Environment.test or Environment.live
+`clientKey` - `client_key` from payment_sessions endpoint
+
+## Step 3: Create and set up session
+
+Create a session using [payment_session endpoint](/api-reference/storefront/adyen/create-an-adyen-payment-session).
+Then set a configuration using data from the response:
+
+```swift
+	let configuration = AdyenSession.Configuration(sessionIdentifier: sessionId,
+	                                               initialSessionData: data)
+```
+
+- `data` - available as `adyen_data` in payment_session API response
+- `sessionId` - available as `adyen_id` in payment_session API response
+
+With the configuration you initialize AdyenSession:
+
+```swift
+	AdyenSession.initialize(with: configuration, delegate: self, presentationDelegate: self) { [weak self] result in
+	        switch result {
+	        case let .success(session):
+	            //Store the session object.
+	            self?.session = session
+	        case let .failure(error):
+	            //Handle the error.
+	        }
+	    }
+```
+
+## Step 4. Configure Drop-in
+
+```swift
+	let dropInConfiguration = DropInComponent.Configuration()
+	// Some payment methods have additional required or optional configuration.
+	// For example, an optional configuration to show the cardholder name field for cards.
+	dropInConfiguration.card.showsHolderNameField = true
+```
+
+## Step 5: Initialize the DropInComponent class
+
+```swift
+	let dropInComponent = DropInComponent(paymentMethods: session.sessionContext.paymentMethods,
+	                                      context: adyenContext,
+	                                      configuration: dropInConfiguration)
+	 
+	// Keep the instance of Drop-in to so that it doesn't get destroyed after the function is executed.
+	self.dropInComponent = dropInComponent
+	 
+	// Set the session as the delegate.
+	dropInComponent.delegate = session
+	// If you support gift cards, set the session as the partial payment delegate.
+	dropInComponent.partialPaymentDelegate = session
+```
+
+## Step 6: Show Drop-in in your app
+
+```
+myCheckoutViewController.present(dropInComponent.viewController, animated: true)
+```
+
+If the `action` field is `redirect` you need to handle the redirect result.
+
+## Step 7. Handling the redirect result
+
+If the `action` field returns `redirect` the shopper is completing the payment outside of your application. You need to inform the Drop-in when the shopper returns to your app.
+
+Here an example for a Custom Url scheme:
+- implement the following in your `UIApplicationDelegate`:
+
+```swift
+	func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+	    return RedirectComponent.applicationDidOpen(from: url)
+	}
+```
+
+for Universal URL use this instead:
+```swift
+	func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+	    guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+	            let incomingURL = userActivity.webpageURL else { return false }
+	    return RedirectComponent.applicationDidOpen(from: incomingURL)
+	}
+```
+
+## Step 8: Show the shopper result of the payment
+
+When the payment flow is finished, your instance of AdyenSession calls the didComplete method.
+Implement the following in your Drop-in configuration object.
+
+```swift
+	func didComplete(with result: AdyenSessionResult, // The session result.
+	                 component: Component, // The Drop-in component.
+	                 session: AdyenSession) // Your instance of AdyenSession.
+```
+
+Use the resultCode to inform your shopper about the current payment status.
+Possible resultCode values:
+- `authorised` - payment authorised
+- `refused` - payment refused
+- `pending` - payment pending (for payments with asynchronous flow like iDEAL). When the shopper completes the payment webhook will process process the payment.
+- `cancelled` - payment canceled
+- `received` - some payments needs more time to be processed. When the status is available webhook will process the payment
+- `error` - an error occured when processing the payment. The response contains more details with the error code
+  Your instance of AdyenSession calls the didFail method containing the error.
+	```swift
+	func didFail(with error: Error, // The error object.
+	             from component: Component, // The Drop-in component.
+	             session: AdyenSession) // Your instance of AdyenSession.
+	```
+
+## Step 8: Continue shopping experience
+
+1. Wait for backend to process the payment
+2. Continue shopping experience
+
+### 1. Wait for backend to process the payment
+
+backend after receiving webhook will change the state of `payment_session` to one of the following state:
+- `pending` - chosen payment method can take a while to complete
+- `completed` - payment resulted in success, order completed
+- `canceled` - payment canceled, payment is `void`
+- `refused` - payment failed
+
+### 2. Continue shopping experience
+
+if succeed - order is processed and completed
+if failed - payment can be retried using new payment session
