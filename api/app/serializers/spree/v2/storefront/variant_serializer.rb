@@ -6,7 +6,7 @@ module Spree
 
         set_type :variant
 
-        attributes :sku, :barcode, :weight, :height, :width, :depth, :is_master, :options_text, :public_metadata
+        attributes :sku, :barcode, :weight, :height, :width, :depth, :is_master, :options_text, :options, :public_metadata
 
         attribute :purchasable do |variant|
           variant.purchasable?
