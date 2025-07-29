@@ -4,7 +4,7 @@ module Spree
       def link_to_edit_metafields(resource, classes: 'text-left dropdown-item')
         return unless resource.class.included_modules.include?(Spree::Metadata)
         return unless Spree::MetafieldDefinition.for_owner_type(resource.class.to_s).exists?
-        
+
         link_to_with_icon(
           'tag',
           Spree.t('metafields.nav.metafields'),
@@ -22,6 +22,14 @@ module Spree
           existing_metafield = resource.metafields.find { |mf| mf.metafield_definition_id == definition.id }
           existing_metafield || resource.metafields.build(metafield_definition: definition)
         end
+      end
+
+      def metafield_definition_owner_types
+        Rails.application.config.spree.metafield_enabled_resources.map(&:to_s)
+      end
+
+      def metafield_definition_kinds
+        Spree::MetafieldDefinition::AVAILABLE_KINDS
       end
     end
   end

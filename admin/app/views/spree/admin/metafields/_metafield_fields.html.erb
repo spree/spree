@@ -8,7 +8,7 @@
       <% if metafield_definition.description.present? %>
         <small class="text-muted"><%= metafield_definition.description %></small>
       <% end %>
-      <small class="text-muted"><code><%= metafield_definition.key %></code></small>
+      <small class="text-muted mt-2"><code><%= metafield_definition.key %></code></small>
     </div>
   </td>
   
@@ -16,9 +16,7 @@
     <div class="form-group">
       <!-- Short Text input -->
       <% if metafield_definition.kind == 'short_text' %>
-        <%= f.text_field :value, 
-            class: "form-control", 
-            placeholder: Spree.t('metafields.form.short_text_placeholder') %>
+        <%= f.text_field :value, class: "form-control" %>
       <% end %>
       
       <!-- Long Text input -->
@@ -26,15 +24,12 @@
         <%= f.text_area :value, 
             class: "form-control", 
             rows: 3,
-            data: { controller: 'textarea-autogrow' },
-            placeholder: Spree.t('metafields.form.long_text_placeholder') %>
+            data: { controller: 'textarea-autogrow' } %>
       <% end %>
       
       <!-- Number input -->
       <% if metafield_definition.kind == 'number' %>
-        <%= f.number_field :value, 
-            class: "form-control", 
-            placeholder: Spree.t('metafields.form.number_placeholder') %>
+        <%= f.number_field :value, class: "form-control" %>
       <% end %>
       
       <!-- Boolean input -->
@@ -46,34 +41,21 @@
               [Spree.t('metafields.form.false'), 'false']
             ], f.object.value.to_s),
             { include_blank: false },
-            { class: "form-control" } %>
+            { class: "custom-select" } %>
       <% end %>
       
       <!-- JSON input -->
       <% if metafield_definition.kind == 'json' %>
-        <%= f.text_area :value, 
-            class: "form-control", 
-            rows: 2,
-            placeholder: Spree.t('metafields.form.json_placeholder') %>
+        <%= f.text_area :value, class: "form-control", rows: 2 %>
       <% end %>
       
       <!-- Rich Text input -->
       <% if metafield_definition.kind == 'rich_text' %>
         <div class="trix-container">
-          <%= f.rich_text_area :value, 
-              placeholder: Spree.t('metafields.form.rich_text_placeholder') %>
+          <%= f.rich_text_area :value %>
         </div>
       <% end %>
     </div>
   </td>
-  
-  <td class="w-10 align-top pt-3">
-    <span class="badge badge-secondary"><%= Spree.t("metafields.form.#{metafield_definition.kind}") %></span>
-  </td>
-  
-  <td class="w-15 align-top pt-3">
-    <span class="badge badge-<%= metafield_definition.display_on == 'back_end' ? 'secondary' : 'success' %>">
-      <%= Spree.t("metafields.form.#{metafield_definition.display_on}") %>
-    </span>
-  </td>
+
 </tr>

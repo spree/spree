@@ -27,18 +27,18 @@
     <div class="form-group">
       <%= f.label :owner_type, Spree.t(:owner_type) %>
       <%= f.select :owner_type, 
-          options_for_select(Spree::MetafieldDefinition.available_owner_types.map { |type| [type.demodulize, type] }, f.object.owner_type),
+          options_for_select(metafield_definition_owner_types.map { |type| [type.demodulize, type] }, f.object.owner_type),
           { include_blank: Spree.t(:select_owner_type) },
-          { class: 'form-control', required: true } %>
+          { class: 'custom-select', required: true } %>
       <%= f.error_message_on :owner_type %>
     </div>
 
     <div class="form-group">
       <%= f.label :kind, Spree.t(:kind) %>
       <%= f.select :kind, 
-          options_for_select(Spree::MetafieldDefinition::AVAILABLE_KINDS.map { |kind| [Spree.t("metafield_definitions.form.#{kind}"), kind] }, f.object.kind),
+          options_for_select(metafield_definition_kinds.map { |kind| [Spree.t("metafield_definitions.form.#{kind}"), kind] }, f.object.kind),
           { include_blank: Spree.t(:select_kind) },
-          { class: 'form-control', required: true } %>
+          { class: 'custom-select', required: true } %>
       <%= f.error_message_on :kind %>
     </div>
 
@@ -47,7 +47,7 @@
       <%= f.select :display_on, 
           options_for_select(display_on_options, f.object.display_on),
           { include_blank: Spree.t(:select_display_on) },
-          { class: 'form-control', required: true } %>
+          { class: 'custom-select', required: true } %>
       <%= f.error_message_on :display_on %>
     </div>
   </div>

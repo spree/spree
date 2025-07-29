@@ -1,10 +1,9 @@
 <%= content_for :page_title do %>
-<%= Spree.t(:metafield_definitions) %>
+  <%= Spree.t(:metafield_definitions) %>
 <% end %>
 
 <%= content_for :page_actions do %>
-<%= link_to_with_icon 'plus', Spree.t(:new_metafield_definition), spree.new_admin_metafield_definition_path, 
-  class: 'btn btn-primary' %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_metafield_definition), spree.new_admin_metafield_definition_path, class: 'btn btn-primary' %>
 <% end %>
 
 <div class="card-lg">
@@ -26,14 +25,14 @@
             <tr>
               <td><code><%= definition.key %></code></td>
               <td><%= definition.name %></td>
-              <td><%= definition.owner_type %></td>
-              <td><span class="badge badge-secondary"><%= definition.kind %></span></td>
+              <td><%= definition.owner_type.demodulize %></td>
+              <td><span class="badge badge-light"><%= definition.kind %></span></td>
               <td>
                 <%= form_with model: definition, url: admin_metafield_definition_path(definition), method: :patch, data: { controller: 'auto-submit' } do |f| %>
                   <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
                 <% end %>
               </td>
-              <td>
+              <td class="text-right">
                 <%= link_to_edit(definition) %>
               </td>
             </tr>
@@ -42,7 +41,6 @@
       </table>
     </div>
   <% else %>
-    <%= render 'spree/admin/shared/no_resource_found', 
-        resource: Spree::MetafieldDefinition %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>
 </div>

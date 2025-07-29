@@ -11,7 +11,6 @@ module Spree
       serialize :private_metadata, coder: HashSerializer
 
       # New metafields association
-      has_many :metafield_definitions, -> { where(owner_type: self.class.name) }, as: :owner, class_name: 'Spree::MetafieldDefinition', dependent: :destroy
       has_many :metafields, as: :owner, class_name: 'Spree::Metafield', dependent: :destroy
 
       accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
