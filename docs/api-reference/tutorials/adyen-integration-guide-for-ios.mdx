@@ -168,7 +168,7 @@ Possible resultCode values:
 - `pending` - payment pending (for payments with asynchronous flow like iDEAL). When the shopper completes the payment webhook will process process the payment.
 - `cancelled` - payment canceled
 - `received` - some payments needs more time to be processed. When the status is available webhook will process the payment
-- `error` - an error occured when processing the payment. The response contains more details with the error code
+- `error` - an error occurred when processing the payment. The response contains more details with the error code
   Your instance of AdyenSession calls the didFail method containing the error.
   ```swift
   func didFail(with error: Error, // The error object.
