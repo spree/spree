@@ -54,14 +54,14 @@ CocoaPods and Carthage instructions are available [here](https://docs.adyen.com/
 Create the instance of APIContext that includes client key and environment setting.
 
 ```swift
-	// Set the client key and environment in an instance of APIContext.
-	let apiContext = APIContext(clientKey: clientKey, environment: Environment.test) // Set the environment to a live one when going live.
-	// Create the amount with the value in minor units and the currency code.
-	let amount = Amount(value: 1000, currencyCode: "EUR")
-	// Create the payment object with the amount and country code.
-	let payment = Payment(amount: amount, countryCode: "NL")
-	// Create an instance of AdyenContext, passing the instance of APIContext, and payment object.
-	let adyenContext = AdyenContext(apiContext: apiContext, payment:payment)
+// Set the client key and environment in an instance of APIContext.
+let apiContext = APIContext(clientKey: clientKey, environment: Environment.test) // Set the environment to a live one when going live.
+// Create the amount with the value in minor units and the currency code.
+let amount = Amount(value: 1000, currencyCode: "EUR")
+// Create the payment object with the amount and country code.
+let payment = Payment(amount: amount, countryCode: "NL")
+// Create an instance of AdyenContext, passing the instance of APIContext, and payment object.
+let adyenContext = AdyenContext(apiContext: apiContext, payment:payment)
 ```
 
 `environment` - Environment.test or Environment.live
@@ -73,8 +73,8 @@ Create a session using [payment_session endpoint](/api-reference/storefront/adye
 Then set a configuration using data from the response:
 
 ```swift
-	let configuration = AdyenSession.Configuration(sessionIdentifier: sessionId,
-	                                               initialSessionData: data)
+let configuration = AdyenSession.Configuration(sessionIdentifier: sessionId,
+			  																				initialSessionData: data)
 ```
 
 - `data` - available as `adyen_data` in payment_session API response
@@ -83,40 +83,40 @@ Then set a configuration using data from the response:
 With the configuration you initialize AdyenSession:
 
 ```swift
-	AdyenSession.initialize(with: configuration, delegate: self, presentationDelegate: self) { [weak self] result in
-	        switch result {
-	        case let .success(session):
-	            //Store the session object.
-	            self?.session = session
-	        case let .failure(error):
-	            //Handle the error.
-	        }
-	    }
+AdyenSession.initialize(with: configuration, delegate: self, presentationDelegate: self) { [weak self] result in
+				switch result {
+				case let .success(session):
+						//Store the session object.
+						self?.session = session
+				case let .failure(error):
+						//Handle the error.
+				}
+		}
 ```
 
 ## Step 4. Configure Drop-in
 
 ```swift
-	let dropInConfiguration = DropInComponent.Configuration()
-	// Some payment methods have additional required or optional configuration.
-	// For example, an optional configuration to show the cardholder name field for cards.
-	dropInConfiguration.card.showsHolderNameField = true
+let dropInConfiguration = DropInComponent.Configuration()
+// Some payment methods have additional required or optional configuration.
+// For example, an optional configuration to show the cardholder name field for cards.
+dropInConfiguration.card.showsHolderNameField = true
 ```
 
 ## Step 5: Initialize the DropInComponent class
 
 ```swift
-	let dropInComponent = DropInComponent(paymentMethods: session.sessionContext.paymentMethods,
-	                                      context: adyenContext,
-	                                      configuration: dropInConfiguration)
-	 
-	// Keep the instance of Drop-in to so that it doesn't get destroyed after the function is executed.
-	self.dropInComponent = dropInComponent
-	 
-	// Set the session as the delegate.
-	dropInComponent.delegate = session
-	// If you support gift cards, set the session as the partial payment delegate.
-	dropInComponent.partialPaymentDelegate = session
+let dropInComponent = DropInComponent(paymentMethods: session.sessionContext.paymentMethods,
+																			context: adyenContext,
+																			configuration: dropInConfiguration)
+	
+// Keep the instance of Drop-in to so that it doesn't get destroyed after the function is executed.
+self.dropInComponent = dropInComponent
+	
+// Set the session as the delegate.
+dropInComponent.delegate = session
+// If you support gift cards, set the session as the partial payment delegate.
+dropInComponent.partialPaymentDelegate = session
 ```
 
 ## Step 6: Show Drop-in in your app
@@ -135,18 +135,18 @@ Here an example for a Custom Url scheme:
 - implement the following in your `UIApplicationDelegate`:
 
 ```swift
-	func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-	    return RedirectComponent.applicationDidOpen(from: url)
-	}
+func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+		return RedirectComponent.applicationDidOpen(from: url)
+}
 ```
 
 for Universal URL use this instead:
 ```swift
-	func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-	    guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-	            let incomingURL = userActivity.webpageURL else { return false }
-	    return RedirectComponent.applicationDidOpen(from: incomingURL)
-	}
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+		guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+						let incomingURL = userActivity.webpageURL else { return false }
+		return RedirectComponent.applicationDidOpen(from: incomingURL)
+}
 ```
 
 ## Step 8: Show the shopper result of the payment
@@ -155,9 +155,9 @@ When the payment flow is finished, your instance of AdyenSession calls the didCo
 Implement the following in your Drop-in configuration object.
 
 ```swift
-	func didComplete(with result: AdyenSessionResult, // The session result.
-	                 component: Component, // The Drop-in component.
-	                 session: AdyenSession) // Your instance of AdyenSession.
+func didComplete(with result: AdyenSessionResult, // The session result.
+									component: Component, // The Drop-in component.
+									session: AdyenSession) // Your instance of AdyenSession.
 ```
 
 Use the resultCode to inform your shopper about the current payment status.
