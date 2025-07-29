@@ -67,7 +67,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp
-      - install_libvips
       - bundle_install
       - run:
           name: Run tests
