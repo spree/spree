@@ -15,15 +15,16 @@ You also need to install Spree Adyen extension before.
 
 ### return_url
 
-spree_adyen needs to be configured with `return_url`
+spree_adyen needs to be configured with `return_url`.
+
 Return url tells where shopper should be redirect after the payment from outside your application (for example klarna or most of others buy now pay later systems).
+
 Use the custom URL for your app, like `my-app://adyen`. Url can contain custom query params however do not include any personally identifiable information (PII) of your customer. Maximum length of the url is 1024 characters.
 
 ## Note
 
 The list of available library versions can be found on [Official Adyen Documentation for iOS integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=iOS&integration=Drop-in&version=5.13.1)
 Current newest version available at the moment of writing the tutorial is 5.19.2.
-This doc will be referring to the library version as YOUR_VERSION.
 
 ## Resources
 
@@ -191,4 +192,5 @@ backend after receiving webhook will change the state of `payment_session` to on
 ### 2. Continue shopping experience
 
 if succeed - order is processed and completed
+
 if failed - payment can be retried using new payment session
