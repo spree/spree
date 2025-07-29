@@ -1,0 +1,48 @@
+<%= content_for :page_title do %>
+<%= Spree.t(:metafield_definitions) %>
+<% end %>
+
+<%= content_for :page_actions do %>
+<%= link_to_with_icon 'plus', Spree.t(:new_metafield_definition), spree.new_admin_metafield_definition_path, 
+  class: 'btn btn-primary' %>
+<% end %>
+
+<div class="card-lg">
+  <% if @metafield_definitions.any? %>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:key) %></th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:owner_type) %></th>
+            <th><%= Spree.t(:kind) %></th>
+            <th><%= Spree.t(:display_on) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @metafield_definitions.each do |definition| %>
+            <tr>
+              <td><code><%= definition.key %></code></td>
+              <td><%= definition.name %></td>
+              <td><%= definition.owner_type %></td>
+              <td><span class="badge badge-secondary"><%= definition.kind %></span></td>
+              <td>
+                <%= form_with model: definition, url: admin_metafield_definition_path(definition), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+                  <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to_edit(definition) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found', 
+        resource: Spree::MetafieldDefinition %>
+  <% end %>
+</div>

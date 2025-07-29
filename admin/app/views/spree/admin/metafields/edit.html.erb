@@ -1,0 +1,52 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button @back_path %>
+  <%= Spree.t('metafields.index.title', resource: @resource_name) %>
+<% end %>
+
+<div class="row">
+  <div class="col-md-12">
+    <% unless @has_definitions %>
+      <div class="alert alert-info">
+        <h5><%= Spree.t('metafields.no_definitions.title') %></h5>
+        <p><%= Spree.t('metafields.no_definitions.message', resource_type: @resource.class.model_name.human) %></p>
+        <%= link_to Spree.t('metafields.no_definitions.create_definitions'), 
+            admin_metafield_definitions_path, 
+            class: 'btn btn-primary btn-sm' %>
+      </div>
+    <% else %>
+      <%= form_with model: @resource, url: spree.admin_metafield_path(@resource), method: :put, class: 'form-horizontal' do |f| %>
+        <div class="card mb-4">
+          <div class="card-header d-flex align-items-center justify-content-between">
+            <h5 class="card-title"><%= Spree.t('metafields.index.title_short') %></h5>
+            
+            <% if can?(:manage, Spree::MetafieldDefinition) %>
+              <%= link_to_with_icon 'tag', Spree.t('metafields.manage_definitions'), spree.admin_metafield_definitions_path, class: 'btn btn-sm btn-light' %>
+            <% end %>
+          </div>
+          <div class="card-body p-0">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><%= Spree.t('metafields.form.field_name') %></th>
+                  <th><%= Spree.t('metafields.form.value') %></th>
+                  <th><%= Spree.t('metafields.form.kind') %></th>
+                  <th><%= Spree.t('metafields.form.display_on') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= f.fields_for :metafields, sorted_metafields(@resource, display_on: params[:display_on]) do |metafield_form| %>
+                  <%= render partial: 'spree/admin/metafields/metafield_fields', locals: { f: metafield_form } %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="form-actions d-flex justify-content-between">
+          <%= turbo_save_button_tag Spree.t('actions.update') %>
+          <%= link_to Spree.t('actions.discard'), @back_path, class: 'btn btn-light', data: { turbo_frame: '_top' } %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

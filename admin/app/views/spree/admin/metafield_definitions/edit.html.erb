@@ -1,0 +1,13 @@
+<%= content_for :page_title do %>
+  <%= Spree.t(:editing_metafield_definition) %>
+<% end %>
+
+<%= form_with model: [:admin, @metafield_definition] do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @metafield_definition } %>
+      <%= render 'spree/admin/metafield_definitions/form', f: f %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+    </div>
+  </div>
+<% end %>

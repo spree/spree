@@ -43,6 +43,10 @@
       <%= nav_item(Spree.t(:stock_locations), spree.admin_stock_locations_path, icon: 'map-pin') %>
     <% end %>
 
+    <% if can?(:manage, Spree::MetafieldDefinition) %>
+      <%= nav_item(Spree.t(:metafield_definitions), spree.admin_metafield_definitions_path, icon: 'list-details') %>
+    <% end %>
+
     <% if can?(:manage, Spree::Store) %>
       <% if spree.respond_to?(:admin_audits_path) %>
         <%= nav_item(Spree.t('admin.audit_log'), spree.admin_audits_path, icon: 'history', active: %w[audits exports imports].include?(controller_name)) %>

@@ -66,6 +66,8 @@ Always inherit from `Spree.base_class` when creating models.
 - Implement concerns for shared functionality
 - Use scopes for reusable query patterns
 - Include `Spree::Metadata` concern for models that need metadata support
+- Don't use enums, use string columns instead
+- For models that require state machine, please use https://github.com/state-machines/state_machines-activerecord gem, default column should be `status`, legacy models use `state`
 
 ```ruby
 # ✅ Good model structure
@@ -150,6 +152,7 @@ This will create a dummy rails application and run migrations. If there's alread
 - Use Spree's factory bot definitions
 - For controller specs always add `render_views` to the test
 - For controller spec authentication use `stub_authorization!`
+- Don't create test scenarios for standard rails validation, only for custom validations
 
 ```ruby
 # ✅ Proper spec structure
@@ -360,6 +363,10 @@ end
 ```
 
 This document should be updated as Spree evolves and new patterns emerge. Always refer to the official Spree documentation for the most current practices and guidelines.
+
+## Routes
+
+- Always use `spree.` routes engine when using routes in views and controllers
 
 ## Internationalization
 

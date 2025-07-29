@@ -5,7 +5,10 @@
       "Bash(find:*)",
       "Bash(bundle exec rspec:*)",
       "Bash(bundle exec rails c:*)",
-      "Bash(ruby test:*)"
+      "Bash(ruby test:*)",
+      "Bash(rails generate:*)",
+      "Bash(bundle exec rake:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": []
   }
