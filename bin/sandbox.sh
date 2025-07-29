@@ -33,7 +33,14 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-keeps \
   --skip-rc \
   --skip-test \
-  --skip-asset-pipeline
+  --skip-asset-pipeline \
+  --skip-docker \
+  --skip-rubocop \
+  --skip-brakeman \
+  --skip-ci \
+  --skip-kamal \
+  --skip-devcontainer \
+  --skip-solid \
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
@@ -76,9 +83,7 @@ RUBY
 bundle update
 bundle install --gemfile Gemfile --path ../vendor/bundle
 
-bin/rails importmap:install
-bin/rails turbo:install
-bin/rails stimulus:install
+bin/rails importmap:install turbo:install stimulus:install
 
 bin/rails db:drop || true
 bin/rails db:create

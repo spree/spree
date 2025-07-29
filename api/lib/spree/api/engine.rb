@@ -15,7 +15,7 @@ module Spree
       end
 
       initializer 'spree.api.checking_migrations' do
-        Migrations.new(config, engine_name).check
+        Migrations.new(config, engine_name).check unless Rails.env.test?
       end
 
       def self.root

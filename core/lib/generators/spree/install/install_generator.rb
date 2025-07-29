@@ -46,24 +46,6 @@ module Spree
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
 
-    def additional_tweaks
-      return unless File.exist? 'public/robots.txt'
-
-      append_file 'public/robots.txt', <<-ROBOTS.strip_heredoc
-        User-agent: *
-        Disallow: /checkout
-        Disallow: /cart
-        Disallow: /orders
-        Disallow: /user
-        Disallow: /account
-        Disallow: /api
-        Disallow: /password
-        Disallow: /api_tokens
-        Disallow: /cart_link
-        Disallow: /account_link
-      ROBOTS
-    end
-
     # Currently we only support devise, in the future we will also add support for default Rails authentication
     def install_authentication
       if @authentication == 'devise'
@@ -121,7 +103,6 @@ module Spree
       say_status :copying, 'migrations'
       silence_stream(STDOUT) do
         silence_warnings { rake 'active_storage:install:migrations' }
-        silence_warnings { rake 'action_mailbox:install:migrations' }
         silence_warnings { rake 'action_text:install:migrations' }
         silence_warnings { rake 'spree:install:migrations' }
         silence_warnings { rake 'spree_api:install:migrations' }
