@@ -38,12 +38,6 @@ export default class extends Controller {
     }
   }
 
-  disconnect() {
-    if (this.select) {
-      this.select.destroy()
-    }
-  }
-
   initTomSelect(options = []) {
     const settings = {
       maxOptions: 1500,
