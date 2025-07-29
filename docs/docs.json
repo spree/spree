@@ -196,7 +196,8 @@
                 "group": "Tutorials",
                 "pages": [
                   "api-reference/tutorials/quick-checkout-with-stripe",
-                  "api-reference/tutorials/adyen-integration-guide-for-android"
+                  "api-reference/tutorials/adyen-integration-guide-for-android",
+                  "api-reference/tutorials/adyen-integration-guide-for-ios"
                 ]
               },
               {
