@@ -37,8 +37,7 @@ implementation "com.adyen.checkout:drop-in:YOUR_VERSION"
 
 ## Step 2: Create a checkout session
 
-Create session model from spree_adyen API `POST /api/v2/storefront/adyen/payment_sessions` or `GET POST /api/v2/storefront/adyen/payment_sessions/{id}` endpoint:
-(see [API docs](https://spreecommerce.org/docs/api-reference/storefront/adyen/create-an-adyen-payment-session) for more details)
+Create session using [this endpoint](https://spreecommerce.org/docs/api-reference/storefront/adyen/create-an-adyen-payment-session).
 
 ```
 val sessionModel = SessionModel.SERIALIZER.deserialize(sessionsResponseJSON)
