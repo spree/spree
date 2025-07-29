@@ -8,16 +8,16 @@ This guide is aimed at advanced users who want to create adyen integration for t
 You also need to install Spree Adyen extension before.
 </Warning>
 
-
 ## Resources
 
 - [Official Adyen Documentation for Android integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=Android&integration=Drop-in&version=5.13.1)
-- Spree Adyen API docs - [create payment_session](https://spreecommerce.org/docs/api-reference/storefront/adyen/create-an-adyen-payment-session) and [GET payment_session](https://spreecommerce.org/docs/api-reference/storefront/adyen/get-an-adyen-payment-session)
-- [Offcial Adyen example for Android integration](https://github.com/adyen-examples/adyen-android-online-payments)
+- Spree Adyen API docs - [create payment_session](/api-reference/storefront/adyen/create-an-adyen-payment-session) and [get payment_session](/api-reference/storefront/adyen/get-adyen-payment-session)
+- [Official Adyen example for Android integration](https://github.com/adyen-examples/adyen-android-online-payments)
 
 ## Overview
 
 The integration consists of two main components:
+
 - **Spree Adyen**: Provides API for your client and receive payment result from Adyen
 - **Your Android client app**: Shows the Drop-in UI and handles payment flow
 
@@ -25,21 +25,23 @@ The integration consists of two main components:
 
 Import the compatibility module:
 
-import the module with Jet Compose
-```
+### Import the module with Jet Compose
+
+```bash
 implementation "com.adyen.checkout:drop-in-compose:YOUR_VERSION"
 ```
 
-import without Jet Compose
-```
+### Import without Jet Compose
+
+```bash
 implementation "com.adyen.checkout:drop-in:YOUR_VERSION"
 ```
 
 ## Step 2: Create a checkout session
 
-Create session using [this endpoint](https://spreecommerce.org/docs/api-reference/storefront/adyen/create-an-adyen-payment-session).
+Create session using [this endpoint](/api-reference/storefront/adyen/create-an-adyen-payment-session).
 
-```
+```kotlin
 val sessionModel = SessionModel.SERIALIZER.deserialize(sessionsResponseJSON)
 ```
 
@@ -47,6 +49,9 @@ sessionsResponseJSON should contain:
 - `sessionData` - available as `adyen_data` in payment_session API response
 - `id` - available as `adyen_id` in payment_session API response
 
+```kotlin
+val sessionModel = SessionModel.SERIALIZER.deserialize(sessionsResponseJSON)
+```
 
 ## Step 3
 
@@ -54,7 +59,7 @@ call `CheckoutSessionProvider.createSession` passing serialized session data (`s
 
 dropInConfiguration example:
 
-```
+```kotlin
 val checkoutConfiguration = CheckoutConfiguration(
 	    environment = environment,
 	    clientKey = clientKey,
@@ -85,7 +90,7 @@ see also: https://docs.adyen.com/online-payments/build-your-integration/sessions
 `shopperLocale` - shopper locale in ISO format
 
 
-```
+```kotlin
 	// Create an object for the checkout session.
 	val result = CheckoutSessionProvider.createSession(sessionModel, dropInConfiguration)
 	 
@@ -99,7 +104,7 @@ see also: https://docs.adyen.com/online-payments/build-your-integration/sessions
 
 ## Step 4: Launch and show Drop-in
 
-```
+```kotlin
 	override fun onDropInResult(sessionDropInResult: SessionDropInResult?) {
 	   when (sessionDropInResult) {
 	      // The payment finishes with a result.
@@ -117,12 +122,14 @@ see also: https://docs.adyen.com/online-payments/build-your-integration/sessions
 ## Step 5: Create the Drop-in launcher
 
 DropIn.startPayment, passing:
-- dropInLauncher - The Drop-in launcher object
-- checkoutSession - result of `CheckoutSessionProvider.createSession`
-- dropInConfiguration - Your Drop-in configuration
+
+- `dropInLauncher` - The Drop-in launcher object
+- `checkoutSession` - result of `CheckoutSessionProvider.createSession`
+- `dropInConfiguration` - Your Drop-in configuration
 
 Example:
-```
+
+```kotlin
 	import com.adyen.checkout.dropin.compose.startPayment
 	import com.adyen.checkout.dropin.compose.rememberLauncherForDropInResult
 	 
@@ -134,12 +141,12 @@ Example:
 	}
 ```
 
-# Get payment outcome
+## Get payment outcome
 
 1. Wait for backend to process the payment
 2. Continue shopping experience
 
-## 1. Wait for backend to process the payment
+### 1. Wait for backend to process the payment
 
 backend will change the state of `payment_session` to one of the following state
 
@@ -148,7 +155,7 @@ backend will change the state of `payment_session` to one of the following state
 - `canceled` - payment canceled, payment is `void`
 - `refused` - payment failed
 
-2. Continue shopping experience
+### 2. Continue shopping experience
 
 if succeed - order is processed and completed
 if failed - payment can be retried using new payment session
