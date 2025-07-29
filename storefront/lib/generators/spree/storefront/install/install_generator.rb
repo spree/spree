@@ -40,7 +40,7 @@ module Spree
           end
 
           # remove static robots.txt as we use robots.txt.erb
-          rm 'public/robots.txt'
+          remove_file Rails.root.join('public/robots.txt') if Rails.root && Rails.root.join('public/robots.txt').exist?
         end
       end
     end
