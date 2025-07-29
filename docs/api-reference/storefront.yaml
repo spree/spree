@@ -3808,6 +3808,17 @@ components:
             options_text:
               type: string
               example: 'Size: small, Color: red'
+            options:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  value:
+                    type: string
+                  presentation:
+                    type: string
             purchasable:
               type: boolean
               description: Indicates if Variant is in stock or backorderable
@@ -4771,6 +4782,13 @@ components:
                       depth: null
                       is_master: false
                       options_text: 'Color: white, Size: XS'
+                      options:
+                        - name: color
+                          value: white
+                          presentation: White
+                        - name: size
+                          value: XS
+                          presentation: XS
                       purchasable: true
                       in_stock: true
                       backorderable: false
@@ -5181,6 +5199,13 @@ components:
                       depth: null
                       is_master: false
                       options_text: 'Color: white, Size: XS'
+                      options:
+                        - name: color
+                          value: white
+                          presentation: White
+                        - name: size
+                          value: XS
+                          presentation: XS
                       purchasable: true
                       in_stock: true
                       backorderable: false
@@ -5979,6 +6004,13 @@ components:
                       depth: null
                       is_master: false
                       options_text: 'Color: khaki, Size: XS'
+                      options:
+                        - name: color
+                          value: khaki
+                          presentation: Khaki
+                        - name: size
+                          value: XS
+                          presentation: XS
                       purchasable: true
                       in_stock: true
                       backorderable: false
@@ -15064,6 +15096,13 @@ components:
                       depth: null
                       is_master: false
                       options_text: 'Color: beige, Size: XS'
+                      options:
+                        - name: Color
+                          value: beige
+                          presentation: Beige
+                        - name: Size
+                          value: XS
+                          presentation: XS
                       purchasable: true
                       in_stock: true
                       backorderable: false
