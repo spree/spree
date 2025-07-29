@@ -39,6 +39,13 @@ module Spree
       opts[:skip_test] = true
       opts[:skip_bootsnap] = true
       opts[:skip_asset_pipeline] = true # skip installing propshaft, we're still using sprockets as a dependency
+      opts[:skip_docker] = true
+      opts[:skip_rubocop] = true
+      opts[:skip_brakeman] = true
+      opts[:skip_ci] = true
+      opts[:skip_kamal] = true
+      opts[:skip_devcontainer] = true
+      opts[:skip_solid] = true
 
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,
@@ -73,45 +80,10 @@ module Spree
       end
     end
 
-    def test_dummy_clean
-      inside dummy_path do
-        remove_file '.gitignore'
-        remove_file 'doc'
-        remove_file 'Gemfile'
-        remove_file 'lib/tasks'
-        remove_file 'app/assets/images/rails.png'
-        remove_file 'app/assets/javascripts/application.js'
-        remove_file 'public/index.html'
-        remove_file 'public/robots.txt'
-        remove_file 'README'
-        remove_file 'test'
-        remove_file 'vendor'
-        remove_file 'spec'
-      end
-    end
-
-    def inject_content_security_policy
-      inside dummy_path do
-        inject_into_file 'config/initializers/content_security_policy.rb', %Q[
-  p.script_src  :self, :https, :unsafe_inline, :http, :unsafe_eval
-        ], before: /^end/, verbose: true
-      end
-    end
-
     attr_reader :lib_name
     attr_reader :database
 
     protected
-
-    def inject_require_for(requirement)
-      inject_into_file 'config/application.rb', %Q[
-begin
-  require '#{requirement}'
-rescue LoadError
-  # #{requirement} is not available.
-end
-      ], before: /require '#{@lib_name}'/, verbose: true
-    end
 
     def inject_yaml_permitted_classes
       inside dummy_path do
@@ -139,10 +111,6 @@ end
       end
     end
     alias store_application_definition! application_definition
-
-    def camelized
-      @camelized ||= name.gsub(/\W/, '_').squeeze('_').camelize
-    end
 
     def remove_directory_if_exists(path)
       remove_dir(path) if File.directory?(path)
