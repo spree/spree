@@ -1,0 +1,20 @@
+<%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+  <div class="card-lg">
+    <%= render 'filters' %>
+
+    <% if ransack_collection.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <%= render 'table_header' %>
+          <tbody>
+            <%= render partial: 'table_row', collection: ransack_collection, as: controller_name.singularize %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= render 'spree/admin/shared/index_table_options', collection: ransack_collection %>
+    <% else %>
+      <%= render 'spree/admin/shared/no_resource_found' %>
+    <% end %>
+  </div>
+<% end %>
