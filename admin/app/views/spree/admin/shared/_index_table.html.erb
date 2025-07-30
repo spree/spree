@@ -5,7 +5,7 @@
     <%= render 'filters' %>
 
     <% if ransack_collection.any? %>
-      <div class="table-responsive">
+      <div class="table-responsive" id="listing_<%= controller_name %>">
         <table class="table">
           <thead>
             <%= render 'table_header' %>
