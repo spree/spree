@@ -1,18 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_roles_url %>
-  <%= Spree.t(:new_role) %>
-<% end %>
-
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
-    <%= form_for [:admin, @role] do |f| %>
-      <div class="card mb-4">
-        <div class="card-body">
-          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @role } %>
-          <%= render 'form', f: f %>
-        </div>
-      </div>
-      <%= render 'spree/admin/shared/new_resource_links' %>
-    <% end %>
-  </div>
-</div>
+<%= render 'spree/admin/shared/new_resource' %>

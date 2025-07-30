@@ -1,18 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_oauth_applications_url %>
-  <%= @oauth_application.name.capitalize %>
-<% end %>
-
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
-    <%= form_for [:admin, @oauth_application] do |f| %>
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @oauth_application } %>
-      <div class="card mb-4">
-        <div class="card-body">
-          <%= render 'form', f: f %>
-        </div>
-      </div>
-      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
-    <% end %>
-  </div>
-</div>
+<%= render 'spree/admin/shared/edit_resource' %>

@@ -3,7 +3,7 @@
   <%= @object.try(:name) || @object.try(:title) || @object.try(:number) %>
 <% end %>
 
-<%= form_with model: [:admin, @object] do |f| %>
+<%= form_with model: [:admin, @object], id: "edit_#{controller_name.singularize}_#{@object.id}" do |f| %>
   <div class="row">
     <div class="col-lg-6 offset-lg-3">
       <%= render 'spree/admin/shared/error_messages', target: @object %>
