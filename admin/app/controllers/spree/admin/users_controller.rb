@@ -73,6 +73,10 @@ module Spree
         model_class.accessible_by(current_ability, :show).find(params[:id])
       end
 
+      def collection_url
+        spree.admin_users_path
+      end
+
       private
 
       def user_params

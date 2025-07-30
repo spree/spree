@@ -3,7 +3,7 @@
   <%= Spree.t("new_#{controller_name.singularize}") %>
 <% end %>
 
-<%= form_with model: [:admin, @object], id: "new_#{controller_name.singularize}" do |f| %>
+<%= form_with model: [:admin, @object], url: collection_url, id: "new_#{controller_name.singularize}" do |f| %>
   <div class="row">
     <div class="col-lg-6 offset-lg-3">
       <%= render 'spree/admin/shared/error_messages', target: @object %>

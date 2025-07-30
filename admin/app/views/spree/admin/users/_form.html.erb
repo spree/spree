@@ -1,38 +1,5 @@
-<div class="form-group">
-  <%= f.label :email, raw(Spree.t(:email) + required_span_tag) %>
-  <%= f.email_field :email, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-  <%= f.error_message_on :email %>
-</div>
-<div class="form-group">
-  <%= f.label :first_name, raw(Spree.t(:first_name) + required_span_tag) %>
-  <%= f.text_field :first_name, class: 'form-control', required: true %>
-  <%= f.error_message_on :first_name %>
-</div>
-<div class="form-group">
-  <%= f.label :last_name, raw(Spree.t(:last_name) + required_span_tag) %>
-  <%= f.text_field :last_name, class: 'form-control', required: true %>
-  <%= f.error_message_on :last_name %>
-</div>
-<div class="form-group">
-  <%= f.label :phone, Spree.t(:phone) %>
-  <%= f.text_field :phone, class: 'form-control' %>
-  <%= f.error_message_on :phone %>
-</div>
-<div class="form-group">
-  <%= f.label :tag_list, Spree.t(:tags) %>
-  <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-100', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
-</div>
-<% if @user.class == Spree.admin_user_class && can?(:manage, Spree::Role) %>
-  <div class="form-group">
-    <%= f.label :spree_role_ids, Spree.t(:roles) %>
-    <%= f.select :spree_role_ids,
-            options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),
-            { prompt: false },
-            { multiple: true,  data: { controller: 'autocomplete-select' } } %>          
+<div class="card mb-4">
+  <div class="card-body">
+    <%= render 'form_fields', f: f %>  
   </div>
-<% end %>
-<div class="custom-control custom-checkbox mb-3">
-  <%= f.check_box :accepts_email_marketing, class: 'custom-control-input' %>
-  <%= f.label :accepts_email_marketing, Spree.t(:accepts_email_marketing), class: 'custom-control-label' %>
-  <%= f.error_message_on :accepts_email_marketing %>
 </div>
