@@ -14,7 +14,7 @@
             class: 'btn btn-primary btn-sm' %>
       </div>
     <% else %>
-      <%= form_with model: @resource, url: spree.admin_metafield_path(@resource), method: :put, class: 'form-horizontal' do |f| %>
+      <%= form_with model: @resource, url: spree.admin_metafield_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
         <div class="card mb-4">
           <div class="card-header d-flex align-items-center justify-content-between">
             <h5 class="card-title"><%= Spree.t('metafields.index.title_short') %></h5>

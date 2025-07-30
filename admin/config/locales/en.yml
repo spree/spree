@@ -332,19 +332,6 @@ en:
           select_all: Select All
           selected_items: "%{count} selected"
           delete_selected: Delete Selected
-        messages:
-          metafield_created: Metafield created successfully
-          metafield_updated: Metafield updated successfully
-          metafield_deleted: Metafield deleted successfully
-          metafields_created: "%{count} metafields created successfully"
-          metafields_updated: "%{count} metafields updated successfully"
-          metafields_deleted: "%{count} metafields deleted successfully"
-          metafields_creation_errors: "Errors creating metafields: %{errors}"
-          metafields_update_errors: "Errors updating metafields: %{errors}"
-          model_does_not_support_metadata: This model does not support metadata
-          resource_not_found: Resource not found
-          invalid_owner_type: Invalid owner type
-          metafield_not_found: Metafield not found
         nav:
           metafields: Metafields
       metafield_definitions:
@@ -386,3 +373,5 @@ en:
           metafield_definition_not_found: Metafield definition not found
         nav:
           metafield_definitions: Metafield Definitions
+    all_owner_types: All Owner Types
+    by_owner_type: By Owner Type

@@ -1,0 +1,21 @@
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters auto-submit"} do |f| %>
+  <div class="d-flex">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:title) %>
+
+    <%= select_tag 'q[owner_type_eq]',
+          options_for_select([
+            [Spree.t(:all_owner_types), '']
+          ] + metafield_definition_owner_types.map { |type| [type.demodulize, type] }, 
+          params.dig(:q, :owner_type_eq)),
+          { 
+            include_blank: false,
+            class: 'custom-select w-20',
+            data: { 
+              filters_target: :input,
+              action: 'auto-submit#submit'
+            } 
+          } %>
+  </div>
+  <%= render "spree/admin/shared/filter_badge_template" %>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

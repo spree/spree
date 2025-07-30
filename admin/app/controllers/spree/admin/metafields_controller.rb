@@ -4,13 +4,15 @@ module Spree
       before_action :set_resource
       before_action :load_data, only: [:edit, :update]
 
+      include Spree::Admin::MetafieldsHelper
+
       def edit
         # Metafields are built automatically by the sorted_metafields helper
       end
 
       def update
         if @resource.update(permitted_metafields_params)
-          flash[:success] = Spree.t('metafields.messages.metafields_updated')
+          flash[:success] = flash_message_for(@resource, :updated)
           redirect_to edit_admin_metafield_path(@resource, resource_type: @resource.class.to_s)
         else
           render :edit, status: :unprocessable_entity
@@ -28,34 +30,9 @@ module Spree
       def resource_class
         @resource_class ||= begin
           klass = params[:resource_type]
-          allowed_resource_class.find { |allowed_class| allowed_class.to_s == klass } ||
+          metafield_definition_owner_types.find { |allowed_class| allowed_class.to_s == klass } ||
             raise(ActiveRecord::RecordNotFound, "Resource type not found")
         end
-      end
-
-      def allowed_resource_class
-        # All models that include Spree::Metadata
-        classes = [
-          Spree::Product,
-          Spree::Variant,
-          Spree::Order,
-          Spree::Store,
-          Spree::Taxon,
-          Spree::Taxonomy,
-          Spree::Address,
-          Spree::Asset,
-          Spree::LineItem,
-          Spree::Shipment,
-          Spree::Payment,
-          Spree::StockTransfer,
-          Spree::StockItem,
-          Spree::TaxRate
-        ]
-        
-        # Add user class if configured
-        classes << Spree.user_class if Spree.user_class
-        
-        classes
       end
 
       def set_resource
@@ -69,7 +46,7 @@ module Spree
       def load_data
         @resource_name = @resource.try(:name) || @resource.try(:title) || "#{@resource.class.name} ##{@resource.id}"
         @has_definitions = Spree::MetafieldDefinition.for_owner_type(@resource.class.to_s).exists?
-        
+
         @back_path = case @resource.class.name
         when 'Spree::Product'
           spree.edit_admin_product_path(@resource)
@@ -80,7 +57,7 @@ module Spree
         when Spree.user_class.to_s
           spree.edit_admin_user_path(@resource)
         when 'Spree::Store'
-          spree.edit_admin_store_path(@resource)
+          spree.edit_admin_store_path
         when 'Spree::Taxon'
           spree.edit_admin_taxonomy_taxon_path(@resource.taxonomy, @resource)
         when 'Spree::Taxonomy'

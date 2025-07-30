@@ -21,5 +21,11 @@ module Spree
     # Scopes
     #
     scope :for_owner_type, ->(owner_type) { where(owner_type: owner_type) }
+
+
+    #
+    # Ransack
+    #
+    self.whitelisted_ransackable_attributes = %w[key name owner_type kind display_on]
   end
 end
