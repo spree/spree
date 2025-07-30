@@ -3,6 +3,7 @@ module Spree
     include Spree::FilterParam
     include Spree::Metadata
     include Spree::ParameterizableName
+    include Spree::UniqueName
     include Spree::DisplayOn
     include Spree::TranslatableResource
     if defined?(Spree::Webhooks::HasWebhooks)
