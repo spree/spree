@@ -1,0 +1,14 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(collection_url) %>
+  <%= Spree.t("new_#{controller_name.singularize}") %>
+<% end %>
+
+<%= form_with model: [:admin, @object] do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render 'spree/admin/shared/error_messages', target: @object %>
+      <%= render 'spree/admin/metafield_definitions/form', f: f %>
+      <%= render 'spree/admin/shared/new_resource_links', f: f %>
+    </div>
+  </div>
+<% end %>
