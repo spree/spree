@@ -1,12 +1,23 @@
-<%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+<% sortable = local_assigns[:sortable] %>
+
+<%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
   <div class="card-lg">
     <%= render 'filters' %>
 
     <% if ransack_collection.any? %>
       <div class="table-responsive">
         <table class="table">
-          <%= render 'table_header' %>
-          <tbody>
+          <thead>
+            <%= render 'table_header' %>
+          </thead>
+          <tbody
+            <% if sortable %>
+              data-controller="sortable"
+              data-sortable-handle-value=".move-handle"
+              data-sortable-resource-name-value="<%= controller_name.singularize %>"
+              data-sortable-response-kind-value="turbo-stream"
+            <% end %>
+          >
             <%= render partial: 'table_row', collection: ransack_collection, as: controller_name.singularize %>
           </tbody>
         </table>
@@ -14,7 +25,7 @@
 
       <%= render 'spree/admin/shared/index_table_options', collection: ransack_collection %>
     <% else %>
-      <%= render 'spree/admin/shared/no_resource_found' %>
+      <%= render 'spree/admin/shared/no_resource_found', new_object_url: new_object_url %>
     <% end %>
   </div>
 <% end %>
