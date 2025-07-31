@@ -51,6 +51,14 @@ module Spree
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
 
+    store_accessor :private_metadata, :wallet
+
+    # Returns the type of wallet the card is associated with, eg. "apple_pay", "google_pay", etc.
+    # @return [String]
+    def wallet_type
+      wallet&.[]('type')
+    end
+
     # ActiveMerchant::Billing::CreditCard added this accessor used by some gateways.
     # More info: https://github.com/spree/spree/issues/6209
     #
@@ -116,6 +124,8 @@ module Spree
       @verification_value = value.to_s.gsub(/\s/, '')
     end
 
+    # Returns the last 4 digits of the card number.
+    # @return [String], eg. "4338"
     def set_last_digits
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
@@ -130,10 +140,13 @@ module Spree
     end
 
     # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
+    # @return [String]
     def display_number
       "XXXX-XXXX-XXXX-#{last_digits}"
     end
 
+    # Show the card brand, eg. "VISA", "MASTERCARD", etc.
+    # @return [String]
     def display_brand
       brand.present? ? brand.upcase : Spree.t(:no_cc_type)
     end
@@ -141,14 +154,21 @@ module Spree
     # ActiveMerchant needs first_name/last_name because we pass it a Spree::CreditCard and it calls those methods on it.
     # Looking at the ActiveMerchant source code we should probably be calling #to_active_merchant before passing
     # the object to ActiveMerchant but this should do for now.
+    #
+    # Returns the first name of the cardholder.
+    # @return [String]
     def first_name
       name.to_s.split(/[[:space:]]/, 2)[0]
     end
 
+    # Returns the last name of the cardholder.
+    # @return [String]
     def last_name
       name.to_s.split(/[[:space:]]/, 2)[1]
     end
 
+    # Returns an ActiveMerchant::Billing::CreditCard object.
+    # @return [ActiveMerchant::Billing::CreditCard]
     def to_active_merchant
       ActiveMerchant::Billing::CreditCard.new(
         number: number,
