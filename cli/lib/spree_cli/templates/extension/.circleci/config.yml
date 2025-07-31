@@ -18,7 +18,6 @@ run_tests: &run_tests
     - restore_cache:
         keys:
           - spree-bundle-{{ .Branch }}
-          - spree-bundle
     - run:
         name: Add keyserver
         command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
@@ -57,7 +56,6 @@ jobs:
       - restore_cache:
           keys:
             - spree-bundle-{{ .Branch }}
-            - spree-bundle
       - run:
           name: Add keyserver
           command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
@@ -74,7 +72,7 @@ jobs:
       - save_cache:
           paths:
             - vendor/bundle
-          key: spree-bundle-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-{{ .Branch }}
 
   tests_postgres: &tests_postgres
     <<: *run_tests
@@ -109,7 +107,6 @@ jobs:
       - restore_cache:
           keys:
             - spree-bundle-{{ .Branch }}
-            - spree-bundle
       - run:
           name: Set bundle path
           command: bundle config --local path vendor/bundle
