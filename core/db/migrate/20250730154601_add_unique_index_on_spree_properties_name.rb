@@ -1,5 +1,8 @@
 class AddUniqueIndexOnSpreePropertiesName < ActiveRecord::Migration[7.2]
   def change
+    # we don't need to run this migration in multi-tenant mode as it's already handled there
+    return if defined?(SpreeMultiTenant)
+
     # Rename duplicated properties
     duplicates = Spree::Property.select(:name).group(:name).having('COUNT(*) > 1').reorder('').pluck(:name)
 
