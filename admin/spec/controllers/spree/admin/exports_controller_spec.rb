@@ -76,4 +76,20 @@ describe Spree::Admin::ExportsController, type: :controller do
       end
     end
   end
+
+  describe '#show' do
+    let(:export) { create(:product_export, store: store) }
+
+    before do
+      allow_any_instance_of(Spree::Exports::Products).to receive_message_chain(:attachment, :url).and_return('http://example.com/test.csv')
+    end
+
+    subject { get :show, params: { id: export.id } }
+
+    it 'downloads the export' do
+      subject
+      expect(response).to have_http_status(:see_other)
+      expect(response.headers['Location']).to eq(export.attachment.url)
+    end
+  end
 end
