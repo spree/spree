@@ -26,7 +26,7 @@ describe Spree::CreditCard, type: :model do
     expect(credit_card.respond_to?(:track_data)).to be true
   end
 
-  context '#can_capture?' do
+  describe '#can_capture?' do
     shared_examples 'can be captured' do
       it 'can be captured' do
         expect(credit_card.can_capture?(payment)).to be true
@@ -54,7 +54,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#can_void?' do
+  describe '#can_void?' do
     context 'when payment is not voided' do
       before { allow(payment).to receive_messages(failed?: false, void?: false) }
 
@@ -72,7 +72,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#can_credit?' do
+  describe '#can_credit?' do
     shared_examples 'can not credit' do
       it 'can not credit' do
         expect(credit_card.can_credit?(payment)).to be false
@@ -106,7 +106,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#valid?' do
+  describe '#valid?' do
     it 'validates presence of number' do
       credit_card.attributes = valid_credit_card_attributes.except(:number)
       expect(credit_card).not_to be_valid
@@ -150,7 +150,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#save' do
+  describe '#save' do
     before do
       credit_card.attributes = valid_credit_card_attributes
       credit_card.save!
@@ -167,7 +167,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#number=' do
+  describe '#number=' do
     it 'strips non-numeric characters from card input' do
       credit_card.number = '6011000990139424'
       expect(credit_card.number).to eq('6011000990139424')
@@ -205,7 +205,7 @@ describe Spree::CreditCard, type: :model do
   end
 
   # Regression test for #3847 & #3896
-  context '#expiry=' do
+  describe '#expiry=' do
     it 'can set with a 2-digit month and year' do
       credit_card.expiry = '04 / 14'
       expect(credit_card.month).to eq(4)
@@ -246,7 +246,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#cc_type=' do
+  describe '#cc_type=' do
     it 'converts between the different types' do
       credit_card.cc_type = 'mastercard'
       expect(credit_card.cc_type).to eq('master')
@@ -299,13 +299,13 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#associations' do
+  context 'Associations' do
     it 'is able to access its payments' do
       expect { credit_card.payments.to_a }.not_to raise_error
     end
   end
 
-  context '#first_name' do
+  describe '#first_name' do
     before do
       credit_card.name = 'Ludwig van Beethoven'
     end
@@ -315,7 +315,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#last_name' do
+  describe '#last_name' do
     before do
       credit_card.name = 'Ludwig van Beethoven'
     end
@@ -325,7 +325,7 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#to_active_merchant' do
+  describe '#to_active_merchant' do
     before do
       credit_card.number = '4111111111111111'
       credit_card.year = Time.current.year
@@ -377,7 +377,7 @@ describe Spree::CreditCard, type: :model do
     expect { second.update!(default: true) }.not_to raise_error
   end
 
-  describe 'scopes' do
+  context 'Scopes' do
     describe '#not_expired' do
       let(:previous_year) { DateTime.now.year - 1 }
       let(:current_year) { DateTime.now.year }
@@ -422,8 +422,8 @@ describe Spree::CreditCard, type: :model do
     end
   end
 
-  context '#display_brand' do
-    let(:credit_card) { create(:credit_card, cc_type: cc_type, user_id: order.user_id) }
+  describe '#display_brand' do
+    let(:credit_card) { build(:credit_card, cc_type: cc_type, user_id: order.user_id) }
 
     context 'when the cc_type does not exist' do
       let(:cc_type) { nil }
@@ -435,6 +435,21 @@ describe Spree::CreditCard, type: :model do
       let(:cc_type) { 'visa' }
 
       it { expect(credit_card.display_brand).to eq(cc_type.upcase) }
+    end
+  end
+
+  describe '#wallet_type' do
+    let(:credit_card) { build(:credit_card, private_metadata: metadata) }
+    let(:metadata) { {} }
+
+    context 'when the wallet_type does not exist' do
+      it { expect(credit_card.wallet_type).to be_nil }
+    end
+
+    context 'when the wallet_type exists' do
+      let(:metadata) { { wallet: { type: 'apple_pay' } } }
+
+      it { expect(credit_card.wallet_type).to eq('apple_pay') }
     end
   end
 end
