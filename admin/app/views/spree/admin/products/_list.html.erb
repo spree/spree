@@ -15,10 +15,10 @@
                   <%= sort_link @search,
                   :name,
                   Spree.t(:name),
-                  { 
-                    default_order: "desc", 
-                    title: "admin_products_listing_name_title" 
-                  } 
+                  {
+                    default_order: "desc",
+                    title: "admin_products_listing_name_title"
+                  }
                   %>
                 </th>
                 <th scope="col" class="text-center">
@@ -30,6 +30,8 @@
                   <th scope="col" class="d-vendor"><%= Spree.t(:vendor) %></th>
                 <% end %>
                 <th scope="col"><%= Spree.t(:price) %></th>
+
+                <%= render_admin_partials(:products_table_header_partials) %>
               </tr>
             </thead>
             <tbody>
