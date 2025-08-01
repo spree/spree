@@ -44,6 +44,10 @@ module Spree
       true
     end
 
+    def name
+      url
+    end
+
     private
 
     # remove https:// and http:// from the url

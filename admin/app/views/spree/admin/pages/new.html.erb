@@ -1,7 +1,8 @@
 <% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_pages_path %>
+  <%= page_header_back_button collection_url %>
   <%= Spree.t(:new_page) %>
 <% end %>
+
 <% content_for :title do %>
   <%= Spree.t(:new_page) %>
 <% end %>

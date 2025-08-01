@@ -5,31 +5,31 @@
 
   <div class="card-body">
     <div class="form-group">
-      <%= zone_form.label :name, Spree.t(:name) %>
-      <%= zone_form.text_field :name, class: 'form-control' %>
-      <%= zone_form.error_message_on :name %>
+      <%= f.label :name, Spree.t(:name) %>
+      <%= f.text_field :name, class: 'form-control' %>
+      <%= f.error_message_on :name %>
     </div>
 
     <div class="form-group">
-      <%= zone_form.label :description, Spree.t(:description) %>
-      <%= zone_form.text_field :description, class: 'form-control' %>
+      <%= f.label :description, Spree.t(:description) %>
+      <%= f.text_field :description, class: 'form-control' %>
     </div>
 
     <div class="form-group">
       <div class="custom-control custom-checkbox">
-        <%= zone_form.check_box :default_tax, class: 'custom-control-input' %>
-        <%= zone_form.label :default_tax, Spree.t(:default_tax_zone), class: 'custom-control-label' %>
+        <%= f.check_box :default_tax, class: 'custom-control-input' %>
+        <%= f.label :default_tax, Spree.t(:default_tax_zone), class: 'custom-control-label' %>
       </div>
     </div>
 
     <div class="form-group">
       <strong><%= Spree.t(:type) %></strong>
       <div class="custom-control custom-radio my-2">
-        <%= zone_form.radio_button :kind, :country, id: 'country_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+        <%= f.radio_button :kind, :country, id: 'country_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
         <%= label_tag :country_based, Spree.t(:country_based), class: 'custom-control-label' %>
       </div>
       <div class="custom-control custom-radio my-2">
-        <%= zone_form.radio_button :kind, :state, id: 'state_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+        <%= f.radio_button :kind, :state, id: 'state_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
         <%= label_tag :state_based, Spree.t(:state_based), class: 'custom-control-label' %>
       </div>
     </div>
@@ -37,8 +37,8 @@
 </div>
 
 <% if @zone.country? %>
-  <%= render partial: 'country_members', locals: { zone_form: zone_form } %>
+  <%= render partial: 'country_members', locals: { zone_form: f } %>
 <% else %>
-  <%= render partial: 'state_members', locals: { zone_form: zone_form } %>
+  <%= render partial: 'state_members', locals: { zone_form: f } %>
 <% end %>
 

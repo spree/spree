@@ -6,6 +6,7 @@ module Spree
       before_action :load_user
       before_action :load_store_credit, only: [:new, :edit, :update, :destroy]
       before_action :ensure_unused_store_credit, only: [:update]
+      helper_method :collection_url
 
       def index
         @store_credits = scope.includes(:created_by).order(created_at: :desc)
@@ -84,6 +85,7 @@ module Spree
 
       def load_store_credit
         @store_credit = scope.find_by(id: params[:id]) || scope.new
+        @object = @store_credit
       end
 
       def scope
@@ -94,6 +96,10 @@ module Spree
         unless @store_credit.amount_used.zero?
           raise StoreCreditError, Spree.t('store_credit.errors.cannot_change_used_store_credit')
         end
+      end
+
+      def collection_url
+        spree.admin_user_store_credits_path(@user)
       end
     end
   end

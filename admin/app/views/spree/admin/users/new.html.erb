@@ -1,18 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_users_path %>
-  <%= Spree.t(:new_customer) %>
-<% end %>
-
-<%= form_for [:admin, @user], url: spree.admin_users_path, method: :post do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
-      <div class="card mb-4">
-        <div class="card-body">
-          <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @user } %>
-          <%= render 'form', f: f %>
-        </div>
-      </div>
-      <%= render 'spree/admin/shared/new_resource_links' %>
-    </div>
-  </div>
-<% end %>
+<%= render 'spree/admin/shared/new_resource' %>

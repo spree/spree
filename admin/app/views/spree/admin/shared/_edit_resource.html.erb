@@ -1,0 +1,14 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(collection_url) %>
+  <%= @object.try(:name) || @object.try(:title) || @object.try(:number) %>
+<% end %>
+
+<%= form_with model: [:admin, @object], id: "edit_#{controller_name.singularize}_#{@object.id}" do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render 'spree/admin/shared/error_messages', target: @object %>
+      <%= render 'form', f: f %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+    </div>
+  </div>
+<% end %>

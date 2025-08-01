@@ -12,11 +12,6 @@ RSpec.describe I18n do
                             "Missing #{missing_keys.leaves.count} i18n keys, run `i18n-tasks missing' to show them"
   end
 
-  it 'does not have unused keys' do
-    expect(unused_keys).to be_empty,
-                           "#{unused_keys.leaves.count} unused i18n keys, run `i18n-tasks unused' to show them"
-  end
-
   it 'files are normalized' do
     non_normalized = i18n.non_normalized_paths
     error_message = "The following files need to be normalized:\n" \

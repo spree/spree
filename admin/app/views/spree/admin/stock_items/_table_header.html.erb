@@ -1,0 +1,9 @@
+<tr>
+  <th scope="col"><%= Spree.t(:variant) %></th>
+  <th scope="col"><%= Spree.t(:stock_location) %></th>
+  <th scope="col" class="text-center">
+    <%= Spree.t(:backorderable) %>
+    <%= help_bubble(Spree.t(:continue_selling_when_out_of_stock)) %>
+  </th>
+  <th scope="col"><%= Spree.t(:count_on_hand) %></th>
+</tr>

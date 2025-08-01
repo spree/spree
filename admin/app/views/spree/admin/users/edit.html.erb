@@ -8,7 +8,7 @@
   <%= form_for [:admin, @user], as: :user, url: spree.admin_user_path(@user), method: :put do |f| %>
     <div class="card-body pb-0">    
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @user } %>
-      <%= render 'form', f: f %>
+      <%= render 'form_fields', f: f %>
     </div>
     <div class="card-footer">
       <%= render 'spree/admin/shared/edit_resource_links', f: f, turbo_frame: '_top' %>
