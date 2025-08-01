@@ -9,8 +9,8 @@ module Spree
             stock_item.available?
           end
 
-          belongs_to :stock_location
-          belongs_to :variant
+          belongs_to :stock_location, serializer: Spree::Api::Dependencies.platform_stock_location_serializer.constantize
+          belongs_to :variant, serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
         end
       end
     end

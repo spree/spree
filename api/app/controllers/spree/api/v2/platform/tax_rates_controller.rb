@@ -16,6 +16,10 @@ module Spree
           def spree_permitted_attributes
             super + [calculator_attributes: Spree::Calculator.json_api_permitted_attributes]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_tax_rate_serializer.constantize
+          end
         end
       end
     end
