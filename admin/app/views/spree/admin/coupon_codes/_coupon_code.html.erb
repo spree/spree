@@ -1,8 +1,0 @@
-<tr id="spree_coupon_code_<%= coupon_code[0] %>">
-  <td class="w-50">
-    <code><%= coupon_code[1].upcase %></code>
-    <%= clipboard_component(coupon_code[1].upcase) %>
-  </td>
-  <td class="w-25 font-size-sm"><%= active_badge(coupon_code[2] == 'used') %></td>
-  <td class="w-25 font-size-sm"><%= local_time(coupon_code[3]) %></td>
-</tr>

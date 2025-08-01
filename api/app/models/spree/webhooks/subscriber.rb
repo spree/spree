@@ -11,7 +11,6 @@ module Spree
         has_secure_token :secret_key
       end
 
-
       has_many :events, inverse_of: :subscriber
 
       validates :url, 'spree/url': true, presence: true
@@ -53,6 +52,10 @@ module Spree
               [model_name, model.supported_webhook_events]
             end
         end
+      end
+
+      def name
+        url
       end
 
       private

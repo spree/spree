@@ -13,7 +13,7 @@
   <td class="actions">
     <% if can? :edit, stock_location %>
       <div class="d-flex justify-content-end align-items-center">
-        <div><%= link_to_edit stock_location, data: { row_link_target: 'link' } %></div>
+        <div><%= link_to_edit stock_location, data: { row_link_target: 'link', turbo_frame: '_top' } %></div>
 
         <% if !stock_location.default? && can?(:mark_as_default, Spree::StockLocation) %>
           <div class="dropdown">

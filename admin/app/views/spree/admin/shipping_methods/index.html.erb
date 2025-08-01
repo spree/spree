@@ -4,10 +4,9 @@
 
 <% content_for :page_actions do %>
   <%= render_admin_partials(:shipping_methods_actions_partials) %>
-  <% if can?(:create, Spree::ShippingMethod) %>
-    <%= link_to_with_icon 'plus', Spree.t(:new_shipping_method), new_object_url, class: "btn btn-primary" %>
-  <% end %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_shipping_method), new_object_url, class: "btn btn-primary" if can?(:create, Spree::ShippingMethod) %>
 <% end %>
+
 <%= render partial: 'spree/admin/shared/shipping_nav' %>
 
 <% content_for :page_alerts do %>
@@ -18,26 +17,4 @@
 
 <%= render_admin_partials(:shipping_methods_header_partials) %>
 
-<div class="card-lg">
-  <% if @collection.any? %>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th><%= Spree.t(:name) %></th>
-            <th><%= Spree.t(:zone) %></th>
-            <th><%= Spree.t(:estimated_delivery_time) %></th>
-            <th><%= Spree.t(:amount) %></th>
-            <th><%= Spree.t(:visibility) %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render partial: 'spree/admin/shipping_methods/shipping_method', collection: @collection.includes(:zones, :calculator), as: :shipping_method %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <%= render 'spree/admin/shared/no_resource_found' %>
-  <% end %>
-</div>
+<%= render 'spree/admin/shared/index_table' %>

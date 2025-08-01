@@ -1,0 +1,9 @@
+<tr>
+  <th><%= Spree.t(:name) %></th>
+  <th><%= Spree.t(:country) %></th>
+  <th><%= Spree.t(:active) %>?</th>
+  <% if can?(:mark_as_default, Spree::StockLocation) %>
+    <th><%= Spree.t(:default) %>?</th>
+  <% end %>
+  <th></th>
+</tr>

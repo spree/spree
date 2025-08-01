@@ -13,29 +13,4 @@
 
 <%= render_admin_partials(:stock_transfers_header_partials) %>
 
-<div class="card-lg">
-  <%= render "filters" %>
-  <% if @collection.any? %>
-    <div class="table-responsive">
-      <table class="table" id="listing_products">
-        <thead>
-          <tr>
-            <th scope="col"><%= Spree.t(:number) %></th>
-            <th scope="col"><%= Spree.t(:reference) %></th>
-            <th scope="col"><%= Spree.t(:source) %></th>
-            <th scope="col"><%= Spree.t(:destination) %></th>
-            <th scope="col"><%= Spree.t(:variants_count) %></th>
-            <th scope="col"><%= Spree.t(:created_at) %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render collection: @collection, partial: 'stock_transfer' %>
-        </tbody>
-      </table>
-    </div>
-    <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
-  <% else %>
-    <%= render 'spree/admin/shared/no_resource_found' %>
-  <% end %>
-</div>
+<%= render 'spree/admin/shared/index_table' %>

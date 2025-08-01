@@ -7,29 +7,4 @@
 
 <%= render_admin_partials(:posts_header_partials) %>
 
-<div class="card-lg">
-  <%= turbo_frame_tag "posts", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
-    <%= render "spree/admin/posts/filters" %>
-    <% if @collection.any? %>
-      <div class="table-responsive rounded-lg">
-        <table class="table">
-          <thead>
-            <tr>
-              <th><%= sort_link @search, :title, Spree.t(:title) %></th>
-              <th><%= Spree.t(:category) %></th>
-              <th><%= Spree.t(:author) %></th>
-              <th><%= sort_link @search, :published_at, Spree.t(:published_at) %></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <%= render collection: @collection, partial: "spree/admin/posts/post", cached: spree_base_cache_scope %>
-          </tbody>
-        </table>
-      </div>
-      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
-    <% else %>
-      <%= render 'spree/admin/shared/no_resource_found' %>
-    <% end %>
-  <% end %>
-</div>
+<%= render 'spree/admin/shared/index_table' %>

@@ -1,0 +1,17 @@
+<tr id="<%= spree_dom_id reimbursement_type %>" data-controller="row-link">
+  <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
+    <%= reimbursement_type.name.humanize %>
+  </td>
+  <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
+    <code><%= reimbursement_type.type.demodulize %></code>
+  </td>
+  <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
+    <%= active_badge(reimbursement_type.active, label: Spree.t(reimbursement_type.active? ? :active : :inactive)) %>
+  </td>
+  <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
+    <%= active_badge(reimbursement_type.mutable) %>
+  </td>
+  <td class="actions w-10">
+    <%= link_to_edit reimbursement_type, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' } if can?(:edit, reimbursement_type) %>
+  </td>
+</tr>

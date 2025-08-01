@@ -2,7 +2,9 @@
 
 <%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
   <div class="card-lg">
-    <%= render 'filters' %>
+    <% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>
+      <%= render 'filters' %>
+    <% end %>
 
     <% if ransack_collection.any? %>
       <div class="table-responsive" id="listing_<%= controller_name %>">

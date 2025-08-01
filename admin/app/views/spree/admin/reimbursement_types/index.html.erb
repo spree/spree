@@ -7,43 +7,4 @@
 
 <%= render_admin_partials(:reimbursement_types_header_partials) %>
 
-<div class="card-lg">
-  <% if @collection.any? %>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th><%= Spree.t(:name) %></th>
-            <th><%= Spree.t(:type) %></th>
-            <th><%= Spree.t(:status) %></th>
-            <th><%= Spree.t(:mutable) %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @collection.each do |reimbursement_type| %>
-            <tr id="<%= spree_dom_id reimbursement_type %>" data-controller="row-link">
-              <td class="w-40 align-center cursor-pointer" data-action="click->row-link#openLink">
-                <%= reimbursement_type.name.humanize %>
-              </td>
-              <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
-                <code><%= reimbursement_type.type.demodulize %></code>
-              </td>
-              <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
-                <%= active_badge(reimbursement_type.active, label: Spree.t(reimbursement_type.active? ? :active : :inactive)) %>
-              </td>
-              <td class="w-10 align-center cursor-pointer" data-action="click->row-link#openLink">
-                <%= active_badge(reimbursement_type.mutable) %>
-              </td>
-              <td class="actions w-10">
-                <%= link_to_edit reimbursement_type, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' } if can?(:edit, reimbursement_type) %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <%= render 'spree/admin/shared/no_resource_found' %>
-  <% end %>
-</div>
+<%= render 'spree/admin/shared/index_table' %>

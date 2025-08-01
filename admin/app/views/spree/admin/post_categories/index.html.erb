@@ -7,23 +7,4 @@
 
 <%= render_admin_partials(:post_categories_header_partials) %>
 
-<% if @collection.any? %>
-  <div class="card-lg">
-    <div class="table-responsive rounded-lg">
-      <table class="table">
-        <thead>
-          <tr>
-            <th><%= Spree.t(:title) %></th>
-            <th><%= Spree.t(:posts) %></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <%= render collection: @collection, partial: 'spree/admin/post_categories/post_category', cached: spree_base_cache_scope %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-<% else %>
-  <%= render 'spree/admin/shared/no_resource_found' %>
-<% end %>
+<%= render 'spree/admin/shared/index_table' %>
