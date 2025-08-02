@@ -257,7 +257,7 @@ module Spree
 
     @@store_credit_category_attributes = [:name]
 
-    @@taxonomy_attributes = [:name]
+    @@taxonomy_attributes = [:name, :position]
 
     @@tax_category_attributes = [:name, :tax_code,:description, :is_default]
 

@@ -31,6 +31,10 @@ module Spree
       def permitted_resource_params
         params.require(:taxonomy).permit(permitted_taxonomy_attributes)
       end
+
+      def update_turbo_stream_enabled?
+        true
+      end
     end
   end
 end

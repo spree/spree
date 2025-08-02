@@ -58,6 +58,15 @@ describe Spree::Admin::TaxonomiesController do
 
       expect(response).to redirect_to spree.admin_taxonomy_path(taxonomy)
     end
+
+    context 'update position' do
+      subject { put :update, params: { id: taxonomy.id, taxonomy: { position: 2 } }, format: :turbo_stream }
+
+      it 'updates the taxonomy position' do
+        subject
+        expect(taxonomy.reload.position).to eq(2)
+      end
+    end
   end
 
   describe '#destroy' do

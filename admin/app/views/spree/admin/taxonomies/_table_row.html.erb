@@ -10,7 +10,7 @@
     <%= taxonomy.taxons.count - 1 %>
   </td>
   <td class="w-10 actions">
-    <%= link_to_with_icon 'list-tree', Spree.t('admin.manage_taxons'), spree.admin_taxonomy_path(taxonomy), class: 'btn btn-light btn-sm' %>
-    <%= link_to_edit(taxonomy, class: 'btn btn-light btn-sm') if can?(:edit, taxonomy) %>
+    <%= link_to_with_icon 'list-tree', Spree.t('admin.manage_taxons'), spree.admin_taxonomy_path(taxonomy), class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' } %>
+    <%= link_to_edit(taxonomy, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, taxonomy) %>
   </td>
 </tr>
