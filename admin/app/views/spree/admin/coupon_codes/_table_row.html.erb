@@ -1,4 +1,4 @@
-<tr id="spree_coupon_code_<%= coupon_code[0] %>">
+<tr id="<%= spree_dom_id coupon_code %>">
   <td class="w-50">
     <code><%= coupon_code.code.upcase %></code>
     <%= clipboard_component(coupon_code.code.upcase) %>

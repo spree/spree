@@ -57,10 +57,10 @@
         <table class="table">
           <thead>
             <tr class="border-bottom">
-              <th></th>
-              <th><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
-              <th><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>
-              <th></th>
+              <th scope="col"></th>
+              <th scope="col"><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
+              <th scope="col"><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody id="option_values" data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="option_value" data-sortable-response-kind-value="turbo-stream">

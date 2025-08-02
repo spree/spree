@@ -2,13 +2,13 @@
   <div class="table-responsive">
     <table class="table">
       <thead>
-        <th><%= Spree.t(:currency) %></th>
-        <th><%= Spree.t('store_credit.allocated') %></th>
-        <th><%= Spree.t('store_credit.authorized') %></th>
-        <th><%= Spree.t('store_credit.captured') %></th>
-        <th><%= Spree.t('store_credit.remaining') %></th>
-        <th><%= Spree.t(:created_by) %></th>
-        <th><%= Spree.t(:issued_on) %></th>
+        <th scope="col"><%= Spree.t(:currency) %></th>
+        <th scope="col"><%= Spree.t('store_credit.allocated') %></th>
+        <th scope="col"><%= Spree.t('store_credit.authorized') %></th>
+        <th scope="col"><%= Spree.t('store_credit.captured') %></th>
+        <th scope="col"><%= Spree.t('store_credit.remaining') %></th>
+        <th scope="col"><%= Spree.t(:created_by) %></th>
+        <th scope="col"><%= Spree.t(:issued_on) %></th>
       </thead>
       <tbody>
         <%= render partial: 'spree/admin/store_credits/store_credit', collection: @store_credits, as: :store_credit, cached: spree_base_cache_scope %>

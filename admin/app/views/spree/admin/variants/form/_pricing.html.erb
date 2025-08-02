@@ -12,11 +12,11 @@
     <table class="table">
       <thead>
         <tr>
-          <th><%= Spree.t(:currency) %></th>
-          <th>
+          <th scope="col"><%= Spree.t(:currency) %></th>
+          <th scope="col">
             <%= Spree.t(:amount) %>
           </th>
-          <th>
+          <th scope="col">
             <%= Spree.t(:compare_at_amount) %>
             <%= help_bubble(Spree.t('admin.variants_form.compare_at_price_description')) %>
           </th>

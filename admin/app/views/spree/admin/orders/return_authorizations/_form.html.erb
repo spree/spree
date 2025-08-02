@@ -5,7 +5,7 @@
     <table class="table table-condensed return-items-table">
       <thead>
         <tr>
-          <th>
+          <th scope="col">
             <% if allow_return_item_changes %>
               <div class="custom-control custom-checkbox ml-1">
                 <input
@@ -18,14 +18,14 @@
               </div>
             <% end %>
           </th>
-          <th><%= Spree.t(:product) %></th>
-          <th><%= Spree.t(:status) %></th>
-          <th><%= Spree.t(:charged) %></th>
-          <th><%= Spree.t(:purchased_quantity) %></th>
+          <th scope="col"><%= Spree.t(:product) %></th>
+          <th scope="col"><%= Spree.t(:status) %></th>
+          <th scope="col"><%= Spree.t(:charged) %></th>
+          <th scope="col"><%= Spree.t(:purchased_quantity) %></th>
           <th style="min-width:130px;"><%= Spree.t(:return_quantity) %></th>
           <th style="min-width:150px;"><%= Spree.t(:pre_tax_refund_amount) %></th>
-          <th><%= Spree.t(:reimbursement_type) %></th>
-          <th><%= Spree.t(:exchange_for) %></th>
+          <th scope="col"><%= Spree.t(:reimbursement_type) %></th>
+          <th scope="col"><%= Spree.t(:exchange_for) %></th>
         </tr>
       </thead>
       <tbody>

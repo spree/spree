@@ -12,11 +12,11 @@
         <table class="table table-condensed" id='refunds' data-order-id='<%= @order.number %>'>
           <thead>
             <tr data-hook="refunds_header" class="border-bottom">
-              <th><%= Spree.t(:amount) %></th>
-              <th><%= Spree.t(:status) %></th>
-              <th><%= Spree.t(:reason) %></th>
-              <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-              <th></th>
+              <th scope="col"><%= Spree.t(:amount) %></th>
+              <th scope="col"><%= Spree.t(:status) %></th>
+              <th scope="col"><%= Spree.t(:reason) %></th>
+              <th scope="col"><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>

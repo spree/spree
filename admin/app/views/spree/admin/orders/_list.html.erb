@@ -3,16 +3,16 @@
     <table class="table" id="listing_orders">
       <thead>
         <tr>
-          <th><%= I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
+          <th scope="col"><%= I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
           <% if controller_name == 'orders' %>
-            <th><%= sort_link @search, :completed_at,   Spree.t(:date) %></th>
+            <th scope="col"><%= sort_link @search, :completed_at,   Spree.t(:date) %></th>
           <% else %>
-            <th><%= sort_link @search, :created_at,     Spree.t(:date) %></th>
+            <th scope="col"><%= sort_link @search, :created_at,     Spree.t(:date) %></th>
           <% end %>
           <th class="d-customer"><%= Spree.t(:customer) %></th>
-          <th><%= Spree.t(:package_from) %></th>
-          <th><%= I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
-          <th><%= I18n.t(:shipment_state, scope: 'activerecord.attributes.spree/order') %></th>
+          <th scope="col"><%= Spree.t(:package_from) %></th>
+          <th scope="col"><%= I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
+          <th scope="col"><%= I18n.t(:shipment_state, scope: 'activerecord.attributes.spree/order') %></th>
           <th class="text-right"><%= sort_link @search, :item_count, I18n.t(:item_count, scope: 'activerecord.attributes.spree/order') %></th>
           <th class="text-right"><%= sort_link @search, :total, I18n.t(:total, scope: 'activerecord.attributes.spree/order') %></th>
         </tr>
