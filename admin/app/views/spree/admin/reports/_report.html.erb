@@ -4,7 +4,7 @@
       <thead>
         <tr>
           <% @report.line_item_class.headers.each do |header| %>
-            <th><%= header[:label] %></th>
+            <th scope="col"><%= header[:label] %></th>
           <% end %>
         </tr>
       </thead>

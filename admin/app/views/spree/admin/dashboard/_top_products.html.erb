@@ -14,15 +14,15 @@
       <table class="table">
         <thead>
           <tr class="border-bottom">
-            <th>
+            <th scope="col">
               <%= Spree.t(:product) %>
             </th>
             <% if defined?(Spree::Vendor) && !@vendor %>
-              <th>
+              <th scope="col">
                 <%= Spree.t(:vendor) %>
               </th>
             <% end %>
-            <th>
+            <th scope="col">
               <%= Spree.t(:price) %>
             </th>
             <th class="text-center">

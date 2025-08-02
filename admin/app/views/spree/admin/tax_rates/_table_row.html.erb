@@ -10,6 +10,6 @@
   <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(tax_rate.included_in_price?) %></td>
   <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(tax_rate.show_rate_in_label?) %></td>
   <td class="w-10 actions">
-    <%= link_to_edit(tax_rate, data: { row_link_target: 'link' }) if can? :edit, tax_rate %>
+    <%= link_to_edit(tax_rate, data: { row_link_target: 'link', turbo_frame: '_top' }) if can? :edit, tax_rate %>
   </td>
 </tr>

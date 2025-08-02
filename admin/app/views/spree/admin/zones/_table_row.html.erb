@@ -1,0 +1,8 @@
+<tr id="<%= spree_dom_id zone %>" class="cursor-pointer" data-controller="row-link">
+  <td class="w-25" data-action="click->row-link#openLink"><%= zone.name %></td>
+  <td class="w-40 text-muted text-wrap" data-action="click->row-link#openLink"><%= zone.description %></td>
+  <td class="w-10" data-action="click->row-link#openLink"><%= active_badge(zone.default_tax?) %></td>
+  <td class="w-10 actions">
+    <%= link_to_edit(zone, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, zone %>
+  </td>
+</tr>

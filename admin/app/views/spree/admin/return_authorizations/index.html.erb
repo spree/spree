@@ -8,13 +8,4 @@
 
 <%= render_admin_partials(:return_authorizations_header_partials) %>
 
-<div class="card-lg">
-  <%= render "spree/admin/return_authorizations/filters" %>
-  <%= render "spree/admin/return_authorizations/list" %>
-
-  <%= render partial: "spree/admin/shared/index_table_options",
-  locals: {
-    collection: @collection,
-    per_page_action: :return_authorizations,
-  } %>
-</div>
+<%= render 'spree/admin/shared/index_table', new_object_url: nil %>

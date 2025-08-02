@@ -1,0 +1,34 @@
+<tr id="<%= spree_dom_id oauth_application %>">
+  <td class="w-20"><code><%= oauth_application.name %></code></td>
+  <td class="w-40">
+    <div class="input-group" data-controller="password-toggle">
+      <%= button_tag class: 'btn hover-gray px-1', data: { action: 'click->password-toggle#password' } do %>
+        <%= icon 'eye', class: 'mr-0' %>
+      <% end %>
+      <%= password_field_tag :password, oauth_application.uid, class: 'form-control-plaintext', data: { password_toggle_target: 'unhide' }, readonly: true %>
+    </div>
+  </td>
+  <td class="w-15">
+    <% if oauth_application.scopes.include?('write') %>
+      <span class="badge badge-warning">
+        <%= icon('pencil', class: 'mr-1') %>
+        <%= Spree.t('admin.oauth_applications.read_and_write') %>
+      </span>
+    <% else %>
+      <span class="badge badge-light">
+        <%= icon('eye', class: 'mr-1') %>
+        <%= Spree.t('admin.oauth_applications.read_only') %>
+      </span>
+    <% end %>
+  </td>
+  <td class="w-15">
+    <% if oauth_application.last_used_at %>
+      <%= local_time(oauth_application.last_used_at) %>
+    <% else %>
+      <span class="text-muted"><%= Spree.t('admin.oauth_applications.never') %></span>
+    <% end %>
+  </td>
+  <td class="actions w-10">
+    <%= link_to_edit(oauth_application, no_text: true, data: { turbo_frame: '_top' }) if can? :edit, oauth_application %>
+  </td>
+</tr>

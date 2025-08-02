@@ -13,11 +13,11 @@
     <table class="table">
       <thead>
         <tr>
-          <th></th>
-          <th><%= Spree.t(:payment_method) %></th>
-          <th><%= Spree.t(:visibility) %></th>
+          <th scope="col"></th>
+          <th scope="col"><%= Spree.t(:payment_method) %></th>
+          <th scope="col"><%= Spree.t(:visibility) %></th>
           <th class="text-center"><%= Spree.t(:active) %></th>
-          <th></th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="payment_method" data-sortable-response-kind-value="turbo-stream">
@@ -34,9 +34,9 @@
       <table class="table">
         <thead>
         <tr>
-          <th><%= Spree.t(:name) %></th>
-          <th><%= Spree.t(:description) %></th>
-          <th></th>
+          <th scope="col"><%= Spree.t(:name) %></th>
+          <th scope="col"><%= Spree.t(:description) %></th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>

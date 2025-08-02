@@ -1,13 +1,13 @@
 <table class="show return-items-table table table-condensed index">
   <thead>
     <tr>
-      <th><%= Spree.t(:product) %></th>
-      <th><%= Spree.t(:pre_tax_amount) %></th>
-      <th><%= Spree.t(:preferred_reimbursement_type) %></th>
-      <th><%= Spree.t(:exchange_for) %></th>
-      <th><%= Spree.t(:acceptance_errors) %></th>
+      <th scope="col"><%= Spree.t(:product) %></th>
+      <th scope="col"><%= Spree.t(:pre_tax_amount) %></th>
+      <th scope="col"><%= Spree.t(:preferred_reimbursement_type) %></th>
+      <th scope="col"><%= Spree.t(:exchange_for) %></th>
+      <th scope="col"><%= Spree.t(:acceptance_errors) %></th>
       <% if show_decision %>
-        <th></th>
+        <th scope="col"></th>
       <% end %>
     </tr>
   </thead>
