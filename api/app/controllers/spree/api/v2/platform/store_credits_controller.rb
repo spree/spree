@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:user, :created_by, :category, :credit_type]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_store_credit_serializer.constantize
+          end
         end
       end
     end

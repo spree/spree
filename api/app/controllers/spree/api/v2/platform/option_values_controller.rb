@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:option_type]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_option_value_serializer.constantize
+          end
         end
       end
     end

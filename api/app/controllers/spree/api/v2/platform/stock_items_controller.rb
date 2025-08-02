@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:variant, :stock_location]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_stock_item_serializer.constantize
+          end
         end
       end
     end

@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:promotions]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_promotion_category_serializer.constantize
+          end
         end
       end
     end

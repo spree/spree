@@ -7,9 +7,9 @@ module Spree
 
           set_type :gift_card
 
-          belongs_to :user
+          belongs_to :user, serializer: Spree::Api::Dependencies.platform_user_serializer.constantize
 
-          has_many :orders
+          has_many :orders, serializer: Spree::Api::Dependencies.platform_order_serializer.constantize
         end
       end
     end

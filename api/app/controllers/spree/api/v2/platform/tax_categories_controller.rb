@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:tax_rates]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_tax_category_serializer.constantize
+          end
         end
       end
     end

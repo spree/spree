@@ -5,9 +5,9 @@ module Spree
         class AddressSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :country
-          belongs_to :state
-          belongs_to :user
+          belongs_to :country, serializer: Spree::Api::Dependencies.platform_country_serializer.constantize
+          belongs_to :state, serializer: Spree::Api::Dependencies.platform_state_serializer.constantize
+          belongs_to :user, serializer: Spree::Api::Dependencies.platform_user_serializer.constantize
         end
       end
     end

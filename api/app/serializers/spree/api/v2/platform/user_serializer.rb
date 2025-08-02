@@ -21,11 +21,11 @@ module Spree
 
           has_one :bill_address,
                   record_type: :address,
-                  serializer: :address
+                  serializer: Spree::Api::Dependencies.platform_address_serializer.constantize
 
           has_one :ship_address,
                   record_type: :address,
-                  serializer: :address
+                  serializer: Spree::Api::Dependencies.platform_address_serializer.constantize
 
           def self.price_stats(stats)
             stats.map { |value| { currency: value.currency.to_s, amount: value.money.to_s } }

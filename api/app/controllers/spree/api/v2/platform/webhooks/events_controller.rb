@@ -13,6 +13,10 @@ module Spree
             def scope_includes
               %i[subscriber]
             end
+
+            def resource_serializer
+              Spree::Api::Dependencies.platform_webhooks_event_serializer.constantize
+            end
           end
         end
       end

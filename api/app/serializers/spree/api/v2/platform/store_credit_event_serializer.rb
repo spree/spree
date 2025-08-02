@@ -5,7 +5,7 @@ module Spree
         class StoreCreditEventSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :store_credit
+          belongs_to :store_credit, serializer: Spree::Api::Dependencies.platform_store_credit_serializer.constantize
           belongs_to :originator, polymorphic: true
         end
       end

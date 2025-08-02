@@ -6,7 +6,7 @@ module Spree
           include ResourceSerializerConcern
 
           attributes :name
-          belongs_to :country
+          belongs_to :country, serializer: Spree::Api::Dependencies.platform_country_serializer.constantize
         end
       end
     end

@@ -48,6 +48,10 @@ module Spree
           def spree_permitted_attributes
             super + [:new_parent_id, :new_position_idx]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_taxon_serializer.constantize
+          end
         end
       end
     end

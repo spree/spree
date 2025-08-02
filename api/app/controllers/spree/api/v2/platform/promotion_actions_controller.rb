@@ -23,6 +23,10 @@ module Spree
               calculator_attributes: Spree::Calculator.json_api_permitted_attributes.concat(conditional_params, calculator_params)
             }]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_promotion_action_serializer.constantize
+          end
         end
       end
     end

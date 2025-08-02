@@ -8,6 +8,10 @@ module Spree
           def model_class
             Spree::StoreCreditType
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_store_credit_type_serializer.constantize
+          end
         end
       end
     end

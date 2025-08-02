@@ -15,6 +15,10 @@ module Spree
               product: [:variants_including_master, :variant_images, :master, { variants: [:prices] }]
             ]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_classification_serializer.constantize
+          end
         end
       end
     end

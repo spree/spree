@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:order, :adjustable]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_adjustment_serializer.constantize
+          end
         end
       end
     end

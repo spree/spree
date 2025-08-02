@@ -136,6 +136,10 @@ module Spree
           def remove_item_service
             Spree::Api::Dependencies.platform_shipment_remove_item_service.constantize
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_shipment_serializer.constantize
+          end
         end
       end
     end

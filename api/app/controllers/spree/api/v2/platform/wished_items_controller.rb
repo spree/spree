@@ -12,6 +12,10 @@ module Spree
           def model_class
             Spree::WishedItem
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_wished_item_serializer.constantize
+          end
         end
       end
     end

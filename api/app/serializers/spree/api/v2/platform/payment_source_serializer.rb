@@ -3,8 +3,8 @@ module Spree
     module V2
       module Platform
         class PaymentSourceSerializer < BaseSerializer
-          belongs_to :payment_method
-          belongs_to :user
+          belongs_to :payment_method, serializer: Spree::Api::Dependencies.platform_payment_method_serializer.constantize
+          belongs_to :user, serializer: Spree::Api::Dependencies.platform_user_serializer.constantize
         end
       end
     end

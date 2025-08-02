@@ -18,6 +18,10 @@ module Spree
           def spree_permitted_attributes
             super + rule_params
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_promotion_rule_serializer.constantize
+          end
         end
       end
     end

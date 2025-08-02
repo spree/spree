@@ -18,6 +18,10 @@ module Spree
           def model_class
             Spree::DigitalLink
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_digital_link_serializer.constantize
+          end
         end
       end
     end

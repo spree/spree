@@ -44,13 +44,13 @@ module Spree
             display_compare_at_price(object, params[:currency])
           end
 
-          belongs_to :product
-          belongs_to :tax_category
-          has_many :digitals
-          has_many :images
-          has_many :option_values
-          has_many :stock_items
-          has_many :stock_locations
+          belongs_to :product, serializer: Spree::Api::Dependencies.platform_product_serializer.constantize
+          belongs_to :tax_category, serializer: Spree::Api::Dependencies.platform_tax_category_serializer.constantize
+          has_many :digitals, serializer: Spree::Api::Dependencies.platform_digital_serializer.constantize
+          has_many :images, serializer: Spree::Api::Dependencies.platform_image_serializer.constantize
+          has_many :option_values, serializer: Spree::Api::Dependencies.platform_option_value_serializer.constantize
+          has_many :stock_items, serializer: Spree::Api::Dependencies.platform_stock_item_serializer.constantize
+          has_many :stock_locations, serializer: Spree::Api::Dependencies.platform_stock_location_serializer.constantize
         end
       end
     end

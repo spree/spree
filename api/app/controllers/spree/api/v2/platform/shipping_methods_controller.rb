@@ -17,6 +17,10 @@ module Spree
               }
             ]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_shipping_method_serializer.constantize
+          end
         end
       end
     end
