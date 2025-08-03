@@ -57,7 +57,7 @@ module Spree
       def spree_collection_select(method, collection, value_method, text_method, options = {})
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
-            @template.collection_select(@object_name, method, collection, value_method, text_method, options, { class: 'custom-select' })
+            @template.collection_select(@object_name, method, collection, value_method, text_method, objectify_options(options), { class: 'custom-select' }) +
             @template.error_message_on(@object_name, method) + field_help(method, options)
         end
       end
@@ -67,15 +67,12 @@ module Spree
           @template.content_tag(:div, class: 'custom-control custom-checkbox') do
             @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input'))) +
             @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
-            @template.error_message_on(@object_name, method) + field_help(method, options)
-          end
+          end + @template.error_message_on(@object_name, method) + field_help(method, options)
         end
       end
 
       def field_help(_method, options = {})
-        @template.content_tag(:span, class: 'form-text text-muted mt-2') do
-          options[:help]
-        end
+        @template.content_tag(:span, options[:help], class: 'form-text text-muted mt-2')
       end
 
       private
