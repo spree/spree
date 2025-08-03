@@ -1,23 +1,7 @@
-<div class="form-group">
-  <%= f.label :email, raw(Spree.t(:email) + required_span_tag) %>
-  <%= f.email_field :email, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-  <%= f.error_message_on :email %>
-</div>
-<div class="form-group">
-  <%= f.label :first_name, raw(Spree.t(:first_name) + required_span_tag) %>
-  <%= f.text_field :first_name, class: 'form-control', required: true %>
-  <%= f.error_message_on :first_name %>
-</div>
-<div class="form-group">
-  <%= f.label :last_name, raw(Spree.t(:last_name) + required_span_tag) %>
-  <%= f.text_field :last_name, class: 'form-control', required: true %>
-  <%= f.error_message_on :last_name %>
-</div>
-<div class="form-group">
-  <%= f.label :phone, Spree.t(:phone) %>
-  <%= f.text_field :phone, class: 'form-control' %>
-  <%= f.error_message_on :phone %>
-</div>
+<%= f.spree_text_field :email, required: true, autofocus: f.object.new_record?, label: raw(Spree.t(:email) + required_span_tag), type: :email %>
+<%= f.spree_text_field :first_name, required: true, label: raw(Spree.t(:first_name) + required_span_tag) %>
+<%= f.spree_text_field :last_name, required: true, label: raw(Spree.t(:last_name) + required_span_tag) %>
+<%= f.spree_text_field :phone %>
 <div class="form-group">
   <%= f.label :tag_list, Spree.t(:tags) %>
   <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-100', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
@@ -31,8 +15,4 @@
             { multiple: true,  data: { controller: 'autocomplete-select' } } %>          
   </div>
 <% end %>
-<div class="custom-control custom-checkbox mb-3">
-  <%= f.check_box :accepts_email_marketing, class: 'custom-control-input' %>
-  <%= f.label :accepts_email_marketing, Spree.t(:accepts_email_marketing), class: 'custom-control-label' %>
-  <%= f.error_message_on :accepts_email_marketing %>
-</div>
+<%= f.spree_check_box :accepts_email_marketing %>

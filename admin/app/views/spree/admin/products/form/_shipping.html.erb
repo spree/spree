@@ -7,10 +7,6 @@
       <%= render 'spree/admin/variants/form/dimensions', f: f %>
     <% end %>
 
-    <div class="form-group">
-      <%= f.label :shipping_category_id, Spree.t(:shipping_category) %>
-      <%= f.select(:shipping_category_id, @shipping_categories.pluck(:name, :id), { include_blank: Spree.t('match_choices.none') }, { class: 'custom-select' }) %>
-      <%= f.error_message_on :shipping_category %>
-    </div>
+    <%= f.spree_select :shipping_category_id, @shipping_categories.pluck(:name, :id), { include_blank: Spree.t('match_choices.none') } %>
   </div>
 </div>

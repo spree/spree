@@ -5,26 +5,13 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :sku, Spree.t(:sku) %>
-      <%= f.text_field :sku, class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :sku %>
 
-    <div class="form-group">
-      <%= f.label :barcode, Spree.t(:barcode) %>
-      <%= f.text_field :barcode, class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :barcode %>
 
-    <div class="form-group">
-      <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-      <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { data: { controller: 'autocomplete-select' } }) %>
-    </div>
+    <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, data: { controller: 'autocomplete-select' } %>
 
-    <div class="form-group">
-      <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
-      <%= f.error_message_on :discontinue_on %>
-      <%= f.date_field :discontinue_on, class: 'form-control' %>
-    </div>
+    <%= f.spree_date_field :discontinue_on %>
 
     <%= render 'spree/admin/variants/form/dimensions', f: f %>
   </div>

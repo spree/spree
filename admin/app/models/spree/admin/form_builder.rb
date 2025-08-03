@@ -54,6 +54,16 @@ module Spree
         end
       end
 
+      def spree_select(method, choices = nil, options = {}, html_options = {}, &block)
+        html_options[:class] ||= 'custom-select'
+
+        @template.content_tag(:div, class: 'form-group') do
+          @template.label(@object_name, method, get_label(method, options)) +
+            @template.select(@object_name, method, choices, objectify_options(options), html_options, &block) +
+            @template.error_message_on(@object_name, method) + field_help(method, options)
+        end
+      end
+
       def spree_collection_select(method, collection, value_method, text_method, options = {})
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +

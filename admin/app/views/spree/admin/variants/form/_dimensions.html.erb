@@ -1,21 +1,12 @@
 <div class="row">
   <div class="col-lg-6">
-    <div class="form-group mb-3">
-      <%= f.label :width %>
-      <%= f.text_field :width, value: number_with_precision(f.object.width, precision: 2), class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :width, value: number_with_precision(f.object.width, precision: 2) %>
 
-    <div class="form-group mb-3">
-      <%= f.label :height %>
-      <%= f.text_field :height, value: number_with_precision(f.object.height, precision: 2), class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :height, value: number_with_precision(f.object.height, precision: 2) %>
   </div>
 
   <div class="col-lg-6">
-    <div class="form-group mb-3">
-      <%= f.label :depth %>
-      <%= f.text_field :depth, value: number_with_precision(f.object.depth, precision: 2), class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :depth, value: number_with_precision(f.object.depth, precision: 2) %>
 
     <div class="form-group mb-3">
       <%= f.label :dimensions_unit, Spree.t(:unit) %>

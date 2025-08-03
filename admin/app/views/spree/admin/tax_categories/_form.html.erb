@@ -1,25 +1,12 @@
 <div class="card mb-4">
   <div class="card-body">
 
-    <div class="form-group">
-      <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, class: 'form-control', autofocus: f.object.new_record?, required: true %>
-      <%= f.error_message_on :name %>
-    </div>
+    <%= f.spree_text_field :name, autofocus: f.object.new_record?, required: true %>
 
-    <div class="form-group">
-      <%= f.label :tax_code, Spree.t(:tax_code) %>
-      <%= f.text_field :tax_code, class: 'form-control' %>
-    </div>
+    <%= f.spree_text_field :tax_code %>
 
-    <div class="form-group">
-      <%= f.label :description, Spree.t(:description) %><br>
-      <%= f.text_area :description, class: 'form-control' %>
-    </div>
+    <%= f.spree_text_area :description %>
 
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :is_default, class: 'custom-control-input' %>
-      <%= f.label :is_default, class: 'custom-control-label' %>
-    </div>
+    <%= f.spree_check_box :is_default %>
   </div>
 </div>

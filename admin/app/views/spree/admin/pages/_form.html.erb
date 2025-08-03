@@ -5,10 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, class: 'form-control', required: true, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName', seo_form_target: 'sourceTitleInput' }, autofocus: true %>
-    </div>
+    <%= f.spree_text_field :name, required: true, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName', seo_form_target: 'sourceTitleInput' }, autofocus: true %>
   </div>
 </div>
 <%= render 'spree/admin/shared/seo',

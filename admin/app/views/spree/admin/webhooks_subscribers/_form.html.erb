@@ -5,19 +5,8 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="row">
-      <div class="form-group col-12">
-        <%= f.label :url, raw(Spree.t(:url) + required_span_tag) %>
-        <%= f.text_field :url, class: 'form-control', placeholder: 'https://example.com/endpoint' %>
-        <%= f.error_message_on :url %>
-      </div>
-      <div class="form-group col-3">
-        <div class="custom-control custom-checkbox">
-          <%= f.check_box :active, class: 'custom-control-input' %>
-          <%= f.label :active, class: 'custom-control-label' %>
-        </div>
-      </div>
-    </div>
+    <%= f.spree_text_field :url, placeholder: 'https://example.com/endpoint' %>
+    <%= f.spree_check_box :active %>
   </div>
 </div>
 <div class="card mb-4">
