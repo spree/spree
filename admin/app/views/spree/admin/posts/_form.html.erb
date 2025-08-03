@@ -2,18 +2,14 @@
   <div class="col-lg-8">
     <div class="card mb-4">
       <div class="card-body">
-        <div class="form-group">
-          <%= f.label :title, Spree.t(:title) %>
-          <%= f.text_field :title,
-                class: "form-control",
-                required: true,
-                autofocus: true,
-                data: {
-                  seo_form_target: 'sourceTitleInput',
-                  slug_form_target: 'name',
-                  action: 'slug-form#updateUrlFromName'
-                } %>
-        </div>
+        <%= f.spree_text_field :title,
+              required: true,
+              autofocus: true,
+              data: {
+                seo_form_target: 'sourceTitleInput',
+                slug_form_target: 'name',
+                action: 'slug-form#updateUrlFromName'
+              } %>
 
         <div class="form-group">
           <%= f.label :content, Spree.t(:content) %>

@@ -16,11 +16,8 @@
         <p class="text-muted">
           <%= Spree.t(:store_name_help) %>
         </p>
-        <div class="form-group">
-          <%= f.label :name, Spree.t(:name) %>
-          <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-          <%= f.error_message_on :name %>
-        </div>
+        <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+        
         <div class="form-group mb-0">
           <%= f.label :logo do %>
             <%= Spree.t(:logo) %>
@@ -36,15 +33,8 @@
         <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
       </div>
       <div class="card-body">
-        <div class="form-group">
-          <%= f.label :contact_phone, Spree.t(:contact_phone) %>
-          <%= f.text_field :contact_phone, class: 'form-control' %>
-        </div>
-
-        <div class="form-group">
-          <%= f.label :address, Spree.t(:address) %>
-          <%= f.text_area :address, rows: 5, class: 'form-control', data: { controller: 'textarea-autogrow' } %>
-        </div>
+        <%= f.spree_text_field :contact_phone %>
+        <%= f.spree_text_area :address %>
       </div>
     </div>
 
@@ -141,33 +131,10 @@
         <p class="text-muted">
           <%= Spree.t(:digital_assets_help) %>
         </p>
-        <div class="custom-control custom-checkbox mb-3">
-          <%= f.check_box :preferred_limit_digital_download_days,
-                      class: "custom-control-input" %>
-          <%= f.label :preferred_limit_digital_download_days, class: "custom-control-label" %>
-          <%= f.error_message_on :preferred_limit_digital_download_days %>
-        </div>
-        <div class="form-group">
-          <%= f.label :preferred_digital_asset_authorized_days %>
-          <%= f.number_field :preferred_digital_asset_authorized_days,
-                         class: "form-control",
-                         min: 1 %>
-          <%= f.error_message_on :preferred_digital_asset_authorized_days %>
-        </div>
-
-        <div class="custom-control custom-checkbox mb-3">
-          <%= f.check_box :preferred_limit_digital_download_count,
-                      class: "custom-control-input" %>
-          <%= f.label :preferred_limit_digital_download_count, class: "custom-control-label" %>
-          <%= f.error_message_on :preferred_limit_digital_download_count %>
-        </div>
-        <div class="form-group">
-          <%= f.label :preferred_digital_asset_authorized_clicks %>
-          <%= f.number_field :preferred_digital_asset_authorized_clicks,
-                         class: "form-control",
-                         min: 1 %>
-          <%= f.error_message_on :preferred_digital_asset_authorized_clicks %>
-        </div>
+        <%= f.spree_check_box :preferred_limit_digital_download_days %>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
+        <%= f.spree_check_box :preferred_limit_digital_download_count %>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
       </div>
     </div>
   </div>
