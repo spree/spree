@@ -22,15 +22,7 @@
     <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <%= label_tag :payment_method_name, Spree.t(:name) %>
-      <%= text_field :payment_method, :name, class: 'form-control' %>
-      <span class="text-muted form-text mt-2">
-        This name will be used to identify the payment method on the storefront
-      </span>
-
-      <%= error_message_on :payment_method, :name %>
-    </div>
+    <%= f.spree_text_field :name, help: 'This name will be used to identify the payment method on the storefront' %>
 
     <% if can?(:manage, Spree::Store) && available_stores.count > 1 %>
       <div class="form-group">
@@ -44,21 +36,9 @@
       </div>
     <% end %>
 
-    <div class="form-group">
-      <%= label_tag :payment_method_display_on, Spree.t(:display) %>
-      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select' } %>
-    </div>
-    <div class="form-group">
-      <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %>
-      <%= select(:payment_method, :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes).to_s, true], [Spree.t(:say_no).to_s, false]], {}, {class: 'custom-select'}) %>
-    </div>
+    <%= f.spree_select :display_on, display_on_options, { label: Spree.t(:display) } %>
+    <%= f.spree_select :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes).to_s, true], [Spree.t(:say_no).to_s, false]], { label: Spree.t(:auto_capture) } %>
 
-    <div class="form-group">
-      <label><%= Spree.t(:active) %></label>
-      <div class="custom-control custom-switch">
-        <%= f.check_box :active, class: 'custom-control-input' %>
-        <%= f.label :active, '&nbsp;'.html_safe, class: 'custom-control-label' %>
-      </div>
-    </div>
+    <%= f.spree_check_box :active %>
   </div>
 </div>

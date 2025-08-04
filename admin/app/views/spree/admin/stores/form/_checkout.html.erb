@@ -1,66 +1,31 @@
 <%= content_for(:page_title) do %>
-  <%= Spree.t(:checkout) %> <%= Spree.t(:settings) %>
+<%= Spree.t(:checkout) %> <%= Spree.t(:settings) %>
 <% end %>
 
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
-    <div class="alert alert-info mb-3">
-      <p>
-        <%= Spree.t('admin.checkout_settings.policy_copy', policies_link: link_to(Spree.t(:policies), spree.edit_admin_store_path + '?section=policies', class: 'alert-link')).html_safe %>
-      </p>
-    </div>
+<div class="alert alert-info mb-3">
+  <p>
+    <%= Spree.t('admin.checkout_settings.policy_copy', policies_link: link_to(Spree.t(:policies), spree.edit_admin_store_path + '?section=policies', class: 'alert-link')).html_safe %>
+  </p>
+</div>
 
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:settings) %></h5>
-      </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:settings) %></h5>
+  </div>
 
-      <div class="card-body">
-        <div class="custom-control custom-checkbox mb-3">
-          <%= f.check_box :preferred_guest_checkout, class: "custom-control-input" %>
-          <%= f.label :preferred_guest_checkout, Spree.t('admin.checkout_settings.guest_checkout.label'), class: "custom-control-label" %>
-          <%= f.error_message_on :preferred_guest_checkout %>
+  <div class="card-body">
+    <%= f.spree_check_box :preferred_guest_checkout, label: Spree.t('admin.checkout_settings.guest_checkout.label'), help: Spree.t('admin.checkout_settings.guest_checkout.description') %>
+    <%= f.spree_check_box :preferred_company_field_enabled, label: Spree.t('admin.store_form.company_field.label'), help: Spree.t('admin.store_form.company_field.description') %>
+    <%= f.spree_check_box :preferred_special_instructions_enabled, label: Spree.t('admin.checkout_settings.special_instructions.label'), help: Spree.t('admin.checkout_settings.special_instructions.description') %>
+  </div>
+</div>
 
-          <p class="text-muted mt-1">
-            <%= Spree.t('admin.checkout_settings.guest_checkout.description') %>
-          </p>
-        </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:checkout_message) %></h5>
+  </div>
 
-        <div class="custom-control custom-checkbox mb-3">
-          <%= f.check_box :preferred_company_field_enabled, class: "custom-control-input" %>
-          <%= f.label :preferred_company_field_enabled, Spree.t('admin.store_form.company_field.label'), class: "custom-control-label" %>
-          <%= f.error_message_on :preferred_company_field_enabled %>
-
-          <div class="text-muted mt-1">
-            <%= Spree.t('admin.store_form.company_field.description') %>
-          </div>
-        </div>
-
-        <div class="custom-control custom-checkbox">
-          <%= f.check_box :preferred_special_instructions_enabled, class: "custom-control-input" %>
-          <%= f.label :preferred_special_instructions_enabled, Spree.t('admin.checkout_settings.special_instructions.label'), class: "custom-control-label" %>
-          <%= f.error_message_on :preferred_special_instructions_enabled %>
-
-          <p class="text-muted mt-1">
-            <%= Spree.t('admin.checkout_settings.special_instructions.description') %>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:checkout_message) %></h5>
-      </div>
-
-      <div class="card-body">
-        <p class="text-muted">
-          <%= Spree.t('admin.checkout_settings.checkout_message_description') %>
-        </p>
-        <div class="trix-container">
-          <%= f.rich_text_area :checkout_message, class: 'overflow-auto', style: 'height: 300px' %>
-        </div>
-      </div>
-    </div>
+  <div class="card-body">
+    <%= f.spree_rich_text_area :checkout_message, label: false, help: Spree.t('admin.checkout_settings.checkout_message_description') %>
   </div>
 </div>

@@ -30,10 +30,7 @@
             <%= f.label :name, Spree.t(:site_name) %>
             <%= f.text_field :name, class: 'form-control' %>
           </div>
-          <div class="form-group">
-            <%= f.label :meta_description, 'Search description' %>
-            <%= f.text_area :meta_description, class: 'form-control', style: 'min-height: 5em', data: { controller: 'textarea-autogrow'} %>
-          </div>
+          <%= f.spree_text_area :meta_description, label: 'Search description', style: 'min-height: 5em' %>
           <div class="custom-control custom-checkbox mb-2">
             <%= f.check_box :preferred_index_in_search_engines, class: 'custom-control-input' %>
             <%= f.label :preferred_index_in_search_engines, Spree.t(:index_in_search_engines), class: 'custom-control-label' %>
@@ -73,20 +70,11 @@
           </h5>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_head, Spree.t(:head_tag) %>
-            <%= f.text_area :storefront_custom_code_head, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
+          <%= f.spree_text_area :storefront_custom_code_head, rows: 4 %>
 
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_body_start, Spree.t(:body_tag_start) %>
-            <%= f.text_area :storefront_custom_code_body_start, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
+          <%= f.spree_text_area :storefront_custom_code_body_start, rows: 4 %>
 
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_body_end, Spree.t(:body_tag_end) %>
-            <%= f.text_area :storefront_custom_code_body_end, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
+          <%= f.spree_text_area :storefront_custom_code_body_end, rows: 4 %>
         </div>
       </div>
 

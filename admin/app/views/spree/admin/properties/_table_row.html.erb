@@ -20,6 +20,6 @@
     <% end %>
   </td>
   <td class="w-10 actions">
-    <%= link_to_edit(property, class: 'btn btn-light btn-sm') if can?(:edit, property) %>
+    <%= link_to_edit(property, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, property) %>
   </td>
 </tr>

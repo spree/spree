@@ -36,14 +36,10 @@
 
     <div class="card mb-4">
       <div class="card-body">
-        <div class="form-group">
-          <%= f.label :stock_location, raw(Spree.t(:stock_location) + required_span_tag) %>
-          <%= f.select :stock_location_id,
+        <%= f.spree_select :stock_location_id,
                    available_stock_locations_list,
                    { include_blank: Spree.t(:select_a_stock_location) },
-                   class: "custom-select" %>
-          <%= f.error_message_on :stock_location %>
-        </div>
+                   { label: Spree.t(:stock_location), required: true } %>
       </div>
     </div>
 

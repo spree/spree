@@ -7,10 +7,7 @@
     </div>
 
     <div class="card-body">
-      <div class="form-group">
-        <%= f.collection_select(:tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'custom-select' }) %>
-        <%= f.error_message_on :tax_category %>
-      </div>
+      <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') } %>
     </div>
   </div>
 <% end %>

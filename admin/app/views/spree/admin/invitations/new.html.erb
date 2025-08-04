@@ -6,20 +6,11 @@
       <%= modal_header Spree.t('actions.send_invitation') %>
       <div class="modal-body">
         <%= render 'spree/admin/shared/error_messages', target: @invitation %>
-        <div class="form-group">
-          <%= f.label :email, Spree.t(:email) %>
-          <%= f.email_field :email, class: 'form-control', required: :required, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com', autofocus: true %>
-        </div>
+        <%= f.spree_email_field :email, required: true, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com', autofocus: true %>
         <% if @roles.any? %>
-          <div class="form-group">
-            <%= f.label :role, Spree.t(:role_id) %>
-            <%= f.select :role_id, @roles.map { |role| [role.name, role.id] }, {}, { data: { controller: 'autocomplete-select', 'enable-button-target': 'input' }, required: true } %>
-          </div>
+          <%= f.spree_select :role_id, @roles.map { |role| [role.name, role.id] }, { label: Spree.t(:role_id), autocomplete: true, required: true }, { data: { 'enable-button-target': 'input' } } %>
         <% end %>
-        <div class="form-group">
-          <%= f.label :expires_at %>
-          <%= f.date_field :expires_at, class: 'form-control', required: true, data: { 'enable-button-target': 'input' } %>
-        </div>
+        <%= f.spree_date_field :expires_at, required: true, data: { 'enable-button-target': 'input' } %>
       </div>
       <div class="modal-footer">
         <%= turbo_save_button_tag nil, class: 'btn btn-primary', data: { 'enable-button-target': 'button' } do %>

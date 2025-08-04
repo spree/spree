@@ -6,25 +6,9 @@
   </div>
 
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :prefix, raw(Spree.t('admin.gift_card_batches.prefix') + required_span_tag)%>
-      <%= f.text_field :prefix, class: 'form-control', disabled: f.object.persisted? %>
-      <%= f.error_message_on :prefix %>
-    </div>
-    <div class="form-group">
-      <%= f.label :amount, raw(Spree.t(:amount) + required_span_tag) %>
-      <%= f.number_field :amount, class: 'form-control', disabled: f.object.persisted?, required: true %>
-      <%= f.error_message_on :amount %>
-    </div>
-    <div class="form-group">
-      <%= f.label :codes_count, raw(Spree.t('admin.gift_card_batches.codes_count') + required_span_tag) %>
-      <%= f.number_field :codes_count, class: 'form-control', disabled: f.object.persisted?, required: true, min: 1, max: Spree::Config[:gift_card_batch_limit] %>
-      <%= f.error_message_on :codes_count %>
-    </div>
-    <div class="form-group">
-      <%= f.label :expires_at, Spree.t(:expires_at) %>
-      <%= f.date_field :expires_at, class: 'form-control', disabled: f.object.persisted? %>
-      <%= f.error_message_on :expires_at %>
-    </div>
+    <%= f.spree_text_field :prefix, disabled: f.object.persisted?, label: Spree.t('admin.gift_card_batches.prefix') %>
+    <%= f.spree_number_field :amount, required: true, disabled: f.object.persisted? %>
+    <%= f.spree_number_field :codes_count, required: true, min: 1, max: Spree::Config[:gift_card_batch_limit], label: Spree.t('admin.gift_card_batches.codes_count') %>
+    <%= f.spree_date_field :expires_at, disabled: f.object.persisted?, help: 'Gift cards will expire after this date.' %>
   </div>
 </div>

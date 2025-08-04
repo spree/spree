@@ -1,9 +1,5 @@
 <div class="card mb-4">
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
-      <%= f.text_field :name, class: 'form-control', required: true, autofocus: true %>
-      <%= f.error_message_on :name %>
-    </div>
+    <%= f.spree_text_field :name, required: true, autofocus: true %>
   </div>
 </div>

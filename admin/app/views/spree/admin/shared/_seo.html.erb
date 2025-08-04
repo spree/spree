@@ -17,14 +17,9 @@
       <%= placeholder %>
     </div>
     <div class="seo__inputs d-none" data-seo-form-target="inputsContainer">
-      <div class="form-group">
-        <%= f.label :meta_title, Spree.t(:meta_title) %>
-        <%= f.text_field :meta_title, class: 'form-control', data: { seo_form_target: 'titleInput', action: 'input->seo-form#updatePreviews' } %>
-      </div>
-      <div class="form-group">
-        <%= f.label :meta_description, Spree.t(:meta_description) %>
-        <%= f.text_area :meta_description, class: 'form-control', rows: 4, data: { seo_form_target: 'descriptionInput', action: 'input->seo-form#updatePreviews' } %>
-      </div>
+      <%= f.spree_text_field :meta_title, data: { seo_form_target: 'titleInput', action: 'input->seo-form#updatePreviews' } %>
+      <%= f.spree_text_area :meta_description, rows: 4, data: { seo_form_target: 'descriptionInput', action: 'input->seo-form#updatePreviews' } %>
+      
       <div class="form-group">
         <% if defined?(slug_attribute_name) %>
           <%= label_tag slug_attribute_name, Spree.t(:slug) %>

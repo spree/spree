@@ -143,29 +143,15 @@
 
   <div class="card mb-4">
     <div class="card-body">
-      <div class="form-group">
-        <%= f.label :stock_location, raw(Spree.t(:stock_location) + required_span_tag) %>
-        <%= f.select :stock_location_id,
-                 available_stock_locations_list,
-                 { include_blank: Spree.t(:select_a_stock_location) },
-                 { class: "custom-select" } %>
-        <%= f.error_message_on :stock_location %>
-      </div>
+      <%= f.spree_select :stock_location_id,
+               available_stock_locations_list,
+               { include_blank: Spree.t(:select_a_stock_location), label: Spree.t(:stock_location), required: true } %>
 
-      <div class="form-group">
-        <%= f.label :reason, raw(Spree.t(:reason) + required_span_tag) %>
-        <%= f.select :return_authorization_reason_id,
-                 @reasons.collect { |r| [r.name, r.id] },
-                 { include_blank: Spree.t(:select_a_return_authorization_reason) },
-                 { class: "custom-select" } %>
-        <%= f.error_message_on :reason %>
-      </div>
+      <%= f.spree_select :return_authorization_reason_id,
+               @reasons.collect { |r| [r.name, r.id] },
+               { include_blank: Spree.t(:select_a_return_authorization_reason), label: Spree.t(:reason), required: true } %>
 
-      <div class="form-group">
-        <%= f.label :memo, Spree.t(:memo) %>
-        <%= f.text_area :memo, class: "form-control" %>
-        <%= f.error_message_on :memo %>
-      </div>
+      <%= f.spree_text_area :memo %>
     </div>
   </div>
 </div>

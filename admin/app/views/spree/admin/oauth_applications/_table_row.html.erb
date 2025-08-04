@@ -1,8 +1,8 @@
 <tr id="<%= spree_dom_id oauth_application %>">
   <td class="w-20"><code><%= oauth_application.name %></code></td>
   <td class="w-40">
-    <div class="input-group" data-controller="password-toggle">
-      <%= button_tag class: 'btn hover-gray px-1', data: { action: 'click->password-toggle#password' } do %>
+    <div class="d-flex gap-2 align-items-center" data-controller="password-toggle">
+      <%= button_tag class: 'btn btn-light btn-sm px-1', data: { action: 'click->password-toggle#password' } do %>
         <%= icon 'eye', class: 'mr-0' %>
       <% end %>
       <%= password_field_tag :password, oauth_application.uid, class: 'form-control-plaintext', data: { password_toggle_target: 'unhide' }, readonly: true %>

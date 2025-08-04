@@ -5,22 +5,10 @@
     </h5>
   </div>
   <div class="card-body" >
-    <div class="form-group">
-      <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
-      <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-      <%= f.error_message_on :name %>
-    </div>
-    <div class="form-group">
-      <%= f.label :admin_name, Spree.t(:internal_name) %>
-      <%= f.text_field :admin_name, class: 'form-control', label: false %>
-    </div>
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_text_field :admin_name, label: Spree.t(:internal_name) %>
     <% unless f.object.default? %>
-      <div class="form-group">
-        <div class="custom-control custom-checkbox">
-          <%= f.check_box :active, class: 'custom-control-input' %>
-          <%= f.label :active, class: 'custom-control-label' %>
-        </div>
-      </div>
+      <%= f.spree_check_box :active %>
     <% end %>
   </div>
 </div>

@@ -3,10 +3,6 @@
     <h5 class="card-title"><%= Spree.t(:tax) %></h5>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-      <%= f.select(:tax_category_id, @tax_categories.pluck(:name, :id), { include_blank: false }, { class: 'custom-select' }) %>
-      <%= f.error_message_on :tax_category %>
-    </div>
+    <%= f.spree_select :tax_category_id, @tax_categories.pluck(:name, :id), { include_blank: false, label: Spree.t(:tax_category) } %>
   </div>
 </div>

@@ -4,6 +4,7 @@ module Spree
       include Spree::Admin::BreadcrumbConcern
 
       layout :choose_layout
+      default_form_builder Spree::Admin::FormBuilder
 
       helper 'spree/base'
       helper 'spree/admin/navigation'

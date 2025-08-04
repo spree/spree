@@ -16,7 +16,7 @@
     <% end %>
   </td>
   <td class="w-15">
-    <%= link_to_with_icon 'eye', Spree.t(:view), spree.admin_webhooks_subscriber_path(webhooks_subscriber), class: "btn btn-light btn-sm", data: { row_link_target: 'link' } %>
-    <%= link_to_edit(webhooks_subscriber) if can? :edit, webhooks_subscriber %>
+    <%= link_to_with_icon 'eye', Spree.t(:view), spree.admin_webhooks_subscriber_path(webhooks_subscriber), class: "btn btn-light btn-sm", data: { row_link_target: 'link', turbo_frame: '_top' } %>
+    <%= link_to_edit(webhooks_subscriber, data: { turbo_frame: '_top' }) if can? :edit, webhooks_subscriber %>
   </td>
 </tr>
