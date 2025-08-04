@@ -8,7 +8,7 @@
       <h1 class="uppercase text-2xl font-medium mt-4"><%= post.title %></h1>
 
       <% if post.published? %>
-        <div class="mt-2 text-sm"><%= spree_time(post.published_at, '%B %e, %Y') %></div>
+        <div class="mt-2 text-sm"><%= local_time(post.published_at, '%B %e, %Y') %></div>
       <% end %>
 
       <div class="mt-8 post-details-content"><%= post.content %></div>

@@ -21,6 +21,6 @@
 
   <td class="w-full md:w-auto md:px-4 md:border-y md:border-r border-accent">
     <span class="md:hidden font-medium mr-1"><%= Spree.t(:expires_at) %>:</span>
-    <%= gift_card.expires_at.present? ? spree_date(gift_card.expires_at) : '-' %>
+    <%= gift_card.expires_at.present? ? local_date(gift_card.expires_at) : '-' %>
   </td>
 </tr>
