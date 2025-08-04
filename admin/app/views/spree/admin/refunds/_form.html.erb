@@ -10,8 +10,4 @@
   </div>
 <% end %>
 
-<div class="form-group mb-0">
-  <%= f.label :refund_reason_id, Spree.t(:reason) %>
-  <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, { include_blank: true }, { data: { controller: 'autocomplete-select' }, required: true }) %>
-  <%= f.error_message_on :reason %>
-</div>
+<%= f.spree_collection_select :refund_reason_id, refund_reasons, :id, :name, { include_blank: true, label: Spree.t(:reason), required: true, autocomplete: true } %>

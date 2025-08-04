@@ -110,11 +110,7 @@
         <% else %>
           <% disabled = @taxon.root? %>
         <% end %>
-        <div class="form-group">
-          <%= f.label :parent_id, Spree.t('admin.navigation.nested_under') %>
-          <%= f.select :parent_id, nested_set_options(@taxonomy.taxons.includes(:parent), @taxon) {|i| i.pretty_name }, { include_blank: false }, { data: { controller: 'autocomplete-select' }, disabled: disabled  } %>
-          <%= f.error_message_on :parent_id %>
-        </div>
+        <%= f.spree_select :parent_id, nested_set_options(@taxonomy.taxons.includes(:parent), @taxon) {|i| i.pretty_name }, { include_blank: false, label: Spree.t('admin.navigation.nested_under'), autocomplete: true }, { disabled: disabled } %>
       </div>
     </div>
 

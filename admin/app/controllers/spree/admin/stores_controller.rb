@@ -50,7 +50,10 @@ module Spree
 
         if @store.save
           remove_assets(%w[logo mailer_logo], object: @store)
-          flash[:success] = flash_message_for(@store, :successfully_updated)
+          respond_to do |format|
+            format.turbo_stream { flash.now[:success] = flash_message_for(@store, :successfully_updated) }
+            format.html { flash[:success] = flash_message_for(@store, :successfully_updated) }
+          end
         else
           flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
         end
