@@ -238,6 +238,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # @return [ActiveRecord::Relation]
   def ransack_collection
     @ransack_collection ||= begin
+      # Check if collection is already a ransack collection and return it
+      return collection if collection.is_a?(Ransack::Search) || collection.respond_to?(:current_page)
+
       params[:q] ||= {}
 
       @ransack_collection = collection.ransack(params[:q])
