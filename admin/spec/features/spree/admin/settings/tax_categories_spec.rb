@@ -42,7 +42,7 @@ RSpec.feature 'Tax categories' do
     fill_in 'Name', with: 'Non-Taxable'
     fill_in 'Description', with: 'Non-Taxable Tax Category'
     fill_in 'Tax Code', with: 'NON_TAXABLE_TAX_CATEGORY'
-    uncheck 'Is default', allow_label_click: true
+    uncheck 'Default', allow_label_click: true
 
     within('#page-header') { click_button 'Update' }
 

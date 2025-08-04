@@ -9,7 +9,7 @@
 
     <%= f.spree_text_field :barcode %>
 
-    <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, data: { controller: 'autocomplete-select' } %>
+    <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none'), label: Spree.t(:tax_category), autocomplete: true } %>
 
     <%= f.spree_date_field :discontinue_on %>
 

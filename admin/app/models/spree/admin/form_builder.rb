@@ -87,10 +87,17 @@ module Spree
         end
       end
 
-      def spree_collection_select(method, collection, value_method, text_method, options = {})
+      def spree_collection_select(method, collection, value_method, text_method, options = {}, html_options = {})
+        if options[:autocomplete]
+          html_options[:data] ||= {}
+          html_options[:data][:controller] ||= 'autocomplete-select'
+        else
+          html_options[:class] ||= 'custom-select'
+        end
+
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
-            @template.collection_select(@object_name, method, collection, value_method, text_method, objectify_options(options), { class: 'custom-select' }) +
+            @template.collection_select(@object_name, method, collection, value_method, text_method, objectify_options(options), html_options) +
             @template.error_message_on(@object_name, method) + field_help(method, options)
         end
       end
