@@ -10,7 +10,7 @@ RSpec.feature 'Tax categories' do
     fill_in 'Name', with: 'New Tax Category'
     fill_in 'Description', with: 'New Tax Category Description'
     fill_in 'Tax Code', with: 'NEW_TAX_CATEGORY'
-    check 'Is default', allow_label_click: true
+    check 'Default', allow_label_click: true
 
     click_on 'Create'
 
