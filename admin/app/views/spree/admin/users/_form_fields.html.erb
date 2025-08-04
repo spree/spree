@@ -1,18 +1,15 @@
-<%= f.spree_text_field :email, required: true, autofocus: f.object.new_record?, label: raw(Spree.t(:email) + required_span_tag), type: :email %>
-<%= f.spree_text_field :first_name, required: true, label: raw(Spree.t(:first_name) + required_span_tag) %>
-<%= f.spree_text_field :last_name, required: true, label: raw(Spree.t(:last_name) + required_span_tag) %>
+<%= f.spree_email_field :email, required: true, autofocus: f.object.new_record? %>
+<%= f.spree_text_field :first_name, required: true %>
+<%= f.spree_text_field :last_name, required: true %>
 <%= f.spree_text_field :phone %>
 <div class="form-group">
   <%= f.label :tag_list, Spree.t(:tags) %>
   <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-100', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
 </div>
 <% if @user.class == Spree.admin_user_class && can?(:manage, Spree::Role) %>
-  <div class="form-group">
-    <%= f.label :spree_role_ids, Spree.t(:roles) %>
-    <%= f.select :spree_role_ids,
-            options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),
-            { prompt: false },
-            { multiple: true,  data: { controller: 'autocomplete-select' } } %>          
-  </div>
+  <%= f.spree_select :spree_role_ids,
+          options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),
+          { prompt: false, label: Spree.t(:roles), autocomplete: true },
+          { multiple: true } %>
 <% end %>
 <%= f.spree_check_box :accepts_email_marketing %>

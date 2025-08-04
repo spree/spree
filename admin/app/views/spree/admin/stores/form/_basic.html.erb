@@ -6,137 +6,90 @@
   <%= link_to_edit_translations(@store) %>
 <% end %>
 
-<div class="row">
-  <div class="col-lg-6">
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">
-          <%= Spree.t(:store_name_help) %>
-        </p>
-        <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
-        
-        <div class="form-group mb-0">
-          <%= f.label :logo do %>
-            <%= Spree.t(:logo) %>
-            <%= help_bubble("Used in the admin dashboard") %>
-          <% end %>
-          <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
-        </div>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
-      </div>
-      <div class="card-body">
-        <%= f.spree_text_field :contact_phone %>
-        <%= f.spree_text_area :address %>
-      </div>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">
-          <%= Spree.t(:standards_and_formats_help) %>
-        </p>
-        <div class="form-group mb-3">
-          <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
-          <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
-        </div>
-        <div data-controller="unit-system">
-          <div class="form-group mb-3">
-            <%= label_tag :preferred_unit_system, raw(Spree.t(:unit_system) + required_span_tag) %>
-            <%= select_tag 'store[preferred_unit_system]', options_for_select(unit_systems, @store.preferred_unit_system), {class: 'custom-select', data: {unit_system_target: "body", action: "change->unit-system#unitSystemHandler"}} %>
-            <p class="text-muted form-text mt-2 mb-0">
-              <%= Spree.t(:unit_system_help) %>
-            </p>
-          </div>
-          <div class="form-group">
-            <%= label_tag :preferred_weight_unit, raw(Spree.t(:weight_unit) + required_span_tag) %>
-            <%= select_tag 'store[preferred_weight_unit]', options_for_select(weight_units(@store), @store.preferred_weight_unit), {class: 'custom-select', data: {unit_system_target: "weightUnit"}} %>
-            <p class="text-muted form-text mt-2 mb-0">
-              <%= Spree.t(:weight_unit_help) %>
-            </p>
-          </div>
-        </div>
-      </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">
+      <%= Spree.t(:store_name_help) %>
+    </p>
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    
+    <div class="form-group mb-0">
+      <%= f.label :logo do %>
+        <%= Spree.t(:logo) %>
+        <%= help_bubble("Used in the admin dashboard") %>
+      <% end %>
+      <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
     </div>
   </div>
+</div>
 
-  <div class="col-lg-6">
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:countries) %></h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">
-          <%= Spree.t(:currency_and_country_help) %>
-        </p>
-        <div class="form-group">
-          <%= f.label :default_currency, Spree.t(:default_currency) %>
-          <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
-          <%= f.error_message_on :default_currency %>
-        </div>
-        <div class="form-group">
-          <%= f.label :supported_currencies, Spree.t(:supported_currencies) %>
-          <%= f.select :supported_currencies,
-          currency_options(@store.supported_currencies&.split(',')),
-          { prompt: false },
-          { multiple: true, data: { controller: 'autocomplete-select' } } %>
-          <%= f.error_message_on :supported_currencies %>
-        </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:countries) %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">
+      <%= Spree.t(:currency_and_country_help) %>
+    </p>
+    <%= f.spree_select :default_currency, currency_options(@store.default_currency), { label: Spree.t(:default_currency), autocomplete: true } %>
+    <%= f.spree_select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false, multiple: true, autocomplete: true } %>
+    <%= f.spree_select :default_country_iso, Spree::Country.pluck(:name, :iso), { include_blank: false, label: Spree.t(:default_country), autocomplete: true } %>
 
-        <div class="form-group">
-          <%= f.label :default_country_iso, Spree.t(:default_country) %>
-          <%= f.collection_select :default_country_iso, Spree::Country.pluck(:iso, :name), :first, :last, { include_blank: false }, { data: { controller: 'autocomplete-select' } } %>
-          <%= f.error_message_on :default_country_iso %>
-        </div>
-        <div class="form-group">
-          <%= f.label :checkout_zone_id, Spree.t(:shipping_zone) %>
-          <%= f.select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { }, { data: { controller: 'autocomplete-select' } } %>
-          <small class="form-text text-muted mt-2">
-            <%= Spree.t(:shipping_zone_help) %>
-            <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path %>
-          </small>
-          <%= f.error_message_on :checkout_zone_id %>
-        </div>
+    <%= f.spree_select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { label: Spree.t(:shipping_zone), autocomplete: true } %>
+    <small class="form-text text-muted mb-3">
+      <%= Spree.t(:shipping_zone_help) %>
+      <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'text-blue' %>
+    </small>
 
-        <div class="form-group">
-          <%= f.label :default_locale, Spree.t(:default_locale) %>
-          <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { data: { controller: 'autocomplete-select' } } %>
-          <%= f.error_message_on :default_locale %>
-        </div>
-        <div class="form-group">
-          <%= f.label :supported_locales, Spree.t(:supported_locales) %>
-          <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, data: { controller: 'autocomplete-select' } } %>
-          <%= f.error_message_on :supported_locales %>
-        </div>
-      </div>
+    <%= f.spree_select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), { autocomplete: true } %>
+    <%= f.spree_select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), { multiple: true, autocomplete: true } %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">
+      <%= Spree.t(:standards_and_formats_help) %>
+    </p>
+    <div class="form-group mb-3">
+      <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
+      <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
+    </div>
+    <div data-controller="unit-system">
+      <%= f.spree_select :preferred_unit_system, options_for_select(unit_systems, @store.preferred_unit_system), { label: Spree.t(:unit_system), data: { unit_system_target: "body", action: "change->unit-system#unitSystemHandler" }, help: Spree.t(:unit_system_help) } %>
+      <%= f.spree_select :preferred_weight_unit, options_for_select(weight_units(@store), @store.preferred_weight_unit), { label: Spree.t(:weight_unit), data: { unit_system_target: "weightUnit" }, help: Spree.t(:weight_unit_help) } %>
     </div>
   </div>
+</div>
 
-  <div class="col-lg-6">
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">
-          <%= Spree.t(:digital_assets_help) %>
-        </p>
-        <%= f.spree_check_box :preferred_limit_digital_download_days %>
-        <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
-        <%= f.spree_check_box :preferred_limit_digital_download_count %>
-        <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
-      </div>
-    </div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :contact_phone %>
+    <%= f.spree_text_area :address %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">
+      <%= Spree.t(:digital_assets_help) %>
+    </p>
+    <%= f.spree_check_box :preferred_limit_digital_download_days %>
+    <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
+    <%= f.spree_check_box :preferred_limit_digital_download_count %>
+    <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
   </div>
 </div>
 

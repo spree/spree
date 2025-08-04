@@ -3,7 +3,7 @@
   <%= @object.try(:name) || @object.try(:title) || @object.try(:number) %>
 <% end %>
 
-<%= form_with model: [:admin, @object], url: object_url, scope: @resource.object_name, id: "edit_#{controller_name.singularize}_#{@object.id}" do |f| %>
+<%= form_with model: [:admin, @object], url: object_url, scope: @resource.object_name, id: "edit_#{controller_name.singularize}_#{@object.id}", data: local_assigns[:data] || {} do |f| %>
   <div class="row">
     <div class="col-lg-6 offset-lg-3">
       <%= render 'spree/admin/shared/error_messages', target: @object %>

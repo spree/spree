@@ -23,11 +23,29 @@ module Spree
         end
       end
 
+      def spree_email_field(method, options = {})
+        options[:class] ||= 'form-control'
+        @template.content_tag(:div, class: 'form-group') do
+          @template.label(@object_name, method, get_label(method, options)) +
+            @template.email_field(@object_name, method, objectify_options(options)) +
+            @template.error_message_on(@object_name, method) + field_help(method, options)
+        end
+      end
+
       def spree_date_field(method, options = {})
         options[:class] ||= 'form-control'
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.date_field(@object_name, method, objectify_options(options)) +
+            @template.error_message_on(@object_name, method) + field_help(method, options)
+        end
+      end
+
+      def spree_datetime_field(method, options = {})
+        options[:class] ||= 'form-control'
+        @template.content_tag(:div, class: 'form-group') do
+          @template.label(@object_name, method, get_label(method, options)) +
+            @template.datetime_field(@object_name, method, objectify_options(options)) +
             @template.error_message_on(@object_name, method) + field_help(method, options)
         end
       end
@@ -55,7 +73,12 @@ module Spree
       end
 
       def spree_select(method, choices = nil, options = {}, html_options = {}, &block)
-        html_options[:class] ||= 'custom-select'
+        if options[:autocomplete]
+          html_options[:data] ||= {}
+          html_options[:data][:controller] ||= 'autocomplete-select'
+        else
+          html_options[:class] ||= 'custom-select'
+        end
 
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
@@ -81,6 +104,15 @@ module Spree
         end
       end
 
+      def spree_radio_button(method, tag_value, options = {})
+        @template.content_tag(:div, class: 'form-group') do
+          @template.content_tag(:div, class: 'custom-control custom-radio') do
+            @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input'))) +
+              @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', for: options[:id])
+          end + @template.error_message_on(@object_name, method) + field_help(method, options)
+        end
+      end
+
       def field_help(_method, options = {})
         @template.content_tag(:span, options[:help], class: 'form-text text-muted mt-2')
       end
@@ -88,6 +120,8 @@ module Spree
       private
 
       def get_label(method, options)
+        return '' if options[:label] == false
+
         translated_label = if options[:label]
                               options[:label]
                             elsif I18n.exists?("spree.#{method}")

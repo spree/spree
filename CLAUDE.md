@@ -250,7 +250,7 @@ end
 - Use Spree's admin styling conventions
 - Use as much as possible Turbo Rails features (Hotwire)
 - Re-usable components should be helpers
-- Implement proper form helpers
+- Please use `Spree::Admin::FormBuilder` methods for form fields
 - Follow UX patterns established in core admin
 - Use Stimulus controllers for JavaScript interactions
 
@@ -258,21 +258,13 @@ For create new resource form:
 
 ```erb
 <!-- ✅ Proper admin form structure -->
-<%= form_with model: [:admin, @product] do |f| %>
-  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
-  <%= render 'spree/admin/products/form', f: f %>
-  <%= render 'spree/admin/new_resource_links', f: f %>
-<% end %>
+<%= render 'spree/admin/shared/new_resource' %>
 ```
 
 For edit resource form:
 
 ```erb
-<%= form_with model: [:admin, @product] do |f| %>
-  <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
-  <%= render 'spree/admin/products/form', f: f %>
-  <%= render 'spree/admin/edit_resource_links', f: f %>
-<% end %>
+<%= render 'spree/admin/shared/edit_resource' %>
 ```
 
 And the re-usable form partial should be in `app/views/spree/admin/products/_form.html.erb`, eg.
@@ -286,18 +278,12 @@ And the re-usable form partial should be in `app/views/spree/admin/products/_for
   </div>
 
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-      <%= f.error_message_on :name %>
-    </div>
+    <%= f.spree_text_field :name %>
+    <%= f.spree_rich_text_area :description %>
+    <%= f.spree_check_box :active %>
   </div>
 </div>
 ```
-
-Try to group form fields into cards.
-Use Bootstrap 4.6 form elements and components, such as form-group, form-control. 
-Always use custom bootstrap classes for checkbox and radio buttons.
 
 ## Performance & Best Practices
 

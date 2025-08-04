@@ -10,17 +10,9 @@
 
     <%= f.spree_check_box :default_tax, label: Spree.t(:default_tax_zone) %>
 
-    <div class="form-group">
-      <strong><%= Spree.t(:type) %></strong>
-      <div class="custom-control custom-radio my-2">
-        <%= f.radio_button :kind, :country, id: 'country_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
-        <%= label_tag :country_based, Spree.t(:country_based), class: 'custom-control-label' %>
-      </div>
-      <div class="custom-control custom-radio my-2">
-        <%= f.radio_button :kind, :state, id: 'state_based', class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
-        <%= label_tag :state_based, Spree.t(:state_based), class: 'custom-control-label' %>
-      </div>
-    </div>
+    <h6 class="mb-2 mt-3"><%= Spree.t(:type) %></h6>
+    <%= f.spree_radio_button :kind, :country, id: 'country_based', data: { action: 'auto-submit#submit' }, label: Spree.t(:country_based) %>
+    <%= f.spree_radio_button :kind, :state, id: 'state_based', data: { action: 'auto-submit#submit' }, label: Spree.t(:state_based) %>
   </div>
 </div>
 

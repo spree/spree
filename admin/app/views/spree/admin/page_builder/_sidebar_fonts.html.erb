@@ -55,12 +55,11 @@
     </div>
     <div class="tab-pane fade" id="pills-custom-tab" role="tabpanel" aria-labelledby="pills-custom">
       <div class="px-3 py-2">
-        <div class="mb-3 form-group">
+        <div class="mb-3">
           <div class="alert alert-warning">
             Using custom fonts can slow down your store.
           </div>
-          <%= f.label :preferred_custom_font_code, Spree.t(:custom_font_code) %>
-          <%= f.text_area :preferred_custom_font_code, class: 'form-control', style: 'min-height: 6em', data: { controller: 'textarea-autogrow'} %>
+          <%= f.spree_text_area :preferred_custom_font_code, style: 'min-height: 6em' %>
         </div>
         <%= f.submit Spree.t('actions.update'), class: 'btn btn-primary' %>
 
