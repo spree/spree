@@ -1,41 +1,31 @@
 <%= turbo_stream.replace "new_oauth_application" do %>
-  <div class="card">
-    <div class="card-body">
-      <div data-controller="clipboard" class="mb-3">
-        <div class="form-group">
-          <%= label_tag :client_id, 'Client ID' %>
-          <div class="input-group">
-            <%= text_area_tag :client_id, @object.uid, class: 'form-control', rows: 1, data: { clipboard_target: 'source', action: 'clipboard#copy' }, readonly: true %>
-            <div class="input-append">
-              <button data-action="clipboard#copy" class="btn btn-light">
-                <%= icon 'clone.svg', class: 'mr-2' %>
-                <%= Spree.t('admin.copy_to_clipboard') %>
-              </button>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-group">
+            <%= label_tag :client_id, Spree.t('admin.oauth_applications.client_id') %>
+            <div class="d-flex gap-2 align-items-center">
+              <%= text_field_tag :client_id, @object.uid, class: 'form-control-plaintext bg-light rounded', readonly: true %>
+              <%= clipboard_component(@object.uid) %>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div data-controller="clipboard" class="mb-3">
-        <div class="form-group">
-          <%= label_tag :client_secret, 'Client Secret' %>
-          <div class="input-group">
-            <%= text_area_tag :client_secret, @object.plaintext_secret, class: 'form-control', rows: 1, data: { clipboard_target: 'source', action: 'clipboard#copy' }, readonly: true %>
-            <div class="input-append">
-              <button data-action="clipboard#copy" class="btn btn-light">
-                <%= icon 'clone.svg', class: 'mr-2' %>
-                <%= Spree.t('admin.copy_to_clipboard') %>
-              </button>
+          <div class="form-group">
+            <%= label_tag :client_secret, Spree.t('admin.oauth_applications.client_secret') %>
+            <div class="d-flex gap-2 align-items-center">
+              <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-control-plaintext bg-light rounded', readonly: true %>
+              <%= clipboard_component(@object.plaintext_secret) %>
+            </div>
+            <div class="alert alert-warning mt-3">
+              This is your application's secret token, copy it now and keep it safe. It won't be shown again.
             </div>
           </div>
-          <div class="alert alert-warning mt-3">
-            This is your application's secret token, copy it now and keep it safe. It won't be shown again.
-          </div>
+        </div>
+        <div class="card-footer border-top">
+          <%= link_to 'Back to list', spree.admin_oauth_applications_url, class: 'btn btn-light' %>
         </div>
       </div>
-    </div>
-    <div class="card-footer">
-      <%= link_to 'Back to list', spree.admin_oauth_applications_url, class: 'btn btn-light' %>
     </div>
   </div>
 <% end %>

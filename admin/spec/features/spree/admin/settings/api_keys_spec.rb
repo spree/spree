@@ -15,11 +15,14 @@ describe 'API keys', type: :feature do
     visit '/admin/oauth_applications/new'
 
     fill_in 'Name', with: 'My app'
+    select 'Read & Write', from: 'Scopes'
     click_button 'Create'
 
     expect(page).to have_content('Client ID')
     expect(page).to have_content('Client Secret')
-    expect(page).to have_content(Spree::OauthApplication.last.uid)
+
+    oauth_application = Spree::OauthApplication.last
+    expect(page).to have_field('Client ID', with: oauth_application.uid, readonly: true)
   end
 
   it 'can modify existing app' do
