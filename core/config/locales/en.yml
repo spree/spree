@@ -172,6 +172,7 @@ en:
         name: Name
       spree/tax_category:
         description: Description
+        is_default: Is default
         name: Name
       spree/tax_rate:
         amount: Rate
