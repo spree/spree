@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:states, :zones]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_country_serializer.constantize
+          end
         end
       end
     end

@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:zone_members]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_zone_serializer.constantize
+          end
         end
       end
     end

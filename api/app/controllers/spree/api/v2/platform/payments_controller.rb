@@ -10,6 +10,10 @@ module Spree
           def model_class
             Spree::Payment
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_payment_serializer.constantize
+          end
         end
       end
     end

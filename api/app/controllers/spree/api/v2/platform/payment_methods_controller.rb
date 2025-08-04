@@ -20,6 +20,10 @@ module Spree
 
             super + preferred_attributes
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_payment_method_serializer.constantize
+          end
         end
       end
     end
