@@ -5,7 +5,7 @@ module Spree
         class OptionTypeSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :option_values
+          has_many :option_values, serializer: Spree::Api::Dependencies.platform_option_value_serializer.constantize
         end
       end
     end

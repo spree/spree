@@ -8,6 +8,10 @@ module Spree
           def model_class
             Spree::DataFeed
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_data_feed_serializer.constantize
+          end
         end
       end
     end

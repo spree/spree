@@ -52,6 +52,10 @@ module Spree
           def destroy_service
             Spree::Api::Dependencies.platform_line_item_destroy_service.constantize
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_line_item_serializer.constantize
+          end
         end
       end
     end

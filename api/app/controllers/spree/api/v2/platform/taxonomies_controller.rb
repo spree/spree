@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:taxons, :root]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_taxonomy_serializer.constantize
+          end
         end
       end
     end
