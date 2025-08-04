@@ -164,7 +164,7 @@
                 <%= Spree.t(:expires_at) %>
               </span>
               <% if @object.expires_at %>
-                <span><%= local_time(@object.expires_at) %></span>
+                <span><%= spree_time(@object.expires_at) %></span>
               <% else %>
                 <span class="text-muted"><%= Spree.t(:not_available) %></span>
               <% end %>
@@ -189,7 +189,7 @@
               <span class="text-muted">
                 <%= Spree.t(:created_at) %>
               </span>
-              <span><%= local_time(@object.created_at) %></span>
+              <span><%= spree_time(@object.created_at) %></span>
             </li>
           </ul>
         </div>

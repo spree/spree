@@ -14,7 +14,7 @@
 
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= post.post_category_title || '-' %></td>
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= post.author_name %></td>
-  <td class="cursor-pointer" data-action="click->row-link#openLink"><%= post.published_at.present? ? local_date(post.published_at) : '-' %></td>
+  <td class="cursor-pointer" data-action="click->row-link#openLink"><%= post.published_at.present? ? spree_date(post.published_at) : '-' %></td>
 
   <td class="actions">
     <%= link_to_edit(post, class: 'btn btn-light btn-sm', data: { 'turbo-frame': '_top' }) if can? :edit, post %>

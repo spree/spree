@@ -24,7 +24,7 @@
       </tr>
       <tr>
         <th scope="col"><%= Spree.t(:issued_on) %>:</th>
-        <td><%= local_time(payment.source.created_at) %></td>
+        <td><%= spree_time(payment.source.created_at) %></td>
       </tr>
     </table>
   </div>

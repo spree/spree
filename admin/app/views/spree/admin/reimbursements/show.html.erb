@@ -77,7 +77,7 @@ locals: {
         <% @reimbursement.refunds.includes(:reason).each do |refund| %>
           <tr id="<%= spree_dom_id(refund) %>">
             <td><%= refund.display_amount %></td>
-            <td><%= local_time(refund.created_at) %></td>
+            <td><%= spree_time(refund.created_at) %></td>
             <td><%= refund.reason&.name %></td>
           </tr>
         <% end %>

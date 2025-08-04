@@ -45,7 +45,7 @@
         <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
           <span class="text-muted"><%= Spree.t(:created_at) %></span>
           <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
-            <%= local_time(@user.created_at) %>
+            <%= spree_time(@user.created_at) %>
           </span>
         </div>
       </div>

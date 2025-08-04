@@ -4,7 +4,7 @@
   <td data-action="click->row-link#openLink"><%= stock_transfer.source_location&.display_name.presence || Spree.t(:none) %></td>
   <td data-action="click->row-link#openLink"><%= stock_transfer.destination_location.display_name %></td>
   <td data-action="click->row-link#openLink"><%= stock_transfer.destination_movements.size %></td>
-  <td data-action="click->row-link#openLink"><%= local_time_ago(stock_transfer.created_at) %></td>
+  <td data-action="click->row-link#openLink"><%= spree_time_ago(stock_transfer.created_at) %></td>
   <td class="actions" data-action="click->row-link#openLink">
     <%= link_to '', admin_stock_transfer_path(stock_transfer), data: { row_link_target: 'link' }, class: 'd-none' %>
   </td>

@@ -67,7 +67,7 @@
                 <%= I18n.t('activerecord.attributes.user.last_sign_in') %>
                 <span>
                   <% if @admin_user.last_sign_in_at %>
-                    <%= local_time(@admin_user.last_sign_in_at) %>
+                    <%= spree_time(@admin_user.last_sign_in_at) %>
                   <% else %>
                     <%= Spree.t(:not_available) %>
                   <% end %>
@@ -79,7 +79,7 @@
                 <%= I18n.t('activerecord.attributes.user.current_sign_in') %>
                 <span>
                   <% if @admin_user.current_sign_in_at %>
-                    <%= local_time(@admin_user.current_sign_in_at) %>
+                    <%= spree_time(@admin_user.current_sign_in_at) %>
                   <% else %>
                     <%= Spree.t(:not_available) %>
                   <% end %>
@@ -89,13 +89,13 @@
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <%= Spree.t(:created_at) %>
               <span>
-                <%= local_time(@admin_user.created_at) %>
+                <%= spree_time(@admin_user.created_at) %>
               </span>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               <%= Spree.t(:updated_at) %>
               <span>
-                <%= local_time(@admin_user.updated_at) %>
+                <%= spree_time(@admin_user.updated_at) %>
               </span>
             </li>
             <% if @admin_user.invited_by %>

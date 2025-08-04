@@ -33,7 +33,7 @@
             <%= reimbursement.reimbursement_status %>
           </span>
         </td>
-        <td data-action="click->row-link#openLink"><%= local_time(reimbursement.created_at) %></td>
+        <td data-action="click->row-link#openLink"><%= spree_time(reimbursement.created_at) %></td>
       </tr>
     <% end %>
   </tbody>

@@ -13,7 +13,7 @@
     <tbody>
       <% refunds.each do |refund| %>
         <tr id="<%= spree_dom_id(refund) %>">
-          <td><%= local_time(refund.created_at) %></td>
+          <td><%= spree_time(refund.created_at) %></td>
           <td class="amount"><%= refund.display_amount %></td>
           <td><%= truncate(refund.reason.name, length: 100) %></td>
           <% if show_actions && !refund.payment.order.canceled? %>

@@ -6,7 +6,7 @@
     <span class="badge badge-<%= @return_authorization.state %>">
       <%= Spree.t("return_authorization_states.#{@return_authorization.state}") %>
     </span>
-    <%= local_time(
+    <%= spree_time(
       @return_authorization.created_at,
       class: "badge badge-light with-tip",
     ) %>

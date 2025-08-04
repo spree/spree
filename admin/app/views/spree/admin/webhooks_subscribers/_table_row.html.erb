@@ -10,7 +10,7 @@
   </td>
   <td class="w-10" data-action="click->row-link#openLink">
     <% if webhooks_subscriber.latest_event_at %>
-      <%= local_time(webhooks_subscriber.latest_event_at) %>
+      <%= spree_time(webhooks_subscriber.latest_event_at) %>
     <% else %>
       <span class="text-muted"><%= Spree.t(:not_available) %></span>
     <% end %>

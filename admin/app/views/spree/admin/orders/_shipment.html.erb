@@ -6,7 +6,7 @@
       <strong class="shipment-number"><%= shipment.number %></strong>
       <% if shipment.shipped_at.present? %>
         <small class="text-muted">
-          <%= local_time_ago(shipment.shipped_at, class: 'with-tip') %>
+          <%= spree_time_ago(shipment.shipped_at, class: 'with-tip') %>
         </small>
       <% end %>
     </div>

@@ -309,6 +309,27 @@ module Spree
       def allowed_file_types_for_upload
         Rails.application.config.active_storage.web_image_content_types
       end
+
+      # returns the local date for a given date
+      # @param date [Date] the date to format
+      # @return [String] the local date
+      def spree_date(date, options = {})
+        local_date(date, options)
+      end
+
+      # returns the local time for a given time
+      # @param time [Time] the time to format
+      # @return [String] the local time
+      def spree_time(time, options = {})
+        local_time(time, options)
+      end
+
+      # returns the local time ago for a given time
+      # @param time [Time] the time to format
+      # @return [String] the local time ago
+      def spree_time_ago(time, options = {})
+        local_time_ago(time, options)
+      end
     end
   end
 end

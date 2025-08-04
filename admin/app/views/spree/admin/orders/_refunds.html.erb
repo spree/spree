@@ -31,7 +31,7 @@
                   <% end %>
                 </td>
                 <td><%= truncate(refund.reason.name, length: 100) %></td>
-                <td><%= local_time(refund.created_at) %></td>
+                <td><%= spree_time(refund.created_at) %></td>
                 <% if refund.editable? && can?(:edit, refund) %>
                   <td class="actions">
                     <span data-toggle="modal" data-target="#modal">

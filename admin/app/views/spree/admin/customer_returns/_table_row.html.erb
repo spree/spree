@@ -15,7 +15,7 @@
         <%= customer_return.number %>
       <% end %>
     </td>
-    <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
+    <td data-action="click->row-link#openLink"><%= spree_time(customer_return.created_at) %></td>
     <td data-action="click->row-link#openLink"><%= render "spree/admin/orders/customer_summary", order: customer_return.order %></td>
     <td data-action="click->row-link#openLink"><%= link_to customer_return.order.number,
       spree.edit_admin_order_path(customer_return.order) %></td>

@@ -23,7 +23,7 @@
   </td>
   <td class="w-15">
     <% if oauth_application.last_used_at %>
-      <%= local_time(oauth_application.last_used_at) %>
+      <%= spree_time(oauth_application.last_used_at) %>
     <% else %>
       <span class="text-muted"><%= Spree.t('admin.oauth_applications.never') %></span>
     <% end %>
