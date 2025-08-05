@@ -1,0 +1,55 @@
+---
+title: "Connect Razorpay payments to Spree Commerce"
+sidebarTitle: Razorpay
+description: "Configuring Razorpay in Your Spree Store: A Setup & Management Walkthrough."
+---
+
+Razorpay is a secure payment gateway that enables businesses to accept online payments via cards, UPI, net banking, and wallets. It also supports international transactions across multiple currencies.
+
+## Installation
+
+Before you can enable Razorpay, it must be installed. To do so, you need to add this line in Gemfile:
+
+```bash
+gem 'spree_razorpay', git: 'https://github.com/umeshravani/spree_razorpay'
+```
+
+Install the Gem using Bundle Install:
+
+```bash
+bundle install
+```
+
+Install and copy migrations:
+
+```bash
+bundle exec rails g spree_razorpay:install
+```
+
+After that, you need to make sure to restart the server.
+
+## Connect Razorpay
+
+Sign in to your Spree admin dashboard and navigate to **Settings → Payments**.
+
+![](https://github.com/user-attachments/assets/8e39086d-85a6-42a2-b9fb-75299044e6d6)
+
+Find Razorpay under Available Payment Methods and click **Add**.
+
+This will redirect you to the Razorpay setup form.
+
+![](https://github.com/user-attachments/assets/f45efc43-b1db-4c79-9ad3-e3d672014676)
+
+You will need Key and Key Secret from your [Razorpay dashboard credentials page](https://dashboard.razorpay.com/app/website-app-settings/api-keys). 
+
+<Tip>
+  To get your credentials, Navigate to Account & Settings → API Keys (under Website and app settings) → Generate new key to generate key for the selected mode.
+</Tip>
+
+![](https://github.com/user-attachments/assets/f390685d-550b-4814-8785-4fcc32746f15)
+
+You should see your live and test credentials. Copy both API key into `Key` and Secret into `Key Secret`, also Test API key into `Test Key` and Test Key Secret into `Test Key Secret`
+
+If you wish to test the Razorpay payments before going live, just select `Test Mode` option in Spree.
+
+Click **Create** to enable Razorpay as a payment method on your store.
