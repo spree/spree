@@ -4,7 +4,7 @@ module Spree
 
     included do
       scope :active, -> { where(active: true) }
-      default_scope { order(Arel.sql("LOWER(#{table_name}.name)")) }
+      default_scope { order(name: :asc) }
 
       include Spree::UniqueName
     end

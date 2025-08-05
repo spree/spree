@@ -13,6 +13,21 @@ RSpec.describe Spree::Admin::ReturnAuthorizationReasonsController, type: :contro
       get :index
       expect(response).to be_successful
     end
+
+    context 'with existing return authorization reasons' do
+      let!(:return_authorization_reason) { create(:return_authorization_reason) }
+      let!(:return_authorization_reason_2) { create(:return_authorization_reason, name: 'B') }
+
+      it 'returns a successful response' do
+        get :index
+        expect(response).to be_successful
+      end
+
+      it 'orders the return authorization reasons by name' do
+        get :index
+        expect(assigns(:return_authorization_reasons)).to eq([return_authorization_reason_2, return_authorization_reason])
+      end
+    end
   end
 
   describe 'GET #new' do
