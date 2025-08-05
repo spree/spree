@@ -1,7 +1,7 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
 
-  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :ransack_collection
+  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search_collection, :paginated_collection
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
   after_action :set_return_to, only: [:index]
@@ -236,15 +236,21 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   # Returns the filtered and paginated ransack results
   # @return [ActiveRecord::Relation]
-  def ransack_collection
-    @ransack_collection ||= begin
+  def paginated_collection
+    @paginated_collection ||= begin
+      # Check if collection is already a ransack collection and return it
+      return collection if collection.respond_to?(:current_page)
+
+      search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
+    end
+  end
+
+  # Returns the ransack search collection
+  # @return [Ransack::Search]
+  def search_collection
+    @search_collection ||= begin
       params[:q] ||= {}
-
-      @ransack_collection = collection.ransack(params[:q])
-      @ransack_collection = @ransack_collection.result(distinct: true)
-      @ransack_collection = @ransack_collection.page(params[:page]).per(params[:per_page])
-
-      @ransack_collection
+      collection.ransack(params[:q])
     end
   end
 

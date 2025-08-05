@@ -6,7 +6,7 @@
       <%= render 'filters' %>
     <% end %>
 
-    <% if ransack_collection.any? %>
+    <% if paginated_collection.any? %>
       <div class="table-responsive" id="listing_<%= controller_name %>">
         <table class="table">
           <thead>
@@ -20,12 +20,12 @@
               data-sortable-response-kind-value="turbo-stream"
             <% end %>
           >
-            <%= render partial: 'table_row', collection: ransack_collection, as: controller_name.singularize %>
+            <%= render partial: 'table_row', collection: paginated_collection, as: controller_name.singularize %>
           </tbody>
         </table>
       </div>
 
-      <%= render 'spree/admin/shared/index_table_options', collection: ransack_collection %>
+      <%= render 'spree/admin/shared/index_table_options', collection: paginated_collection %>
     <% else %>
       <%= render 'spree/admin/shared/no_resource_found', new_object_url: new_object_url %>
     <% end %>
