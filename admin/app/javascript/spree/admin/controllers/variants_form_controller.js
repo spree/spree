@@ -128,13 +128,14 @@ export default class extends CheckboxSelectAll {
 
       const nestingLevel = internalName.split('/').length
       if (nestingLevel === 1) {
-        const firstOptionKey = Object.keys(this.optionsValue)[0]
+        const sortedOptions = Object.entries(this.optionsValue).sort((a, b) => a[1].position - b[1].position)
+        const firstOptionKey = sortedOptions[0][0]
         const newOptionValues = this.optionsValue[firstOptionKey].values.filter((value) => value.text !== internalName)
         if (newOptionValues.length === 0) {
           const newOptionsValue = this.optionsValue
           delete newOptionsValue[firstOptionKey]
           this.optionsValue = newOptionsValue
-          this.optionsContainerTarget.querySelector(`#option-${firstOptionKey}`).remove()
+          this.removeOption(firstOptionKey)
         } else {
           this.optionsValue = {
             ...this.optionsValue,
@@ -899,10 +900,20 @@ export default class extends CheckboxSelectAll {
     let { optionId } = event.params
     optionId = String(optionId)
 
-    const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
-    option.remove()
-    this.optionsValue = { ...this.optionsValue, [optionId]: null }
+    this.removeOption(optionId)
+
+    const newOptionsValue = {}
+    Object.entries(this.optionsValue).filter((option) => option[0] !== optionId).forEach((option) => {
+      newOptionsValue[option[0]] = option[1]
+    })
+
+    this.optionsValue = newOptionsValue
     this.refreshParentInputs()
+  }
+
+  removeOption(optionId) {
+    const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
+    if (option) option.remove()
   }
 
   optionFormTemplate(optionName, optionValues, id, availableOptions) {
