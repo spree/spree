@@ -45,8 +45,6 @@ module Spree
           end
         end
 
-        params.delete(:variants_attributes) if params[:variants_attributes].blank?
-
         # mark resource properties to be removed
         # when value is left blank
         if params[:product_properties_attributes].present?
@@ -61,6 +59,18 @@ module Spree
 
         # ensure there is at least one store
         params[:store_ids] = [store.id] if params[:store_ids].blank?
+
+        # Add empty list for option_type_ids and mark variants as removed if there are no variants and options
+        if params[:variants_attributes].blank? && variants_to_remove.any? && !params.key?(:option_type_ids)
+          params[:option_type_ids] = []
+          params[:variants_attributes] = {}
+
+          variants_to_remove.each_with_index do |variant_id, index|
+            params[:variants_attributes][index.to_s] = { id: variant_id, _destroy: '1' }
+          end
+
+          params[:variants_attributes].permit!
+        end
 
         params
       end
