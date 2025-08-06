@@ -26,7 +26,6 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-keeps \
   --skip-rc \
   --skip-test \
-  --skip-asset-pipeline
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
