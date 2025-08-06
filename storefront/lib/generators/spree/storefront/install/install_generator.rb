@@ -38,9 +38,6 @@ module Spree
           else
             append_to_file 'app/assets/config/manifest.js', "\n//= link_tree ../builds" unless File.read('app/assets/config/manifest.js').include?('//= link_tree ../builds')
           end
-
-          # remove static robots.txt as we use robots.txt.erb
-          remove_file Rails.root.join('public/robots.txt') if Rails.root && Rails.root.join('public/robots.txt').exist?
         end
       end
     end

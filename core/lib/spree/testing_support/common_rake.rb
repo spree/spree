@@ -21,16 +21,16 @@ namespace :common do
 
     skip_javascript = ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
 
-    dummy_app_args = [
-      "--lib_name=#{ENV['LIB_NAME']}"
+    Spree::DummyGenerator.start [
+      "--lib_name=#{ENV['LIB_NAME']}",
+      "--skip_javascript=#{skip_javascript}"
     ]
-    if skip_javascript
-      dummy_app_args << '--skip_javascript'
-    end
-    Spree::DummyGenerator.start dummy_app_args
 
+    # install frontend libraries
     unless skip_javascript
-      system('bin/rails importmap:install turbo:install stimulus:install')
+      system('bin/rails importmap:install')
+      system('bin/rails turbo:install')
+      system('bin/rails stimulus:install')
     end
 
     Spree::InstallGenerator.start [
