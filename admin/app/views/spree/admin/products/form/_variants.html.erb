@@ -77,7 +77,8 @@
                     create: true,
                     include_blank: true,
                     data: {
-                      multi_tom_select_target: "selectTemplate"
+                      multi_tom_select_target: "selectTemplate",
+                      test_id: "new_option_values_tom_select"
                     },
                     select_data: {
                       variants_form_target: "newOptionValuesSelect",
@@ -89,7 +90,8 @@
                     create: true,
                     include_blank: true,
                     data: {
-                      multi_tom_select_target: "select"
+                      multi_tom_select_target: "select",
+                      test_id: "new_option_values_tom_select"
                     },
                     select_data: {
                       variants_form_target: "newOptionValuesSelect",
@@ -160,7 +162,7 @@
             </div>
           </div>
           <%= render 'spree/admin/products/form/variants/variant_template', default_stock_location: default_stock_location_for_product(@product) %>
-          <div class="variants-table__body" data-variants-form-target="variantsContainer">
+          <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
           <div class="variants-table__footer">
             <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
