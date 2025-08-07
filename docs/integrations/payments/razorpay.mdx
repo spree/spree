@@ -11,19 +11,9 @@ Razorpay is a secure payment gateway that enables businesses to accept online pa
 Before you can enable Razorpay, it must be installed. To do so, you need to add this line in Gemfile:
 
 ```bash
-gem 'spree_razorpay', git: 'https://github.com/umeshravani/spree_razorpay'
-```
 
-Install the Gem using Bundle Install:
+bundle add spree_razorpay_checkout && bundle exec rails g spree_razorpay_checkout:install
 
-```bash
-bundle install
-```
-
-Install and copy migrations:
-
-```bash
-bundle exec rails g spree_razorpay:install
 ```
 
 After that, you need to make sure to restart the server.
@@ -32,13 +22,13 @@ After that, you need to make sure to restart the server.
 
 Sign in to your Spree admin dashboard and navigate to **Settings → Payments**.
 
-![](https://github.com/user-attachments/assets/8e39086d-85a6-42a2-b9fb-75299044e6d6)
+![](/images/integrations/razorpay/razorpay_payment_method_list.png)
 
 Find Razorpay under Available Payment Methods and click **Add**.
 
 This will redirect you to the Razorpay setup form.
 
-![](https://github.com/user-attachments/assets/f45efc43-b1db-4c79-9ad3-e3d672014676)
+![](/images/integrations/razorpay/razorpay_form.png)
 
 You will need Key and Key Secret from your [Razorpay dashboard credentials page](https://dashboard.razorpay.com/app/website-app-settings/api-keys). 
 
@@ -46,7 +36,7 @@ You will need Key and Key Secret from your [Razorpay dashboard credentials page]
   To get your credentials, Navigate to Account & Settings → API Keys (under Website and app settings) → Generate new key to generate key for the selected mode.
 </Tip>
 
-![](https://github.com/user-attachments/assets/f390685d-550b-4814-8785-4fcc32746f15)
+![](/images/integrations/razorpay/razorpay_credentials.png)
 
 You should see your live and test credentials. Copy both API key into `Key` and Secret into `Key Secret`, also Test API key into `Test Key` and Test Key Secret into `Test Key Secret`
 
