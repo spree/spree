@@ -5,7 +5,7 @@ class AddMissingFieldsToUsers < ActiveRecord::Migration[7.2]
     users_table = Spree.user_class.table_name
     add_column users_table, :login, :string, if_not_exists: true
 
-    json_type = if respond_to?(:jsonb)
+    json_type = if users_table.respond_to?(:jsonb)
       :jsonb
     else
       :json
