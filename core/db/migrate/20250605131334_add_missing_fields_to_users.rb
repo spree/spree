@@ -3,23 +3,33 @@
 class AddMissingFieldsToUsers < ActiveRecord::Migration[7.2]
   def change
     users_table = Spree.user_class.table_name
-    add_column users_table, :login, :string, if_not_exists: true
+    admin_users_table = Spree.admin_user_class.table_name
 
-    json_type = if users_table.respond_to?(:jsonb)
-      :jsonb
-    else
-      :json
+    change_table users_table do |t|
+      add_column users_table, :login, :string, if_not_exists: true
+
+      if t.respond_to? :jsonb
+        add_column users_table, :public_metadata, :jsonb, if_not_exists: true
+        add_column users_table, :private_metadata, :jsonb, if_not_exists: true
+      else
+        add_column users_table, :public_metadata, :json, if_not_exists: true
+        add_column users_table, :private_metadata, :json, if_not_exists: true
+      end
+
+      add_reference users_table, :bill_address, if_not_exists: true
+      add_reference users_table, :ship_address, if_not_exists: true
     end
 
-    add_column users_table, :public_metadata, json_type, if_not_exists: true
-    add_column users_table, :private_metadata, json_type, if_not_exists: true
+    change_table admin_users_table do |t|
+      add_column admin_users_table, :login, :string, if_not_exists: true
 
-    add_reference users_table, :bill_address, if_not_exists: true
-    add_reference users_table, :ship_address, if_not_exists: true
-
-    admin_users_table = Spree.admin_user_class.table_name
-    add_column admin_users_table, :login, :string, if_not_exists: true
-    add_column admin_users_table, :public_metadata, json_type, if_not_exists: true
-    add_column admin_users_table, :private_metadata, json_type, if_not_exists: true
+      if t.respond_to? :jsonb
+        add_column admin_users_table, :public_metadata, :jsonb, if_not_exists: true
+        add_column admin_users_table, :private_metadata, :jsonb, if_not_exists: true
+      else
+        add_column admin_users_table, :public_metadata, :json, if_not_exists: true
+        add_column admin_users_table, :private_metadata, :json, if_not_exists: true
+      end
+    end
   end
 end
