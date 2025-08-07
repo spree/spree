@@ -13,7 +13,7 @@ module Spree
     end
 
     def copy_cursor_rules
-      copy_file 'spree_rules.md', '.cursor/rules/spree_rules.md'
+      copy_file 'spree_rules.mdc', '.cursor/rules/spree_rules.mdc'
     end
   end
 end
