@@ -822,7 +822,8 @@
                 "group": "Payments",
                 "pages": [
                   "integrations/payments/stripe",
-                  "integrations/payments/paypal"
+                  "integrations/payments/paypal",
+                  "integrations/payments/razorpay"
                 ]
               },
               {
