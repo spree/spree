@@ -1,0 +1,164 @@
+# Spree API Rules
+
+## Controller Standards
+- API controllers inherit from `Spree::Api::V2::BaseController`
+- Follow RESTful conventions
+- Use proper HTTP status codes
+- Implement proper error handling
+
+```ruby
+# ✅ Proper API controller
+class Spree::Api::V2::Storefront::ProductsController < Spree::Api::V2::BaseController
+  def index
+    render json: serialized_collection
+  end
+
+  def show
+    render json: serialized_resource
+  end
+
+  private
+
+  def serialized_collection
+    collection_serializer.new(
+      collection,
+      include: resource_includes,
+      sparse_fields: sparse_fields
+    ).serializable_hash
+  end
+
+  def serialized_resource
+    resource_serializer.new(
+      resource,
+      include: resource_includes,
+      sparse_fields: sparse_fields
+    ).serializable_hash
+  end
+end
+```
+
+## Serializer Standards
+- Use JsonApiSerializer for all API responses
+- Place serializers in `app/serializers/spree/`
+- Follow JSON:API specification
+
+```ruby
+# ✅ Proper serializer structure
+class Spree::V2::Storefront::ProductSerializer < Spree::Api::V2::BaseSerializer
+  set_type :product
+  
+  attributes :name, :description, :slug, :available_on
+  
+  has_many :variants, serializer: :variant
+  has_many :images, serializer: :image
+  
+  attribute :display_price do |product|
+    product.price_in(current_currency)
+  end
+end
+```
+
+## Authentication & Authorization
+- Use token-based authentication
+- Implement proper scoping for resources
+- Use CanCanCan for authorization checks
+
+## Error Handling
+- Return proper HTTP status codes
+- Use consistent error response format
+- Handle validation errors appropriately
+
+```ruby
+# ✅ Proper error handling
+rescue_from ActiveRecord::RecordInvalid do |exception|
+  render json: { error: exception.record.errors.full_messages }, status: :unprocessable_entity
+end
+
+rescue_from ActiveRecord::RecordNotFound do
+  render json: { error: 'Resource not found' }, status: :not_found
+end
+```
+
+## Parameter Handling
+- Use strong parameters
+- Validate required parameters
+- Handle filtering and sorting parameters
+
+```ruby
+# ✅ Proper parameter handling
+def permitted_params
+  params.require(:product).permit(Spree::PermittedAttributes.product_attributes)
+end
+
+def filter_params
+  params.permit(:name, :category_id, :available_on)
+end
+```
+
+## Pagination
+- Use Kaminari for pagination
+- Return pagination metadata
+- Support page size limits
+
+## Filtering & Sorting
+- Implement ransack for complex filtering
+- Support sorting by multiple fields
+- Validate sort parameters
+
+## Include Relationships
+- Support sparse fieldsets
+- Allow including related resources
+- Optimize N+1 queries with includes
+
+## Versioning
+- Use namespace versioning (V2, V3, etc.)
+- Maintain backward compatibility
+- Document API changes
+
+## Testing Standards
+- Test all endpoints thoroughly
+- Use request specs for integration testing
+- Test authentication and authorization
+- Test error scenarios
+
+```ruby
+# ✅ Proper API spec
+require 'spec_helper'
+
+RSpec.describe '/api/v2/storefront/products', type: :request do
+  describe 'GET /api/v2/storefront/products' do
+    let!(:products) { create_list(:product, 3) }
+
+    it 'returns products' do
+      get '/api/v2/storefront/products'
+      
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data']).to be_an(Array)
+      expect(json_response['data'].size).to eq(3)
+    end
+  end
+end
+```
+
+## JSON:API Compliance
+- Follow JSON:API specification
+- Use proper resource relationships
+- Include meta information
+- Support compound documents
+
+## Security
+- Validate all inputs
+- Implement rate limiting
+- Use HTTPS in production
+- Sanitize output data
+
+## Documentation
+- Document all endpoints
+- Include request/response examples
+- Document authentication requirements
+- Use OpenAPI/Swagger for API docs
+
+## Translation Files
+- Place API translations in `api/config/locales/en.yml`
+- Use namespace structure for error messages
+- Provide translations for validation errors
