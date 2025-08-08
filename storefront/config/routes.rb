@@ -63,6 +63,7 @@ Spree::Core::Engine.add_routes do
       resource :newsletter, only: [:edit, :update], controller: :newsletter
       resources :store_credits, only: [:index]
       resources :gift_cards, only: [:index]
+      resources :credit_cards, only: [:index, :create, :destroy, :new]
     end
 
     # Wishlists

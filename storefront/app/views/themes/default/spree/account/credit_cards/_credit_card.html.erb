@@ -1,0 +1,45 @@
+<li class="p-4 my-4 border border-accent lg:flex justify-between relative" id="<%= dom_id(credit_card) %>">
+  <div class="flex items-top gap-4 text-sm">
+    <div class="flex-shrink-0">
+      <%= payment_method_icon_tag credit_card.cc_type, height: 60, width: 60 %>
+    </div>
+    <div>
+      <p class="mb-1"> •••• <%=credit_card.last_digits %></p>
+      <p class="mb-2"><%= Spree.t(:expiration) %> <%= credit_card.month %>/<%= credit_card.year %></p>
+      <% if credit_card == @default_credit_card %> 
+        <div class="bg-accent border border-default rounded-full px-3 py-2 text-xs mb-0">
+          <%= Spree.t(:default_payment_method) %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div data-controller="modal"
+       data-modal-allow-background-close="true"
+       data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+    <button data-action="click->modal#open" class="flex p-2 max-lg:absolute top-2 right-2">
+      <%= render 'spree/shared/icons/delete' %>
+    </button>
+    <div data-modal-target="container"
+         data-action="click->modal#closeBackground keyup@window->modal#closeWithKeyboard"
+         class="hidden animated fadeIn fixed inset-0 overflow-y-auto flex items-center justify-center z-[9999]">
+      <div class="w-full lg:w-[424px] relative">
+        <div class="mx-4 lg:mx-0 bg-white">
+          <div class="px-8 py-6">
+            <div class="flex justify-end">
+              <button data-action="click->modal#close">
+                <%= render 'spree/shared/icons/close' %>
+                <span class="sr-only"><%= Spree.t(:close) %></span>
+              </button>
+            </div>
+            <h2 class="text-xl lg:text-2xl my-4 uppercase"><%= Spree.t(:delete_credit_card) %></h2>
+            <p class="mb-8"><%= Spree.t(:are_you_sure) %></p>
+            <div class="flex justify-end items-center flex-wrap mt-4 gap-4">
+              <%= button_tag Spree.t(:cancel), class: 'uppercase text-sm font-semibold tracking-widest', data: { action: 'click->modal#close' } %>
+              <%= button_to Spree.t(:delete), spree.account_credit_card_path(credit_card), method: :delete, class: 'btn-primary !px-6 !py-3 !leading-[1.375rem]' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
