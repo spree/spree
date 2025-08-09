@@ -72,7 +72,7 @@ module Spree
     #
     # @return [Hash] the theme layout sections
     def theme_layout_sections
-      @theme_layout_sections ||= current_theme_or_preview.sections.includes(:links, { asset_attachment: :blob },
+      @theme_layout_sections ||= current_theme_or_preview.sections.includes(:rich_text_text, :links, { asset_attachment: :blob },
                                                                             { blocks: [:rich_text_text, :links] }).all.each_with_object({}) do |section, hash|
         hash[section.type.to_s.demodulize.underscore] = section
       end
