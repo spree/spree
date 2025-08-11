@@ -26,7 +26,7 @@ module Spree
         params.require(:store).permit(
           :preferred_index_in_search_engines,
           :preferred_password_protected, :social_image, :favicon_image, :name,
-          :meta_description, :meta_title, :meta_keywords, :seo_robots,
+          :meta_description, :meta_keywords, :seo_robots, :seo_title,
           :facebook, :twitter, :instagram, :linkedin, :youtube, :tiktok, :pinterest,
           :storefront_custom_code_head, :storefront_custom_code_body_start,
           :storefront_custom_code_body_end, :storefront_password, :spotify, :discord

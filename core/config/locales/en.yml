@@ -165,6 +165,9 @@ en:
         preferred_limit_digital_download_days: Limit digital links download days
         seo_robots: SEO Robots
         seo_title: SEO Title
+        storefront_custom_code_body_end: Custom Code before closing body tag
+        storefront_custom_code_body_start: Custom Code after opening body tag
+        storefront_custom_code_head: Custom Code in page head
         url: Site URL
       spree/store_credit:
         amount_used: Amount used

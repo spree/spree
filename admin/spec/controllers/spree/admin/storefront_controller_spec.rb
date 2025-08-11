@@ -21,7 +21,7 @@ describe Spree::Admin::StorefrontController do
 
     let(:store_params) do
       {
-        name: 'New Store Name',
+        seo_title: 'New Store Name',
         meta_description: 'This is a cool store',
         storefront_password: 'password',
         facebook: 'https://www.facebook.com/spreecommerce',
@@ -40,7 +40,7 @@ describe Spree::Admin::StorefrontController do
     it 'updates the store data' do
       subject
 
-      expect(store.reload.name).to eq('New Store Name')
+      expect(store.reload.seo_title).to eq('New Store Name')
       expect(store.meta_description).to eq('This is a cool store')
       expect(store.storefront_password).to eq('password')
       expect(store.facebook).to eq('https://www.facebook.com/spreecommerce')
