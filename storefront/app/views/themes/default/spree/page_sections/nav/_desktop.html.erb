@@ -4,7 +4,7 @@
     <% main_link = presenter.main_link %>
     <% next unless main_link.present? %>
     <div class="header--nav-item group" <%= block_attributes(block, allowed_styles: ['padding-top', 'padding-bottom']) %>>
-      <%= active_link_to spree_storefront_resource_url(main_link.linkable || main_link), data: { title: main_link.label.downcase.strip }, class: "shrink-0 menu-item header--nav-link px-4 py-1", class_active: "menu-item--active", target: main_link.open_in_new_tab.presence && "_blank", rel: main_link.open_in_new_tab.presence && "noopener noreferrer" do %>
+      <%= active_link_to spree_storefront_resource_url(main_link.linkable || main_link), active: spree_nav_active_option(main_link.linkable || main_link), data: { title: main_link.label.downcase.strip }, class: "shrink-0 menu-item header--nav-link px-4 py-1", class_active: "menu-item--active", target: main_link.open_in_new_tab.presence && "_blank", rel: main_link.open_in_new_tab.presence && "noopener noreferrer" do %>
         <span class="group-hover:border-b-[1.5px] group-hover:border-b-accent"><%= main_link.label %></span>
       <% end %>
       <% if presenter.columns.any? %>
@@ -42,7 +42,7 @@
   <% end %>
 <% else %>
   <% section.links.each do |link| %>
-    <%= active_link_to spree_storefront_resource_url(link.linkable || link), data: { title: link.label.downcase.strip }, class: "shrink-0 menu-item header--nav-link px-4 py-1 focus:mx-0 focus:px-4", class_active: "menu-item--active", target: link.open_in_new_tab.presence && "_blank", rel: link.open_in_new_tab.presence && "noopener noreferrer", **link_attributes(link, as_html: false) do %>
+    <%= active_link_to spree_storefront_resource_url(link.linkable || link), active: spree_nav_active_option(link.linkable || link), data: { title: link.label.downcase.strip }, class: "shrink-0 menu-item header--nav-link px-4 py-1 focus:mx-0 focus:px-4", class_active: "menu-item--active", target: link.open_in_new_tab.presence && "_blank", rel: link.open_in_new_tab.presence && "noopener noreferrer", **link_attributes(link, as_html: false) do %>
       <span><%= link.label %></span>
     <% end %>
   <% end %>
