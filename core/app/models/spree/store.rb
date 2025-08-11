@@ -111,6 +111,8 @@ module Spree
 
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
 
+    has_many :policies, as: :owner, class_name: 'Spree::Policy', dependent: :destroy
+
     #
     # Page Builder associations
     #

@@ -72,17 +72,8 @@ module Spree
           ),
           Spree::PageBlocks::Nav.new(
             preferred_label: 'Info',
-            default_links: [
-              Spree::PageLink.new(
-                label: 'Privacy Policy',
-                linkable: store.customer_privacy_policy
-              ),
-              Spree::PageLink.new(
-                label: 'Terms of Service',
-                linkable: store.customer_terms_of_service
-              ),
-            ]
-          ),
+            default_links: []
+          )
         ]
       end
 

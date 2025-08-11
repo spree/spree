@@ -1,3 +1,6 @@
+require 'spree/core/preferences/runtime_configuration'
+require 'kaminari'
+
 module Spree
   module Admin
     class RuntimeConfiguration < ::Spree::Preferences::RuntimeConfiguration

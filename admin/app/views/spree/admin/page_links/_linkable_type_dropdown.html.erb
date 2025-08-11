@@ -6,7 +6,7 @@
   <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.select_options_admin_posts_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
 <% elsif page_link.linkable_type == 'Spree::Page' %>
   <%= select_tag "#{form_name}[linkable_id]", options_for_select(all_linkable_pages, page_link.linkable_id), { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
-<% elsif page_link.linkable_type == 'ActionText::RichText' %>
+<% elsif page_link.linkable_type == 'Spree::Policy' %>
   <%= select_tag "#{form_name}[linkable_id]", options_for_select(all_linkable_policies, page_link.linkable_id), { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
 <% elsif page_link.linkable_type == 'Spree::Vendor' %>
   <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.select_options_admin_vendors_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>

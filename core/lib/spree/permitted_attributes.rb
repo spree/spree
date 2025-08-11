@@ -29,6 +29,7 @@ module Spree
       :page_section_attributes,
       :payment_attributes,
       :payment_method_attributes,
+      :policy_attributes,
       :post_attributes,
       :post_category_attributes,
       :product_attributes,
@@ -142,6 +143,8 @@ module Spree
     @@payment_attributes = [:amount, :payment_method_id, :payment_method]
 
     @@payment_method_attributes = [:name, :type, :description, :active, :display_on, :auto_capture, :position]
+
+    @@policy_attributes = [:name, :slug, :body, :show_in_checkout_footer, :position]
 
     @@post_attributes = [:title, :meta_title, :meta_description, :slug, :author_id, :post_category_id, :published_at, :content, :excerpt, :image, tag_list: []]
 
