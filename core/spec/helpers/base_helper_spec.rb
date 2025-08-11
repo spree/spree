@@ -36,7 +36,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'return complete list of countries' do
-        expect(available_countries).to match_array(Spree::Country.all)
+        expect(available_countries).to contain_exactly(*Spree::Country.all)
       end
     end
   end
