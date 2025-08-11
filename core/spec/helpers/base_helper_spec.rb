@@ -36,7 +36,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       it 'return complete list of countries' do
-        expect(available_countries).to contain_exactly(*Spree::Country.all)
+        expect(available_countries).to match_array(Spree::Country.all)
       end
     end
   end
@@ -365,10 +365,10 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#default_image_for_product_or_variant' do
+    subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
+
     let(:product) { build :product, stores: [current_store] }
     let(:variant) { build :variant, product: product }
-
-    subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
 
     context 'when Product passed' do
       let(:product_or_variant) { product }
@@ -443,6 +443,130 @@ describe Spree::BaseHelper, type: :helper do
     context 'when a store has no favicon' do
       it do
         expect(spree_favicon_path).to eq('favicon.ico')
+      end
+    end
+  end
+
+  describe '#spree_nav_active_option' do
+    let(:current_store) { create(:store) }
+
+    before do
+      allow(view).to receive(:current_store).and_return(current_store)
+    end
+
+    it 'is aliased as spree_navigation_active_option' do
+      expect(helper.method(:spree_navigation_active_option)).to eq(helper.method(:spree_nav_active_option))
+    end
+
+    context 'with a homepage link' do
+      let(:homepage_url) { '/' }
+      let(:root_url) { "http://#{current_store.url}/" }
+
+      context 'when on the homepage' do
+        before do
+          allow(helper).to receive(:request).and_return(double('request', path: '/'))
+        end
+
+        it 'returns true for a relative path' do
+          expect(helper.spree_nav_active_option(homepage_url)).to be(true)
+        end
+
+        it 'returns true for a full URL' do
+          expect(helper.spree_nav_active_option(root_url)).to be(true)
+        end
+      end
+
+      context 'when not on the homepage' do
+        before do
+          allow(helper).to receive(:request).and_return(double('request', path: '/products'))
+        end
+
+        it 'returns false for a relative path' do
+          expect(helper.spree_nav_active_option(homepage_url)).to be(false)
+        end
+
+        it 'returns false for a full URL' do
+          expect(helper.spree_nav_active_option(root_url)).to be(false)
+        end
+      end
+
+      context 'when request object is not available' do
+        before do
+          allow(helper).to receive(:request).and_return(nil)
+          allow(helper).to receive(:root_path).and_return('/')
+        end
+
+        it 'uses current_page? to determine the active state' do
+          allow(helper).to receive(:current_page?).with('/').and_return(true)
+          expect(helper.spree_nav_active_option('/')).to be(true)
+
+          allow(helper).to receive(:current_page?).with('/').and_return(false)
+          expect(helper.spree_nav_active_option('/')).to be(false)
+        end
+      end
+    end
+
+    context 'with a non-homepage link' do
+      let(:product) { create(:product) }
+      let(:product_url) { "/products/#{product.slug}" }
+      let(:full_product_url) { "http://#{current_store.url}#{product_url}" }
+
+      before do
+        allow(helper).to receive(:spree_storefront_resource_url).with(product).and_return(product_url)
+      end
+
+      it 'returns :inclusive for a string URL' do
+        expect(helper.spree_nav_active_option(product_url)).to eq(:inclusive)
+      end
+
+      it 'returns :inclusive for a full URL' do
+        expect(helper.spree_nav_active_option(full_product_url)).to eq(:inclusive)
+      end
+
+      it 'returns :inclusive for a resource object' do
+        expect(helper.spree_nav_active_option(product)).to eq(:inclusive)
+      end
+    end
+
+    context 'with a blank or nil URL' do
+      it 'returns false for a blank string' do
+        expect(helper.spree_nav_active_option('')).to be(false)
+      end
+
+      it 'returns false for nil' do
+        expect(helper.spree_nav_active_option(nil)).to be(false)
+      end
+    end
+
+    context 'with an invalid URL' do
+      it 'rescues from URI::InvalidURIError and returns :inclusive for non-root path' do
+        invalid_url = 'http://[]/foo'
+        expect { URI.parse(invalid_url) }.to raise_error(URI::InvalidURIError)
+        expect(helper.spree_nav_active_option(invalid_url)).to eq(:inclusive)
+      end
+
+      it 'rescues from URI::InvalidURIError and checks for homepage' do
+        invalid_url = 'http://[]/'
+        expect { URI.parse(invalid_url) }.to raise_error(URI::InvalidURIError)
+
+        allow(helper).to receive(:request).and_return(double('request', path: '/'))
+        expect(helper.spree_nav_active_option(invalid_url)).to be(true)
+      end
+    end
+
+    context 'with a Spree::PageLink resource' do
+      let(:page_link) { instance_double(Spree::PageLink) }
+
+      it 'calls linkable_url and returns :inclusive for a non-root path' do
+        allow(page_link).to receive(:linkable_url).and_return('/some-page')
+        allow(helper).to receive(:spree_storefront_resource_url).with(page_link).and_return('/some-page')
+        expect(helper.spree_nav_active_option(page_link)).to eq(:inclusive)
+      end
+
+      it 'calls linkable_url and returns true for a root path when on homepage' do
+        allow(page_link).to receive(:linkable_url).and_return('/')
+        allow(helper).to receive(:request).and_return(double('request', path: '/'))
+        expect(helper.spree_nav_active_option(page_link)).to be(true)
       end
     end
   end

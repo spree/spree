@@ -109,7 +109,7 @@ module Spree
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
-          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
+          meta.reverse_merge!(keywords: current_store.meta_keywords || current_store.seo_title,
                               description: current_store.seo_meta_description)
         end
       end
@@ -214,6 +214,64 @@ module Spree
       end
     end
 
+    # Helper method to determine the correct active option for navigation links
+    # This prevents homepage links from being incorrectly active on all pages
+    # when using active_link_to gem with inclusive matching
+    #
+    # @param resource [Object, String] The resource or URL to check
+    # @return [Boolean, Symbol, Regexp] The active option for active_link_to
+    #
+    # @example Basic usage in a navigation partial
+    #   <%= active_link_to url,
+    #                      active: spree_nav_active_option(url),
+    #                      class: "nav-link",
+    #                      class_active: "nav-link--active" do %>
+    #     <%= link.label %>
+    #   <% end %>
+    #
+    # @example With a resource object
+    #   <%= active_link_to spree_storefront_resource_url(link.linkable),
+    #                      active: spree_nav_active_option(link.linkable),
+    #                      class: "nav-link" do %>
+    #     <%= link.label %>
+    #   <% end %>
+    def spree_nav_active_option(resource)
+      url = case resource
+            when String
+              resource
+            when Spree::PageLink
+              resource.linkable_url
+            when nil
+              nil
+            else
+              spree_storefront_resource_url(resource)
+            end
+
+      return false if url.blank?
+
+      path = begin
+        uri = URI.parse(url)
+        uri.path
+      rescue URI::InvalidURIError
+        url.to_s.split('?').first.split('#').first.gsub(/^https?:\/\/[^\/]+/, '')
+      end
+
+      # Homepage URLs need exact matching to prevent them from matching all paths
+      # when using inclusive matching (since every path starts with "/")
+      if path == '/' || path.blank? || path.empty?
+        if defined?(request) && request
+          request.path == '/'
+        else
+          current_page?(root_path)
+        end
+      else
+        :inclusive
+      end
+    end
+
+    # Alias for easier use in views
+    alias_method :spree_navigation_active_option, :spree_nav_active_option
+
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
@@ -272,7 +330,7 @@ module Spree
               else
                 width = style.to_s.split('x').first.to_i
                 height = style.to_s.split('x').last.to_i
-                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
+                content_tag(:div, width: width, height: height, style: 'background-color: #f0f0f0;')
               end
 
         content_tag(:div, img, class: "admin-product-image-container #{style}-img")
