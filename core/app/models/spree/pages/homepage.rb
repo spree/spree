@@ -4,7 +4,7 @@ module Spree
       def page_builder_url
         return unless page_builder_url_exists?(:root_path)
 
-        Spree::Core::Engine.routes.url_helpers.root_path
+        Spree::Core::Engine.routes.url_helpers.root_path.chomp('/')
       end
 
       def icon_name
