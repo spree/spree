@@ -171,6 +171,7 @@ module Spree
 
     def storefront_products_includes
       [
+        :variants_including_master,
         :prices_including_master,
         :variant_images,
         :option_types,
