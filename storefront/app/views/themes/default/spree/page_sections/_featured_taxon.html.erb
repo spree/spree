@@ -42,7 +42,7 @@
       </div>
     <% end %>
     <% if loaded && section.taxon.present? %>
-      <% taxon_products = section.products(current_currency, storefront_products_includes) %>
+      <% taxon_products = section.products(current_currency) %>
       <% if taxon_products.any? %>
         <div class='grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6'>
           <% if section_with_image %>
