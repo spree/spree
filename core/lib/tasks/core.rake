@@ -195,6 +195,12 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
   desc 'Migrate policies to store policies'
   task migrate_policies_to_store_policies: :environment do |_t, _args|
+    # Check if migration has already been run
+    if Spree::Policy.any?
+      say "Policies already exist. Skipping migration to prevent duplicates."
+      return
+    end
+
     Spree::Store.all.each do |store|
       %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_slug|
         policy = store.send(policy_slug)
