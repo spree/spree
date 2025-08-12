@@ -17,7 +17,7 @@ module Spree
           [Spree.t(:product), 'Spree::Product'],
           [Spree.t(:post), 'Spree::Post'],
           [Spree.t(:taxon), 'Spree::Taxon'],
-          [Spree.t(:policy), 'ActionText::RichText'],
+          [Spree.t(:policy), 'Spree::Policy'],
           [Spree.t(:url), nil]
         ]
       end
