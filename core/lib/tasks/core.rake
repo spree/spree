@@ -192,6 +192,49 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       end
     end
   end
+
+  desc 'Migrate policies to store policies'
+  task migrate_policies_to_store_policies: :environment do |_t, _args|
+    Spree::Store.all.each do |store|
+      %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_slug|
+        policy = store.send(policy_slug)
+        next unless policy.present?
+
+        store.policies.create(
+          name: Spree.t(policy_slug.gsub(/customer_/, '')),
+          body: policy.body
+        )
+
+        say "Migrated #{policy_slug} to store #{store.id}"
+      end
+    end
+
+    Spree::PageLink.where(linkable_type: 'ActionText::RichText').each do |page_link|
+      # Check if this page link is attached to ActionText content
+      # Find the ActionText record
+      action_text = ActionText::RichText.find_by(id: page_link.linkable_id)
+      next unless action_text
+
+      # Check if the ActionText belongs to a store policy
+      if action_text.record_type == 'Spree::Store' && action_text.name.to_s.include?('policy')
+        # Find the corresponding policy in the new policies system
+        store = action_text.record
+        policy_name = action_text.name.to_s.gsub(/customer_/, '').gsub(/_policy$/, '')
+
+        policy = store.policies.find_by(name: Spree.t(policy_name))
+
+        if policy
+          # Update the page link to point to the policy instead
+          page_link.update!(
+            linked_resource_type: 'Spree::Policy',
+            linked_resource_id: policy.id
+          )
+
+          say "Migrated #{policy_name} to store #{store.id}"
+        end
+      end
+    end
+  end
 end
 
 namespace :core do
