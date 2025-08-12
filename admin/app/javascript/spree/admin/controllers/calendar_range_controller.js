@@ -36,9 +36,9 @@ export default class extends Controller {
     });
 
     this.picker.on('select', (event) => {
-      const { start, end } = event.detail;
-      this.dateFromTarget.value = start;
-      this.dateToTarget.value = end;
+      const data = event.detail;
+      this.dateFromTarget.value = data.start
+      this.dateToTarget.value = data.end
 
       // https://stackoverflow.com/questions/68624668/how-can-i-submit-a-form-on-input-change-with-turbo-streams
       this.pickerTarget.closest('form').requestSubmit()
