@@ -1357,6 +1357,32 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
+  /api/v2/storefront/policies:
+    get:
+      summary: List all Store Policies
+      description: 'Returns a list of Store Policies. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Policies
+      operationId: policies-list
+      responses:
+        '200':
+          $ref: '#/components/responses/PolicyList'
+      security:
+        - bearerAuth: []
+  /api/v2/storefront/policies/{policy_slug}:
+    get:
+      summary: Retrieve a Policy
+      description: 'Returns the details of a specified Policy. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Policies
+      operationId: show-policy
+      responses:
+        '200':
+          $ref: '#/components/responses/Policy'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](/developer/core-concepts/products#taxons-and-taxonomies)'
@@ -3002,6 +3028,56 @@ components:
               nullable: true
             preferences:
               type: object
+      required:
+        - id
+        - type
+        - attributes
+    Policy:
+      type: object
+      title: Policy
+      description: 'Policy represents terms and conditions, privacy policies, and other legal documents that can be displayed on the storefront.'
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: policy
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Terms and Conditions
+              description: Display name of the policy
+            slug:
+              type: string
+              example: terms-and-conditions
+              description: URL-friendly identifier for the policy
+            show_in_checkout_footer:
+              type: boolean
+              example: true
+              description: Whether to display this policy in the checkout footer
+            created_at:
+              $ref: '#/components/schemas/Timestamp'
+            updated_at:
+              $ref: '#/components/schemas/Timestamp'
+            body:
+              type: string
+              example: asdrdfas
+              description: Raw text content of the policy
+              nullable: true
+            body_html:
+              type: string
+              example: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
+              description: HTML formatted content of the policy
+              nullable: true
+          required:
+            - name
+            - slug
+            - show_in_checkout_footer
+            - created_at
+            - updated_at
       required:
         - id
         - type
@@ -8207,6 +8283,31 @@ components:
                     relationships:
                       checkout_zone_applicable_states:
                         data: []
+    Policy:
+      description: 200 Success - Returns the `policy` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Policy'
+            required:
+              - data
+          examples:
+            Policy:
+              value:
+                data:
+                  id: '1'
+                  type: policy
+                  attributes:
+                    name: Terms and Conditions
+                    slug: terms-and-conditions
+                    show_in_checkout_footer: true
+                    created_at: '2025-08-12T12:13:09.183Z'
+                    updated_at: '2025-08-12T13:27:59.470Z'
+                    body: asdrdfas
+                    body_html: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
     Taxon:
       description: 200 Success - Returns the `taxon` object.
       content:
@@ -15179,6 +15280,43 @@ components:
                       name: Check
                       description: Pay by check.
                       preferences: {}
+    PolicyList:
+      description: 200 Success - Returns an array of `policy` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Policy'
+            required:
+              - data
+          examples:
+            List of Policies:
+              value:
+                data:
+                  - id: '1'
+                    type: policy
+                    attributes:
+                      name: Terms and Conditions
+                      slug: terms-and-conditions
+                      show_in_checkout_footer: true
+                      created_at: '2025-08-12T12:13:09.183Z'
+                      updated_at: '2025-08-12T13:27:59.470Z'
+                      body: asdrdfas
+                      body_html: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
+                  - id: '2'
+                    type: policy
+                    attributes:
+                      name: Privacy Policy
+                      slug: privacy-policy
+                      show_in_checkout_footer: false
+                      created_at: '2025-08-12T10:00:00.000Z'
+                      updated_at: '2025-08-12T10:00:00.000Z'
+                      body: Privacy policy content
+                      body_html: "<div class=\"trix-content\">\n  <div>Privacy policy content</div>\n</div>\n"
     Vendor:
       description: 200 Success - Returns the `vendor` object.
       content:
@@ -15266,6 +15404,7 @@ tags:
   - name: Products
   - name: Variants
   - name: Stores
+  - name: Policies
   - name: Taxons
   - name: Vendors
   - name: Wishlists

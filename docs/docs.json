@@ -349,6 +349,13 @@
                     ]
                   },
                   {
+                    "group": "Policies",
+                    "pages": [
+                      "api-reference/storefront/policies/list-all-store-policies",
+                      "api-reference/storefront/policies/retrieve-a-policy"
+                    ]
+                  },
+                  {
                     "group": "Taxons",
                     "pages": [
                       "api-reference/storefront/taxons/list-all-taxons",
