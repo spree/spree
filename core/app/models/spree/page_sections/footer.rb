@@ -48,16 +48,32 @@ module Spree
           shop_default_links << Spree::PageLink.new(linkable: new_arrivals_collection) if new_arrivals_collection.present?
         end
 
+        default_info_links = []
+
+        if store.policies.find_by(name: Spree.t('terms_of_service')).present?
+          default_info_links << Spree::PageLink.new(
+            label: Spree.t('terms_of_service'),
+            linkable: store.policies.find_by(name: Spree.t('terms_of_service'))
+          )
+        end
+
+        if store.policies.find_by(name: Spree.t('privacy_policy')).present?
+          default_info_links << Spree::PageLink.new(
+            label: Spree.t('privacy_policy'),
+            linkable: store.policies.find_by(name: Spree.t('privacy_policy'))
+          )
+        end
+
         [
           Spree::PageBlocks::Nav.new(
             preferred_label: 'Shop',
             default_links: shop_default_links
           ),
           Spree::PageBlocks::Nav.new(
-            preferred_label: 'Account',
+            preferred_label: Spree.t('account'),
             default_links: [
               Spree::PageLink.new(
-                label: 'My Account',
+                label: Spree.t('my_account'),
                 linkable: pages.find_by(type: 'Spree::Pages::Account')
               ),
               Spree::PageLink.new(
@@ -72,7 +88,7 @@ module Spree
           ),
           Spree::PageBlocks::Nav.new(
             preferred_label: 'Info',
-            default_links: []
+            default_links: default_info_links
           )
         ]
       end
