@@ -37,9 +37,6 @@ export default class extends Controller {
 
     this.picker.on('select', (event) => {
       const { start, end } = event.detail;
-      if (start.toDateString() === end.toDateString()) {
-        end.setHours(23, 59, 59, 999);
-      }
       this.dateFromTarget.value = start;
       this.dateToTarget.value = end;
 
