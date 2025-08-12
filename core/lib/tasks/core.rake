@@ -195,10 +195,15 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
   desc 'Migrate policies to store policies'
   task migrate_policies_to_store_policies: :environment do |_t, _args|
+    # Helper to consistently derive policy name
+    derive_policy_name = lambda do |name_str|
+      name_str.to_s.gsub(/customer_/, '').gsub(/_policy$/, '')
+    end
+
     # Check if migration has already been run
     if Spree::Policy.any?
-      say "Policies already exist. Skipping migration to prevent duplicates."
-      return
+      puts "Policies already exist. Skipping migration to prevent duplicates."
+      exit
     end
 
     Spree::Store.all.each do |store|
@@ -207,11 +212,11 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         next unless policy.present?
 
         store.policies.create(
-          name: Spree.t(policy_slug.gsub(/customer_/, '').gsub(/_policy$/, '')),
+          name: Spree.t(derive_policy_name.call(policy_slug)),
           body: policy.body
         )
 
-        say "Migrated #{policy_slug} to store #{store.id}"
+        puts "Migrated #{policy_slug} to store #{store.id}"
       end
     end
 
@@ -225,9 +230,9 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       if action_text.record_type == 'Spree::Store' && action_text.name.to_s.include?('policy')
         # Find the corresponding policy in the new policies system
         store = action_text.record
-      policy_name = derive_policy_name.call(action_text.name)
+        policy_name = derive_policy_name.call(action_text.name)
 
-      policy = store.policies.find_by(name: Spree.t(policy_name))
+        policy = store.policies.find_by(name: Spree.t(policy_name))
 
         if policy
           # Update the page link to point to the policy instead
@@ -236,7 +241,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
             linked_resource_id: policy.id
           )
 
-          say "Migrated #{policy_name} to store #{store.id}"
+          puts "Migrated #{policy_name} to store #{store.id}"
         end
       end
     end
