@@ -225,9 +225,9 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       if action_text.record_type == 'Spree::Store' && action_text.name.to_s.include?('policy')
         # Find the corresponding policy in the new policies system
         store = action_text.record
-        policy_name = action_text.name.to_s.gsub(/customer_/, '').gsub(/_policy$/, '')
+      policy_name = derive_policy_name.call(action_text.name)
 
-        policy = store.policies.find_by(name: Spree.t(policy_name))
+      policy = store.policies.find_by(name: Spree.t(policy_name))
 
         if policy
           # Update the page link to point to the policy instead
