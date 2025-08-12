@@ -101,6 +101,9 @@ en:
         number: Number
       spree/payment_method:
         name: Name
+      spree/policy:
+        body: Body
+        show_in_checkout_footer: Show in checkout footer
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -1312,6 +1315,7 @@ en:
     new_password: New password
     new_payment: New Payment
     new_payment_method: New Payment Method
+    new_policy: New Policy
     new_post: New Post
     new_post_category: New Post Category
     new_product: New Product

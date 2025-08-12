@@ -4,7 +4,7 @@
 
 <div class="alert alert-info mb-3">
   <p>
-    <%= Spree.t('admin.checkout_settings.policy_copy', policies_link: link_to(Spree.t(:policies), spree.edit_admin_store_path + '?section=policies', class: 'alert-link')).html_safe %>
+    <%= Spree.t('admin.checkout_settings.policy_copy', policies_link: link_to(Spree.t(:policies), spree.admin_policies_path, class: 'alert-link')).html_safe %>
   </p>
 </div>
 

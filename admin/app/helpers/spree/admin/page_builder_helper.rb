@@ -88,12 +88,7 @@ module Spree
       end
 
       def all_linkable_policies
-        @all_linkable_policies = [
-          current_store.customer_privacy_policy,
-          current_store.customer_terms_of_service,
-          current_store.customer_returns_policy,
-          current_store.customer_shipping_policy
-        ].compact.map { |policy| [policy.name.humanize, policy.id] }
+        @all_linkable_policies ||= current_store.policies.pluck(:name, :id)
       end
 
       def refresh_theme_preview(section = nil, block = nil)

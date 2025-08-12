@@ -65,6 +65,7 @@ module Spree
         storefront_product_serializer: 'Spree::V2::Storefront::ProductSerializer',
         storefront_estimated_shipment_serializer: 'Spree::V2::Storefront::EstimatedShippingRateSerializer',
         storefront_store_serializer: 'Spree::V2::Storefront::StoreSerializer',
+        storefront_policy_serializer: 'Spree::V2::Storefront::PolicySerializer',
         storefront_order_serializer: 'Spree::V2::Storefront::OrderSerializer',
         storefront_variant_serializer: 'Spree::V2::Storefront::VariantSerializer',
 

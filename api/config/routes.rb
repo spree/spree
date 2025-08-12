@@ -53,6 +53,7 @@ Spree::Core::Engine.add_routes do
 
         resources :menus, only: %i[index show]
         resources :cms_pages, only: %i[index show]
+        resources :policies, only: %i[index show]
 
         resources :wishlists do
           get :default, on: :collection

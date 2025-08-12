@@ -55,8 +55,6 @@ en:
         description: Take control of your settings and tailor your experience according to your preferences. Customize your notifications to suit your needs.
         join: Email me about new products, sales, and more. You can unsubscribe at any time.
         status: You are currently %{status} to the newsletters.
-      policies:
-        last_update_at: Last update %{date}
       products:
         pinch_to_zoom_html: Pinch to<br>zoom
       refund_action_not_required_message:

@@ -111,6 +111,8 @@ module Spree
 
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
 
+    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy
+
     #
     # Page Builder associations
     #
@@ -185,6 +187,7 @@ module Spree
     after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     after_create :create_default_theme
+    after_create :create_default_policies
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
     after_commit :clear_cache
@@ -403,6 +406,14 @@ module Spree
       StorePaymentMethod.insert_all(payment_method_ids.map { |payment_method_id| { store_id: id, payment_method_id: payment_method_id } })
     end
 
+    %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_method|
+      define_method policy_method do
+        Spree::Deprecation.warn("Store##{policy_method} is deprecated and will be removed in Spree 6.0. Please use Store#policies instead.")
+
+        ActionText::RichText.find_by(name: policy_method, record: self)
+      end
+    end
+
     private
 
     def countries_available_for_checkout_cache_key
@@ -494,6 +505,25 @@ module Spree
       post_categories.find_or_create_by(title: Spree.t('default_post_categories.resources'))
       post_categories.find_or_create_by(title: Spree.t('default_post_categories.articles'))
       post_categories.find_or_create_by(title: Spree.t('default_post_categories.news'))
+    end
+
+    def create_default_policies
+      policies.find_or_initialize_by(name: Spree.t('terms_of_service')) do |policy|
+        policy.body = Spree.t('terms_of_service')
+        policy.save!
+      end
+      policies.find_or_initialize_by(name: Spree.t('privacy_policy')) do |policy|
+        policy.body = Spree.t('privacy_policy')
+        policy.save!
+      end
+      policies.find_or_initialize_by(name: Spree.t('returns_policy')) do |policy|
+        policy.body = Spree.t('returns_policy')
+        policy.save!
+      end
+      policies.find_or_initialize_by(name: Spree.t('shipping_policy')) do |policy|
+        policy.body = Spree.t('shipping_policy')
+        policy.save!
+      end
     end
 
     # code is slug, so we don't want to generate new slug when code changes
