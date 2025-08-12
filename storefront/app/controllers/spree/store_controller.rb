@@ -28,8 +28,7 @@ module Spree
 
     helper_method :permitted_products_params, :products_filters_params,
                   :storefront_products_scope, :storefront_products,
-                  :default_products_sort, :default_products_finder_params,
-                  :storefront_products_includes
+                  :default_products_sort, :default_products_finder_params
 
     helper_method :stored_location
 
@@ -172,7 +171,6 @@ module Spree
 
     def storefront_products_includes
       [
-        :variants_including_master,
         :prices_including_master,
         :variant_images,
         :option_types,
