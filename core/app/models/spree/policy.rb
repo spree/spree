@@ -17,15 +17,15 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', touch: true
 
     #
+    # Translations
+    #
+    TRANSLATABLE_FIELDS = %i[name body].freeze
+    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
+
+    #
     # ActionText
     #
     translates :body, backend: :action_text
-
-    #
-    # Translations
-    #
-    TRANSLATABLE_FIELDS = %i[name].freeze
-    translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     #
     # Validations
