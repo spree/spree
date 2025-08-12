@@ -11,7 +11,7 @@ module Spree
         end
 
         attribute :body_html do |object|
-          object.body.to_s
+          object.body.to_s.html_safe
         end
       end
     end
