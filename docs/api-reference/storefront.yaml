@@ -1593,6 +1593,7 @@ paths:
                       example: 80.99
                     channel:
                       type: string
+                      default: Web
                       enum:
                         - Web
                         - Android
@@ -5770,7 +5771,7 @@ components:
                         description: The Adyen session data required for payment processing
                       channel:
                         type: string
-                        nullable: true
+                        default: Web
                         enum:
                           - Web
                           - Android
