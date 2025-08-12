@@ -18,8 +18,8 @@ RSpec.describe Spree::Policy, type: :model do
 
   describe 'friendly_id' do
     it 'generates friendly URLs from slug' do
-      policy = create(:policy, slug: 'privacy-policy')
-      expect(policy.to_param).to eq('privacy-policy')
+      policy = create(:policy, slug: 'my-policy')
+      expect(policy.to_param).to eq('my-policy')
     end
 
     it 'maintains slug history' do
