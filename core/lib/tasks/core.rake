@@ -207,7 +207,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         next unless policy.present?
 
         store.policies.create(
-          name: Spree.t(policy_slug.gsub(/customer_/, '')),
+          name: Spree.t(policy_slug.gsub(/customer_/, '').gsub(/_policy$/, '')),
           body: policy.body
         )
 
