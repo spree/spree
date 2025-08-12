@@ -20,6 +20,10 @@ module Spree
           def model_class
             Spree::Policy
           end
+
+          def scope_includes
+            [:rich_text_translations]
+          end
         end
       end
     end
