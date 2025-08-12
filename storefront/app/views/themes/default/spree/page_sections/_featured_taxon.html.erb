@@ -42,7 +42,7 @@
       </div>
     <% end %>
     <% if loaded && section.taxon.present? %>
-      <% if taxon_products(current_currency, section).any? %>
+      <% if section.products(current_currency, storefront_products_includes).any? %>
         <div class='grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6'>
           <% if section_with_image %>
             <div class='lg:col-span-5'>
@@ -52,7 +52,7 @@
             </div>
           <% end %>
           <div class='<%= section_with_image ? "lg:col-span-7" : "lg:col-span-12" %>'>
-            <%= render 'spree/products/swiper', products: taxon_products(current_currency, section), desktop_slides: desktop_slides_amount, pagination: 'bottom', arrows_on_top: arrows_on_top, section: section %>
+            <%= render 'spree/products/swiper', products: section.products(current_currency, storefront_products_includes), desktop_slides: desktop_slides_amount, pagination: 'bottom', arrows_on_top: arrows_on_top, section: section %>
           </div>
         </div>
       <% end %>
