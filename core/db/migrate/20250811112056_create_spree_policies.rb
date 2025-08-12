@@ -4,15 +4,15 @@ class CreateSpreePolicies < ActiveRecord::Migration[7.2]
       t.belongs_to :store, null: false
       t.string :slug, null: false
       t.string :name, null: false
-      t.boolean :show_in_checkout_footer, null: false, default: true, index: true
-      t.integer :position, null: false, default: 0, index: true
+      t.boolean :show_in_checkout_footer, null: false, default: true
+      t.integer :position,               null: false, default: 0
 
       t.timestamps
     end
 
-    add_index :spree_policies, [:store_id, :slug], unique: true
+    add_index :spree_policies, [:store_id, :slug],                    unique: true
     add_index :spree_policies, [:store_id, :show_in_checkout_footer]
-
+    add_index :spree_policies, [:store_id, :position]
     create_table :spree_policy_translations do |t|
       t.string :locale, null: false
       t.string :name
