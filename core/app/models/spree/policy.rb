@@ -43,5 +43,11 @@ module Spree
     #  Ransack
     #
     self.whitelisted_ransackable_attributes = %w[name show_in_checkout_footer]
+
+    def page_builder_url
+      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:policy_path)
+
+      Spree::Core::Engine.routes.url_helpers.policy_path(self)
+    end
   end
 end
