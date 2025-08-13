@@ -203,7 +203,7 @@ module Spree
         "#{base_url + localize}/posts/#{resource.slug}#{preview_id}"
       elsif resource.is_a?(Spree::Taxon)
         "#{base_url + localize}/t/#{resource.permalink}"
-      elsif resource.is_a?(Spree::Page) || resource.is_a?(ActionText::RichText)
+      elsif resource.is_a?(Spree::Page) || resource.is_a?(Spree::Policy)
         "#{base_url + localize}#{resource.page_builder_url}"
       elsif resource.is_a?(Spree::PageLink)
         resource.linkable_url
