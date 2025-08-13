@@ -464,25 +464,37 @@ export default class extends CheckboxSelectAll {
       this.variantsTableTarget.classList.remove('d-none')
 
       const nestingLevel = Math.min(keys.length, 2)
-      let idx = 0
+
+      // This is the index for the product variant attributes
+      // We only want to count nested options
+      let idx = this.variantsContainerTarget.querySelectorAll('.nested').length
 
       for (let i = 0; i < nestingLevel; i++) {
         this.variantsValue.forEach((variant) => {
           const { name, internalName } = this.calculateVariantName(variant, keys, i)
           if (currentVariants.has(internalName) || this.ignoredVariants.has(internalName)) {
-            idx++
             return
           }
           currentVariants.add(internalName)
 
           const existingVariant = this.variantsContainerTarget.querySelector(`[data-variant-name="${internalName}"]`)
           if (existingVariant) {
-            if (i === 0 && nestingLevel > 1) {
-              existingVariant.querySelectorAll("input[type='hidden']").forEach((input) => input.remove())
+            if (i === 0) {
+              if (nestingLevel > 1) {
+                existingVariant.querySelectorAll("input[type='hidden']").forEach((input) => input.remove())
 
-              this.prepareParentVariant(existingVariant, internalName)
+                this.prepareParentVariant(existingVariant, internalName)
+              } else if (nestingLevel === 1) {
+                // We need to generate hidden inputs when we only have a single option left
+                // And there are no inputs already
+                if (existingVariant.querySelectorAll("input[type='hidden']").length === 0) {
+                  const inputs = this.createInputsForVariant(keys, variant, idx)
+                  inputs.forEach((input) => existingVariant.appendChild(input))
+                  idx++
+                }
+              }
             }
-            idx++
+
             return
           }
 
@@ -538,10 +550,10 @@ export default class extends CheckboxSelectAll {
             }
 
             this.preparePriceInputs(variantTarget, internalName, idx)
-
             this.prepareStockInputs(variantTarget, internalName, idx)
+
+            idx++
           }
-          idx++
 
           variantNameContainer.textContent = name
           if (previousVariant) {
@@ -571,7 +583,9 @@ export default class extends CheckboxSelectAll {
   }
 
   refreshParentInputs() {
-    const firstOption = Object.values(this.optionsValue)[0]
+    const sortedOptions = Object.entries(this.optionsValue).sort((a, b) => a[1].position - b[1].position)
+    const firstOption = sortedOptions[0]?.[1]
+
     if (firstOption) {
       firstOption.values.forEach((option) => {
         this.currenciesValue.forEach((currency) => {
@@ -914,6 +928,9 @@ export default class extends CheckboxSelectAll {
   removeOption(optionId) {
     const option = this.optionsContainerTarget.querySelector(`#option-${optionId}`)
     if (option) option.remove()
+
+    const optionTypeInput = this.optionsContainerTarget.querySelector(`#product_option_type_ids_${optionId}`)
+    if (optionTypeInput) optionTypeInput.remove()
   }
 
   optionFormTemplate(optionName, optionValues, id, availableOptions) {
@@ -1056,14 +1073,24 @@ export default class extends CheckboxSelectAll {
 
   priceForVariant(variantName, currency) {
     const existingPrice = this.pricesValue[variantName]?.[currency.toLowerCase()]
+
     if (existingPrice) {
       return {
         ...existingPrice,
         amount: existingPrice.amount ? parseFloat(existingPrice.amount) : existingPrice.amount
       }
-    }
+    } else {
+      const parentName = variantName.split('/')[0]
+      const parentPrices = Object.entries(this.pricesValue)
+        .filter(([internalName, prices]) => internalName.startsWith(parentName) && prices[currency.toLowerCase()] !== undefined)
+        .map(([_key, prices]) => parseFloat(prices[currency.toLowerCase()].amount))
+        .sort((priceAmountA, priceAmountB) => priceAmountA - priceAmountB)
 
-    return { amount: null, id: null }
+      return {
+        amount: parentPrices[0],
+        id: null
+      }
+    }
   }
 
   updatePriceForVariant(variantName, newPrice, currency) {

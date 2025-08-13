@@ -27,6 +27,7 @@
           <div data-variants-form-target="optionsContainer" class="options-creator__options_container">
             <% @product.product_option_types.includes(:option_type).reorder('spree_product_option_types.position').each do |product_option_type| %>
               <% option_type = product_option_type.option_type %>
+              <!-- <%= hidden_field_tag "product[option_type_ids][]", option_type.id, id: "product_option_type_ids_#{option_type.id}" %> -->
               <div class="options-creator__option" data-variants-form-target="option" id="option-<%= option_type.id %>">
                 <% if can?(:manage_option_types, @product) %>
                   <button class="draggable" type="button">
@@ -77,8 +78,7 @@
                     create: true,
                     include_blank: true,
                     data: {
-                      multi_tom_select_target: "selectTemplate",
-                      test_id: "new_option_values_tom_select"
+                      multi_tom_select_target: "selectTemplate"
                     },
                     select_data: {
                       variants_form_target: "newOptionValuesSelect",
@@ -90,8 +90,7 @@
                     create: true,
                     include_blank: true,
                     data: {
-                      multi_tom_select_target: "select",
-                      test_id: "new_option_values_tom_select"
+                      multi_tom_select_target: "select"
                     },
                     select_data: {
                       variants_form_target: "newOptionValuesSelect",

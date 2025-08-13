@@ -15,7 +15,7 @@ describe 'Products', type: :feature do
     end
 
     def select_option_value(option_value_name, index: 0, create: false)
-      select_element = all('[data-test-id="new_option_values_tom_select"]')[index]
+      select_element = all('[data-multi-tom-select-target="select"]')[index]
 
       within(select_element) do
         tom_select(option_value_name, from: 'new_option_values_-ts-control', create: create)
@@ -416,6 +416,125 @@ describe 'Products', type: :feature do
         )
       end
 
+      it 'uses the parent stock level for new variants', js: true do
+        # Add the first option - Color
+        find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
+        tom_select('Color', from: Spree.t(:option_name), create: true)
+        select_option_value('Black', index: 0, create: true)
+        select_option_value('White', index: 1, create: true)
+        click_on 'Done'
+
+        within('#option-Color') do
+          expect(page).to have_content('Black')
+          expect(page).to have_content('White')
+        end
+
+        # Set stock levels for the color variants
+        within('[data-test-id="product-variants-table"]') do
+          within('[data-variant-name="Black"]') do
+            within('.column-quantity') { find('input').set(100) }
+          end
+
+          within('[data-variant-name="White"]') do
+            within('.column-quantity') { find('input').set(200) }
+          end
+        end
+
+        # Update product variants
+        click_on 'Update', match: :first
+        expect(page).to have_content('successfully updated')
+        within('.alerts-container') { find('button').click }
+
+        # Add the second option - Size
+        find('span', text: Spree.t('admin.variants_form.add_option.not_empty')).click
+        tom_select('Size', from: Spree.t(:option_name), create: true)
+        select_option_value('Small', index: 0, create: true)
+        select_option_value('Medium', index: 1, create: true)
+        select_option_value('Large', index: 2, create: true)
+        click_on 'Done'
+
+        within('#option-Size') do
+          expect(page).to have_content('Small')
+          expect(page).to have_content('Medium')
+          expect(page).to have_content('Large')
+        end
+
+        # Check stock levels for the color/size variants
+        within('[data-test-id="product-variants-table"]') do
+          within('[data-variant-name="Black"]') do
+            within('.column-quantity') { expect(page).to have_field(placeholder: 300) }
+          end
+
+          within('[data-variant-name="Black/Small"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="Black/Medium"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="Black/Large"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="White"]') do
+            within('.column-quantity') { expect(page).to have_field(placeholder: 600) }
+          end
+
+          within('[data-variant-name="White/Small"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+
+          within('[data-variant-name="White/Medium"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+
+          within('[data-variant-name="White/Large"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+        end
+
+        # Update product variants
+        click_on 'Update', match: :first
+        expect(page).to have_content('successfully updated')
+        within('.alerts-container') { find('button').click }
+
+        # Make sure the stock levels are still correct after the update
+        within('[data-test-id="product-variants-table"]') do
+          within('[data-variant-name="Black"]') do
+            within('.column-quantity') { expect(page).to have_field(placeholder: 300) }
+          end
+
+          within('[data-variant-name="Black/Small"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="Black/Medium"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="Black/Large"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 100) }
+          end
+
+          within('[data-variant-name="White"]') do
+            within('.column-quantity') { expect(page).to have_field(placeholder: 600) }
+          end
+
+          within('[data-variant-name="White/Small"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+
+          within('[data-variant-name="White/Medium"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+
+          within('[data-variant-name="White/Large"]') do
+            within('.column-quantity') { expect(page).to have_field(with: 200) }
+          end
+        end
+      end
+
       context 'for a product with existing options', js: true do
         let!(:color_option) { create(:option_type, name: 'color', presentation: 'Color', products: [product]) }
         let!(:black_option_value) { create(:option_value, name: 'black', presentation: 'Black', option_type: color_option) }
@@ -429,9 +548,10 @@ describe 'Products', type: :feature do
         let!(:variant1) { create(:variant, product: product, option_values: [black_option_value, small_option_value], price: 10) }
         let!(:variant2) { create(:variant, product: product, option_values: [black_option_value, medium_option_value], price: 10) }
         let!(:variant3) { create(:variant, product: product, option_values: [black_option_value, large_option_value], price: 10) }
-        let!(:variant4) { create(:variant, product: product, option_values: [white_option_value, small_option_value], price: 10) }
-        let!(:variant5) { create(:variant, product: product, option_values: [white_option_value, medium_option_value], price: 10) }
-        let!(:variant6) { create(:variant, product: product, option_values: [white_option_value, large_option_value], price: 10) }
+
+        let!(:variant4) { create(:variant, product: product, option_values: [white_option_value, small_option_value], price: 11) }
+        let!(:variant5) { create(:variant, product: product, option_values: [white_option_value, medium_option_value], price: 11) }
+        let!(:variant6) { create(:variant, product: product, option_values: [white_option_value, large_option_value], price: 11) }
 
         it 'allows adding another option' do
           visit spree.edit_admin_product_path(product.reload)
@@ -573,7 +693,7 @@ describe 'Products', type: :feature do
           )
         end
 
-        it 'allows removing an option' do
+        it 'allows removing the first option' do
           visit spree.edit_admin_product_path(product.reload)
 
           within("#option-#{color_option.id}") do
@@ -611,6 +731,7 @@ describe 'Products', type: :feature do
           # Update product variants
           click_on 'Update', match: :first
           expect(page).to have_content('successfully updated')
+          within('.alerts-container') { find('button').click }
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Small"]') do
@@ -633,6 +754,75 @@ describe 'Products', type: :feature do
             'Size: Small',
             'Size: Medium',
             'Size: Large'
+          )
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Small"]') do
+              find('.column-checkbox').click
+            end
+          end
+
+          click_on 'Delete selected'
+
+          # Update product variants
+          click_on 'Update', match: :first
+          expect(page).to have_content('successfully updated')
+          within('.alerts-container') { find('button').click }
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Medium"]') do
+              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-quantity') { expect(page).to have_field(with: 110) }
+            end
+
+            within('[data-variant-name="Large"]') do
+              within('.column-price') { expect(page).to have_field(with: 12) }
+              within('.column-quantity') { expect(page).to have_field(with: 120) }
+            end
+          end
+
+          expect(product.reload.variants.map(&:options_text)).to contain_exactly(
+            'Size: Medium',
+            'Size: Large'
+          )
+        end
+
+        it 'allows removing the last option' do
+          visit spree.edit_admin_product_path(product.reload)
+
+          within("#option-#{size_option.id}") do
+            click_on 'Edit'
+            click_on 'Delete'
+          end
+
+          expect(page).to have_css("#option-#{color_option.id}")
+          expect(page).not_to have_css("#option-#{size_option.id}")
+
+          within('[data-test-id="product-variants-table"]') do
+            expect(page).to have_content('Black')
+            expect(page).to have_content('White')
+
+            expect(page).not_to have_content('Small')
+            expect(page).not_to have_content('Medium')
+            expect(page).not_to have_content('Large')
+          end
+
+          # Update product variants
+          click_on 'Update', match: :first
+          expect(page).to have_content('successfully updated')
+
+          within('[data-test-id="product-variants-table"]') do
+            expect(page).to have_content('Black')
+            expect(page).to have_content('White')
+
+            expect(page).not_to have_content('Small')
+            expect(page).not_to have_content('Medium')
+            expect(page).not_to have_content('Large')
+          end
+
+          expect(product.reload.variants.map(&:options_text)).to contain_exactly(
+            'Color: Black',
+            'Color: White'
           )
         end
 
@@ -863,6 +1053,62 @@ describe 'Products', type: :feature do
 
           expect(product.reload.variants.map(&:options_text)).to contain_exactly(
             'Color: Black, Size: Small'
+          )
+        end
+
+        it 'uses the parent price for new variants' do
+          visit spree.edit_admin_product_path(product.reload)
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Black"]') do
+              within('.column-price') { expect(page).to have_field(with: 10) }
+            end
+
+            within('[data-variant-name="White"]') do
+              within('.column-price') { expect(page).to have_field(with: 11) }
+            end
+          end
+
+          within("#option-#{size_option.id}") do
+            click_on 'Edit'
+            select_option_value('Extra Large', index: 3, create: true)
+            click_on 'Done'
+          end
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Black/Extra Large"]') do
+              within('.column-price') { expect(page).to have_field(with: 10) }
+            end
+
+            within('[data-variant-name="White/Extra Large"]') do
+              within('.column-price') { expect(page).to have_field(with: 11) }
+            end
+          end
+
+          # Update product variants
+          click_on 'Update', match: :first
+          expect(page).to have_content('successfully updated')
+          within('.alerts-container') { find('button').click }
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Black/Extra Large"]') do
+              within('.column-price') { expect(page).to have_field(with: 10) }
+            end
+
+            within('[data-variant-name="White/Extra Large"]') do
+              within('.column-price') { expect(page).to have_field(with: 11) }
+            end
+          end
+
+          expect(product.reload.variants.map(&:options_text)).to contain_exactly(
+            'Color: Black, Size: Small',
+            'Color: Black, Size: Medium',
+            'Color: Black, Size: Large',
+            'Color: Black, Size: Extra Large',
+            'Color: White, Size: Small',
+            'Color: White, Size: Medium',
+            'Color: White, Size: Large',
+            'Color: White, Size: Extra Large'
           )
         end
       end
