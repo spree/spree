@@ -33,8 +33,6 @@ commands:
       - run:
           name: Fix APT mirrors
           command: |
-            sudo sed -i 's|http://archive.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
-            sudo sed -i 's|http://security.ubuntu.com|http://ubuntu.cs.utah.edu|g' /etc/apt/sources.list
             sudo apt-get update
       - run:
           name: Install libvips
