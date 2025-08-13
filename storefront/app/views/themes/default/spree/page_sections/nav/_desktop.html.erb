@@ -10,8 +10,7 @@
           class: "shrink-0 menu-item header--nav-link px-4 py-1",
           class_active: "menu-item--active",
           target: main_link.open_in_new_tab.presence && "_blank",
-          rel: main_link.open_in_new_tab.presence && "noopener noreferrer",
-          **link_attributes(main_link, as_html: false) do %>
+          rel: main_link.open_in_new_tab.presence && "noopener noreferrer" do %>
         <span class="group-hover:border-b-[1.5px] group-hover:border-b-accent"><%= main_link.label %></span>
       <% end %>
       <% if presenter.columns.any? %>
