@@ -406,14 +406,22 @@ describe 'Products', type: :feature do
           end
         end
 
-        expect(product.reload.variants.map(&:options_text)).to contain_exactly(
+        expected_variant_options_text = [
           'Color: Black, Size: Small',
           'Color: Black, Size: Medium',
           'Color: Black, Size: Large',
           'Color: White, Size: Small',
           'Color: White, Size: Medium',
           'Color: White, Size: Large'
-        )
+        ]
+
+        expect(product.reload.variants.map(&:options_text)).to eq(expected_variant_options_text)
+
+        # Update product variants to check if the order is preserved
+        click_on 'Update', match: :first
+        expect(page).to have_content('successfully updated')
+
+        expect(product.reload.variants.map(&:options_text)).to eq(expected_variant_options_text)
       end
 
       it 'allows adding new option values', js: true do

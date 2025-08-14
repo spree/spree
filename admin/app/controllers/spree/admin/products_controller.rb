@@ -173,7 +173,7 @@ module Spree
           joins(option_type: :product_option_types).
           includes(option_type: :option_values).
           merge(@product.product_option_types).
-          reorder("#{Spree::ProductOptionType.table_name}.position").
+          reorder("#{Spree::ProductOptionType.table_name}.position", "#{Spree::Variant.table_name}.position").
           uniq.group_by(&:option_type).each_with_index do |option, index|
             option_type, option_values = option
 
