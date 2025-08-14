@@ -129,25 +129,28 @@ export default class extends CheckboxSelectAll {
       const nestingLevel = internalName.split('/').length
       if (nestingLevel === 1) {
         const sortedOptions = Object.entries(this.optionsValue).sort((a, b) => a[1].position - b[1].position)
-        const firstOptionKey = sortedOptions[0][0]
-        const newOptionValues = this.optionsValue[firstOptionKey].values.filter((value) => value.text !== internalName)
-        if (newOptionValues.length === 0) {
-          const newOptionsValue = this.optionsValue
-          delete newOptionsValue[firstOptionKey]
-          this.optionsValue = newOptionsValue
-          this.removeOption(firstOptionKey)
-        } else {
-          this.optionsValue = {
-            ...this.optionsValue,
-            [firstOptionKey]: {
-              ...this.optionsValue[firstOptionKey],
-              values: newOptionValues
-            }
-          }
+        const firstOptionKey = sortedOptions[0]?.[0]
 
-          this.optionsContainerTarget.querySelector(`#option-${firstOptionKey} [data-name="${internalName}"]`).remove()
+        if (firstOptionKey !== undefined) {
+          const newOptionValues = this.optionsValue[firstOptionKey].values.filter((value) => value.text !== internalName)
+          if (newOptionValues.length === 0) {
+            const newOptionsValue = this.optionsValue
+            delete newOptionsValue[firstOptionKey]
+            this.optionsValue = newOptionsValue
+            this.removeOption(firstOptionKey)
+          } else {
+            this.optionsValue = {
+              ...this.optionsValue,
+              [firstOptionKey]: {
+                ...this.optionsValue[firstOptionKey],
+                values: newOptionValues
+              }
+            }
+
+            this.optionsContainerTarget.querySelector(`#option-${firstOptionKey} [data-name="${internalName}"]`).remove()
+          }
+          checkbox.checked = false
         }
-        checkbox.checked = false
       }
 
       delete newStockValue[internalName]
@@ -1092,7 +1095,7 @@ export default class extends CheckboxSelectAll {
         .sort((priceAmountA, priceAmountB) => priceAmountA - priceAmountB)
 
       return {
-        amount: parentPrices[0],
+        amount: parentPrices[0] ?? null,
         id: null
       }
     }
