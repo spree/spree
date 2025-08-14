@@ -1624,6 +1624,10 @@ paths:
                         - Web
                         - Android
                         - iOS
+                    return_url:
+                      type: string
+                      default: 'https://{host}/adyen/payment_sessions/redirect'
+                      description: URL to return back to store after payment with redirect flow like Klarna or iDEAL. The URL must not include personally identifiable information (PII), for example name or email address.
                   required:
                     - amount
               required:
@@ -1632,6 +1636,7 @@ paths:
               payment_session:
                 amount: 80.99
                 channel: Android
+                return_url: "my-app://your.package.name"
       operationId: create-adyen-payment-session
       responses:
         '200':
@@ -5854,6 +5859,10 @@ components:
                           - iOS
                         description: The channel of the payment session
                         example: Android
+                      return_url:
+                        type: string
+                        description: URL to return back to store after payment with redirect flow like Klarna or iDEAL. The URL must not include personally identifiable information (PII), for example name or email address.
+                        example: 'https://{host}/adyen/payment_sessions/redirect'
                       status:
                         type: string
                         description: The status of the payment session
@@ -5910,6 +5919,7 @@ components:
                     client_key: 'test_ECRHWDLSER123456HMT57VW7XGOUDA23'
                     status: initial
                     expires_at: '2025-07-24T14:40:45.000Z'
+                    return_url: 'https://example.com/adyen/payment_sessions/redirect'
                   relationships:
                     order:
                       data:
