@@ -466,8 +466,13 @@ export default class extends CheckboxSelectAll {
       const nestingLevel = Math.min(keys.length, 2)
 
       // This is the index for the product variant attributes
-      // We only want to count nested options
-      let idx = this.variantsContainerTarget.querySelectorAll('.nested').length
+      // We only want to count nested options if we have more than one option type
+      let idx
+      if (nestingLevel > 1) {
+        idx = this.variantsContainerTarget.querySelectorAll('.nested').length
+      } else {
+        idx = this.variantsContainerTarget.querySelectorAll('[data-variants-form-target="variant"]').length
+      }
 
       for (let i = 0; i < nestingLevel; i++) {
         this.variantsValue.forEach((variant) => {

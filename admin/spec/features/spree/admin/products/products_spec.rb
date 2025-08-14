@@ -416,6 +416,56 @@ describe 'Products', type: :feature do
         )
       end
 
+      it 'allows adding new option values', js: true do
+        # Add the first option - Color
+        find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
+        tom_select('Color', from: Spree.t(:option_name), create: true)
+        select_option_value('Black', index: 0, create: true)
+        select_option_value('White', index: 1, create: true)
+        click_on 'Done'
+
+        within('#option-Color') do
+          expect(page).to have_content('Black')
+          expect(page).to have_content('White')
+        end
+
+        # Update product variants
+        click_on 'Update', match: :first
+        expect(page).to have_content('successfully updated')
+        within('.alerts-container') { find('button').click }
+
+        color_option = Spree::OptionType.find_by(name: 'color')
+
+        within("#option-#{color_option.id}") do
+          click_on 'Edit'
+          select_option_value('Red', index: 2, create: true)
+          click_on 'Done'
+        end
+
+        within("#option-#{color_option.id}") do
+          expect(page).to have_content('Black')
+          expect(page).to have_content('White')
+          expect(page).to have_content('Red')
+        end
+
+        # Update product variants
+        click_on 'Update', match: :first
+        expect(page).to have_content('successfully updated')
+        within('.alerts-container') { find('button').click }
+
+        within('[data-test-id="product-variants-table"]') do
+          expect(page).to have_content('Black')
+          expect(page).to have_content('White')
+          expect(page).to have_content('Red')
+        end
+
+        expect(product.reload.variants.map(&:options_text)).to contain_exactly(
+          'Color: Black',
+          'Color: White',
+          'Color: Red'
+        )
+      end
+
       it 'uses the parent stock level for new variants', js: true do
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
