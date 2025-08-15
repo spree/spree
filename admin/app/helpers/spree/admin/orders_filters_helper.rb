@@ -1,7 +1,7 @@
 module Spree
   module Admin
     module OrdersFiltersHelper
-      def params_to_filters(search_params:, vendor: nil, user: nil)
+      def params_to_filters(search_params:, vendor: nil, user: nil, timezone: nil)
         if search_params.is_a?(String)
           search_params = JSON.parse(search_params).deep_symbolize_keys
         end
@@ -15,7 +15,7 @@ module Spree
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
             # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
-            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
+            search_params[:created_at_gt].to_date&.in_time_zone(timezone || current_timezone)&.beginning_of_day
           rescue StandardError
             ''
           end
@@ -23,7 +23,7 @@ module Spree
 
         if search_params[:created_at_lt].present?
           search_params[:created_at_lt] = begin
-            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
+            search_params[:created_at_lt].to_date&.in_time_zone(timezone || current_timezone)&.end_of_day
           rescue StandardError
             ''
           end
@@ -31,7 +31,7 @@ module Spree
 
         if search_params[:completed_at_gt].present?
           search_params[:completed_at_gt] = begin
-            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
+            search_params[:completed_at_gt].to_date&.in_time_zone(timezone || current_timezone)&.beginning_of_day
           rescue StandardError
             ''
           end
@@ -39,7 +39,7 @@ module Spree
 
         if search_params[:completed_at_lt].present?
           search_params[:completed_at_lt] = begin
-            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
+            search_params[:completed_at_lt].to_date&.in_time_zone(timezone || current_timezone)&.end_of_day
           rescue StandardError
             ''
           end
@@ -62,7 +62,7 @@ module Spree
 
       def load_orders
         @search = scope.preload(:user).accessible_by(current_ability, :index).
-                  ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
+                  ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user, timezone: current_timezone))
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
