@@ -128,6 +128,11 @@ module Spree
       end
     end
 
+    # Normalizes search parameters to ensure consistent format between UI and exports
+    # Handles:
+    # - JSON string parsing/validation
+    # - Maintaining existing Time objects
+    # - Error cases gracefully
     def normalize_search_params
       return if search_params.blank?
 

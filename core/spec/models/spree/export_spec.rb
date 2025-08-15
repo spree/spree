@@ -89,7 +89,7 @@ RSpec.describe Spree::Export, :job, type: :model do
     end
 
     context 'with valid JSON string' do
-      let(:params) { { created_at_gt: '2023-01-01' }.to_json }
+      let(:params) { { filters: { date: '2023-01-01' } }.to_json }
 
       it 'maintains the same content' do
         export.search_params = params
