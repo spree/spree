@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Export, type: :model, job: true do
+RSpec.describe Spree::Export, :job, type: :model do
   let(:store) { create(:store, code: 'my-store') }
   let(:user) { create(:admin_user) }
 
@@ -68,6 +68,65 @@ RSpec.describe Spree::Export, type: :model, job: true do
 
     it 'queues the export done email' do
       expect { export.send_export_done_email }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+    end
+  end
+
+  describe '#normalize_search_params' do
+    let(:export) { build(:export) }
+
+    context 'with nil search_params' do
+      it 'does nothing' do
+        export.search_params = nil
+        expect { export.normalize_search_params }.not_to change(export, :search_params)
+      end
+    end
+
+    context 'with empty search_params' do
+      it 'does nothing' do
+        export.search_params = ''
+        expect { export.normalize_search_params }.not_to change(export, :search_params)
+      end
+    end
+
+    context 'with valid JSON string' do
+      let(:params) { { filters: { date: '2023-01-01' } }.to_json }
+
+      it 'maintains the same content' do
+        export.search_params = params
+        export.normalize_search_params
+        expect(JSON.parse(export.search_params)).to eq(JSON.parse(params))
+      end
+
+      it 'ensures valid JSON output' do
+        export.search_params = params
+        export.normalize_search_params
+        expect { JSON.parse(export.search_params) }.not_to raise_error
+      end
+    end
+
+    context 'with invalid JSON string' do
+      it 'preserves the original string' do
+        export.search_params = '{invalid: json'
+        expect { export.normalize_search_params }.not_to raise_error
+        expect(export.search_params).to eq('{invalid: json')
+      end
+    end
+
+    context 'with Ruby hash input' do
+      it 'converts to JSON string' do
+        export.search_params = { key: 'value' }
+        export.normalize_search_params
+        expect(export.search_params).to eq('{"key":"value"}')
+      end
+    end
+
+    context 'with pre-normalized params' do
+      it 'does not double-process' do
+        export.search_params = { date: Time.current }.to_json
+        original = export.search_params.dup
+        export.normalize_search_params
+        expect(export.search_params).to eq(original)
+      end
     end
   end
 end

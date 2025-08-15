@@ -42,6 +42,7 @@ module Spree
     # Callbacks
     #
     before_validation :set_default_format, on: :create
+    before_validation :normalize_search_params, on: :create, if: -> { search_params.present? }
     before_create :clear_search_params, if: -> { record_selection == 'all' }
     after_commit :generate_async, on: :create
 
@@ -124,6 +125,23 @@ module Spree
         Spree.user_class
       else
         "Spree::#{type.demodulize.singularize}".constantize
+      end
+    end
+
+    # Normalizes search parameters to ensure consistent format between UI and exports
+    # Handles:
+    # - JSON string parsing/validation
+    # - Maintaining existing Time objects
+    # - Error cases gracefully
+    def normalize_search_params
+      return if search_params.blank?
+
+      begin
+        parsed = JSON.parse(search_params.to_s)
+        # Just re-serialize to ensure consistent format
+        self.search_params = parsed.to_json
+      rescue JSON::ParserError
+        # Leave as-is if not JSON
       end
     end
 

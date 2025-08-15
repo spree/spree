@@ -15,7 +15,7 @@ module Spree
         if search_params[:created_at_gt].present?
           search_params[:created_at_gt] = begin
             # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
-            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)
+            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)&.beginning_of_day
           rescue StandardError
             ''
           end
@@ -31,7 +31,7 @@ module Spree
 
         if search_params[:completed_at_gt].present?
           search_params[:completed_at_gt] = begin
-            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)
+            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)&.beginning_of_day
           rescue StandardError
             ''
           end
