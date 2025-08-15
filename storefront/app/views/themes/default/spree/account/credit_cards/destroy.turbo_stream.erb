@@ -1,0 +1,6 @@
+<%= spree_turbo_update_flashes %>
+
+<%= turbo_stream.update 'credit_cards_list' do %>
+  <%= render partial: 'spree/account/credit_cards/credit_cards_list', 
+             locals: { credit_cards: @credit_cards, default_credit_card: @default_credit_card } %>
+<% end %>

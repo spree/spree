@@ -49,6 +49,14 @@ en:
         customer_support_email_not_configured: Customer support email is not configured
         message_not_sent: Unfortunately we weren't able to send the email at this time. Please try again later
         message_sent: Message sent!
+      credit_cards:
+        no_credit_cards_title: You currently have no credit cards
+        create_error: Failed to add card. Please try again.
+        create_success: Card added. It will appear on the list shortly after refresh.
+        delete_success: Card deleted.
+        delete_error: Failed to delete card.
+        update_success: Card updated.
+        update_error: Failed to update card.
       newsletter_subscribers:
         success: Thank you for subscribing to our newsletter!
       newsletter_subscription:

@@ -1,0 +1,5 @@
+<%= turbo_frame_tag 'credit_cards_list' do %>
+  <ul>
+    <%= render partial: 'spree/account/credit_cards/credit_card', collection: credit_cards, as: :credit_card, locals: { default_credit_card: default_credit_card } %>
+  </ul>
+<% end %>

@@ -5,12 +5,11 @@
   <div class="lg:col-span-8 lg:col-start-5">
     <div class="mb-12 lg:mb-24">
       <div class="font-medium mb-4">
-        <%= Spree.t(:payment_methods) %>
+        <%= Spree.t(:credit_cards) %>
       </div>
       <% if @credit_cards.any? %>
-        <ul>
-          <%= render partial: 'spree/account/credit_cards/credit_card', collection: @credit_cards, as: :credit_card %>
-        </ul>
+        <%= render partial: 'spree/account/credit_cards/credit_cards_list', 
+                   locals: { credit_cards: @credit_cards, default_credit_card: @default_credit_card } %>
         <div class="flex">
           <div data-controller="modal" data-modal-allow-background-close="true">
             <%= button_tag Spree.t(:add), type: "button", class: "btn-primary block w-full lg:w-auto", data: { action: "click->modal#open" } %>
@@ -26,12 +25,11 @@
         </div>
       <% else %>
         <div class="text-center py-6">
-          <p class="mb-2 font-medium uppercase"><%= Spree.t('storefront.account.no_credit_cards_title') %></p>
-          <p><%= Spree.t('storefront.account.no_credit_cards_description') %></p>
+          <p class="mb-2 font-medium uppercase"><%= Spree.t('storefront.credit_cards.no_credit_cards_title') %></p>
           <div class="flex mt-8 justify-center">
             <div data-controller="modal" data-modal-allow-background-close="true">
               <%= button_tag Spree.t(:add), type: "button", class: "btn-primary block", data: { action: "click->modal#open" } %>
-              <%= turbo_frame_tag :new_address_modal,
+              <%= turbo_frame_tag :new_credit_card_modal,
                     src: spree.new_account_credit_card_path,
                     loading: :lazy,
                     data: { 

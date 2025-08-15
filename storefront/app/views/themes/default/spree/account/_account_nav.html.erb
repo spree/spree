@@ -36,7 +36,7 @@
 
   <%= link_to Spree.t(:credit_cards), spree.account_credit_cards_path,
     data: { active: current == "credit_cards" },
-    class: "shrink-0 block lg:px-4 lg:py-3 px-3 py-4 border-b lg:border-b-0 text-neutral-700 hover:border-accent-100 hover:bg-accent-100 hover:text-black #{current == "payment_methods" ? "lg:bg-accent border-text lg:border-b-0 lg:border-l-[1.5px]" : "border-accrent lg:border-l"}"
+    class: "shrink-0 block lg:px-4 lg:py-3 px-3 py-4 border-b lg:border-b-0 text-neutral-700 hover:border-accent-100 hover:bg-accent-100 hover:text-black #{current == "credit_cards" ? "lg:bg-accent border-text lg:border-b-0 lg:border-l-[1.5px]" : "border-accrent lg:border-l"}"
   %>
 
   <%= link_to Spree.t('storefront.account.newsletter_settings'), spree.edit_account_newsletter_path,
