@@ -114,7 +114,7 @@ module Spree
     end
 
     def default_title
-      @default_title ||= current_store.name
+      @default_title ||= current_store.seo_title.presence || current_store.name
     end
 
     # this is a hook for subclasses to provide title

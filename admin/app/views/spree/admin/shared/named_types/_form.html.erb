@@ -1,15 +1,6 @@
 <div class="card mb-4">
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
-      <%= f.text_field :name, class: 'form-control', autofocus: f.object.new_record?, required: true %>
-      <%= f.error_message_on :name %>
-    </div>
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :active, class: 'custom-control-input' %>
-      <%= f.label :active, class: 'custom-control-label' do %>
-        <%= Spree.t(:active) %>
-      <% end %>
-    </div>
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_check_box :active %>
   </div>
 </div>

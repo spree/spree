@@ -26,21 +26,9 @@
           </h5>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <%= f.label :name, Spree.t(:site_name) %>
-            <%= f.text_field :name, class: 'form-control' %>
-          </div>
-          <div class="form-group">
-            <%= f.label :meta_description, 'Search description' %>
-            <%= f.text_area :meta_description, class: 'form-control', style: 'min-height: 5em', data: { controller: 'textarea-autogrow'} %>
-          </div>
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :preferred_index_in_search_engines, class: 'custom-control-input' %>
-            <%= f.label :preferred_index_in_search_engines, Spree.t(:index_in_search_engines), class: 'custom-control-label' %>
-          </div>
-          <p class="text-muted small pl-4 mb-0">
-            Checking this box will allow your site to appear in search engines.
-          </p>
+          <%= f.spree_text_field :seo_title %>
+          <%= f.spree_text_area :meta_description %>
+          <%= f.spree_check_box :preferred_index_in_search_engines, label: Spree.t(:index_in_search_engines), help: 'Checking this box will allow your site to appear in search engines.' %>
         </div>
       </div>
 
@@ -51,17 +39,9 @@
           </h5>
         </div>
         <div class="card-body" data-controller="reveal" data-reveal-hidden-class="d-none">
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :preferred_password_protected, class: 'custom-control-input', data: { action: 'reveal#toggle' } %>
-            <%= f.label :preferred_password_protected, Spree.t(:password_protected), class: 'custom-control-label' %>
-          </div>
-          <p class="text-muted small pl-4">
-            Checking this box will put your storefront behind a password.
-          </p>
-          
-          <div class="form-group <%= @store.prefers_password_protected? ? '' : 'd-none' %>" data-reveal-target="item">
-            <%= f.label :storefront_password, Spree.t(:password) %>
-            <%= f.text_field :storefront_password, class: 'form-control' %>
+          <%= f.spree_check_box :preferred_password_protected, label: Spree.t(:password_protected), help: 'Checking this box will put your storefront behind a password.', data: { action: 'reveal#toggle' } %>
+          <div class="d-none" data-reveal-target="item">
+            <%= f.spree_text_field :storefront_password, label: Spree.t(:password), help: 'Enter a password to protect your storefront.' %>
           </div>
         </div>
       </div>
@@ -73,20 +53,9 @@
           </h5>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_head, Spree.t(:head_tag) %>
-            <%= f.text_area :storefront_custom_code_head, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
-
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_body_start, Spree.t(:body_tag_start) %>
-            <%= f.text_area :storefront_custom_code_body_start, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
-
-          <div class="form-group">
-            <%= f.label :storefront_custom_code_body_end, Spree.t(:body_tag_end) %>
-            <%= f.text_area :storefront_custom_code_body_end, class: 'form-control', rows: 4, data: { controller: 'textarea-autogrow'} %>
-          </div>
+          <%= f.spree_text_area :storefront_custom_code_head, rows: 4 %>
+          <%= f.spree_text_area :storefront_custom_code_body_start, rows: 4 %>
+          <%= f.spree_text_area :storefront_custom_code_body_end, rows: 4 %>
         </div>
       </div>
 
@@ -126,16 +95,7 @@
             Social links will be displayed in the footer of your store
           </div>
           <% Spree::Store::SUPPORTED_SOCIAL_NETWORKS.each do |social| %>
-            <div class="form-group">
-              <%= f.label :"store_#{social}" do %>
-                <%= icon social %>
-                <%= social.capitalize %>
-              <% end %>
-              <%= f.text_field social.to_sym,
-                    class: 'form-control',
-                    placeholder: Spree::Store::SOCIAL_NETWORKS_CONFIG[social.to_sym][:input_placeholder]
-              %>
-            </div>
+            <%= f.spree_text_field social.to_sym, label: social.capitalize, placeholder: Spree::Store::SOCIAL_NETWORKS_CONFIG[social.to_sym][:input_placeholder] %>
           <% end %>
         </div>
       </div>

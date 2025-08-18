@@ -14,5 +14,5 @@
   </td>
   <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.completed_orders_for_store(current_store).count %></td>
   <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.display_amount_spent_in(current_currency) %></td>
-  <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= local_time(user.created_at) %></td>
+  <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= spree_time(user.created_at) %></td>
 </tr>

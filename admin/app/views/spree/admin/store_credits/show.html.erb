@@ -16,11 +16,11 @@
         <table class="table">
           <thead>
             <tr>
-              <th><%= Spree.t(:action) %></th>
-              <th><%= Spree.t(:amount) %></th>
-              <th><%= Spree.t(:source) %></th>
-              <th><%= Spree.t(:order) %></th>
-              <th><%= Spree.t(:created_at) %></th>
+              <th scope="col"><%= Spree.t(:action) %></th>
+              <th scope="col"><%= Spree.t(:amount) %></th>
+              <th scope="col"><%= Spree.t(:source) %></th>
+              <th scope="col"><%= Spree.t(:order) %></th>
+              <th scope="col"><%= Spree.t(:created_at) %></th>
             </tr>
           </thead>
           <tbody>
@@ -75,7 +75,7 @@
               </span>
 
               <span>
-                <%= local_time(@store_credit.created_at) %>
+                <%= spree_time(@store_credit.created_at) %>
               </span>
             </li>
 

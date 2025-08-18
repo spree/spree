@@ -1357,6 +1357,32 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
+  /api/v2/storefront/policies:
+    get:
+      summary: List all Store Policies
+      description: 'Returns a list of Store Policies. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Policies
+      operationId: policies-list
+      responses:
+        '200':
+          $ref: '#/components/responses/PolicyList'
+      security:
+        - bearerAuth: []
+  /api/v2/storefront/policies/{policy_slug}:
+    get:
+      summary: Retrieve a Policy
+      description: 'Returns the details of a specified Policy. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Policies
+      operationId: show-policy
+      responses:
+        '200':
+          $ref: '#/components/responses/Policy'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](/developer/core-concepts/products#taxons-and-taxonomies)'
@@ -1591,6 +1617,13 @@ paths:
                       type: number
                       description: The payment amount
                       example: 80.99
+                    channel:
+                      type: string
+                      default: Web
+                      enum:
+                        - Web
+                        - Android
+                        - iOS
                   required:
                     - amount
               required:
@@ -1598,6 +1631,7 @@ paths:
             example:
               payment_session:
                 amount: 80.99
+                channel: Android
       operationId: create-adyen-payment-session
       responses:
         '200':
@@ -2994,6 +3028,56 @@ components:
               nullable: true
             preferences:
               type: object
+      required:
+        - id
+        - type
+        - attributes
+    Policy:
+      type: object
+      title: Policy
+      description: 'Policy represents terms and conditions, privacy policies, and other legal documents that can be displayed on the storefront.'
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: policy
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Terms and Conditions
+              description: Display name of the policy
+            slug:
+              type: string
+              example: terms-and-conditions
+              description: URL-friendly identifier for the policy
+            show_in_checkout_footer:
+              type: boolean
+              example: true
+              description: Whether to display this policy in the checkout footer
+            created_at:
+              $ref: '#/components/schemas/Timestamp'
+            updated_at:
+              $ref: '#/components/schemas/Timestamp'
+            body:
+              type: string
+              example: asdrdfas
+              description: Raw text content of the policy
+              nullable: true
+            body_html:
+              type: string
+              example: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
+              description: HTML formatted content of the policy
+              nullable: true
+          required:
+            - name
+            - slug
+            - show_in_checkout_footer
+            - created_at
+            - updated_at
       required:
         - id
         - type
@@ -5761,6 +5845,15 @@ components:
                       adyen_data:
                         type: string
                         description: The Adyen session data required for payment processing
+                      channel:
+                        type: string
+                        default: Web
+                        enum:
+                          - Web
+                          - Android
+                          - iOS
+                        description: The channel of the payment session
+                        example: Android
                       status:
                         type: string
                         description: The status of the payment session
@@ -5812,6 +5905,7 @@ components:
                     adyen_id: CS3E6B43783787E79B
                     amount: '80.99'
                     currency: USD
+                    channel: iOS
                     adyen_data: 'Ab02b4c0!BQABAgCNxadId3f9NXF6OMYGXsZAoAwcnOdgINKAypoyo8GUq8UqjnT/7J8K4kNhl6tjWOpGY6t+r+4QQVVfo4IHFWtjzNkj2k9dnTS4932UyCznLC+gHbzPHcfN6rNiHBIpQo523a94EvV2Sq1Gh/3j6N2aNCjfV2TDWynQJU11uOhalgwhAnVrD3HmFtbVqM60kGiPRBfE4LwLuQ7f+7S/cdVx8HzWizvafndeRnx5lM3RQNibNRbimJ3G6YZh/HI9FwZYbxkUoq8dQl8dgdquNKAxsSO0BcC6UpTU2Z8d/z3lAsm0UlX1+YiryRut4Ipg9YqJbVt3gnj7Kh4kZFRO1hZM8NDeD9PshE8riBXDpUwJ84m+9I+cfbnwYWgfZaGuxfGG+IiiliQBWIjHefd6ukUATLWsPX6ufUL7BT3rSMx/5QMmdNrE/zMA9B1tFg5Tm8t88S6WQcSZ/vIgOv+peDml5j44OcEth6iEqxRwsmT3T0nZUhYwYUSTEykrpY9+Ly2+NWpTE+sgvXhld6SZubbbG9gIBad6TIwaKkUO0kJOx6Zvk37uU2D0z8mnWIktimBZIqhegsdBXutVyUe93xSighf/C41n69COSjALE3KCcXGCmR4NsdwJ7LesJMYLu1S4gDOObvkuW5IY2k8r6pptUWgsOxcyUvbpPMlQrjRTHAwRPxcnk0SJrSL29HwASnsia2V5IjoiQUYwQUFBMTAzQ0E1MzdFQUVEODdDMjRERDUzOTA5QjgwQTc4QTkyM0UzODIzRDY4REFDQzk0QjlGRjgzMDVEQyJ9JcDZ7NsVaMwwHpvV0vX/5b7P9FS/1TfuFbQRmlFX4vCQOLxSiyAf5P4uN7Hb2Zw4dplBl4oSEBBUvrKk5TCqjGoS1azHS8Fv5LCcl2yCDH6WBtQKzJnT6NmXl29+ILYCxETtyF9K8LwgJyu8sHs2jQnnLujLBqqjIZqDFa8TORtGiwvhtS3UMtagkkg0SkCaaaOjqtZdWrTy7C9Gy9nFZNYEfmurFZmgLRROTB3jRNwmveWvayFJl4TTtub14l+RZJDx2VgjAwqRU8btN/0xnrT9m2kg6LOyW4F9TkauPgAzY3Gu//HQOGW7VDBPq6y83mzP7iNp8Whe14NQSu29i9rBricl0f6RoWin87jRD7AtZx0MxlhNxUF579COCwNHAMhs310nntoSY5U8s13of9Wn2lDcBcg2QmSNOixMMIcBkjHpEQEZAeGzfi8OvJtjoi9TVY0VzrpSbR1dcx8MNjOUeY37H+XlWkdEkd3457zbeOuSlEbjvuDYW7tYHYWipsd4fNllXiMzKW+w6YxL2Kqj0M5B+3ihuEKg7VS3b/XKs+OS7eHGZSImAt9e4tGltEqYzdRHzm4S6pnJytaoPp7+OswEm+JQTi739w4CJeNWxr1t9dot2k9OQw3vZabeI7OTrwBc2IwtUYZ9oPlBVOibMoUwCIVmSPrSgF8nCj9S2RdZgamLNnyg1srQmWnNxtOLMnvTnWedICtoE48rMG2Q+cDrEjy11TCGK3R+LHE+LaqPv96yk3ztsHomOF7XstAvLvUAIH3Z/X5+ePNcDzV7OZkS9xcLkqGqeqR04iHGZZfLw3q4rauZMWLyxb+NkGKfgTtGhe7nq+Z7bGXWxzQh694dJf+59oGCslmfJ44cd8SX3o2JjSZ7Ew7LgQt7fj6z+yif1Bs8SH3QNZN9POsfxJggCwRIhvaPmZR7hsV75+b4jC+wU2LAHik8Nr1pt48NpCxULtKNw6ZPUbJwMVWK7gmZtqa39l7OmIs2PE54vgeZk38XBi6K1UFqoZlV667GrnwOgscob3DFPMcjZhCBYOWJNLjxjqP6pw3zf7OB/ZA1m4F6yv4LVka19rlQk0esAqfTy36KbJggRYNJdGYgDr6u2zz3NblMfZpys5mtpW8ncoBdsOeWlL+cspDGig9HINHT2CnrL9+N7oU='
                     client_key: 'test_ECRHWDLSER123456HMT57VW7XGOUDA23'
                     status: initial
@@ -8189,6 +8283,31 @@ components:
                     relationships:
                       checkout_zone_applicable_states:
                         data: []
+    Policy:
+      description: 200 Success - Returns the `policy` object.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Policy'
+            required:
+              - data
+          examples:
+            Policy:
+              value:
+                data:
+                  id: '1'
+                  type: policy
+                  attributes:
+                    name: Terms and Conditions
+                    slug: terms-and-conditions
+                    show_in_checkout_footer: true
+                    created_at: '2025-08-12T12:13:09.183Z'
+                    updated_at: '2025-08-12T13:27:59.470Z'
+                    body: asdrdfas
+                    body_html: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
     Taxon:
       description: 200 Success - Returns the `taxon` object.
       content:
@@ -15161,6 +15280,43 @@ components:
                       name: Check
                       description: Pay by check.
                       preferences: {}
+    PolicyList:
+      description: 200 Success - Returns an array of `policy` objects.
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Policy'
+            required:
+              - data
+          examples:
+            List of Policies:
+              value:
+                data:
+                  - id: '1'
+                    type: policy
+                    attributes:
+                      name: Terms and Conditions
+                      slug: terms-and-conditions
+                      show_in_checkout_footer: true
+                      created_at: '2025-08-12T12:13:09.183Z'
+                      updated_at: '2025-08-12T13:27:59.470Z'
+                      body: asdrdfas
+                      body_html: "<div class=\"trix-content\">\n  <div>asdrdfas</div>\n</div>\n"
+                  - id: '2'
+                    type: policy
+                    attributes:
+                      name: Privacy Policy
+                      slug: privacy-policy
+                      show_in_checkout_footer: false
+                      created_at: '2025-08-12T10:00:00.000Z'
+                      updated_at: '2025-08-12T10:00:00.000Z'
+                      body: Privacy policy content
+                      body_html: "<div class=\"trix-content\">\n  <div>Privacy policy content</div>\n</div>\n"
     Vendor:
       description: 200 Success - Returns the `vendor` object.
       content:
@@ -15248,6 +15404,7 @@ tags:
   - name: Products
   - name: Variants
   - name: Stores
+  - name: Policies
   - name: Taxons
   - name: Vendors
   - name: Wishlists

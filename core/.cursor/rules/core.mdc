@@ -1,0 +1,256 @@
+---
+alwaysApply: true
+---
+
+# Spree Core Rules
+
+## Model Standards
+- All core models inherit from `Spree.base_class`
+- Use ActiveRecord associations with proper options (always add class_name, dependent, inverse_of)
+- Include appropriate concerns for shared functionality
+- Implement proper validations and scopes
+
+```ruby
+# ✅ Core model structure
+class Spree::Product < Spree.base_class
+  include Spree::Metadata
+  include Spree::SoftDeletable
+  
+  has_many :variants, -> { order(:position) }, class_name: 'Spree::Variant', 
+           dependent: :destroy, inverse_of: :product
+  has_many :product_properties, class_name: 'Spree::ProductProperty', 
+           dependent: :destroy, inverse_of: :product
+  has_many :properties, through: :product_properties
+  
+  validates :name, presence: true
+  validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+  
+  scope :available, -> { where(available_on: ..Time.current) }
+  scope :active, -> { where(deleted_at: nil) }
+end
+```
+
+## Service Objects
+- Place service objects in `app/services/spree/`
+- Follow single responsibility principle
+- Return result objects or raise exceptions
+- Include proper error handling
+- All service objects need to add `prepend ::Spree::ServiceModule::Base`
+- All service objects need to define call method
+- All services need to ruturn `success` or `failure`
+  
+```ruby
+# ✅ Service object structure
+module Spree
+  class OrderService
+    prepend ::Spree::ServiceModule::Base
+
+    def call(order:)
+      return failure('Order already completed') if order.completed?
+      
+      Spree::Order.with_lock do
+        order.finalize!
+        order.update!(completed_at: Time.current)
+        send_confirmation_email
+      end
+      
+      success(order.reload)
+    rescue StandardError => e
+      Rails.error.report e
+      failure(e.message)
+    end
+  end
+end
+```
+
+## Finder Objects
+- Place finder objects in `app/finders/spree/`
+- Handle complex query logic
+- Return ActiveRecord relations
+- Support chaining
+
+```ruby
+# ✅ Finder object structure
+module Spree
+  class ProductsFinder
+    def initialize(params = {})
+      @params = params
+    end
+
+    def execute
+      products = Spree::Product.includes(:variants, :images)
+      products = filter_by_category(products)
+      products = filter_by_price_range(products)
+      products = sort_products(products)
+      products
+    end
+
+    private
+
+    attr_reader :params
+
+    def filter_by_category(products)
+      return products unless params[:category_id].present?
+      
+      products.joins(:classifications)
+              .where(spree_classifications: { taxon_id: params[:category_id] })
+    end
+  end
+end
+```
+
+## Migration Standards
+- Use descriptive migration names with timestamps
+- Add proper indexes for performance
+- Include `null: false` for required columns
+- Add `deleted_at` for soft deletable models
+- Don't add foreign keys
+
+```ruby
+# ✅ Proper migration structure
+class CreateSpreeMetafields < ActiveRecord::Migration[7.0]
+  def change
+    create_table :spree_metafields do |t|
+      t.string :key, null: false
+      t.text :value, null: false
+      t.string :kind, null: false, default: 'single_line_text_field'
+      t.string :visibility, null: false, default: 'private'
+      t.references :owner, polymorphic: true, null: false, index: false
+      t.timestamps
+      t.datetime :deleted_at, index: true
+    end
+    
+    add_index :spree_metafields, [:owner_type, :owner_id, :key, :visibility], 
+              name: 'index_spree_metafields_on_owner_and_key_and_visibility'
+    add_index :spree_metafields, :key
+  end
+end
+```
+
+## Job Standards
+- Place jobs in `app/jobs/spree/`
+- Inherit from `Spree::BaseJob`
+- Use proper queue names
+- Handle failures gracefully
+- Each job needs to define a queue in `Spree.queues` (in `core/lib/spree/core.rb`
+
+```ruby
+# ✅ Job structure
+module Spree
+  class OrderEmailJob < BaseJob
+    queue_as Spree.queues.orders
+
+    def perform(order_id)
+      order = Spree::Order.find(order_id)
+      Spree::OrderMailer.confirm_email(order).deliver_now
+    rescue ActiveRecord::RecordNotFound => e
+      Rails.error.report e
+      # Order was deleted, no need to retry
+    end
+  end
+end
+```
+
+## Mailer Standards
+- Place mailers in `app/mailers/spree/`
+- Use proper email templates
+- Include both HTML and text versions
+- Handle missing records gracefully
+- All mailers need to inherit from `Spree::BaseMailer`
+
+```ruby
+# ✅ Mailer structure
+module Spree
+  class OrderMailer < Spree::BaseMailer
+    def confirm_email(order)
+      @order = order
+      @store = order.store
+      
+      mail(
+        to: order.email,
+        subject: Spree.t('order_mailer.confirm_email.subject', order: order.number)
+      )
+    end
+  end
+end
+```
+
+## Concern Standards
+- Place concerns in appropriate model directories
+- Use proper module structure
+- Include class methods when needed
+- Document concern purpose
+
+```ruby
+# ✅ Concern structure
+module Spree
+  module Metadata
+    extend ActiveSupport::Concern
+
+    included do
+      has_many :metafields, as: :owner, class_name: 'Spree::Metafield', dependent: :destroy
+    end
+
+    def metafield(key)
+      metafields.find_by(key: key)
+    end
+
+    def set_metafield(key, value, type: 'string')
+      metafield = metafields.find_or_initialize_by(key: key)
+      metafield.assign_attributes(value: value, value_type: type)
+      metafield.save!
+      metafield
+    end
+  end
+end
+```
+
+## Validator Standards
+- Place validators in `app/validators/spree/`
+- Follow ActiveModel::Validator patterns
+- Provide clear error messages
+
+## Presenter Standards
+- Place presenters in `app/presenters/spree/`
+- Handle view logic and formatting
+- Keep business logic in models/services
+
+## Testing Core Components
+- Test all public methods
+- Test edge cases and error conditions
+- Use proper factory definitions
+- Mock external dependencies
+- Don't test standard associations or validations
+- Always test custom validations
+
+```ruby
+# ✅ Core model spec
+require 'spec_helper'
+
+RSpec.describe Spree::Product, type: :model do
+  let(:product) { create(:product) }
+
+  describe 'Scopes' do
+    describe '.available' do
+      let!(:available_product) { create(:product, available_on: 1.day.ago) }
+      let!(:future_product) { create(:product, available_on: 1.day.from_now) }
+
+      it 'returns only available products' do
+        expect(described_class.available).to include(available_product)
+        expect(described_class.available).not_to include(future_product)
+      end
+    end
+  end
+
+  describe '#my_custom_method' do
+    it 'returns the correct value' do
+      expect(product.my_custom_method).to eq('expected_value')
+    end
+  end
+end
+```
+
+## Helper Standards
+- Place helpers in `app/helpers/spree/`
+- Keep helpers simple and focused
+- Use helpers for view-specific logic only

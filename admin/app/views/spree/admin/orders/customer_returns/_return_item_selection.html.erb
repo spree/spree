@@ -2,7 +2,7 @@
   <table class="table">
     <thead class="border-bottom">
       <tr>
-        <th>
+        <th scope="col">
           <div class="custom-control custom-checkbox ml-1">
             <input
               type="checkbox"
@@ -13,11 +13,11 @@
             <label class="custom-control-label" for="checkAllMasterCheckbox"><span></span></label>
           </div>
         </th>
-        <th><%= Spree.t(:product) %></th>
-        <th><%= Spree.t(:sku) %></th>
-        <th><%= Spree.t(:pre_tax_amount) %></th>
-        <th><%= Spree.t(:exchange_for) %></th>
-        <th><%= Spree.t(:resellable) %></th>
+        <th scope="col"><%= Spree.t(:product) %></th>
+        <th scope="col"><%= Spree.t(:sku) %></th>
+        <th scope="col"><%= Spree.t(:pre_tax_amount) %></th>
+        <th scope="col"><%= Spree.t(:exchange_for) %></th>
+        <th scope="col"><%= Spree.t(:resellable) %></th>
       </tr>
     </thead>
     <tbody>

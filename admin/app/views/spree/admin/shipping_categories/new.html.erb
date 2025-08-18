@@ -1,14 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_shipping_categories_url %>
-  <%= Spree.t(:new_shipping_category) %>
-<% end %>
-
-<%= form_for [:admin, @shipping_category] do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @shipping_category } %>
-      <%= render partial: 'form', locals: { f: f } %>
-      <%= render partial: 'spree/admin/shared/new_resource_links' %>
-    </div>
-  </div>
-<% end %>
+<%= render 'spree/admin/shared/new_resource' %>

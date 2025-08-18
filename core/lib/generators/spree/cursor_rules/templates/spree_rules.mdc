@@ -1,0 +1,387 @@
+---
+alwaysApply: true
+---
+
+# Cursor Rules for Spree Commerce Development
+
+## General Development Guidelines
+
+### Framework & Architecture
+
+- Spree is built on Ruby on Rails and follows MVC architecture
+- All Spree code must be namespaced under `Spree::` module
+- Spree is distributed as Rails engines with separate gems (core, admin, api, storefront, emails, etc.)
+- Follow Rails conventions and the Rails Security Guide
+- Prefer Rails idioms and standard patterns over custom solutions
+
+### Code Organization
+
+- Place all models in `app/models/spree/` directory
+- Place all controllers in `app/controllers/spree/` directory  
+- Place all views in `app/views/spree/` directory
+- Place all services in `app/services/spree/` directory
+- Place all mailers in `app/mailers/spree/` directory
+- Place all API serializers in `app/serializers/spree/` directory
+- Place all helpers in `app/helpers/spree/` directory
+- Place all jobs in `app/jobs/spree/` directory
+- Place all presenters in `app/presenters/spree/` directory
+- Use consistent file naming: `spree/product.rb` for `Spree::Product` class
+- Group related functionality into concerns when appropriate
+- Do not call `Spree::User` directly, use `Spree.user_class` instead
+- Do not call `Spree::AdminUser` directly, use `Spree.admin_user_class` instead
+
+## Naming Conventions & Structure
+
+### Classes & Modules
+
+```ruby
+# ✅ Correct naming
+module Spree
+  class Product < Spree.base_class
+  end
+end
+
+module Spree
+  module Admin
+    class ProductsController < ResourceController
+    end
+  end
+end
+
+# ❌ Incorrect - missing namespace
+class Product < ApplicationRecord
+end
+```
+
+Always inherit from `Spree.base_class` when creating models.
+
+### File Paths
+
+- Models: `app/models/spree/product.rb`
+- Controllers: `app/controllers/spree/admin/products_controller.rb`
+- Views: `app/views/spree/admin/products/`
+- Decorators: `app/models/spree/product_decorator.rb`
+
+## Model Development
+
+### Model Patterns
+
+- Use ActiveRecord associations appropriately, always pass `class_name` and `dependent` options
+- Implement concerns for shared functionality
+- Use scopes for reusable query patterns
+- Include `Spree::Metadata` concern for models that need metadata support
+
+```ruby
+# ✅ Good model structure
+class Spree::Product < Spree.base_class
+  include Spree::Metadata
+  
+  has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
+  has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy
+  has_many :properties, through: :product_properties, source: :property
+  
+  scope :available, -> { where(available_on: ..Time.current) }
+  
+  validates :name, presence: true
+  validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+end
+```
+
+For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
+
+## Controller Development
+
+### Controller Inheritance
+
+- Admin controllers inherit from `Spree::Admin::ResourceController` which handles most of CRUD operations
+- API controllers inherit from `Spree::Api::V2::BaseController`
+- Storefront controllers inherit from `Spree::StoreController`
+
+### Parameter Handling
+
+- Always use strong parameters
+
+```ruby
+# ✅ Proper parameter handling
+def permitted_product_params
+  params.require(:product).permit(:name, :description, :price)
+end
+```
+
+## Customization & Extensions
+
+### Spree::Dependencies System (Preferred Method)
+
+Dependencies allow you to replace parts of Spree core with custom implementations. This is the preferred method for customization.
+
+#### Global Customization
+
+In `config/initializers/spree.rb`:
+
+```ruby
+# Single service replacement
+Spree::Dependencies.cart_add_item_service = 'MyAddToCartService'
+
+# Or using block syntax
+Spree.dependencies do |dependencies|
+  dependencies.cart_add_item_service = 'MyAddToCartService'
+  dependencies.checkout_complete_service = 'MyCheckoutCompleteService'
+end
+```
+
+#### API Level Customization
+
+```ruby
+# Storefront API specific
+Spree::Api::Dependencies.storefront_cart_serializer = 'MyCartSerializer'
+Spree::Api::Dependencies.storefront_cart_add_item_service = 'MyAddToCartService'
+
+# Platform API specific
+Spree::Api::Dependencies.platform_product_serializer = 'MyProductSerializer'
+```
+
+#### Service Implementation
+
+```ruby
+# ✅ Proper service inheritance
+class MyAddToCartService < Spree::Cart::AddItem
+  def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
+    ApplicationRecord.transaction do
+      run :add_to_line_item
+      run Spree::Dependencies.cart_recalculate_service.constantize
+      run :update_external_system
+    end
+  end
+
+  private
+
+  def update_external_system(result)
+    # Custom logic here
+  end
+end
+```
+
+#### Available Injection Points
+
+Common dependencies you can override:
+- Cart services: `cart_add_item_service`, `cart_update_service`, `cart_remove_item_service`
+- Checkout services: `checkout_next_service`, `checkout_complete_service`
+- Order services: `order_approve_service`, `order_cancel_service`
+- Payment services: `payment_create_service`, `payment_process_service`
+- Ability classes: `ability_class`
+- Serializers: Various API serializers for different endpoints
+
+### Decorators (Use Sparingly)
+
+Decorators should be a last resort - they make upgrades difficult. Use `Module.prepend` pattern for decorators.
+
+#### Model Decorators
+
+```ruby
+# ✅ Proper decorator structure
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.has_many :videos, class_name: 'Spree::Video', dependent: :destroy
+      base.before_validation :strip_whitespaces
+    end
+
+    def custom_name
+      name.upcase
+    end
+
+    private
+
+    def strip_whitespaces
+      self.name = name.strip if name.present?
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+#### Controller Decorators
+
+```ruby
+# ✅ Controller decorator with dependency injection
+module Spree
+  module Admin
+    module ProductsControllerDecorator
+      def self.prepended(base)
+        base.before_action :load_custom_data, only: [:show, :edit]
+      end
+
+      def custom_action
+        # Custom action implementation
+      end
+
+      private
+
+      def load_custom_data
+        @custom_data = fetch_custom_data
+      end
+    end
+
+    ProductsController.prepend(ProductsControllerDecorator)
+  end
+end
+```
+
+### View Customization
+
+#### Admin Panel Injection Points
+
+Use partial injection for admin customization:
+
+```ruby
+# In config/initializers/spree.rb
+Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/custom_head'
+Rails.application.config.spree_admin.body_end_partials << 'spree/admin/shared/custom_footer'
+```
+
+Available injection points:
+- `head_partials` - Injects into `<head>` tag
+- `body_start_partials` - Injects at start of `<body>`
+- `body_end_partials` - Injects at end of `<body>`
+
+#### Storefront Themes
+
+Create custom themes for storefront customization:
+
+```bash
+bin/rails g spree:storefront:theme MyTheme
+```
+
+```ruby
+# Register theme in config/initializers/spree.rb
+Rails.application.config.spree.themes << Spree::Themes::MyTheme
+```
+
+#### View Overrides
+
+Override specific views by creating files in your app:
+
+```
+app/views/themes/my_theme/spree/products/index.html.erb
+```
+
+Do not override views for admin, only for storefront. Avoid overriding any views for Checkout or Cart.
+
+### Authentication Integration
+
+```ruby
+# In config/initializers/spree.rb
+Spree.user_class = 'User'
+Spree.admin_user_class = 'AdminUser'
+
+# Custom authentication
+Rails.application.config.to_prepare do
+  Spree::ApplicationController.include MyAuthenticationModule
+end
+```
+
+## Testing Guidelines
+
+### Test Structure
+
+- Use RSpec for testing
+- Place specs in `spec/` directory following Rails conventions
+- Use Spree's testing helpers and factories
+
+```ruby
+# ✅ Proper test structure
+require 'spec_helper'
+
+RSpec.describe Spree::Product, type: :model do
+  let(:product) { create(:product) }
+  
+  describe '#available?' do
+    it 'returns true when product is available' do
+      expect(product.available?).to be true
+    end
+  end
+end
+```
+
+### Factory Usage
+
+```ruby
+# Use Spree factories
+create(:product, name: 'Test Product')
+create(:order_with_line_items)
+create(:user)
+```
+
+## Performance & Security
+
+### Database Queries
+
+- Use includes/joins to avoid N+1 queries
+- Add database indexes for frequently queried fields
+- Use counter caches for associations that are counted frequently
+
+### Security
+
+- Always use strong parameters in controllers
+- Sanitize user input
+- Use Spree's built-in authorization system (CanCanCan)
+- Validate file uploads and restrict file types
+
+## Common Patterns
+
+### Service Objects
+
+```ruby
+# ✅ Spree service pattern
+module Spree
+  class MyCustomService
+    prepend Spree::ServiceModule::Base
+
+    def call(param1:, param2: nil)
+      # Service logic here
+      success(result_data)
+    rescue StandardError => e
+      failure(e.message)
+    end
+  end
+end
+```
+
+### API Development
+
+```ruby
+# ✅ Custom API endpoint
+module Spree
+  module Api
+    module V2
+      class CustomController < Spree::Api::V2::BaseController
+        def index
+          render json: serialized_collection
+        end
+
+        private
+
+        def serialized_collection
+          Spree::Api::Dependencies.storefront_product_serializer.constantize.new(
+            collection,
+            include: resource_includes,
+            fields: sparse_fields
+          ).serializable_hash
+        end
+      end
+    end
+  end
+end
+```
+
+## Avoid These Patterns
+
+❌ Direct inheritance from Rails classes without Spree namespace
+❌ Monkey patching without using decorators or dependencies
+❌ Hard-coding configuration values
+❌ Direct SQL queries without using ActiveRecord
+❌ Creating models outside Spree namespace when extending core functionality
+❌ Using class_eval decorators (use Module.prepend instead)
+❌ Overriding entire view files when partial injection would work
+❌ Modifying core Spree files directly

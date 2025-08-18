@@ -6,11 +6,8 @@
   </div>
 
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :name, Spree.t(:name) %>
-      <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-      <%= f.error_message_on :name %>
-    </div>
+    <%= f.spree_text_field :name, required: true %>
+
     <div class="form-group">
       <%= f.label :amount_percentage, Spree.t(:rate) %>
       <div class="input-group">
@@ -22,30 +19,13 @@
       <%= f.error_message_on :amount %>
     </div>
 
-    <div class="form-group">
-      <%= f.label :zone_id, Spree.t(:zone) %>
-      <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, { class: 'custom-select' }) %>
-    </div>
-    <div class="form-group">
-      <%= f.label :tax_category_id, Spree.t(:tax_category) %>
-      <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, { class: 'custom-select' }) %>
-    </div>
+    <%= f.spree_collection_select :zone_id, @available_zones, :id, :name, label: Spree.t(:zone) %>
+    <%= f.spree_collection_select :tax_category_id, @available_categories, :id, :name, label: Spree.t(:tax_category) %>
 
     <hr class="my-4" />
 
-    <div class="form-group">
-      <div class="custom-control custom-checkbox">
-        <%= f.check_box :included_in_price, class: 'custom-control-input' %>
-        <%= f.label :included_in_price, class: 'custom-control-label' %>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="custom-control custom-checkbox">
-        <%= f.check_box :show_rate_in_label, class: 'custom-control-input' %>
-        <%= f.label :show_rate_in_label, class: 'custom-control-label' %>
-      </div>
-    </div>
+    <%= f.spree_check_box :included_in_price %>
+    <%= f.spree_check_box :show_rate_in_label %>
   </div>
 </div>
 

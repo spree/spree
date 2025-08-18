@@ -1,7 +1,7 @@
 <tr id="<%= spree_dom_id webhook_event %>">
   <td><span class="badge badge-light"><%= webhook_event.name %></span></td>
   <td><%= active_badge(webhook_event.success) %></td>
-  <td><%= local_time(webhook_event.created_at) %></td>
+  <td><%= spree_time(webhook_event.created_at) %></td>
   <td>
     <% if webhook_event.response_code%>
       <code><%= webhook_event.response_code %></code></td>

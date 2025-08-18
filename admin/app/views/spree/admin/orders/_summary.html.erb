@@ -7,7 +7,7 @@
       <li class="list-group-item d-flex justify-content-between align-items-center border-0">
         <span><%= Spree.t(:canceled_at) %></span>
         <span class="text-rightfont-weight-bold">
-          <%= local_time(@order.canceled_at) %>
+          <%= spree_time(@order.canceled_at) %>
         </span>
       </li>
       <% if @order.canceler.present? %>

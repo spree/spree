@@ -5,7 +5,7 @@ module Spree
         class CountrySerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :states
+          has_many :states, serializer: Spree::Api::Dependencies.platform_state_serializer.constantize
         end
       end
     end

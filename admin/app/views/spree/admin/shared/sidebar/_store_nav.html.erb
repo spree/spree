@@ -10,7 +10,7 @@
 
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:emails), spree.edit_admin_store_path(section: 'emails'), icon: 'send', active: params[:section] == 'emails') %>
-      <%= nav_item(Spree.t(:policies), spree.edit_admin_store_path(section: 'policies'), icon: 'list-check', active: params[:section] == 'policies') %>
+      <%= nav_item(Spree.t(:policies), spree.admin_policies_path, icon: 'list-check') if can?(:manage, Spree::Policy) %>
       <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') %>
       <%= render_admin_partials(:store_settings_nav_partials) %>
     <% end %>

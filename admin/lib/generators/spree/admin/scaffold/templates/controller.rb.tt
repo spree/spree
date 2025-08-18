@@ -1,0 +1,11 @@
+module Spree
+  module Admin
+    class <%= @resource_name.demodulize.pluralize %>Controller < ResourceController
+      private
+
+      def permitted_resource_params
+        params.require(:<%= @singular_name %>).permit(:name)
+      end
+    end
+  end
+end

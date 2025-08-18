@@ -33,6 +33,7 @@ locals: {
 
 <% content_for :page_title do %>
   <%= render "spree/admin/products/edit_page_title" %>
+  <%= render_admin_partials(:product_page_title_partials, product: @product) %>
 <% end %>
 
 <%= form_for [:admin, @product] do |f| %>

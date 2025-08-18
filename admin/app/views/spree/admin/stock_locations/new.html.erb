@@ -1,14 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_stock_locations_path %>
-  <%= Spree.t(:new_stock_location) %>
-<% end %>
-
-<%= form_for [:admin, @stock_location] do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @stock_location } %>
-      <%= render 'form', f: f %>
-      <%= render 'spree/admin/shared/new_resource_links' %>
-    </div>
-  </div>
-<% end %>
+<%= render 'spree/admin/shared/new_resource' %>

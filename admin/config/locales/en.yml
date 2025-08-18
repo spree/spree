@@ -102,6 +102,8 @@ en:
       notifications: Notifications
       num_orders: No. of Orders
       oauth_applications:
+        client_id: Client ID
+        client_secret: Client Secret
         last_used: Last used
         list: API keys
         never: Never

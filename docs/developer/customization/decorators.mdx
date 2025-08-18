@@ -65,17 +65,19 @@ end
 Assume you want to add a new model called `Video` associated to `Spree::Product`. Let's start with creating a database migration:
 
 ```bash
-bin/rails g migration CreateVideos url:string product:references
+bin/rails g migration CreateSpreeVideos url:string product:references
 bin/rails db:migrate
 ```
 
-In the model code add the association to `Spree::Product`:
+Create a model and add the association to `Spree::Product`:
 
 ```ruby
-class Video < ApplicationRecord
-  belongs_to :product, class_name: 'Spree::Product'
+module Spree
+  class Video < Spree.base_class
+    belongs_to :product, class_name: 'Spree::Product'
 
-  has_one_attached :video_file
+    has_one_attached :video_file
+  end
 end
 ```
 
@@ -85,7 +87,7 @@ Finally add the association in `ProductDecorator` in `app/models/spree/product_d
 module Spree
   module ProductDecorator
     def self.prepended(base)
-      base.has_many :videos, class_name: 'Video', foreign_key: 'product_id', dependent: :destroy
+      base.has_many :videos, class_name: 'Spree::Video', dependent: :destroy
     end
   end
 

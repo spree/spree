@@ -6,15 +6,15 @@
         <td><%= payment.source.name %></td>
       </tr>
       <tr>
-        <th><%= Spree.t(:card_type) %>:</th>
+        <th scope="col"><%= Spree.t(:card_type) %>:</th>
         <td><%= payment.source.display_brand %></td>
       </tr>
       <tr>
-        <th><%= Spree.t(:card_number) %>:</th>
+        <th scope="col"><%= Spree.t(:card_number) %>:</th>
         <td><%= payment.source.display_number %></td>
       </tr>
       <tr>
-        <th><%= Spree.t(:expiration) %>:</th>
+        <th scope="col"><%= Spree.t(:expiration) %>:</th>
         <td><%= payment.source.month %>/<%= payment.source.year %></td>
       </tr>
     </table>

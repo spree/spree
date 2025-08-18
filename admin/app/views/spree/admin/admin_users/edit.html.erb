@@ -19,13 +19,10 @@
       <%= render'spree/admin/shared/error_messages', target: @admin_user %>
       <%= render 'form', f: f %>
       <% if can?(:manage, Spree::Role) && @roles.any? %>
-        <div class="form-group">
-          <%= f.label :spree_role_ids, Spree.t(:roles) %>
-          <%= f.select :spree_role_ids,
-                  options_from_collection_for_select(@roles, 'id', 'name', @admin_user.spree_roles.pluck(:id)),
-                  { prompt: false },
-                  { multiple: true,  data: { controller: 'autocomplete-select' } } %>          
-        </div>
+        <%= f.spree_select :spree_role_ids,
+                options_from_collection_for_select(@roles, 'id', 'name', @admin_user.spree_roles.pluck(:id)),
+                { prompt: false, label: Spree.t(:roles), autocomplete: true },
+                { multiple: true } %>          
       <% end %>
     </div>
     <div class="card-footer">

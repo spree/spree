@@ -134,4 +134,20 @@ describe Spree::Admin::ReportsController, type: :controller do
       end
     end
   end
+
+  describe '#show' do
+    let(:report) { create(:report, store: store) }
+
+    before do
+      allow_any_instance_of(Spree::Reports::SalesTotal).to receive_message_chain(:attachment, :url).and_return('http://example.com/test.csv')
+    end
+
+    subject { get :show, params: { id: report.id } }
+
+    it 'downloads the export' do
+      subject
+      expect(response).to have_http_status(:see_other)
+      expect(response.headers['Location']).to eq(report.attachment.url)
+    end
+  end
 end

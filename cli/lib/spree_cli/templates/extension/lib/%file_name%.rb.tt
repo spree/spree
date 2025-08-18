@@ -5,7 +5,9 @@ require '<%=file_name%>/version'
 require '<%=file_name%>/configuration'
 
 module <%= class_name %>
+  mattr_accessor :queue
+
   def self.queue
-    'default'
+    @@queue ||= Spree.queues.default
   end
 end

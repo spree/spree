@@ -7,5 +7,5 @@
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= store_credit.display_amount_remaining.to_html %></td>
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= store_credit.currency %></td>
   <td class="cursor-pointer" data-action="click->row-link#openLink"><%= store_credit.created_by_email %></td>
-  <td class="cursor-pointer" data-action="click->row-link#openLink"><%= local_date(store_credit.created_at) %></td>
+  <td class="cursor-pointer" data-action="click->row-link#openLink"><%= spree_date(store_credit.created_at) %></td>
 </tr>

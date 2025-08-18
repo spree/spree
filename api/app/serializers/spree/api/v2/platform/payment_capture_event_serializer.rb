@@ -5,7 +5,7 @@ module Spree
         class PaymentCaptureEventSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :payment
+          belongs_to :payment, serializer: Spree::Api::Dependencies.platform_payment_serializer.constantize
         end
       end
     end

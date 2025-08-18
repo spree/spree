@@ -48,12 +48,12 @@
                   <th scope="col" class="pr-0 w-5">
                     <%= bulk_operations_select_all_checkbox %>
                   </th>
-                  <th><%= Spree.t(:name) %></th>
-                  <th><%= Spree.t(:email_marketing) %></th>
-                  <th><%= Spree.t(:location) %></th>
-                  <th><%= Spree.t('admin.num_orders') %></th>
-                  <th><%= Spree.t('admin.amount_spent') %></th>
-                  <th><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+                  <th scope="col"><%= Spree.t(:name) %></th>
+                  <th scope="col"><%= Spree.t(:email_marketing) %></th>
+                  <th scope="col"><%= Spree.t(:location) %></th>
+                  <th scope="col"><%= Spree.t('admin.num_orders') %></th>
+                  <th scope="col"><%= Spree.t('admin.amount_spent') %></th>
+                  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
                 </tr>
               </thead>
               <tbody>

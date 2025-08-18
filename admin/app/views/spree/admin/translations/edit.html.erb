@@ -39,6 +39,8 @@
                 <%= render 'spree/admin/translations/taxons/form', options %>
               <% when 'Spree::Taxonomy' %>
                 <%= render 'spree/admin/translations/taxonomies/form', options %>
+              <% when 'Spree::Policy' %>
+                <%= render 'spree/admin/translations/policies/form', options %>
               <% end %>
             </tbody>
           </table>

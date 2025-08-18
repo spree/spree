@@ -2,11 +2,11 @@
   <thead>
     <tr>
       <% if @product.has_variants? %>
-        <th><%= Spree.t(:variant) %></th>
+        <th scope="col"><%= Spree.t(:variant) %></th>
       <% end %>
-      <th><%= Spree.t(:name) %></th>
-      <th><%= Spree.t(:size) %></th>
-      <th></th>
+      <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+      <th scope="col"><%= Spree.t(:size) %></th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>

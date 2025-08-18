@@ -12,6 +12,10 @@ module Spree
           def scope_includes
             [:wished_items]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_wishlist_serializer.constantize
+          end
         end
       end
     end

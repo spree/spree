@@ -17,7 +17,7 @@
                   <%= order_shipment_state(@last_order, class: 'ml-2') %>
                 </p>
                 <span class="text-muted">
-                  <%= local_time_ago(@last_order.completed_at, class: 'with-tip') %>
+                  <%= spree_time_ago(@last_order.completed_at, class: 'with-tip') %>
                 </span>
               </div>
               <div class="col-lg-3 text-lg-right font-weight-bold">

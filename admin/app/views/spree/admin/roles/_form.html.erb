@@ -1,6 +1,5 @@
-<div class="form-group">
-  <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
-  <%= f.text_field :name, class: 'form-control', required: true %>
-  <%= f.error_message_on :name %>
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+  </div>
 </div>
-

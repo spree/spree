@@ -1,0 +1,36 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: true, help: 'Customers will see this in their cart and at checkout.' %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:kind) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= render 'spree/admin/promotions/form/kind', f: f %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:settings) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= render 'spree/admin/promotions/form/settings', f: f %>
+  </div>
+</div>
+
+<p class="alert alert-info text-center">
+  In the next step you will be able to add actions and rules to your promotion
+</p>

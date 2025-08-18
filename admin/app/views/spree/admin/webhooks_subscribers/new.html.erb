@@ -1,11 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_webhooks_subscribers_path %>
-  <%= Spree.t('admin.webhooks_subscribers.new_webhooks_subscriber') %>
-<% end %>
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @webhooks_subscriber } %>
-<%= form_for [:admin, @webhooks_subscriber] do |f| %>
-  <fieldset>
-    <%= render partial: 'form', locals: { f: f } %>
-    <%= render partial: 'spree/admin/shared/new_resource_links' %>
-  </fieldset>
-<% end %>
+<%= render 'spree/admin/shared/new_resource' %>

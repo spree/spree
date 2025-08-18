@@ -1,0 +1,38 @@
+<%= search_form_for [:admin, @promotion, @search], class: "filter-wrap", data: {controller: "filters"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :code_i_cont %>
+
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
+          <span class="text-muted font-weight-normal mr-1">
+            <%= Spree.t(:show) %>
+          </span>
+          <%= Spree.t(:all) if (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
+          <%= Spree.t('admin.coupon_codes.used') if params.dig(:q, :state_eq) == 'used' %>
+          <%= Spree.t('admin.coupon_codes.unused') if params.dig(:q, :state_eq) == 'unused' %>
+        </button>
+        <div class="dropdown-menu w-100 font-size-sm" style="min-width: 200px">
+          <%= active_link_to Spree.t(:all),
+            spree.admin_promotion_coupon_codes_path(@promotion),
+            class: 'dropdown-item',
+            active: (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
+          <%= link_to Spree.t('admin.coupon_codes.used'),
+            spree.admin_promotion_coupon_codes_path(@promotion, q: {state_eq: :used}),
+            class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'used'}" %>
+          <%= link_to Spree.t('admin.coupon_codes.unused'),
+            spree.admin_promotion_coupon_codes_path(@promotion, q: {state_eq: :unused}),
+            class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'unused'}" %>
+        </div>
+      </div>
+    </div>
+
+    <%= link_to spree.admin_promotion_coupon_codes_path(@promotion, format: :csv), class: 'btn btn-light bg-transparent with-tip', title: 'Download coupons as a CSV file' do %>
+      <%= icon 'download' %>
+      <%= Spree.t(:download) %>
+    <% end %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

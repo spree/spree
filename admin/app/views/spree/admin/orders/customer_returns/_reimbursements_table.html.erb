@@ -1,10 +1,10 @@
 <table class="table table-condensed">
   <thead>
     <tr>
-      <th><%= Spree.t(:number) %></th>
-      <th><%= Spree.t(:total) %></th>
-      <th><%= Spree.t(:status) %></th>
-      <th><%= Spree.t(:date) %></th>
+      <th scope="col"><%= Spree.t(:number) %></th>
+      <th scope="col"><%= Spree.t(:total) %></th>
+      <th scope="col"><%= Spree.t(:status) %></th>
+      <th scope="col"><%= Spree.t(:date) %></th>
     </tr>
   </thead>
   <tbody>
@@ -33,7 +33,7 @@
             <%= reimbursement.reimbursement_status %>
           </span>
         </td>
-        <td data-action="click->row-link#openLink"><%= local_time(reimbursement.created_at) %></td>
+        <td data-action="click->row-link#openLink"><%= spree_time(reimbursement.created_at) %></td>
       </tr>
     <% end %>
   </tbody>

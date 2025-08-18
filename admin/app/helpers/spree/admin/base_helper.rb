@@ -38,7 +38,7 @@ module Spree
         @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories
-                               stores tax_categories tax_rates webhooks webhooks_subscribers zones].include?(controller_name)
+                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies].include?(controller_name)
       end
 
       # @return [Array<String>] the available countries for checkout
@@ -308,6 +308,27 @@ module Spree
       # @return [Array<String>] the allowed file types for upload, eg. ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
       def allowed_file_types_for_upload
         Rails.application.config.active_storage.web_image_content_types
+      end
+
+      # returns the local date for a given date
+      # @param date [Date] the date to format
+      # @return [String] the local date
+      def spree_date(date, options = {})
+        local_date(date, options)
+      end
+
+      # returns the local time for a given time
+      # @param time [Time] the time to format
+      # @return [String] the local time
+      def spree_time(time, options = {})
+        local_time(time, options)
+      end
+
+      # returns the local time ago for a given time
+      # @param time [Time] the time to format
+      # @return [String] the local time ago
+      def spree_time_ago(time, options = {})
+        local_time_ago(time, options)
       end
     end
   end

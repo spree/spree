@@ -22,7 +22,7 @@
     </small>
   </td>
   <td data-action="click->row-link#openLink"><%= return_authorization.display_pre_tax_total.to_html %></td>
-  <td data-action="click->row-link#openLink"><%= local_time(return_authorization.created_at) %></td>
+  <td data-action="click->row-link#openLink"><%= spree_time(return_authorization.created_at) %></td>
   <td data-action="click->row-link#openLink" class="text-right">
     <%= link_to_edit(
       return_authorization,

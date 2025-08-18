@@ -3,7 +3,7 @@
 
 <% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
 <% content_for(:page_subtitle) do %>
-  <%= local_time record.updated_at, class: 'badge badge-light with-tip', title: 'Last update' %>
+  <%= spree_time record.updated_at, class: 'badge badge-light with-tip', title: 'Last update' %>
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>

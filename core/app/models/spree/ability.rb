@@ -99,6 +99,8 @@ module Spree
         wished_item.wishlist.user == user
       end
       can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
+      can :read, ::Spree::Policy
+      can :read, ::Spree::Page
     end
 
     def protect_admin_role

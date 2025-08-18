@@ -247,7 +247,8 @@ module Spree
           Spree::Property,
           Spree::Taxon,
           Spree::Taxonomy,
-          Spree::Store
+          Spree::Store,
+          Spree::Policy
         ]
 
         Rails.application.config.spree.analytics_events = {

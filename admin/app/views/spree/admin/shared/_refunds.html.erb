@@ -2,18 +2,18 @@
   <table class="table table-condensed" id='refunds' data-order-id='<%= @order.number %>'>
     <thead>
       <tr data-hook="refunds_header" class="border-bottom">
-        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-        <th><%= Spree.t(:amount) %></th>
-        <th><%= Spree.t(:reason) %></th>
+        <th scope="col"><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th scope="col"><%= Spree.t(:amount) %></th>
+        <th scope="col"><%= Spree.t(:reason) %></th>
         <% if show_actions %>
-          <th></th>
+          <th scope="col"></th>
         <% end %>
       </tr>
     </thead>
     <tbody>
       <% refunds.each do |refund| %>
         <tr id="<%= spree_dom_id(refund) %>">
-          <td><%= local_time(refund.created_at) %></td>
+          <td><%= spree_time(refund.created_at) %></td>
           <td class="amount"><%= refund.display_amount %></td>
           <td><%= truncate(refund.reason.name, length: 100) %></td>
           <% if show_actions && !refund.payment.order.canceled? %>

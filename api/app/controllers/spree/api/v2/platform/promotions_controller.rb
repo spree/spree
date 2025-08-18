@@ -24,6 +24,10 @@ module Spree
               calculator_attributes: Spree::Calculator.json_api_permitted_attributes.concat(conditional_params, calculator_params)
             }], promotion_rules_attributes: Spree::PromotionRule.json_api_permitted_attributes.concat(conditional_params, rule_params) }]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_promotion_serializer.constantize
+          end
         end
       end
     end

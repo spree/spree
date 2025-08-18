@@ -15,8 +15,8 @@
       <table class="table">
         <thead>
           <tr>
-            <th><%= Spree.t(:name) %></th>
-            <th></th>
+            <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+            <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
@@ -26,7 +26,7 @@
                 <%= store_credit_category.name %>
               </td>
               <td class="actions">
-                <%= link_to_edit(store_credit_category, no_text: true) if can? :edit, store_credit_category %>
+                <%= link_to_edit(store_credit_category, no_text: true, data: { turbo_frame: '_top' }) if can? :edit, store_credit_category %>
               </td>
             </tr>
           <% end %>

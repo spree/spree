@@ -14,7 +14,7 @@
       <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
     <% end %>
     <strong><%= payment.number.upcase %></strong>
-    <%= local_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
+    <%= spree_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
 
     <div class="dropdown">
       <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">

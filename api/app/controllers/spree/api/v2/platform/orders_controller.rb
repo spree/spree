@@ -156,6 +156,10 @@ module Spree
               shipments_attributes: Spree::Shipment.json_api_permitted_attributes
             ]
           end
+
+          def resource_serializer
+            Spree::Api::Dependencies.platform_order_serializer.constantize
+          end
         end
       end
     end

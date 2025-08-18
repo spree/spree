@@ -49,7 +49,7 @@
             <%= Spree.t(:created_at) %>
           </span>
           <span>
-            <%= local_time(@promotion.created_at, format: :long) %>
+            <%= spree_time(@promotion.created_at, format: :long) %>
           </span>
         </li>
 
@@ -58,7 +58,7 @@
             <%= Spree.t(:updated_at) %>
           </span>
           <span>
-            <%= local_time(@promotion.updated_at, format: :long) %>
+            <%= spree_time(@promotion.updated_at, format: :long) %>
           </span>
         </li>
 
@@ -106,7 +106,7 @@
             <%= I18n.t('activerecord.attributes.spree/promotion.starts_at') %>
           </span>
           <% if @promotion.starts_at %>
-            <span><%= local_time(@promotion.starts_at) %></span>
+            <span><%= spree_time(@promotion.starts_at) %></span>
           <% else %>
             <span class="text-muted"><%= Spree.t(:not_available) %></span>
           <% end %>
@@ -116,7 +116,7 @@
             <%= Spree.t(:expires_at) %>
           </span>
           <% if @promotion.expires_at %>
-            <span><%= local_time(@promotion.expires_at) %></span>
+            <span><%= spree_time(@promotion.expires_at) %></span>
           <% else %>
             <span class="text-muted"><%= Spree.t(:not_available) %></span>
           <% end %>

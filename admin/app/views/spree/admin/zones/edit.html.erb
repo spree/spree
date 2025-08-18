@@ -1,14 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_zones_url %>
-  <%= @zone.name %>
-<% end %>
-
-<%= form_for [:admin, @zone], data: {controller: 'auto-submit'} do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @zone } %>
-      <%= render 'form', zone_form: f %>
-      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
-    </div>
-  </div>
-<% end %>
+<%= render 'spree/admin/shared/edit_resource', data: { controller: 'auto-submit' } %>

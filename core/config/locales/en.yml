@@ -101,6 +101,9 @@ en:
         number: Number
       spree/payment_method:
         name: Name
+      spree/policy:
+        body: Body
+        show_in_checkout_footer: Show in checkout footer
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -165,6 +168,9 @@ en:
         preferred_limit_digital_download_days: Limit digital links download days
         seo_robots: SEO Robots
         seo_title: SEO Title
+        storefront_custom_code_body_end: Custom Code before closing body tag
+        storefront_custom_code_body_start: Custom Code after opening body tag
+        storefront_custom_code_head: Custom Code in page head
         url: Site URL
       spree/store_credit:
         amount_used: Amount used
@@ -1309,6 +1315,7 @@ en:
     new_password: New password
     new_payment: New Payment
     new_payment_method: New Payment Method
+    new_policy: New Policy
     new_post: New Post
     new_post_category: New Post Category
     new_product: New Product

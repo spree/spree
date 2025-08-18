@@ -10,7 +10,7 @@
   <% if @order.completed? %>
     <span class="text-muted font-size-sm font-weight-normal with-tip">
       <%= I18n.t('activerecord.attributes.spree/order.completed_at') %>
-      <%= local_time(@order.completed_at) %>
+      <%= spree_time(@order.completed_at) %>
     </span>
   <% end %>
 <% end %>

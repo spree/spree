@@ -8,7 +8,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhooks_subscriber_path(@webhooks_subscriber), class: 'btn btn-primary' %>
+  <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhooks_subscriber_path(@webhooks_subscriber), class: 'btn btn-light' %>
 <% end %>
 
 <ul class="list-group bg-white mb-4 rounded-lg">
@@ -39,13 +39,13 @@
   <table class="table card-body pb-0">
     <thead>
       <tr>
-        <th><%= Spree.t('admin.name') %></th>
-        <th><%= Spree.t('admin.successful') %></th>
-        <th><%= Spree.t('admin.created_at') %></th>
-        <th><%= Spree.t('admin.response_code') %></th>
-        <th><%= Spree.t('admin.execution_time') %></th>
-        <th><%= Spree.t('admin.errors') %></th>
-        <th></th>
+        <th scope="col"><%= Spree.t('admin.name') %></th>
+        <th scope="col"><%= Spree.t('admin.successful') %></th>
+        <th scope="col"><%= Spree.t('admin.created_at') %></th>
+        <th scope="col"><%= Spree.t('admin.response_code') %></th>
+        <th scope="col"><%= Spree.t('admin.execution_time') %></th>
+        <th scope="col"><%= Spree.t('admin.errors') %></th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>

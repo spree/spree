@@ -1,17 +1,1 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button spree.admin_pages_path %>
-  <%= Spree.t(:new_page) %>
-<% end %>
-<% content_for :title do %>
-  <%= Spree.t(:new_page) %>
-<% end %>
-
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
-    <%= form_with model: @page, url: spree.admin_pages_path, data: { controller: 'slug-form seo-form' }, scope: :page do |f| %>
-      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @page } %>
-      <%= render 'form', f: f, vertical: false %>
-      <%= render 'spree/admin/shared/new_resource_links', f: f %>
-    <% end %>
-  </div>
-</div>
+<%= render 'spree/admin/shared/new_resource', data: { controller: 'slug-form seo-form' } %>

@@ -25,7 +25,7 @@
       <% end %>
     </td>
     <td data-action="click->row-link#openLink"><%= customer_return.display_pre_tax_total.to_html %></td>
-    <td data-action="click->row-link#openLink"><%= local_time(customer_return.created_at) %></td>
+    <td data-action="click->row-link#openLink"><%= spree_time(customer_return.created_at) %></td>
     <td class="text-right">
       <% if can_create_reimbursement %>
         <span class="dropdown">

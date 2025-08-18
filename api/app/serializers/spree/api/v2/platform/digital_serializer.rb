@@ -21,7 +21,7 @@ module Spree
             digital.attachment.byte_size.to_i
           end
 
-          belongs_to :variant
+          belongs_to :variant, serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
         end
       end
     end

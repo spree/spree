@@ -1,0 +1,14 @@
+<tr id="<%= spree_dom_id refund_reason %>" data-controller="row-link" class="cursor-pointer">
+  <td class="w-40 align-center" data-action="click->row-link#openLink">
+    <%= refund_reason.name %>
+  </td>
+  <td class="w-20 align-center" data-action="click->row-link#openLink">
+    <%= active_badge(refund_reason.active, label: Spree.t(refund_reason.active? ? :active : :inactive)) %>
+  </td>
+  <td class="w-10 align-center" data-action="click->row-link#openLink">
+    <%= active_badge(refund_reason.mutable) %>
+  </td>
+  <td class="actions w-10" data-action="click->row-link#openLink">
+    <%= link_to_edit(refund_reason, no_text: true, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, refund_reason %>
+  </td>
+</tr>
