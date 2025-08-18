@@ -128,20 +128,24 @@ module Spree
       end
     end
 
-    # Normalizes search parameters to ensure consistent format between UI and exports
-    # Handles:
-    # - JSON string parsing/validation
-    # - Maintaining existing Time objects
-    # - Error cases gracefully
+    # Ensures search params maintain consistent format between UI and exports
+    # - Preserves valid JSON unchanged
+    # - Converts Ruby hashes to JSON strings
+    # - Handles malformed input gracefully
     def normalize_search_params
       return if search_params.blank?
 
+      if search_params.is_a?(Hash)
+        self.search_params = search_params.to_json
+        return
+      end
+
       begin
+        # It's a string, so we parse and re-dump to ensure consistency
         parsed = JSON.parse(search_params.to_s)
-        # Just re-serialize to ensure consistent format
         self.search_params = parsed.to_json
       rescue JSON::ParserError
-        # Leave as-is if not JSON
+        # Leave as-is if not valid JSON string
       end
     end
 
