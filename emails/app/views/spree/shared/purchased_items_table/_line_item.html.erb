@@ -1,11 +1,11 @@
 <tr>
   <td class="purchase_image">
-    <%= link_to(image_tag(variant_image_url(line_item.variant)), spree_storefront_resource_url(line_item.product)) %>
+    <%= link_to(image_tag(variant_image_url(line_item.variant)), spree_storefront_resource_url(line_item.product, locale: I18n.locale)) %>
   </td>
   <td class="purchase_item">
     <strong>
       <span class="f-fallback">
-        <%= link_to raw(line_item.name), spree_storefront_resource_url(line_item.product) %>
+        <%= link_to raw(line_item.name), spree_storefront_resource_url(line_item.product, locale: I18n.locale) %>
       </span>
     </strong>
     <p class="purchase_item--additional"><%= line_item.variant.options_text -%></p>
