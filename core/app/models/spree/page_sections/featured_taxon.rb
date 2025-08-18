@@ -49,6 +49,23 @@ module Spree
         @display_name ||= preferred_heading.present? ? "#{preferred_heading} - #{name}" : name
       end
 
+
+      def products(currency)
+        Spree::Deprecation.warn('FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. Please use taxon_products helper method instead')
+
+        @products ||= begin
+          finder_params = {
+            store: store,
+            filter: { taxons: preferred_taxon_id },
+            currency: currency,
+            sort_by: 'default'
+          }
+
+          products_finder = Spree::Dependencies.products_finder.constantize
+          products_finder.new(scope: store.products, params: finder_params).execute.limit(preferred_max_products_to_show)
+        end
+      end
+
       private
 
       def make_taxon_id_valid
