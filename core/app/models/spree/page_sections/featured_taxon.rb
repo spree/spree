@@ -49,35 +49,6 @@ module Spree
         @display_name ||= preferred_heading.present? ? "#{preferred_heading} - #{name}" : name
       end
 
-      def products(currency)
-        @products ||= begin
-          finder_params = {
-            store: store,
-            filter: { taxons: preferred_taxon_id },
-            currency: currency,
-            sort_by: 'default'
-          }
-
-          includes_params = [
-            :variants_including_master,
-            :prices_including_master,
-            :variant_images,
-            :option_types,
-            :option_values,
-            { master: [:images, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
-              variants: [
-                :images, :prices, :option_values, :stock_items, :stock_locations,
-                { option_values: :option_type, stock_items: :stock_location }
-              ],
-              taxons: [:taxonomy],
-              taggings: [:tag] }
-          ]
-
-          products_finder = Spree::Dependencies.products_finder.constantize
-          products_finder.new(scope: store.products.includes(includes_params), params: finder_params).execute.limit(preferred_max_products_to_show)
-        end
-      end
-
       private
 
       def make_taxon_id_valid
