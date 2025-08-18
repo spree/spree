@@ -50,7 +50,10 @@ module Spree
       end
 
       def products(currency)
-        Spree::Deprecation.warn('FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. Please use taxon_products helper method instead')
+        Spree::Deprecation.warn(
+          'FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. ' \
+          'Please use taxon_products(currency, featured_taxon) helper method instead'
+        )
 
         @products ||= begin
           finder_params = {

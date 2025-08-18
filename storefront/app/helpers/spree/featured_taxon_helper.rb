@@ -1,5 +1,8 @@
 module Spree
   module FeaturedTaxonHelper
+    # @param currency [String]
+    # @param featured_taxon [Spree::PageSections::FeaturedTaxon]
+    # @return [ActiveRecord::Relation<Spree::Product>] limited set of products for the featured taxon
     def taxon_products(currency, featured_taxon)
       @products_cache ||= {}
       @products_cache[featured_taxon.id] ||= begin
