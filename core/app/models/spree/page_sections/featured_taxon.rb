@@ -49,7 +49,6 @@ module Spree
         @display_name ||= preferred_heading.present? ? "#{preferred_heading} - #{name}" : name
       end
 
-
       def products(currency)
         Spree::Deprecation.warn('FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. Please use taxon_products helper method instead')
 
