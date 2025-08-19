@@ -1,0 +1,15 @@
+<%= f.label field, local_assigns[:label] || field.to_s.humanize %>
+<div class="mt-2 btn-group btn-group-toggle d-flex" data-toggle="buttons">
+  <% options.each do |option| %>
+    <label class="btn  list-group-item-secondary <%= 'flex-fill' if local_assigns[:equal_width] != false %> <%= 'active' if f.object.send(field) == option[:value] %> border-t border-gray-100 bg-white py-2 px-3 w-full" >
+      <%= f.radio_button field, option[:value], 
+                          { data: { action: 'auto-submit#submit' }, 
+                            class: 'd-none',
+                            checked: f.object.send(field) == option[:value] } %>
+      <% if option[:icon] %>
+        <i class="ti ti-<%= option[:icon] %> mr-1"></i>
+      <% end %>
+      <%= option[:label] %>
+    </label>
+  <% end %>
+</div>

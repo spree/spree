@@ -1,0 +1,38 @@
+<% if local_assigns[:label] %>
+  <%= content_tag :label, local_assigns[:label] %>
+<% end %>
+<% columns = local_assigns[:columns] || 2 %>
+<% inputs.each_slice(columns) do |input_row| %>
+  <div class="row">
+    <% input_row.each do |input| %>
+      <div class="col-md-<%= 12 / columns %>">
+        <div class="form-group">
+          <%= f.label input[:field], input[:label], class: "form-label" %>
+          <% case input[:type] %>
+          <% when 'number' %>
+            <%= f.number_field input[:field], 
+                class: "form-control", 
+                min: input[:min] || 0, 
+                max: input[:max] || 1000,
+                data: { action: 'auto-submit#submit' } %>
+          <% when 'text' %>
+            <%= f.text_field input[:field], 
+                class: "form-control", 
+                data: { action: 'auto-submit#submit' } %>
+          <% when 'email' %>
+            <%= f.email_field input[:field], 
+                class: "form-control", 
+                data: { action: 'auto-submit#submit' } %>
+          <% else %>
+            <%= f.text_field input[:field], 
+                class: "form-control", 
+                data: { action: 'auto-submit#submit' } %>
+          <% end %>
+          <% if input[:unit] %>
+            <small class="form-text text-muted"><%= input[:unit] %></small>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %> 

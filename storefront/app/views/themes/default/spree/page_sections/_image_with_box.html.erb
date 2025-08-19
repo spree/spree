@@ -1,0 +1,51 @@
+<% cache_unless page_builder_enabled?, spree_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>;">
+    <div class="flex relative w-full <%= section.preferred_image_size %>" style='justify-content: <%= section.preferred_box_alignment_horizontal %>; align-items: <%= section.preferred_box_alignment_vertical %>;  min-height: <%= section.preferred_container_height %>px;'>
+      <% if section.image.present? %>
+        <%= image_tag spree_image_url(section.image, width: 1000, height: nil),
+                class: "object-cover object-center absolute top-0 right-0 bottom-0 left-0 w-full h-full lg:object-cover " + section.preferred_image_size,
+                loading: :lazy,
+                sizes: "(max-width: 1024px) 100vw, 50vw",
+                srcset: [640, 750, 828, 1080, 1200, 2000, 4000].map { |width|
+                  "#{spree_image_url(section.image, width: width / 2, height: nil)} #{width}w"
+                }.join(', ')
+              %>
+      <% else %>
+        <%= content_tag(:div, '', class: 'object-cover absolute top-0 right-0 bottom-0 left-0 w-full h-full bg-gray-100 -z-10 ' + section.preferred_image_size) %>
+      <% end %>
+      <div class="overflow-hidden relative z-10 w-full" style='max-width: <%= section.preferred_box_width %>px; background-color: <%= section.preferred_box_background_color %>; padding-top: <%= section.preferred_box_top_padding %>px; padding-right: <%= section.preferred_box_right_padding %>px; padding-bottom: <%= section.preferred_box_bottom_padding %>px; padding-left: <%= section.preferred_box_left_padding %>px; <%= 'margin-left: 16px; margin-right: 16px;' if section.preferred_image_size == 'page-container' %>'>
+        <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
+          <% case block.type %>
+          <% when 'Spree::PageBlocks::Image' %>
+            <div <%= block_attributes(block) %> class="flex justify-center w-full" style="background-color: transparent!important;">
+              <% if block.image.attached? && block.image.variable? %>
+                <% image_style = "aspect-ratio: #{spree_asset_aspect_ratio(block.image)}; --desktop-height: #{block.preferred_height}px; --mobile-height: #{block.preferred_mobile_height}px;" %>
+                <%= image_tag spree_image_url(block.image, width: 1000), height: block.preferred_height, class: "custom-desktop-height custom-mobile-height", style: image_style %>
+              <% end %>
+            </div>
+          <% when 'Spree::PageBlocks::Heading' %>
+            <h2 class='font-medium <%= block.preferred_size == 'small' ? 'text-xl lg:text-2xl' : block.preferred_size == 'medium' ? 'text-xl lg:text-3xl' : 'text-2xl lg:text-3xl' %>' <%= block_attributes(block) %>>
+              <%= block.text %>
+            </h2>
+          <% when 'Spree::PageBlocks::Text' %>
+            <div class="text-body-l" <%= block_attributes(block) %>>
+              <%= block.text %>
+            </div>
+          <% when 'Spree::PageBlocks::Buttons' %>
+            <div class="w-full image-with-text--buttons">
+              <div <%= block_attributes(block) %>>
+                <div class="flex flex-row gap-4 w-full" style="justify-content: <%= block.preferred_text_alignment %>;">
+                  <%= page_builder_link_to block.link,
+                          label: block.link.label,
+                          class: (block.preferred_button_style_1 == 'secondary' ? 'btn-secondary' : 'btn-primary') + ' w-full lg:w-auto',
+                          target: (block.link.open_in_new_tab ? '_blank' : nil),
+                          rel: (block.link.open_in_new_tab ? 'noopener noreferrer' : nil) %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

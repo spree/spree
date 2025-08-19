@@ -194,6 +194,7 @@ module Spree
           Spree::PageSections::FeaturedPosts,
           Spree::PageSections::TaxonGrid,
           Spree::PageSections::ImageWithText,
+          Spree::PageSections::ImageWithBox,
           Spree::PageSections::FeaturedTaxon,
           Spree::PageSections::CollectionBanner,
           Spree::PageSections::ProductDetails,

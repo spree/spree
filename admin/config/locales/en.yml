@@ -9,11 +9,11 @@ en:
       bulk_ops:
         products:
           body:
-            add_tags: 'Select tags to add to the products:'
-            add_to_brand: 'Select which brand to add the products to:'
-            add_to_taxons: 'Select which taxons to add the products to:'
-            remove_from_taxons: 'Select which taxons to remove the products from:'
-            remove_tags: 'Select tags to remove from the products:'
+            add_tags: "Select tags to add to the products:"
+            add_to_brand: "Select which brand to add the products to:"
+            add_to_taxons: "Select which taxons to add the products to:"
+            remove_from_taxons: "Select which taxons to remove the products from:"
+            remove_tags: "Select tags to remove from the products:"
             set_return_rule: Select return rule for products
             set_status:
               active: Setting products to active will make those products available on the storefront.
@@ -32,8 +32,8 @@ en:
             set_status: Set as %{status}
         users:
           body:
-            add_tags: 'Select tags to add to the customers:'
-            remove_tags: 'Select tags to remove from the customers:'
+            add_tags: "Select tags to add to the customers:"
+            remove_tags: "Select tags to remove from the customers:"
           title:
             add_tags: Add tags
             remove_tags: Remove tags
@@ -140,22 +140,30 @@ en:
         button_style: Button style
         button_text: Button's text
         button_text_color: Button text color
+        box_background_color: Box background color
+        box_width: Box width
+        box_alignment_vertical: Box alignment vertical
+        box_alignment_horizontal: Box alignment horizontal
         category: Category
+        container_height: Container height
         description: Description
         description_alignment: Description alignment
         desktop_image_alignment: Image alignment for desktop
         desktop_logo_height: Logo height (desktop)
+        full_width: Full width
         heading: Heading
         heading_alignment: Heading alignment
         heading_size: Heading size
         height: Height
         left_aligned: Left aligned
         logo_centered: Logo centered
+        image_size: Image size
         max_video_width_on_desktop: Max video width on desktop
         maximum_posts_to_show: Maximum posts to show
         maximum_products_to_show: Maximum products to show
         nav_centered: Nav centered
         not_set: Not set
+        page_container: Page container
         separated: Separated
         show_more_button: Show explore category button
         show_taxon_image: Show taxon image
@@ -241,7 +249,7 @@ en:
           is_equal_to: is equal to
           is_not_equal_to: is not equal to
         on_sale: On sale
-        products_must_match: 'Products must match:'
+        products_must_match: "Products must match:"
         tag: Product tag
       taxon_type: Taxon type
       taxon_types:
@@ -267,7 +275,7 @@ en:
           not_empty: Add another option
         compare_at_price_description: This price is used to show marked down price on the product page.
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
-        total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
+        total_inventory_html: "Total inventory at %{stock_location} location: %{count} available"
       webhooks_subscribers:
         all_events: All Events
         new_webhooks_subscriber: New Webhooks Subscriber
