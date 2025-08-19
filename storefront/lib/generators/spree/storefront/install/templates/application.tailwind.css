@@ -38,6 +38,10 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+body .section-header {
+  @apply sticky top-0 z-50;
+}
+
 .trix-content a {
   text-decoration: underline;
 }
@@ -198,14 +202,8 @@ textarea.text-input {
   padding-bottom: 0.75rem;
   color: var(--button-text-color, var(--button-text));
   outline-offset: 0.5rem;
-  transition-property:
-    color,
-    background-color,
-    border-color,
-    text-decoration-color,
-    fill,
-    stroke,
-    -webkit-text-decoration-color;
+  transition-property: color, background-color, border-color,
+    text-decoration-color, fill, stroke, -webkit-text-decoration-color;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
@@ -405,7 +403,7 @@ textarea.text-input {
   h4,
   h5,
   h6 {
-    @apply text-xl pb-1;
+    @apply pb-1 text-xl;
   }
 }
 
@@ -1669,7 +1667,7 @@ html[aria-busy="true"] .hide-on-load {
   h4,
   h5,
   h6 {
-    @apply text-xl font-medium my-4;
+    @apply my-4 text-xl font-medium;
   }
 
   li {
@@ -1704,7 +1702,7 @@ html[aria-busy="true"] .hide-on-load {
   }
 
   .attachment__caption {
-    @apply text-center text-neutral-600 italic;
+    @apply italic text-center text-neutral-600;
   }
 }
 
