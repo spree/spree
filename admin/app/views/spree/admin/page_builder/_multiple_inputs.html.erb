@@ -1,12 +1,12 @@
-<% if local_assigns[:label] %>
-  <%= content_tag :label, local_assigns[:label] %>
-<% end %>
-<% columns = local_assigns[:columns] || 2 %>
-<% inputs.each_slice(columns) do |input_row| %>
-  <div class="row">
-    <% input_row.each do |input| %>
-      <div class="col-md-<%= 12 / columns %>">
-        <div class="form-group">
+<div class="form-group">
+  <% if local_assigns[:label] %>
+    <%= content_tag :label, local_assigns[:label] %>
+  <% end %>
+  <% columns = local_assigns[:columns] || 2 %>
+  <% inputs.each_slice(columns) do |input_row| %>
+    <div class="row">
+      <% input_row.each do |input| %>
+        <div class="col-md-<%= 12 / columns %>">
           <%= f.label input[:field], input[:label], class: "form-label" %>
           <% case input[:type] %>
           <% when 'number' %>
@@ -32,7 +32,6 @@
             <small class="form-text text-muted"><%= input[:unit] %></small>
           <% end %>
         </div>
-      </div>
-    <% end %>
-  </div>
-<% end %> 
+      <% end %>
+    </div>
+  <% end %> 

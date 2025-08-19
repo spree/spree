@@ -3,44 +3,36 @@
   <%= render 'active_storage/upload_form', form: f, field_name: :asset, width: 512, height: 512, auto_submit: true %>
 </div>
 <% content_for(:design_tab) do %>
-  <div class="form-group">
-    <%= f.label :preferred_image_size, Spree.t('admin.page_builder.image_size') %>
-    <%= f.select :preferred_image_size, 
-      options_for_select([
-        [Spree.t('admin.page_builder.page_container'), 'page-container'],
-        [Spree.t('admin.page_builder.full_width'), 'w-full'], 
-      ], f.object.preferred_image_size), 
-      {}, 
-      { data: { action: 'auto-submit#submit' }, class: 'form-control' } %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/range_input',
+  <%= render 'spree/admin/page_builder/option_select',
+    f: f,
+    field: :preferred_image_size,
+    label: Spree.t('admin.page_builder.image_size'),
+    options: [
+      [Spree.t('admin.page_builder.page_container'), 'page-container'],
+      [Spree.t('admin.page_builder.full_width'), 'w-full']
+    ]
+  %>
+  <%= render 'spree/admin/page_builder/range_input',
     f: f,
     field: :preferred_container_height,
     min: 0, max: 2400, unit: 'px',
     label: Spree.t('admin.page_builder.container_height'),
     label_for_min_value: "auto"
   %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/color_picker',
+  <%= render 'spree/admin/page_builder/color_picker',
       f: f,
       field: :preferred_box_background_color,
       value: f.object.preferred_box_background_color.presence,
       label: Spree.t('tadmin.page_builder.box_background_color'),
       action: 'change->auto-submit#submit' %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/range_input',
+  <%= render 'spree/admin/page_builder/range_input',
     f: f,
     field: :preferred_box_width,
     min: 0, max: 1200, unit: 'px',
     label: Spree.t('admin.page_builder.box_width'),
     label_for_min_value: "auto"
   %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/alignment_buttons',
+  <%= render 'spree/admin/page_builder/alignment_buttons',
     f: f,
     field: :preferred_box_alignment_vertical,
     label: Spree.t('admin.page_builder.box_alignment_vertical'),
@@ -50,9 +42,7 @@
       { value: 'end', label: Spree.t(:bottom), icon: 'layout-align-bottom' }
     ]
   %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/alignment_buttons',
+  <%= render 'spree/admin/page_builder/alignment_buttons',
     f: f,
     field: :preferred_box_alignment_horizontal,
     label: Spree.t('admin.page_builder.box_alignment_horizontal'),
@@ -62,9 +52,7 @@
       { value: 'end', label: Spree.t(:right), icon: 'layout-align-right' }
     ]
   %>
-  </div>
-  <div class="form-group">
-    <%= render 'spree/admin/page_builder/multiple_inputs',
+  <%= render 'spree/admin/page_builder/multiple_inputs',
     f: f,
     label: "Box Padding",
     columns: 4,
@@ -74,5 +62,4 @@
       { field: :preferred_box_bottom_padding, label: Spree.t(:bottom), type: 'number', min: 0, max: 200, unit: 'px' },
       { field: :preferred_box_left_padding, label: Spree.t(:left), type: 'number', min: 0, max: 200, unit: 'px' }
     ] %>
-  </div>
 <% end %>
