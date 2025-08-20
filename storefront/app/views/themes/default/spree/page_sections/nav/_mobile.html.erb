@@ -123,7 +123,7 @@
                   </span>
                 <% end %>
               <% end %>
-              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :eager  %>
+              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy  %>
             </div>
           </div>
         <% end %>
