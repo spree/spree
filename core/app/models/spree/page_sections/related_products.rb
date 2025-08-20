@@ -1,8 +1,6 @@
 module Spree
   module PageSections
     class RelatedProducts < Spree::PageSection
-      has_rich_text :description
-
       before_validation :make_heading_size_valid
       before_validation :make_alignment_valid
 

@@ -1,8 +1,6 @@
 module Spree
   module PageSections
     class AnnouncementBar < Spree::PageSection
-      has_rich_text :text
-
       before_validation :set_default_text, on: :create
 
       BACKGROUND_COLOR_DEFAULT = '#F5F5F4'
