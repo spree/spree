@@ -42,6 +42,18 @@ describe Spree::Zone, type: :model do
           expect(zone_with_default_tax.reload).not_to be_default_tax
         end
       end
+
+      describe '#nullify_checkout_zone' do
+        let!(:zone) { create(:zone) }
+
+        it 'is expected to nullify checkout zone' do
+          Spree::Store.current.update(checkout_zone: zone)
+
+          expect { zone.destroy }
+          .to change { Spree::Store.current.reload.checkout_zone_id }
+          .to(nil)
+        end
+      end
     end
 
     context 'when there is only one qualifying zone' do
