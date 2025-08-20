@@ -29,7 +29,7 @@ module Spree
     helper_method :permitted_products_params, :products_filters_params,
                   :storefront_products_scope, :storefront_products,
                   :default_products_sort, :default_products_finder_params,
-                  :storefront_products_includes
+                  :storefront_products_includes, :storefront_products_finder
 
     helper_method :stored_location
 
@@ -123,6 +123,10 @@ module Spree
       @accurate_title ||= current_store.seo_title.presence || current_store.name
     end
 
+    def storefront_products_finder
+      @storefront_products_finder ||= Spree::Dependencies.products_finder.constantize
+    end
+
     def storefront_products_scope
       @storefront_products_scope ||= current_store.products.active(current_currency)
     end
@@ -156,7 +160,7 @@ module Spree
         finder_params = default_products_finder_params
         finder_params[:sort_by] ||= @taxon&.sort_order || 'manual'
 
-        products_finder = Spree::Dependencies.products_finder.constantize
+        products_finder = storefront_products_finder
         products = products_finder.
                    new(scope: storefront_products_scope, params: finder_params).
                    execute.
