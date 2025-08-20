@@ -42,7 +42,7 @@
       </div>
     <% end %>
     <% if loaded && section.taxon.present? %>
-      <% taxon_products = taxon_products(section.taxon).limit(section.preferred_max_products_to_show).to_a %>
+      <% taxon_products = taxon_products(section.taxon).limit(section.preferred_max_products_to_show) %>
       <% if taxon_products.any? %>
         <div class='grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6'>
           <% if section_with_image %>
