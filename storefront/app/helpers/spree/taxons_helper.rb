@@ -12,8 +12,7 @@ module Spree
           sort_by: 'default'
         }
 
-        products_finder = Spree::Dependencies.products_finder.constantize
-        products_finder.new(scope: current_store.products.includes(storefront_products_includes), params: finder_params).execute
+        storefront_products_finder.new(scope: current_store.products.includes(storefront_products_includes), params: finder_params).execute
       end
     end
   end
