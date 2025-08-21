@@ -8,7 +8,8 @@ module Spree
         order_updater = ::Spree::OrderUpdater.new(order)
 
         order.payments.store_credits.checkout.destroy_all
-        order_updater.update
+        order_updater.update_totals
+        order_updater.persist_totals
 
         shipment = options[:shipment]
         if shipment.present?
