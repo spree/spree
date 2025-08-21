@@ -43,7 +43,7 @@ en:
         name: Name
         numcode: ISO Code
       spree/credit_card:
-        base: ""
+        base: ''
         cc_type: Type
         month: Month
         name: Name
@@ -204,7 +204,7 @@ en:
         weight: Weight
         width: Width
       spree/wished_item:
-        variant: ""
+        variant: ''
       spree/zone:
         description: Description
         name: Name
@@ -539,7 +539,7 @@ en:
       not_found: not found
       not_locked: was not locked
       not_saved:
-        one: "1 error prohibited this %{resource} from being saved:"
+        one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
   number:
     currency:
@@ -737,7 +737,7 @@ en:
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
-    call_us_now: "Call us now: "
+    call_us_now: 'Call us now: '
     cancel: cancel
     cancel_order: Cancel order
     canceled: Canceled
@@ -1060,7 +1060,7 @@ en:
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
     favicon: Favicon
-    favicon_upload_info: "File format: PNG or ICO. File resolution: up to 256x256. File size: up to 1MB"
+    favicon_upload_info: 'File format: PNG or ICO. File resolution: up to 256x256. File size: up to 1MB'
     featured_image: Featured image
     featured_taxon: Featured taxon
     field: Field
@@ -1146,8 +1146,8 @@ en:
     image: Image
     image_alt_text: Add Alt text to your image
     images: Images
-    implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
-    implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
+    implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
+    implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import_payment_methods_from: Import payment methods from
     import_products_from: Import products from
     in_stock: In Stock
@@ -1160,7 +1160,7 @@ en:
     info_number_of_skus_not_shown:
       one: and one other
       other: and %{count} others
-    info_product_has_multiple_skus: "This product has %{count} variants:"
+    info_product_has_multiple_skus: 'This product has %{count} variants:'
     instagram: Instagram
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
@@ -1189,7 +1189,7 @@ en:
         subject: "%{invitee_name} has accepted your invitation to join %{resource_name}"
       invitation_email:
         body: "%{inviter_name} has invited you to join %{resource_name}"
-        link_description: "To accept this invitation, please click the link below:"
+        link_description: 'To accept this invitation, please click the link below:'
         subject: Invitation to join %{resource_name}
       thanks: Thank you,
     invitation_resent: Invitation resent!
@@ -1391,11 +1391,11 @@ en:
       prices_saved: Prices successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
-      product_not_cloned: "Product could not be cloned. Reason: %{error}"
-      product_not_deleted: "Product could not be deleted. Reason: %{error}"
+      product_not_cloned: 'Product could not be cloned. Reason: %{error}'
+      product_not_deleted: 'Product could not be deleted. Reason: %{error}'
       translations_saved: Translations successfully saved
       variant_deleted: Variant has been deleted
-      variant_not_deleted: "Variant could not be deleted. Reason: %{error}"
+      variant_not_deleted: 'Variant could not be deleted. Reason: %{error}'
     notify_me_when_available: Notify me when available
     num_orders: "# Orders"
     number: Number
@@ -1444,9 +1444,9 @@ en:
         thanks: Thank you
       payment_link_email:
         message: Please click the button below to pay for your order.
-        message_copy_link: "If the button doesn't work please copy and paste the following link to your browser:"
+        message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
         pay_for_order: Pay for order
-        subject: "Payment link for order #%{number}"
+        subject: 'Payment link for order #%{number}'
       store_owner_notification_email:
         heading: New Order Received
         instructions: You have received a new order.
@@ -1454,8 +1454,8 @@ en:
         subject: "%{store_name} received a new order"
         thanks: Thank you
       store_team: "%{store_name} Team"
-      subtotal: "Subtotal:"
-      total: "Order Total:"
+      subtotal: 'Subtotal:'
+      total: 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1669,7 +1669,7 @@ en:
         all: Match all of these rules
         any: Match any of these rules
     promotion_label: Promotion (%{name})
-    promotion_not_cloned: "Promotion has not been cloned. Reason: %{error}"
+    promotion_not_cloned: 'Promotion has not been cloned. Reason: %{error}'
     promotion_rule: Promotion Rule
     promotion_rule_types:
       country:
@@ -1753,8 +1753,8 @@ en:
         store_team: "%{store_name} Team"
         subject: Reimbursement Notification
         thanks: Thank you for your business.
-        total_refunded: "Total refunded: %{total}"
-    reimbursement_perform_failed: "Reimbursement could not be performed.  Error: %{error}"
+        total_refunded: 'Total refunded: %{total}'
+    reimbursement_perform_failed: 'Reimbursement could not be performed.  Error: %{error}'
     reimbursement_status: Reimbursement status
     reimbursement_type: Reimbursement type
     reimbursement_type_override: Reimbursement Type Override
@@ -1830,13 +1830,13 @@ en:
     save_and_continue: Save and Continue
     save_my_address: Save my address
     saving: Saving
-    say_no: "No"
-    say_yes: "Yes"
+    say_no: 'No'
+    say_yes: 'Yes'
     scope: Scope
     scopes: Scopes
     search: Search
     search_all: Search all
-    search_by: "Search by:"
+    search_by: 'Search by:'
     search_engine_listing: Search engine listing
     search_order_number: Order Number
     search_results: Search results for '%{keywords}'
@@ -1878,7 +1878,7 @@ en:
     settings: Settings
     ship: Ship
     ship_address: Ship Address
-    ship_to: "Shipping to:"
+    ship_to: 'Shipping to:'
     ship_total: Ship Total
     shipment: Shipment
     shipment_adjustments: Shipment adjustments
@@ -1888,12 +1888,12 @@ en:
         dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
-        shipping_method: "Shipping method: %{shipping_method}"
+        shipping_method: 'Shipping method: %{shipping_method}'
         store_team: "%{store_name} Team"
         subject: Shipment Notification
         thanks: Thank you for your business.
-        track_information: "Tracking Information: %{tracking}"
-        track_link: "Tracking Link: %{url}"
+        track_information: 'Tracking Information: %{tracking}'
+        track_link: 'Tracking Link: %{url}'
     shipment_refunded_message: You will receive a refund in the next few days.
     shipment_state: Shipment State
     shipment_states:
@@ -2059,10 +2059,10 @@ en:
       insufficient_funds: Store credit amount remaining is not sufficient
       select_one_store_credit: Select store credit to go towards remaining balance
       successful_action: Successful store credit %{action}
-      unable_to_credit: "Unable to credit code: %{auth_code}"
+      unable_to_credit: 'Unable to credit code: %{auth_code}'
       unable_to_find: Could not find store credit
-      unable_to_find_for_action: "Could not find store credit for auth code: %{auth_code} for action: %{action}"
-      unable_to_void: "Unable to void code: %{auth_code}"
+      unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
+      unable_to_void: 'Unable to void code: %{auth_code}'
     store_credits: Store Credits
     store_default: Default store
     store_details: Store details
@@ -2146,7 +2146,7 @@ en:
     theme_copied: Theme has been successfully copied.
     theme_duplicating: Theme is still duplicating
     theme_is_now_live: Theme is now live
-    theme_not_copied: "Theme could not be copied with errors: %{error}"
+    theme_not_copied: 'Theme could not be copied with errors: %{error}'
     theme_settings:
       accent_color: Accent color
       background_color: Background color
@@ -2195,7 +2195,7 @@ en:
     translations: Translations
     translations_for: "%{resource_name} translations"
     tree: Tree
-    true_label: "TRUE"
+    true_label: 'TRUE'
     try_removing_filters: Try removing some filters to see more products
     twitter: Twitter
     type: Type
@@ -2234,7 +2234,7 @@ en:
     user: User
     user_not_found: User not found
     user_rule:
-      choose_users: "Input the full email address of a registered customer(s) in the search field to whom this discount should apply:"
+      choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
     users: Users
     validation:
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
@@ -2243,7 +2243,7 @@ en:
       is_too_large: is too large -- stock on hand cannot cover requested quantity!
       must_be_int: must be an integer
       must_be_non_negative: must be a non-negative value
-      unpaid_amount_not_zero: "Amount was not fully reimbursed. Still due: %{amount}"
+      unpaid_amount_not_zero: 'Amount was not fully reimbursed. Still due: %{amount}'
     value: Value
     variant: Variant
     variant_placeholder: Choose a variant
