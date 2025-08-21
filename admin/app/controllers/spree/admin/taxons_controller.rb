@@ -52,6 +52,10 @@ module Spree
         spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy_id, @taxon.id)
       end
 
+      def update_turbo_stream_enabled?
+        true
+      end
+
       def destroy_turbo_stream_enabled?
         true && !params[:force_redirect].to_b
       end
