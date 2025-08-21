@@ -285,3 +285,8 @@ en:
         subscriptions: Subscriptions
         time_of_last_event: Time of Last Event
         webhooks_events: Webhooks Events
+    bottom: Bottom
+    center: Center
+    left: Left
+    right: Right
+    top: Top

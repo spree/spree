@@ -39,3 +39,4 @@ en:
             the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
           wrong_quantity: Quantity has to be greater than 0
       wrong_shipment_target: target shipment is the same as original shipment
+    cart_state_changed: Cart state has changed
