@@ -1,22 +1,18 @@
 class FixUniqueIndexOnSpreeOrderPromotions < ActiveRecord::Migration[7.2]
   def change
-    drop_index :spree_order_promotions, name: 'index_spree_order_promotions_on_promotion_id_and_order_id'
+    remove_index :spree_order_promotions, name: 'index_spree_order_promotions_on_promotion_id_and_order_id', if_exists: true
 
     # Remove duplicate records before adding unique index
-    duplicates = execute(<<~SQL)
-      SELECT promotion_id, order_id, MIN(id) as keep_id
-      FROM spree_order_promotions
-      GROUP BY promotion_id, order_id
-      HAVING COUNT(*) > 1
-    SQL
+    duplicates = Spree::OrderPromotion.select(:promotion_id, :order_id).group(:promotion_id, :order_id).having('COUNT(*) > 1').reorder('').pluck(:promotion_id, :order_id)
 
-    duplicates.each do |row|
-      execute(<<~SQL)
-        DELETE FROM spree_order_promotions
-        WHERE promotion_id = #{row['promotion_id']}
-        AND order_id = #{row['order_id']}
-        AND id != #{row['keep_id']}
-      SQL
+    duplicates.each do |duplicate_promotion_id, duplicate_order_id|
+      order_promotions = Spree::OrderPromotion.where(promotion_id: duplicate_promotion_id, order_id: duplicate_order_id)
+
+      order_promotions.each_with_index do |order_promotion, index|
+        next if index == 0 # Keep the first one unchanged
+
+        order_promotion.destroy
+      end
     end
 
     add_index :spree_order_promotions, [:promotion_id, :order_id], unique: true, name: 'index_spree_order_promotions_on_promotion_id_and_order_id'
