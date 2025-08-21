@@ -44,7 +44,10 @@ module Spree
 
         # clear cache
         Spree::Product.where(id: products.pluck(:id)).touch_all
-        Spree::Taxon.where(id: taxons.pluck(:id)).touch_all
+
+        taxon_ids = taxons.pluck(:id)
+        Spree::Taxon.where(id: taxon_ids).touch_all
+        Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids)
 
         success(true)
       end

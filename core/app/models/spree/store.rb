@@ -342,7 +342,7 @@ module Spree
     end
 
     def supported_shipping_zones
-      @supported_shipping_zones ||= if checkout_zone_id.present?
+      @supported_shipping_zones ||= if checkout_zone.present?
                                       [checkout_zone]
                                     else
                                       Spree::Zone.includes(zone_members: :zoneable).all

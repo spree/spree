@@ -9,8 +9,6 @@ module Spree
         queries.reduce(:or)
       }
 
-      has_rich_text :description
-
       before_validation :make_heading_size_valid
       before_validation :make_alignment_valid
       before_validation :make_taxon_id_valid
@@ -50,6 +48,11 @@ module Spree
       end
 
       def products(currency)
+        Spree::Deprecation.warn(
+          'FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. ' \
+          'Please use taxon_products(featured_taxon.taxon) helper method in views instead'
+        )
+
         @products ||= begin
           finder_params = {
             store: store,

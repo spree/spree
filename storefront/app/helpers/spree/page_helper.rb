@@ -12,7 +12,7 @@ module Spree
       page ||= current_page
 
       sections = current_page_preview.present? ? current_page_preview.sections : page.sections
-      sections_html = sections.includes(:links, { asset_attachment: :blob }, { blocks: [:rich_text_text, :links] }).map do |section|
+      sections_html = sections.includes(:links, :rich_text_text, :rich_text_description, { asset_attachment: :blob }, { blocks: [:rich_text_text, :links] }).map do |section|
         render_section(section, variables)
       end.join.html_safe
 

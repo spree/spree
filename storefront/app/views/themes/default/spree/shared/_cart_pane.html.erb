@@ -34,7 +34,7 @@
       </span>
     </div>
     <div class='flex-1 h-0 overflow-y-auto'>
-      <%= turbo_frame_tag cart_id(order), class: 'cart-contents', src: spree.cart_path, data: { turbo_permanent: true } %>
+      <%= turbo_frame_tag cart_id(order), class: 'cart-contents', src: spree.cart_path, data: { turbo_permanent: true }, loading: :lazy %>
     </div>
   </div>
 </div>
