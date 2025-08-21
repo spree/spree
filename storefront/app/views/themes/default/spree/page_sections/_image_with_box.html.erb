@@ -7,13 +7,13 @@
                 loading: :lazy,
                 sizes: "(max-width: 1024px) 100vw, 50vw",
                 srcset: [640, 750, 828, 1080, 1200, 2000, 4000].map { |width|
-                  "#{spree_image_url(section.image, width: width / 2, height: nil)} #{width}w"
+                  "#{spree_image_url(section.image, width: width, height: nil)} #{width}w"
                 }.join(', ')
               %>
       <% else %>
         <%= content_tag(:div, '', class: 'object-cover absolute top-0 right-0 bottom-0 left-0 w-full h-full bg-gray-100 -z-10 ' + section.preferred_image_size) %>
       <% end %>
-      <div class="overflow-hidden relative z-10 w-full" style='max-width: <%= section.preferred_box_width %>px; background-color: <%= section.preferred_box_background_color %>; padding-top: <%= section.preferred_box_top_padding %>px; padding-right: <%= section.preferred_box_right_padding %>px; padding-bottom: <%= section.preferred_box_bottom_padding %>px; padding-left: <%= section.preferred_box_left_padding %>px; <%= 'margin-left: 16px; margin-right: 16px;' if section.preferred_image_size == 'page-container' %>'>
+      <div class="overflow-hidden relative z-10 w-full max-md:w-full" style='max-width: <%= section.preferred_box_width %>px; background-color: <%= section.preferred_box_background_color %>; padding-top: <%= section.preferred_box_top_padding %>px; padding-right: <%= section.preferred_box_right_padding %>px; padding-bottom: <%= section.preferred_box_bottom_padding %>px; padding-left: <%= section.preferred_box_left_padding %>px; <%= 'margin-left: 16px; margin-right: 16px;' if section.preferred_image_size == 'page-container' %>'>
         <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
           <% case block.type %>
           <% when 'Spree::PageBlocks::Image' %>

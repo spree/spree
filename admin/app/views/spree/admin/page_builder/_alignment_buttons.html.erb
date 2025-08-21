@@ -1,7 +1,5 @@
 <div class="form-group">
-  <% if local_assigns[:label] %>
-    <%= f.label field, local_assigns[:label] || field.to_s.humanize %>
-  <% end %>
+  <%= f.label field, local_assigns[:label] || field.to_s.humanize %>
   <div class="btn-group btn-group-toggle d-flex" data-toggle="buttons">
     <% options.each do |option| %>
       <label class="btn  list-group-item-secondary <%= 'flex-fill' if local_assigns[:equal_width] != false %> <%= 'active' if f.object.send(field) == option[:value] %> border-t border-gray-100 bg-white py-2 px-3 w-full" >

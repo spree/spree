@@ -1,7 +1,5 @@
 <div class="form-group">
-  <% if local_assigns[:label] %>
-    <%= f.label field, local_assigns[:label] || field.to_s.humanize %>
-  <% end %>
+  <%= f.label field, local_assigns[:label] || field.to_s.humanize %>
   <%= f.select field, 
     options_for_select(options, f.object.send(field)), 
     local_assigns[:select_options] || {}, 

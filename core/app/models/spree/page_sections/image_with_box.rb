@@ -38,13 +38,13 @@ module Spree
       def default_blocks
         @default_blocks.presence || [
           Spree::PageBlocks::Heading.new(
-            text: Spree.t('page_sections.image_with_box.default_blocks.heading'),
+            text: Spree.t('page_sections.image_with_box.heading_default'),
             preferred_background_color: 'transparent',
             preferred_text_alignment: 'center',
             preferred_bottom_padding: '8'
           ),
           Spree::PageBlocks::Text.new(
-            text: Spree.t('page_sections.image_with_box.default_blocks.text'),
+            text: Spree.t('page_sections.image_with_box.text_default'),
             preferred_background_color: 'transparent',
             preferred_text_alignment: 'center',
             preferred_bottom_padding: '24'
