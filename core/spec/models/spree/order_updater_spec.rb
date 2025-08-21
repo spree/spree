@@ -9,6 +9,7 @@ module Spree
     context 'order totals' do
       before do
         create_list(:line_item, 2, order: order, price: 10)
+        order.reload
         order.update_with_updater!
       end
 
@@ -25,6 +26,7 @@ module Spree
 
       it 'update shipment total' do
         create(:shipment, order: order, cost: 10)
+        order.reload
         updater.update_shipment_total
         expect(order.shipment_total).to eq(10)
       end
@@ -42,6 +44,7 @@ module Spree
           updater.update
           create(:adjustment, source: promotion_action, adjustable: order, order: order)
           create(:line_item, order: order, price: 10) # in addition to the two already created
+          order.reload
           updater.update
         end
 
