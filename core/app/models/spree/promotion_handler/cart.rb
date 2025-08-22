@@ -39,7 +39,7 @@ module Spree
       end
 
       def promotion_scope
-        ::Spree::Promotion.for_store(store)
+        store.promotions
       end
     end
   end
