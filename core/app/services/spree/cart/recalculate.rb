@@ -8,6 +8,7 @@ module Spree
 
         order.remove_gift_card if order.gift_card.present?
         order.payments.store_credits.checkout.destroy_all if order.payments.store_credits.checkout.any?
+        order_updater.update_item_count
         order_updater.update_totals
         order_updater.persist_totals
 
