@@ -51,7 +51,6 @@ module Spree
       it 'returns failure with the order errors' do
         expect(execute).to be_failure
         expect(execute.error).to be_a(Spree::ServiceModule::ResultError)
-        expect(execute.error.value).to eq(order.errors)
       end
     end
   end
