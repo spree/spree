@@ -9,6 +9,7 @@ module Spree
 
         ActiveRecord::Base.transaction do
           return failure(line_item) unless line_item.save
+          return failure(order) unless order.valid?
 
           recalculate_service.call(order: order, line_item: line_item, options: options)
         end

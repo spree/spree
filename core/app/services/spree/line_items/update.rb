@@ -7,6 +7,7 @@ module Spree
       def call(line_item:, line_item_attributes: {}, options: {})
         ActiveRecord::Base.transaction do
           return failure(line_item) unless line_item.update(line_item_attributes)
+          return failure(line_item.order) unless line_item.order.valid?
 
           recalculate_service.call(order: line_item.order, line_item: line_item, options: options)
         end
