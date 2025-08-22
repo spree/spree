@@ -358,12 +358,25 @@ module Spree
       self.shipped_at = Time.current
     end
 
+    # Returns the shipping method of the selected shipping rate
+    #
+    # @return [Spree::ShippingMethod]
     def shipping_method
       selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
     end
 
+    # Returns the tax category of the selected shipping rate
+    #
+    # @return [Spree::TaxCategory]
     def tax_category
       selected_shipping_rate.try(:tax_rate).try(:tax_category)
+    end
+
+    # Returns the tax category ID of the selected shipping rate
+    #
+    # @return [Integer]
+    def tax_category_id
+      selected_shipping_rate.try(:tax_rate).try(:tax_category_id)
     end
 
     # Only one of either included_tax_total or additional_tax_total is set

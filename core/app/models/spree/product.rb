@@ -381,6 +381,12 @@ module Spree
       @tax_category ||= super || TaxCategory.default
     end
 
+    # Returns tax category ID for Product
+    # @return [Integer]
+    def tax_category_id
+      @tax_category_id ||= super || TaxCategory.default.id
+    end
+
     # Adding properties and option types on creation based on a chosen prototype
     attr_accessor :prototype_id
 
