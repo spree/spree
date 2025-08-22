@@ -6,7 +6,7 @@ module Spree
       layout 'turbo_rails/frame'
 
       def create
-        @variant = Spree::Variant.accessible_by(current_ability, :manage).find(params[:line_item][:variant_id])
+        @variant = variant_scope.find(params.dig(:line_item, :variant_id))
 
         @order.transaction do
           line_item_result = create_service.call(order: @order, line_item_attributes: permitted_resource_params)
@@ -119,6 +119,10 @@ module Spree
 
       def permitted_resource_params
         params.require(:line_item).permit(permitted_line_item_attributes)
+      end
+
+      def variant_scope
+        Spree::Variant.accessible_by(current_ability, :manage)
       end
     end
   end
