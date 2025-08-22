@@ -9,10 +9,11 @@ describe Spree::Admin::AssetsHelper do
 
   describe '#media_form_assets' do
     context 'when variant is persisted' do
-      let(:variant) { build(:variant) }
+      let(:variant) { create(:variant, images: [image]) }
+      let(:image) { create(:image) }
 
       it 'returns the correct assets' do
-        expect(helper.media_form_assets(variant, 'Spree::Variant')).to eq(variant.images)
+        expect(helper.media_form_assets(variant, 'Spree::Variant')).to eq([image])
       end
     end
 
