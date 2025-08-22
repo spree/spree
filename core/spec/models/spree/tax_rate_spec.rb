@@ -176,7 +176,7 @@ describe Spree::TaxRate, type: :model do
 
       before do
         allow(Spree::TaxRate).to receive_messages match: [rate_1, rate_2]
-        allow(shipment).to receive_messages cost: 10.0, tax_category: tax_category_1
+        allow(shipment).to receive_messages cost: 10.0, tax_category: tax_category_1, tax_category_id: tax_category_1.id
       end
 
       it 'applies adjustments for two tax rates to the order' do
