@@ -41,6 +41,7 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
+        order_updater: 'Spree::OrderUpdater',
 
         # shipment
         shipment_change_state_service: 'Spree::Shipments::ChangeState',

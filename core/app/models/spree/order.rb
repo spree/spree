@@ -350,7 +350,7 @@ module Spree
     end
 
     def updater
-      @updater ||= OrderUpdater.new(self)
+      @updater ||= Spree::Dependencies.order_updater.constantize.new(self)
     end
 
     def update_with_updater!
