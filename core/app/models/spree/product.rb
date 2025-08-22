@@ -376,15 +376,15 @@ module Spree
     end
 
     # Returns tax category for Product
-    # @return [Spree::TaxCategory]
+    # @return [Spree::TaxCategory, nil]
     def tax_category
       @tax_category ||= super || TaxCategory.default
     end
 
     # Returns tax category ID for Product
-    # @return [Integer]
+    # @return [Integer, nil]
     def tax_category_id
-      @tax_category_id ||= super || TaxCategory.default.id
+      @tax_category_id ||= super || TaxCategory.default&.id
     end
 
     # Adding properties and option types on creation based on a chosen prototype
