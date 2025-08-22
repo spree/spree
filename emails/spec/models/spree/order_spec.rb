@@ -117,7 +117,7 @@ describe Spree::Order, type: :model do
       allow(shipments).to receive_messages ready: []
       allow(shipments).to receive_messages pending: []
       allow(shipments).to receive_messages shipped: []
-      allow(shipments).to receive(:sum).with(:cost).and_return(shipment.cost)
+      allow(shipments).to receive_message_chain(:sum, :cost).and_return(shipment.cost)
 
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end

@@ -57,7 +57,7 @@ module Spree
         current_line_item.quantity += other_order_line_item.quantity
         handle_error(current_line_item) unless current_line_item.save
       else
-        other_order_line_item.order_id = order.id
+        order.line_items << other_order_line_item
         other_order_line_item.adjustments.update_all(order_id: order.id)
         handle_error(other_order_line_item) unless other_order_line_item.save
       end
@@ -69,9 +69,7 @@ module Spree
     end
 
     def persist_merge
-      updater.update_item_count
-      updater.update_item_total
-      updater.persist_totals
+      updater.update
     end
 
     def handle_gift_card(other_order)

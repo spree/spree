@@ -14,12 +14,12 @@ module Spree
 
       return if amount.zero?
 
-      adjustments.new(
-        adjustable: adjustable,
+      adjustable.adjustments.new(
         amount: amount,
         included: included,
         label: label,
-        order: order
+        order: order,
+        source: self
       ).save
     end
 
