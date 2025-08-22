@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe Spree::Order, type: :model do
     let(:order) { create(:order, total: 100, payment_total: 0) }
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    let(:updater) { order.updater }
 
     context 'processing payments' do
       before do

@@ -4,7 +4,7 @@ require 'spree/testing_support/order_walkthrough'
 module Spree
   describe OrderUpdater, type: :model do
     let(:order) { create(:order) }
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    let(:updater) { order.updater }
 
     context 'order totals' do
       before do
@@ -15,7 +15,7 @@ module Spree
 
       it 'updates payment totals' do
         create(:payment_with_refund, amount: 20, order: order)
-        Spree::OrderUpdater.new(order).update_payment_total
+        order.updater.update_payment_total
         expect(order.payment_total).to eq(15)
       end
 
