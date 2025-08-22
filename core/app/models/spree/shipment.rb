@@ -6,6 +6,7 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
     include Spree::Metadata
+    include Spree::MemoizedData
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
@@ -14,6 +15,8 @@ module Spree
     end
     include Spree::Shipment::Emails
     include Spree::Shipment::Webhooks
+
+    MEMOIZED_METHODS = %w[digital?]
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
@@ -252,7 +255,7 @@ module Spree
     end
 
     def digital?
-      shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
+      @digital ||= shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)

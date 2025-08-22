@@ -38,7 +38,7 @@ module Spree
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
                           default_image secondary_image
-                          purchasable? in_stock? backorderable? has_variants?]
+                          purchasable? in_stock? backorderable? has_variants? digital?]
 
     STATUS_TO_WEBHOOK_EVENT = {
       'active' => 'activated',
@@ -602,7 +602,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
+      @digital ||= shipping_category&.shipping_methods&.includes(:calculator)&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
     end
 
     def auto_match_taxons
