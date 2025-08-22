@@ -27,18 +27,6 @@ module Spree
         end
       end
 
-      # we use this method to fetch images for media gallery on product form
-      # for new products we use session to store temporary assets not tied to any variant/product (yet)
-      def media_form_assets(variant)
-        if variant&.persisted?
-          variant.images
-        elsif session_uploaded_assets.any?
-          Spree::Image.accessible_by(current_ability, :manage).where(id: session_uploaded_assets)
-        else
-          []
-        end
-      end
-
       def product_status(product)
         if product.deleted?
           content_tag(:span, 'Deleted', class: 'badge  badge-danger')

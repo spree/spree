@@ -30,6 +30,8 @@ en:
         phone: Phone
         state: State
         zipcode: Zip Code
+      spree/asset:
+        alt: Alt text
       spree/calculator/tiered_flat_rate:
         preferred_base_amount: Base Amount
         preferred_tiers: Tiers
