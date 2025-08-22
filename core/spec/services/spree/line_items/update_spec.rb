@@ -42,5 +42,17 @@ module Spree
         expect(execute).to be_success
       end
     end
+
+    context 'when order is not valid' do
+      before do
+        allow(order).to receive(:valid?).and_return(false)
+      end
+
+      it 'returns failure with the order errors' do
+        expect(execute).to be_failure
+        expect(execute.error).to be_a(Spree::ServiceModule::ResultError)
+        expect(execute.error.value).to eq(order.errors)
+      end
+    end
   end
 end
