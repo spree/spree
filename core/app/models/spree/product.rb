@@ -376,7 +376,7 @@ module Spree
     end
 
     # Returns tax category for Product
-    # @return [Spree::TaxCategory]
+    # @return [Spree::TaxCategory, nil]
     def tax_category
       @tax_category ||= super || TaxCategory.default
     end
