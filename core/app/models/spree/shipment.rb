@@ -6,7 +6,6 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
     include Spree::Metadata
-    include Spree::MemoizedData
     if defined?(Spree::Security::Shipments)
       include Spree::Security::Shipments
     end
