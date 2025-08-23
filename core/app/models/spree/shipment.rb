@@ -64,6 +64,7 @@ module Spree
 
     delegate :store, :currency, to: :order
     delegate :amount_in_cents, to: :display_cost
+    delegate :digital?, to: :shipping_method
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
@@ -249,10 +250,6 @@ module Spree
 
     def line_items
       inventory_units.includes(:line_item).map(&:line_item).uniq
-    end
-
-    def digital?
-      shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
