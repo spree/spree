@@ -81,6 +81,7 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
 
     has_one :master,
             -> { where is_master: true },
@@ -602,7 +603,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      @digital ||= shipping_category&.shipping_methods&.includes(:calculator)&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
+      @digital ||= shipping_methods&.digital&.exists?
     end
 
     def auto_match_taxons
