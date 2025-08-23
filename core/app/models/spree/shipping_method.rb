@@ -10,8 +10,11 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
+    include Spree::MemoizedData
 
     extend Spree::DisplayMoney
+
+    MEMOIZED_METHODS = %w[display_estimated_price digital?]
 
     # Used for #refresh_rates
     DISPLAY_ON_FRONT_END = 1
@@ -116,6 +119,10 @@ module Spree
           ''
         end
       end
+    end
+
+    def digital?
+      @digital ||= calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     private
