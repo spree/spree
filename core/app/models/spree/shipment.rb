@@ -201,8 +201,11 @@ module Spree
       with_free_shipping_promotion?
     end
 
+    # Returns true if the shipment has a free shipping promotion applied
+    #
+    # @return [Boolean]
     def with_free_shipping_promotion?
-      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
+      adjustments.promotion.includes(:source).any? { |p| p.source.respond_to?(:free_shipping?) && p.source.free_shipping? }
     end
 
     def finalize!
