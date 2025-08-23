@@ -480,6 +480,8 @@ module Spree
     end
 
     # Is this variant purely digital? (no physical product)
+    #
+    # @return [Boolean]
     def digital?
       product.digital?
     end

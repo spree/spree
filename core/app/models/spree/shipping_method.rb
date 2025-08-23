@@ -121,6 +121,9 @@ module Spree
       end
     end
 
+    # Returns true if the shipping method is digital
+    #
+    # @return [Boolean]
     def digital?
       @digital ||= calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
