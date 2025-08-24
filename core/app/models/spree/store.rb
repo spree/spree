@@ -206,7 +206,11 @@ module Spree
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(url = nil)
-      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute || Spree::Current.store
+      if url.present?
+        Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
+      else
+        Spree::Current.store
+      end
     end
 
     # FIXME: we need to drop `or_initialize` in v5
@@ -412,6 +416,13 @@ module Spree
 
         ActionText::RichText.find_by(name: policy_method, record: self)
       end
+    end
+
+    # Returns all active webhooks subscribers for the store
+    #
+    # @return [Array<Spree::Webhooks::Subscriber>]
+    def active_webhooks_subscribers
+      @active_webhooks_subscribers ||= Spree::Webhooks::Subscriber.active
     end
 
     private
