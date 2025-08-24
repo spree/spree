@@ -30,8 +30,6 @@ module Spree
     def load_line_items
       @line_items = if @order.nil? || @order.new_record?
                       []
-                    elsif @order.line_items.loaded?
-                      @order.line_items.includes(line_items_includes).sort_by(&:created_at).reverse
                     else
                       @order.line_items.includes(line_items_includes).order(created_at: :desc)
                     end
