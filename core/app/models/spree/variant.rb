@@ -266,7 +266,7 @@ module Spree
     # Returns default Image for Variant
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.size.positive?
+      @default_image ||= if images.any?
                            images.first
                          else
                            product.default_image
