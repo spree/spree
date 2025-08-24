@@ -82,7 +82,9 @@ module Spree
       end
 
       def no_webhooks_subscribers?(event_name)
-        !Spree::Webhooks::Subscriber.active.with_urls_for(event_name).exists?
+        Spree::Current.webhooks_subscribers.none? do |subscriber|
+          subscriber.supports_event?(event_name)
+        end
       end
 
       def webhooks_request_options
