@@ -31,10 +31,26 @@ module Spree
       @line_items = if @order.nil? || @order.new_record?
                       []
                     elsif @order.line_items.loaded?
-                      @order.line_items.sort_by(&:created_at).reverse
+                      @order.line_items.includes(line_items_includes).sort_by(&:created_at).reverse
                     else
-                      @order.line_items.includes(variant: { option_values: [:option_type] }).order(created_at: :desc)
+                      @order.line_items.includes(line_items_includes).order(created_at: :desc)
                     end
+    end
+
+    def line_items_includes
+      {
+        variant: [
+          :images,
+          { option_values: [:option_type] },
+          {
+            product: [
+              :variants,
+              :variant_images,
+              { master: :images }
+            ]
+          }
+        ]
+      }
     end
   end
 end

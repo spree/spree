@@ -346,11 +346,11 @@ module Spree
     # Returns default Image for Product
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.size.positive?
+      @default_image ||= if images.any?
                            images.first
-                         elsif default_variant.images.size.positive?
+                         elsif default_variant.images.any?
                            default_variant.default_image
-                         elsif variant_images.size.positive?
+                         elsif variant_images.any?
                            variant_images.first
                          end
     end
