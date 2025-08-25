@@ -69,7 +69,7 @@ describe 'Checkout steps (address and delivery)' do
     end
 
     context 'with promotion', js: true do
-      let(:promotion) { create(:promotion, code: :welcomepromo) }
+      let(:promotion) { create(:promotion, stores: [store], code: :welcomepromo) }
 
       before do
         order.update!(email: nil, user: nil)
@@ -110,7 +110,7 @@ describe 'Checkout steps (address and delivery)' do
       end
 
       context 'with coupon codes' do
-        let!(:promotion) { create(:promotion, name: '10% OFF', code: nil, multi_codes: true, number_of_codes: 1) }
+        let!(:promotion) { create(:promotion, stores: [store], name: '10% OFF', code: nil, multi_codes: true, number_of_codes: 1) }
         let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
 
         let(:calculator) { create(:flat_percent_item_total_calculator, preferred_flat_percent: 10) }

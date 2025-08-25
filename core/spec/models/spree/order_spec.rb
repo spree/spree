@@ -120,7 +120,7 @@ describe Spree::Order, type: :model do
   end
 
   describe '#update_with_updater!' do
-    let(:updater) { Spree::OrderUpdater.new(order) }
+    let(:updater) { order.updater }
 
     before do
       allow(order).to receive(:updater).and_return(updater)

@@ -1,5 +1,5 @@
 <%= turbo_render_alerts %>
 
 <%= turbo_stream.replace 'media-form' do %>
-  <%= render 'spree/admin/variants/form/media', viewable: @asset.viewable %>
+  <%= render 'spree/admin/shared/media_form', viewable: @asset.viewable, viewable_type: @asset.viewable_type %>
 <% end %>

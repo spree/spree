@@ -223,12 +223,24 @@ module Spree
       self.class.in_stock_or_backorderable.exists?(id: id)
     end
 
+    # Returns tax category for Variant
+    # @return [Spree::TaxCategory]
     def tax_category
       @tax_category ||= if self[:tax_category_id].nil?
                           product.tax_category
                         else
                           Spree::TaxCategory.find_by(id: self[:tax_category_id]) || product.tax_category
                         end
+    end
+
+    # Returns tax category ID for Variant
+    # @return [Integer]
+    def tax_category_id
+      @tax_category_id ||= if self[:tax_category_id].nil?
+                             product.tax_category_id
+                           else
+                             self[:tax_category_id]
+                           end
     end
 
     def options_text
@@ -254,7 +266,7 @@ module Spree
     # Returns default Image for Variant
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.size.positive?
+      @default_image ||= if images.any?
                            images.first
                          else
                            product.default_image
@@ -480,6 +492,8 @@ module Spree
     end
 
     # Is this variant purely digital? (no physical product)
+    #
+    # @return [Boolean]
     def digital?
       product.digital?
     end

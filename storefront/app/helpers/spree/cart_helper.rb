@@ -30,7 +30,7 @@ module Spree
     def color_options_style_for_line_items(line_items)
       @color_options_style_for_line_items = begin
         colors = line_items.map(&:variant).map do |v|
-          color_option_values = v.option_values.find_all do |ov|
+          color_option_values = v.option_values.includes(:option_type).find_all do |ov|
             ov.option_type.color?
           end
 

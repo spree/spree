@@ -64,6 +64,7 @@ module Spree
 
     delegate :store, :currency, to: :order
     delegate :amount_in_cents, to: :display_cost
+    delegate :digital?, to: :shipping_method
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
@@ -200,8 +201,11 @@ module Spree
       with_free_shipping_promotion?
     end
 
+    # Returns true if the shipment has a free shipping promotion applied
+    #
+    # @return [Boolean]
     def with_free_shipping_promotion?
-      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
+      adjustments.promotion.includes(:source).any? { |p| p.source.respond_to?(:free_shipping?) && p.source.free_shipping? }
     end
 
     def finalize!
@@ -249,10 +253,6 @@ module Spree
 
     def line_items
       inventory_units.includes(:line_item).map(&:line_item).uniq
-    end
-
-    def digital?
-      shipping_method&.calculator&.is_a?(Spree::Calculator::Shipping::DigitalDelivery)
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
@@ -358,12 +358,25 @@ module Spree
       self.shipped_at = Time.current
     end
 
+    # Returns the shipping method of the selected shipping rate
+    #
+    # @return [Spree::ShippingMethod]
     def shipping_method
       selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
     end
 
+    # Returns the tax category of the selected shipping rate
+    #
+    # @return [Spree::TaxCategory]
     def tax_category
       selected_shipping_rate.try(:tax_rate).try(:tax_category)
+    end
+
+    # Returns the tax category ID of the selected shipping rate
+    #
+    # @return [Integer]
+    def tax_category_id
+      selected_shipping_rate.try(:tax_rate).try(:tax_category_id)
     end
 
     # Only one of either included_tax_total or additional_tax_total is set
