@@ -1512,6 +1512,10 @@ en:
       image_banner:
         heading_default: Welcome to your website
         text_default: This is the place to tell people about your business and what you do.
+      image_with_box:
+        button_text_default: Shop now
+        heading_default: Welcome to our shop!
+        text_default: At %{store_name} we offer a wide range of products for your home and business.
       image_with_text:
         heading_default: Welcome to our shop!
         text_default: At %{store_name} we offer a wide range of products for your home and business.

@@ -135,20 +135,27 @@ en:
         border_color: Border color
         border_top_width: Border top width
         bottom_padding: Bottom padding
+        box_alignment_horizontal: Box alignment horizontal
+        box_alignment_vertical: Box alignment vertical
+        box_background_color: Box background color
+        box_width: Box width
         button_alignment: Button alignment
         button_background_color: Button background color
         button_style: Button style
         button_text: Button's text
         button_text_color: Button text color
         category: Category
+        container_height: Container height
         description: Description
         description_alignment: Description alignment
         desktop_image_alignment: Image alignment for desktop
         desktop_logo_height: Logo height (desktop)
+        full_width: Full width
         heading: Heading
         heading_alignment: Heading alignment
         heading_size: Heading size
         height: Height
+        image_size: Image size
         left_aligned: Left aligned
         logo_centered: Logo centered
         max_video_width_on_desktop: Max video width on desktop
@@ -156,6 +163,7 @@ en:
         maximum_products_to_show: Maximum products to show
         nav_centered: Nav centered
         not_set: Not set
+        page_container: Page container
         separated: Separated
         show_more_button: Show explore category button
         show_taxon_image: Show taxon image
@@ -277,3 +285,8 @@ en:
         subscriptions: Subscriptions
         time_of_last_event: Time of Last Event
         webhooks_events: Webhooks Events
+    bottom: Bottom
+    center: Center
+    left: Left
+    right: Right
+    top: Top
