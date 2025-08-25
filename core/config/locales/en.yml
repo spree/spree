@@ -187,6 +187,7 @@ en:
         name: Name
         permalink: Permalink
         position: Position
+        sort_order: Sort Order
       spree/taxonomy:
         name: Name
       spree/user:

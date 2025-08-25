@@ -1004,6 +1004,19 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
           expect(product.reload.variant_ids).to eq([variant2.id, variant3.id])
         end
       end
+
+      context 'when all variants are removed' do
+        before do
+          product_params.delete(:variants_attributes)
+        end
+
+        it 'removes the product variants' do
+          send_request
+
+          expect(product.reload.variant_ids).to be_empty
+          expect(product.option_types).to be_empty
+        end
+      end
     end
 
     context 'setting track_inventory to false' do

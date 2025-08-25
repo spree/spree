@@ -466,7 +466,7 @@ describe Spree::Order, type: :model do
         allow(order).to receive_messages(payment_required?: true)
         order.line_items << FactoryBot.create(:line_item, variant: variant_digital)
         order.line_items << FactoryBot.create(:line_item, variant: variant_physical_with_digital_asset)
-        Spree::OrderUpdater.new(order).update
+        order.updater.update
 
         order.save!
       end

@@ -1,7 +1,7 @@
 <div class="row" data-controller="product-form slug-form seo-form" data-seo-form-editor-value="tinymce">
   <div class="col-md-8">
     <%= render 'spree/admin/products/form/base', f: f %>
-    <%= render 'spree/admin/variants/form/media', viewable: @product.master %>
+    <%= render 'spree/admin/shared/media_form', viewable: @product.master, viewable_type: 'Spree::Variant' %>
     <%= f.fields_for :master, @product.master do |vf| %>
       <%= render 'spree/admin/variants/form/pricing', f: vf %>
     <% end unless @product.has_variants? %>

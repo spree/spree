@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class AssetsController < ResourceController
-      include Spree::Admin::SessionAssetsHelper
+      include Spree::Admin::AssetsHelper
 
       def create
         @asset = asset_type.new(permitted_resource_params)
@@ -10,10 +10,8 @@ module Spree
         authorize! :update, @asset.viewable if @asset.viewable.present? && current_vendor
 
         if @asset.save
-          @product = @asset.product || current_store.products.new
-
-          # we need to store the asset ids in the session to be able to display them in the product page
-          store_uploaded_asset_in_session(@asset) if @product.new_record?
+          # we need to store the asset ids in the session for new assets to be able to display them
+          store_uploaded_asset_in_session(@asset, @asset.viewable_type) if @asset.viewable.nil? || @asset.viewable.new_record?
         else
           flash.now[:error] = @asset.errors.full_messages.to_sentence
           render :create, status: :unprocessable_entity

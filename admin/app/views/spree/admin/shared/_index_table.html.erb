@@ -27,7 +27,7 @@
 
       <%= render 'spree/admin/shared/index_table_options', collection: paginated_collection %>
     <% else %>
-      <%= render 'spree/admin/shared/no_resource_found', new_object_url: new_object_url %>
+      <%= render 'spree/admin/shared/no_resource_found', new_object_url: (new_object_url if can?(:create, model_class)) %>
     <% end %>
   </div>
 <% end %>

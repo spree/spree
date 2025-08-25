@@ -38,7 +38,7 @@ module Spree
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
                           default_image secondary_image
-                          purchasable? in_stock? backorderable? has_variants?]
+                          purchasable? in_stock? backorderable? has_variants? digital?]
 
     STATUS_TO_WEBHOOK_EVENT = {
       'active' => 'activated',
@@ -81,6 +81,7 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    has_many :shipping_methods, through: :shipping_category, class_name: 'Spree::ShippingMethod'
 
     has_one :master,
             -> { where is_master: true },
@@ -345,11 +346,11 @@ module Spree
     # Returns default Image for Product
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.size.positive?
+      @default_image ||= if images.any?
                            images.first
-                         elsif default_variant.images.size.positive?
+                         elsif default_variant.images.any?
                            default_variant.default_image
-                         elsif variant_images.size.positive?
+                         elsif variant_images.any?
                            variant_images.first
                          end
     end
@@ -376,7 +377,7 @@ module Spree
     end
 
     # Returns tax category for Product
-    # @return [Spree::TaxCategory]
+    # @return [Spree::TaxCategory, nil]
     def tax_category
       @tax_category ||= super || TaxCategory.default
     end
@@ -602,7 +603,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      shipping_category&.shipping_methods&.any? { |method| method.calculator.is_a?(Spree::Calculator::Shipping::DigitalDelivery) }
+      @digital ||= shipping_methods&.digital&.exists?
     end
 
     def auto_match_taxons

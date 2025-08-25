@@ -28,6 +28,14 @@ module Spree
         events.order(:created_at).last&.created_at
       end
 
+      # Returns true if the subscriber supports the given event
+      #
+      # @param event [String] The event to check, e.g. 'product.create'
+      # @return [Boolean]
+      def supports_event?(event)
+        subscriptions.include?(event) || subscriptions.include?('*')
+      end
+
       def self.with_urls_for(event)
         where(
           case ActiveRecord::Base.connection.adapter_name

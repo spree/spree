@@ -6,7 +6,7 @@
         <%= render 'active_storage/upload_form', form: f, field_name: :attachment, width: 200, height: 200, can_delete: false %>
       </div>
       <div class="modal-body" style="min-height: 200px">
-        <%= f.spree_text_area :alt, rows: 4 %>
+        <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 4 %>
       </div>
       <div class="modal-footer">
         <%= turbo_save_button_tag %>

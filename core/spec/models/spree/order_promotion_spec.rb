@@ -1,18 +1,16 @@
 require 'spec_helper'
 
 describe Spree::OrderPromotion, type: :model do
-  subject { create(:order_promotion, order: order, promotion: promotion) }
+  subject { order.order_promotions.find_by(promotion: promotion) }
 
   let(:order) { create(:order_with_line_items) }
   let(:promotion) { create(:promotion_with_item_adjustment, code: 'test') }
 
-  shared_context 'apply promo' do
-    before do
-      order.coupon_code = promotion.code
-      Spree::PromotionHandler::Coupon.new(order).apply
-      order.save!
-      order.all_adjustments.promotion.update_all(amount: -5.0)
-    end
+  before do
+    order.coupon_code = promotion.code
+    Spree::PromotionHandler::Coupon.new(order).apply
+    order.save!
+    order.all_adjustments.promotion.update_all(amount: -5.0)
   end
 
   context '#name' do
@@ -28,16 +26,12 @@ describe Spree::OrderPromotion, type: :model do
   end
 
   context '#amount' do
-    include_context 'apply promo'
-
     it 'equals sum of adjustments created by promotion' do
       expect(subject.amount).to eq(-5.0)
     end
   end
 
   context '#display_amount' do
-    include_context 'apply promo'
-
     it 'returns Spree::Money instance with amount value and proper currency' do
       expect(subject.display_amount.to_s).to eq('-$5.00')
     end

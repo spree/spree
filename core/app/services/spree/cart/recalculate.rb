@@ -4,11 +4,13 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, line_item:, line_item_created: false, options: {})
-        order.remove_gift_card if order.gift_card.present?
-        order_updater = ::Spree::OrderUpdater.new(order)
+        order_updater = order.updater
 
-        order.payments.store_credits.checkout.destroy_all
-        order_updater.update
+        order.remove_gift_card if order.gift_card.present?
+        order.payments.store_credits.checkout.destroy_all if order.payments.store_credits.checkout.any?
+        order_updater.update_item_count
+        order_updater.update_totals
+        order_updater.persist_totals
 
         shipment = options[:shipment]
         if shipment.present?

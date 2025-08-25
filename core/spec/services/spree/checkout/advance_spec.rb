@@ -162,7 +162,7 @@ RSpec.describe Spree::Checkout::Advance do
   end
 
   def ensure_states_updated_only_once
-    updater_spy = Spree::OrderUpdater.new(order)
+    updater_spy = order.updater
     allow(order).to receive(:updater).and_return(updater_spy)
     expect(updater_spy).to receive(:update_shipment_state).once.and_call_original
     expect(updater_spy).to receive(:update_payment_state).once.and_call_original
