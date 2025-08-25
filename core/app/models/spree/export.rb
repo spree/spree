@@ -42,6 +42,7 @@ module Spree
     # Callbacks
     #
     before_validation :set_default_format, on: :create
+    before_validation :normalize_search_params, on: :create, if: -> { search_params.present? }
     before_create :clear_search_params, if: -> { record_selection == 'all' }
     after_commit :generate_async, on: :create
 
@@ -124,6 +125,27 @@ module Spree
         Spree.user_class
       else
         "Spree::#{type.demodulize.singularize}".constantize
+      end
+    end
+
+    # Ensures search params maintain consistent format between UI and exports
+    # - Preserves valid JSON unchanged
+    # - Converts Ruby hashes to JSON strings
+    # - Handles malformed input gracefully
+    def normalize_search_params
+      return if search_params.blank?
+
+      if search_params.is_a?(Hash)
+        self.search_params = search_params.to_json
+        return
+      end
+
+      begin
+        # It's a string, so we parse and re-dump to ensure consistency
+        parsed = JSON.parse(search_params.to_s)
+        self.search_params = parsed.to_json
+      rescue JSON::ParserError
+        # Leave as-is if not valid JSON string
       end
     end
 

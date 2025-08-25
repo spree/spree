@@ -45,6 +45,17 @@
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
     <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>
+    <%= f.hidden_field :shipment_state_eq, value: params.dig(:q, :shipment_state_eq) %>
+    <% Array(params.dig(:q, :shipment_state_not_in)).each do |state| %>
+      <%= hidden_field_tag 'q[shipment_state_not_in][]', state %>
+    <% end %>
+    <%= f.hidden_field :state_eq, value: params.dig(:q, :state_eq) %>
+    <% Array(params.dig(:q, :state_in)).each do |state| %>
+      <%= hidden_field_tag 'q[state_in][]', state %>
+    <% end %>
+    <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
+    <%= f.hidden_field :partially_refunded, value: params.dig(:q, :partially_refunded) %>
+
 
     <% unless @user %>
       <div class="form-group">

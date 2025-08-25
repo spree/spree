@@ -8,9 +8,9 @@ describe Spree::Admin::ExportsController, type: :controller do
   let(:store) { @default_store }
 
   describe '#index' do
-    let!(:export) { create(:product_export, store: store) }
-
     subject { get :index }
+
+    let!(:export) { create(:product_export, store: store) }
 
     it 'renders the index template' do
       subject
@@ -78,13 +78,13 @@ describe Spree::Admin::ExportsController, type: :controller do
   end
 
   describe '#show' do
+    subject { get :show, params: { id: export.id } }
+
     let(:export) { create(:product_export, store: store) }
 
     before do
       allow_any_instance_of(Spree::Exports::Products).to receive_message_chain(:attachment, :url).and_return('http://example.com/test.csv')
     end
-
-    subject { get :show, params: { id: export.id } }
 
     it 'downloads the export' do
       subject
