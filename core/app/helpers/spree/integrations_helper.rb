@@ -1,7 +1,7 @@
 module Spree
   module IntegrationsHelper
     def store_integrations
-      @store_integrations ||= current_store.integrations.active.to_a
+      @store_integrations ||= Spree::Current.integrations
     end
 
     def store_integration(name)
