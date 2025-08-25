@@ -724,6 +724,7 @@ paths:
         '422':
           $ref: '#/components/responses/422UnprocessableEntity'
       security:
+        - orderToken: []
         - bearerAuth: []
       summary: Change Cart Currency
       tags:
@@ -1355,8 +1356,6 @@ paths:
           $ref: '#/components/responses/Store'
         '403':
           $ref: '#/components/responses/403Forbidden'
-      security:
-        - bearerAuth: []
   /api/v2/storefront/policies:
     get:
       summary: List all Store Policies
@@ -1367,8 +1366,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/PolicyList'
-      security:
-        - bearerAuth: []
   /api/v2/storefront/policies/{policy_slug}:
     get:
       summary: Retrieve a Policy
@@ -1381,8 +1378,6 @@ paths:
           $ref: '#/components/responses/Policy'
         '404':
           $ref: '#/components/responses/404NotFound'
-      security:
-        - bearerAuth: []
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](/developer/core-concepts/products#taxons-and-taxonomies)'
