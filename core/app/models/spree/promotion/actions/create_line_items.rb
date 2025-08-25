@@ -47,9 +47,13 @@ module Spree
             current_quantity = order.quantity_of(item.variant)
             next unless current_quantity < item.quantity && item_available?(item)
 
-            line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: order,
-                                                                                   variant: item.variant,
-                                                                                   quantity: item.quantity - current_quantity).value
+            line_item = Spree::Dependencies.cart_add_item_service.constantize.call(
+              order: order,
+              variant: item.variant,
+              quantity: item.quantity - current_quantity,
+              options: { validate_only_quantity: true }
+            ).value
+
             action_taken = true if line_item.try(:valid?)
           end
           action_taken
@@ -80,7 +84,11 @@ module Spree
         # Checks that there's enough stock to add the line item to the order
         def item_available?(item)
           quantifier = Spree::Stock::Quantifier.new(item.variant)
-          quantifier.can_supply? item.quantity
+          quantifier.required_amount_sufficient?(item.quantity)
+        end
+
+        def item_promotable?(variant_id)
+          promotion_action_line_items.pluck(:variant_id).include?(variant_id)
         end
 
         private
