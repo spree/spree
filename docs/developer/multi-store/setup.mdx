@@ -1,0 +1,16 @@
+---
+title: Multi-Store Setup
+sidebarTitle: Configuration
+---
+
+## Root domain
+
+You need to set a wildcard `root_domain` on the store to enable multi-store setup
+
+```ruby
+Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'lvh.me')
+```
+
+## Store configuration
+
+You can configure each store individually in the admin panel.

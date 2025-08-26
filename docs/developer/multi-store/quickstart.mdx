@@ -1,0 +1,27 @@
+---
+title: Multi-Store Spree Commerce
+sidebarTitle: Quickstart
+---
+
+Spree out of the box supports multiple stores on the same instance. This is useful for running multiple brands or multiple language versions of the same brand on the same instance.
+
+<Frame type="glass" caption="Spree multi-store setup">
+![](/images/mulit_store_978x2.png)
+</Frame>
+
+## Store resources
+
+Each Store can have its own resources. For example, a Store can have its own Products, Taxonomies, Promotions, etc.
+
+| Resource                                          | Relationship                                                                                                                               |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [**Order**](orders)                            | One Order belongs to one Store                                                                                                             |
+| [**Product**](products)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
+| [**Payment Method**](payments)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
+| [**Taxonomy**](products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
+| [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
+| **Store Credit**                                  | One Store Credit belongs to and can be used in one Store        
+
+## Setup multi-store application
+
+[Follow the setup guide](/developer/multi-store/setup) to get started.

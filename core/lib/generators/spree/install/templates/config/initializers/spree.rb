@@ -29,6 +29,11 @@ end
 # Default is nil and your application host will be used
 # Spree.cdn_host = 'cdn.example.com'
 
+# Multi-store setup
+# You need to set a wildcard `root_domain` on the store to enable multi-store setup
+# all new stores will be created in a subdomain of the root domain, eg. store1.lvh.me, store2.lvh.me, etc.
+# Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'lvh.me')
+
 # Use a different service for storage (S3, google, etc)
 # unless Rails.env.test?
 #   Spree.private_storage_service_name = :amazon_public # public assets, such as product images
