@@ -72,8 +72,9 @@ module Spree
     #
     # @return [Hash] the theme layout sections
     def theme_layout_sections
-      @theme_layout_sections ||= current_theme_or_preview.sections.includes(:links, :rich_text_text, :rich_text_description, { asset_attachment: :blob },
-                                                                            { blocks: [:rich_text_text, :links] }).all.each_with_object({}) do |section, hash|
+      Spree::Deprecation.warn('theme_layout_sections is deprecated and will be removed in Spree 6.0. Please use render_header_sections and render_footer_sections instead.')
+
+      @theme_layout_sections ||= current_theme_or_preview.sections.includes(section_includes).all.each_with_object({}) do |section, hash|
         hash[section.type.to_s.demodulize.underscore] = section
       end
     rescue StandardError => e
