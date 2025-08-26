@@ -1,0 +1,8 @@
+<%= Spree.t('newsletter_mailer.email_confirmation.dear_customer' %>
+<%= Spree.t('newsletter_mailer.email_confirmation.instructions') %>
+
+<%= url_for(spree.verify_newsletter_subscriber_url(@subscriber)) %>
+
+============================================================
+<%= Spree.t('newsletter_mailer.email_confirmation.thanks') %>
+<%= Spree.t('newsletter_mailer.email_confirmation.store_team', store_name: current_store.name) %>
