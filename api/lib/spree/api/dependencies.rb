@@ -88,6 +88,7 @@ module Spree
         storefront_credit_card_finder: -> { Spree::Dependencies.credit_card_finder },
         storefront_find_by_variant_finder: -> { Spree::Dependencies.line_item_by_variant_finder },
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
+        storefront_posts_finder: -> { Spree::Dependencies.posts_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
 
