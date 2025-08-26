@@ -16,11 +16,9 @@
         %>
       </div>
       <div class="d-flex align-items-center d-none">
-        <% if section.can_be_sorted? %>
-          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 handle-section">
-            <%= icon('grip-vertical', class: 'mr-0') %>
-          </button>
-        <% end %>
+        <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 handle-section">
+          <%= icon('grip-vertical', class: 'mr-0') %>
+        </button>
       </div>
     </div>
     <% if section.blocks_available?  %>

@@ -123,7 +123,7 @@ module Spree
     end
 
     def can_be_sorted?
-      role == 'content'
+      true
     end
 
     def lazy?
