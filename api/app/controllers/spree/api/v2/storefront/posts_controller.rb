@@ -30,7 +30,7 @@ module Spree
           end
 
           def scope
-            super.published
+            super.published.includes(:post_category, image_attachment: :blob)
           end
 
           def allowed_sort_attributes
