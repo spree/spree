@@ -14,6 +14,10 @@ module Spree
           post.content.to_plain_text if post.content.present?
         end
 
+        attribute :content_html do |post|
+          post.content.to_s if post.content.present?
+        end
+
         attribute :description do |post|
           post.description
         end
