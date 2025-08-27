@@ -1,5 +1,5 @@
 module Spree
-  describe Newselleter::Verify do
+  describe Newsletter::Verify do
     subject(:service) { described_class.new(params).call }
 
     let(:params) do

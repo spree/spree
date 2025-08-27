@@ -1,5 +1,5 @@
 module Spree
-  module Newselleter
+  module Newsletter
     class Verify
       def initialize(subscriber:)
         @subscriber = subscriber
@@ -23,7 +23,7 @@ module Spree
       def set_user_email_marketing_to_true
         return if subscriber.user.blank?
 
-        subscriber.user.update!(email_marketing: true)
+        subscriber.user.update!(accepts_email_marketing: true)
       end
     end
   end

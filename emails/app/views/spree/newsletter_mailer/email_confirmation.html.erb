@@ -1,0 +1,16 @@
+<h1>
+  <%= Spree.t('newsletter_mailer.email_confirmation.dear_customer' %>
+</h1>
+<p>
+  <%= Spree.t('newsletter_mailer.email_confirmation.instructions') %>
+</p>
+<p>
+  <%= link_to Spree.t('newsletter_mailer.email_confirmation.verify_email_address_link'), @confirm_email_url, class: 'button' %>
+  <p>
+    <%= Spree.t('newsletter_mailer.email_confirmation.message_copy_link') %>
+    <br>
+    <span style="word-break: break-all;">
+      <%= link_to @confirm_email_url, @confirm_email_url %>
+    </span>
+  </p>
+</p>

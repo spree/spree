@@ -1,7 +1,7 @@
 module Spree
-  module Newselleter
+  module Newsletter
     class Subscribe
-      helper Spree::AnalyticsHelper
+      # include Spree::AnalyticsHelper
 
       def initialize(email:, user: nil)
         @email = email
@@ -14,17 +14,17 @@ module Spree
         if subscriber.new_record?
           subscriber.user = user_from_email
         else
-          subscriber.regenerate_verification_token!
+          subscriber.regenerate_verification_token
         end
 
         if email_already_verified_by_user?
-          Spree::Newselleter::Verify.new(subscriber: subscriber).call
+          Spree::Newsletter::Verify.new(subscriber: subscriber).call
         else
           subscriber.save!
-          ApplicationMailer.newsletter_subscription_confirmation(subscriber).deliver_later
+          subscriber.deliver_newsletter_subscription_confirmation
         end
 
-        track_event('subscribed_to_newsletter', { email: user.email, user: user })
+        # track_event('subscribed_to_newsletter', { email: user.email, user: user })
         subscriber
       end
 
@@ -47,7 +47,7 @@ module Spree
       def user_from_email
         return @user_from_email if instance_variable_defined?(:@user_from_email)
 
-        @user_from_email = Spree::User.find_by(email: email)
+        @user_from_email = Spree.user_class.find_by(email: email)
       end
     end
   end

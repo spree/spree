@@ -1,13 +1,13 @@
 require 'spec_helper'
 
 module Spree
-  describe Newselleter::Subscribe do
-    subject(:service) { described_class.new(params).call }
+  describe Newsletter::Subscribe do
+    subject(:service) { described_class.new(**params).call }
 
     let(:params) do
       {
         email: email,
-        user_caller: user
+        user: user
       }
     end
 
@@ -19,7 +19,9 @@ module Spree
         let(:email) { user.email }
 
         it 'does not send a confirmation email' do
-          expect { service }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+          expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_subscription_confirmation)
+
+          service
         end
 
         it 'creates a new verified subscriber' do
@@ -31,7 +33,9 @@ module Spree
         let(:email) { 'test@example.com' }
         
         it 'sends a confirmation email' do
-          expect { service }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+          expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_subscription_confirmation)
+
+          service
         end
 
         it 'creates a new unverified subscriber' do
@@ -52,7 +56,9 @@ module Spree
           end
 
           it 'does not send a confirmation email' do
-            expect { service }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+            expect(subscriber).not_to receive(:deliver_newsletter_subscription_confirmation)
+
+            service
           end
         end
 
@@ -68,7 +74,9 @@ module Spree
           end
 
           it 'sends a confirmation email' do
-            expect { service }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+            expect(subscriber).to receive(:deliver_newsletter_subscription_confirmation)
+
+            service
           end
         end
       end
@@ -88,7 +96,9 @@ module Spree
           end
 
           it 'does not send a confirmation email' do
-            expect { service }.not_to have_enqueued_job(ActionMailer::MailDeliveryJob)
+            expect(subscriber).not_to receive(:deliver_newsletter_subscription_confirmation)
+
+            service
           end
         end
 
@@ -104,7 +114,9 @@ module Spree
           end
 
           it 'sends a confirmation email' do
-            expect { service }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+            expect(subscriber).to receive(:deliver_newsletter_subscription_confirmation)
+
+            service
           end
         end
       end
@@ -115,7 +127,9 @@ module Spree
         end
 
         it 'sends a confirmation email' do
-          expect { service }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+          expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_subscription_confirmation)
+          
+          service
         end
       end
     end
