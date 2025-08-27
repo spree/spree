@@ -2,6 +2,7 @@ module Spree
   module Posts
     class Find < Spree::BaseFinder
       def initialize(scope:, params:)
+        super(scope: scope, params: params)
         @scope = scope
         @query = params[:q].presence&.strip
         @ids = String(params.dig(:filter, :ids)).split(',')
