@@ -67,6 +67,9 @@ Spree::Core::Engine.add_routes do
           end
         end
 
+        resources :posts, only: %i[index show]
+        resources :post_categories, only: %i[index show]
+
         get '/digitals/:token', to: 'digitals#download', as: 'digital'
       end
 
