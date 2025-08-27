@@ -66,19 +66,48 @@ describe 'API V2 Storefront Posts Spec', type: :request do
     end
 
     context 'with sorting' do
-      before do
-        published_posts.first.update(published_at: 1.day.ago)
-        published_posts.last.update(published_at: 1.hour.ago)
+      let!(:oldest_post) { create(:post, :published, title: 'Oldest Post', published_at: 3.days.ago, store: store, author: admin_user, post_category: post_category) }
+      let!(:newest_post) { create(:post, :published, title: 'Newest Post', published_at: 1.hour.ago, store: store, author: admin_user, post_category: post_category) }
+      let!(:middle_post) { create(:post, :published, title: 'Middle Post', published_at: 1.day.ago, store: store, author: admin_user, post_category: post_category) }
+
+      context 'sorting by published_at ascending' do
+        before { get '/api/v2/storefront/posts?sort=published_at' }
+
+        it 'returns posts sorted by published date ascending' do
+          expect(response.status).to eq(200)
+          published_dates = json_response['data'].map { |post| DateTime.parse(post['attributes']['published_at']) }
+          expect(published_dates).to eq(published_dates.sort)
+        end
       end
 
-      before { get '/api/v2/storefront/posts?sort_by=published-newest' }
+      context 'sorting by published_at descending' do
+        before { get '/api/v2/storefront/posts?sort=-published_at' }
 
-      it 'returns posts sorted by published date' do
-        expect(response.status).to eq(200)
-        expect(json_response['data'].count).to eq(3)
-        
-        published_dates = json_response['data'].map { |post| post['attributes']['published_at'] }
-        expect(published_dates).to eq(published_dates.sort.reverse)
+        it 'returns posts sorted by published date descending' do
+          expect(response.status).to eq(200)
+          published_dates = json_response['data'].map { |post| DateTime.parse(post['attributes']['published_at']) }
+          expect(published_dates).to eq(published_dates.sort.reverse)
+        end
+      end
+
+      context 'sorting by title ascending' do
+        before { get '/api/v2/storefront/posts?sort=title' }
+
+        it 'returns posts sorted by title ascending' do
+          expect(response.status).to eq(200)
+          titles = json_response['data'].map { |post| post['attributes']['title'] }
+          expect(titles).to eq(titles.sort)
+        end
+      end
+
+      context 'sorting by title descending' do
+        before { get '/api/v2/storefront/posts?sort=-title' }
+
+        it 'returns posts sorted by title descending' do
+          expect(response.status).to eq(200)
+          titles = json_response['data'].map { |post| post['attributes']['title'] }
+          expect(titles).to eq(titles.sort.reverse)
+        end
       end
     end
 

@@ -57,6 +57,7 @@ module Spree
         collection_sorter: 'Spree::BaseSorter',
         order_sorter: 'Spree::BaseSorter',
         products_sorter: 'Spree::Products::Sort',
+        posts_sorter: 'Spree::Posts::Sort',
 
         # paginator
         collection_paginator: 'Spree::Shared::Paginate',

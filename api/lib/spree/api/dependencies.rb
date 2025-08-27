@@ -74,6 +74,7 @@ module Spree
         storefront_order_sorter: -> { Spree::Dependencies.collection_sorter },
         storefront_products_sorter: -> { Spree::Dependencies.products_sorter },
         platform_products_sorter: -> { Spree::Dependencies.products_sorter },
+        storefront_posts_sorter: -> { Spree::Dependencies.posts_sorter },
 
         # paginators
         storefront_collection_paginator: -> { Spree::Dependencies.collection_paginator },

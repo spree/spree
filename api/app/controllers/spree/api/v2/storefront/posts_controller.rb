@@ -5,6 +5,10 @@ module Spree
         class PostsController < ::Spree::Api::V2::ResourceController
           protected
 
+          def sorted_collection
+            collection_sorter.new(collection, params, allowed_sort_attributes).call
+          end
+
           def collection
             @collection ||= collection_finder.new(scope: scope, params: finder_params).execute
           end
@@ -15,6 +19,10 @@ module Spree
 
           def collection_finder
             Spree::Api::Dependencies.storefront_posts_finder.constantize
+          end
+
+          def collection_sorter
+            Spree::Api::Dependencies.storefront_posts_sorter.constantize
           end
 
           def collection_serializer
@@ -34,7 +42,7 @@ module Spree
           end
 
           def allowed_sort_attributes
-            super << :published_at
+            super << :published_at << :title
           end
         end
       end
