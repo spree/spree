@@ -7,7 +7,7 @@ RSpec.describe Spree::HasImageAltText, type: :concern do
       include Spree::HasImageAltText
 
       attr_accessor :preferred_image_alt, :asset
-      
+
       def initialize
         @preferred_image_alt = nil
         @asset = nil
@@ -25,6 +25,11 @@ RSpec.describe Spree::HasImageAltText, type: :concern do
     it 'returns preference value when present' do
       instance.preferred_image_alt = 'Custom alt text'
       expect(instance.image_alt).to eq('Custom alt text')
+    end
+
+    it 'falls back when preference is whitespace-only' do
+      instance.preferred_image_alt = '   '
+      expect(instance.image_alt).to eq('Image')
     end
 
     it 'returns filename-based alt when preference is blank but asset has filename' do
