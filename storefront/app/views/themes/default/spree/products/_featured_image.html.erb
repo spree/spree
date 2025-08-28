@@ -15,7 +15,7 @@
     <%= spree_image_tag(object.default_image, width: width, height: height, loading: :lazy, alt: object.name + "primary image", class: image_hover_class) %>
     <% if object.secondary_image.present? && object.secondary_image.attached? %>
       <% secondary_image_class = "w-full absolute top-0 left-0 opacity-100 h-full !max-h-full #{object_class}" %>
-      <%= spree_image_tag(object.secondary_image, width: width, height: height, loading: :lazy, alt: object.name + "secondary image"t, class: secondary_image_class) %>
+      <%= spree_image_tag(object.secondary_image, width: width, height: height, loading: :lazy, alt: object.name + "secondary image", class: secondary_image_class) %>
     <% end %>
   </figure>
 <% else %>
