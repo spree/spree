@@ -11,7 +11,7 @@
     <div class="pb-2 custom-control custom-checkbox">
       <%= lf.check_box :open_in_new_tab, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
       <%= lf.label :open_in_new_tab, class: 'custom-control-label' %>
-      <span class="mt-2 text-muted form-text">Clicking on the image will send the user to the selected page/URL</span>
+      <span class="mt-2 text-muted form-text"><%= Spree.t('admin.page_builder.image_click_hint') %></span>
     </div>
   <% end %>
 </div>
