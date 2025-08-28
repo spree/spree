@@ -7,6 +7,7 @@ RSpec.describe Spree::HasImageAltText, type: :concern do
       include Spree::HasImageAltText
 
       attr_accessor :preferred_image_alt, :asset
+      
       def initialize
         @preferred_image_alt = nil
         @asset = nil
