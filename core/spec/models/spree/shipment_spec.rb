@@ -42,9 +42,12 @@ describe Spree::Shipment, type: :model do
       expect(shipment.digital?).to eq(false)
     end
 
-    it 'returns false if shipping method is nil' do
-      shipment.shipping_rates.delete_all
-      expect(shipment.digital?).to eq(false)
+    context 'when shipping method is nil' do
+      let(:shipping_method) { nil }
+
+      it 'returns false if shipping method is nil' do
+        expect(shipment.digital?).to eq(false)
+      end
     end
   end
 
