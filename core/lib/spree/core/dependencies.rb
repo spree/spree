@@ -57,6 +57,7 @@ module Spree
         collection_sorter: 'Spree::BaseSorter',
         order_sorter: 'Spree::BaseSorter',
         products_sorter: 'Spree::Products::Sort',
+        posts_sorter: 'Spree::Posts::Sort',
 
         # paginator
         collection_paginator: 'Spree::Shared::Paginate',
@@ -103,6 +104,7 @@ module Spree
         completed_order_finder: 'Spree::Orders::FindComplete',
         credit_card_finder: 'Spree::CreditCards::Find',
         products_finder: 'Spree::Products::Find',
+        posts_finder: 'Spree::Posts::Find',
         taxon_finder: 'Spree::Taxons::Find',
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
         variant_finder: 'Spree::Variants::Find'

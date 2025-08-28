@@ -105,7 +105,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
         expect(assigns(:orders).to_a).to contain_exactly(cancelled_order)
       end
-  
+
       it 'returns all orders with balance due' do
         get :index, params: { q: { payment_state_eq: :balance_due } }
 
@@ -188,6 +188,15 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
           expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
         end
       end
+    end
+
+    it 'returns orders matching both shipment and payment filters' do
+      get :index, params: { q: {
+        shipment_state_not_in: %w[shipped canceled],
+        payment_state_eq: :balance_due
+      } }
+
+      expect(assigns(:orders).to_a).to contain_exactly(order)
     end
   end
 

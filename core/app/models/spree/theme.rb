@@ -21,7 +21,7 @@ module Spree
     has_many :previews, class_name: 'Spree::Theme', foreign_key: :parent_id, dependent: :destroy_async
     has_many :pages, -> { without_previews }, class_name: 'Spree::Page', dependent: :destroy, as: :pageable
     has_many :page_previews, -> { only_previews }, class_name: 'Spree::Page', dependent: :destroy_async, as: :pageable
-    has_many :layout_sections, class_name: 'Spree::PageSection', dependent: :destroy, as: :pageable
+    has_many :layout_sections, -> { order(position: :asc) }, class_name: 'Spree::PageSection', dependent: :destroy, as: :pageable
     alias sections layout_sections
 
     #
