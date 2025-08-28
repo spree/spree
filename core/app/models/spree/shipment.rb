@@ -64,7 +64,6 @@ module Spree
 
     delegate :store, :currency, to: :order
     delegate :amount_in_cents, to: :display_cost
-    delegate :digital?, to: :shipping_method
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
@@ -123,6 +122,10 @@ module Spree
 
     def amount
       cost
+    end
+
+    def digital?
+      shipping_method&.digital? || false
     end
 
     def add_shipping_method(shipping_method, selected = false)
