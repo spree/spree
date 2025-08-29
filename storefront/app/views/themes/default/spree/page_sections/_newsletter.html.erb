@@ -1,15 +1,15 @@
 <% img = section.image %>
-
-<div class="w-full flex justify-center items-center relative" style="<%= section_styles(section) %>">
+<div class="flex relative justify-center items-center w-full" style="<%= section_styles(section) %>">
   <% if img.attached? && img.variable? %>
     <img
-      class="w-full h-full absolute top-0 object-cover z-0"
+      class="object-cover absolute top-0 z-0 w-full h-full"
       style="opacity: <%= section.preferred_overlay_transparency %>%"
+      alt="<%= section.image_alt %>"
       src="<%= spree_image_url(img, width: 2000, height: nil) %>" />
   <% end %>
-  <div class="w-full page-container flex flex-col text-center py-5 px-5 z-10">
-    <% section.blocks.includes(:rich_text_text).each do |block| %>
-      <% case block.type %>
+  <div class="flex z-10 flex-col px-5 py-5 w-full text-center page-container">
+      <% section.blocks.includes(:rich_text_text).each do |block| %>
+        <% case block.type %>
         <% when 'Spree::PageBlocks::Heading' %>
           <h2 class='font-medium <%= block.preferred_size == 'small' ? 'text-xl lg:text-2xl' : block.preferred_size == 'medium' ? 'text-xl lg:text-3xl' : 'text-2xl lg:text-3xl' %>' <%= block_attributes(block) %>>
             <%= block.text.body %>
@@ -24,7 +24,7 @@
               <div class='relative w-full lg:w-[424px] flex'>
                 <%= hidden_field_tag :section_id, section.id %>
                 <%= f.email_field :email, placeholder: block.preferred_placeholder, required: true, class: 'focus:border-primary focus:ring-primary pr-36 text-sm bg-accent rounded-input border-accent py-2 px-4 w-full relative z-30 !leading-[46px]' %>
-                <div class="absolute right-2 top-1/2 transform -translate-y-1/2 z-40">
+                <div class="absolute right-2 top-1/2 z-40 transform -translate-y-1/2">
                   <%= f.submit block.preferred_button_text.html_safe, class: "#{block.preferred_button_style == 'secondary' ? 'btn-secondary' : 'btn-primary'} content-center" %>
                 </div>
               </div>
@@ -38,10 +38,10 @@
           <div <%= block_attributes(block) %> class="flex justify-center w-full">
             <% if block.image.attached? && block.image.variable? %>
               <% image_style = "aspect-ratio: #{spree_asset_aspect_ratio(block.image)}; --desktop-height: #{block.preferred_height}px; --mobile-height: #{block.preferred_mobile_height}px;" %>
-              <%= image_tag spree_image_url(block.image, width: 1000, height: 1000), height: block.preferred_height, class: "custom-desktop-height custom-mobile-height", style: image_style %>
+              <%= image_tag spree_image_url(block.image, width: 1000, height: 1000), height: block.preferred_height, alt: block.image_alt ,  class: "custom-desktop-height custom-mobile-height", style: image_style %>
             <% end %>
           </div>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
-</div>

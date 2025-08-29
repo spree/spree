@@ -149,6 +149,7 @@ en:
         heading_alignment: Heading alignment
         heading_size: Heading size
         height: Height
+        image_click_hint: Clicking on the image will send the user to the selected page/URL
         left_aligned: Left aligned
         logo_centered: Logo centered
         max_video_width_on_desktop: Max video width on desktop

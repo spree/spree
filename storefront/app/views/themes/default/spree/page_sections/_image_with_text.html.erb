@@ -8,6 +8,7 @@
               <%= image_tag spree_image_url(section.image, width: 1000, height: nil),
                 class: "w-full h-full object-cover",
                 loading: :lazy,
+                alt: section.image_alt,
                 sizes: "(max-width: 1024px) 100vw, 50vw",
                 srcset: [640, 750, 828, 1080, 1200, 2000].map { |width|
                   "#{spree_image_url(section.image, width: width / 2, height: nil)} #{width}w"
@@ -46,7 +47,7 @@
             <% when 'Spree::PageBlocks::Buttons' %>
               <div class="w-full image-with-text--buttons" <%= block_attributes(block) %>>
                 <div class="inline-block">
-                  <div class="flex flex-col lg:flex-row gap-4">
+                  <div class="flex flex-col gap-4 lg:flex-row">
                     <% if block.link %>
                       <%= page_builder_link_to block.link,
                           label: block.link.label,

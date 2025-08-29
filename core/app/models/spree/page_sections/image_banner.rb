@@ -1,12 +1,15 @@
 module Spree
   module PageSections
     class ImageBanner < Spree::PageSection
+      include Spree::HasImageAltText
+      
       TOP_PADDING_DEFAULT = 0
       BOTTOM_PADDING_DEFAULT = 0
 
       preference :overlay_transparency, :integer, default: 40
       preference :height, :integer, default: 384
       preference :vertical_alignment, :string, default: :middle
+      preference :image_alt, :string
 
       def default_blocks
         [
@@ -45,6 +48,8 @@ module Spree
       def icon_name
         'slideshow'
       end
+
+
     end
   end
 end

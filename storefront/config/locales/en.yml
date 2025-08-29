@@ -57,6 +57,8 @@ en:
         status: You are currently %{status} to the newsletters.
       products:
         pinch_to_zoom_html: Pinch to<br>zoom
+        primary_image: primary image
+        secondary_image: secondary image
       refund_action_not_required_message:
         order_canceled:
           fully: This order has been canceled. No further action is required. You will receive a refund within couple business days.

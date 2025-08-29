@@ -1,11 +1,14 @@
 module Spree
   module PageSections
     class ImageWithText < Spree::PageSection
+      include Spree::HasImageAltText
+      
       TOP_PADDING_DEFAULT = 16
       BOTTOM_PADDING_DEFAULT = 16
 
       preference :desktop_image_alignment, :string, default: 'right'
       preference :vertical_alignment, :string, default: :middle
+      preference :image_alt, :string
 
       has_one :link, ->(ps) { ps.links }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
       accepts_nested_attributes_for :link
@@ -55,6 +58,8 @@ module Spree
       def icon_name
         'photo'
       end
+
+
     end
   end
 end

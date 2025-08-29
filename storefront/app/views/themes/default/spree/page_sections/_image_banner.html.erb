@@ -1,6 +1,6 @@
 <% cache_unless page_builder_enabled?, spree_base_cache_scope.call(section) do %>
-  <div class="w-full relative image-banner" style="<%= section_styles(section) %>;height: <%= section.preferred_height %>px">
-    <div class="w-full absolute left-0 image-banner--image-wrapper" style="height: <%= section.preferred_height %>px; opacity: <%= section.preferred_overlay_transparency %>%;">
+  <div class="relative w-full image-banner" style="<%= section_styles(section) %>;height: <%= section.preferred_height %>px">
+    <div class="absolute left-0 w-full image-banner--image-wrapper" style="height: <%= section.preferred_height %>px; opacity: <%= section.preferred_overlay_transparency %>%;">
       <% if section.image.attached? && section.image.variable? %>
         <picture>
           <source media="(max-width: 640px)" srcset="<%= spree_image_url(section.image, width: 320, height: nil) %>">
@@ -9,7 +9,7 @@
           <source media="(max-width: 1080px)" srcset="<%= spree_image_url(section.image, width: 540, height: nil) %>">
           <source media="(max-width: 1200px)" srcset="<%= spree_image_url(section.image, width: 620, height: nil) %>">
           <source media="(min-width: 1201px)" srcset="<%= spree_image_url(section.image, width: 1000, height: nil) %>">
-          <%= spree_image_tag(section.image, width: 1000, class: "w-full h-full object-cover", loading: "lazy") %>
+          <%= spree_image_tag(section.image, width: 1000, class: "w-full h-full object-cover", loading: "lazy", alt: section.image_alt) %>
         </picture>
       <% end %>
     </div>
@@ -23,7 +23,7 @@
                                   'justify-center'
                                 end
     %>
-    <div class="flex h-full w-full items-center justify-center">
+    <div class="flex justify-center items-center w-full h-full">
       <div class="flex flex-col <%= vertical_alignment_class %> p-5 z-10 w-full gap-y-2 h-full image-banner--block-wrapper">
         <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
           <% case block.type %>
@@ -38,7 +38,7 @@
           <% when 'Spree::PageBlocks::Buttons' %>
             <div <%= block_attributes(block) %> class="w-full text-center image-banner--buttons">
               <div class="inline-block">
-                <div class="flex flex-col lg:flex-row gap-4">
+                <div class="flex flex-col gap-4 lg:flex-row">
                   <% if block.link.present? %>
                     <% if block.link.linkable_url.present? %>
                       <%= page_builder_link_to block.link, label: block.link.label, class: "btn-#{block.preferred_button_style_1}", target: (block.link.open_in_new_tab ? "_blank" : nil) %>

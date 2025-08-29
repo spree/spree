@@ -1,7 +1,10 @@
 module Spree
   module PageSections
     class Newsletter < Spree::PageSection
+      include Spree::HasImageAltText
+      
       preference :overlay_transparency, :integer, default: 40
+      preference :image_alt, :string
 
       def default_blocks
         @default_blocks.presence || [
