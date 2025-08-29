@@ -52,7 +52,7 @@ module Spree
 
         path = section.lazy_path(variables)
 
-        turbo_frame_tag(css_id, src: path, loading: :lazy, class: css_class, data: { controller: 'prefetch-lazy' }) do
+        turbo_frame_tag(css_id, src: path, loading: :lazy, class: css_class, data: { controller: 'prefetch-lazy', turbo_permanent: true }) do
           render('/' + section.to_partial_path, **variables)
         end
       else
@@ -72,7 +72,7 @@ module Spree
     #
     # @return [Array] the layout sections of the page
     def layout_sections
-      @layout_sections ||= current_theme_or_preview.sections.includes(section_includes)
+      @layout_sections ||= current_theme_or_preview.sections
     end
 
     # Renders the header sections of the page.

@@ -1,159 +1,162 @@
-<% layout = section.preferred_layout %>
-<header
-  class='header-<%= layout %>'
-  data-controller='header toggle-menu slideover <%= "slideover-account" if show_account_pane? %>'
-  data-toggle-menu-class='hamburger-visible'
-  data-slideover-invisible-class='translate-x-full,opacity-0'
-  data-slideover-visible-class='translate-x-0,opacity-100'
-  data-slideover-active-target='#slideover-cart'
-  data-slideover-account-invisible-class='translate-x-full,opacity-0'
-  data-slideover-account-visible-class='translate-x-0,opacity-100'
-  data-slideover-account-active-target='#slideover-account'
->
-  <nav
-    aria-label='Top'
-    style="<%= section_styles(section) %>"
-    class="relative transition-transform duration-300">
-    <div class='page-container'>
-      <div class='flex items-center<%= " lg:items-end" if layout == "logo-centered" %> <%= " lg:items-center" unless layout == "logo-centered" %> justify-between '>
-        <% unless layout == 'logo-centered' %>
-          <div class='hidden lg:flex' id='header-logo'>
-            <%= render 'spree/shared/logo', logo: section.logo, height: section.preferred_desktop_logo_height %>
-          </div>
-        <% end %>
-        <div class='flex -order-1 flex-1 <%= " lg:flex-none lg:order-1 z-10 lg:mr-8" unless layout == "logo-centered" %>'>
-          <!-- Mobile menu toggle, controls the 'mobileMenuOpen' state. -->
-          <button
-            type='button'
-            data-action='click->toggle-menu#toggle touch->toggle-menu#toggle'
-            class='relative w-6 lg:hidden'
-            data-toggle-menu-target='button'
-            >
-            <span class='sr-only'><%= Spree.t(:toggle_menu) %></span>
-            <div
-              class='absolute top-0'
-            >
-              <%= render 'spree/shared/icons/menu', color: section.preferred_text_color %>
+<% cache_unless page_builder_enabled?, [spree_base_cache_scope.call(section), request.path] do %>
+  <% layout = section.preferred_layout %>
+  <header
+    class='header-<%= layout %>'
+    data-controller='header toggle-menu slideover <%= "slideover-account" if show_account_pane? %>'
+    data-toggle-menu-class='hamburger-visible'
+    data-slideover-invisible-class='translate-x-full,opacity-0'
+    data-slideover-visible-class='translate-x-0,opacity-100'
+    data-slideover-active-target='#slideover-cart'
+    data-slideover-account-invisible-class='translate-x-full,opacity-0'
+    data-slideover-account-visible-class='translate-x-0,opacity-100'
+    data-slideover-account-active-target='#slideover-account'
+  >
+    <nav
+      aria-label='Top'
+      style="<%= section_styles(section) %>"
+      class="relative transition-transform duration-300">
+      <div class='page-container'>
+        <div class='flex items-center<%= " lg:items-end" if layout == "logo-centered" %> <%= " lg:items-center" unless layout == "logo-centered" %> justify-between '>
+          <% unless layout == 'logo-centered' %>
+            <div class='hidden lg:flex' id='header-logo'>
+              <%= render 'spree/shared/logo', logo: section.logo, height: section.preferred_desktop_logo_height %>
             </div>
-            <div
-              class='absolute top-0 opacity-0'
-            >
-              <%= render 'spree/shared/icons/close', color: section.preferred_text_color %>
-            </div>
-          </button>
-          <!-- Search button -->
-          <div class='<%= "lg:relative" unless layout == "logo-centered" %> flex'>
+          <% end %>
+          <div class='flex -order-1 flex-1 <%= " lg:flex-none lg:order-1 z-10 lg:mr-8" unless layout == "logo-centered" %>'>
+            <!-- Mobile menu toggle, controls the 'mobileMenuOpen' state. -->
             <button
-              class='flex items-center ml-4 lg:ml-0'
-              id='open-search'
-              data-action='click->toggle-menu#hide touch->toggle-menu#hide'
+              type='button'
+              data-action='click->toggle-menu#toggle touch->toggle-menu#toggle'
+              class='relative w-6 lg:hidden'
+              data-toggle-menu-target='button'
               >
-              <%= render 'spree/shared/icons/search', color: section.preferred_text_color %>
-              <span class='hidden lg:block ml-2 text-sm !leading-6 uppercase'><%= Spree.t(:search) %></span>
+              <span class='sr-only'><%= Spree.t(:toggle_menu) %></span>
+              <div
+                class='absolute top-0'
+              >
+                <%= render 'spree/shared/icons/menu', color: section.preferred_text_color %>
+              </div>
+              <div
+                class='absolute top-0 opacity-0'
+              >
+                <%= render 'spree/shared/icons/close', color: section.preferred_text_color %>
+              </div>
             </button>
+            <!-- Search button -->
+            <div class='<%= "lg:relative" unless layout == "logo-centered" %> flex'>
+              <button
+                class='flex items-center ml-4 lg:ml-0'
+                id='open-search'
+                data-action='click->toggle-menu#hide touch->toggle-menu#hide'
+                >
+                <%= render 'spree/shared/icons/search', color: section.preferred_text_color %>
+                <span class='hidden lg:block ml-2 text-sm !leading-6 uppercase'><%= Spree.t(:search) %></span>
+              </button>
+            </div>
           </div>
-        </div>
-        <div class='flex items-center flex-col<%= " lg:flex-1" unless layout == "logo-centered" %> header-nav-container'>
-          <!-- Logo -->
-          <div class='<%= "flex lg:pb-4" if layout == "logo-centered" %><%= "lg:hidden" unless layout == "logo-centered" %>' id='header-logo'>
-            <%= render 'spree/shared/logo', logo: section.logo, height: section.preferred_desktop_logo_height %>
-          </div>
-          <!-- Desktop Menu -->
-          <% if layout == 'nav-centered' %>
-            <div
-              class='hidden lg:flex absolute top-px left-1/2 -translate-x-1/2 justify-center w-[calc(100%-29rem)] overflow-auto'
-            >
-            <% end %>
-            <div class='hidden lg:flex<%= " w-full px-12" if layout == "left" %>'>
-              <div class='flex flex-wrap justify-center mx-4 h-full'>
-                <%= render 'spree/page_sections/nav/desktop', section: section %>
+          <div class='flex items-center flex-col<%= " lg:flex-1" unless layout == "logo-centered" %> header-nav-container'>
+            <!-- Logo -->
+            <div class='<%= "flex lg:pb-4" if layout == "logo-centered" %><%= "lg:hidden" unless layout == "logo-centered" %>' id='header-logo'>
+              <%= render 'spree/shared/logo', logo: section.logo, height: section.preferred_desktop_logo_height %>
+            </div>
+            <!-- Desktop Menu -->
+            <% if layout == 'nav-centered' %>
+              <div
+                class='hidden lg:flex absolute top-px left-1/2 -translate-x-1/2 justify-center w-[calc(100%-29rem)] overflow-auto'
+              >
+              <% end %>
+              <div class='hidden lg:flex<%= " w-full px-12" if layout == "left" %>'>
+                <div class='flex flex-wrap justify-center mx-4 h-full'>
+                  <%= render 'spree/page_sections/nav/desktop', section: section %>
+                </div>
               </div>
             </div>
-          </div>
-          <% if layout == 'nav-centered' %></div>
-        <% end %>
-        <div
-          class='flex items-center gap-4 flex-1 justify-end<%= " lg:flex-none order-2" unless layout == "logo-centered" %>'
-        >
-          <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
-            <div
-            data-controller="modal"
-            data-modal-allow-background-close="true"
-            data-modal-
-            class="hidden lg:flex"
-            data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
-              <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
-                <% if should_render_currency_dropdown? %>
-                  <span>
-                    <%= "#{current_currency} (#{currency_money(current_currency).symbol})" %>
-                  </span>
-                <% end %>
-                <% if should_render_locale_dropdown? %>
-                  <span class="uppercase <%= should_render_currency_dropdown?.presence && "border-l pl-2" %> flex items-center gap-1">
-                    <% country_code = current_locale.to_s.split("-").last %>
-                    <%= svg_country_icon(country_code) %>
-                    <span ><%= country_code %></span>
-                  </span>
-                <% end %>
-              <% end %>
-              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy  %>
-            </div>
+            <% if layout == 'nav-centered' %></div>
           <% end %>
-          <!-- Desktop Account -->
-          <div class='hidden lg:flex'>
-            <% if show_account_pane? %>
-              <button
-                data-action='click->slideover-account#toggle click@window->slideover-account#hide click->toggle-menu#hide touch->toggle-menu#hide'
-                >
-                <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
-              </button>
-            <% else %>
-              <%= link_to spree.account_path do %>
-                <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
-              <% end %>
-            <% end %>
-          </div>
-          <% if show_account_pane? %>
-            <%= form_with url: spree.account_wishlist_path, method: :get, data: { turbo_stream: true } do %>
-              <button
-                type="submit"
-                id="wishlist-icon"
-                class="flex items-end">
-                <%= render 'spree/shared/wishlist_icon', wishlist: current_wishlist, background_color: section.preferred_background_color %>
-              </button>
-            <% end %>
-          <% else %>
-            <%= link_to spree.account_wishlist_path, id: "wishlist-icon" do %>
-              <%= render 'spree/shared/wishlist_icon', background_color: section.preferred_background_color %>
-            <% end %>
-          <% end %>
-          <!-- Cart -->
           <div
-            data-action='click->toggle-menu#hide touch->toggle-menu#hide'
-            >
-            <%= render 'spree/shared/cart_icon' %>
+            class='flex items-center gap-4 flex-1 justify-end<%= " lg:flex-none order-2" unless layout == "logo-centered" %>'
+          >
+            <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
+              <div
+              data-controller="modal"
+              data-modal-allow-background-close="true"
+              data-modal-
+              class="hidden lg:flex"
+              data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+                <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
+                  <% if should_render_currency_dropdown? %>
+                    <span>
+                      <%= "#{current_currency} (#{currency_money(current_currency).symbol})" %>
+                    </span>
+                  <% end %>
+                  <% if should_render_locale_dropdown? %>
+                    <span class="uppercase <%= should_render_currency_dropdown?.presence && "border-l pl-2" %> flex items-center gap-1">
+                      <% country_code = current_locale.to_s.split("-").last %>
+                      <%= svg_country_icon(country_code) %>
+                      <span ><%= country_code %></span>
+                    </span>
+                  <% end %>
+                <% end %>
+                <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy  %>
+              </div>
+            <% end %>
+            <!-- Desktop Account -->
+            <div class='hidden lg:flex'>
+              <% if show_account_pane? %>
+                <button
+                  data-action='click->slideover-account#toggle click@window->slideover-account#hide click->toggle-menu#hide touch->toggle-menu#hide'
+                  >
+                  <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
+                </button>
+              <% else %>
+                <%= link_to spree.account_path do %>
+                  <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
+                <% end %>
+              <% end %>
+            </div>
+            <% if show_account_pane? %>
+              <%= form_with url: spree.account_wishlist_path, method: :get, data: { turbo_stream: true } do %>
+                <button
+                  type="submit"
+                  id="wishlist-icon"
+                  class="flex items-end">
+                  <%= render 'spree/shared/wishlist_icon', wishlist: current_wishlist, background_color: section.preferred_background_color %>
+                </button>
+              <% end %>
+            <% else %>
+              <%= link_to spree.account_wishlist_path, id: "wishlist-icon" do %>
+                <%= render 'spree/shared/wishlist_icon', background_color: section.preferred_background_color %>
+              <% end %>
+            <% end %>
+            <!-- Cart -->
+            <div
+              data-action='click->toggle-menu#hide touch->toggle-menu#hide'
+              >
+              <%= render 'spree/shared/cart_icon' %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div
-      class='h-0 opacity-0 pointer-events-none hide-on-load'
-      data-toggle-menu-target='toggleable'
-      role='dialog'
-      aria-modal='true'
-    >
       <div
-        class='flex justify-between flex-col lg:hidden w-full transition-transform translate-x-[-50%] has-[.currency-and-locale-modal:not(.hidden)]:transform-none body header--mobile-menu'
-        data-toggle-menu-target='content'
-        style='background-color: <%= section.preferred_background_color %>; height: calc(100dvh - 38px);'
-        >
-        <%= render 'spree/page_sections/nav/mobile', section: section %>
+        class='h-0 opacity-0 pointer-events-none hide-on-load'
+        data-toggle-menu-target='toggleable'
+        role='dialog'
+        aria-modal='true'
+      >
+        <div
+          class='flex justify-between flex-col lg:hidden w-full transition-transform translate-x-[-50%] has-[.currency-and-locale-modal:not(.hidden)]:transform-none body header--mobile-menu'
+          data-toggle-menu-target='content'
+          style='background-color: <%= section.preferred_background_color %>; height: calc(100dvh - 38px);'
+          >
+          <%= render 'spree/page_sections/nav/mobile', section: section %>
+        </div>
       </div>
-    </div>
-  </nav>
-  <%= render 'spree/shared/cart_pane', section: section %>
-  <% if show_account_pane? %>
-    <%= render 'spree/shared/account_pane', section: section %>
-  <% end %>
-  <%= render 'spree/shared/search', section: section, logo: section.logo, logo_height: section.preferred_desktop_logo_height %>
-</header>
+    </nav>
+
+    <%= render 'spree/shared/cart_pane', section: section %>
+    <% if show_account_pane? %>
+      <%= render 'spree/shared/account_pane', section: section %>
+    <% end %>
+    <%= render 'spree/shared/search', section: section, logo: section.logo, logo_height: section.preferred_desktop_logo_height %>
+  </header>
+<% end %>

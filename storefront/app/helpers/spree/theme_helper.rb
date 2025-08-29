@@ -68,6 +68,13 @@ module Spree
       @page_builder_enabled ||= (current_theme_preview.present? || current_page_preview.present?) && params[:page_builder] == 'true'
     end
 
+    # Returns whether the page cache is enabled
+    #
+    # @return [Boolean] whether the page cache is enabled
+    def page_cache_enabled?
+      @page_cache_enabled ||= Spree::Storefront::Config.page_cache_enabled
+    end
+
     # Returns the theme layout sections, eg. header, footer, etc.
     #
     # @return [Hash] the theme layout sections
