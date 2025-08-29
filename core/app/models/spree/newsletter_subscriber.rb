@@ -4,10 +4,15 @@ module Spree
 
     belongs_to :user, optional: true, class_name: Spree.user_class.name
 
-    validates :email, presence: true, uniqueness: true
+    validates :email,
+              presence: true,
+              format: { with: URI::MailTo::EMAIL_REGEXP },
+              uniqueness: { case_sensitive: false }
 
     scope :verified, -> { where.not(verified_at: nil) }
     scope :unverified, -> { where(verified_at: nil) }
+
+    normalizes :email, with: ->(email) { email.to_s.strip.downcase.presence }
 
     def verified?
       verified_at.present?

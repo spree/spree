@@ -1,12 +1,21 @@
 require 'spec_helper'
-require 'shoulda/matchers'
 
 describe Spree::NewsletterSubscriber, type: :model do
-  let(:subscriber) { build(:newsletter_subscriber) }
+  subject(:subscriber) { build(:newsletter_subscriber, email: email) }
+
+  let(:email) { 'joe#example.com' }
+
+  describe 'normalizations' do
+    it { is_expected.to normalize(:email).from(" ME@XYZ.COM\n").to('me@xyz.com') }
+    it { is_expected.to normalize(:email).from('').to(nil) }
+    it { is_expected.to normalize(:email).from(nil).to(nil) }
+  end
 
   describe 'validations' do
-    it { expect(subscriber).to validate_presence_of(:email) }
-    it { expect(subscriber).to validate_uniqueness_of(:email) }
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_uniqueness_of(:email).ignoring_case_sensitivity }
+    it { is_expected.to allow_value('test@example.com').for(:email) }
+    it { is_expected.not_to allow_value('test@').for(:email) }
   end
 
   describe 'scopes' do
@@ -14,11 +23,15 @@ describe Spree::NewsletterSubscriber, type: :model do
     let!(:unverified_subscriber) { create(:newsletter_subscriber, :unverified) }
 
     describe 'verified' do
-      it { expect(Spree::NewsletterSubscriber.verified).to eq([verified_subscriber]) }
+      it 'returns verified subscribers only' do
+        expect(described_class.verified).to eq([verified_subscriber])
+      end
     end
 
     describe 'unverified' do
-      it { expect(Spree::NewsletterSubscriber.unverified).to eq([unverified_subscriber]) }
+      it 'returns unverified subscribers only' do
+        expect(described_class.unverified).to eq([unverified_subscriber])
+      end
     end
   end
 
@@ -52,12 +65,18 @@ describe Spree::NewsletterSubscriber, type: :model do
   end
 
   describe 'verified?' do
-    it { expect(subscriber.verified?).to eq(false) }
+    subject { subscriber.verified? }
+
+    context 'when email is not verified' do
+      let(:subscriber) { create(:newsletter_subscriber, :unverified) }
+
+      it { is_expected.to be_falsy }
+    end
 
     context 'when email is verified' do
-      let!(:verified_subscriber) { create(:newsletter_subscriber, :verified) }
+      let(:subscriber) { create(:newsletter_subscriber, :verified) }
 
-      it { expect(verified_subscriber.verified?).to eq(true) }
+      it { is_expected.to be_truthy }
     end
   end
 end
