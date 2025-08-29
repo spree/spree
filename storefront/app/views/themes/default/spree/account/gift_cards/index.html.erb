@@ -18,7 +18,7 @@
           </tr>
         </thead>
         <tbody class="block md:table-row-group">
-          <%= render collection: @gift_cards, partial: 'spree/account/gift_cards/gift_card', cached: spree_base_cache_scope %>
+          <%= render collection: @gift_cards, partial: 'spree/account/gift_cards/gift_card', cached: spree_storefront_base_cache_scope %>
         </tbody>
       </table>
     <% else %>

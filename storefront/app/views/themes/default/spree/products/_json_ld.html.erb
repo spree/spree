@@ -26,7 +26,7 @@
   <% end %>
   "offers": [
   <% if product.has_variants? %>
-    <%= render partial: "spree/products/json_ld_variant", collection: product.variants, as: :variant, locals: { product: product }, cached: spree_base_cache_scope %>
+    <%= render partial: "spree/products/json_ld_variant", collection: product.variants, as: :variant, locals: { product: product }, cached: spree_storefront_base_cache_scope %>
   <% else %>
     <%= render "spree/products/json_ld_variant", product: product, variant: first_or_default_variant %>
   <% end %>

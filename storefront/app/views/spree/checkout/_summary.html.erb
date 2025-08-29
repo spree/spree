@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :checkout_summary, id: 'summary' do %>
   <div class="checkout-content-summary text-sm">
-    <% cache [*spree_base_cache_scope.call(order.cache_key_with_version), order.state] do %>
+    <% cache [*spree_storefront_base_cache_scope.call(order.cache_key_with_version), order.state] do %>
       <div data-hook="order_summary">
         <div class="flex justify-between items-center mb-2">
           <span><%= Spree.t(:subtotal) %>:</span>
@@ -8,7 +8,7 @@
         </div>
         <div class="d-table-cell text-right font-weight-bold"></div>
 
-        <% cache spree_base_cache_scope.call(order.line_item_adjustments.nonzero.cache_key_with_version) do %>
+        <% cache spree_storefront_base_cache_scope.call(order.line_item_adjustments.nonzero.cache_key_with_version) do %>
           <% if order.line_item_adjustments.nonzero.exists? %>
             <% order.line_item_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
               <div class="flex justify-between items-center mb-2">
@@ -59,7 +59,7 @@
         <% end %>
 
         <% if order.payment? || order.completed? %>
-          <% cache spree_base_cache_scope.call(order.all_adjustments.nonzero.tax.eligible.cache_key_with_version) do %>
+          <% cache spree_storefront_base_cache_scope.call(order.all_adjustments.nonzero.tax.eligible.cache_key_with_version) do %>
             <% order.all_adjustments.nonzero.tax.eligible.group_by(&:label).each do |label, adjustments| %>
               <div class="flex justify-between items-center mb-2">
                 <span><%= label %></span>

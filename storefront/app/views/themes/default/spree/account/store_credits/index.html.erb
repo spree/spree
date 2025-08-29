@@ -21,7 +21,7 @@
           </tr>
         </thead>
         <tbody class="block md:table-row-group">
-          <%= render collection: @store_credit_events, partial: 'spree/account/store_credits/store_credit_event', cached: spree_base_cache_scope %>
+          <%= render collection: @store_credit_events, partial: 'spree/account/store_credits/store_credit_event', cached: spree_storefront_base_cache_scope %>
         </tbody>
       </table>
     <% else %>

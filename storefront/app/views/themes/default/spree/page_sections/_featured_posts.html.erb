@@ -41,7 +41,7 @@
         <div class='swiper-wrapper px-4 lg:px-0 h-auto'>
           <%= render partial: "spree/posts/post",
           collection: section.posts,
-          cached: spree_base_cache_scope,
+          cached: spree_storefront_base_cache_scope,
           as: :post %>
         </div>
         <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block top-[100px]", aria: { label: "Previous posts" }, style: "transform: translate(-50%, -50%);" do %>
