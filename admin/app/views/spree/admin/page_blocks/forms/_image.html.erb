@@ -1,6 +1,6 @@
 <%= render 'active_storage/upload_form', form: f, field_name: :asset, width: 512, height: 512, auto_submit: true %>
-<div class="form-group">
-  <%= f.label :preferred_image_alt %>
+<div class="mt-2 form-group">
+  <%= f.label :preferred_image_alt, Spree.t(:alt_text) %>
   <%= f.text_field :preferred_image_alt, data: { action: 'auto-submit#submit' }, class: 'form-control' %>
 </div>
 <% content_for(:design_tab) do %>
