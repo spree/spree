@@ -1,4 +1,4 @@
-<% cache_unless page_builder_enabled?, spree_base_cache_scope.call(section) do %>
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
   <div class="w-full relative image-banner" style="<%= section_styles(section) %>;height: <%= section.preferred_height %>px">
     <div class="w-full absolute left-0 image-banner--image-wrapper" style="height: <%= section.preferred_height %>px; opacity: <%= section.preferred_overlay_transparency %>%;">
       <% if section.image.attached? && section.image.variable? %>

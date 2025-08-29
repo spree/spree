@@ -65,6 +65,6 @@
     <%= render partial: "spree/shared/order_line_item",
     collection: shipment.inventory_units,
     as: :inventory_unit,
-    cached: spree_base_cache_scope %>
+    cached: spree_storefront_base_cache_scope %>
   </div>
 </li>
