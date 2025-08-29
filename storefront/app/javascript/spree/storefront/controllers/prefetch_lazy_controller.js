@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    rootMargin: { type: Integer, default: 300 }
+    rootMargin: { type: Number, default: 300 }
   }
 
   connect() {
