@@ -1,5 +1,6 @@
-<% if loaded %>
-  <% img = section.image %>
+<div class="w-full flex justify-center items-center relative min-h-[200px]" style="<%= section_styles(section) %>">
+  <% if loaded %>
+    <% img = section.image %>
     <% if img.attached? && img.variable? %>
       <img
         class="w-full h-full absolute top-0 object-cover z-0"
@@ -43,5 +44,5 @@
         <% end %>
       <% end %>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>
