@@ -2,12 +2,12 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    rootMargin: { type: Number, default: 300 }
+    rootMargin: { type: Number, default: 200 }
   }
 
   connect() {
     if (this.element.getAttribute("loading") == "lazy") {
-      this.observer = new IntersectionObserver(this.intersect, { rootMargin: `${this.rootMarginValue}px` })
+      this.observer = new IntersectionObserver(this.intersect, { rootMargin: `0px 0px ${this.rootMarginValue}px 0px` })
       this.observer.observe(this.element)
     }
   }
