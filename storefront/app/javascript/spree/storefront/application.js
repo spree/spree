@@ -47,6 +47,7 @@ const controllers = [
   'no-ui-slider',
   'pdp-desktop-gallery',
   'plp-variant-picker',
+  'prefetch-lazy',
   'product-form',
   'quantity-picker',
   'read-more',
