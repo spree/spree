@@ -103,6 +103,10 @@ module Spree
       false
     end
 
+    def linkable?
+      false
+    end
+
     def layout_sections?
       true
     end

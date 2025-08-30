@@ -81,10 +81,10 @@ module Spree
 
       def all_linkable_pages
         @all_linkable_pages ||= Spree::Page.
-                                linkable.
                                 without_previews.
                                 where(pageable: [@theme, current_store]).
-                                map { |page| [page.display_name, page.id] }
+                                select(&:linkable?).
+                                map { |page| [page.display_name, page.id] }.sort_by(&:first)
       end
 
       def all_linkable_policies

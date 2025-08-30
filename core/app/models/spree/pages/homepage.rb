@@ -11,6 +11,10 @@ module Spree
         'home'
       end
 
+      def linkable?
+        true
+      end
+
       def default_sections
         sections = [
           Spree::PageSections::ImageWithText.new(
