@@ -2,6 +2,8 @@ module Spree
   module Pages
     class Password < Spree::Page
       def page_builder_url
+        return unless page_builder_url_exists?(:password_path)
+
         Spree::Core::Engine.routes.url_helpers.password_path
       end
 
