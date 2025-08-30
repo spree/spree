@@ -4,6 +4,10 @@ module Spree
       def icon_name
         'shopping-cart'
       end
+
+      def linkable?
+        true
+      end
     end
   end
 end

@@ -10,6 +10,10 @@ module Spree
       def icon_name
         'user'
       end
+
+      def linkable?
+        true
+      end
     end
   end
 end

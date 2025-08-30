@@ -5,6 +5,10 @@ module Spree
         true
       end
 
+      def linkable?
+        true
+      end
+
       def page_builder_url
         return unless page_builder_url_exists?(:page_path)
 
