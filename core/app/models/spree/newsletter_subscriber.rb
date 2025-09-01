@@ -23,14 +23,13 @@ module Spree
     end
 
     def self.subscribe(email:, user: nil)
-      raise NotImplementedError
+      Spree::Newsletter::Subscribe.new(email: email, user: user).call
     end
 
     def self.verify(verification_token)
-      subscriber = find_by(verification_token: verification_token)
-      return unless subscriber
+      subscriber = find_by!(verification_token: verification_token)
 
-      raise NotImplementedError
+      Spree::Newsletter::Verify.new(subscriber: subscriber).call
     end
   end
 end
