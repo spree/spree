@@ -90,6 +90,13 @@
                 "icon": "book-open",
                 "pages": [
                   {
+                    "group": "Multi-Store",
+                    "icon": "store",
+                    "pages": [
+                      "developer/multi-store/quickstart"
+                    ]
+                  },
+                  {
                     "group": "Multi-Tenant",
                     "icon": "building",
                     "pages": [

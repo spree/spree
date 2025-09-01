@@ -1,0 +1,40 @@
+---
+title: Multi-Store Setup
+sidebarTitle: Configuration
+---
+
+## Root domain
+
+You need to set a wildcard `root_domain` on the store to enable multi-store setup
+
+```ruby
+Spree.root_domain = ENV.fetch('SPREE_ROOT_DOMAIN', 'lvh.me')
+```
+
+This will be used to generate the store URLs, eg. `store1.lvh.me`, `store2.lvh.me`, etc.
+
+`store1` part is the unique store `code` identifier, which is auto-generated based on the store name. You can change it in the admin panel in **Settings -> Domains**.
+
+<Info>
+  If you later change the `root_domain`, you will need to run:
+
+  ```ruby
+  Spree::Store.all.each(&:save)
+  ```
+  
+  to update the store URLs.
+</Info>
+
+## Creating new stores
+
+After you restart your application, you will see a new option in the admin panel, under new item menu:
+
+![](/images/new_store_dropdown.png)
+
+You can also create a new store from the rails console:
+
+```ruby
+Spree::Store.create!(name: 'New Store')
+```
+
+This will create a new store with the given name, code and URL.
