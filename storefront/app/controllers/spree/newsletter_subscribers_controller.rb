@@ -5,26 +5,31 @@ module Spree
 
     # POST /newsletter_subscribers
     def create
-      user = Spree.user_class.find_or_initialize_by(email: newsletter_params[:email])
+      subscriber = Spree::NewsletterSubscriber.subscribe(email: newsletter_params[:email], user: try_spree_current_user)
 
-      if user.new_record? && user.respond_to?(:password) && user.respond_to?(:password_confirmation)
-        user.password ||= SecureRandom.hex(16) # we need to set a password to pass validation
-        user.password_confirmation ||= user.password
-      end
-
-      user.accepts_email_marketing = true if user.new_record? || try_spree_current_user == user
-
-      if user.save
-        track_event('subscribed_to_newsletter', { email: user.email, user: user })
-
+      if subscriber.errors.any?
+        flash[:error] = subscriber.errors.full_messages.to_sentence.presence || Spree.t('something_went_wrong')
+      elsif subscriber.previous_changes.any?
+        track_event('subscribed_to_newsletter', { email: subscriber.email, user: try_spree_current_user })
         flash[:success] = Spree.t('storefront.newsletter_subscribers.success')
       else
-        flash[:error] = user.errors.full_messages.to_sentence.presence || Spree.t('something_went_wrong')
+        flash[:notice] = Spree.t('storefront.newsletter_subscribers.already_subscribed')
       end
 
       respond_to do |format|
         format.html { redirect_to spree.root_path }
         format.turbo_stream
+      end
+    end
+
+    # GET /newsletter_subscribers/verify?token=VERIFICATION_TOKEN
+    def verify
+      subscriber = Spree::Newsletter::Verify.call(token: params[:token])
+
+      if subscriber.verified?
+        redirect_to spree.root_path, notice: Spree.t('storefront.newsletter_subscribers.verified')
+      else
+        redirect_to spree.root_path, alert: Spree.t('storefront.newsletter_subscribers.verification_failed')
       end
     end
 
