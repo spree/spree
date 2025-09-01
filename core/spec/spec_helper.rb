@@ -35,6 +35,7 @@ end
 require 'rspec/rails'
 require 'database_cleaner/active_record'
 require 'ffaker'
+require 'shoulda-matchers'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
@@ -86,4 +87,11 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
 end
