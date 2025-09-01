@@ -7,10 +7,11 @@ module Spree
       end
 
       def call
-        return if already_subscribed?
+        return existed_subscription if existed_subscription.present?
 
         ActiveRecord::Base.transaction do
           upsert_subscriber
+          return subscriber if subscriber.errors.any?
 
           if subscriber.email == user&.email
             # no need to verified since user email is already verified
@@ -23,6 +24,7 @@ module Spree
 
         # deliver confirmation email after the transaction is completed
         subscriber.deliver_newsletter_email_verification unless subscriber.verified?
+        subscriber
       end
 
       private
@@ -36,8 +38,8 @@ module Spree
       end
       alias_method :subscriber, :upsert_subscriber
 
-      def already_subscribed?
-        Spree::NewsletterSubscriber.verified.exists?(email: email)
+      def existed_subscription
+        @existed_subscription ||= Spree::NewsletterSubscriber.verified.find_by(email: email)
       end
     end
   end
