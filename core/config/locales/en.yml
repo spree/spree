@@ -1359,7 +1359,8 @@ en:
         verify_email_address_link: Verify email address
         thanks: Thank you
         store_team: "%{store_name} Team"
-        message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
+        message_copy_link: "If the button doesn't work please copy and paste the following link to your browser:"
+        ignore_disclaimer: "If you didn't request this, please ignore this email."
     newsletters: Newsletters
     next: Next
     no_actions_added: No actions added
