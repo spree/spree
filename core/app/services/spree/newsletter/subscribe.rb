@@ -11,7 +11,7 @@ module Spree
 
         ActiveRecord::Base.transaction do
           upsert_subscriber
-          
+
           if subscriber.email == user&.email
             # no need to verified since user email is already verified
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
