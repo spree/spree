@@ -36,10 +36,36 @@ describe Spree::NewsletterSubscriber, type: :model do
   end
 
   describe 'subscribe' do
-    subject { described_class.subscribe(email: 'test@example.com') }
+    let(:subscribe_service) { double(Spree::Newsletter::Subscribe) }
 
-    it 'raises NotImplementedError' do
-      expect { subject }.to raise_error(NotImplementedError)
+    context 'with user' do
+      subject { described_class.subscribe(email: email, user: user) }
+
+      let(:user) { create(:user) }
+
+      before do
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, user: user).and_return(subscribe_service)
+      end
+
+      it 'calls subscribe service' do
+        expect(subscribe_service).to receive(:call)
+
+        subject
+      end
+    end
+
+    context 'without user' do
+      subject { described_class.subscribe(email: email) }
+
+      before do
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, user: nil).and_return(subscribe_service)
+      end
+
+      it 'calls subscribe service' do
+        expect(subscribe_service).to receive(:call)
+
+        subject
+      end
     end
   end
 
@@ -49,17 +75,24 @@ describe Spree::NewsletterSubscriber, type: :model do
     context 'when subscriber is found' do
       let(:subscriber) { create(:newsletter_subscriber, :unverified) }
       let(:token) { subscriber.verification_token }
+      let(:verify_service) { double(Spree::Newsletter::Verify) }
 
-      it 'raises NotImplementedError' do
-        expect { subject }.to raise_error(NotImplementedError)
+      before do
+        allow(Spree::Newsletter::Verify).to receive(:new).with(subscriber: kind_of(described_class)).and_return(verify_service)
+      end
+
+      it 'calls verify service' do
+        expect(verify_service).to receive(:call)
+
+        subject
       end
     end
 
     context 'when subscriber is not found' do
       let(:token) { 'invalid-token' }
 
-      it 'returns nil' do
-        expect(subject).to be_nil
+      it 'returns ActiveRecord::RecordNotFound' do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
