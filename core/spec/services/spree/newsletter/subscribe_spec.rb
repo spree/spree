@@ -19,7 +19,7 @@ module Spree
       let(:email) { user.email }
 
       it 'does not send a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_subscription_confirmation)
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
 
         service
       end
@@ -34,7 +34,7 @@ module Spree
       let(:email) { 'test@example.com' }
 
       it 'sends a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_subscription_confirmation)
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_email_verification).once
 
         service
       end
@@ -45,7 +45,7 @@ module Spree
     end
 
     context 'when verified subscription already exists' do
-      let!(:subscriber) { create(:newsletter_subscriber, email: email, verified_at: Time.current) }
+      let!(:subscriber) { create(:newsletter_subscriber, :verified, email: email) }
 
       it 'does not create new subscriber' do
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
@@ -56,14 +56,14 @@ module Spree
       end
 
       it 'does not send a confirmation email' do
-        expect(subscriber).not_to receive(:deliver_newsletter_subscription_confirmation)
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
 
         service
       end
     end
 
     context 'when unverified subscription has been already created' do
-      let!(:subscriber) { create(:newsletter_subscriber, email: email, verified_at: nil) }
+      let!(:subscriber) { create(:newsletter_subscriber, :unverified, email: email) }
 
       it 'does not create new subscriber' do
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
@@ -74,7 +74,7 @@ module Spree
       end
 
       it 'sends a confirmation email' do
-        expect(subscriber).to receive(:deliver_newsletter_subscription_confirmation)
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_email_verification).once
 
         service
       end

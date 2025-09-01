@@ -3,7 +3,7 @@ module Spree
     module Emails
       extend ActiveSupport::Concern
 
-      def deliver_newsletter_subscription_confirmation
+      def deliver_newsletter_email_verification
         # you can overwrite this method in your application / extension to send out the confirmation email
         # or use `spree_emails` gem
       end
