@@ -24,7 +24,7 @@ module Spree
 
     # GET /newsletter_subscribers/verify?token=VERIFICATION_TOKEN
     def verify
-      subscriber = Spree::Newsletter::Verify.call(token: params[:token])
+      subscriber = Spree::NewsletterSubscriberv.verify(token: params[:token])
 
       if subscriber.verified?
         redirect_to spree.root_path, notice: Spree.t('storefront.newsletter_subscribers.verified')
