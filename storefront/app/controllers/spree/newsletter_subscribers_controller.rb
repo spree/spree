@@ -10,7 +10,7 @@ module Spree
 
       if subscriber.errors.any?
         flash[:error] = subscriber.errors.full_messages.to_sentence.presence || Spree.t('something_went_wrong')
-      elsif subscriber.previous_changes.any?
+      elsif !subscriber.verified?
         track_event('subscribed_to_newsletter', { email: subscriber.email, user: try_spree_current_user })
         flash[:success] = Spree.t('storefront.newsletter_subscribers.success')
       else

@@ -14,8 +14,10 @@
   </span>
 </p>
 
+<p><%= Spree.t('newsletter_mailer.email_confirmation.ignore_disclaimer') %></p>
+
 <p>
   <%= Spree.t('newsletter_mailer.email_confirmation.thanks') %>
   <br />
-  <%= Spree.t('newsletter_mailer.email_confirmation.store_team') %>
+  <%= Spree.t('newsletter_mailer.email_confirmation.store_team', store_name: current_store.name) %>
 </p>
