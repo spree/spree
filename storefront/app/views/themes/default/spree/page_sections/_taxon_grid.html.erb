@@ -1,4 +1,4 @@
-<% cache_unless page_builder_enabled?, [*spree_base_cache_scope.call(section), @taxons].compact do %>
+<% cache_unless page_builder_enabled?, [*spree_storefront_base_cache_scope.call(section), @taxons].compact do %>
   <div style='<%= section_styles(section) %>'>
     <h1 class='text-xl lg:text-2xl font-medium pb-8 page-container' style='<%= section_heading_styles(section) %>'>
       <%= section.heading %>

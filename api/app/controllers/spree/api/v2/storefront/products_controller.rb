@@ -16,14 +16,15 @@ module Spree
           end
 
           def resource
-            # fixed N+1 queries issue
-            variant_includes = [
+            # using FriendlyId so old slugs still work
+            @resource ||= find_with_fallback_default_locale { scope.includes(variants: variant_includes, master: variant_includes).friendly.find(params[:id]) } || scope.includes(variants: variant_includes, master: variant_includes).friendly.find(params[:id])
+          end
+
+          def variant_includes
+            [
               :prices,
               { option_values: [:option_type] }
             ]
-
-            # using FriendlyId so old slugs still work
-            @resource ||= find_with_fallback_default_locale { scope.includes(variants: variant_includes, master: variant_includes).friendly.find(params[:id]) } || scope.includes(variants: variant_includes, master: variant_includes).friendly.find(params[:id])
           end
 
           def collection_sorter

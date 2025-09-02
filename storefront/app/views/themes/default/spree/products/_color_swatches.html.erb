@@ -2,7 +2,7 @@
 <% variants_with_color = product.variants.find_all { |variant| variant.option_values.find { |ov| ov.option_type_id == color_option.id } } if color_option.present? %>
 
 <% if color_option.present? && variants_with_color.length > 0 %>
-  <% cache spree_base_cache_scope.call(variants_with_color) do %>
+  <% cache spree_storefront_base_cache_scope.call(variants_with_color) do %>
     <% color_values = product.option_values.find_all { |ov| ov.option_type_id == color_option.id }.uniq %>
     <%= raw(Spree::ColorsPreviewStylesPresenter.new(color_values.map { |o| { name: o.presentation, filter_name: o.name } }).to_s) %>
 
@@ -11,7 +11,7 @@
         <% selected_variant = variants_with_color.find { |variant| variant.option_values.include?(color_value) } %>
         <% next if selected_variant.blank? %>
 
-        <% cache spree_base_cache_scope.call(selected_variant) do %>
+        <% cache spree_storefront_base_cache_scope.call(selected_variant) do %>
           <div
             data-variant-id="<%= selected_variant.id %>"
             class="[&:nth-of-type(n+4)]:hidden [&:nth-of-type(n+4)]:md:block [&:nth-of-type(n+8)]:md:hidden cursor-pointer"

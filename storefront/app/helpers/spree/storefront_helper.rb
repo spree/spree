@@ -5,6 +5,24 @@ module Spree
     include Spree::ShipmentHelper
     include Heroicon::Engine.helpers
 
+    # Returns the cache key for the storefront including the current wishlist and order.
+    #
+    # @return [Array] The cache key
+    def spree_storefront_base_cache_key
+      @spree_storefront_base_cache_key ||= [
+        spree_base_cache_key,
+        current_wishlist,
+        current_order
+      ].compact
+    end
+
+    # Returns the cache scope for the storefront including the current wishlist and order.
+    #
+    # @return [Proc] The cache scope
+    def spree_storefront_base_cache_scope
+      ->(record = nil) { [*spree_storefront_base_cache_key, record].compact_blank }
+    end
+
     # Renders the storefront partials for the given section.
     #
     # @param section [String] The section to render

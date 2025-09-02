@@ -21,7 +21,7 @@
                   </button>
                   <div class="p-4 pt-0 w-full gap-2 flex flex-col">
                     <% if block.try(:featured_taxon) %>
-                      <% cache spree_base_cache_scope.call(block.featured_taxon) do %>
+                      <% cache spree_storefront_base_cache_scope.call(block.featured_taxon) do %>
                         <% if block.featured_taxon.image.attached? && block.featured_taxon.image.variable? %>
                           <%= link_to spree_storefront_resource_url(block.featured_taxon), class: "flex w-full pt-4" do %>
                             <%= spree_image_tag(block.featured_taxon.image, width: 140, height: 140, class: 'h-auto aspect-1 w-2/5 max-w-[140px]', loading: :lazy, alt: block.featured_taxon.name) %>

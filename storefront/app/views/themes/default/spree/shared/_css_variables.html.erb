@@ -1,4 +1,4 @@
-<% cache_unless page_builder_enabled?, spree_base_cache_scope.call(current_theme) do %>
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(current_theme) do %>
   <style data-turbo-track="reload">
     <%= theme_setting(:custom_font_css_import) if theme_setting(:custom_font_css_import).present? %>
 

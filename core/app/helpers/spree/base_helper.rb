@@ -238,7 +238,7 @@ module Spree
         I18n.locale,
         (current_currency if defined?(current_currency)),
         defined?(try_spree_current_user) && try_spree_current_user.present?,
-        defined?(try_spree_current_user) && try_spree_current_user.try(:has_spree_role?, 'admin')
+        defined?(try_spree_current_user) && try_spree_current_user.respond_to?(:role_users) && try_spree_current_user.role_users.cache_key_with_version
       ].compact
     end
 

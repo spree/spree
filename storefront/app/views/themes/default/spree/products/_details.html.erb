@@ -1,4 +1,4 @@
-<% cache spree_base_cache_scope.call(product) do %>
+<% cache spree_storefront_base_cache_scope.call(product) do %>
   <% if product.storefront_description.present? %>
     <% description_text = strip_tags(product.storefront_description) %>
     <div data-controller="read-more" class="py-4 flex flex-col gap-4" data-read-more-more-text-value="<%= Spree.t(:read_more) %>" data-read-more-less-text-value="Read less">

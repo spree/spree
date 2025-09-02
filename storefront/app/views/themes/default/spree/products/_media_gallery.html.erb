@@ -1,6 +1,6 @@
 <% desktop ||= false %>
 
-<% cache [*spree_base_cache_scope.call(product), images, desktop].compact do %>
+<% cache [*spree_storefront_base_cache_scope.call(product), images, desktop].compact do %>
   <% if desktop == true %>
     <div
       class="media-gallery w-full h-full media-gallery-desktop"

@@ -8,7 +8,7 @@
     </h1>
     <% if @wished_items.any? %>
       <div class="grid lg:grid-cols-3 gap-x-6 gap-y-10 lg:mb-24">
-        <%= render collection: @wished_items, partial: 'spree/wishlists/wished_item', cached: ->(wished_item) { [*spree_base_cache_scope.call(wished_item), wished_item.variant, current_currency] } %>
+        <%= render collection: @wished_items, partial: 'spree/wishlists/wished_item', cached: ->(wished_item) { [*spree_storefront_base_cache_scope.call(wished_item), wished_item.variant, current_currency] } %>
       </div>
     <% else %>
       <%= render 'no_wished_items' %>

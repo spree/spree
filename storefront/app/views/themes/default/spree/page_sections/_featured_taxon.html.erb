@@ -1,4 +1,4 @@
-<% cache_unless page_builder_enabled?, [spree_base_cache_key, section.cache_key_with_version, loaded.to_b] do %>
+<% cache_unless page_builder_enabled?, [spree_storefront_base_cache_key, section.cache_key_with_version, loaded.to_b] do %>
   <div style='<%= section_styles(section) %>' class='animate-fadeIn'>
     <div class='page-container'>
       <% heading_size = case section.preferred_heading_size

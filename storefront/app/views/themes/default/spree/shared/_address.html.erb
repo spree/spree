@@ -1,4 +1,4 @@
-<% cache [*spree_base_cache_scope.call(address), address.user] do %>
+<% cache [*spree_storefront_base_cache_scope.call(address), address.user] do %>
   <div class="text-sm">
     <div class="mb-1"><%= address.full_name %></div>
     <% unless address.company.blank? %>

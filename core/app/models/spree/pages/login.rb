@@ -10,6 +10,10 @@ module Spree
 
         Spree::Core::Engine.routes.url_helpers.login_path
       end
+
+      def linkable?
+        true
+      end
     end
   end
 end

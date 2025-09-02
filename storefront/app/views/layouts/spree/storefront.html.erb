@@ -10,16 +10,12 @@
     <%= render_storefront_partials(:body_start_partials) %>
     <%= current_store.storefront_custom_code_body_start&.html_safe %>
 
-    <% if theme_layout_sections.empty? %>
-      <%= render template: 'errors/500' %>
-    <% else %>
-      <%= render_header_sections %>
-      <%= turbo_frame_tag :flash do %>
-        <%= render('spree/shared/flashes') %>
-      <% end %>
-      <%= yield %>
-      <%= render_footer_sections %>
+    <%= render_header_sections %>
+    <%= turbo_frame_tag :flash do %>
+      <%= render('spree/shared/flashes') %>
     <% end %>
+    <%= yield %>
+    <%= render_footer_sections %>
 
     <%= current_store.storefront_custom_code_body_end&.html_safe %>
     <%= render_storefront_partials(:body_end_partials) %>

@@ -30,6 +30,10 @@ module Spree
         'footer'
       end
 
+      def lazy?
+        !Rails.env.test?
+      end
+
       def blocks_available?
         true
       end
