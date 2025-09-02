@@ -70,7 +70,7 @@ describe Spree::NewsletterSubscriber, type: :model do
   end
 
   describe 'verify' do
-    subject { described_class.verify(token) }
+    subject { described_class.verify(token: token) }
 
     context 'when subscriber is found' do
       let(:subscriber) { create(:newsletter_subscriber, :unverified) }
