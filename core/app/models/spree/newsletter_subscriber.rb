@@ -26,8 +26,8 @@ module Spree
       Spree::Newsletter::Subscribe.new(email: email, user: user).call
     end
 
-    def self.verify(verification_token)
-      subscriber = find_by!(verification_token: verification_token)
+    def self.verify(token:)
+      subscriber = unverified.find_by!(verification_token: token)
 
       Spree::Newsletter::Verify.new(subscriber: subscriber).call
     end
