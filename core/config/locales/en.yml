@@ -1354,7 +1354,7 @@ en:
     newsletter_mailer:
       email_confirmation:
         subject: Verify your email address
-        dear_customer: Hey %{name},
+        dear_customer: Hey,
         instructions: Please click the button below to verify your email address.
         verify_email_address_link: Verify email address
         thanks: Thank you
