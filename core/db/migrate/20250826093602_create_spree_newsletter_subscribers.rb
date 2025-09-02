@@ -1,4 +1,4 @@
-class CreateSpreeNewsletterSubscribers < ActiveRecord::Migration[8.0]
+class CreateSpreeNewsletterSubscribers < ActiveRecord::Migration[7.2]
   def change
     create_table :spree_newsletter_subscribers do |t|
       t.string :email, index: { unique: true }, null: false
