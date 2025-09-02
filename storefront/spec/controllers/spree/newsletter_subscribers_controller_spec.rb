@@ -80,23 +80,32 @@ RSpec.describe Spree::NewsletterSubscribersController, type: :controller do
       end
     end
 
-    context 'with existing user (when signed in as that user)' do
-      before do
-        allow(controller).to receive(:try_spree_current_user).and_return(user)
+    context 'with signed in user' do
+      context 'with the same email' do
+        before do
+          allow(controller).to receive(:try_spree_current_user).and_return(user)
+        end
+
+        it 'updates accepts_email_marketing for existing user' do
+          expect { request }.to change { user.reload.accepts_email_marketing }.to(true)
+        end
       end
 
-      it 'updates accepts_email_marketing for existing user' do
-        expect { request }.to change { user.reload.accepts_email_marketing }.to(true)
-      end
-    end
+      context 'with the different email' do
+        let(:another_user) { create(:user, email: 'another_user@example.com', accepts_email_marketing: false) }
 
-    context 'with existing user (when signed as another user)' do
-      before do
-        allow(controller).to receive(:try_spree_current_user).and_return(user)
-      end
+        before do
+          allow(controller).to receive(:try_spree_current_user).and_return(another_user)
+          user
+        end
 
-      it 'updates accepts_email_marketing for existing user' do
-        expect { request }.to change { user.reload.accepts_email_marketing }.to(true)
+        it 'does not update accepts_email_marketing for user with the same email' do
+          expect { request }.not_to change { user.reload.accepts_email_marketing }
+        end
+
+        it 'does not update accepts_email_marketing for the current user' do
+          expect { request }.not_to change { another_user.reload.accepts_email_marketing }
+        end
       end
     end
 
@@ -116,6 +125,56 @@ RSpec.describe Spree::NewsletterSubscribersController, type: :controller do
         subject
 
         expect(flash[:error]).to be_present
+      end
+    end
+  end
+
+  describe 'GET #verify' do
+    subject(:request) { get :verify, params: { token: token } }
+
+    let(:token) { '1234567890' }
+
+    context 'with valid token' do
+      before do
+        create(:newsletter_subscriber, :unverified, verification_token: token)
+      end
+
+      it 'verifies the newsletter subscriber' do
+        expect { request }.to change { Spree::NewsletterSubscriber.verified.count }.by(1)
+      end
+    end
+
+    context 'with already verified subscriber' do
+      before do
+        create(:newsletter_subscriber, :verified, verification_token: token)
+      end
+
+      it 'sets error flash message' do
+        subject
+
+        expect(flash[:alert]).to be_present
+      end
+
+      it 'redirects to root path for html format' do
+        request
+
+        expect(response).to redirect_to spree.root_path
+      end
+    end
+
+    context 'with invalid token' do
+      let(:token) { 'invalid-token' }
+
+      it 'sets error flash message' do
+        subject
+
+        expect(flash[:alert]).to be_present
+      end
+
+      it 'redirects to root path for html format' do
+        request
+
+        expect(response).to redirect_to spree.root_path
       end
     end
   end
