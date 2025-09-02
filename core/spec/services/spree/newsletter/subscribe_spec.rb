@@ -28,7 +28,7 @@ module Spree
       end
 
       it 'does not create a new record' do
-        expect { service }.not_to change { Spree::NewsletterSubscriber.verified.count }
+        expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
       end
     end
 
@@ -81,10 +81,6 @@ module Spree
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
       end
 
-      it 'does not regenerate verification token' do
-        expect { service }.not_to change { subscriber.reload.verification_token }
-      end
-
       it 'does not send a confirmation email' do
         expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
 
@@ -101,10 +97,6 @@ module Spree
 
       it 'does not create new subscriber' do
         expect { service }.not_to change(Spree::NewsletterSubscriber, :count)
-      end
-
-      it 'regenerates verification token' do
-        expect { service }.to change { subscriber.reload.verification_token }
       end
 
       it 'sends a confirmation email' do

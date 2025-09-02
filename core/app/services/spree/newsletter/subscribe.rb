@@ -16,9 +16,6 @@ module Spree
           if subscriber.email == user&.email
             # no need to verified since user email is already verified
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
-          elsif subscriber.previous_changes.blank?
-            # non verified subscriber already existed
-            subscriber.regenerate_verification_token
           end
         end
 
@@ -34,6 +31,8 @@ module Spree
       def upsert_subscriber
         @upsert_subscriber ||= Spree::NewsletterSubscriber.where(email: email).first_or_create do |new_record|
           new_record.user = Spree.user_class.find_by(email: new_record.email)
+        rescue ActiveRecord::RecordNotFound
+          retry
         end
       end
       alias_method :subscriber, :upsert_subscriber

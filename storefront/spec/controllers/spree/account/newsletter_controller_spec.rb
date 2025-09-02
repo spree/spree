@@ -52,12 +52,12 @@ RSpec.describe Spree::Account::NewsletterController, type: :controller do
 
       context 'with newsletter subscriber record' do
         before do
-          create(:newsletter_subscriber, email: user.email)
+          create(:newsletter_subscriber, email: user.email, user: user)
           create(:newsletter_subscriber, email: 'foo@bar.com')
         end
 
         it 'removes newsletter subscriber record' do
-          expect { subject }.to change { Spree::NewsletterSubscriber.where(email: user.email).count }.by(-1)
+          expect { subject }.to change { Spree::NewsletterSubscriber.where(email: user.email, user: user).count }.by(-1)
         end
       end
     end
