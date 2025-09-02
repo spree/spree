@@ -2,6 +2,7 @@ module Spree
   class NewsletterSubscribersController < StoreController
     skip_before_action :redirect_to_password
     before_action :load_newsletter_section, only: :create
+    rescue_from ActiveRecord::RecordNotFound, with: :subscriber_not_found
 
     # POST /newsletter_subscribers
     def create
@@ -24,7 +25,7 @@ module Spree
 
     # GET /newsletter_subscribers/verify?token=VERIFICATION_TOKEN
     def verify
-      subscriber = Spree::NewsletterSubscriberv.verify(token: params[:token])
+      subscriber = Spree::NewsletterSubscriber.verify(token: params[:token])
 
       if subscriber.verified?
         redirect_to spree.root_path, notice: Spree.t('storefront.newsletter_subscribers.verified')
@@ -34,6 +35,10 @@ module Spree
     end
 
     private
+
+    def subscriber_not_found
+      redirect_to spree.root_path, alert: Spree.t('storefront.newsletter_subscribers.verification_failed')
+    end
 
     def newsletter_params
       params.require(:newsletter).permit(:email)
