@@ -8,7 +8,7 @@
   </button>
   <div class="dropdown-menu" style="min-width: 300px">
     <% @theme.pages.standard.order(name: :asc).find_all(&:customizable?).each do |page| %>
-      <%= active_link_to spree.edit_admin_theme_path(@theme, theme_preview_id: @theme_preview.id, page_id: page.id), class: 'dropdown-item', active: @page == page do %>
+      <%= active_link_to spree.edit_admin_theme_path(@theme, theme_preview_id: @theme_preview.id, page_id: page.id), class: 'dropdown-item', active: @page == page, data: { turbo_prefetch: false } do %>
         <%= icon page.icon_name, class: 'mr-2' %>
         <%= page.display_name %>
       <% end %>
