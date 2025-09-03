@@ -58,6 +58,7 @@ const controllers = [
   'slideover-account',
   'slideover',
   'sticky-button',
+  'textarea-autogrow',
   'toggle-menu',
   'turbo-stream-form',
   'wished-item',
@@ -74,6 +75,7 @@ const manifest = {
   "reveal": "stimulus-reveal-controller",
   "scroll-to": "stimulus-scroll-to",
   "read-more": "stimulus-read-more",
+  "textarea-autogrow": "stimulus-textarea-autogrow"
 }
 
 import { lazyLoadControllersFromManifest } from "spree/storefront/helpers/lazy_load_controllers_with_manifest"

@@ -3,6 +3,7 @@ pin '@rails/request.js', to: '@rails--request.js.js', preload: ['application-spr
 pin 'tailwindcss-stimulus-components', preload: ['application-spree-storefront', 'application-spree-admin'] # @3.0.4
 pin 'stimulus-reveal-controller', preload: ['application-spree-admin'] # @4.1.0
 pin '@stimulus-components/auto-submit', to: '@stimulus-components--auto-submit.js', preload: ['application-spree-admin'] # @6.0.0
+pin 'stimulus-textarea-autogrow', preload: ['application-spree-admin'] # @4.1.0
 
 pin_all_from Spree::Core::Engine.root.join('app/javascript/spree/core/controllers'),
              under: 'spree/core/controllers',
