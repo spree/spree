@@ -42,7 +42,9 @@ en:
         guest_checkout:
           description: Allow customers to checkout without creating an account.
           label: Allow guest checkout
-        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
+        checkout_links:
+          label: Checkout links
+          description: Links to these pages will be displayed in the checkout footer.
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field

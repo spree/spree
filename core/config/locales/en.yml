@@ -103,7 +103,6 @@ en:
         name: Name
       spree/policy:
         body: Body
-        show_in_checkout_footer: Show in checkout footer
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency

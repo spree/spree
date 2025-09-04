@@ -31,7 +31,6 @@ describe 'Storefront API v2 Policies spec', type: :request do
         expect(json_response['data']['type']).to eq('policy')
         expect(json_response['data']['attributes']['name']).to eq(policy.name)
         expect(json_response['data']['attributes']['slug']).to eq(policy.slug)
-        expect(json_response['data']['attributes']['show_in_checkout_footer']).to eq(policy.show_in_checkout_footer)
         expect(json_response['data']['attributes']['body']).to eq(policy.body.to_plain_text)
         expect(json_response['data']['attributes']['body_html']).to eq(policy.body.to_s)
         expect(json_response['data']['attributes']['created_at']).to be_present

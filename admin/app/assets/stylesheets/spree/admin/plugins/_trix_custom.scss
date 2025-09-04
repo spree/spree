@@ -67,6 +67,11 @@ trix-toolbar .trix-button, trix-toolbar .trix-button-group {
   margin-bottom: 0 !important;
 }
 
+trix-toolbar .trix-button {
+  width: 32px !important;
+  height: 28px !important;
+  padding: 4px;
+}
 trix-toolbar .trix-button:hover {
   background-color: $border-color !important;
   color: theme-color('black') !important;

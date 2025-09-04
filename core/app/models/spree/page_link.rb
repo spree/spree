@@ -8,7 +8,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :parent, polymorphic: true, touch: true, counter_cache: true # Block or Section
+    belongs_to :parent, polymorphic: true, touch: true # Block or Section
     belongs_to :linkable, polymorphic: true, optional: true # Page, Product, etc.
     has_one :theme, through: :parent
 
