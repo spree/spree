@@ -3135,6 +3135,14 @@ components:
             display_inluded_tax_total:
               type: string
               example: $0.00
+            compare_at_amount:
+              type: string
+              example: '290.99'
+              description: 'Compare at price of the Line Item'
+            display_compare_at_amount:
+              type: string
+              example: $290.99
+              description: 'Display compare at price of the Line Item'
             public_metadata:
               type: object
               example:
@@ -5252,6 +5260,8 @@ components:
                       display_included_tax_total: $0.00
                       pre_tax_amount: '474.95'
                       display_pre_tax_amount: $474.95
+                      compare_at_amount: '599.99'
+                      display_compare_at_amount: $599.99
                     relationships:
                       variant:
                         data:
@@ -5669,6 +5679,8 @@ components:
                       display_included_tax_total: $0.00
                       pre_tax_amount: '474.95'
                       display_pre_tax_amount: $474.95
+                      compare_at_amount: '599.99'
+                      display_compare_at_amount: '$599.99'
                     relationships:
                       variant:
                         data:
