@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Policy, type: :model do
   let(:store) { Spree::Store.default }
-  let(:policy) { create(:policy, store: store) }
+  let(:policy) { create(:policy, owner: store) }
 
   describe 'validations' do
     context 'slug uniqueness' do
@@ -10,7 +10,7 @@ RSpec.describe Spree::Policy, type: :model do
 
       it 'allows same slug for different stores' do
         other_store = create(:store)
-        other_policy = create(:policy, store: other_store, slug: policy.slug)
+        other_policy = create(:policy, owner: other_store, slug: policy.slug)
         expect(other_policy.slug).to eq(policy.slug)
       end
     end
@@ -54,21 +54,10 @@ RSpec.describe Spree::Policy, type: :model do
   end
 
   describe 'scopes' do
-    describe '.show_in_checkout_footer' do
-      let!(:visible_policy) { create(:policy, show_in_checkout_footer: true) }
-      let!(:hidden_policy) { create(:policy, show_in_checkout_footer: false) }
-
-      it 'returns only policies that should be shown in checkout footer' do
-        result = described_class.show_in_checkout_footer
-        expect(result).to include(visible_policy)
-        expect(result).not_to include(hidden_policy)
-      end
-    end
-
     describe '.for_store' do
       let(:other_store) { create(:store) }
-      let!(:store1_policy) { create(:policy, store: store) }
-      let!(:store2_policy) { create(:policy, store: other_store) }
+      let!(:store1_policy) { create(:policy, owner: store) }
+      let!(:store2_policy) { create(:policy, owner: other_store) }
 
       it 'returns policies for specific store' do
         result = described_class.for_store(store)

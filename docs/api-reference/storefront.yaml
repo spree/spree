@@ -3350,10 +3350,6 @@ components:
               type: string
               example: terms-and-conditions
               description: URL-friendly identifier for the policy
-            show_in_checkout_footer:
-              type: boolean
-              example: true
-              description: Whether to display this policy in the checkout footer
             created_at:
               $ref: '#/components/schemas/Timestamp'
             updated_at:
@@ -3371,7 +3367,6 @@ components:
           required:
             - name
             - slug
-            - show_in_checkout_footer
             - created_at
             - updated_at
       required:
@@ -8777,7 +8772,6 @@ components:
                   attributes:
                     name: Terms and Conditions
                     slug: terms-and-conditions
-                    show_in_checkout_footer: true
                     created_at: '2025-08-12T12:13:09.183Z'
                     updated_at: '2025-08-12T13:27:59.470Z'
                     body: asdrdfas
@@ -15776,7 +15770,6 @@ components:
                     attributes:
                       name: Terms and Conditions
                       slug: terms-and-conditions
-                      show_in_checkout_footer: true
                       created_at: '2025-08-12T12:13:09.183Z'
                       updated_at: '2025-08-12T13:27:59.470Z'
                       body: asdrdfas
@@ -15786,7 +15779,6 @@ components:
                     attributes:
                       name: Privacy Policy
                       slug: privacy-policy
-                      show_in_checkout_footer: false
                       created_at: '2025-08-12T10:00:00.000Z'
                       updated_at: '2025-08-12T10:00:00.000Z'
                       body: Privacy policy content

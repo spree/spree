@@ -14,6 +14,7 @@ module Spree
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
+    include Spree::HasPageLinks
 
     #
     # Magic methods
@@ -111,7 +112,7 @@ module Spree
 
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
 
-    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy
+    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     #
     # Page Builder associations
@@ -125,6 +126,7 @@ module Spree
              inverse_of: :store,
              dependent: :destroy
     has_one :default_theme, -> { without_previews.where(default: true) }, class_name: 'Spree::Theme', inverse_of: :store
+    alias theme default_theme
     has_many :theme_pages, class_name: 'Spree::Page', through: :themes, source: :pages
     has_many :theme_page_previews, class_name: 'Spree::Page', through: :theme_pages, source: :previews
     has_many :pages, -> { without_previews.custom }, class_name: 'Spree::Pages::Custom', dependent: :destroy, as: :pageable

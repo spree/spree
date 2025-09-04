@@ -4,7 +4,7 @@ module Spree
       class PolicySerializer < BaseSerializer
         set_type :policy
 
-        attributes :name, :slug, :show_in_checkout_footer, :created_at, :updated_at
+        attributes :name, :slug, :created_at, :updated_at
 
         attribute :body do |object|
           object.body.to_plain_text

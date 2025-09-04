@@ -1,15 +1,12 @@
-<tr id="<%= spree_dom_id policy %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_policy_path(policy) %>">
-  <td class="w-10 move-handle text-center">
-    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+<tr id="<%= spree_dom_id policy %>" data-controller="row-link">
+  <td class="w-40 cursor-pointer" data-action="click->row-link#openLink">
+    <%= link_to policy.name, spree.edit_admin_policy_path(policy), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
-    <%= policy.name %>
-  </td>
-  <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
-    <%= link_to policy.slug, spree.edit_admin_policy_path(policy), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <code><%= policy.slug %></code>
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
-    <%= active_badge(policy.show_in_checkout_footer) %>
+    <%= active_badge(policy.with_body?) %>
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
     <%= spree_time(policy.updated_at) %>

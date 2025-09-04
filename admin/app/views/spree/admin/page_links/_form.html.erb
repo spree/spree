@@ -1,4 +1,4 @@
-<% data_action = (@page_link.persisted? ? { action: 'blur->auto-submit#submit' } : {}) %>
+<% data_action = (@page_link.persisted? && !@page_link.parent.is_a?(Spree::Store) ? { action: 'blur->auto-submit#submit' } : {}) %>
 
 <div class="form-group">
   <%= f.label :linkable_type, 'Link' %>
@@ -9,8 +9,8 @@
 <hr class="my-4" />
 
 <div class="form-group">
-  <%= f.label :label, 'Name' %>
-  <%= f.text_field :label, class: 'form-control', data: data_action, placeholder: 'eg. About us', required: true %>
+  <%= f.label :label, Spree.t(:name) %>
+  <%= f.text_field :label, class: 'form-control', data: data_action, required: true %>
 </div>
 
 <div class="custom-control custom-checkbox">
