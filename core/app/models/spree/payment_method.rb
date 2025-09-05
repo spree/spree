@@ -22,12 +22,10 @@ module Spree
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
 
-    with_options dependent: :restrict_with_error do
-      has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
-      has_many :credit_cards, class_name: 'Spree::CreditCard'
-    end
+    has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
+    has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
 
-    has_many :gateway_customers, class_name: 'Spree::GatewayCustomer'
+    has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
 
     def self.providers
       Rails.application.config.spree.payment_methods
