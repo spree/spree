@@ -10,7 +10,7 @@ module Spree
         attributes :amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_name, :state, :public_metadata
 
         attribute :payment_method_id do |payment|
-          payment.payment_method_id.to_s
+          payment.payment_method_id&.to_s
         end
       end
     end

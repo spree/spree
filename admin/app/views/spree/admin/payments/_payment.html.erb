@@ -10,7 +10,7 @@
       <% end %>
       <%= Spree.t('payment_states.' + payment.state) %>
     </span>
-    <% if payment.payment_method.payment_icon_name.present? %>
+    <% if payment.payment_method.present? && payment.payment_method.payment_icon_name.present? %>
       <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
     <% end %>
     <strong><%= payment.number.upcase %></strong>
@@ -28,13 +28,13 @@
           <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_gift_card_path(payment.source.originator), class: 'dropdown-item' %>
         <% end %>
 
-        <% if can?(:update, payment) && (payment.checkout? || payment.pending?) %>
+        <% if can?(:update, payment) && (payment.checkout? || payment.pending?) && payment.payment_method.present? %>
           <%= link_to_with_icon 'check', Spree.t(:capture), spree.capture_admin_order_payment_path(@order, payment), class: 'dropdown-item', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
         <% end %>
-        <% if can?(:refund, @order) && payment.completed? && payment.can_credit? %>
+        <% if can?(:refund, @order) && payment.completed? && payment.can_credit? && payment.payment_method.present? %>
           <%= link_to_with_icon 'credit-card-refund', Spree.t(:refund), spree.new_admin_order_payment_refund_path(@order, payment), class: 'dropdown-item' %>
         <% end %>
-        <% if can?(:cancel, payment) && payment.pending? %>
+        <% if can?(:cancel, payment) && payment.pending? && payment.payment_method.present? %>
           <div class="dropdown-divider"></div>
           <%= link_to_with_icon 'cancel', Spree.t(:void), spree.void_admin_order_payment_path(@order, payment), class: 'dropdown-item btn-danger', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
         <% end %>
@@ -52,7 +52,7 @@
         <strong><%= payment.display_amount %></strong>
 
         <p class="mb-1 mt-2"><%= Spree.t(:payment_method) %>:</p>
-        <strong><%= link_to payment.payment_method.name, spree.admin_payment_method_path(payment.payment_method) %></strong>
+        <strong><%= payment_method_name(payment) %></strong>
 
         <% if payment.transaction_id.present? %>
           <p class="mb-1 mt-2">

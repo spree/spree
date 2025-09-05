@@ -2,6 +2,8 @@ module Spree
   module Admin
     module PaymentsHelper
       def payment_method_name(payment)
+        return unless payment.payment_method.present?
+
         payment_method = payment.payment_method
 
         if can?(:update, payment_method)

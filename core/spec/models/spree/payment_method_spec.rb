@@ -184,4 +184,18 @@ describe Spree::PaymentMethod, type: :model do
   describe '#payment_icon_name' do
     it { expect(build(:credit_card_payment_method, type: 'Spree::Gateway::AuthorizeNetGateway').payment_icon_name).to eq('authorizenet') }
   end
+
+  context 'when payment method is destroyed' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let!(:payment) { create(:payment, payment_method: payment_method, source: credit_card) }
+    let!(:credit_card) { create(:credit_card, payment_method: payment_method) }
+    let!(:gateway_customer) { create(:gateway_customer, payment_method: payment_method) }
+
+    it 'destroys the payment method' do
+      expect { payment_method.destroy }.to change(Spree::PaymentMethod, :count).by(-1).and change(Spree::CreditCard, :count).by(-1).and change(Spree::GatewayCustomer, :count).by(-1)
+      expect(payment.reload.payment_method).to be_nil
+      expect(credit_card.reload.payment_method).to be_nil
+      expect(credit_card.reload.deleted_at).not_to be_nil
+    end
+  end
 end

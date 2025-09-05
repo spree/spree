@@ -20,7 +20,7 @@
           <%= @order.display_gift_card_total %>
         </div>
       </div>
-    <% elsif payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
+    <% elsif payment.payment_method.present? && payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
       <div class="d-flex flex align-items-center items-center">
         <div><%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %></div>
         <div class="ml-3"><%= Spree.t(:store_credit_name) %></div>
@@ -31,7 +31,7 @@
       <%= payment_method_icon_tag source.class.to_s.demodulize.downcase, height: 30 %>
     </div>
     <div>
-      <% if payment.payment_method.respond_to?(:source_partial_name) %>
+      <% if payment.payment_method.present? && payment.payment_method.respond_to?(:source_partial_name) %>
         <%= render partial: "spree/payment_sources/#{payment.payment_method.source_partial_name}", locals: { payment: payment, source: source } %>
       <% elsif source.respond_to?(:name) %>
         <%= source.name %>
@@ -39,7 +39,7 @@
         <%= source.class.to_s.demodulize.downcase %>
       <% end %>
     </div>
-  <% else %>
+  <% elsif payment.payment_method.present? %>
     <div class="flex-shrink-0">
       <%= payment_method_icon_tag payment.payment_method.payment_icon_name %>
     </div>
