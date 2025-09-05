@@ -224,6 +224,10 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       let!(:payment) { create(:payment, payment_method: payment_method, source: credit_card, order: order, amount: order.total) }
       let!(:credit_card) { create(:credit_card, payment_method: payment_method) }
 
+      before do
+        payment_method.destroy
+      end
+
       it 'shows an order' do
         subject
         expect(response).to render_template(:edit)
