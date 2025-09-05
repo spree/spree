@@ -125,6 +125,15 @@ Before upgrading, please ensure you have the following prerequisites:
 
     And that's it! You can now login to the admin panel and storefront using your existing users.
   </Accordion>
+  <Accordion title="5. Migrate data to the new format">
+    In Spree 5 we changed a bit of the data in some models so you will need to run these commands to fix it:
+
+    #### Taxons
+
+    ```ruby
+    Spree::Taxon.all.each { |t| t.set_pretty_name; t.save }
+    ```
+  </Accordion>
 </AccordionGroup>
 
 ## Read the release notes
