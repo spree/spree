@@ -15,7 +15,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  context '#add_to_shipment' do
+  describe '#add_to_shipment' do
     let(:shipment) { order.shipments.first }
 
     context 'order is not completed' do
@@ -49,6 +49,8 @@ describe Spree::OrderInventory, type: :model do
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
 
+        expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
+
         # The before_save callback in LineItem would verify inventory
         line_item = Spree::Cart::AddItem.call(order: order, variant: variant, options: { shipment: shipment }).value
 
@@ -65,6 +67,8 @@ describe Spree::OrderInventory, type: :model do
 
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
+
+        expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
         line_item = Spree::Cart::AddItem.call(order: order, variant: variant).value
         subject.verify(shipment)
@@ -85,7 +89,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  context '#determine_target_shipment' do
+  describe '#determine_target_shipment' do
     let(:stock_location) { create :stock_location }
     let(:variant) { line_item.variant }
 
@@ -142,7 +146,7 @@ describe Spree::OrderInventory, type: :model do
       expect(subject.inventory_units.reload.sum(:quantity)).to eq 2
     end
 
-    context '#remove_from_shipment' do
+    describe '#remove_from_shipment' do
       let!(:shipment) { order.shipments.first }
       let!(:variant) { subject.variant }
       let!(:inventory_units_for_item) do
