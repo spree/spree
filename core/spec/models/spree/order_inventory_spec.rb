@@ -15,7 +15,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  describe '#add_to_shipment' do
+  context '#add_to_shipment' do
     let(:shipment) { order.shipments.first }
 
     context 'order is not completed' do
@@ -89,7 +89,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  describe '#determine_target_shipment' do
+  context '#determine_target_shipment' do
     let(:stock_location) { create :stock_location }
     let(:variant) { line_item.variant }
 
@@ -146,7 +146,7 @@ describe Spree::OrderInventory, type: :model do
       expect(subject.inventory_units.reload.sum(:quantity)).to eq 2
     end
 
-    describe '#remove_from_shipment' do
+    context '#remove_from_shipment' do
       let!(:shipment) { order.shipments.first }
       let!(:variant) { subject.variant }
       let!(:inventory_units_for_item) do
