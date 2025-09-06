@@ -258,4 +258,22 @@ namespace :core do
   task archive_products: :environment do |_t, _args|
     Spree::Product.where('discontinue_on <= ?', Time.current).where.not(status: 'archived').update_all(status: 'archived', updated_at: Time.current)
   end
+
+  desc 'Migrate newsletter subscribers'
+  task migrate_newsletter_subscribers: :environment do |_t, _args|
+    Spree.user_class.where(accepts_email_marketing: true).in_batches(of: 500) do |user_batch|
+      subscriber_attributes = user_batch.pluck(:id, :email, :updated_at).map do |id, email, updated_at|
+        {
+          email: Spree::NewsletterSubscriber.new(email: email).email, # normalized email
+          user_id: id,
+          verified_at: updated_at,
+          verification_token: nil,
+          updated_at: DateTime.current,
+          created_at: DateTime.current
+        }
+      end
+
+      Spree::NewsletterSubscriber.insert_all(subscriber_attributes.uniq { |attrs| attrs[:email] })
+    end
+  end
 end

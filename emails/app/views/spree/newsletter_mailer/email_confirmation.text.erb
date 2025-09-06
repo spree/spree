@@ -1,0 +1,9 @@
+<%= Spree.t('newsletter_mailer.email_confirmation.dear_customer') %>
+<%= Spree.t('newsletter_mailer.email_confirmation.instructions') %>
+
+<%= @confirm_email_url %>
+
+<%= Spree.t('newsletter_mailer.email_confirmation.ignore_disclaimer') %>
+============================================================
+<%= Spree.t('newsletter_mailer.email_confirmation.thanks') %>
+<%= Spree.t('newsletter_mailer.email_confirmation.store_team', store_name: current_store.name) %>

@@ -7,8 +7,7 @@ RSpec.describe Spree::Account::NewsletterController, type: :controller do
   render_views
 
   before do
-    allow(controller).to receive(:current_store).and_return(store)
-    allow(controller).to receive(:try_spree_current_user).and_return(user)
+    allow(controller).to receive_messages(current_store: store, try_spree_current_user: user)
   end
 
   describe 'GET #edit' do
@@ -34,6 +33,10 @@ RSpec.describe Spree::Account::NewsletterController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(user.reload.accepts_email_marketing).to be(true)
       end
+
+      it 'creates newsletter subscriber record' do
+        expect { subject }.to change { Spree::NewsletterSubscriber.where(email: user.email, user: user).count }.by(1)
+      end
     end
 
     context 'when user unsubscribes from the newsletter' do
@@ -45,6 +48,17 @@ RSpec.describe Spree::Account::NewsletterController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(user.reload.accepts_email_marketing).to be(false)
+      end
+
+      context 'with newsletter subscriber record' do
+        before do
+          create(:newsletter_subscriber, email: user.email, user: user)
+          create(:newsletter_subscriber, email: 'foo@bar.com')
+        end
+
+        it 'removes newsletter subscriber record' do
+          expect { subject }.to change { Spree::NewsletterSubscriber.where(email: user.email, user: user).count }.by(-1)
+        end
       end
     end
   end
