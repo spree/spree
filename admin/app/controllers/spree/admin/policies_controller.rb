@@ -6,7 +6,7 @@ module Spree
       private
 
       def collection
-        model_class.accessible_by(current_ability, :manage).order(:position)
+        model_class.accessible_by(current_ability, :manage)
       end
 
       def find_resource
