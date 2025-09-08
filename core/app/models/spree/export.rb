@@ -3,12 +3,6 @@ require 'csv'
 module Spree
   class Export < Spree.base_class
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
-    DATE_FIELD_SUFFIX_TO_PARSER = {
-      "_gt"   => :parse_to_beginning_of_day,
-      "_gteq" => :parse_to_beginning_of_day,
-      "_lt"   => :parse_to_end_of_day,
-      "_lteq" => :parse_to_end_of_day
-    }.freeze
 
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
@@ -218,21 +212,37 @@ module Spree
       params = raw_params.is_a?(Hash) ? raw_params.deep_stringify_keys : {}
 
       %w[created_at completed_at].each do |field|
-        DATE_FIELD_SUFFIX_TO_PARSER.each do |suffix, parser|
+        ["_gt", "_gteq", "_lt", "_lteq"].each do |suffix|
           key = "#{field}#{suffix}"
-          params[key] = send(parser, params[key]) if params[key].present?
+          value = params[key]
+          next unless value.present?
+
+          if date_only?(value)
+            boundary = ["_gt", "_gteq"].include?(suffix) ? :beginning_of_day : :end_of_day
+            params[key] = parse_to_day_boundary(value, boundary)
+          elsif value.is_a?(String)
+            params[key] = "" unless (Time.zone.parse(value) rescue nil)
+          end
         end
       end
 
       params
     end
 
-    def parse_to_beginning_of_day(value)
-      value.to_date&.in_time_zone(store.preferred_timezone).beginning_of_day.iso8601 rescue ""
+    def parse_to_day_boundary(value, boundary)
+      timezone = (store && store.preferred_timezone).presence || Time.zone.name || 'UTC'
+
+      begin
+        date = value.respond_to?(:to_date) ? value.to_date : Date.parse(value.to_s)
+        datetime = date.in_time_zone(timezone)
+        boundary == :beginning_of_day ? datetime.beginning_of_day.iso8601 : boundary == :end_of_day ? datetime.end_of_day.iso8601 : ""
+      rescue StandardError
+        ""
+      end
     end
 
-    def parse_to_end_of_day(value)
-      value.to_date&.in_time_zone(store.preferred_timezone).end_of_day.iso8601 rescue ""
+    def date_only?(value)
+      value.is_a?(String) && /\A\d{4}-\d{2}-\d{2}\z/.match?(value)
     end
   end
 end
