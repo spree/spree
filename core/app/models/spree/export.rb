@@ -148,17 +148,20 @@ module Spree
     def normalize_search_params
       return if search_params.blank?
 
-      if search_params.is_a?(Hash)
-        params_hash = search_params.deep_dup
-        self.search_params = normalize_date_filters(params_hash).to_json
-      else
-        begin
-          params_hash = JSON.parse(search_params.to_s)
-          self.search_params = normalize_date_filters(params_hash).to_json
-        rescue JSON::ParserError
-          # keep original input
+      params_hash =
+        case search_params
+        when Hash
+          search_params.deep_dup
+        else
+          begin
+            JSON.parse(search_params.to_s)
+          rescue JSON::ParserError => e
+            self.search_params = nil
+            return
+          end
         end
-      end
+
+      self.search_params = normalize_date_filters(params_hash).to_json if params_hash.present?
     end
 
     def current_ability

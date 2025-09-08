@@ -114,10 +114,10 @@ RSpec.describe Spree::Export, :job, type: :model do
     end
 
     context 'with invalid JSON string' do
-      it 'preserves the original string' do
+      it 'sets search_params to nil to avoid crashes' do
         export.search_params = '{invalid: json'
         expect { export.normalize_search_params }.not_to raise_error
-        expect(export.search_params).to eq('{invalid: json')
+        expect(export.search_params).to be_nil
       end
     end
 
