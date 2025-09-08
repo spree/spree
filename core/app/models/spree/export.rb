@@ -147,15 +147,18 @@ module Spree
     # - Handles malformed input gracefully
     def normalize_search_params
       return if search_params.blank?
-      params_hash =
-        case search_params
-        when Hash
-          search_params.deep_dup
-        else
-          JSON.parse(search_params.to_s) rescue {}
-        end
 
-      self.search_params = normalize_date_filters(params_hash).to_json
+      if search_params.is_a?(Hash)
+        params_hash = search_params.deep_dup
+        self.search_params = normalize_date_filters(params_hash).to_json
+      else
+        begin
+          params_hash = JSON.parse(search_params.to_s)
+          self.search_params = normalize_date_filters(params_hash).to_json
+        rescue JSON::ParserError
+          # keep original input
+        end
+      end
     end
 
     def current_ability
@@ -222,11 +225,11 @@ module Spree
     end
 
     def parse_to_beginning_of_day(value)
-      value.to_date&.in_time_zone(store.preferred_timezone).beginning_of_day.iso8601
+      value.to_date&.in_time_zone(store.preferred_timezone).beginning_of_day.iso8601 rescue ""
     end
 
     def parse_to_end_of_day(value)
-      value.to_date&.in_time_zone(store.preferred_timezone).end_of_day.iso8601
+      value.to_date&.in_time_zone(store.preferred_timezone).end_of_day.iso8601 rescue ""
     end
   end
 end
