@@ -3,6 +3,12 @@ require 'csv'
 module Spree
   class Export < Spree.base_class
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
+    DATE_FIELD_SUFFIX_TO_PARSER = {
+      "_gt"   => :parse_to_beginning_of_day,
+      "_gteq" => :parse_to_beginning_of_day,
+      "_lt"   => :parse_to_end_of_day,
+      "_lteq" => :parse_to_end_of_day
+    }.freeze
 
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
@@ -42,7 +48,7 @@ module Spree
     # Callbacks
     #
     before_validation :set_default_format, on: :create
-    before_validation :normalize_search_params, on: :create, if: -> { search_params.present? }
+    before_save :normalize_search_params, if: -> { search_params.present? }
     before_create :clear_search_params, if: -> { record_selection == 'all' }
     after_commit :generate_async, on: :create
 
@@ -141,19 +147,15 @@ module Spree
     # - Handles malformed input gracefully
     def normalize_search_params
       return if search_params.blank?
+      params_hash =
+        case search_params
+        when Hash
+          search_params.deep_dup
+        else
+          JSON.parse(search_params.to_s) rescue {}
+        end
 
-      if search_params.is_a?(Hash)
-        self.search_params = search_params.to_json
-        return
-      end
-
-      begin
-        # It's a string, so we parse and re-dump to ensure consistency
-        parsed = JSON.parse(search_params.to_s)
-        self.search_params = parsed.to_json
-      rescue JSON::ParserError
-        # Leave as-is if not valid JSON string
-      end
+      self.search_params = normalize_date_filters(params_hash).to_json
     end
 
     def current_ability
@@ -204,6 +206,27 @@ module Spree
 
     def clear_search_params
       self.search_params = nil
+    end
+
+    def normalize_date_filters(raw_params)
+      params = raw_params.is_a?(Hash) ? raw_params.deep_stringify_keys : {}
+
+      %w[created_at completed_at].each do |field|
+        DATE_FIELD_SUFFIX_TO_PARSER.each do |suffix, parser|
+          key = "#{field}#{suffix}"
+          params[key] = send(parser, params[key]) if params[key].present?
+        end
+      end
+
+      params
+    end
+
+    def parse_to_beginning_of_day(value)
+      value.to_date&.in_time_zone(store.preferred_timezone).beginning_of_day.iso8601
+    end
+
+    def parse_to_end_of_day(value)
+      value.to_date&.in_time_zone(store.preferred_timezone).end_of_day.iso8601
     end
   end
 end

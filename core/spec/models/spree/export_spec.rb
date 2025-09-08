@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Export, :job, type: :model do
-  let(:store) { create(:store, code: 'my-store') }
+  let(:store) { create(:store, code: 'my-store', preferred_timezone: 'UTC') }
   let(:user) { create(:admin_user) }
 
   let(:search_params) { nil }
@@ -135,6 +135,34 @@ RSpec.describe Spree::Export, :job, type: :model do
         original = export.search_params.dup
         export.normalize_search_params
         expect(export.search_params).to eq(original)
+      end
+    end
+
+    context "date normalization" do
+      it "expands a completed_at same-day filter to cover the whole day" do
+        export.update(search_params: { completed_at_gt: "2025-09-07", completed_at_lt: "2025-09-07" })
+        export.normalize_search_params
+        params = JSON.parse(export.search_params)
+
+        expect(Time.iso8601(params["completed_at_gt"])).to eq(Time.zone.parse("2025-09-07 00:00:00 #{export.store.preferred_timezone}"))
+        expect(Time.iso8601(params["completed_at_lt"])).to eq(Time.zone.parse("2025-09-07 23:59:59 #{export.store.preferred_timezone}"))
+      end
+
+      it "expands a created_at same-day filter to cover the whole day" do
+        export.update(search_params: { created_at_gteq: "2026-01-15", created_at_lteq: "2026-01-15" })
+        export.normalize_search_params
+        params = JSON.parse(export.search_params)
+
+        expect(Time.iso8601(params["created_at_gteq"])).to eq(Time.zone.parse("2026-01-15 00:00:00 #{export.store.preferred_timezone}"))
+        expect(Time.iso8601(params["created_at_lteq"])).to eq(Time.zone.parse("2026-01-15 23:59:59 #{export.store.preferred_timezone}"))
+      end
+
+      it "drops invalid dates instead of crashing" do
+        export.update(search_params: { completed_at_gt: "not-a-date" })
+        export.normalize_search_params
+        params = JSON.parse(export.search_params)
+
+        expect(params["completed_at_gt"]).to eq("")
       end
     end
   end
