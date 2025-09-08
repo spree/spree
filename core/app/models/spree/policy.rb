@@ -35,8 +35,8 @@ module Spree
     #
     # Scopes
     #
-    scope :with_body, -> { where.not(body: nil) }
-    scope :without_body, -> { where(body: nil) }
+    scope :with_body,    -> { joins(:rich_text_body).distinct }
+    scope :without_body, -> { where.missing(:rich_text_body) }
 
     #
     #  Ransack
