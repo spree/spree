@@ -10,7 +10,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
   end
 
   describe 'policies#index' do
-    let!(:other_store_policy) { create(:policy, slug: 'other-store-policy', store: other_store) }
+    let!(:other_store_policy) { create(:policy, slug: 'other-store-policy', owner: other_store) }
 
     before { get '/api/v2/storefront/policies' }
 
@@ -49,7 +49,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
 
     context 'with locale set to pl' do
       let!(:localized_policy) do
-        policy = create(:policy, store: store, slug: 'localized-policy', name: 'Privacy Policy EN')
+        policy = create(:policy, owner: store, slug: 'localized-policy', name: 'Privacy Policy EN')
 
         I18n.with_locale(:pl) do
           policy.name = 'Polityka Prywatności'
@@ -93,7 +93,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
     end
 
     context 'accessing policy from different store' do
-      let(:other_store_policy) { create(:policy, store: other_store, slug: 'other-policy') }
+      let(:other_store_policy) { create(:policy, owner: other_store, slug: 'other-policy') }
 
       before { get "/api/v2/storefront/policies/#{other_store_policy.slug}" }
 
