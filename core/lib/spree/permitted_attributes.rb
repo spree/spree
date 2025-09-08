@@ -144,7 +144,7 @@ module Spree
 
     @@payment_method_attributes = [:name, :type, :description, :active, :display_on, :auto_capture, :position]
 
-    @@policy_attributes = [:name, :slug, :body, :show_in_checkout_footer, :position]
+    @@policy_attributes = [:name, :slug, :body]
 
     @@post_attributes = [:title, :meta_title, :meta_description, :slug, :author_id, :post_category_id, :published_at, :content, :excerpt, :image, tag_list: []]
 

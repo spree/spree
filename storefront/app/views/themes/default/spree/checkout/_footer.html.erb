@@ -1,8 +1,8 @@
 <% cache spree_storefront_base_cache_scope.call(current_store) do %>
-  <% if current_store.policies.show_in_checkout_footer.any? %>
+  <% if current_store.policies.any? %>
     <div class="flex flex-col gap-4 text-sm">
       <ul class="flex justify-center flex-wrap gap-4">
-        <% current_store.policies.show_in_checkout_footer.order(:position).each do |policy| %>
+        <% current_store.policies.each do |policy| %>
           <%= link_to policy.name, spree.policy_path(policy), target: '_blank' %>
         <% end %>
       </ul>

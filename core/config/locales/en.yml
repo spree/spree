@@ -103,7 +103,7 @@ en:
         name: Name
       spree/policy:
         body: Body
-        show_in_checkout_footer: Show in checkout footer
+        owner: Policy for
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -1067,6 +1067,7 @@ en:
     field: Field
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filled: Filled
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable

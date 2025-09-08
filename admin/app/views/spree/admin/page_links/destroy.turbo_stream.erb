@@ -1,11 +1,15 @@
-<%= turbo_stream.replace :page_sidebar do %>
-  <% if @page_link.parent.is_a?(Spree::PageSection) %>
-    <% @page_section = @page_link.parent %>
-    <%= render template: 'spree/admin/page_sections/edit' %>
-  <% elsif @page_link.parent.is_a?(Spree::PageBlock) %>
-    <% @page_block = @page_link.parent %>
-    <%= render template: 'spree/admin/page_blocks/edit' %>
+<% if @page_link.parent.is_a?(Spree::Store) %>
+  <%= turbo_stream.remove spree_dom_id(@page_link) %>
+<% else %>
+  <%= turbo_stream.replace :page_sidebar do %>
+    <% if @page_link.parent.is_a?(Spree::PageSection) %>
+      <% @page_section = @page_link.parent %>
+      <%= render template: 'spree/admin/page_sections/edit' %>
+    <% elsif @page_link.parent.is_a?(Spree::PageBlock) %>
+      <% @page_block = @page_link.parent %>
+      <%= render template: 'spree/admin/page_blocks/edit' %>
+    <% end %>
   <% end %>
-<% end %>
 
-<%= render 'spree/admin/page_links/refresh_theme_preview' %>
+  <%= render 'spree/admin/page_links/refresh_theme_preview' %>
+<% end %>

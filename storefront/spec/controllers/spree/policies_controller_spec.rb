@@ -10,7 +10,7 @@ describe Spree::PoliciesController, type: :controller do
   end
 
   describe 'GET #show' do
-    let(:policy) { create(:policy, store: store) }
+    let(:policy) { create(:policy, owner: store) }
 
     it 'renders the policy' do
       get :show, params: { id: policy.slug }

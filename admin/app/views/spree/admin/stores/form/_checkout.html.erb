@@ -2,12 +2,6 @@
 <%= Spree.t(:checkout) %> <%= Spree.t(:settings) %>
 <% end %>
 
-<div class="alert alert-info mb-3">
-  <p>
-    <%= Spree.t('admin.checkout_settings.policy_copy', policies_link: link_to(Spree.t(:policies), spree.admin_policies_path, class: 'alert-link')).html_safe %>
-  </p>
-</div>
-
 <div class="card mb-4">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:settings) %></h5>
@@ -27,5 +21,20 @@
 
   <div class="card-body">
     <%= f.spree_rich_text_area :checkout_message, label: false, help: Spree.t('admin.checkout_settings.checkout_message_description') %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
+  </div>
+
+  <div class="card-body">
+    <div class="alert alert-info">
+      <div>
+        <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
+      </div>
+    </div>
+    <%= render 'spree/admin/stores/form/checkout_links' %>
   </div>
 </div>

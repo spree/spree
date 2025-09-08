@@ -64,6 +64,16 @@ RSpec.describe Spree::Admin::PageLinksController, type: :controller do
         expect(page_block.links.last.linkable).to be_a Spree::Pages::Homepage
       end
     end
+
+    context 'for store checkout' do
+      subject :post_create do
+        post :create, params: { store_id: store.id }, as: :turbo_stream
+      end
+
+      it 'creates a new page link' do
+        expect { post_create }.to change { store.page_links.count }.by 1
+      end
+    end
   end
 
   describe '#edit' do

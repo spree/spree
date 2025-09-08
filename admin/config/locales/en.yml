@@ -38,11 +38,13 @@ en:
             add_tags: Add tags
             remove_tags: Remove tags
       checkout_settings:
+        checkout_links:
+          description: Links to these pages will be displayed in the checkout footer.
+          label: Checkout links
         checkout_message_description: Visible to your customers on the checkout page in the right sidebar.
         guest_checkout:
           description: Allow customers to checkout without creating an account.
           label: Allow guest checkout
-        policy_copy: Checkout footer links are added automatically based on the %{policies_link} content.
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
