@@ -4,7 +4,7 @@ module Spree
       include Spree::ImagesHelper
 
       def available_stores
-        @available_stores ||= Spree::Store.accessible_by(current_ability).includes(:logo_attachment, :favicon_image_attachment, :default_custom_domain)
+        @available_stores ||= Spree::Store.accessible_by(current_ability, :manage).includes(:logo_attachment, :favicon_image_attachment, :default_custom_domain)
       end
 
       DEFAULT_ICON_SIZE = 40

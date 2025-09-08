@@ -13,6 +13,10 @@ module Spree
 
       private
 
+      def find_resource
+        model_class.accessible_by(current_ability, :manage).find(params[:id])
+      end
+
       def collection_url
         @collection_url ||= if @parent.is_a?(Spree::PageSection)
                               spree.edit_admin_page_section_path(@parent)
@@ -20,8 +24,6 @@ module Spree
                               spree.edit_admin_page_section_block_path(@parent.section, @parent)
                             elsif @parent.is_a?(Spree::Store)
                               spree.edit_admin_store_path(section: :checkout)
-                            else
-                              [:admin, @parent, :links]
                             end
       end
 

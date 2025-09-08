@@ -35,33 +35,6 @@
         <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
       </div>
     </div>
-    <div>
-      <% if @store.links.any? %>
-        <ul class="list-group mb-3"
-            data-controller="sortable"
-            data-sortable-handle-value=".handle"
-            data-sortable-resource-name-value="page_link"
-            data-sortable-response-kind-value="turbo-stream">
-          <% @store.links.each do |link| %>
-            <li class="list-group-item p-0"
-                data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
-            >
-              <%= turbo_frame_tag spree_dom_id(link), class: 'd-flex align-items-center w-100 py-2 px-3' do %>
-                <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'd-block text-dark flex-fill' %>
-                <button class="btn btn-sm pr-0 handle hover-light h-100 px-1">
-                  <%= icon 'grip-vertical', class: 'mr-0' %>
-                </button>
-              <% end %>
-            </li>
-          <% end %>
-        </ul>
-      <% else %>
-        <p class="text-muted text-center p-5">
-          <%= Spree.t(:no_resource_found, resource: Spree::PageLink.model_name.human) %>
-        </p>
-      <% end %>
-
-      <%= link_to_with_icon 'plus', Spree.t(:add_link), spree.admin_page_link_path(@store), class: 'btn btn-primary w-100', data: { turbo_method: :post } %>
-    </div>
+    <%= render 'spree/admin/stores/form/checkout_links' %>
   </div>
 </div>
