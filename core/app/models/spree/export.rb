@@ -212,17 +212,12 @@ module Spree
       params = raw_params.is_a?(Hash) ? raw_params.deep_stringify_keys : {}
 
       %w[created_at completed_at].each do |field|
-        ["_gt", "_gteq", "_lt", "_lteq"].each do |suffix|
+        ['_gt', '_gteq', '_lt', '_lteq'].each do |suffix|
           key = "#{field}#{suffix}"
           value = params[key]
           next unless value.present?
 
-          if date_only?(value)
-            boundary = ["_gt", "_gteq"].include?(suffix) ? :beginning_of_day : :end_of_day
-            params[key] = parse_to_day_boundary(value, boundary)
-          elsif value.is_a?(String)
-            params[key] = "" unless (Time.zone.parse(value) rescue nil)
-          end
+          params[key] = normalize_single_date_filter(value, suffix)
         end
       end
 
@@ -230,14 +225,38 @@ module Spree
     end
 
     def parse_to_day_boundary(value, boundary)
-      timezone = (store && store.preferred_timezone).presence || Time.zone.name || 'UTC'
+      timezone = store&.preferred_timezone.presence || Time.zone.name || 'UTC'
 
       begin
         date = value.respond_to?(:to_date) ? value.to_date : Date.parse(value.to_s)
         datetime = date.in_time_zone(timezone)
-        boundary == :beginning_of_day ? datetime.beginning_of_day.iso8601 : boundary == :end_of_day ? datetime.end_of_day.iso8601 : ""
+
+        case boundary
+        when :beginning_of_day
+          datetime.beginning_of_day.iso8601
+        when :end_of_day
+          datetime.end_of_day.iso8601
+        else
+          ''
+        end
       rescue StandardError
-        ""
+        ''
+      end
+    end
+
+    def normalize_single_date_filter(value, suffix)
+      if date_only?(value)
+        boundary = ['_gt', '_gteq'].include?(suffix) ? :beginning_of_day : :end_of_day
+        parse_to_day_boundary(value, boundary)
+      elsif value.is_a?(String)
+        begin
+          parsed = Time.zone.parse(value)
+          parsed ? value : ''
+        rescue StandardError
+          ''
+        end
+      else
+        value
       end
     end
 
