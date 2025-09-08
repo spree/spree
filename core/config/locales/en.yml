@@ -103,6 +103,7 @@ en:
         name: Name
       spree/policy:
         body: Body
+        owner: Policy for
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency

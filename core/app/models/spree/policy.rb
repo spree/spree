@@ -41,7 +41,7 @@ module Spree
     #
     #  Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[name]
+    self.whitelisted_ransackable_attributes = %w[name owner_type owner_id]
 
     def page_builder_url
       return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:policy_path)
