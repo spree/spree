@@ -5,8 +5,6 @@ module Spree
 
     UNIQUENESS_SCOPE = %i[owner_id owner_type].freeze
 
-    acts_as_list scope: UNIQUENESS_SCOPE
-
     #
     # FriendlyId
     #
