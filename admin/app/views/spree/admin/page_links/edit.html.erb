@@ -1,5 +1,5 @@
 <% if @page_link.parent.is_a?(Spree::Store) %>
-  <%= turbo_frame_tag spree_dom_id(@page_link) do %>
+  <%= turbo_frame_tag spree_dom_id(@page_link), class: 'd-flex align-items-center w-100 py-2 px-3' do %>
     <%= link_to collection_url, class: 'btn-close position-absolute top-0 right-0 mt-1 mr-1' do %>
       <%= icon 'x', class: 'mr-0' %>
     <% end %>
