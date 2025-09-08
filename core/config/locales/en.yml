@@ -1066,6 +1066,7 @@ en:
     field: Field
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filled: Filled
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable
