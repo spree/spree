@@ -4,7 +4,7 @@ class FixPoliciesStoreAssociation < ActiveRecord::Migration[7.2]
 
     Spree::Policy.reset_column_information
     Spree::Policy.all.each do |policy|
-      policy.update(owner: policy.store)
+      policy.update(owner_id: policy.store_id, owner_type: 'Spree::Store')
     end
 
     remove_index :spree_policies, [:store_id, :slug], unique: true, if_exists: true
