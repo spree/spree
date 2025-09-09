@@ -153,6 +153,14 @@ describe Spree::Store, type: :model, without_global_store: true do
           expect(store.code).to match(/store-\d+/)
         end
       end
+
+      describe '#create_default_policies' do
+        let(:store) { build(:store) }
+
+        it 'creates default policies' do
+          expect { store.save! }.to change(Spree::Policy, :count).by(4).and change(store.links, :count).by(4)
+        end
+      end
     end
 
     describe '#set_url' do
