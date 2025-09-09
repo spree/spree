@@ -1,9 +1,13 @@
 <% cache spree_storefront_base_cache_scope.call(current_store) do %>
-  <% if current_store.policies.any? %>
+  <% if current_store.links.any? %>
     <div class="flex flex-col gap-4 text-sm">
       <ul class="flex justify-center flex-wrap gap-4">
-        <% current_store.policies.each do |policy| %>
-          <%= link_to policy.name, spree.policy_path(policy), target: '_blank' %>
+        <% current_store.links.each do |link| %>
+          <li>
+            <%= page_builder_link_to link, { target: ('_blank' if link.open_in_new_tab), rel: ('noopener noreferrer' if link.open_in_new_tab) } do %>
+              <%= link.label %>
+            <% end %>
+          </li>
         <% end %>
       </ul>
     </div>

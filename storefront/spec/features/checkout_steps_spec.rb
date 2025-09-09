@@ -621,6 +621,15 @@ describe 'Checkout steps (address and delivery)' do
         expect(page.current_path).to eq('/user/sign_in')
       end
     end
+
+    describe 'checkout links' do
+      let!(:link) { create(:page_link, parent: store) }
+
+      it 'shows checkout links' do
+        visit "/checkout/#{order.token}"
+        expect(page).to have_content(link.label)
+      end
+    end
   end
 
   def login_from_checkout
