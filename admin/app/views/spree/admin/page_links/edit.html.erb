@@ -1,9 +1,9 @@
 <% if @page_link.parent.is_a?(Spree::Store) %>
-  <%= turbo_frame_tag spree_dom_id(@page_link), class: 'd-flex align-items-center w-100 py-2 px-3' do %>
-    <%= link_to collection_url, class: 'btn-close position-absolute top-0 right-0 mt-1 mr-1' do %>
+  <%= turbo_frame_tag spree_dom_id(@page_link), class: 'd-flex align-items-center w-100 py-2 pl-3 pr-2' do %>
+    <%= link_to collection_url, class: 'btn-close position-absolute top-0 right-0 mt-2 mr-2' do %>
       <%= icon 'x', class: 'mr-0' %>
     <% end %>
-    <%= form_for @page_link, url: spree.admin_page_link_path(@page_link), data: { controller: 'auto-submit' }, html: { class: 'w-100 mt-2' } do |f| %>
+    <%= form_for @page_link, url: spree.admin_page_link_path(@page_link), data: { controller: 'auto-submit' }, html: { class: 'w-100 mt-2 mr-1 mb-2' } do |f| %>
       <%= render 'spree/admin/page_links/form', f: f %>
       <hr class="my-3">
       <%= render 'spree/admin/shared/edit_resource_links', f: f %>
