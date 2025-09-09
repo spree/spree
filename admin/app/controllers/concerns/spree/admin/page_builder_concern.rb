@@ -8,11 +8,11 @@ module Spree
       end
 
       def set_variables
-        @theme_preview = current_store.theme_previews.find(session[:theme_preview_id]) if session[:theme_preview_id].present?
-        @theme = @theme_preview.parent if @theme_preview
-        if session[:page_preview_id].present?
+        @theme_preview = current_store.theme_previews.find_by(id: session[:theme_preview_id]) if session[:theme_preview_id].present?
+        @theme = @theme_preview.present? ? @theme_preview.parent : current_store.default_theme
+        if @theme.present? && session[:page_preview_id].present?
           @page_preview = @theme.page_previews.find_by(id: session[:page_preview_id]) ||
-                            current_store.page_previews.find(session[:page_preview_id])
+                            current_store.page_previews.find_by(id: session[:page_preview_id])
         end
         @page = @page_preview.parent if @page_preview
       end
