@@ -521,21 +521,14 @@ module Spree
     end
 
     def create_default_policies
-      policies.find_or_initialize_by(name: Spree.t('terms_of_service')) do |policy|
-        policy.body = Spree.t('terms_of_service')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('privacy_policy')) do |policy|
-        policy.body = Spree.t('privacy_policy')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('returns_policy')) do |policy|
-        policy.body = Spree.t('returns_policy')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('shipping_policy')) do |policy|
-        policy.body = Spree.t('shipping_policy')
-        policy.save!
+      policies.find_or_create_by(name: Spree.t('terms_of_service'))
+      policies.find_or_create_by(name: Spree.t('privacy_policy'))
+      policies.find_or_create_by(name: Spree.t('returns_policy'))
+      policies.find_or_create_by(name: Spree.t('shipping_policy'))
+
+      # Create checkout links to the policies
+      policies.each do |policy|
+        links.find_or_create_by(linkable: policy)
       end
     end
 
