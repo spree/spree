@@ -9,8 +9,6 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
   describe 'GET #index' do
     subject(:index) { get :index }
 
-    let!(:policies) { create_list(:policy, 3, owner: store) }
-
     it 'renders the list of policies' do
       index
 
