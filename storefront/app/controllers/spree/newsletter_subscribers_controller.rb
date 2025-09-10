@@ -25,7 +25,11 @@ module Spree
 
     # GET /newsletter_subscribers/verify?token=VERIFICATION_TOKEN
     def verify
-      subscriber = Spree::NewsletterSubscriber.verify(token: params[:token])
+      raise ActiveRecord::RecordNotFound if params[:token].blank?
+
+      subscriber = ActiveRecord::Base.connected_to(role: :writing) do
+        Spree::NewsletterSubscriber.verify(token: params[:token])
+      end
 
       if subscriber.verified?
         redirect_to spree.root_path, notice: Spree.t('storefront.newsletter_subscribers.verified')
