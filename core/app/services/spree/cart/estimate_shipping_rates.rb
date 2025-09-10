@@ -9,7 +9,7 @@ module Spree
 
         packages = ::Spree::Stock::Coordinator.new(dummy_order).packages
         estimator = ::Spree::Stock::Estimator.new(dummy_order)
-        shipping_rates = if order.line_items.any? && packages.any?
+        shipping_rates = if order.item_count.positive? && packages.any?
                            estimator.shipping_rates(packages.first)
                          else
                            []
