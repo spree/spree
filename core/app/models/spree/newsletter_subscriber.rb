@@ -11,7 +11,7 @@ module Spree
     validates :email,
               presence: true,
               format: { with: URI::MailTo::EMAIL_REGEXP },
-              uniqueness: { case_sensitive: false }
+              uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope }
 
     scope :verified, -> { where.not(verified_at: nil) }
     scope :unverified, -> { where(verified_at: nil) }
