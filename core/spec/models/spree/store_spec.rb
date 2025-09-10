@@ -430,7 +430,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       include_context 'with checkout zone not set'
 
       it 'returns list of all countries' do
-        checkout_available_countries_ids = subject.countries_available_for_checkout.ids
+        checkout_available_countries_ids = subject.countries_available_for_checkout.pluck(:id)
         all_countries_ids                = Spree::Country.all.ids
 
         expect(checkout_available_countries_ids).to eq(all_countries_ids)
