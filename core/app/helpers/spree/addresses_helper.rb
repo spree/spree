@@ -67,16 +67,22 @@ module Spree
     end
 
     def current_store_countries_with_states_ids
-      @current_store_countries_with_states_ids ||= current_store.countries_available_for_checkout.where(states_required: true).includes(:states).each_with_object([]) do |country, memo|
+      Spree::Deprecation.warn('current_store_countries_with_states_ids is deprecated and will be removed in Spree 5.3')
+
+      @current_store_countries_with_states_ids ||= current_store.countries_available_for_checkout.find_all { |country| country.states_required? }.each_with_object([]) do |country, memo|
         memo << current_store.states_available_for_checkout(country)
       end.flatten.pluck(:country_id)
     end
 
     def current_store_countries_without_states_ids
-      @current_store_countries_without_states_ids ||= current_store.countries_available_for_checkout.where(states_required: false).ids
+      Spree::Deprecation.warn('current_store_countries_without_states_ids is deprecated and will be removed in Spree 5.3')
+
+      @current_store_countries_without_states_ids ||= current_store.countries_available_for_checkout.find_all { |country| !country.states_required? }.pluck(:id)
     end
 
     def current_store_supported_countries_ids
+      Spree::Deprecation.warn('current_store_supported_countries_ids is deprecated and will be removed in Spree 5.3')
+
       @current_store_supported_countries_ids ||= Rails.cache.fetch(['current_store_supported_countries_ids', current_store]) do
         (current_store_countries_with_states_ids + current_store_countries_without_states_ids).uniq
       end
@@ -90,7 +96,7 @@ module Spree
           addresses.
           includes(:country, :state).
           not_quick_checkout.
-          where(country_id: current_store_supported_countries_ids).
+          where(country_id: current_store.countries_available_for_checkout.pluck(:id)).
           includes(:user)
       end
     end
