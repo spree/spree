@@ -177,5 +177,21 @@ RSpec.describe Spree::NewsletterSubscribersController, type: :controller do
         expect(response).to redirect_to spree.root_path
       end
     end
+
+    context 'with blank token' do
+      let(:token) { '' }
+
+      it 'sets error flash message' do
+        subject
+
+        expect(flash[:alert]).to be_present
+      end
+
+      it 'redirects to root path for html format' do
+        request
+
+        expect(response).to redirect_to spree.root_path
+      end
+    end
   end
 end
