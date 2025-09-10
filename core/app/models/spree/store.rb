@@ -329,12 +329,17 @@ module Spree
       formatted_custom_domain || formatted_url
     end
 
+    # Returns the countries available for checkout for the store or creates a new one if it doesn't exist
+    # @return [Array<Spree::Country>]
     def countries_available_for_checkout
       @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
         (checkout_zone.try(:country_list) || Spree::Country.all).to_a
       end
     end
 
+    # Returns the states available for checkout for the store or creates a new one if it doesn't exist
+    # @param country [Spree::Country] the country to get the states for
+    # @return [Array<Spree::State>]
     def states_available_for_checkout(country)
       Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
         (checkout_zone.try(:state_list_for, country) || country.states).to_a
