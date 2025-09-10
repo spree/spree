@@ -331,13 +331,13 @@ module Spree
 
     def countries_available_for_checkout
       @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
-        checkout_zone.try(:country_list) || Spree::Country.all
+        (checkout_zone.try(:country_list) || Spree::Country.all).to_a
       end
     end
 
     def states_available_for_checkout(country)
       Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
-        checkout_zone.try(:state_list_for, country) || country.states
+        (checkout_zone.try(:state_list_for, country) || country.states).to_a
       end
     end
 
