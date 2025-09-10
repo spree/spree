@@ -1351,6 +1351,16 @@ en:
     new_user: New User
     new_variant: New Variant
     new_zone: New Zone
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hey,
+        ignore_disclaimer: If you didn't request this, please ignore this email.
+        instructions: Please click the button below to verify your email address.
+        message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
+        store_team: "%{store_name} Team"
+        subject: Verify your email address
+        thanks: Thank you
+        verify_email_address_link: Verify email address
     newsletters: Newsletters
     next: Next
     no_actions_added: No actions added

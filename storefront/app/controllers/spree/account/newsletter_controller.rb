@@ -14,8 +14,10 @@ module Spree
         }
 
         if try_spree_current_user.accepts_email_marketing?
+          Spree::NewsletterSubscriber.subscribe(email: try_spree_current_user.email, user: try_spree_current_user)
           track_event('subscribed_to_newsletter', event_properties)
         else
+          Spree::NewsletterSubscriber.find_by(email: try_spree_current_user.email)&.destroy
           track_event('unsubscribed_from_newsletter', event_properties)
         end
       end

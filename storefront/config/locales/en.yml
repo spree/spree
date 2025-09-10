@@ -50,7 +50,10 @@ en:
         message_not_sent: Unfortunately we weren't able to send the email at this time. Please try again later
         message_sent: Message sent!
       newsletter_subscribers:
+        already_subscribed: You are already subscribed to our newsletter
         success: Thank you for subscribing to our newsletter!
+        verification_failed: Verification failed
+        verified: Your email has been verified!
       newsletter_subscription:
         description: Take control of your settings and tailor your experience according to your preferences. Customize your notifications to suit your needs.
         join: Email me about new products, sales, and more. You can unsubscribe at any time.
