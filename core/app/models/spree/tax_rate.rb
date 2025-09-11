@@ -115,6 +115,14 @@ module Spree
       compute(item)
     end
 
+    def included?
+      included_in_price
+    end
+
+    def additional?
+      !included_in_price
+    end
+
     private
 
     def label
