@@ -14,6 +14,13 @@ RSpec.describe Spree::Policy, type: :model do
         expect(other_policy.slug).to eq(policy.slug)
       end
     end
+
+    context 'owner presence' do
+      it 'is invalid without an owner' do
+        policy.owner = nil
+        expect(policy).to be_invalid
+      end
+    end
   end
 
   describe 'friendly_id' do
