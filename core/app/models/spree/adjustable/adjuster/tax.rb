@@ -3,9 +3,9 @@ module Spree
     module Adjuster
       class Tax < Spree::Adjustable::Adjuster::Base
         def update
-          tax_adjustments = adjustments.tax
-          included_tax_total = tax_adjustments.find_all(&:included?).map(&:reload).map(&:update!).compact.sum || 0
-          additional_tax_total = tax_adjustments.find_all(&:additional?).map(&:reload).map(&:update!).compact.sum || 0
+          tax = adjustments.tax
+          included_tax_total = tax.find_all(&:included?).map(&:reload).map(&:update!).compact.sum || 0
+          additional_tax_total = tax.find_all(&:additional?).map(&:reload).map(&:update!).compact.sum || 0
 
           update_totals(included_tax_total, additional_tax_total)
         end
