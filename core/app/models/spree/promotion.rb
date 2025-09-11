@@ -49,7 +49,7 @@ module Spree
     before_validation :downcase_code, if: -> { code.present? }
     before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
     after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
-    after_commit :remove_coupons, unless: -> { multi_codes? }, on: :update
+    after_commit :remove_coupons, on: :update
     before_destroy :not_used?
 
     #
@@ -193,7 +193,7 @@ module Spree
     # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
-      return [] if rules.none?
+      return [] if rules.to_a.none?
 
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
@@ -329,6 +329,9 @@ module Spree
     end
 
     def remove_coupons
+      return unless (saved_change_to_kind? && kind_was == 'coupon_code' && kind == 'automatic') ||
+                    (saved_change_to_multi_codes? && multi_codes_was == true && multi_codes == false)
+
       coupon_codes.where(deleted_at: nil).update_all(deleted_at: Time.current)
     end
 
