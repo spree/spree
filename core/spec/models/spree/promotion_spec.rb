@@ -6,7 +6,7 @@ describe Spree::Promotion, type: :model do
   let(:store) { @default_store }
   let(:promotion) { create(:promotion, kind: :automatic) }
 
-  describe 'validations' do
+  describe 'Validations' do
     let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
 
     it 'valid_promotion is valid' do
@@ -69,8 +69,8 @@ describe Spree::Promotion, type: :model do
     end
   end
 
-  describe 'callbacks' do
-    describe 'set_usage_limit_to_nil' do
+  describe 'Callbacks' do
+    describe '#set_usage_limit_to_nil' do
       let(:promotion) { create(:promotion, kind: :coupon_code, usage_limit: 100) }
 
       context 'when promo has one code for all customers' do
@@ -87,6 +87,14 @@ describe Spree::Promotion, type: :model do
 
           expect{ promotion.save }.to change{ promotion.usage_limit }.from(100).to(nil)
         end
+      end
+    end
+
+    describe '#remove_coupons' do
+      let!(:promotion) { create(:promotion, kind: :coupon_code, multi_codes: true, number_of_codes: 1) }
+
+      it 'removes the coupons' do
+        expect { promotion.update!(kind: :automatic) }.to change { promotion.coupon_codes.count }.from(1).to(0)
       end
     end
   end
