@@ -31,6 +31,7 @@ module Spree
     #
     validates :slug, presence: true, uniqueness: { scope: UNIQUENESS_SCOPE }
     validates :name, presence: true
+    validates :owner, presence: true
 
     #
     # Scopes

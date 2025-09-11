@@ -31,9 +31,9 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
 
     let(:policy_params) do
       {
-        name: 'Privacy Policy',
+        name: 'New Privacy Policy',
         body: 'This is our privacy policy content',
-        slug: 'privacy-policy'
+        slug: 'new-privacy-policy'
       }
     end
 
@@ -41,9 +41,27 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
       expect { create_policy }.to change(Spree::Policy, :count).by(1)
 
       policy = Spree::Policy.last
-      expect(policy.name).to eq('Privacy Policy')
+      expect(policy.name).to eq('New Privacy Policy')
       expect(policy.body.to_plain_text).to eq('This is our privacy policy content')
-      expect(policy.slug).to eq('privacy-policy')
+      expect(policy.slug).to eq('new-privacy-policy')
+      expect(policy.owner).to eq(store)
+    end
+
+    context 'when manually passing owner params' do
+      let(:policy_params) do
+        {
+          name: 'New Privacy Policy',
+          body: 'This is our privacy policy content',
+          slug: 'new-privacy-policy',
+          owner_id: 123,
+          owner_type: 'Spree::User'
+        }
+      end
+
+      it 'ignores the given owner params' do
+        expect { create_policy }.to change(Spree::Policy, :count).by(1)
+        expect(Spree::Policy.last.owner).to eq(store)
+      end
     end
   end
 
@@ -77,6 +95,7 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
       expect(policy.name).to eq('Updated Privacy Policy')
       expect(policy.body.to_plain_text).to eq('This is updated privacy policy content')
       expect(policy.slug).to eq('updated-privacy-policy')
+      expect(policy.owner).to eq(store)
     end
   end
 
