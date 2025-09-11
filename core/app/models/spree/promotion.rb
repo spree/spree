@@ -193,7 +193,7 @@ module Spree
     # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
-      return [] if rules.to_a.none?
+      return [] if rules.to_a.none? # preloaded rules as we're going to use them anyway, so avoiding additional database queries
 
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
@@ -329,8 +329,8 @@ module Spree
     end
 
     def remove_coupons
-      return unless (saved_change_to_kind? && kind_was == 'coupon_code' && kind == 'automatic') ||
-                    (saved_change_to_multi_codes? && multi_codes_was == true && multi_codes == false)
+      return unless (previous_changes.key?('kind') && previous_changes['kind'][0] == 'coupon_code' && kind == 'automatic') ||
+                    (previous_changes.key?('multi_codes') && previous_changes['multi_codes'][0] == true && multi_codes == false)
 
       coupon_codes.where(deleted_at: nil).update_all(deleted_at: Time.current)
     end
