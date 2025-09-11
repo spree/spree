@@ -809,6 +809,7 @@ describe Spree::Promotion, type: :model do
       promo.activate(order: order)
       order.update_with_updater!
 
+      line_item.reload
       expect(line_item.adjustments.size).to eq(1)
       expect(order.adjustment_total).to eq(-5)
 
