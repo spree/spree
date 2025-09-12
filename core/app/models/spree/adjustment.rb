@@ -107,7 +107,7 @@ module Spree
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?
 
       update_columns(attributes)
-      source.promotion.touch if promotion?
+      source.promotion.touch if promotion? && source.promotion.coupon_code?
 
       amount
     end

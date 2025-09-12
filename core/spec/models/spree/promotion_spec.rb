@@ -295,6 +295,15 @@ describe Spree::Promotion, type: :model do
         expect(promotion.activate(payload)).to be true
         expect(promotion.reload.updated_at).not_to eq(previous_updated_at)
       end
+
+      context 'automatic promotion' do
+        let(:promotion) { create(:promotion, kind: :automatic) }
+
+        it 'does not touch the promotion' do
+          expect(promotion.activate(payload)).to be true
+          expect(promotion.reload.updated_at).to eq(promotion.created_at)
+        end
+      end
     end
 
     context 'when not activated' do
