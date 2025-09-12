@@ -188,14 +188,26 @@ module Spree
       !!eligible_rules(promotable, options)
     end
 
+    # We cache the rules to avoid multiple database queries
+    # this is useful for orders with many line items
+    #
+    # @return [Array<Spree::PromotionRule>]
+    def cached_rules
+      Rails.cache.fetch("#{cache_key_with_version}/rules") do
+        rules.to_a
+      end
+    rescue TypeError # when using null_store in test environment
+      rules.to_a
+    end
+
     # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
     # if there are no such rules, an empty array is returned
     # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
-      return [] if rules.to_a.none? # preloaded rules as we're going to use them anyway, so avoiding additional database queries
+      return [] if cached_rules.none?
 
-      specific_rules = rules.select { |rule| rule.applicable?(promotable) }
+      specific_rules = cached_rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
       rule_eligibility = Hash[specific_rules.map do |rule|

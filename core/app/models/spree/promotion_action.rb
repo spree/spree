@@ -4,7 +4,7 @@ module Spree
   class PromotionAction < Spree.base_class
     acts_as_paranoid
 
-    belongs_to :promotion, class_name: 'Spree::Promotion'
+    belongs_to :promotion, class_name: 'Spree::Promotion', touch: true
 
     validates :promotion, :type, presence: true
 
