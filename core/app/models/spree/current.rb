@@ -7,7 +7,7 @@ module Spree
     end
 
     def webhooks_subscribers
-      super || store.active_webhooks_subscribers
+      super || store&.active_webhooks_subscribers || Spree::Webhooks::Subscriber.none
     end
   end
 end
