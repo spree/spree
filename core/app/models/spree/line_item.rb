@@ -55,7 +55,7 @@ module Spree
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
-    attr_accessor :target_shipment
+    attr_accessor :target_shipment, :skip_update_adjustments, :skip_update_tax_charge
 
     self.whitelisted_ransackable_associations = %w[variant order tax_category]
     self.whitelisted_ransackable_attributes = %w[variant_id order_id tax_category_id quantity
@@ -231,6 +231,8 @@ module Spree
     end
 
     def update_adjustments
+      return if skip_update_adjustments
+
       if saved_change_to_quantity?
         recalculate_adjustments
         update_tax_charge # Called to ensure pre_tax_amount is updated.
@@ -242,6 +244,8 @@ module Spree
     end
 
     def update_tax_charge
+      return if skip_update_tax_charge
+
       Spree::TaxRate.adjust(order, [self])
     end
 

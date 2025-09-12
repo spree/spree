@@ -37,6 +37,10 @@ module Spree
         line_item.public_metadata = public_metadata.to_h if public_metadata
         line_item.private_metadata = private_metadata.to_h if private_metadata
 
+        # this is handled by recalculate service
+        line_item.skip_update_adjustments = true
+        line_item.skip_update_tax_charge = true
+
         return failure(line_item) unless line_item.save
 
         line_item.reload.update_price
