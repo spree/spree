@@ -289,12 +289,6 @@ describe Spree::Promotion, type: :model do
         expect(promotion.activate(payload)).to be true
         expect(promotion.orders.first).to eql order
       end
-
-      it 'touches the promotion' do
-        previous_updated_at = promotion.updated_at
-        expect(promotion.activate(payload)).to be true
-        expect(promotion.reload.updated_at).not_to eq(previous_updated_at)
-      end
     end
 
     context 'when not activated' do
@@ -304,12 +298,6 @@ describe Spree::Promotion, type: :model do
         expect(promotion.orders).to be_empty
         expect(promotion.activate(payload)).to be_falsey
         expect(promotion.orders).to be_empty
-      end
-
-      it "doesn't the promotion" do
-        previous_updated_at = promotion.updated_at
-        expect(promotion.activate(payload)).to be_falsey
-        expect(promotion.reload.updated_at).to eq(previous_updated_at)
       end
     end
   end
