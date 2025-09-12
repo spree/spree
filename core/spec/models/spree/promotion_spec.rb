@@ -857,4 +857,10 @@ describe Spree::Promotion, type: :model do
       end
     end
   end
+
+  describe '#cached_rules' do
+    it 'returns the rules' do
+      expect(promotion.cached_rules).to eq(promotion.rules)
+    end
+  end
 end
