@@ -31,6 +31,11 @@ module Spree
         attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] +
           totals[:taxable_adjustment_total] +
           totals[:additional_tax_total]
+
+        # Only update if totals have changed
+        current_attributes = @adjustable.attributes.slice(*attributes.keys.map(&:to_s))
+        return if attributes.all? { |key, value| current_attributes[key.to_s] == value }
+
         attributes[:updated_at] = Time.current
         @adjustable.update_columns(totals)
       end
