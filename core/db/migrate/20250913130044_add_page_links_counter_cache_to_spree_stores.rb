@@ -4,7 +4,7 @@ class AddPageLinksCounterCacheToSpreeStores < ActiveRecord::Migration[7.2]
 
     Spree::Store.reset_column_information
     Spree::Store.find_each do |store|
-      Spree::Store.reset_counters(store.id, :page_links)
+      Spree::Store.reset_counters(store.id, :links)
     end
   end
 end
