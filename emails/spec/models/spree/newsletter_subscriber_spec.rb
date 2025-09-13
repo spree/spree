@@ -14,6 +14,7 @@ describe Spree::NewsletterSubscriber, type: :model do
 
     context 'when send_consumer_transactional_emails store setting is disabled' do
       before do
+        allow(Spree::Current).to receive(:store).and_return(store)
         allow(store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
       end
 
