@@ -47,8 +47,6 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
-
     #
     # Attachments
     #
