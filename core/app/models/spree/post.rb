@@ -1,6 +1,7 @@
 module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::Linkable
     extend FriendlyId
 
     friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id deleted?]

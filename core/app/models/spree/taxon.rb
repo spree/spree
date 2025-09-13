@@ -18,6 +18,7 @@ module Spree
     include Spree::TranslatableResourceSlug
     include Spree::Metadata
     include Spree::MemoizedData
+    include Spree::Linkable
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
     end
