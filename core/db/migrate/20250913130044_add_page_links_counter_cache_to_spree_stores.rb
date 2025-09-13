@@ -1,4 +1,4 @@
-class AddPageLinksCounterCacheToSpreeStores < ActiveRecord::Migration[8.0]
+class AddPageLinksCounterCacheToSpreeStores < ActiveRecord::Migration[7.2]
   def change
     add_column :spree_stores, :page_links_count, :integer, default: 0, null: false
 
