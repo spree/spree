@@ -1,0 +1,5 @@
+  <p id="payment-and-conditions" class="text-xs mt-2 mb-4">
+    <%= Spree.t('storefront.checkout.by_placing_this_order_you_agree_to') %>
+    <%= link_to Spree.t(:terms_of_service), policy_path('terms_of_service'), target: :_blank, class: 'text-primary' %><%= I18n.t('support.array.two_words_connector') %>
+    <%= link_to Spree.t(:privacy_policy), policy_path('privacy_policy'), target: :_blank, class: 'text-primary' %>.
+  </p>
