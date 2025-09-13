@@ -19,6 +19,7 @@ describe Spree::NewsletterSubscriber, type: :model do
 
       it 'does not call newsletter mailer' do
         expect(Spree::NewsletterMailer).not_to receive(:email_confirmation)
+        deliver_newsletter_email_verification
       end
     end
   end
