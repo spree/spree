@@ -18,10 +18,24 @@ module Spree
           it 'updates all linked adjusters' do
             line_item.price = 10
             line_item.tax_category = tax_rate.tax_category
+            line_item.adjustment_total = 0
+            line_item.additional_tax_total = 0
+
+            old_updated_at = line_item.updated_at
 
             subject.update
             expect(line_item.adjustment_total).to eq(0.5)
             expect(line_item.additional_tax_total).to eq(0.5)
+            expect(line_item.updated_at).not_to eq(old_updated_at)
+
+            old_updated_at = line_item.updated_at
+
+            subject.update
+            # skipping the update because the totals have not changed
+            line_item.reload
+            expect(line_item.adjustment_total).to eq(0.5)
+            expect(line_item.additional_tax_total).to eq(0.5)
+            expect(line_item.updated_at).to eq(old_updated_at)
           end
         end
 
