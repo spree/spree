@@ -1,6 +1,7 @@
 module Spree
   class Page < Spree.base_class
     include Spree::Previewable
+    include Spree::Linkable
 
     #
     # Magic methods

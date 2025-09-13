@@ -4,7 +4,7 @@ RSpec.describe Spree::Policy, type: :model do
   let(:store) { Spree::Store.default }
   let(:policy) { create(:policy, owner: store) }
 
-  describe 'validations' do
+  describe 'Validations' do
     context 'slug uniqueness' do
       before { policy }
 
@@ -19,6 +19,18 @@ RSpec.describe Spree::Policy, type: :model do
       it 'is invalid without an owner' do
         policy.owner = nil
         expect(policy).to be_invalid
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    context 'after destroy destroys links in which policy is linked to' do
+      let!(:page_link) { create(:page_link, linkable: policy, parent: store) }
+
+      it 'destroys links' do
+        expect(store.links).to include(page_link)
+        expect { policy.destroy }.to change(Spree::PageLink, :count).by(-1)
+        expect(store.links).not_to include(page_link)
       end
     end
   end
@@ -38,7 +50,7 @@ RSpec.describe Spree::Policy, type: :model do
     end
   end
 
-  describe 'translations' do
+  describe 'Translations' do
     it 'has translatable name field' do
       expect(described_class::TRANSLATABLE_FIELDS).to include(:name)
     end
@@ -60,7 +72,7 @@ RSpec.describe Spree::Policy, type: :model do
     end
   end
 
-  describe 'scopes' do
+  describe 'Scopes' do
     describe '.for_store' do
       let(:other_store) { create(:store) }
       let!(:store1_policy) { create(:policy, owner: store) }
