@@ -119,8 +119,6 @@ module Spree
     has_many :stores, through: :store_products, class_name: 'Spree::Store'
     has_many :digitals, through: :variants_including_master
 
-    has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
-
     after_initialize :ensure_master
     after_initialize :assign_default_tax_category
 
