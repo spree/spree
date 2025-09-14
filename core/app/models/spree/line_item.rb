@@ -18,7 +18,7 @@ module Spree
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
     has_many :adjustments, as: :adjustable, dependent: :destroy
-    has_many :inventory_units, inverse_of: :line_item, dependent: :destroy
+    has_many :inventory_units, class_name: 'Spree::InventoryUnit', inverse_of: :line_item, dependent: :destroy
     has_many :shipments, through: :inventory_units, source: :shipment
     has_many :digital_links, dependent: :destroy
 
