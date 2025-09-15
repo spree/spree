@@ -6,14 +6,12 @@
     "image": <%= post.image.attached? ? [spree_image_url(post.image, width: 1200, height: 675)].to_json.html_safe : [].to_json.html_safe %>,
     "datePublished": "<%= post.published_at&.iso8601 %>",
     "dateModified": "<%= post.updated_at&.iso8601 %>",
-    <% if post.author.present? %>
     "author": [
       {
         "@type": "Person",
         "name": "<%= post.author_name %>"
       }
     ]
-    <% end %>
   }
 </script>
 
