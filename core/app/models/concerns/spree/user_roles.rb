@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, as: :user, dependent: :destroy
+      has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, as: :user, dependent: :destroy_async # async as we need to check if the user has admin role before destroying
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
       has_many :stores, through: :role_users, source: :resource, source_type: 'Spree::Store'
       has_many :invitations, class_name: 'Spree::Invitation', as: :invitee, dependent: :destroy
