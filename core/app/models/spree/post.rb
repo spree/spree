@@ -45,7 +45,7 @@ module Spree
     #
     # Validations
     #
-    validates :title, :store, :author, presence: true
+    validates :title, :store, presence: true
     validates :slug, presence: true, uniqueness: { scope: :store_id, conditions: -> { where(deleted_at: nil) } }
     validates :meta_title, length: { maximum: 160 }, allow_blank: true
     validates :meta_description, length: { maximum: 320 }, allow_blank: true
