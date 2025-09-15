@@ -52,6 +52,7 @@ module Spree
 
     def check_if_there_are_other_admin_users
       return if self.class != Spree.admin_user_class
+      return unless has_spree_role?(Spree::Role::ADMIN_ROLE)
 
       if Spree::Store.current.users.where.not(id: id).none?
         errors.add(:base, I18n.t('activerecord.errors.models.spree/admin_user.attributes.base.cannot_destroy_last_admin_user'))
