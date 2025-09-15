@@ -13,7 +13,7 @@ module Spree
           upsert_subscriber
           return subscriber if subscriber.errors.any?
 
-          if subscriber.email == user&.email
+          if subscriber.email == user&.email || !Spree::NewsletterSubscriber.needs_verification?
             # no need to verified since user email is already verified
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end
@@ -30,7 +30,7 @@ module Spree
 
       def upsert_subscriber
         @upsert_subscriber ||= Spree::NewsletterSubscriber.where(email: email).first_or_create do |new_record|
-          new_record.user = Spree.user_class.find_by(email: new_record.email)
+          new_record.user = Spree.user_class.find_by(email: new_record.email) || user
         rescue ActiveRecord::RecordNotFound
           retry
         end
