@@ -66,13 +66,15 @@
   </ul>
 <% else %>
   <ul class="nav flex-column">
-    <% unless current_store.setup_completed? %>
-      <%= nav_item(nil, spree.admin_getting_started_path, icon: 'map') do %>
-        <%= icon 'map' %>
-        <%= Spree.t('admin.getting_started') %>
-        <span class="badge ml-auto badge-info">
-          <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
-        </span>
+    <% if can?(:manage, current_store) %>
+      <% unless current_store.setup_completed? %>
+        <%= nav_item(nil, spree.admin_getting_started_path, icon: 'map') do %>
+          <%= icon 'map' %>
+          <%= Spree.t('admin.getting_started') %>
+          <span class="badge ml-auto badge-info">
+            <%= current_store.setup_tasks_done %><span class="opacity-50">/<%= current_store.setup_tasks_total %></span>
+          </span>
+        <% end %>
       <% end %>
     <% end %>
 
