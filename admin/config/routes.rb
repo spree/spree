@@ -233,7 +233,7 @@ Spree::Core::Engine.add_routes do
         put :resend
       end
     end
-    resources :admin_users, except: [:destroy]
+    resources :admin_users
 
     # Action Text
     namespace :action_text do

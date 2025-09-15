@@ -98,9 +98,9 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
     context 'with invalid token' do
       it 'raises RecordNotFound' do
-        expect {
+        expect do
           get :new, params: { token: 'invalid' }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -122,17 +122,17 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
     context 'with invalid token' do
       it 'raises RecordNotFound' do
-        expect {
+        expect do
           post :create, params: { token: 'invalid' }
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
     context 'with valid parameters' do
       it 'creates a new admin user' do
-        expect {
+        expect do
           post :create, params: valid_params
-        }.to change(Spree.admin_user_class, :count).by(1)
+        end.to change(Spree.admin_user_class, :count).by(1)
       end
 
       it 'accepts the invitation' do
@@ -167,9 +167,9 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       end
 
       it 'does not create a new admin user' do
-        expect {
+        expect do
           post :create, params: invalid_params
-        }.not_to change(Spree.admin_user_class, :count)
+        end.not_to change(Spree.admin_user_class, :count)
       end
 
       it 'renders the new template' do
@@ -259,6 +259,28 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
       it 'returns unprocessable entity status' do
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    stub_authorization!
+
+    context 'can delete user' do
+      let!(:other_admin) { create(:admin_user) }
+
+      it 'deletes the admin user' do
+        expect { delete :destroy, params: { id: admin_user.id } }.to change(Spree.admin_user_class, :count).by(-1)
+        expect(response).to redirect_to(spree.admin_admin_users_path)
+      end
+    end
+
+    context 'cannot delete user' do
+      it 'does not delete the admin user' do
+        delete :destroy, params: { id: admin_user.id }
+        expect(response).to redirect_to(spree.admin_admin_users_path)
+        expect(flash[:error]).to include ('Cannot delete the last admin user')
+        expect(admin_user).not_to be_destroyed
       end
     end
   end

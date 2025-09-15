@@ -7,7 +7,9 @@ module Spree
       before_action :load_parent, except: [:new, :create]
       before_action :load_roles, except: [:index]
       before_action :load_invitation, only: [:new, :create]
-      before_action :load_admin_user, only: [:show, :edit, :update]
+      before_action :load_admin_user, only: [:show, :edit, :update, :destroy]
+
+      helper_method :object_url
 
       layout :choose_layout
 
@@ -16,8 +18,8 @@ module Spree
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at asc'
         @search = scope.includes(role_users: :role, avatar_attachment: :blob).
-                        where(role_users: { resource: @parent }).
-                        ransack(params[:q])
+                  where(role_users: { resource: @parent }).
+                  ransack(params[:q])
         @collection = @search.result
       end
 
@@ -71,6 +73,17 @@ module Spree
         end
       end
 
+      # DELETE /admin/admin_users/:id
+      def destroy
+        authorize! :destroy, @admin_user
+        if @admin_user.destroy
+          redirect_to spree.admin_admin_users_path, status: :see_other, notice: flash_message_for(@admin_user, :successfully_removed)
+        else
+          flash[:error] = @admin_user.errors.full_messages.to_sentence
+          redirect_to spree.admin_admin_users_path, status: :see_other
+        end
+      end
+
       private
 
       def permitted_params
@@ -106,6 +119,10 @@ module Spree
 
       def model_class
         Spree.admin_user_class
+      end
+
+      def object_url
+        spree.admin_admin_user_path(@admin_user)
       end
     end
   end

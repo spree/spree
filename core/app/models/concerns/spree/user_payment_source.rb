@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :credit_cards, class_name: 'Spree::CreditCard', foreign_key: :user_id
+      has_many :credit_cards, class_name: 'Spree::CreditCard', foreign_key: :user_id, dependent: :destroy
       def default_credit_card
         credit_cards.default.first
       end

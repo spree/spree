@@ -37,7 +37,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :author, class_name: Spree.admin_user_class.to_s
+    belongs_to :author, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :post_category, class_name: 'Spree::PostCategory', optional: true
     alias category post_category
