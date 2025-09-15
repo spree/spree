@@ -18,7 +18,7 @@ FactoryBot.define do
   factory :export, class: 'Spree::Export' do
     store { create(:store) }
     user { create(:admin_user) }
-    type { 'Spree::Export::Products' }
+    type { 'Spree::Exports::Products' }
     format { 'csv' }
 
     factory :product_export, class: 'Spree::Exports::Products', parent: :export do
