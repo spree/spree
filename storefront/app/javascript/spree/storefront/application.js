@@ -139,6 +139,14 @@ document.addEventListener('turbo:submit-end', () => {
   Turbo.navigator.delegate.adapter.progressBar.hide()
 })
 
+// fix for Safari buggy behavior with lazy loaded turbo frames
+document.addEventListener("turbo:before-fetch-request", (event) => {
+  const frame = event.target.closest("turbo-frame");
+  if (frame && frame.id) {
+    event.detail.fetchOptions.headers["Turbo-Frame"] = frame.id;
+  }
+});
+
 function replaceCsrfMetaTags() {
   const csrfMetaTagsTemplate = document.querySelector('template#csrf_meta_tags')
   if (!csrfMetaTagsTemplate) return
