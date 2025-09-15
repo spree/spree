@@ -76,9 +76,7 @@
       <% end %>
     <% end %>
 
-    <% if can?(:manage, :dashboard) %>
-      <%= nav_item(Spree.t(:home), spree.admin_path, icon: 'home', active: controller_name == 'dashboard' && action_name == 'show') %>
-    <% end %>
+    <%= nav_item(Spree.t(:home), spree.admin_path, icon: 'home', active: controller_name == 'dashboard' && action_name == 'show') %>
 
     <%= render 'spree/admin/shared/sidebar/orders_nav' %>
     <%= render 'spree/admin/shared/sidebar/returns_nav' %>
