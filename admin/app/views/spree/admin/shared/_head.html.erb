@@ -37,6 +37,8 @@
 <%= tinymce_assets %>
 <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.12/dist/trix.css">
 
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js" data-turbo-track="reload"></script>
+
 <%= javascript_importmap_tags 'application-spree-admin', importmap: Rails.application.config.spree_admin.importmap %>
 
 <%= yield :head %>
