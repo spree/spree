@@ -10,7 +10,7 @@
         <%= icon 'eye' %>
         <%= Spree.t(:view_store) %>
       <% end %>
-      <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item' do %>
+      <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item', data: { turbo_prefetch: false } do %>
         <%= icon 'tools' %>
         <%= Spree.t('admin.edit_theme') %>
       <% end if current_store.default_theme && can?(:manage, Spree::Theme) %>
