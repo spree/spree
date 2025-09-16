@@ -65,7 +65,7 @@ module Spree
     #
     # @return [Boolean] whether the page builder is enabled
     def page_builder_enabled?
-      @page_builder_enabled ||= (current_theme_preview.present? || current_page_preview.present?) && params[:page_builder] == 'true'
+      @page_builder_enabled ||= current_theme_preview.present? || current_page_preview.present?
     end
 
     # Returns the theme layout sections, eg. header, footer, etc.
