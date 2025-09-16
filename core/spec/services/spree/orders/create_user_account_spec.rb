@@ -69,7 +69,7 @@ describe Spree::Orders::CreateUserAccount do
       let(:accepts_email_marketing) { true }
 
       it 'calls subscribe for newsletter' do
-        expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, current_user: user)
+        expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: user)
 
         service
       end
