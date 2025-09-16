@@ -9,13 +9,12 @@ describe Spree::Orders::CreateUserAccount do
   let(:order) do
     create(:completed_order_with_totals, bill_address: address, ship_address: address, store: store, user: nil, email: 'new@customer.com')
   end
-  let(:subscriber) { Spree::NewsletterSubscriber.subscribe }
 
   context 'when accepts_email_marketing is true' do
     let(:accepts_email_marketing) { true }
 
     it 'calls subscribe for newsletter' do
-      expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, current_user: kind_of(Spree.user_class))
+      expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: kind_of(Spree.user_class))
 
       service
     end

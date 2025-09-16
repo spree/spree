@@ -6,7 +6,7 @@ module Spree
 
     # POST /newsletter_subscribers
     def create
-      subscriber = Spree::NewsletterSubscriber.subscribe(email: newsletter_params[:email], current_user: try_spree_current_user)
+      subscriber = Spree::NewsletterSubscriber.subscribe(email: newsletter_params[:email], user: try_spree_current_user)
 
       if subscriber.errors.any?
         flash[:error] = subscriber.errors.full_messages.to_sentence.presence || Spree.t('something_went_wrong')

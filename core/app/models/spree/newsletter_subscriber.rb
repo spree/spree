@@ -34,8 +34,8 @@ module Spree
       true
     end
 
-    def self.subscribe(email:, current_user: nil)
-      Spree::Newsletter::Subscribe.new(email: email, current_user: current_user).call
+    def self.subscribe(email:, user: nil)
+      Spree::Newsletter::Subscribe.new(email: email, current_user: user).call
     end
 
     def self.verify(token:)

@@ -72,7 +72,7 @@ module Spree
       end
 
       def create_newsletter_subscriber(user)
-        Spree::NewsletterSubscriber.subscribe(email: user.email, current_user: user)
+        Spree::NewsletterSubscriber.subscribe(email: user.email, user: user)
       end
     end
   end
