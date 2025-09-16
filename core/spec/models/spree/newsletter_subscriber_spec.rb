@@ -39,12 +39,12 @@ describe Spree::NewsletterSubscriber, type: :model do
     let(:subscribe_service) { double(Spree::Newsletter::Subscribe) }
 
     context 'with user' do
-      subject { described_class.subscribe(email: email, user: user) }
+      subject { described_class.subscribe(email: email, current_user: user) }
 
       let(:user) { create(:user) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, user: user).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: user).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
@@ -58,7 +58,7 @@ describe Spree::NewsletterSubscriber, type: :model do
       subject { described_class.subscribe(email: email) }
 
       before do
-        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, user: nil).and_return(subscribe_service)
+        allow(Spree::Newsletter::Subscribe).to receive(:new).with(email: email, current_user: nil).and_return(subscribe_service)
       end
 
       it 'calls subscribe service' do
