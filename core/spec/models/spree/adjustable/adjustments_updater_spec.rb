@@ -7,13 +7,20 @@ module Spree
       let(:line_item) { order.line_items.first }
       let(:tax_rate) { create(:tax_rate, amount: 0.05) }
 
+      let(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 2) }
+      let(:promotion_action) { promotion.actions.first }
+
       describe '#update' do
+        let(:promo_total) { -2 }
+        let(:tax_total) { 0.4 }
+
         before do
+          create(:adjustment, order: order, source: promotion_action, adjustable: line_item)
           create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
         end
 
         context 'persisted object' do
-          let(:subject) { AdjustmentsUpdater.new(line_item) }
+          subject { AdjustmentsUpdater.new(line_item) }
 
           it 'updates all linked adjusters' do
             line_item.price = 10
@@ -24,8 +31,9 @@ module Spree
             old_updated_at = line_item.updated_at
 
             subject.update
-            expect(line_item.adjustment_total).to eq(0.5)
-            expect(line_item.additional_tax_total).to eq(0.5)
+            expect(line_item.promo_total).to eq(promo_total)
+            expect(line_item.additional_tax_total).to eq(tax_total)
+            expect(line_item.adjustment_total).to eq(tax_total + promo_total)
             expect(line_item.updated_at).not_to eq(old_updated_at)
 
             old_updated_at = line_item.updated_at
@@ -33,8 +41,9 @@ module Spree
             subject.update
             # skipping the update because the totals have not changed
             line_item.reload
-            expect(line_item.adjustment_total).to eq(0.5)
-            expect(line_item.additional_tax_total).to eq(0.5)
+            expect(line_item.promo_total).to eq(promo_total)
+            expect(line_item.additional_tax_total).to eq(tax_total)
+            expect(line_item.adjustment_total).to eq(tax_total + promo_total)
             expect(line_item.updated_at).to eq(old_updated_at)
           end
         end
