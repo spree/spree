@@ -39,7 +39,7 @@ describe Spree::NewsletterSubscriber, type: :model do
     let(:subscribe_service) { double(Spree::Newsletter::Subscribe) }
 
     context 'with user' do
-      subject { described_class.subscribe(email: email, current_user: user) }
+      subject { described_class.subscribe(email: email, user: user) }
 
       let(:user) { create(:user) }
 
