@@ -1,6 +1,6 @@
 <tr id="<%= dom_id page %>" data-controller="row-link" class="cursor-pointer">
   <td scope="row" data-action="click->row-link#openLink" class="w-60">
-    <%= link_to page.name, spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to page.name, spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), data: { row_link_target: :link, turbo_frame: '_top', turbo_prefetch: false } %>
   </td>
   <td data-action="click->row-link#openLink" class="w-15">
     <%= spree_time_ago(page.created_at, class: 'with-tip') %>
@@ -15,7 +15,7 @@
       </button>
       <ul class="dropdown-menu">
         <li>
-          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), class: 'dropdown-item', data: { turbo_frame: '_top' } %>
+          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), class: 'dropdown-item', data: { turbo_frame: '_top', turbo_prefetch: false } %>
         </li>
         <li>
           <%= link_to_delete(page, class: 'dropdown-item btn-danger', icon: 'trash') %>
