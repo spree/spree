@@ -30,7 +30,7 @@ module Spree
 
     def formatted_url
       return if url.blank?
-      return url if url.start_with?("mailto:")
+      return url if %w[mailto: javascript: tel:].any? { |protocol| url.start_with?(protocol) }
 
       @formatted_url ||= url.match(/http:\/\/|https:\/\//) ? url : "http://#{url}"
     end
