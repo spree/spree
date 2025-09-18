@@ -36,7 +36,7 @@ module Spree
         attributes = totals
         attributes[:adjustment_total] = totals[:non_taxable_adjustment_total] +
           totals[:taxable_adjustment_total] +
-          totals[:additional_tax_total]
+          totals.fetch(:additional_tax_total, 0)
 
         update_adjustable_attributes(attributes)
       end
