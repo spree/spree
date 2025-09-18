@@ -17,7 +17,6 @@ export default class ToggleMenu extends Toggle {
   }
 
   toggle(e) {
-    this.contentTarget.style.paddingBottom = `${this.contentTarget.offsetTop}px`
     super.toggle(e)
     if (this.openValue) {
       this.buttonTarget.classList.add('menu-open')
