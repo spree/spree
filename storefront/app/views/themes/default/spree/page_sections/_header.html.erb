@@ -79,9 +79,8 @@
             <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
               <div
               data-controller="modal"
-              data-modal-allow-background-close="true"
-              class="hidden lg:flex"
-              data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+              data-modal-disable-backdrop="true"
+              class="hidden lg:flex">
                 <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
                   <% if should_render_currency_dropdown? %>
                     <span>
@@ -136,7 +135,8 @@
           </div>
         </div>
       </div>
-      <div
+    </nav>
+    <div
         class='h-0 opacity-0 pointer-events-none hide-on-load'
         data-toggle-menu-target='toggleable'
         role='dialog'
@@ -145,12 +145,11 @@
         <div
           class='flex justify-between flex-col lg:hidden w-full transition-transform translate-x-[-50%] has-[.currency-and-locale-modal:not(.hidden)]:transform-none body header--mobile-menu'
           data-toggle-menu-target='content'
-          style='background-color: <%= section.preferred_background_color %>; height: calc(100dvh - 38px);'
+          style='background-color: <%= section.preferred_background_color %>; height: calc(100dvh - 58px - 36px);'
           >
           <%= render 'spree/page_sections/nav/mobile', section: section %>
         </div>
       </div>
-    </nav>
 
     <%= render 'spree/shared/cart_pane', section: section %>
     <% if show_account_pane? %>
