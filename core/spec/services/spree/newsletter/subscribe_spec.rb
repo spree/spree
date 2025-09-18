@@ -7,7 +7,7 @@ module Spree
     let(:params) do
       {
         email: email,
-        user: user
+        current_user: user
       }
     end
 
