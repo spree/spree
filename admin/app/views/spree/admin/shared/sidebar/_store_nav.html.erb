@@ -82,11 +82,7 @@
     <%= render 'spree/admin/shared/sidebar/returns_nav' %>
     <%= render 'spree/admin/shared/sidebar/products_nav' %>
     <%= render 'spree/admin/shared/sidebar/vendors_nav' %>
-
-    <% if can?(:manage, Spree.user_class) %>
-      <%= nav_item(Spree.t(:customers), spree.admin_users_path, icon: 'users') %>
-    <% end %>
-
+    <%= render 'spree/admin/shared/sidebar/customers_nav' %>
     <%= render 'spree/admin/shared/sidebar/promotions_nav' %>
 
     <% if can?(:manage, Spree::Report) %>

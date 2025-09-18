@@ -1,0 +1,25 @@
+<tr id="<%= spree_dom_id newsletter_subscriber %>">
+  <td class="w-30">
+    <%= newsletter_subscriber.email %>
+  </td>
+  <td class="w-30">
+    <% if newsletter_subscriber.user.present? %>
+      <%= newsletter_subscriber.user.email %>
+    <% else %>
+      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+    <% end %>
+  </td>
+  <td class="w-10">
+    <%= active_badge(newsletter_subscriber.verified?) %>
+  </td>
+  <td class="w-15">
+    <% if newsletter_subscriber.verified_at.present? %>
+      <%= spree_date(newsletter_subscriber.verified_at) %>
+    <% else %>
+      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+    <% end %>
+  </td>
+  <td class="w-15">
+    <%= spree_date(newsletter_subscriber.created_at) %>
+  </td>
+</tr>

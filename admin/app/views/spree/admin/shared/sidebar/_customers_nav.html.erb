@@ -1,0 +1,8 @@
+<% if can?(:manage, Spree.user_class) %>
+  <% customers_active = %w[users newsletter_subscribers].include?(controller_name) %>
+  <%= nav_item(Spree.t(:customers), spree.admin_users_path, icon: 'users', active: customers_active) %>
+
+  <ul class="nav-submenu <% unless customers_active %>d-none<% end %>">
+    <%= nav_item(Spree.t(:newsletter_subscribers), spree.admin_newsletter_subscribers_path) %>
+  </ul>
+<% end %>
