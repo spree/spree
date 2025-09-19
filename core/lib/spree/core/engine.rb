@@ -152,7 +152,8 @@ module Spree
           Spree::Exports::Products,
           Spree::Exports::Orders,
           Spree::Exports::Customers,
-          Spree::Exports::GiftCards
+          Spree::Exports::GiftCards,
+          Spree::Exports::NewsletterSubscribers
         ]
 
         Rails.application.config.spree.taxon_rules = [

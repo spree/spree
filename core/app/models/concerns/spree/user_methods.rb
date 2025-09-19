@@ -134,8 +134,17 @@ module Spree
       orders.complete.none?
     end
 
+    # Returns the CSV row representation of the user
+    # @param [Spree::Store] store
+    # @return [Array<String>]
     def to_csv(_store = nil)
       Spree::CSV::CustomerPresenter.new(self).call
+    end
+
+    # Returns the full name of the user
+    # @return [String]
+    def full_name
+      name.full
     end
 
     private

@@ -1365,6 +1365,7 @@ en:
         subject: Verify your email address
         thanks: Thank you
         verify_email_address_link: Verify email address
+    newsletter_subscribers: Newsletter Subscribers
     newsletters: Newsletters
     next: Next
     no_actions_added: No actions added
@@ -2268,6 +2269,8 @@ en:
     variants_count: Variants count
     vendor: Vendor
     vendors: Vendors
+    verified: Verified
+    verified_at: Verified at
     version: Version
     view: View
     view_all: View all

@@ -1,6 +1,7 @@
 <% sortable = local_assigns[:sortable] %>
 
 <%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+  <%= render 'spree/admin/shared/export_modal', export_type: export_type if local_assigns[:export_type] %>
   <div class="card-lg">
     <% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>
       <%= render 'filters' %>

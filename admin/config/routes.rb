@@ -105,7 +105,7 @@ Spree::Core::Engine.add_routes do
         post :bulk_remove_tags
       end
     end
-
+    resources :newsletter_subscribers, only: [:index, :destroy]
     resources :addresses, except: [:index, :show]
 
     # promotions
