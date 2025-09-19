@@ -70,6 +70,8 @@ module Spree
     validates :dimensions_unit, inclusion: { in: DIMENSION_UNITS }, allow_blank: true
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
+    validate :variant_validators, on: [:create, :update]
+
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
@@ -507,6 +509,12 @@ module Spree
     end
 
     private
+
+    def variant_validators
+      Rails.application.config.spree.validators.variants.each do |validator|
+        validates_with validator
+      end
+    end
 
     def ensure_not_in_complete_orders
       if orders.complete.any?

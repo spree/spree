@@ -146,6 +146,7 @@ module Spree
     end
 
     validate :discontinue_on_must_be_later_than_make_active_at, if: -> { make_active_at && discontinue_on }
+    validate :product_validators, on: [:create, :update]
 
     scope :for_store, ->(store) { joins(:store_products).where(StoreProduct.table_name => { store_id: store.id }) }
     scope :draft, -> { where(status: 'draft') }
@@ -798,6 +799,12 @@ module Spree
 
     def eligible_for_taxon_matching?
       previously_new_record? || tag_list_previously_changed? || available_on_previously_changed?
+    end
+
+    def product_validators
+      Rails.application.config.spree.validators.products.each do |validator|
+        validates_with validator
+      end
     end
 
     def after_activate

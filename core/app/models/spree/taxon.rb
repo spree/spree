@@ -70,6 +70,8 @@ module Spree
     end
     validates :image, :square_image, content_type: Rails.application.config.active_storage.web_image_content_types
 
+    validate :taxon_validators, on: [:create, :update]
+
     #
     # Callbacks
     #
@@ -404,6 +406,12 @@ module Spree
     end
 
     private
+
+    def taxon_validators
+      Rails.application.config.spree.validators.taxons.each do |validator|
+        validates_with validator
+      end
+    end
 
     def should_regenerate_pretty_name_and_permalink?
       saved_changes.key?(:name) || saved_changes.key?(:permalink)
