@@ -3,7 +3,7 @@
     <%= newsletter_subscriber.email %>
     <%= clipboard_component(newsletter_subscriber.email) %>
   </td>
-  <td class="w-30">
+  <td class="w-25">
     <% if newsletter_subscriber.user.present? %>
       <%= newsletter_subscriber.user.email %>
     <% else %>
@@ -22,5 +22,15 @@
   </td>
   <td class="w-15">
     <%= spree_date(newsletter_subscriber.created_at) %>
+  </td>
+  <td class="w-5">
+    <div class="dropdown" data-toggle="dropdown">
+      <button class="btn btn-sm btn-light" type="button" id="newsletter-subscriber-actions-<%= newsletter_subscriber.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <%= icon('dots-vertical', class: 'mr-0') %>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="newsletter-subscriber-actions-<%= newsletter_subscriber.id %>">
+        <%= link_to_delete(newsletter_subscriber, icon: 'trash', class: 'dropdown-item text-danger') %>
+      </div>
+    </div>
   </td>
 </tr>
