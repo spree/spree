@@ -74,6 +74,7 @@ module Spree
         storefront_order_sorter: -> { Spree::Dependencies.collection_sorter },
         storefront_products_sorter: -> { Spree::Dependencies.products_sorter },
         platform_products_sorter: -> { Spree::Dependencies.products_sorter },
+        storefront_posts_sorter: -> { Spree::Dependencies.posts_sorter },
 
         # paginators
         storefront_collection_paginator: -> { Spree::Dependencies.collection_paginator },
@@ -88,6 +89,7 @@ module Spree
         storefront_credit_card_finder: -> { Spree::Dependencies.credit_card_finder },
         storefront_find_by_variant_finder: -> { Spree::Dependencies.line_item_by_variant_finder },
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
+        storefront_posts_finder: -> { Spree::Dependencies.posts_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
 

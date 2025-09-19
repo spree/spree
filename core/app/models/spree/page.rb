@@ -1,6 +1,7 @@
 module Spree
   class Page < Spree.base_class
     include Spree::Previewable
+    include Spree::Linkable
 
     #
     # Magic methods
@@ -14,7 +15,6 @@ module Spree
     #
     belongs_to :pageable, polymorphic: true # this can be either Store or Theme
     has_many :sections, -> { order(position: :asc) }, class_name: 'Spree::PageSection', dependent: :destroy_async, as: :pageable
-    has_many :page_links, as: :linkable, class_name: 'Spree::PageLink', dependent: :destroy
     alias page_sections sections
 
     #
@@ -100,6 +100,10 @@ module Spree
     end
 
     def customizable?
+      false
+    end
+
+    def linkable?
       false
     end
 

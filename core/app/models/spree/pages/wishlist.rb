@@ -6,6 +6,10 @@ module Spree
 
         Spree::Core::Engine.routes.url_helpers.account_wishlist_path
       end
+
+      def linkable?
+        true
+      end
     end
   end
 end

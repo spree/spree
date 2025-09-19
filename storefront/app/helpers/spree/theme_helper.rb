@@ -65,15 +65,23 @@ module Spree
     #
     # @return [Boolean] whether the page builder is enabled
     def page_builder_enabled?
-      @page_builder_enabled ||= (current_theme_preview.present? || current_page_preview.present?) && params[:page_builder] == 'true'
+      @page_builder_enabled ||= current_theme_preview.present? || current_page_preview.present?
+    end
+
+    # Returns whether the page cache is enabled
+    #
+    # @return [Boolean] whether the page cache is enabled
+    def page_cache_enabled?
+      @page_cache_enabled ||= Spree::Storefront::Config.page_cache_enabled
     end
 
     # Returns the theme layout sections, eg. header, footer, etc.
     #
     # @return [Hash] the theme layout sections
     def theme_layout_sections
-      @theme_layout_sections ||= current_theme_or_preview.sections.includes(:links, { asset_attachment: :blob },
-                                                                            { blocks: [:rich_text_text, :links] }).all.each_with_object({}) do |section, hash|
+      Spree::Deprecation.warn('theme_layout_sections is deprecated and will be removed in Spree 6.0. Please use render_header_sections and render_footer_sections instead.')
+
+      @theme_layout_sections ||= current_theme_or_preview.sections.includes(section_includes).all.each_with_object({}) do |section, hash|
         hash[section.type.to_s.demodulize.underscore] = section
       end
     rescue StandardError => e

@@ -1,4 +1,4 @@
-<div class="bg-background mt-4 border-default border-t overflow-x-hidden h-full w-screen overflow-y-hidden">
+<div class="bg-background border-default border-t overflow-x-hidden h-full w-screen overflow-y-hidden">
   <div class="h-full flex transform has-[.currency-and-locale-modal:not(.hidden)]:transform-none relative transition-transform duration-300" data-controller="mobile-nav">
     <div class="w-screen shrink-0 flex flex-col h-full flex-grow-0">
       <div class="flex-grow overflow-y-scroll">
@@ -21,7 +21,7 @@
                   </button>
                   <div class="p-4 pt-0 w-full gap-2 flex flex-col">
                     <% if block.try(:featured_taxon) %>
-                      <% cache spree_base_cache_scope.call(block.featured_taxon) do %>
+                      <% cache spree_storefront_base_cache_scope.call(block.featured_taxon) do %>
                         <% if block.featured_taxon.image.attached? && block.featured_taxon.image.variable? %>
                           <%= link_to spree_storefront_resource_url(block.featured_taxon), class: "flex w-full pt-4" do %>
                             <%= spree_image_tag(block.featured_taxon.image, width: 140, height: 140, class: 'h-auto aspect-1 w-2/5 max-w-[140px]', loading: :lazy, alt: block.featured_taxon.name) %>
@@ -103,12 +103,7 @@
 
         <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
           <div class="flex mt-4 justify-end">
-            <div
-                data-controller="modal"
-                data-modal-allow-background-close="true"
-                data-modal-
-                class=""
-                data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+            <div data-controller="modal" data-modal-disable-backdrop="true">
               <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
                 <% if should_render_currency_dropdown? %>
                   <span>
@@ -123,7 +118,7 @@
                   </span>
                 <% end %>
               <% end %>
-              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :eager  %>
+              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy %>
             </div>
           </div>
         <% end %>

@@ -3,7 +3,7 @@ module Spree
     class ProductsController < ResourceController
       include Spree::Admin::StockLocationsHelper
       include Spree::Admin::BulkOperationsConcern
-      include Spree::Admin::SessionAssetsHelper
+      include Spree::Admin::AssetsHelper
       include Spree::Admin::ProductsBreadcrumbConcern
 
       helper 'spree/admin/products'
@@ -15,7 +15,6 @@ module Spree
 
       before_action :prepare_product_params, only: [:create, :update]
       before_action :strip_stock_items_param, only: [:create, :update]
-      before_action :ensure_session_uploaded_assets_uuid, only: :new
       before_action :check_slug_availability, only: [:create, :update]
 
       new_action.before :build_master_prices
@@ -173,7 +172,7 @@ module Spree
           joins(option_type: :product_option_types).
           includes(option_type: :option_values).
           merge(@product.product_option_types).
-          reorder("#{Spree::ProductOptionType.table_name}.position").
+          reorder("#{Spree::ProductOptionType.table_name}.position", "#{Spree::Variant.table_name}.position").
           uniq.group_by(&:option_type).each_with_index do |option, index|
             option_type, option_values = option
 
@@ -331,10 +330,12 @@ module Spree
       def assign_master_images
         return unless @product.master.persisted?
 
-        return if session_uploaded_assets.empty?
+        uploaded_assets = session_uploaded_assets('Spree::Variant')
 
-        session_uploaded_assets.update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
-        clear_session_for_uploaded_assets
+        return if uploaded_assets.empty?
+
+        uploaded_assets.update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
+        clear_session_for_uploaded_assets('Spree::Variant')
       end
 
       def product_includes

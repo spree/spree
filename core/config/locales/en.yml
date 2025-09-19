@@ -103,7 +103,7 @@ en:
         name: Name
       spree/policy:
         body: Body
-        show_in_checkout_footer: Show in checkout footer
+        owner: Policy for
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -187,6 +187,7 @@ en:
         name: Name
         permalink: Permalink
         position: Position
+        sort_order: Sort Order
       spree/taxonomy:
         name: Name
       spree/user:
@@ -215,6 +216,10 @@ en:
       messages:
         blank: can't be blank
       models:
+        spree/admin_user:
+          attributes:
+            base:
+              cannot_destroy_last_admin_user: Cannot delete the last admin user
         spree/calculator/tiered_flat_rate:
           attributes:
             base:
@@ -596,6 +601,7 @@ en:
     add_country: Add Country
     add_coupon_code: Add Coupon Code
     add_gift_card: Add Gift Card
+    add_link: Add link
     add_new_address: Add new address
     add_new_credit_card: Add a new card
     add_new_header: Add New Header
@@ -1065,6 +1071,7 @@ en:
     field: Field
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filled: Filled
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable
@@ -1348,6 +1355,16 @@ en:
     new_user: New User
     new_variant: New Variant
     new_zone: New Zone
+    newsletter_mailer:
+      email_confirmation:
+        dear_customer: Hey,
+        ignore_disclaimer: If you didn't request this, please ignore this email.
+        instructions: Please click the button below to verify your email address.
+        message_copy_link: 'If the button doesn''t work please copy and paste the following link to your browser:'
+        store_team: "%{store_name} Team"
+        subject: Verify your email address
+        thanks: Thank you
+        verify_email_address_link: Verify email address
     newsletters: Newsletters
     next: Next
     no_actions_added: No actions added

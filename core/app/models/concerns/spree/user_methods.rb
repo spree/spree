@@ -5,6 +5,7 @@ module Spree
     include Spree::UserPaymentSource
     include Spree::UserReporting
     include Spree::UserRoles
+    include Spree::AdminUserMethods
     include Spree::RansackableAttributes
     include Spree::MultiSearchable
     included do
@@ -12,7 +13,6 @@ module Spree
       # https://github.com/rails/rails/issues/3458
       before_validation :clone_billing_address, if: :use_billing?
       before_destroy :check_completed_orders
-      after_destroy :nullify_approver_id_in_approved_orders
 
       attr_accessor :use_billing
 
@@ -142,12 +142,6 @@ module Spree
 
     def check_completed_orders
       raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
-    end
-
-    def nullify_approver_id_in_approved_orders
-      return unless Spree.admin_user_class != Spree.user_class
-
-      Spree::Order.where(approver_id: id).update_all(approver_id: nil)
     end
 
     def clone_billing_address

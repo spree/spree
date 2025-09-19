@@ -39,6 +39,7 @@ group :test do
   gem 'timecop'
   gem 'test-prof'
   gem 'rails-controller-testing'
+  gem 'shoulda-matchers', '~> 6.0'
 end
 
 group :test, :development do

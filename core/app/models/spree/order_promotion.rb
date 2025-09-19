@@ -6,6 +6,9 @@ module Spree
     delegate :name, :description, :code, :public_metadata, to: :promotion
     delegate :currency, to: :order
 
+    validates :order, :promotion, presence: true
+    validates :order, uniqueness: { scope: :promotion }
+
     extend Spree::DisplayMoney
     money_methods :amount
 

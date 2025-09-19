@@ -1,4 +1,4 @@
-<% cache_unless page_builder_enabled?, [*spree_base_cache_scope.call(section), current_store] do %>
+<% cache_unless page_builder_enabled?, [*spree_storefront_base_cache_scope.call(section), current_store] do %>
   <footer
     id='footer'
     <% unless current_theme_preview %>
@@ -32,7 +32,7 @@
             <div class="gap-1 flex flex-col py-6 md:py-0">
               <h3 class="text-sm py-2"><%= Spree.t(:follow_us) %></h3>
               <div class="flex flex-wrap gap-2 max-w-48 py-2">
-                <% cache spree_base_cache_scope.call(current_store) do %>
+                <% cache spree_storefront_base_cache_scope.call(current_store) do %>
                   <% Spree::Store::SUPPORTED_SOCIAL_NETWORKS.each do |media| %>
                     <% if current_store.send(media).present? %>
                       <%= link_to current_store.send("#{media}_link") do %>

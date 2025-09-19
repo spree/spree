@@ -10,7 +10,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
   end
 
   describe 'policies#index' do
-    let!(:other_store_policy) { create(:policy, slug: 'other-store-policy', store: other_store) }
+    let!(:other_store_policy) { create(:policy, slug: 'other-store-policy', owner: other_store) }
 
     before { get '/api/v2/storefront/policies' }
 
@@ -31,7 +31,6 @@ describe 'Storefront API v2 Policies spec', type: :request do
         expect(json_response['data']['type']).to eq('policy')
         expect(json_response['data']['attributes']['name']).to eq(policy.name)
         expect(json_response['data']['attributes']['slug']).to eq(policy.slug)
-        expect(json_response['data']['attributes']['show_in_checkout_footer']).to eq(policy.show_in_checkout_footer)
         expect(json_response['data']['attributes']['body']).to eq(policy.body.to_plain_text)
         expect(json_response['data']['attributes']['body_html']).to eq(policy.body.to_s)
         expect(json_response['data']['attributes']['created_at']).to be_present
@@ -50,7 +49,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
 
     context 'with locale set to pl' do
       let!(:localized_policy) do
-        policy = create(:policy, store: store, slug: 'localized-policy', name: 'Privacy Policy EN')
+        policy = create(:policy, owner: store, slug: 'localized-policy', name: 'Privacy Policy EN')
 
         I18n.with_locale(:pl) do
           policy.name = 'Polityka Prywatności'
@@ -94,7 +93,7 @@ describe 'Storefront API v2 Policies spec', type: :request do
     end
 
     context 'accessing policy from different store' do
-      let(:other_store_policy) { create(:policy, store: other_store, slug: 'other-policy') }
+      let(:other_store_policy) { create(:policy, owner: other_store, slug: 'other-policy') }
 
       before { get "/api/v2/storefront/policies/#{other_store_policy.slug}" }
 

@@ -19,7 +19,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :user, class_name: "::#{Spree.user_class}", foreign_key: 'user_id'
     belongs_to :category, class_name: 'Spree::StoreCreditCategory', optional: true
-    belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", foreign_key: 'created_by_id', optional: true
+    belongs_to :created_by, class_name: Spree.admin_user_class.to_s, foreign_key: 'created_by_id', optional: true
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id', optional: true
     belongs_to :originator, polymorphic: true, optional: true
 

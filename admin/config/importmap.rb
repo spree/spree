@@ -23,7 +23,6 @@ pin '@stimulus-components/rails-nested-form', to: '@stimulus-components--rails-n
 pin 'stimulus-notification', preload: ['application-spree-admin'] # @2.2.0
 pin 'stimulus-password-visibility', preload: ['application-spree-admin'] # @2.1.1
 pin 'stimulus-sortable', preload: ['application-spree-admin'] # @4.1.1
-pin 'stimulus-textarea-autogrow', preload: ['application-spree-admin'] # @4.1.0
 pin 'hotkeys-js', preload: ['application-spree-admin'] # @3.13.9
 pin 'stimulus-use', preload: ['application-spree-admin'] # @0.51.3
 pin 'stimulus-checkbox-select-all', preload: ['application-spree-admin'] # @5.3.0

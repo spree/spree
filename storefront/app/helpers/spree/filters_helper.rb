@@ -8,12 +8,10 @@ module Spree
     end
 
     def products_for_filters_scope(except_filters: [])
-      products_finder = Spree::Dependencies.products_finder.constantize
-
       finder_params = default_products_finder_params
       finder_params[:filter] = finder_params[:filter].except(*except_filters) if except_filters.any?
 
-      products = products_finder.new(scope: storefront_products_scope, params: finder_params).execute
+      products = storefront_products_finder.new(scope: storefront_products_scope, params: finder_params).execute
       current_store.products.where(id: products.unscope(:order).ids)
     end
 

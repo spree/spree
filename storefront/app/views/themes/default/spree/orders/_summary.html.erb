@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :cart_summary do %>
-  <% if order.line_items.any? %>
+  <% if order.item_count.positive? %>
     <div class="cart-summary-container p-4">
       <p class="text-center lg:text-right text-sm mb-3">
         <%= Spree.t('storefront.cart.shipping_and_taxes_calculated_at_checkout') %>

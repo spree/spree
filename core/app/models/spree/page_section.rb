@@ -24,10 +24,17 @@ module Spree
     alias image asset
 
     #
+    # Rich Text
+    #
+    has_rich_text :text
+    has_rich_text :description
+
+    #
     # Validations
     #
     validates :name, :pageable, presence: true
     validates :asset, content_type: Rails.application.config.active_storage.web_image_content_types
+
     #
     # Callbacks
     #
@@ -116,7 +123,7 @@ module Spree
     end
 
     def can_be_sorted?
-      role == 'content'
+      true
     end
 
     def lazy?

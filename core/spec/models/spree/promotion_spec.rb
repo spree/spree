@@ -6,7 +6,7 @@ describe Spree::Promotion, type: :model do
   let(:store) { @default_store }
   let(:promotion) { create(:promotion, kind: :automatic) }
 
-  describe 'validations' do
+  describe 'Validations' do
     let!(:valid_promotion) { build(:promotion, name: 'A promotion', stores: [store], kind: :automatic) }
 
     it 'valid_promotion is valid' do
@@ -69,8 +69,8 @@ describe Spree::Promotion, type: :model do
     end
   end
 
-  describe 'callbacks' do
-    describe 'set_usage_limit_to_nil' do
+  describe 'Callbacks' do
+    describe '#set_usage_limit_to_nil' do
       let(:promotion) { create(:promotion, kind: :coupon_code, usage_limit: 100) }
 
       context 'when promo has one code for all customers' do
@@ -87,6 +87,14 @@ describe Spree::Promotion, type: :model do
 
           expect{ promotion.save }.to change{ promotion.usage_limit }.from(100).to(nil)
         end
+      end
+    end
+
+    describe '#remove_coupons' do
+      let!(:promotion) { create(:promotion, kind: :coupon_code, multi_codes: true, number_of_codes: 1) }
+
+      it 'removes the coupons' do
+        expect { promotion.update!(kind: :automatic) }.to change { promotion.coupon_codes.count }.from(1).to(0)
       end
     end
   end
@@ -281,12 +289,6 @@ describe Spree::Promotion, type: :model do
         expect(promotion.activate(payload)).to be true
         expect(promotion.orders.first).to eql order
       end
-
-      it 'touches the promotion' do
-        previous_updated_at = promotion.updated_at
-        expect(promotion.activate(payload)).to be true
-        expect(promotion.reload.updated_at).not_to eq(previous_updated_at)
-      end
     end
 
     context 'when not activated' do
@@ -296,12 +298,6 @@ describe Spree::Promotion, type: :model do
         expect(promotion.orders).to be_empty
         expect(promotion.activate(payload)).to be_falsey
         expect(promotion.orders).to be_empty
-      end
-
-      it "doesn't the promotion" do
-        previous_updated_at = promotion.updated_at
-        expect(promotion.activate(payload)).to be_falsey
-        expect(promotion.reload.updated_at).to eq(previous_updated_at)
       end
     end
   end
@@ -801,6 +797,7 @@ describe Spree::Promotion, type: :model do
       promo.activate(order: order)
       order.update_with_updater!
 
+      line_item.reload
       expect(line_item.adjustments.size).to eq(1)
       expect(order.adjustment_total).to eq(-5)
 
@@ -858,6 +855,12 @@ describe Spree::Promotion, type: :model do
           promotion.update(number_of_codes: 501)
         }.to enqueue_job(Spree::CouponCodes::BulkGenerateJob).with(promotion.id, 501 - promotion.coupon_codes.count)
       end
+    end
+  end
+
+  describe '#cached_rules' do
+    it 'returns the rules' do
+      expect(promotion.cached_rules).to eq(promotion.rules)
     end
   end
 end

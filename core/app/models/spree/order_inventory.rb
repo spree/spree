@@ -84,7 +84,7 @@ module Spree
       end
 
       # adding to this shipment, and removing from stock_location
-      if order.completed?
+      if order.completed? && variant.should_track_inventory?
         shipment.stock_location.unstock(variant, quantity, shipment)
       end
 

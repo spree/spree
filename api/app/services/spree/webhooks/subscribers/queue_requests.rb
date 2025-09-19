@@ -15,7 +15,11 @@ module Spree
         private
 
         def filtered_subscribers(event_name, webhook_payload_body, record, options)
-          Spree::Webhooks::Subscriber.active.with_urls_for(event_name)
+          Spree::Current.webhooks_subscribers.map do |subscriber|
+            if subscriber.supports_event?(event_name)
+              subscriber
+            end
+          end.compact
         end
       end
     end

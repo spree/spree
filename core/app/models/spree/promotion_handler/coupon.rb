@@ -62,7 +62,7 @@ module Spree
         promotion = order.promotions.with_coupon_code(coupon_code)
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
-          order.order_promotions.where(promotion_id: promotion.id).destroy_all
+          order.promotions.delete(promotion)
 
           if promotion.multi_codes?
             coupon_code = promotion.coupon_codes.find_by(order: order)

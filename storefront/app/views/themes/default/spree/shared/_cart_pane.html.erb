@@ -33,8 +33,8 @@
         <span class='sr-only'><%= Spree.t('storefront.cart.items_in_cart') %>, <%= Spree.t('storefront.cart.view_bag') %></span>
       </span>
     </div>
-    <div class='flex-1 h-0 overflow-y-auto'>
-      <%= turbo_frame_tag cart_id(order), class: 'cart-contents', src: spree.cart_path, data: { turbo_permanent: true } %>
+    <div class='flex-1 h-0 overflow-y-auto' id="cart-pane-container" data-turbo-permanent>
+      <%= turbo_frame_tag cart_id(order), class: 'cart-contents', src: spree.cart_path, loading: :lazy %>
     </div>
   </div>
 </div>

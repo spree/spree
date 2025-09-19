@@ -49,7 +49,7 @@ module Spree
     before_validation :downcase_code, if: -> { code.present? }
     before_validation :set_starts_at_to_current_time, if: -> { starts_at.blank? }
     after_commit :generate_coupon_codes, if: -> { multi_codes? }, on: [:create, :update]
-    after_commit :remove_coupons, unless: -> { multi_codes? }, on: :update
+    after_commit :remove_coupons, on: :update
     before_destroy :not_used?
 
     #
@@ -147,8 +147,8 @@ module Spree
       if action_taken
         # connect to the order
         # create the join_table entry.
-        orders << order
-        save
+        order.promotions << self unless order.promotions.include?(self)
+        order.save
       end
 
       action_taken
@@ -174,8 +174,8 @@ module Spree
       if action_taken
         # connect to the order
         # create the join_table entry.
-        orders << order
-        save
+        order.promotions << self unless order.promotions.include?(self)
+        order.save
       end
 
       action_taken
@@ -188,14 +188,26 @@ module Spree
       !!eligible_rules(promotable, options)
     end
 
+    # We cache the rules to avoid multiple database queries
+    # this is useful for orders with many line items
+    #
+    # @return [Array<Spree::PromotionRule>]
+    def cached_rules
+      Rails.cache.fetch("#{cache_key_with_version}/rules") do
+        rules.to_a
+      end
+    rescue TypeError # when using null_store in test environment
+      rules.to_a
+    end
+
     # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
     # if there are no such rules, an empty array is returned
     # if the rules make this promotable ineligible, then nil is returned (i.e. this promotable is not eligible)
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
-      return [] if rules.none?
+      return [] if cached_rules.none?
 
-      specific_rules = rules.select { |rule| rule.applicable?(promotable) }
+      specific_rules = cached_rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
       rule_eligibility = Hash[specific_rules.map do |rule|
@@ -329,6 +341,9 @@ module Spree
     end
 
     def remove_coupons
+      return unless (previous_changes.key?('kind') && previous_changes['kind'][0] == 'coupon_code' && kind == 'automatic') ||
+                    (previous_changes.key?('multi_codes') && previous_changes['multi_codes'][0] == true && multi_codes == false)
+
       coupon_codes.where(deleted_at: nil).update_all(deleted_at: Time.current)
     end
 
@@ -337,7 +352,7 @@ module Spree
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order
-        promotable.line_items.any? &&
+        (promotable.item_count.positive? || promotable.line_items.any?) &&
           promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end

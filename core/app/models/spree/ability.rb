@@ -101,6 +101,8 @@ module Spree
       can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
       can :read, ::Spree::Policy
       can :read, ::Spree::Page
+      can :read, ::Spree::Post
+      can :read, ::Spree::PostCategory
     end
 
     def protect_admin_role

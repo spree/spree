@@ -8,7 +8,7 @@ module Spree
         order = line_item.order
 
         ActiveRecord::Base.transaction do
-          line_item.destroy!
+          order.line_items.destroy(line_item)
           recalculate_service.call(order: order, line_item: line_item, options: options)
         end
         success(line_item)

@@ -1,6 +1,7 @@
 <% content_for :page_title do %>
   <% if controller_name == 'orders' %>
-    <%= page_header_back_button spree.admin_orders_path, @order %>
+    <% back_url = @order.present? && !@order.completed? ? spree.admin_checkouts_path : spree.admin_orders_path %>
+    <%= page_header_back_button back_url, @order %>
   <% else %>
     <%= page_header_back_button spree.edit_admin_order_path(@order) %>
   <% end %>

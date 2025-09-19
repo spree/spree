@@ -1,13 +1,10 @@
 <% logo ||= current_store.logo %>
 <% height ||= 64 %>
 <% logo_css ||= '' %>
-
 <%= link_to spree.root_path, id: 'site-logo' do %>
-  <span class='sr-only'><%= current_store.name %></span>
   <% if logo.present? && logo.attached? && logo.variable? %>
     <% aspect_ratio = spree_asset_aspect_ratio(logo) %>
     <% logo_style = "aspect-ratio: #{aspect_ratio};" %>
-
     <% if aspect_ratio.to_f > 10 %>
       <% mobile_class = "h-[16px]" %>
       <% desktop_class = "md:h-[32px]" %>
@@ -20,7 +17,6 @@
     <% else %>
       <% mobile_class = "h-[32px]" %>
     <% end %>
-
     <% if defined?(height) && height > 0 %>
       <% logo_style += "--desktop-height: #{height}px;" %>
       <% cdn_height = height %>
@@ -30,13 +26,10 @@
     <% else %>
       <% cdn_height = 32 %>
     <% end %>
-
     <% img_class = "w-auto #{mobile_class} #{desktop_class} #{logo_css}" %>
-
     <% variant_options = spree_image_variant_options(resize_to_fit: [nil, cdn_height * 3]) %>
-
-    <%= image_tag main_app.cdn_image_url(logo.variant(variant_options)), class: img_class, alt: current_store.name, style: logo_style, height: cdn_height %>
+    <%= image_tag main_app.cdn_image_url(logo.variant(variant_options)), class: img_class, alt: current_store.name + " logo", style: logo_style, height: cdn_height %>
   <% else %>
-    <h1 class='text-lg uppercase text-center'><%= current_store.name %></h1>
+    <h1 class='text-lg text-center uppercase'><%= current_store.name %></h1>
   <% end %>
 <% end %>

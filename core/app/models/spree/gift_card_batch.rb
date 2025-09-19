@@ -10,7 +10,6 @@ module Spree
     belongs_to :created_by, class_name: Spree.admin_user_class.to_s, optional: true
     has_many :gift_cards, class_name: 'Spree::GiftCard', inverse_of: :batch, dependent: :destroy
 
-
     #
     # Validations
     #

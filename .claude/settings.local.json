@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(rm:*)",
@@ -6,9 +7,11 @@
       "Bash(bundle exec rspec:*)",
       "Bash(bundle exec rails c:*)",
       "Bash(ruby test:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(bundle exec rails:*)",
+      "Bash(curl:*)",
+      "Bash(bundle exec rake:*)"
     ],
     "deny": []
-  },
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  }
 }

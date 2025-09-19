@@ -27,6 +27,10 @@ module Spree
       def customizable?
         true
       end
+
+      def linkable?
+        true
+      end
     end
   end
 end

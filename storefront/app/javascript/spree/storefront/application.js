@@ -47,6 +47,7 @@ const controllers = [
   'no-ui-slider',
   'pdp-desktop-gallery',
   'plp-variant-picker',
+  'prefetch-lazy',
   'product-form',
   'quantity-picker',
   'read-more',
@@ -57,6 +58,7 @@ const controllers = [
   'slideover-account',
   'slideover',
   'sticky-button',
+  'textarea-autogrow',
   'toggle-menu',
   'turbo-stream-form',
   'wished-item',
@@ -73,6 +75,7 @@ const manifest = {
   "reveal": "stimulus-reveal-controller",
   "scroll-to": "stimulus-scroll-to",
   "read-more": "stimulus-read-more",
+  "textarea-autogrow": "stimulus-textarea-autogrow"
 }
 
 import { lazyLoadControllersFromManifest } from "spree/storefront/helpers/lazy_load_controllers_with_manifest"
@@ -136,6 +139,14 @@ document.addEventListener('turbo:submit-end', () => {
   Turbo.navigator.delegate.adapter.progressBar.setValue(100)
   Turbo.navigator.delegate.adapter.progressBar.hide()
 })
+
+// fix for Safari buggy behavior with lazy loaded turbo frames
+document.addEventListener("turbo:before-fetch-request", (event) => {
+  const frame = event.target.closest("turbo-frame");
+  if (frame && frame.id) {
+    event.detail.fetchOptions.headers["Turbo-Frame"] = frame.id;
+  }
+});
 
 function replaceCsrfMetaTags() {
   const csrfMetaTagsTemplate = document.querySelector('template#csrf_meta_tags')

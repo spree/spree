@@ -30,7 +30,7 @@ module Spree
     def color_options_style_for_line_items(line_items)
       @color_options_style_for_line_items = begin
         colors = line_items.map(&:variant).map do |v|
-          color_option_values = v.option_values.find_all do |ov|
+          color_option_values = v.option_values.includes(:option_type).find_all do |ov|
             ov.option_type.color?
           end
 
@@ -48,7 +48,7 @@ module Spree
     def cart_id(order)
       return 'cart_contents' if order.blank? || order.id.blank? || order.updated_at.blank?
 
-      "cart_contents_#{order.id}_#{order.updated_at.to_i}"
+      "cart_contents_#{order.id}"
     end
   end
 end

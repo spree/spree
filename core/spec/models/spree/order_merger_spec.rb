@@ -116,15 +116,15 @@ module Spree
 
       specify do
         subject.merge!(order_2)
-        line_items = order_1.line_items.reload
-        expect(line_items.count).to eq(2)
+        expect(order_1.line_items.length).to eq(2)
+        expect(order_1.line_items.count).to eq(2)
 
         expect(order_1.item_count).to eq 2
-        expect(order_1.item_total).to eq line_items.map(&:amount).sum
+        expect(order_1.item_total).to eq order_1.line_items.map(&:amount).sum
 
         # No guarantee on ordering of line items, so we do this:
-        expect(line_items.pluck(:quantity)).to match_array([1, 1])
-        expect(line_items.pluck(:variant_id)).to match_array([variant.id, variant_2.id])
+        expect(order_1.line_items.pluck(:quantity)).to match_array([1, 1])
+        expect(order_1.line_items.pluck(:variant_id)).to match_array([variant.id, variant_2.id])
       end
     end
 
@@ -138,6 +138,7 @@ module Spree
 
       it 'creates errors with invalid line items' do
         variant_2.destroy!
+        order_2.line_items.to_a.first.reload
         subject.merge!(order_2)
         expect(order_1.errors.full_messages).not_to be_empty
       end

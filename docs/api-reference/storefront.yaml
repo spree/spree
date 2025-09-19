@@ -724,6 +724,7 @@ paths:
         '422':
           $ref: '#/components/responses/422UnprocessableEntity'
       security:
+        - orderToken: []
         - bearerAuth: []
       summary: Change Cart Currency
       tags:
@@ -1355,8 +1356,6 @@ paths:
           $ref: '#/components/responses/Store'
         '403':
           $ref: '#/components/responses/403Forbidden'
-      security:
-        - bearerAuth: []
   /api/v2/storefront/policies:
     get:
       summary: List all Store Policies
@@ -1367,8 +1366,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/PolicyList'
-      security:
-        - bearerAuth: []
   /api/v2/storefront/policies/{policy_slug}:
     get:
       summary: Retrieve a Policy
@@ -1381,8 +1378,294 @@ paths:
           $ref: '#/components/responses/Policy'
         '404':
           $ref: '#/components/responses/404NotFound'
-      security:
-        - bearerAuth: []
+  /api/v2/storefront/posts:
+    get:
+      summary: List all Posts
+      description: 'Returns a list of published Posts. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Posts
+      operationId: posts-list
+      parameters:
+        - $ref: '#/components/parameters/FilterByIds'
+        - in: query
+          name: 'filter[title]'
+          schema:
+            type: string
+          example: 'Hello World'
+          description: Filter Posts by title
+        - in: query
+          name: 'filter[post_category_id]'
+          schema:
+            type: string
+          example: '1'
+          description: Filter Posts by Post Category ID
+        - in: query
+          name: 'filter[post_category_slug]'
+          schema:
+            type: string
+          example: 'news'
+          description: Filter Posts by Post Category slug
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: ['id', '-id', 'title', '-title', 'published_at', '-published_at', 'created_at', '-created_at', 'updated_at', '-updated_at']
+          example: '-published_at'
+          description: 'Sort posts by attribute. Prefix with "-" for descending order. Available options: id, title, published_at, created_at, updated_at'
+        - in: query
+          name: include
+          schema:
+            type: string
+          example: 'post_category'
+          description: 'Include related resources (available: post_category)'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+                  links:
+                    $ref: '#/components/schemas/ListLinks'
+              examples:
+                success:
+                  value:
+                    data:
+                      - id: '1'
+                        type: 'post'
+                        attributes:
+                          title: 'Hello World'
+                          slug: 'hello-world'
+                          published_at: '2025-08-11T21:03:00.000Z'
+                          meta_title: ''
+                          meta_description: ''
+                          created_at: '2025-08-11T21:03:00.128Z'
+                          updated_at: '2025-08-27T10:09:23.007Z'
+                          excerpt: null
+                          content: 'This is a test post'
+                          content_html: '<div class="trix-content">\n  <div>This is a test post</div>\n</div>\n'
+                          description: 'This is a test post'
+                          shortened_description: 'This is a test post'
+                          author_name: 'Spree Admin'
+                          post_category_title: 'News'
+                          tags: []
+                          image_url: null
+                        relationships:
+                          post_category:
+                            data:
+                              id: '3'
+                              type: 'post_category'
+                    meta:
+                      count: 1
+                      total_count: 1
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/posts'
+                      next: 'http://localhost:3000/api/v2/storefront/posts?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/posts?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/posts?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/posts?page=1'
+  '/api/v2/storefront/posts/{id}':
+    get:
+      summary: Retrieve a Post
+      description: 'Returns the details of a specified Post. You can use either the post slug or ID. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Posts
+      operationId: show-post
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'hello-world'
+          description: 'Post slug or ID'
+        - in: query
+          name: include
+          schema:
+            type: string
+          example: 'post_category'
+          description: 'Include related resources (available: post_category)'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Post'
+              examples:
+                success:
+                  value:
+                    data:
+                      id: '1'
+                      type: 'post'
+                      attributes:
+                        title: 'Hello World'
+                        slug: 'hello-world'
+                        published_at: '2025-08-11T21:03:00.000Z'
+                        meta_title: ''
+                        meta_description: ''
+                        created_at: '2025-08-11T21:03:00.128Z'
+                        updated_at: '2025-08-27T10:09:23.007Z'
+                        excerpt: null
+                        content: 'This is a test post'
+                        content_html: '<div class="trix-content">\n  <div>This is a test post</div>\n</div>\n'
+                        description: 'This is a test post'
+                        shortened_description: 'This is a test post'
+                        author_name: 'Spree Admin'
+                        post_category_title: 'News'
+                        tags: []
+                        image_url: null
+                      relationships:
+                        post_category:
+                          data:
+                            id: '3'
+                            type: 'post_category'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+  /api/v2/storefront/post_categories:
+    get:
+      summary: List all Post Categories
+      description: 'Returns a list of Post Categories. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Post Categories
+      operationId: post-categories-list
+      parameters:
+        - $ref: '#/components/parameters/FilterByIds'
+        - in: query
+          name: 'filter[title]'
+          schema:
+            type: string
+          example: 'News'
+          description: Filter Post Categories by title
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: ['id', '-id', 'title', '-title', 'created_at', '-created_at', 'updated_at', '-updated_at']
+          example: 'title'
+          description: 'Sort post categories by attribute. Prefix with "-" for descending order. Available options: id, title, created_at, updated_at'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PostCategory'
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+                  links:
+                    $ref: '#/components/schemas/ListLinks'
+              examples:
+                success:
+                  value:
+                    data:
+                      - id: '1'
+                        type: 'post_category'
+                        attributes:
+                          title: 'Resources'
+                          slug: 'resources'
+                          created_at: '2025-08-11T20:58:24.354Z'
+                          updated_at: '2025-08-11T20:58:24.354Z'
+                          description: null
+                        relationships: {}
+                      - id: '2'
+                        type: 'post_category'
+                        attributes:
+                          title: 'Articles'
+                          slug: 'articles'
+                          created_at: '2025-08-11T20:58:24.365Z'
+                          updated_at: '2025-08-11T20:58:24.365Z'
+                          description: null
+                        relationships: {}
+                      - id: '3'
+                        type: 'post_category'
+                        attributes:
+                          title: 'News'
+                          slug: 'news'
+                          created_at: '2025-08-11T20:58:24.375Z'
+                          updated_at: '2025-08-11T20:58:24.375Z'
+                          description: null
+                        relationships: {}
+                    meta:
+                      count: 3
+                      total_count: 3
+                      total_pages: 1
+                    links:
+                      self: 'http://localhost:3000/api/v2/storefront/post_categories'
+                      next: 'http://localhost:3000/api/v2/storefront/post_categories?page=1'
+                      prev: 'http://localhost:3000/api/v2/storefront/post_categories?page=1'
+                      last: 'http://localhost:3000/api/v2/storefront/post_categories?page=1'
+                      first: 'http://localhost:3000/api/v2/storefront/post_categories?page=1'
+  '/api/v2/storefront/post_categories/{id}':
+    get:
+      summary: Retrieve a Post Category
+      description: 'Returns the details of a specified Post Category, including related posts. You can use either the category slug or ID. This endpoint is only available in Spree 5.2 or later.'
+      tags:
+        - Post Categories
+      operationId: show-post-category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'news'
+          description: 'Post Category slug or ID'
+        - in: query
+          name: include
+          schema:
+            type: string
+          example: 'posts'
+          description: 'Include related resources (available: posts)'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/PostCategory'
+              examples:
+                success:
+                  value:
+                    data:
+                      id: '3'
+                      type: 'post_category'
+                      attributes:
+                        title: 'News'
+                        slug: 'news'
+                        created_at: '2025-08-11T20:58:24.375Z'
+                        updated_at: '2025-08-11T20:58:24.375Z'
+                        description: null
+                      relationships:
+                        posts:
+                          data:
+                            - id: '1'
+                              type: 'post'
+        '404':
+          $ref: '#/components/responses/404NotFound'
   /api/v2/storefront/taxons:
     get:
       description: 'Returns a list of Taxons. [Read more about Taxons](/developer/core-concepts/products#taxons-and-taxonomies)'
@@ -1624,6 +1907,10 @@ paths:
                         - Web
                         - Android
                         - iOS
+                    return_url:
+                      type: string
+                      default: 'https://{host}/adyen/payment_sessions/redirect'
+                      description: URL to return back to store after payment with redirect flow like Klarna or iDEAL. The URL must not include personally identifiable information (PII), for example name or email address.
                   required:
                     - amount
               required:
@@ -1632,6 +1919,7 @@ paths:
               payment_session:
                 amount: 80.99
                 channel: Android
+                return_url: "my-app://your.package.name"
       operationId: create-adyen-payment-session
       responses:
         '200':
@@ -2847,6 +3135,14 @@ components:
             display_inluded_tax_total:
               type: string
               example: $0.00
+            compare_at_amount:
+              type: string
+              example: '290.99'
+              description: 'Compare at price of the Line Item'
+            display_compare_at_amount:
+              type: string
+              example: $290.99
+              description: 'Display compare at price of the Line Item'
             public_metadata:
               type: object
               example:
@@ -3054,10 +3350,6 @@ components:
               type: string
               example: terms-and-conditions
               description: URL-friendly identifier for the policy
-            show_in_checkout_footer:
-              type: boolean
-              example: true
-              description: Whether to display this policy in the checkout footer
             created_at:
               $ref: '#/components/schemas/Timestamp'
             updated_at:
@@ -3075,7 +3367,175 @@ components:
           required:
             - name
             - slug
-            - show_in_checkout_footer
+            - created_at
+            - updated_at
+      required:
+        - id
+        - type
+        - attributes
+    Post:
+      type: object
+      title: Post
+      description: 'Post represents a blog post or news article that can be displayed on the storefront.'
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: post
+        attributes:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Hello World
+              description: Title of the post
+            slug:
+              type: string
+              example: hello-world
+              description: URL-friendly identifier for the post
+            published_at:
+              type: string
+              format: date-time
+              example: '2025-08-11T21:03:00.000Z'
+              description: Date and time when the post was published
+              nullable: true
+            meta_title:
+              type: string
+              example: ''
+              description: SEO meta title
+              nullable: true
+            meta_description:
+              type: string
+              example: ''
+              description: SEO meta description
+              nullable: true
+            created_at:
+              $ref: '#/components/schemas/Timestamp'
+            updated_at:
+              $ref: '#/components/schemas/Timestamp'
+            excerpt:
+              type: string
+              example: null
+              description: Short excerpt of the post content
+              nullable: true
+            content:
+              type: string
+              example: This is a test post
+              description: Plain text content of the post
+              nullable: true
+            content_html:
+              type: string
+              example: "<div class=\"trix-content\">\n  <div>This is a test post</div>\n</div>\n"
+              description: HTML formatted content of the post
+              nullable: true
+            description:
+              type: string
+              example: This is a test post
+              description: Description of the post
+              nullable: true
+            shortened_description:
+              type: string
+              example: This is a test post
+              description: Shortened description of the post
+              nullable: true
+            author_name:
+              type: string
+              example: Spree Admin
+              description: Name of the post author
+              nullable: true
+            post_category_title:
+              type: string
+              example: News
+              description: Title of the associated post category
+              nullable: true
+            tags:
+              type: array
+              items:
+                type: string
+              example: []
+              description: List of tags associated with the post
+            image_url:
+              type: string
+              example: null
+              description: URL of the post's featured image
+              nullable: true
+        relationships:
+          type: object
+          properties:
+            post_category:
+              type: object
+              properties:
+                data:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      example: '3'
+                    type:
+                      type: string
+                      example: post_category
+          required:
+            - title
+            - slug
+            - created_at
+            - updated_at
+      required:
+        - id
+        - type
+        - attributes
+    PostCategory:
+      type: object
+      title: Post Category
+      description: 'Post Category represents a category for organizing blog posts or news articles.'
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: post_category
+        attributes:
+          type: object
+          properties:
+            title:
+              type: string
+              example: News
+              description: Title of the post category
+            slug:
+              type: string
+              example: news
+              description: URL-friendly identifier for the post category
+            created_at:
+              $ref: '#/components/schemas/Timestamp'
+            updated_at:
+              $ref: '#/components/schemas/Timestamp'
+            description:
+              type: string
+              example: null
+              description: Description of the post category
+              nullable: true
+        relationships:
+          type: object
+          properties:
+            posts:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: '1'
+                      type:
+                        type: string
+                        example: post
+          required:
+            - title
+            - slug
             - created_at
             - updated_at
       required:
@@ -4795,6 +5255,8 @@ components:
                       display_included_tax_total: $0.00
                       pre_tax_amount: '474.95'
                       display_pre_tax_amount: $474.95
+                      compare_at_amount: '599.99'
+                      display_compare_at_amount: $599.99
                     relationships:
                       variant:
                         data:
@@ -5212,6 +5674,8 @@ components:
                       display_included_tax_total: $0.00
                       pre_tax_amount: '474.95'
                       display_pre_tax_amount: $474.95
+                      compare_at_amount: '599.99'
+                      display_compare_at_amount: '$599.99'
                     relationships:
                       variant:
                         data:
@@ -5854,6 +6318,10 @@ components:
                           - iOS
                         description: The channel of the payment session
                         example: Android
+                      return_url:
+                        type: string
+                        description: URL to return back to store after payment with redirect flow like Klarna or iDEAL. The URL must not include personally identifiable information (PII), for example name or email address.
+                        example: 'https://{host}/adyen/payment_sessions/redirect'
                       status:
                         type: string
                         description: The status of the payment session
@@ -5910,6 +6378,7 @@ components:
                     client_key: 'test_ECRHWDLSER123456HMT57VW7XGOUDA23'
                     status: initial
                     expires_at: '2025-07-24T14:40:45.000Z'
+                    return_url: 'https://example.com/adyen/payment_sessions/redirect'
                   relationships:
                     order:
                       data:
@@ -8303,7 +8772,6 @@ components:
                   attributes:
                     name: Terms and Conditions
                     slug: terms-and-conditions
-                    show_in_checkout_footer: true
                     created_at: '2025-08-12T12:13:09.183Z'
                     updated_at: '2025-08-12T13:27:59.470Z'
                     body: asdrdfas
@@ -15302,7 +15770,6 @@ components:
                     attributes:
                       name: Terms and Conditions
                       slug: terms-and-conditions
-                      show_in_checkout_footer: true
                       created_at: '2025-08-12T12:13:09.183Z'
                       updated_at: '2025-08-12T13:27:59.470Z'
                       body: asdrdfas
@@ -15312,7 +15779,6 @@ components:
                     attributes:
                       name: Privacy Policy
                       slug: privacy-policy
-                      show_in_checkout_footer: false
                       created_at: '2025-08-12T10:00:00.000Z'
                       updated_at: '2025-08-12T10:00:00.000Z'
                       body: Privacy policy content

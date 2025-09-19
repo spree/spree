@@ -3,7 +3,12 @@
   <h6 class="sidebar-header">Page sections</h6>
   <% if @page_preview.layout_sections? %>
     <div class="list-group-flush border-bottom mb-1 pb-2">
-      <%= render collection: @theme_preview.sections.find_all { |s| s.role == 'header' }, partial: 'spree/admin/page_builder/sidebar_section', as: :section  %>
+      <div data-controller="sortable"
+         data-sortable-handle-value=".handle-section"
+         data-sortable-resource-name-value="page_section"
+         data-sortable-response-kind-value="turbo-stream">
+        <%= render collection: @theme_preview.sections.find_all { |s| s.role == 'header' }, partial: 'spree/admin/page_builder/sidebar_section', as: :section  %>
+      </div>
     </div>
   <% end %>
   <div id="page-sections-list" class="list-group-flush py-2">
@@ -21,7 +26,12 @@
   </div>
   <% if @page_preview.layout_sections? %>
     <div class="list-group-flush border-top py-2">
-      <%= render collection: @theme_preview.sections.find_all { |s| s.role == 'footer' }, partial: 'spree/admin/page_builder/sidebar_section', as: :section  %>
+      <div data-controller="sortable"
+         data-sortable-handle-value=".handle-section"
+         data-sortable-resource-name-value="page_section"
+         data-sortable-response-kind-value="turbo-stream">
+        <%= render collection: @theme_preview.sections.find_all { |s| s.role == 'footer' }, partial: 'spree/admin/page_builder/sidebar_section', as: :section  %>
+      </div>
     </div>
   <% end %>
 </div>

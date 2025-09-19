@@ -10,5 +10,13 @@ FactoryBot.define do
     trait :with_image do
       image { Rack::Test::UploadedFile.new(Spree::Core::Engine.root.join('spec/fixtures/thinking-cat.jpg'), 'image/jpeg') }
     end
+
+    trait :published do
+      published_at { Time.current }
+    end
+
+    trait :unpublished do
+      published_at { nil }
+    end
   end
 end

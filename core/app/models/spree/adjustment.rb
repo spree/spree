@@ -92,6 +92,10 @@ module Spree
       source_type == 'Spree::TaxRate'
     end
 
+    def additional?
+      !included?
+    end
+
     # Passing a target here would always be recommended as it would avoid
     # hitting the database again and would ensure you're compute values over
     # the specific object amount passed here.
@@ -103,7 +107,6 @@ module Spree
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?
 
       update_columns(attributes)
-      source.promotion.touch if promotion?
 
       amount
     end

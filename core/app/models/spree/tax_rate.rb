@@ -71,19 +71,25 @@ module Spree
     # Deletes all tax adjustments, then applies all applicable rates
     # to relevant items.
     def self.adjust(order, items)
+      return if items.none?
+
       rates = match(order.tax_zone)
-      tax_categories = rates.map(&:tax_category)
+      tax_category_ids = rates.map(&:tax_category_id)
 
       # using destroy_all to ensure adjustment destroy callback fires.
       Spree::Adjustment.where(adjustable: items).tax.destroy_all
 
-      relevant_items = items.select do |item|
-        tax_categories.include?(item.tax_category)
-      end
+      relevant_items = if tax_category_ids.any?
+                          items.select do |item|
+                            tax_category_ids.include?(item.tax_category_id)
+                          end
+                        else
+                          []
+                        end
 
       relevant_items.each do |item|
         relevant_rates = rates.select do |rate|
-          rate.tax_category == item.tax_category
+          rate.tax_category_id == item.tax_category_id
         end
         store_pre_tax_amount(item, relevant_rates)
         relevant_rates.each do |rate|
@@ -113,6 +119,14 @@ module Spree
 
     def compute_amount(item)
       compute(item)
+    end
+
+    def included?
+      included_in_price
+    end
+
+    def additional?
+      !included_in_price
     end
 
     private

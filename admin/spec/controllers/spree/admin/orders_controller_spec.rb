@@ -105,7 +105,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
         expect(assigns(:orders).to_a).to contain_exactly(cancelled_order)
       end
-  
+
       it 'returns all orders with balance due' do
         get :index, params: { q: { payment_state_eq: :balance_due } }
 
@@ -189,6 +189,15 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         end
       end
     end
+
+    it 'returns orders matching both shipment and payment filters' do
+      get :index, params: { q: {
+        shipment_state_not_in: %w[shipped canceled],
+        payment_state_eq: :balance_due
+      } }
+
+      expect(assigns(:orders).to_a).to contain_exactly(order)
+    end
   end
 
   describe '#edit' do
@@ -196,16 +205,34 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
     let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
 
-    let!(:invalid_payment) { create(:payment, state: 'invalid', amount: 100, order: order) }
-    let!(:valid_payment) { create(:payment, state: 'completed', amount: 100, order: order) }
+    let(:invalid_payment) { create(:payment, state: 'invalid', amount: order.total, order: order) }
+    let(:valid_payment) { create(:payment, state: 'completed', amount: order.total, order: order) }
 
     it 'shows an order' do
+      invalid_payment
+      valid_payment
       subject
 
       expect(assigns[:order]).to eq(order)
       expect(assigns[:line_items]).to eq(order.line_items)
       expect(assigns[:shipments]).to eq(order.shipments)
       expect(assigns[:payments]).to contain_exactly(valid_payment, invalid_payment)
+    end
+
+    context 'when payment method is destroyed' do
+      let(:payment_method) { create(:credit_card_payment_method) }
+      let!(:payment) { create(:payment, payment_method: payment_method, source: credit_card, order: order, amount: order.total) }
+      let!(:credit_card) { create(:credit_card, payment_method: payment_method) }
+
+      before do
+        payment_method.destroy
+      end
+
+      it 'shows an order' do
+        subject
+        expect(response).to render_template(:edit)
+        expect(assigns[:payments]).to contain_exactly(payment)
+      end
     end
   end
 

@@ -69,7 +69,7 @@ module Spree
     end
 
     def update_shipment_total
-      order.shipment_total = shipments.sum(:cost)
+      order.shipment_total = shipments.to_a.sum(&:cost)
       update_order_total
     end
 
@@ -97,7 +97,7 @@ module Spree
     end
 
     def update_item_total
-      order.item_total = line_items.sum('price * quantity')
+      order.item_total = line_items.to_a.sum(&:amount)
       update_order_total
     end
 

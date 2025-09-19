@@ -12,12 +12,12 @@
           data-sortable-handle-value=".move-handle"
           data-sortable-resource-name-value="asset"
           data-sortable-response-kind-value="json">
-      <%= render partial: 'spree/admin/variants/form/media_asset', collection: media_form_assets(viewable), as: :asset, cached: spree_base_cache_scope %>
+      <%= render partial: 'spree/admin/shared/media_asset', collection: media_form_assets(viewable, viewable_type), as: :asset, cached: spree_base_cache_scope %>
       <%= button_tag class: 'upload-area media-form__add-button', data: {
           controller: 'asset-uploader',
           asset_uploader_multiple_value: true,
           asset_uploader_viewable_id_value: viewable&.id,
-          asset_uploader_viewable_type_value: 'Spree::Variant',
+          asset_uploader_viewable_type_value: viewable_type,
           asset_uploader_allowed_file_types_value: allowed_file_types_for_upload,
           asset_uploader_admin_assets_path_value: spree.admin_assets_path,
           action: 'asset-uploader#open',

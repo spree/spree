@@ -49,6 +49,8 @@ describe Spree::OrderInventory, type: :model do
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
 
+        expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
+
         # The before_save callback in LineItem would verify inventory
         line_item = Spree::Cart::AddItem.call(order: order, variant: variant, options: { shipment: shipment }).value
 
@@ -65,6 +67,8 @@ describe Spree::OrderInventory, type: :model do
 
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
+
+        expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
         line_item = Spree::Cart::AddItem.call(order: order, variant: variant).value
         subject.verify(shipment)

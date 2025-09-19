@@ -13,11 +13,17 @@ module Spree
 
       private
 
+      def find_resource
+        model_class.accessible_by(current_ability, :manage).find(params[:id])
+      end
+
       def collection_url
         @collection_url ||= if @parent.is_a?(Spree::PageSection)
                               spree.edit_admin_page_section_path(@parent)
                             elsif @parent.is_a?(Spree::PageBlock)
                               spree.edit_admin_page_section_block_path(@parent.section, @parent)
+                            elsif @parent.is_a?(Spree::Store)
+                              spree.edit_admin_store_path(section: :checkout)
                             end
       end
 
@@ -28,6 +34,8 @@ module Spree
                       Spree::PageBlock.find(params[:block_id])
                     elsif params[:page_section_id].present?
                       Spree::PageSection.find(params[:page_section_id])
+                    elsif params[:store_id].present?
+                      current_store
                     end
       end
 
@@ -39,7 +47,7 @@ module Spree
         @page_link.linkable ||= @parent.default_linkable_resource
       end
 
-      # for create action we don't pass the page_link at all
+      # for create action we don't pass    page_link at all
       def permitted_resource_params
         if params[:page_link].present?
           params.require(:page_link).permit(permitted_page_link_attributes)

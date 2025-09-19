@@ -2,16 +2,35 @@ require 'spec_helper'
 
 RSpec.describe Spree::Policy, type: :model do
   let(:store) { Spree::Store.default }
-  let(:policy) { create(:policy, store: store) }
+  let(:policy) { create(:policy, owner: store) }
 
-  describe 'validations' do
+  describe 'Validations' do
     context 'slug uniqueness' do
       before { policy }
 
       it 'allows same slug for different stores' do
         other_store = create(:store)
-        other_policy = create(:policy, store: other_store, slug: policy.slug)
+        other_policy = create(:policy, owner: other_store, slug: policy.slug)
         expect(other_policy.slug).to eq(policy.slug)
+      end
+    end
+
+    context 'owner presence' do
+      it 'is invalid without an owner' do
+        policy.owner = nil
+        expect(policy).to be_invalid
+      end
+    end
+  end
+
+  describe 'Callbacks' do
+    context 'after destroy destroys links in which policy is linked to' do
+      let!(:page_link) { create(:page_link, linkable: policy, parent: store) }
+
+      it 'destroys links' do
+        expect(store.links).to include(page_link)
+        expect { policy.destroy }.to change(Spree::PageLink, :count).by(-1)
+        expect(store.links).not_to include(page_link)
       end
     end
   end
@@ -31,7 +50,7 @@ RSpec.describe Spree::Policy, type: :model do
     end
   end
 
-  describe 'translations' do
+  describe 'Translations' do
     it 'has translatable name field' do
       expect(described_class::TRANSLATABLE_FIELDS).to include(:name)
     end
@@ -53,22 +72,11 @@ RSpec.describe Spree::Policy, type: :model do
     end
   end
 
-  describe 'scopes' do
-    describe '.show_in_checkout_footer' do
-      let!(:visible_policy) { create(:policy, show_in_checkout_footer: true) }
-      let!(:hidden_policy) { create(:policy, show_in_checkout_footer: false) }
-
-      it 'returns only policies that should be shown in checkout footer' do
-        result = described_class.show_in_checkout_footer
-        expect(result).to include(visible_policy)
-        expect(result).not_to include(hidden_policy)
-      end
-    end
-
+  describe 'Scopes' do
     describe '.for_store' do
       let(:other_store) { create(:store) }
-      let!(:store1_policy) { create(:policy, store: store) }
-      let!(:store2_policy) { create(:policy, store: other_store) }
+      let!(:store1_policy) { create(:policy, owner: store) }
+      let!(:store2_policy) { create(:policy, owner: other_store) }
 
       it 'returns policies for specific store' do
         result = described_class.for_store(store)

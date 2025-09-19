@@ -14,6 +14,7 @@ module Spree
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
+    include Spree::HasPageLinks
 
     #
     # Magic methods
@@ -111,7 +112,7 @@ module Spree
 
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
 
-    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy
+    has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     #
     # Page Builder associations
@@ -125,6 +126,7 @@ module Spree
              inverse_of: :store,
              dependent: :destroy
     has_one :default_theme, -> { without_previews.where(default: true) }, class_name: 'Spree::Theme', inverse_of: :store
+    alias theme default_theme
     has_many :theme_pages, class_name: 'Spree::Page', through: :themes, source: :pages
     has_many :theme_page_previews, class_name: 'Spree::Page', through: :theme_pages, source: :previews
     has_many :pages, -> { without_previews.custom }, class_name: 'Spree::Pages::Custom', dependent: :destroy, as: :pageable
@@ -206,7 +208,11 @@ module Spree
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(url = nil)
-      Spree::Dependencies.current_store_finder.constantize.new(url: url).execute || Spree::Current.store
+      if url.present?
+        Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
+      else
+        Spree::Current.store
+      end
     end
 
     # FIXME: we need to drop `or_initialize` in v5
@@ -323,15 +329,20 @@ module Spree
       formatted_custom_domain || formatted_url
     end
 
+    # Returns the countries available for checkout for the store or creates a new one if it doesn't exist
+    # @return [Array<Spree::Country>]
     def countries_available_for_checkout
       @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
-        checkout_zone.try(:country_list) || Spree::Country.all
+        (checkout_zone.try(:country_list) || Spree::Country.all).to_a
       end
     end
 
+    # Returns the states available for checkout for the store or creates a new one if it doesn't exist
+    # @param country [Spree::Country] the country to get the states for
+    # @return [Array<Spree::State>]
     def states_available_for_checkout(country)
       Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
-        checkout_zone.try(:state_list_for, country) || country.states
+        (checkout_zone.try(:state_list_for, country) || country.states).to_a
       end
     end
 
@@ -342,7 +353,7 @@ module Spree
     end
 
     def supported_shipping_zones
-      @supported_shipping_zones ||= if checkout_zone_id.present?
+      @supported_shipping_zones ||= if checkout_zone.present?
                                       [checkout_zone]
                                     else
                                       Spree::Zone.includes(zone_members: :zoneable).all
@@ -412,6 +423,13 @@ module Spree
 
         ActionText::RichText.find_by(name: policy_method, record: self)
       end
+    end
+
+    # Returns all active webhooks subscribers for the store
+    #
+    # @return [Array<Spree::Webhooks::Subscriber>]
+    def active_webhooks_subscribers
+      @active_webhooks_subscribers ||= Spree::Webhooks::Subscriber.active
     end
 
     private
@@ -508,21 +526,14 @@ module Spree
     end
 
     def create_default_policies
-      policies.find_or_initialize_by(name: Spree.t('terms_of_service')) do |policy|
-        policy.body = Spree.t('terms_of_service')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('privacy_policy')) do |policy|
-        policy.body = Spree.t('privacy_policy')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('returns_policy')) do |policy|
-        policy.body = Spree.t('returns_policy')
-        policy.save!
-      end
-      policies.find_or_initialize_by(name: Spree.t('shipping_policy')) do |policy|
-        policy.body = Spree.t('shipping_policy')
-        policy.save!
+      policies.find_or_create_by(name: Spree.t('terms_of_service'))
+      policies.find_or_create_by(name: Spree.t('privacy_policy'))
+      policies.find_or_create_by(name: Spree.t('returns_policy'))
+      policies.find_or_create_by(name: Spree.t('shipping_policy'))
+
+      # Create checkout links to the policies
+      policies.each do |policy|
+        links.find_or_create_by(linkable: policy)
       end
     end
 

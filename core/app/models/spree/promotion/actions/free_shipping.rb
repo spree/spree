@@ -18,12 +18,12 @@ module Spree
         def create_adjustment(order, adjustable, included = false)
           amount = compute_amount(adjustable)
 
-          adjustments.new(
-            adjustable: adjustable,
+          adjustable.adjustments.new(
             amount: amount,
             included: included,
             label: label,
-            order: order
+            order: order,
+            source: self
           ).save
         end
       end

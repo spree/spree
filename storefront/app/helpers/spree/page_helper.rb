@@ -12,7 +12,7 @@ module Spree
       page ||= current_page
 
       sections = current_page_preview.present? ? current_page_preview.sections : page.sections
-      sections_html = sections.includes(:links, { asset_attachment: :blob }, { blocks: [:rich_text_text, :links] }).map do |section|
+      sections_html = sections.includes(section_includes).map do |section|
         render_section(section, variables)
       end.join.html_safe
 
@@ -52,7 +52,7 @@ module Spree
 
         path = section.lazy_path(variables)
 
-        turbo_frame_tag(css_id, src: path, loading: 'eager', class: css_class) do
+        turbo_frame_tag(css_id, src: path, loading: :lazy, class: css_class, data: { controller: 'prefetch-lazy', turbo_permanent: true }) do
           render('/' + section.to_partial_path, **variables)
         end
       else
@@ -66,6 +66,42 @@ module Spree
       Rails.error.report(e, context: { section_id: section.id }, source: 'spree.storefront')
 
       ''
+    end
+
+    # Returns the layout sections of the page with current theme or theme preview.
+    #
+    # @return [Array] the layout sections of the page
+    def layout_sections
+      @layout_sections ||= current_theme_or_preview.sections
+    end
+
+    # Renders the header sections of the page.
+    #
+    # @return [String] the rendered header sections
+    def render_header_sections
+      @render_header_sections ||= layout_sections.find_all { |section| section.role == 'header' }.map do |section|
+        render_section(section)
+      end.join.html_safe
+    end
+
+    # Renders the footer sections of the page.
+    #
+    # @return [String] the rendered footer sections
+    def render_footer_sections
+      @render_footer_sections ||= layout_sections.find_all { |section| section.role == 'footer' }.map do |section|
+        render_section(section)
+      end.join.html_safe
+    end
+
+    # Returns the includes for the section.
+    #
+    # @return [Array] the includes for the section
+    def section_includes
+      [
+        :links, :rich_text_text,
+        :rich_text_description, { asset_attachment: :blob },
+        { blocks: [:rich_text_text, :links] }
+      ]
     end
 
     # Renders a link to the page builder for the given link.

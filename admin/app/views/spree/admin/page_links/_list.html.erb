@@ -31,6 +31,6 @@
       <% add_url = spree.admin_page_section_block_links_path(parent.section, parent) %>
     <% end %>
 
-    <%= link_to_with_icon 'plus', 'Add link', add_url, class: 'btn btn-primary w-100', data: { turbo_method: :post } if add_url && can?(:create, Spree::PageLink.new(parent: parent)) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_link), add_url, class: 'btn btn-primary w-100', data: { turbo_method: :post } if add_url && can?(:create, Spree::PageLink.new(parent: parent)) %>
   <% end %>
 </div>

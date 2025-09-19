@@ -78,7 +78,7 @@ RSpec.describe Spree::ThemeHelper, type: :helper do
 
   describe '#page_builder_enabled?' do
     it 'returns true if page builder is enabled' do
-      allow(helper).to receive(:params).and_return(theme_preview_id: theme_preview.id, page_builder: 'true')
+      allow(helper).to receive(:params).and_return(theme_preview_id: theme_preview.id)
       expect(helper.page_builder_enabled?).to be_truthy
     end
 

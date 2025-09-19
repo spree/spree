@@ -90,6 +90,14 @@
                 "icon": "book-open",
                 "pages": [
                   {
+                    "group": "Multi-Store",
+                    "icon": "store",
+                    "pages": [
+                      "developer/multi-store/quickstart",
+                      "developer/multi-store/setup"
+                    ]
+                  },
+                  {
                     "group": "Multi-Tenant",
                     "icon": "building",
                     "pages": [
@@ -353,6 +361,20 @@
                     "pages": [
                       "api-reference/storefront/policies/list-all-store-policies",
                       "api-reference/storefront/policies/retrieve-a-policy"
+                    ]
+                  },
+                  {
+                    "group": "Posts",
+                    "pages": [
+                      "api-reference/storefront/posts/list-all-posts",
+                      "api-reference/storefront/posts/retrieve-a-post"
+                    ]
+                  },
+                  {
+                    "group": "Post Categories",
+                    "pages": [
+                      "api-reference/storefront/post-categories/list-all-post-categories",
+                      "api-reference/storefront/post-categories/retrieve-a-post-category"
                     ]
                   },
                   {
