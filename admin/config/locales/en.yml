@@ -100,6 +100,10 @@ en:
       name: Name
       navigation:
         nested_under: Nested under
+      newsletter_subscribers:
+        all: All
+        verified: Verified
+        unverified: Unverified
       not_tracking_inventory: Not tracking inventory
       notifications: Notifications
       num_orders: No. of Orders
