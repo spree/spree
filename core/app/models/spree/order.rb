@@ -180,6 +180,8 @@ module Spree
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
 
+    validate :order_validators, on: [:create, :update]
+
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
     delegate :firstname, :lastname, to: :bill_address, prefix: true, allow_nil: true
@@ -865,6 +867,12 @@ module Spree
     end
 
     private
+
+    def order_validators
+      Rails.application.config.spree.validators.orders.each do |validator|
+        validates_with validator
+      end
+    end
 
     def link_by_email
       self.email = user.email if user

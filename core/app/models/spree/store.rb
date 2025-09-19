@@ -168,6 +168,8 @@ module Spree
     end
     validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
 
+    validate :store_validators, on: [:create, :update]
+
     #
     # Attachments
     #
@@ -433,6 +435,12 @@ module Spree
     end
 
     private
+
+    def store_validators
+      Rails.application.config.spree.validators.stores.each do |validator|
+        validates_with validator
+      end
+    end
 
     def countries_available_for_checkout_cache_key
       "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/countries_available_for_checkout"

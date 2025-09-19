@@ -28,7 +28,7 @@ module Spree
                                :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
-      SpreeValidators = Struct.new(:addresses)
+      SpreeValidators = Struct.new(:addresses, :products, :variants, :taxons, :stores, :prices, :orders, :gift_cards, :assets)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -283,6 +283,15 @@ module Spree
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
+
+        Rails.application.config.spree.validators.products = []
+        Rails.application.config.spree.validators.variants = []
+        Rails.application.config.spree.validators.taxons = []
+        Rails.application.config.spree.validators.stores = []
+        Rails.application.config.spree.validators.prices = []
+        Rails.application.config.spree.validators.orders = []
+        Rails.application.config.spree.validators.gift_cards = []
+        Rails.application.config.spree.validators.assets = []
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

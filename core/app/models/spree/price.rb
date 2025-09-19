@@ -33,6 +33,8 @@ module Spree
 
     validates :currency, presence: true
 
+    validate :price_validators, on: [:create, :update]
+
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
@@ -129,6 +131,12 @@ module Spree
     end
 
     private
+
+    def price_validators
+      Rails.application.config.spree.validators.prices.each do |validator|
+        validates_with validator
+      end
+    end
 
     def ensure_currency
       self.currency ||= Spree::Store.default.default_currency

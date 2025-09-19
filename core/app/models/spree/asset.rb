@@ -20,8 +20,18 @@ module Spree
       where(session_id: uuid)
     }
 
+    validate :asset_validators, on: [:create, :update]
+
     def product
       @product ||= viewable_type == 'Spree::Variant' ? viewable&.product : nil
+    end
+
+    private
+
+    def asset_validators
+      Rails.application.config.spree.validators.assets.each do |validator|
+        validates_with validator
+      end
     end
   end
 end
