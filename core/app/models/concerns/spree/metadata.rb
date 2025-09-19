@@ -1,6 +1,10 @@
+require_relative 'metafields'
+
 module Spree
   module Metadata
     extend ActiveSupport::Concern
+
+    include Spree::Metafields
 
     included do
       # Legacy jsonb fields - to be deprecated
@@ -9,15 +13,6 @@ module Spree
 
       serialize :public_metadata, coder: HashSerializer
       serialize :private_metadata, coder: HashSerializer
-
-      # New metafields association
-      has_many :metafields, as: :owner, class_name: 'Spree::Metafield', dependent: :destroy
-
-      accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
-                                                                                    mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
-                                                                                  }
-
-      scope :with_metafield, ->(key) { joins(:metafield_definitions).where(spree_metafield_definitions: { key: key }) }
     end
 
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails

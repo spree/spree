@@ -2,7 +2,6 @@ module Spree
   module Admin
     module MetafieldsHelper
       def link_to_edit_metafields(resource, classes: 'text-left dropdown-item')
-        return unless resource.class.included_modules.include?(Spree::Metadata)
         return unless Spree::MetafieldDefinition.for_owner_type(resource.class.to_s).exists?
 
         link_to_with_icon(
