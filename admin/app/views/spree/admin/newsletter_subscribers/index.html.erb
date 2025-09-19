@@ -2,4 +2,8 @@
   <%= Spree.t(:newsletter_subscribers) %>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table', new_object_url: nil %>
+<% content_for :page_actions do %>
+  <%= link_to_export_modal %>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table', new_object_url: nil, export_type: Spree::Exports::NewsletterSubscribers %>
