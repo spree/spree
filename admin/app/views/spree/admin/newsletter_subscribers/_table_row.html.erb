@@ -1,6 +1,7 @@
 <tr id="<%= spree_dom_id newsletter_subscriber %>">
   <td class="w-30">
     <%= newsletter_subscriber.email %>
+    <%= clipboard_component(newsletter_subscriber.email) %>
   </td>
   <td class="w-30">
     <% if newsletter_subscriber.user.present? %>

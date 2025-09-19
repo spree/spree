@@ -1,6 +1,39 @@
 <%= search_form_for [:admin, search_collection], class: "filter-wrap", data: { controller: "filters dropdown" } do |f| %>
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :email_cont, label: Spree.t(:email) %>
+
+    <div class="dropdown">
+      <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+        <span class="text-muted font-weight-normal mr-1">
+          <%= Spree.t(:show) %>
+        </span>
+        <%# Show current filter value %>
+        <% current_value =
+          if params.dig(:q, :verified).to_s == 'true'
+            Spree.t('admin.newsletter_subscribers.verified')
+          elsif params.dig(:q, :unverified).to_s == 'true'
+            Spree.t('admin.newsletter_subscribers.unverified')
+          else
+            Spree.t('admin.newsletter_subscribers.all')
+          end
+        %>
+        <%= current_value %>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px">
+        <%= active_link_to Spree.t('admin.newsletter_subscribers.all'),
+          params.to_unsafe_h.deep_merge(q: { verified: nil, unverified: nil }),
+          class: 'dropdown-item',
+          active: params.dig(:q, :verified).blank? && params.dig(:q, :unverified).blank? %>
+        <%= active_link_to Spree.t('admin.newsletter_subscribers.verified'),
+          params.to_unsafe_h.deep_merge(q: { verified: true, unverified: nil }),
+          class: 'dropdown-item',
+          active: params.dig(:q, :verified).to_s == 'true' %>
+        <%= active_link_to Spree.t('admin.newsletter_subscribers.unverified'),
+          params.to_unsafe_h.deep_merge(q: { verified: nil, unverified: true }),
+          class: 'dropdown-item',
+          active: params.dig(:q, :unverified).to_s == 'true' %>
+      </div>
+    </div>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
