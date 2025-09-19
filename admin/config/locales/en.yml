@@ -102,8 +102,8 @@ en:
         nested_under: Nested under
       newsletter_subscribers:
         all: All
-        verified: Verified
         unverified: Unverified
+        verified: Verified
       not_tracking_inventory: Not tracking inventory
       notifications: Notifications
       num_orders: No. of Orders
