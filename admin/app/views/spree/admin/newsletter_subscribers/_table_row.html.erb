@@ -5,7 +5,7 @@
   </td>
   <td class="w-25">
     <% if newsletter_subscriber.user.present? %>
-      <%= newsletter_subscriber.user.email %>
+      <%= link_to newsletter_subscriber.user.full_name, spree.admin_user_path(newsletter_subscriber.user) %>
     <% else %>
       <span class="text-muted"><%= Spree.t(:not_available) %></span>
     <% end %>
