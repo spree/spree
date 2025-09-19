@@ -4,15 +4,16 @@
 
     <%= select_tag 'q[owner_type_eq]',
           options_for_select([
-            [Spree.t(:all_owner_types), '']
+            [Spree.t(:all_owner_types), :all]
           ] + metafield_definition_owner_types.map { |type| [type.demodulize, type] }, 
           params.dig(:q, :owner_type_eq)),
           { 
             include_blank: false,
-            class: 'custom-select w-20',
+            class: 'w-20',
             data: { 
               filters_target: :input,
-              action: 'auto-submit#submit'
+              action: 'auto-submit#submit',
+              controller: 'autocomplete-select'
             } 
           } %>
   </div>
