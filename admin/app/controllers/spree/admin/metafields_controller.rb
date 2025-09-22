@@ -3,25 +3,29 @@ module Spree
     class MetafieldsController < BaseController
       before_action :load_owner
 
+      # GET /admin/<resource_name_plural>/<id>/edit
       def edit
         @metafields = @owner.metafields
         @metafield_definitions = Spree::MetafieldDefinition.where(owner_type: @owner.class.name)
+
+        @metafield_definitions.each do |metafield_definition|
+          @owner.metafields.build(metafield_definition: metafield_definition) unless @owner.has_metafield?(metafield_definition)
+        end
       end
 
+      # PUT /admin/<resource_name_plural>/<id>
       def update
         if @owner.update(permitted_metafields_params)
-          flash[:success] = flash_message_for(@owner, :successfully_updated)
+          flash.now[:success] = flash_message_for(@owner, :successfully_updated)
         else
-          flash[:error] = @owner.errors.full_messages.to_sentence
+          flash.now[:error] = @owner.errors.full_messages.to_sentence
         end
-
-        redirect_to spree.edit_admin_metafields_path(@owner)
       end
 
       private
 
       def permitted_metafields_params
-        params.require(owner_type.param_key).permit(metafields_attributes: [:id, :value, :_destroy])
+        params.require(owner_type.model_name.param_key).permit(metafields_attributes: permitted_metafield_attributes)
       end
 
       # eg. Spree::Product

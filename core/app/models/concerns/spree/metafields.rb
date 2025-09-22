@@ -14,21 +14,30 @@ module Spree
 
       scope :with_metafield, ->(key) { joins(:metafield_definitions).where(spree_metafield_definitions: { key: key }) }
       scope :with_metafield_key_value, ->(key, value) { joins(:metafield_definitions).where(spree_metafield_definitions: { key: key, value: value }) }
-    end
 
-    def set_metafield(key, value)
-      key = key.to_s.parameterize
-      metafield_definition = Spree::MetafieldDefinition.find_or_create_by(key: key, owner_type: self.class.name)
+      def set_metafield(key, value)
+        key = key.to_s.parameterize
+        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(key: key, owner_type: self.class.name)
 
-      metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
-      metafield.value = value
-      metafield.save!
-      metafield
-    end
+        metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
+        metafield.value = value
+        metafield.save!
+        metafield
+      end
 
-    def get_metafield(key)
-      key = key.to_s.parameterize
-      metafields.with_key(key).first
+      def get_metafield(key)
+        key = key.to_s.parameterize
+        metafields.with_key(key).first
+      end
+
+      def has_metafield?(key)
+        if key.is_a?(Spree::MetafieldDefinition)
+          key = key.key
+        end
+
+        key = key.to_s.parameterize
+        metafields.with_key(key).exists?
+      end
     end
   end
 end
