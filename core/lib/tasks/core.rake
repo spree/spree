@@ -264,7 +264,7 @@ namespace :core do
     include ActionView::Helpers::TextHelper
     puts '... started'
     total = 0
-    Spree::Price.where(compare_at_amount: nil).in_batches do |prices|
+    Spree::Price.where(compare_at_amount: 0).in_batches do |prices|
       prices.update_all(compare_at_amount: nil)
       total += prices.count
     end
