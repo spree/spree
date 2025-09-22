@@ -17,8 +17,8 @@
         <%= clipboard_component(current_store.url_or_custom_domain) %>
       </div>
 
-      <div class="d-flex">
-        <%= link_to current_store.formatted_url_or_custom_domain, class: 'btn btn-light w-50 mr-3', target: '_blank' do %>
+      <div class="d-flex gap-2">
+        <%= link_to current_store.formatted_url_or_custom_domain, class: 'btn btn-light w-50', target: '_blank' do %>
           <%= icon 'eye', class: 'mr-1' %>
           &nbsp;
           <%= Spree.t(:view_store) %>

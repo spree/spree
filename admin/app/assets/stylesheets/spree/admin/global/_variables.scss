@@ -57,7 +57,7 @@ $theme-colors: (
 );
 
 $body-color: #333 !default;
-$body-bg: $gray-25 !default;
+$body-bg: $white !default;
 $enable-shadows: false;
 $enable-responsive-font-sizes: true;
 $font-family-sans-serif: Inter, sans-serif !default;
@@ -81,7 +81,7 @@ $list-group-active-border-color: $action-border !default;
 
 $thumbnail-border-color: $border-color !default;
 $hr-border-color: $border-color !default;
-$table-border-color: $gray-50 !default;
+$table-border-color: $border-color !default;
 $card-border-color: $border-color !default;
 $input-btn-focus-width: 0.18rem !default;
 
@@ -94,8 +94,6 @@ $input-placeholder-color: $gray-500;
 $input-padding-y:         .5rem !default;
 $input-disabled-bg: $gray-25 !default;
 $input-focus-border-color: $blue !default;
-$input-box-shadow: none !default;
-$btn-box-shadow: $input-box-shadow !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-400 !default;
@@ -112,6 +110,8 @@ $nav-link-padding-x:                .6rem !default;
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
 $box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
+$input-box-shadow: none !default;
+$btn-box-shadow: $input-box-shadow !default;
 
 $card-border-width: 0px !default;
 $card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
@@ -164,7 +164,7 @@ $display4-weight:             400 !default;
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
 $dropdown-link-hover-bg: $gray-50 !default;
-$dropdown-box-shadow:    rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 6px 12px -3px, rgba(37, 41, 46, 0.12) 0px 6px 18px 0px !default;
+$dropdown-box-shadow:    0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
@@ -183,7 +183,7 @@ $modal-show-transform:              none !default;
 $modal-transition:                  transform .2s ease-out !default;
 $modal-scale-transform:             scale(1.02) !default;
 $modal-header-border-width: 1px !default;
-$modal-content-box-shadow-xs: $border-color 0px 0px 0px 1px, rgba(0, 0, 0, 0.02) 0px 1px 1px 0px, rgba(0, 0, 0, 0.04) 0px 8px 16px -4px, rgba(0, 0, 0, 0.06) 0px 24px 32px -8px !default;
+$modal-content-box-shadow-xs: 0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
 $modal-content-box-shadow-sm-up: $modal-content-box-shadow-xs !default;
 $modal-footer-margin-between: 0 !default;
 
@@ -213,7 +213,7 @@ $code-bg: $gray-25 !default;
 $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
 
-$header-bg: $gray-25 !default;
+$header-bg: $body-bg !default;
 $header-height: 60px !default;
 $sidebar-width: 220px !default;
 $sidebar-bg: $gray-25 !default;
