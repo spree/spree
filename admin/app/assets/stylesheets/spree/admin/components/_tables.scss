@@ -33,7 +33,7 @@ table.table {
 
   thead {
     th {
-      background-color: rgba($gray-25, 0.5);
+      background-color: rgba($gray-25, 0.75);
       @extend .text-muted;
       font-size: $font-size-sm;
       font-weight: $font-weight-normal;
@@ -79,7 +79,7 @@ table.table {
 
     tr:hover:not(.active):not(.sortable-chosen) {
       td {
-        background-color: $gray-25;
+        background-color: rgba($gray-25, 0.5);
       }
     }
 
@@ -186,13 +186,15 @@ td.actions {
 }
 
 .card-lg {
-  table {
-    thead {
-      th:first-child {
-        border-top-left-radius: 0;
-      }
-      th:last-child {
-        border-top-right-radius: 0;
+  .with-filters, turbo-frame {
+    table {
+      thead {
+        th:first-child {
+          border-top-left-radius: 0;
+        }
+        th:last-child {
+          border-top-right-radius: 0;
+        }
       }
     }
   }
