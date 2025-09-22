@@ -4,8 +4,8 @@ RSpec.describe Spree::Metafield, type: :model do
   let(:product) { create(:product) }
 
   describe 'Scopes' do
-    let!(:public_metafield) { create(:metafield, owner: product, visibility: 'public') }
-    let!(:private_metafield) { create(:metafield, owner: product, visibility: 'private') }
+    let!(:public_metafield) { create(:metafield, resource: product, visibility: 'public') }
+    let!(:private_metafield) { create(:metafield, resource: product, visibility: 'private') }
 
     describe '.public_metafields' do
       it 'returns only public metafields' do
