@@ -13,7 +13,7 @@
               </tr>
             </thead>
             <tbody>
-              <%= f.fields_for :metafields, sorted_metafields(f.object, resource_type: @resource.class.to_s) do |metafield_form| %>
+              <%= f.fields_for :metafields, @metafields do |metafield_form| %>
                 <% metafield = metafield_form.object.metafield_definition %>
                 <%= metafield_form.hidden_field :id %>
                 <%= metafield_form.hidden_field :metafield_definition_id %>
