@@ -61,11 +61,6 @@
 
   <%= render_admin_partials(:order_page_dropdown_partials, order: @order) %>
 
-  <% if can?(:manage, Spree::Metafield) %>
-    <%= link_to_with_icon "database-edit", Spree.t(:edit_metafields), spree.edit_admin_metafield_path(@order, owner_type: 'Spree::Order'),
-                class: 'text-left dropdown-item', data: { action: 'drawer#open', turbo_frame: :drawer } %>
-  <% end %>
-
   <% if can?(:cancel, @order) %>
     <div class="dropdown-divider"></div>
     <%= link_to spree.cancel_admin_order_path(@order),
