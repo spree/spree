@@ -4,7 +4,7 @@
 
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <div class="form-group">
       <%= f.label :bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
       <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>

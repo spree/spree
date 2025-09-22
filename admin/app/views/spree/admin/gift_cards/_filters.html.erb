@@ -15,7 +15,7 @@
     <%= render "table_filter_dropdown" %>
     <%= render "spree/admin/shared/filters_button" %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <% if params[:user_id].blank? %>
       <div class="form-group">
         <%= f.label :users_email_eq, Spree.t(:email) %>

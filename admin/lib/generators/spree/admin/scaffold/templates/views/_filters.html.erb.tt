@@ -3,7 +3,7 @@
     <%%= render 'spree/admin/shared/filters_search_bar', param: :name_i_cont, label: Spree.t(:name) %>
     <%%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <!-- Add additional filters here -->
     <%%= render 'spree/admin/shared/filter_submit' %>
   </div>
