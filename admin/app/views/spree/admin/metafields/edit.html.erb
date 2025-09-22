@@ -1,0 +1,10 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:metafields)) %>
+  <div class="drawer-body">
+    This is a test
+  </div>
+  <div class="drawer-footer">
+    <%= turbo_save_button_tag %>
+    <%= drawer_discard_button %>
+  </div>
+<% end %>
