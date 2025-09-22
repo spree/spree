@@ -259,6 +259,19 @@ namespace :core do
     Spree::Product.where('discontinue_on <= ?', Time.current).where.not(status: 'archived').update_all(status: 'archived', updated_at: Time.current)
   end
 
+  desc 'Migrate amount spree_prices.compare_at_amount.'
+  task migrate_compare_at_amount: :environment do |_t, _args|
+    include ActionView::Helpers::TextHelper
+    puts '... started'
+    total = 0
+    Spree::Price.where(compare_at_amount: nil).in_batches do |prices|
+      prices.update_all(compare_at_amount: nil)
+      total += prices.count
+    end
+    puts '... done'
+    puts "... migrated #{pluralize(total, 'record')}"
+  end
+
   desc 'Migrate newsletter subscribers'
   task migrate_newsletter_subscribers: :environment do |_t, _args|
     Spree.user_class.where(accepts_email_marketing: true).in_batches(of: 500) do |user_batch|
