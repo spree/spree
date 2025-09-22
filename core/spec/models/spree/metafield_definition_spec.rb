@@ -11,7 +11,7 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
     let!(:both_definition) { create(:metafield_definition, display_on: 'both') }
     let!(:front_end_definition) { create(:metafield_definition, :front_end_only) }
     let!(:back_end_definition) { create(:metafield_definition, :back_end_only) }
-    let!(:product_definition) { create(:metafield_definition, owner_type: 'Spree::Product') }
+    let!(:product_definition) { create(:metafield_definition, resource_type: 'Spree::Product') }
     let!(:variant_definition) { create(:metafield_definition, :for_variant) }
 
     describe '.available' do
@@ -36,13 +36,13 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
       end
     end
 
-    describe '.for_owner_type' do
-      it 'returns definitions for specific owner type' do
-        expect(described_class.for_owner_type('Spree::Product')).to include(product_definition)
-        expect(described_class.for_owner_type('Spree::Product')).not_to include(variant_definition)
+    describe '.for_resource_type' do
+      it 'returns definitions for specific resource type' do
+        expect(described_class.for_resource_type('Spree::Product')).to include(product_definition)
+        expect(described_class.for_resource_type('Spree::Product')).not_to include(variant_definition)
 
-        expect(described_class.for_owner_type('Spree::Variant')).to include(variant_definition)
-        expect(described_class.for_owner_type('Spree::Variant')).not_to include(product_definition)
+        expect(described_class.for_resource_type('Spree::Variant')).to include(variant_definition)
+        expect(described_class.for_resource_type('Spree::Variant')).not_to include(product_definition)
       end
     end
   end
@@ -101,12 +101,12 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
 
       it 'creates variant field' do
         variant_field = build(:metafield_definition, :for_variant)
-        expect(variant_field.owner_type).to eq('Spree::Variant')
+        expect(variant_field.resource_type).to eq('Spree::Variant')
       end
 
       it 'creates user field' do
         user_field = build(:metafield_definition, :for_user)
-        expect(user_field.owner_type).to eq('Spree::User')
+        expect(user_field.resource_type).to eq('Spree::User')
       end
     end
   end

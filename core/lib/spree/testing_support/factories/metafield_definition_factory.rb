@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :metafield_definition, class: 'Spree::MetafieldDefinition' do
-    key { 'custom_field' }
+    sequence(:key) { |n| "custom_field_#{n}" }
     name { 'Custom Field' }
     description { 'A custom field for storing additional data' }
     kind { 'short_text' }
-    owner_type { 'Spree::Product' }
+    resource_type { 'Spree::Product' }
     display_on { 'both' }
 
     trait :front_end_only do
@@ -58,19 +58,19 @@ FactoryBot.define do
     end
 
     trait :for_variant do
-      owner_type { 'Spree::Variant' }
+      resource_type { 'Spree::Variant' }
       key { 'variant_custom' }
       name { 'Variant Custom Field' }
     end
 
     trait :for_order do
-      owner_type { 'Spree::Order' }
+      resource_type { 'Spree::Order' }
       key { 'order_notes' }
       name { 'Order Notes' }
     end
 
     trait :for_user do
-      owner_type { 'Spree::User' }
+      resource_type { 'Spree::User' }
       key { 'user_preference' }
       name { 'User Preference' }
     end
