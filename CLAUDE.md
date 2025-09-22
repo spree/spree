@@ -222,12 +222,12 @@ class CreateSpreeMetafields < ActiveRecord::Migration[7.0]
       t.text :value, null: false
       t.string :kind, null: false
       t.string :visibility, null: false
-      t.references :owner, polymorphic: true, null: false
+      t.references :resource, polymorphic: true, null: false
       t.timestamps
     end
     
-    add_index :spree_metafields, [:owner_type, :owner_id, :key, :visibility], 
-              name: 'index_spree_metafields_on_owner_and_key_and_visibility'
+    add_index :spree_metafields, [:resource_type, :resource_id, :key, :visibility], 
+              name: 'index_spree_metafields_on_resource_and_key_and_visibility'
   end
 end
 ```

@@ -13,19 +13,18 @@ module Spree
     #
     # Validations
     #
-    validates :key, :name, :owner_type, presence: true
+    validates :key, :name, :resource_type, presence: true
     validates :kind, presence: true, inclusion: { in: AVAILABLE_KINDS }
-    validates :key, uniqueness: { scope: spree_base_uniqueness_scope.push(:owner_type) }
+    validates :key, uniqueness: { scope: spree_base_uniqueness_scope.push(:resource_type) }
 
     #
     # Scopes
     #
-    scope :for_owner_type, ->(owner_type) { where(owner_type: owner_type) }
-
+    scope :for_resource_type, ->(resource_type) { where(resource_type: resource_type) }
 
     #
     # Ransack
     #
-    self.whitelisted_ransackable_attributes = %w[key name owner_type kind display_on]
+    self.whitelisted_ransackable_attributes = %w[key name resource_type kind display_on]
   end
 end

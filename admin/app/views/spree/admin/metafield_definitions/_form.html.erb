@@ -19,7 +19,7 @@
     </div>
 
     <div class="form-group">
-      <%= f.spree_select :owner_type, metafield_definition_owner_types.map { |type| [type.demodulize, type] }, { include_blank: Spree.t(:select_owner_type), autocomplete: true }, { required: true } %>
+      <%= f.spree_select :resource_type, metafield_definition_resource_types.map { |type| [type.demodulize, type] }, { include_blank: Spree.t(:select_resource_type), autocomplete: true }, { required: true } %>
     </div>
 
     <div class="form-group">

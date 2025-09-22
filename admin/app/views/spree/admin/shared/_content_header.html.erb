@@ -26,9 +26,9 @@
           <% end %>
           <div class="dropdown-menu dropdown-menu-right">
             <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
-            <% if record %>
+            <% if record && record.persisted? %>
               <% if can?(:manage, Spree::Metafield) && record.respond_to?(:metafields) %>
-                <%= link_to_with_icon "database-edit", Spree.t(:edit_metafields), spree.edit_admin_metafield_path(record, owner_type: record.class.to_s),
+                <%= link_to_with_icon "database-edit", Spree.t(:edit_metafields), spree.edit_admin_metafield_path(record, resource_type: record.class.to_s),
                             class: 'text-left dropdown-item', data: { action: 'drawer#open', turbo_frame: :drawer } %>
               <% end %>
 

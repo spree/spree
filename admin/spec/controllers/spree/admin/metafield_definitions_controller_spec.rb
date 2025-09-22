@@ -78,7 +78,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
         name: 'Test Field',
         description: 'A test field',
         kind: 'short_text',
-        owner_type: 'Spree::Product',
+        resource_type: 'Spree::Product',
         display_on: 'both'
       }
     end
@@ -199,7 +199,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
           name: 'Test',
           description: 'Description',
           kind: 'short_text',
-          owner_type: 'Spree::Product',
+          resource_type: 'Spree::Product',
           display_on: 'both',
           forbidden_param: 'should not be permitted'
         }
@@ -208,7 +208,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
       controller.params = params
       permitted = controller.send(:permitted_resource_params)
 
-      expect(permitted).to permit(:key, :name, :description, :kind, :owner_type, :display_on)
+      expect(permitted).to permit(:key, :name, :description, :kind, :resource_type, :display_on)
       expect(permitted).not_to permit(:forbidden_param)
     end
   end

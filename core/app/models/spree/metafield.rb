@@ -3,14 +3,14 @@ module Spree
     #
     # Associations
     #
-    belongs_to :owner, polymorphic: true
+    belongs_to :resource, polymorphic: true
     belongs_to :metafield_definition, class_name: 'Spree::MetafieldDefinition'
 
     #
     # Validations
     #
-    validates :metafield_definition, :owner, :value, presence: true
-    validates :metafield_definition_id, uniqueness: { scope: [:owner_type, :owner_id] }
+    validates :metafield_definition, :resource, :value, presence: true
+    validates :metafield_definition_id, uniqueness: { scope: [:resource_type, :resource_id] }
 
     #
     # Scopes

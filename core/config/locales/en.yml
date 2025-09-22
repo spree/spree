@@ -1220,6 +1220,7 @@ en:
     items_reimbursed: Items reimbursed
     items_to_be_reimbursed: Items to be reimbursed
     join_slack: Join Slack
+    key: Key
     kind: Kind
     language: Language
     last_name: Last Name
@@ -1802,6 +1803,7 @@ en:
     resellable: Resellable
     resend: Resend
     reset_password: Reset my password
+    resource: Resource
     response_code: Response Code
     restore_defaults: Restore defaults
     resume: resume
