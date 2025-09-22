@@ -4,7 +4,7 @@ module Spree
 
     included do
       # New metafields association
-      has_many :metafields, as: :owner, class_name: 'Spree::Metafield', dependent: :destroy
+      has_many :metafields, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
       has_many :public_metafields, -> { available_on_front_end }, class_name: 'Spree::Metafield'
       has_many :private_metafields, -> { available_on_back_end }, class_name: 'Spree::Metafield'
 
@@ -17,7 +17,7 @@ module Spree
 
       def set_metafield(key, value)
         key = key.to_s.parameterize
-        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(key: key, owner_type: self.class.name)
+        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(key: key, resource_type: self.class.name)
 
         metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
         metafield.value = value
