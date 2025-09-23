@@ -30,16 +30,25 @@ RSpec.describe Spree::Export, :job, type: :model do
   end
 
   describe '#generate' do
-    before { export.save! }
-
     it 'generates the export' do
+      export.save!
       expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
 
       expect(export.attachment.content_type).to eq('text/csv')
     end
 
     it 'sends the export done email' do
+      export.save!
       expect { export.generate }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+    end
+
+    context 'when the export type is Spree::Exports::Customers' do
+      let(:export) { build(:customer_export, store: store, user: user, format: 'csv') }
+
+      it 'generates the export' do
+        export.save!
+        expect { export.generate }.to change(export.attachment, :attached?).from(false).to(true)
+      end
     end
   end
 

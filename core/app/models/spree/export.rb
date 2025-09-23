@@ -102,7 +102,7 @@ module Spree
 
     def scope
       scope = model_class
-      scope = scope.for_store(store) if model_class.respond_to?(:for_store)
+      scope = scope.for_store(store) if model_class.respond_to?(:for_store) && model_class != Spree.user_class # We cannot use for_store on users because it will return admin users
       scope = scope.for_vendor(vendor) if model_class.respond_to?(:for_vendor) && vendor.present?
       scope.accessible_by(current_ability)
     end
