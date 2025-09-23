@@ -48,7 +48,7 @@ module Spree
     def cart_id(order)
       return 'cart_contents' if order.blank? || order.id.blank? || order.updated_at.blank?
 
-      "cart_contents_#{order.id}_#{order.updated_at.to_i}"
+      "cart_contents_#{order.id}"
     end
   end
 end

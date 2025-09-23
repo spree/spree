@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id theme %>">
   <td class="w-70 p-0">
-    <%= link_to theme.ready? ? spree.edit_admin_theme_path(theme) : '#', class: 'd-flex align-items-top p-3' do %>
+    <%= link_to theme.ready? ? spree.edit_admin_theme_path(theme) : '#', class: 'd-flex align-items-top p-3', data: { turbo_prefetch: false } do %>
       <div class="w-20">
         <%= render 'spree/admin/themes/theme_preview_image', theme: theme, css_class: 'img-thumbnail w-100' %>
       </div>
@@ -43,7 +43,7 @@
             <%= icon('dots-vertical', class: 'mr-0') %>
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-            <%= link_to_edit theme, class: 'dropdown-item' %>
+            <%= link_to_edit theme, class: 'dropdown-item', data: { turbo_prefetch: false } %>
             <%= link_to_with_icon 'copy', Spree.t(:clone), spree.clone_admin_theme_path(theme), class: 'dropdown-item', data: { turbo_method: :post } %>
             <% unless theme.default? %>
             <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item btn-danger shadow-none') if can?(:delete, theme) %>

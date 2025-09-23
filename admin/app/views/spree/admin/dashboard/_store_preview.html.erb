@@ -1,6 +1,6 @@
 <% if current_store.default_theme %>
   <div class="card mb-4">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light position-relative store-preview-link' do %>
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light position-relative store-preview-link', data: { turbo_prefetch: false } do %>
       <div class="position-absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>
@@ -23,7 +23,7 @@
           &nbsp;
           <%= Spree.t(:view_store) %>
         <% end %>
-        <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-50' do %>
+        <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-50', data: { turbo_prefetch: false } do %>
           <%= icon 'tools', class: 'mr-1' %>
           &nbsp;
           <%= Spree.t('admin.edit_theme') %>

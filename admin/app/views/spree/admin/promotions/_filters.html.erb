@@ -4,7 +4,7 @@
     <%= render "spree/admin/promotions/table_filter_dropdown" %>
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <div class="form-group">
       <%= label_tag :q_code_or_coupon_codes_code_eq, Spree.t(:code) %>
       <%= f.search_field :code_or_coupon_codes_code_eq, class: "form-control", data: { filters_target: :input } %>

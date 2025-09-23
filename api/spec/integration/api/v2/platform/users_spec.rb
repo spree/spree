@@ -3,6 +3,8 @@ require 'swagger_helper'
 describe 'Users API', swagger: true do
   include_context 'Platform API v2'
 
+  let!(:another_admin_user) { create(:admin_user) }
+
   resource_name = 'User'
   options = {
     include_example: 'ship_address,bill_address',

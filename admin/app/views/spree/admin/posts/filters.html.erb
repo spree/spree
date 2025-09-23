@@ -4,7 +4,7 @@
 
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <div class="form-group">
       <%= f.label :author_id_eq, Spree.t(:author) %>
       <%= f.select :author_id_eq,

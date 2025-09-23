@@ -3,7 +3,7 @@
     <%= render 'spree/admin/shared/filters_search_bar', param: :number_cont, label: Spree.t(:number) %>
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <div class="form-group">
       <%= f.label :reference_cont, Spree.t(:reference) %>
       <%= f.text_field :reference_cont, include_blank: true, size: 15, class: "form-control", data: { filters_target: :input } %>

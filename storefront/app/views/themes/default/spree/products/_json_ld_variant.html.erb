@@ -1,3 +1,4 @@
+<% cache ["json-ld-variant", spree_base_cache_scope, variant.cache_key_with_version] do %>
 {
   "@type": "Offer",
   <% if variant.sku.present? %>
@@ -8,3 +9,4 @@
   "priceCurrency": <%= current_currency.to_json.html_safe %>,
   "url": <%= spree.product_url(product, variant_id: variant.id, host: current_store.url_or_custom_domain).to_json.html_safe %>
 }
+<% end %>

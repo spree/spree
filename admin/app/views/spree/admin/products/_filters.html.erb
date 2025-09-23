@@ -13,7 +13,7 @@
     <%= render "spree/admin/products/table_filter_dropdown" %>
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
     <div class="form-group">
       <%= f.label :taxons_id_in, Spree.t(:taxons) %>

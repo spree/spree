@@ -37,7 +37,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :author, class_name: Spree.admin_user_class.to_s
+    belongs_to :author, class_name: Spree.admin_user_class.to_s, optional: true
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :post_category, class_name: 'Spree::PostCategory', optional: true
     alias category post_category
@@ -45,7 +45,7 @@ module Spree
     #
     # Validations
     #
-    validates :title, :store, :author, presence: true
+    validates :title, :store, presence: true
     validates :slug, presence: true, uniqueness: { scope: :store_id, conditions: -> { where(deleted_at: nil) } }
     validates :meta_title, length: { maximum: 160 }, allow_blank: true
     validates :meta_description, length: { maximum: 320 }, allow_blank: true

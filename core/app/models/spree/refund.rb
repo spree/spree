@@ -13,7 +13,7 @@ module Spree
       belongs_to :reimbursement, optional: true
     end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
-    belongs_to :refunder, class_name: "::#{Spree.admin_user_class}", optional: true
+    belongs_to :refunder, class_name: Spree.admin_user_class.to_s, optional: true
 
     has_many :log_entries, as: :source
 

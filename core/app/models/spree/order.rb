@@ -454,7 +454,7 @@ module Spree
 
     def full_name
       @full_name ||= if user.present? && user.name.present?
-                       user.name.full
+                       user.full_name
                      else
                        billing_address&.full_name || email
                      end

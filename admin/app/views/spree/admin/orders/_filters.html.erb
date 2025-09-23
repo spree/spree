@@ -41,7 +41,7 @@
     <%= render "spree/admin/orders/table_filter_dropdown" %>
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
     <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>

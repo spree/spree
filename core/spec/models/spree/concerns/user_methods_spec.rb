@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::UserMethods do
   let(:test_user) { create :user }
+  let!(:another_user) { create(:user) }
   let(:current_store) { @default_store }
 
   describe '#last_incomplete_spree_order' do
@@ -57,16 +58,6 @@ describe Spree::UserMethods do
       end
     end
   end
-
-  context 'when user destroyed with approved orders' do
-    let(:order) { create(:order, approver_id: test_user.id, created_at: 1.day.ago) }
-
-    it 'nullifies all approver ids' do
-      expect(test_user).to receive(:nullify_approver_id_in_approved_orders)
-      test_user.destroy
-    end
-  end
-
   describe '#payment_sources' do
     subject { test_user.payment_sources }
 

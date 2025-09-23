@@ -34,6 +34,7 @@ if (typeof Stimulus === 'undefined') {
 }
 import AutoSubmit from '@stimulus-components/auto-submit'
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
+import Dialog from '@stimulus-components/dialog'
 import Dropdown from '@stimulus-components/dropdown'
 import TextareaAutogrow from 'stimulus-textarea-autogrow'
 import Notification from 'stimulus-notification'
@@ -42,7 +43,6 @@ import RailsNestedForm from '@stimulus-components/rails-nested-form'
 import Reveal from 'stimulus-reveal-controller'
 import Sortable from 'stimulus-sortable'
 import { Tabs } from 'tailwindcss-stimulus-components'
-
 import ActiveStorageUpload from 'spree/admin/controllers/active_storage_upload_controller'
 import AdminController from 'spree/admin/controllers/admin_controller'
 import AssetUploaderController from 'spree/admin/controllers/asset_uploader_controller'
@@ -56,6 +56,7 @@ import CalendarRangeController from 'spree/admin/controllers/calendar_range_cont
 import Clipboard from 'spree/admin/controllers/clipboard_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
+import DrawerController from 'spree/admin/controllers/drawer_controller'
 import FiltersController from 'spree/admin/controllers/filters_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
@@ -103,6 +104,8 @@ application.register('checkbox-select-all', CheckboxSelectAll)
 application.register('clipboard', Clipboard)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
+application.register('dialog', Dialog)
+application.register('drawer', DrawerController)
 application.register('disable-submit-button', DisableSubmitButtonController)
 application.register('dropdown', Dropdown)
 application.register('enable-button', EnableButtonController)

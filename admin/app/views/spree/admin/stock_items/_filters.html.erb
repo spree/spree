@@ -4,7 +4,7 @@
 
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter">
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
     <div class="form-group">
       <%= f.label :variant_sku_cont, Spree.t(:sku) %>
       <%= f.text_field :variant_sku_cont, size: 15, class: "form-control", data: {filters_target: :input} %>

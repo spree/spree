@@ -1,4 +1,4 @@
-<div class="bg-background mt-4 border-default border-t overflow-x-hidden h-full w-screen overflow-y-hidden">
+<div class="bg-background border-default border-t overflow-x-hidden h-full w-screen overflow-y-hidden">
   <div class="h-full flex transform has-[.currency-and-locale-modal:not(.hidden)]:transform-none relative transition-transform duration-300" data-controller="mobile-nav">
     <div class="w-screen shrink-0 flex flex-col h-full flex-grow-0">
       <div class="flex-grow overflow-y-scroll">
@@ -103,12 +103,7 @@
 
         <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
           <div class="flex mt-4 justify-end">
-            <div
-                data-controller="modal"
-                data-modal-allow-background-close="true"
-                data-modal-
-                class=""
-                data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
+            <div data-controller="modal" data-modal-disable-backdrop="true">
               <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
                 <% if should_render_currency_dropdown? %>
                   <span>
@@ -123,7 +118,7 @@
                   </span>
                 <% end %>
               <% end %>
-              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy  %>
+              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy %>
             </div>
           </div>
         <% end %>
