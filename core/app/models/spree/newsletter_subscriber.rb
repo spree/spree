@@ -28,12 +28,6 @@ module Spree
       verified_at.present?
     end
 
-    # true: verification email is sent to the subscriber, accept_email_marketing is set to true after verification
-    # false: verification and changing users accept_email_marketing immediately after subscribing
-    def self.needs_verification?
-      true
-    end
-
     def self.subscribe(email:, user: nil)
       Spree::Newsletter::Subscribe.new(email: email, current_user: user).call
     end

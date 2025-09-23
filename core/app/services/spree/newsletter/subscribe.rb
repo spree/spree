@@ -13,7 +13,7 @@ module Spree
           upsert_subscriber
           return subscriber if subscriber.errors.any?
 
-          if subscriber.email == current_user&.email || !Spree::NewsletterSubscriber.needs_verification?
+          if subscriber.email == current_user&.email
             # no need to verified since user email is already verified
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end

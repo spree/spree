@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::NewsletterSubscribersController, type: :controller do
+RSpec.describe Spree::NewsletterSubscribersController, type: :controller, newsletter: true do
   render_views
 
   let(:store) { @default_store }

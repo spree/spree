@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::NewsletterSubscriber, type: :model do
+describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   subject(:subscriber) { build(:newsletter_subscriber, email: email) }
 
   let(:email) { 'joe#example.com' }
