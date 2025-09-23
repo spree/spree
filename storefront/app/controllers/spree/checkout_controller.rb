@@ -171,7 +171,7 @@ module Spree
           clear_order_token
           flash[:error] = 'You cannot access this checkout'
           redirect_to_cart
-        elsif try_spree_current_user.nil? && !@order.completed?
+        elsif try_spree_current_user.nil? && !allow_access_to_complete_order_with_new_user?
           if params[:guest] && current_store.prefers_guest_checkout?
             @order = current_store.
                        orders.
@@ -201,6 +201,12 @@ module Spree
         @order.associate_user!(try_spree_current_user) if try_spree_current_user && @order.user.nil?
       end
       @current_order = @order # for compatibility with the rest of storefront, analytics, etc
+    end
+
+    def allow_access_to_complete_order_with_new_user?
+      cookies_order_token = cookies.permanent.signed[:token]
+
+      @order.completed? && @order.signup_for_an_account? && @order.user_id.present? && cookies_order_token.present? && cookies_order_token == @order.token
     end
 
     def remove_out_of_stock_items

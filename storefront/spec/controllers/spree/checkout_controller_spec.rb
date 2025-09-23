@@ -1087,16 +1087,89 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     context 'when order is in complete state' do
-      let(:order) { create(:completed_order_with_totals, store: store) }
+      let(:order) { create(:completed_order_with_totals, store: store, user: order_user, signup_for_an_account: signup_for_an_account) }
+      let(:signup_for_an_account) { false }
 
-      before { get :complete, params: { token: order.token } }
+      context 'when checkout is associated with a user' do
+        let(:order_user) { create(:user) }
 
-      it 'renders the page' do
-        expect(response).to render_template(:complete)
+        before { get :complete, params: { token: order.token } }
+
+        it 'clears out the session' do
+          expect(session[:checkout_completed]).to be_nil
+        end
+
+        context 'when user is signed in' do
+          let(:user) { order_user }
+
+          it 'renders the page' do
+            expect(response).to render_template(:complete)
+          end
+        end
+
+        context 'when other user is signed in' do
+          let(:user) { create(:user) }
+
+          it 'redirects to the cart' do
+            expect(response).to redirect_to spree.cart_path
+          end
+        end
+
+        context 'for a guest user' do
+          let(:user) { nil }
+
+          it 'redirects to the login page' do
+            expect(response).to redirect_to('/login')
+          end
+        end
       end
 
-      it 'clears out the session' do
-        expect(session[:checkout_completed]).to be_nil
+      context 'when checkout is not associated with a user' do
+        let(:order_user) { nil }
+
+        before { get :complete, params: { token: order.token } }
+
+        it 'clears out the session' do
+          expect(session[:checkout_completed]).to be_nil
+        end
+
+        it 'renders the page' do
+          expect(response).to render_template(:complete)
+        end
+      end
+
+      context 'when a guest user signed up for an account' do
+        let(:order_user) { create(:user) }
+        let(:signup_for_an_account) { true }
+
+        before do
+          request.cookie_jar.signed[:token] = cookies_order_token
+          get :complete, params: { token: order.token }
+        end
+
+        context 'when cookies order token is valid' do
+          let(:cookies_order_token) { order.token }
+
+          it 'renders the page' do
+            expect(response).to render_template(:complete)
+          end
+        end
+
+        context 'when cookies order token is invalid' do
+          let(:cookies_order_token) { build(:order).token }
+
+          it 'redirects to the login page' do
+            expect(response).to redirect_to('/login')
+          end
+        end
+
+        context 'when there is no cookies order token' do
+          let(:cookies_order_token) { nil }
+
+          it 'redirects to the login page' do
+            expect(response).to redirect_to('/login')
+          end
+        end
       end
     end
   end
