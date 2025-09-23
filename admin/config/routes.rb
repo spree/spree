@@ -140,6 +140,11 @@ Spree::Core::Engine.add_routes do
     resources :metafields, only: [:edit, :update], path: '/metafields/:resource_type'
     resources :metafield_definitions, except: :show
 
+    # imports
+    resources :imports, only: [:index, :new, :create, :show] do
+      resources :mappings, only: [:new, :create, :edit, :update, :destroy]
+    end
+
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 
