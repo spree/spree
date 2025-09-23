@@ -29,7 +29,8 @@ class Spree::Base < ApplicationRecord
   def self.for_store(store)
     plural_model_name = model_name.plural.gsub(/spree_/, '').to_sym
 
-    if store.respond_to?(plural_model_name)
+    # We cannot use for_store on users because it will return admin users
+    if store.respond_to?(plural_model_name) && model_name.to_s != Spree.user_class.to_s
       store.send(plural_model_name)
     else
       self
