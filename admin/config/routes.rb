@@ -143,6 +143,11 @@ Spree::Core::Engine.add_routes do
     # json preview
     resources :json_previews, only: [:show], path: '/json_preview/:resource_type', as: :json_preview_resource
 
+    # imports
+    resources :imports, only: [:index, :new, :create, :show] do
+      resources :mappings, only: [:new, :create, :edit, :update, :destroy]
+    end
+
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 
