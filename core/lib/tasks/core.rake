@@ -204,4 +204,17 @@ namespace :core do
   task archive_products: :environment do |_t, _args|
     Spree::Product.where('discontinue_on <= ?', Time.current).where.not(status: 'archived').update_all(status: 'archived', updated_at: Time.current)
   end
+
+  desc 'Migrate amount spree_prices.compare_at_amount.'
+  task migrate_compare_at_amount: :environment do |_t, _args|
+    include ActionView::Helpers::TextHelper
+    puts '... started'
+    total = 0
+    Spree::Price.where(compare_at_amount: 0).in_batches do |prices|
+      prices.update_all(compare_at_amount: nil)
+      total += prices.count
+    end
+    puts '... done'
+    puts "... migrated #{pluralize(total, 'record')}"
+  end
 end
