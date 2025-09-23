@@ -83,6 +83,11 @@ module Spree
           where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or #{table_name}.email LIKE ?",
                 "%#{address}%", "%#{address}%", "%#{email}%")
       end
+
+      # We override this method because we cannot use for_store on users because it will return admin users
+      def self.for_store(store)
+        self
+      end
     end
 
     # Returns the last incomplete spree order for the current store

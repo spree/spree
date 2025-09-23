@@ -28,5 +28,9 @@ FactoryBot.define do
     factory :order_export, class: 'Spree::Exports::Orders', parent: :export do
       type { 'Spree::Exports::Orders' }
     end
+
+    factory :customer_export, class: 'Spree::Exports::Customers', parent: :export do
+      type { 'Spree::Exports::Customers' }
+    end
   end
 end
