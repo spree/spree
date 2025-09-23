@@ -48,7 +48,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
         let!(:credit_cards) { create_list(:credit_card, 3, user_id: user.id, payment_method: payment_method) }
         let(:payment_method) { create(:credit_card_payment_method, display_on: display_on, stores: stores) }
         let(:stores) { [@default_store] }
-        let(:display_on) { :none }
+        let(:display_on) { :back_end }
 
         it 'does not return any' do
           expect(response.status).to eq(200)

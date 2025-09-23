@@ -13,7 +13,7 @@ describe Spree::PaymentMethod, type: :model do
 
   context 'visibility scopes' do
     before do
-      [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
+      ['both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
           name: 'Display Both',
           display_on: display_on,
@@ -25,7 +25,7 @@ describe Spree::PaymentMethod, type: :model do
     end
 
     it 'has 5 total methods' do
-      expect(Spree::PaymentMethod.count).to eq(5)
+      expect(Spree::PaymentMethod.count).to eq(3)
     end
 
     describe '#available' do
@@ -63,7 +63,7 @@ describe Spree::PaymentMethod, type: :model do
         )
         methods = Spree::PaymentMethod.for_store(store)
         expect(methods).not_to include(method_from_other_store)
-        expect(methods.size).to eq(5)
+        expect(methods.size).to eq(3)
       end
     end
   end
