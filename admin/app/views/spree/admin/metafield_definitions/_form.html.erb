@@ -1,23 +1,24 @@
 <div class="card mb-4">
-  <div class="card-body" data-controller="slug-form">
+  <div class="card-body">
     <div class="form-group">
-      <%= f.spree_text_field :name, required: true, data: { slug_form_target: :name, action: 'input->slug-form#updateUrlFromName' }, autofocus: f.object.new_record? %>
+      <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-lg-4">
+        <%= f.spree_text_field :namespace, required: true, placeholder: 'eg. custom' %>
+      </div>
+      <div class="form-group col-lg-8">
+        <%= f.spree_text_field :key, required: true, placeholder: 'eg. id' %>
+      </div>
     </div>
 
     <div class="form-group">
-      <%= f.spree_text_field :key, required: true, data: { slug_form_target: :url } %>
+      <%= f.spree_select :resource_type, metafield_definition_resource_types, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
     </div>
 
     <div class="form-group">
-      <%= f.spree_text_area :description, rows: 3 %>
-    </div>
-
-    <div class="form-group">
-      <%= f.spree_select :resource_type, metafield_definition_resource_types.map { |type| [type.demodulize, type] }, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
-    </div>
-
-    <div class="form-group">
-      <%= f.spree_select :kind, metafield_definition_kinds.map { |kind| [Spree.t("metafield_definitions.form.#{kind}"), kind] }, { include_blank: true, autocomplete: true }, { required: true } %>
+      <%= f.spree_select :type, metafield_definition_types, { include_blank: true, autocomplete: true }, { required: true } %>
     </div>
 
     <div class="form-group">

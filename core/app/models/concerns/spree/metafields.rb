@@ -12,12 +12,13 @@ module Spree
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
 
-      scope :with_metafield, ->(key) { joins(:metafield_definitions).where(spree_metafield_definitions: { key: key }) }
-      scope :with_metafield_key_value, ->(key, value) { joins(:metafield_definitions).where(spree_metafield_definitions: { key: key, value: value }) }
+      scope :with_metafield_key, ->(namespace, key) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
+      scope :with_metafield_key_value, ->(namespace, key, value) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key, value: value }) }
 
-      def set_metafield(key, value)
-        key = key.to_s.parameterize
-        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(key: key, resource_type: self.class.name)
+      def set_metafield(key_with_namespace, value)
+        namespace = key_with_namespace.to_s.split('.').first
+        key = key_with_namespace.to_s.split('.').last
+        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(namespace: namespace, key: key, resource_type: self.class.name)
 
         metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
         metafield.value = value
@@ -25,18 +26,24 @@ module Spree
         metafield
       end
 
-      def get_metafield(key)
-        key = key.to_s.parameterize
-        metafields.with_key(key).first
+      def get_metafield(key_with_namespace)
+        namespace = key_with_namespace.to_s.split('.').first
+        key = key_with_namespace.to_s.split('.').last
+        metafields.with_key(namespace, key).first
       end
 
-      def has_metafield?(key)
-        if key.is_a?(Spree::MetafieldDefinition)
-          key = key.key
+      def has_metafield?(key_with_namespace)
+        if key_with_namespace.is_a?(Spree::MetafieldDefinition)
+          namespace = key_with_namespace.namespace
+          key = key_with_namespace.key
+        elsif key_with_namespace.is_a?(String)
+          namespace = key_with_namespace.to_s.split('.').first
+          key = key_with_namespace.to_s.split('.').last
+        else
+          raise ArgumentError, "Invalid key_with_namespace: #{key_with_namespace.inspect}"
         end
 
-        key = key.to_s.parameterize
-        metafields.with_key(key).exists?
+        metafields.with_key(namespace, key).exists?
       end
     end
   end

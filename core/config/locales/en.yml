@@ -60,6 +60,8 @@ en:
       spree/line_item:
         price: Price
         quantity: Quantity
+      spree/metafield_definition:
+        namespace: Namespace
       spree/option_type:
         filterable: Filterable
         name: Name

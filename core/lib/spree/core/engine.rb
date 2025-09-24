@@ -23,6 +23,7 @@ module Spree
                                :page_blocks,
                                :reports,
                                :translatable_resources,
+                               :metafield_definition_types,
                                :metafield_enabled_resources,
                                :analytics_events,
                                :analytics_event_handlers,
@@ -251,6 +252,15 @@ module Spree
           Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
+        ]
+
+        Rails.application.config.spree.metafield_definition_types = [
+          Spree::MetafieldDefinitions::ShortText,
+          Spree::MetafieldDefinitions::LongText,
+          Spree::MetafieldDefinitions::Number,
+          Spree::MetafieldDefinitions::Boolean,
+          Spree::MetafieldDefinitions::Json,
+          Spree::MetafieldDefinitions::RichText,
         ]
 
         Rails.application.config.spree.metafield_enabled_resources = [

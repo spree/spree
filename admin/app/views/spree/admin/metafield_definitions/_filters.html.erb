@@ -3,7 +3,7 @@
     <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:title) %>
 
     <%= select_tag 'q[resource_type_eq]',
-          options_for_select(metafield_definition_resource_types.map { |type| [type.demodulize.titleize, type] }, params.dig(:q, :resource_type_eq)),
+          options_for_select(metafield_definition_resource_types, params.dig(:q, :resource_type_eq)),
           { 
             include_blank: Spree.t(:all_resource_types),
             class: 'w-20',

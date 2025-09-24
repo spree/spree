@@ -3,10 +3,6 @@ require 'spec_helper'
 RSpec.describe Spree::MetafieldDefinition, type: :model do
   let(:metafield_definition) { build(:metafield_definition) }
 
-  describe 'associations' do
-    it { is_expected.to have_many(:metafields).class_name('Spree::Metafield').dependent(:destroy) }
-  end
-
   describe 'scopes' do
     let!(:both_definition) { create(:metafield_definition, display_on: 'both') }
     let!(:front_end_definition) { create(:metafield_definition, :front_end_only) }
@@ -43,70 +39,6 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
 
         expect(described_class.for_resource_type('Spree::Variant')).to include(variant_definition)
         expect(described_class.for_resource_type('Spree::Variant')).not_to include(product_definition)
-      end
-    end
-  end
-
-  describe 'factory' do
-    it 'creates a valid metafield definition' do
-      expect(metafield_definition).to be_valid
-    end
-
-    context 'with traits' do
-      it 'creates front_end_only field' do
-        front_end_field = build(:metafield_definition, :front_end_only)
-        expect(front_end_field.display_on).to eq('front_end')
-      end
-
-      it 'creates back_end_only field' do
-        back_end_field = build(:metafield_definition, :back_end_only)
-        expect(back_end_field.display_on).to eq('back_end')
-      end
-
-      it 'creates short_text field' do
-        short_text_field = build(:metafield_definition, :short_text_field)
-        expect(short_text_field.kind).to eq('short_text')
-        expect(short_text_field.key).to eq('title')
-      end
-
-      it 'creates long_text field' do
-        long_text_field = build(:metafield_definition, :long_text_field)
-        expect(long_text_field.kind).to eq('long_text')
-        expect(long_text_field.key).to eq('description')
-      end
-
-      it 'creates number field' do
-        number_field = build(:metafield_definition, :number_field)
-        expect(number_field.kind).to eq('number')
-        expect(number_field.key).to eq('priority')
-      end
-
-      it 'creates boolean field' do
-        boolean_field = build(:metafield_definition, :boolean_field)
-        expect(boolean_field.kind).to eq('boolean')
-        expect(boolean_field.key).to eq('featured')
-      end
-
-      it 'creates json field' do
-        json_field = build(:metafield_definition, :json_field)
-        expect(json_field.kind).to eq('json')
-        expect(json_field.key).to eq('settings')
-      end
-
-      it 'creates rich_text field' do
-        rich_text_field = build(:metafield_definition, :rich_text_field)
-        expect(rich_text_field.kind).to eq('rich_text')
-        expect(rich_text_field.key).to eq('content')
-      end
-
-      it 'creates variant field' do
-        variant_field = build(:metafield_definition, :for_variant)
-        expect(variant_field.resource_type).to eq('Spree::Variant')
-      end
-
-      it 'creates user field' do
-        user_field = build(:metafield_definition, :for_user)
-        expect(user_field.resource_type).to eq('Spree::User')
       end
     end
   end

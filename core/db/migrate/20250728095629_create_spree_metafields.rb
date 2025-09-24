@@ -1,15 +1,15 @@
 class CreateSpreeMetafields < ActiveRecord::Migration[7.2]
   def change
     create_table :spree_metafield_definitions do |t|
+      t.string :type, null: false, index: true
+      t.string :namespace, null: false
       t.string :key, null: false
       t.string :name, null: false
-      t.text :description
-      t.string :kind, null: false, index: true
       t.string :resource_type, null: false
       t.string :display_on, null: false, default: 'both', index: true
       t.timestamps
 
-      t.index [:resource_type, :key], unique: true
+      t.index [:resource_type, :namespace, :key], unique: true
     end
 
     create_table :spree_metafields do |t|

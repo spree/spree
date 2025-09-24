@@ -131,7 +131,7 @@ module Spree
 
     @@metafield_attributes = [:id, :value, :metafield_definition_id, :_destroy]
 
-    @@metafield_definition_attributes = [:key, :name, :description, :kind, :resource_type, :display_on]
+    @@metafield_definition_attributes = [:key, :name, :namespace, :type, :resource_type, :display_on]
 
     @@option_type_attributes = [:name, :presentation, :position, :filterable,
                                 option_values_attributes: [:id, :name, :presentation, :position, :_destroy]]

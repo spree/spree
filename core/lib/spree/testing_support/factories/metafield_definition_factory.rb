@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :metafield_definition, class: 'Spree::MetafieldDefinition' do
+    namespace { 'custom' }
     sequence(:key) { |n| "custom_field_#{n}" }
     name { 'Custom Field' }
-    description { 'A custom field for storing additional data' }
-    kind { 'short_text' }
+    type { 'Spree::MetafieldDefinitions::ShortText' }
     resource_type { 'Spree::Product' }
     display_on { 'both' }
 
@@ -16,45 +16,39 @@ FactoryBot.define do
     end
 
     trait :short_text_field do
-      kind { 'short_text' }
+      type { 'Spree::MetafieldDefinitions::ShortText' }
       key { 'title' }
       name { 'Title' }
-      description { 'Short text field' }
     end
 
     trait :long_text_field do
-      kind { 'long_text' }
+      type { 'Spree::MetafieldDefinitions::LongText' }
       key { 'description' }
       name { 'Description' }
-      description { 'Long text field for detailed information' }
     end
 
     trait :number_field do
-      kind { 'number' }
+      type { 'Spree::MetafieldDefinitions::Number' }
       key { 'priority' }
       name { 'Priority' }
-      description { 'Priority level as number' }
     end
 
     trait :boolean_field do
-      kind { 'boolean' }
+      type { 'Spree::MetafieldDefinitions::Boolean' }
       key { 'featured' }
       name { 'Featured' }
-      description { 'Whether item is featured' }
     end
 
     trait :json_field do
-      kind { 'json' }
+      type { 'Spree::MetafieldDefinitions::Json' }
       key { 'settings' }
       name { 'Settings' }
-      description { 'Configuration settings as JSON' }
     end
 
     trait :rich_text_field do
-      kind { 'rich_text' }
+      type { 'Spree::MetafieldDefinitions::RichText' }
       key { 'content' }
       name { 'Content' }
-      description { 'Rich text content with formatting' }
     end
 
     trait :for_variant do

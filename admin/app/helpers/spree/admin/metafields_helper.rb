@@ -2,11 +2,15 @@ module Spree
   module Admin
     module MetafieldsHelper
       def metafield_definition_resource_types
-        Rails.application.config.spree.metafield_enabled_resources.map(&:to_s)
+        Spree::MetafieldDefinition.available_resources.map do |type|
+          [type.to_s.demodulize.titleize, type]
+        end
       end
 
-      def metafield_definition_kinds
-        Spree::MetafieldDefinition::AVAILABLE_KINDS
+      def metafield_definition_types
+        Spree::MetafieldDefinition.available_types.map do |type|
+          [type.to_s.demodulize.titleize, type]
+        end
       end
     end
   end
