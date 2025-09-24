@@ -38,7 +38,7 @@ module Spree
         @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories
-                               stores tax_categories tax_rates webhooks webhooks_subscribers zones metafield_definitions].include?(controller_name)
+                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies metafield_definitions].include?(controller_name)
       end
 
       # @return [Array<String>] the available countries for checkout
