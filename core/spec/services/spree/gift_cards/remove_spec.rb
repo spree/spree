@@ -39,6 +39,11 @@ RSpec.describe Spree::GiftCards::Remove do
       expect(store_credit_payment.source).to be_deleted
     end
 
+    it 'calls update_with_updater!' do
+      expect(order).to receive(:update_with_updater!)
+      subject
+    end
+
     context 'for a completed order' do
       before { order.update_column(:completed_at, Time.current) }
 
