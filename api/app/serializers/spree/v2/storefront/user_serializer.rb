@@ -20,13 +20,13 @@ module Spree
                 id_method_name: :bill_address_id,
                 object_method_name: :bill_address,
                 record_type: :address,
-                serializer: :address
+                serializer: Spree::Api::Dependencies.storefront_address_serializer.constantize
 
         has_one :default_shipping_address,
                 id_method_name: :ship_address_id,
                 object_method_name: :ship_address,
                 record_type: :address,
-                serializer: :address
+                serializer: Spree::Api::Dependencies.storefront_address_serializer.constantize
       end
     end
   end

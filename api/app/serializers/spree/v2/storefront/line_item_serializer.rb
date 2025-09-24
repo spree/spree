@@ -13,8 +13,8 @@ module Spree
                    :pre_tax_amount, :display_pre_tax_amount, :compare_at_amount, :display_compare_at_amount,
                    :public_metadata
 
-        belongs_to :variant
-        has_many :digital_links
+        belongs_to :variant, serializer: Spree::Api::Dependencies.storefront_variant_serializer.constantize
+        has_many :digital_links, serializer: Spree::Api::Dependencies.storefront_digital_link_serializer.constantize
       end
     end
   end

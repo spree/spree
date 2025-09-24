@@ -40,25 +40,25 @@ module Spree
           cart.display_total_minus_store_credits.amount_in_cents
         end
 
-        has_many   :line_items
-        has_many   :variants
-        has_many   :promotions, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
-        has_many   :payments do |cart|
+        has_many   :line_items, serializer: Spree::Api::Dependencies.storefront_line_item_serializer.constantize
+        has_many   :variants, serializer: Spree::Api::Dependencies.storefront_variant_serializer.constantize
+        has_many   :promotions, serializer: Spree::Api::Dependencies.storefront_promotion_serializer.constantize, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
+        has_many   :payments, serializer: Spree::Api::Dependencies.storefront_payment_serializer.constantize do |cart|
           cart.payments.valid
         end
-        has_many   :shipments
+        has_many   :shipments, serializer: Spree::Api::Dependencies.storefront_shipment_serializer.constantize
 
-        belongs_to :user
+        belongs_to :user, serializer: Spree::Api::Dependencies.storefront_user_serializer.constantize
         belongs_to :billing_address,
                    id_method_name: :bill_address_id,
-                   serializer: :address,
+                   serializer: Spree::Api::Dependencies.storefront_address_serializer.constantize,
                    record_type: :address
 
         belongs_to :shipping_address,
                    id_method_name: :ship_address_id,
-                   serializer: :address,
+                   serializer: Spree::Api::Dependencies.storefront_address_serializer.constantize,
                    record_type: :address
-        belongs_to :gift_card, serializer: :gift_card
+        belongs_to :gift_card, serializer: Spree::Api::Dependencies.storefront_gift_card_serializer.constantize
       end
     end
   end

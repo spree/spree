@@ -11,7 +11,7 @@ module Spree
           shipping_rate.shipping_method_id.to_s
         end
 
-        belongs_to :shipping_method
+        belongs_to :shipping_method, serializer: Spree::Api::Dependencies.storefront_shipping_method_serializer.constantize
 
         attribute :free do |shipping_rate|
           shipping_rate.free?
