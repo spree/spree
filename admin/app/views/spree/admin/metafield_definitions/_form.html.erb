@@ -22,7 +22,10 @@
     </div>
 
     <div class="form-group">
-      <%= f.spree_select :display_on, display_on_options, { include_blank: true, autocomplete: true }, { required: true } %>
+      <%= f.spree_select :display_on, [
+        [Spree.t('admin.display_on_options.both'), 'both'],
+        [Spree.t('admin.display_on_options.back_end'), 'back_end']
+      ], { include_blank: true, autocomplete: true }, { required: true } %>
     </div>
   </div>
 </div>

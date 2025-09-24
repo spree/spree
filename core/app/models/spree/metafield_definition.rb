@@ -2,6 +2,8 @@ module Spree
   class MetafieldDefinition < Spree.base_class
     include Spree::DisplayOn
 
+    DISPLAY = [:both, :back_end]
+
     #
     # Associations
     #

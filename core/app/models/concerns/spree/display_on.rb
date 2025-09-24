@@ -2,7 +2,7 @@ module Spree
   module DisplayOn
     extend ActiveSupport::Concern
 
-    DISPLAY = [:both, :front_end, :back_end].freeze
+    DISPLAY = [:both, :front_end, :back_end]
 
     included do
       scope :available,              -> { where(display_on: [:both]) }
