@@ -211,14 +211,12 @@ module Spree
     def normalize_date_filters(raw_params)
       params = raw_params.is_a?(Hash) ? raw_params.deep_stringify_keys : {}
 
-      %w[created_at completed_at].each do |field|
-        ['_gt', '_gteq', '_lt', '_lteq'].each do |suffix|
-          key = "#{field}#{suffix}"
-          value = params[key]
-          next unless value.present?
+      params.each do |key, value|
+        match = key.match(/\A(.+)_([gl]t(?:eq)?)\z/)
+        next unless match && value.present?
 
-          params[key] = normalize_single_date_filter(value, suffix)
-        end
+        suffix = "_#{match[2]}"
+        params[key] = normalize_single_date_filter(value, suffix)
       end
 
       params
@@ -249,9 +247,10 @@ module Spree
         boundary = ['_gt', '_gteq'].include?(suffix) ? :beginning_of_day : :end_of_day
         parse_to_day_boundary(value, boundary)
       elsif value.is_a?(String)
+        store_timezone = store&.preferred_timezone.presence || Time.zone.name || 'UTC'
         begin
-          parsed = Time.zone.parse(value)
-          parsed ? value : ''
+          parsed = Time.use_zone(store_timezone) { Time.zone.parse(value) }
+          parsed ? parsed.iso8601 : ''
         rescue StandardError
           ''
         end
