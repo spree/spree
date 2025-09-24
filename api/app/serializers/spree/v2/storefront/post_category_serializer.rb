@@ -10,7 +10,7 @@ module Spree
           category.description.to_plain_text if category.description.present?
         end
 
-        has_many :posts, serializer: :post, record_type: :post, if: proc { |_record, params|
+        has_many :posts, serializer: Spree::Api::Dependencies.storefront_post_serializer.constantize, record_type: :post, if: proc { |_record, params|
           params[:include_posts] == true
         } do |category|
           category.posts.published.by_newest
