@@ -3,6 +3,7 @@ module Spree
     module Storefront
       class StoreSerializer < BaseSerializer
         include Spree::Api::V2::StoreMediaSerializerImagesConcern
+        include Spree::Api::V2::PublicMetafieldsConcern
 
         set_type :store
 

@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class ShipmentSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :shipment
 
         attributes :number, :final_price, :display_final_price,

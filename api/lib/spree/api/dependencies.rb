@@ -88,6 +88,7 @@ module Spree
         storefront_taxon_image_serializer: 'Spree::V2::Storefront::TaxonImageSerializer',
         storefront_wishlist_serializer: 'Spree::V2::Storefront::WishlistSerializer',
         storefront_wished_item_serializer: 'Spree::V2::Storefront::WishedItemSerializer',
+        storefront_metafield_serializer: 'Spree::V2::Storefront::MetafieldSerializer',
 
         # sorters
         storefront_collection_sorter: -> { Spree::Dependencies.collection_sorter },

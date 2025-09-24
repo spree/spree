@@ -3,7 +3,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :resource, polymorphic: true
+    belongs_to :resource, polymorphic: true, touch: true
     belongs_to :metafield_definition, class_name: 'Spree::MetafieldDefinition'
 
     #
@@ -23,5 +23,9 @@ module Spree
     scope :available_on_front_end, -> { joins(:metafield_definition).merge(Spree::MetafieldDefinition.available_on_front_end) }
     scope :available_on_back_end, -> { joins(:metafield_definition).merge(Spree::MetafieldDefinition.available_on_back_end) }
     scope :with_key, ->(namespace, key) { joins(:metafield_definition).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
+
+    def serialize_value
+      value
+    end
   end
 end
