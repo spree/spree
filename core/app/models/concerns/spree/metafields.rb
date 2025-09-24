@@ -4,12 +4,12 @@ module Spree
 
     included do
       # New metafields association
-      has_many :metafields, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
-      has_many :public_metafields, -> { available_on_front_end }, class_name: 'Spree::Metafield'
-      has_many :private_metafields, -> { available_on_back_end }, class_name: 'Spree::Metafield'
+      has_many :metafields, -> { includes(:metafield_definition) }, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
+      has_many :public_metafields, -> { includes(:metafield_definition).available_on_front_end }, class_name: 'Spree::Metafield'
+      has_many :private_metafields, -> { includes(:metafield_definition).available_on_back_end }, class_name: 'Spree::Metafield'
 
       accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
-                                                                                     mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
+                                                                                     mf[:metafield_definition_id].blank? || mf[:type].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
 
       scope :with_metafield_key, ->(namespace, key) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key }) }

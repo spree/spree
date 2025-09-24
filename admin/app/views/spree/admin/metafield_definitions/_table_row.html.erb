@@ -2,7 +2,7 @@
   <td><code><%= metafield_definition.full_key %></code></td>
   <td><%= metafield_definition.name %></td>
   <td><%= metafield_definition.resource_type.demodulize.titleize %></td>
-  <td><span class="badge badge-light"><%= metafield_definition.type.demodulize.titleize %></span></td>
+  <td><span class="badge badge-light"><%= metafield_definition.metafield_type.demodulize.titleize %></span></td>
   <td>
     <%= form_with model: metafield_definition, url: admin_metafield_definition_path(metafield_definition), method: :patch, data: { controller: 'auto-submit' } do |f| %>
       <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>

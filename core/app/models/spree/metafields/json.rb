@@ -1,6 +1,6 @@
 module Spree
-  module MetafieldDefinitions
-    class Json < Spree::MetafieldDefinition
+  module Metafields
+    class Json < Spree::Metafield
       normalizes :value, with: ->(value) { JSON.parse(value) }
     end
   end

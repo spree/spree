@@ -13,13 +13,15 @@
       </div>
     </div>
 
-    <div class="form-group">
-      <%= f.spree_select :resource_type, metafield_definition_resource_types, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
-    </div>
+    <% if f.object.new_record? %>
+      <div class="form-group">
+        <%= f.spree_select :resource_type, metafield_definition_resource_types, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
+      </div>
 
-    <div class="form-group">
-      <%= f.spree_select :type, metafield_definition_types, { include_blank: true, autocomplete: true }, { required: true } %>
-    </div>
+      <div class="form-group">
+        <%= f.spree_select :metafield_type, metafield_definition_types, { include_blank: true, autocomplete: true, label: Spree.t(:type) }, { required: true } %>
+      </div>
+    <% end %>
 
     <div class="form-group">
       <%= f.spree_select :display_on, [

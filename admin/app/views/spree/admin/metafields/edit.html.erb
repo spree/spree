@@ -16,6 +16,7 @@
               <%= f.fields_for :metafields, @metafields do |metafield_form| %>
                 <%= metafield_form.hidden_field :id %>
                 <%= metafield_form.hidden_field :metafield_definition_id %>
+                <%= metafield_form.hidden_field :type %>
                 <% metafield_definition = metafield_form.object.metafield_definition %>
                 <tr>
                   <td class="align-top pt-3 w-25">
@@ -25,7 +26,7 @@
                     </div>
                   </td>
                   <td class="w-50">
-                    <%= render "spree/admin/metafields/types/#{metafield_definition.type.demodulize.underscore}", f: metafield_form %>
+                    <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>
                   </td>
                 </tr>
               <% end %>

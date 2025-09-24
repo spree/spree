@@ -1,6 +1,6 @@
 module Spree
-  module MetafieldDefinitions
-    class LongText < Spree::MetafieldDefinition
+  module Metafields
+    class ShortText < Spree::Metafield
       normalizes :value, with: ->(value) { value.to_s.strip }
     end
   end

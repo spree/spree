@@ -13,7 +13,7 @@ module Spree
     # Validations
     #
     validates :namespace, :key, :name, :resource_type, presence: true
-    validates :type, presence: true, inclusion: { in: :valid_available_types }
+    validates :metafield_type, presence: true, inclusion: { in: :valid_available_types }
     validates :resource_type, presence: true, inclusion: { in: :valid_available_resources }
     validates :key, uniqueness: { scope: spree_base_uniqueness_scope.push(:resource_type, :namespace) }
 
@@ -42,7 +42,7 @@ module Spree
     # Returns the available types
     # @return [Array<Class>]
     def self.available_types
-      Rails.application.config.spree.metafield_definition_types
+      Rails.application.config.spree.metafield_types
     end
 
     # Returns the available resources
