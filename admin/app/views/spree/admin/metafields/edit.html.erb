@@ -14,10 +14,20 @@
             </thead>
             <tbody>
               <%= f.fields_for :metafields, @metafields do |metafield_form| %>
-                <% metafield = metafield_form.object.metafield_definition %>
                 <%= metafield_form.hidden_field :id %>
                 <%= metafield_form.hidden_field :metafield_definition_id %>
-                <%= render 'spree/admin/metafields/metafield_fields', f: metafield_form, metafield: metafield, resource_type: @resource.class.to_s %>
+                <% metafield_definition = metafield_form.object.metafield_definition %>
+                <tr>
+                  <td class="align-top pt-3 w-25">
+                    <div class="d-flex flex-column">
+                      <strong><%= metafield_definition.name %></strong>
+                      <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
+                    </div>
+                  </td>
+                  <td class="w-50">
+                    <%= render "spree/admin/metafields/types/#{metafield_definition.type.demodulize.underscore}", f: metafield_form %>
+                  </td>
+                </tr>
               <% end %>
             </tbody>
           </table>

@@ -5,56 +5,13 @@
   <td class="align-top pt-3 w-25">
     <div class="d-flex flex-column">
       <strong><%= metafield_definition.name %></strong>
-      <% if metafield_definition.description.present? %>
-        <small class="text-muted"><%= metafield_definition.description %></small>
-      <% end %>
-      <small class="text-muted mt-2"><code><%= metafield_definition.key %></code></small>
+      <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
     </div>
   </td>
   
   <td class="w-50">
     <div class="form-group">
-      <!-- Short Text input -->
-      <% if metafield_definition.kind == 'short_text' %>
-        <%= f.text_field :value, class: "form-control" %>
-      <% end %>
-      
-      <!-- Long Text input -->
-      <% if metafield_definition.kind == 'long_text' %>
-        <%= f.text_area :value, 
-            class: "form-control", 
-            rows: 3,
-            data: { controller: 'textarea-autogrow' } %>
-      <% end %>
-      
-      <!-- Number input -->
-      <% if metafield_definition.kind == 'number' %>
-        <%= f.number_field :value, class: "form-control" %>
-      <% end %>
-      
-      <!-- Boolean input -->
-      <% if metafield_definition.kind == 'boolean' %>
-        <%= f.select :value, 
-            options_for_select([
-              [Spree.t('metafields.form.select_boolean'), ''],
-              [Spree.t('metafields.form.true'), 'true'],
-              [Spree.t('metafields.form.false'), 'false']
-            ], f.object.value.to_s),
-            { include_blank: false },
-            { class: "custom-select" } %>
-      <% end %>
-      
-      <!-- JSON input -->
-      <% if metafield_definition.kind == 'json' %>
-        <%= f.text_area :value, class: "form-control", rows: 2 %>
-      <% end %>
-      
-      <!-- Rich Text input -->
-      <% if metafield_definition.kind == 'rich_text' %>
-        <div class="trix-container">
-          <%= f.rich_text_area :value %>
-        </div>
-      <% end %>
+      <%= render "spree/admin/metafields/types/#{metafield_definition.type.demodulize.underscore}", f: f %>
     </div>
   </td>
 
