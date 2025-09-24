@@ -215,6 +215,9 @@ module Spree
         match = key.match(/\A(.+)_([gl]t(?:eq)?)\z/)
         next unless match && value.present?
 
+        attribute = match[1]
+        next unless date_attribute?(attribute)
+
         suffix = "_#{match[2]}"
         params[key] = normalize_single_date_filter(value, suffix)
       end
@@ -246,7 +249,7 @@ module Spree
       if date_only?(value)
         boundary = ['_gt', '_gteq'].include?(suffix) ? :beginning_of_day : :end_of_day
         parse_to_day_boundary(value, boundary)
-      elsif value.is_a?(String)
+      elsif value.is_a?(String) && date_time_like?(value)
         store_timezone = store&.preferred_timezone.presence || Time.zone.name || 'UTC'
         begin
           parsed = Time.use_zone(store_timezone) { Time.zone.parse(value) }
@@ -254,6 +257,8 @@ module Spree
         rescue StandardError
           ''
         end
+      elsif value.is_a?(String)
+        ''
       else
         value
       end
@@ -261,6 +266,19 @@ module Spree
 
     def date_only?(value)
       value.is_a?(String) && /\A\d{4}-\d{2}-\d{2}\z/.match?(value)
+    end
+
+    def date_time_like?(value)
+      return false unless value.is_a?(String)
+
+      !!(
+        value.match(/\A\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(:\d{2})?(Z|[+-]\d{2}:?\d{2})?)?\z/) ||
+        value.match(/[A-Za-z]{3}, \d{1,2} [A-Za-z]{3} \d{4}/)
+      )
+    end
+    
+    def date_attribute?(attr)
+      attr.to_s.match?(/(_at|_on|_date|date)$/i)
     end
   end
 end
