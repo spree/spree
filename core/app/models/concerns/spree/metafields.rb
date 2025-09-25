@@ -11,7 +11,7 @@ module Spree
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
 
-      scope :with_metafield_key, ->(namespace, key) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
+      scope :with_metafield_key, ->(namespace, key) { joins(metafields: :metafield_definition).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
       scope :with_metafield_key_value, ->(namespace, key, value) {
         joins(metafields: :metafield_definition)
           .where(spree_metafield_definitions: { namespace: namespace, key: key })
