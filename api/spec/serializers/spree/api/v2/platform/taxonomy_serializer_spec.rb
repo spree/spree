@@ -39,6 +39,9 @@ describe Spree::Api::V2::Platform::TaxonomySerializer, retry: 3 do
             },
             taxons: {
               data: taxons_json
+            },
+            metafields: {
+              data: []
             }
           }
         }

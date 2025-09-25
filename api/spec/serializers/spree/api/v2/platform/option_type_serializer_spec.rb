@@ -33,6 +33,9 @@ describe Spree::Api::V2::Platform::OptionTypeSerializer do
                   type: :option_value
                 }
               ]
+            },
+            metafields: {
+              data: []
             }
           }
         }

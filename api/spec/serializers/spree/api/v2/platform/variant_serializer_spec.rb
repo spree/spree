@@ -102,6 +102,9 @@ describe Spree::Api::V2::Platform::VariantSerializer do
                   type: :stock_item
                 }
               ]
+            },
+            metafields: {
+              data: []
             }
           }
         }

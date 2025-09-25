@@ -50,6 +50,9 @@ describe Spree::Api::V2::Platform::AddressSerializer do
                 id: address.user.id.to_s,
                 type: :user
               }
+            },
+            metafields: {
+              data: []
             }
           }
         }

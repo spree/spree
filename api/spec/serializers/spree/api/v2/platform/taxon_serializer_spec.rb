@@ -72,6 +72,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                     type: :taxon
                   }
                 ]
+              },
+              metafields: {
+                data: []
               }
             }
           }
@@ -158,6 +161,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                     type: :taxon
                   }
                 )
+              },
+              metafields: {
+                data: []
               }
             }
           }

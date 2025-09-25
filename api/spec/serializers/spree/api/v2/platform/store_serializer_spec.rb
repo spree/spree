@@ -59,6 +59,9 @@ describe Spree::Api::V2::Platform::StoreSerializer do
                 id: store.default_country.id.to_s,
                 type: :country
               }
+            },
+            metafields: {
+              data: []
             }
           },
         }
