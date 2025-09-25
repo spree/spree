@@ -976,6 +976,7 @@ en:
     duplicating: Duplicating
     edit: Edit
     edit_address: Edit address
+    edit_metafields: Edit Metafields
     edit_refund: Edit refund
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason

@@ -5,7 +5,7 @@
     <%= select_tag 'q[resource_type_eq]',
           options_for_select(metafield_definition_resource_types, params.dig(:q, :resource_type_eq)),
           { 
-            include_blank: Spree.t(:all_resource_types),
+            include_blank: Spree.t(:all),
             class: 'w-20',
             data: { 
               filters_target: :input,
