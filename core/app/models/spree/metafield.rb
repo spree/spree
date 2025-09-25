@@ -12,6 +12,11 @@ module Spree
     delegate :key, :full_key, :name, :display_on, to: :metafield_definition, allow_nil: true
 
     #
+    # Callbacks
+    #
+    before_validation :set_type_from_metafield_definition, on: :create
+
+    #
     # Validations
     #
     validates :metafield_definition, :type, :resource, :value, presence: true
@@ -26,6 +31,12 @@ module Spree
 
     def serialize_value
       value
+    end
+
+    private
+
+    def set_type_from_metafield_definition
+      self.type ||= metafield_definition.metafield_type
     end
   end
 end

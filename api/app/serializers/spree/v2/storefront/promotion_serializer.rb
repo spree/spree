@@ -1,9 +1,9 @@
+# this is actually a serializer for Spree::OrderPromotion, not Spree::Promotion
+# we should fix this in the future
 module Spree
   module V2
     module Storefront
       class PromotionSerializer < BaseSerializer
-        include Spree::Api::V2::PublicMetafieldsConcern
-
         set_id     :promotion_id
         set_type   :promotion
 

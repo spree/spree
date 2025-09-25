@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class CartSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :cart
 
         attributes :number, :item_total, :total, :ship_total, :adjustment_total, :created_at,
