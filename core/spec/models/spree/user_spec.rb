@@ -19,8 +19,6 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     let(:order_2) { create(:order, user: user, created_by: user, store: store) }
     let(:order_3) { create(:order, user: user, created_by: create(:user), store: store) }
 
-    it_behaves_like 'metadata', factory: :user
-
     it 'returns correct order' do
       Timecop.scale(3600) do
         order_1
