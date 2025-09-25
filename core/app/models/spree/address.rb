@@ -2,6 +2,7 @@ module Spree
   class Address < Spree.base_class
     require 'validates_zipcode'
 
+    include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

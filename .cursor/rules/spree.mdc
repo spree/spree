@@ -20,13 +20,13 @@ alwaysApply: true
 ## Model Standards
 - Use ActiveRecord associations with `class_name` and `dependent` options
 - For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
-- Include `Spree::Metadata` concern for models that need metadata support
+- Include `Spree::Metafields` concern for models that need metadata support
 - Use scopes for reusable query patterns
 
 ```ruby
 # ✅ Correct model structure
 class Spree::Product < Spree.base_class
-  include Spree::Metadata
+  include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy
@@ -98,13 +98,13 @@ end
 ## Model Standards
 - Use ActiveRecord associations with `class_name` and `dependent` options
 - For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
-- Include `Spree::Metadata` concern for models that need metadata support
+- Include `Spree::Metafields` concern for models that need metadata support
 - Use scopes for reusable query patterns
 
 ```ruby
 # ✅ Correct model structure
 class Spree::Product < Spree.base_class
-  include Spree::Metadata
+  include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy

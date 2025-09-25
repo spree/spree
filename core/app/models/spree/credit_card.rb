@@ -1,6 +1,7 @@
 module Spree
   class CreditCard < Spree.base_class
     include ActiveMerchant::Billing::CreditCardMethods
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::PaymentSourceConcern
 

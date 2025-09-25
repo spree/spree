@@ -13,8 +13,7 @@ alwaysApply: true
 ```ruby
 # ✅ Core model structure
 class Spree::Product < Spree.base_class
-  include Spree::Metadata
-  include Spree::SoftDeletable
+  include Spree::Metafields
   
   has_many :variants, -> { order(:position) }, class_name: 'Spree::Variant', 
            dependent: :destroy, inverse_of: :product

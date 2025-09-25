@@ -65,14 +65,14 @@ Always inherit from `Spree.base_class` when creating models.
 - Use ActiveRecord associations appropriately, always pass `class_name` and `dependent` options
 - Implement concerns for shared functionality
 - Use scopes for reusable query patterns
-- Include `Spree::Metadata` concern for models that need metadata support
+- Include `Spree::Metafields` concern for models that need metadata support
 - Don't use enums, use string columns instead
 - For models that require state machine, please use https://github.com/state-machines/state_machines-activerecord gem, default column should be `status`, legacy models use `state`
 
 ```ruby
 # ✅ Good model structure
 class Spree::Product < ApplicationRecord
-  include Spree::Metadata
+  include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy

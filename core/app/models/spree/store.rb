@@ -8,6 +8,7 @@ module Spree
 
     include FriendlyId
     include Spree::TranslatableResource
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::Stores::Setup
     include Spree::Stores::Socials

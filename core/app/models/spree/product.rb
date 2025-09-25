@@ -28,6 +28,7 @@ module Spree
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
     include Spree::MemoizedData
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::Linkable
     include Spree::Product::Webhooks

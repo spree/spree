@@ -2,6 +2,7 @@ module Spree
   module UserMethods
     extend ActiveSupport::Concern
 
+    include Spree::Metafields
     include Spree::UserPaymentSource
     include Spree::UserReporting
     include Spree::UserRoles

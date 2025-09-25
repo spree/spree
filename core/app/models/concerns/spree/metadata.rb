@@ -4,10 +4,9 @@ module Spree
   module Metadata
     extend ActiveSupport::Concern
 
-    include Spree::Metafields
+    include Spree::Metafields unless included_modules.include?(Spree::Metafields)
 
     included do
-      # Legacy jsonb fields - to be deprecated
       attribute :public_metadata, default: {}
       attribute :private_metadata, default: {}
 
