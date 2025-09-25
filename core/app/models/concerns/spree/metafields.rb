@@ -7,6 +7,8 @@ module Spree
       has_many :public_metafields, -> { includes(:metafield_definition).available_on_front_end }, as: :resource, class_name: 'Spree::Metafield'
       has_many :private_metafields, -> { includes(:metafield_definition).available_on_back_end }, as: :resource, class_name: 'Spree::Metafield'
 
+      has_many :metafield_definitions, through: :metafields, class_name: 'Spree::MetafieldDefinition'
+
       accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
@@ -21,7 +23,7 @@ module Spree
       def set_metafield(key_with_namespace, value)
         namespace = key_with_namespace.to_s.split('.').first
         key = key_with_namespace.to_s.split('.').last
-        metafield_definition = Spree::MetafieldDefinition.find_or_create_by(namespace: namespace, key: key, resource_type: self.class.name)
+        metafield_definition = Spree::MetafieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.class.name)
 
         metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
         metafield.value = value

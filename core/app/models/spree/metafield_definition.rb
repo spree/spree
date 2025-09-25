@@ -27,6 +27,8 @@ module Spree
     #
     normalizes :key, with: ->(value) { value.to_s.parameterize.underscore.strip }
     normalizes :namespace, with: ->(value) { value.to_s.parameterize.underscore.strip }
+    before_validation :set_default_type, if: -> { metafield_type.blank? }
+    before_validation :set_name_from_key, if: -> { name.blank? }
 
     #
     # Ransack
@@ -59,6 +61,14 @@ module Spree
 
     def valid_available_resources
       self.class.available_resources.map(&:to_s)
+    end
+
+    def set_default_type
+      self.metafield_type ||= Rails.application.config.spree.metafield_types.first.to_s
+    end
+
+    def set_name_from_key
+      self.name ||= key.titleize
     end
   end
 end
