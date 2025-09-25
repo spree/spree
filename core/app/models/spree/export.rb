@@ -270,15 +270,17 @@ module Spree
 
     def date_time_like?(value)
       return false unless value.is_a?(String)
-
-      !!(
-        value.match(/\A\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(:\d{2})?(Z|[+-]\d{2}:?\d{2})?)?\z/) ||
-        value.match(/[A-Za-z]{3}, \d{1,2} [A-Za-z]{3} \d{4}/)
-      )
+      s = value.strip
+      return true if date_only?(s)
+      return true if /\A\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2}(\.\d{1,6})?)?(Z|[+\-]\d{2}:?\d{2})?\z/.match?(s)
+      return true if /\A\d{1,2}\/\d{1,2}\/\d{2,4}(\s+\d{1,2}:\d{2}(:\d{2})?\s*(AM|PM|am|pm)?)?\z/.match?(s)
+      return true if /\A\w{3},\s\d{1,2}\s\w{3}\s\d{4}\s\d{2}:\d{2}:\d{2}\s(UTC|GMT|[A-Z]{3})\z/.match?(s)
+      (s.match?(/[\-\/]\d{1,2}/) && s.match?(/\d{2}:\d{2}/))
     end
-    
-    def date_attribute?(attr)
-      attr.to_s.match?(/(_at|_on|_date|date)$/i)
+
+    def date_attribute?(attr_name)
+      return false if attr_name.blank?
+      attr_name.to_s.match?(/(_at|_on|_date|date)$/i)
     end
   end
 end
