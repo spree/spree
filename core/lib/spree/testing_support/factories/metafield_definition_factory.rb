@@ -27,6 +27,12 @@ FactoryBot.define do
       name { 'Description' }
     end
 
+    trait :rich_text_field do
+      metafield_type { 'Spree::Metafields::RichText' }
+      key { 'content' }
+      name { 'Content' }
+    end
+
     trait :number_field do
       metafield_type { 'Spree::Metafields::Number' }
       key { 'priority' }
