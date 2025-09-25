@@ -51,11 +51,6 @@ FactoryBot.define do
       name { 'Settings' }
     end
 
-    trait :rich_text_field do
-      metafield_type { 'Spree::Metafields::RichText' }
-      key { 'content' }
-      name { 'Content' }
-    end
 
     trait :for_variant do
       resource_type { 'Spree::Variant' }
