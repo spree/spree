@@ -3,36 +3,19 @@
   <% if @metafields.present? %>
     <%= form_for [:admin, @resource], url: spree.admin_metafield_path(@resource, resource_type: @resource.class.to_s), method: :put do |f| %>
       <div class="drawer-body">
-        <div id="drawer-alerts"></div>
-        <div class="rounded border">
-          <table class="table rounded">
-            <thead>
-              <tr>
-                <th scope="col"><%= Spree.t(:key) %></th>
-                <th scope="col"><%= Spree.t(:value) %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <%= f.fields_for :metafields, @metafields do |metafield_form| %>
-                <%= metafield_form.hidden_field :id %>
-                <%= metafield_form.hidden_field :metafield_definition_id %>
-                <%= metafield_form.hidden_field :type %>
-                <% metafield_definition = metafield_form.object.metafield_definition %>
-                <tr>
-                  <td class="align-top pt-3 w-25">
-                    <div class="d-flex flex-column">
-                      <strong><%= metafield_definition.name %></strong>
-                      <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
-                    </div>
-                  </td>
-                  <td class="w-50">
-                    <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
+        <%= f.fields_for :metafields, @metafields do |metafield_form| %>
+          <%= metafield_form.hidden_field :id %>
+          <%= metafield_form.hidden_field :metafield_definition_id %>
+          <%= metafield_form.hidden_field :type %>
+          <% metafield_definition = metafield_form.object.metafield_definition %>
+          <div class="form-group">
+            <%= metafield_form.label :value do %>
+              <strong><%= metafield_definition.name %></strong>
+              <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
+            <% end %>
+            <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>
+          </div>
+        <% end %>
       </div>
       <div class="drawer-footer">
         <%= turbo_save_button_tag %>

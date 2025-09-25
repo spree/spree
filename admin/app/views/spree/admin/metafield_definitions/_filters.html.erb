@@ -6,12 +6,11 @@
           options_for_select(metafield_definition_resource_types, params.dig(:q, :resource_type_eq)),
           { 
             include_blank: Spree.t(:all),
-            class: 'w-20',
+            class: 'custom-select w-20',
             data: { 
               filters_target: :input,
-              action: 'auto-submit#submit',
-              controller: 'autocomplete-select'
-            } 
+              action: 'auto-submit#submit'
+            }
           } %>
   </div>
   <%= render "spree/admin/shared/filter_badge_template" %>

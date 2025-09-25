@@ -67,6 +67,10 @@ dialog:open {
   justify-content: space-between;
   padding: 0;
 
+  .drawer-title {
+    margin-bottom: 0;
+  }
+
   &:open {
     display: flex;
   }
@@ -89,6 +93,7 @@ dialog:open {
     justify-content: space-between;
     align-items: center;
     padding: $modal-inner-padding;
+    border-bottom: 1px solid $gray-50;
   }
 
   .drawer-body {
@@ -102,6 +107,8 @@ dialog:open {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: $gray-25;
+    border-top: 1px solid $gray-50;
   }
 }
 
