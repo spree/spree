@@ -90,6 +90,11 @@ module Spree
                 expect(order.reload.total).to eq(100)
               end
 
+              it 'calls update_with_updater!' do
+                expect(order).to receive(:update_with_updater!)
+                subject.apply
+              end
+
               it 'coupon already applied to the order' do
                 subject.apply
                 expect(subject.success).to be_present
