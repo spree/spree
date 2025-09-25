@@ -35,6 +35,12 @@ module Spree
     #
     self.whitelisted_ransackable_attributes = %w[email verified_at]
     self.whitelisted_ransackable_scopes = %w[verified unverified]
+    
+    def accepts_email_marketing
+      return user.accepts_email_marketing if user.present?
+
+      verified?
+    end
 
     def verified?
       verified_at.present?
@@ -45,7 +51,7 @@ module Spree
     end
 
     def self.subscribe(email:, user: nil)
-      Spree::Newsletter::Subscribe.new(email: email, user: user).call
+      Spree::Newsletter::Subscribe.new(email: email, current_user: user).call
     end
 
     def self.verify(token:)

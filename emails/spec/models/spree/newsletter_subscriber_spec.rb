@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe Spree::NewsletterSubscriber, type: :model do
+describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
   let(:store) { Spree::Store.default }
   let(:subscriber) { create(:newsletter_subscriber) }
 

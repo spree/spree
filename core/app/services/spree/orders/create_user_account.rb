@@ -6,8 +6,12 @@ module Spree
       prepend ::Spree::ServiceModule::Base
 
       def call(order:, accepts_email_marketing: false)
-        existing_user = Spree.user_class.find_by(email: order.email)
-        return existing_user if existing_user.present?
+        Spree.user_class.find_by(email: order.email).tap do |existing_user|
+          next if existing_user.blank?
+
+          create_newsletter_subscriber(existing_user) if accepts_email_marketing
+          return existing_user
+        end
 
         user = create_new_user(order, accepts_email_marketing)
         return failure(:user_creation_failed) unless user.persisted?
@@ -22,6 +26,7 @@ module Spree
 
         # send welcome email
         user.send_welcome_email if user.respond_to?(:send_welcome_email)
+        create_newsletter_subscriber(user) if accepts_email_marketing
 
         success(user.reload)
       end
@@ -64,6 +69,10 @@ module Spree
 
           user.update_columns(ship_address_id: order.ship_address_id, updated_at: Time.current) unless user.ship_address_id.present?
         end
+      end
+
+      def create_newsletter_subscriber(user)
+        Spree::NewsletterSubscriber.subscribe(email: user.email, user: user)
       end
     end
   end

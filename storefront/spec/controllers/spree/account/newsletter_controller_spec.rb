@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Account::NewsletterController, type: :controller do
+RSpec.describe Spree::Account::NewsletterController, type: :controller, newsletter: true do
   let(:store) { @default_store }
   let(:user) { create(:user, email: 'test@example.com') }
 

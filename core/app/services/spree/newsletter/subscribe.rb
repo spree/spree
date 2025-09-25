@@ -1,9 +1,9 @@
 module Spree
   module Newsletter
     class Subscribe
-      def initialize(email:, user: nil)
+      def initialize(email:, current_user: nil)
         @email = email
-        @user = user
+        @current_user = current_user
       end
 
       def call
@@ -13,7 +13,7 @@ module Spree
           upsert_subscriber
           return subscriber if subscriber.errors.any?
 
-          if subscriber.email == user&.email
+          if subscriber.email == current_user&.email
             # no need to verified since user email is already verified
             Spree::Newsletter::Verify.new(subscriber: subscriber).call
           end
@@ -26,13 +26,11 @@ module Spree
 
       private
 
-      attr_reader :email, :user
+      attr_reader :email, :current_user
 
       def upsert_subscriber
-        @upsert_subscriber ||= Spree::NewsletterSubscriber.where(email: email).first_or_create do |new_record|
-          new_record.user = Spree.user_class.find_by(email: new_record.email)
-        rescue ActiveRecord::RecordNotFound
-          retry
+        @upsert_subscriber ||= Spree::NewsletterSubscriber.find_or_create_by(email: email) do |new_record|
+          new_record.user = Spree.user_class.find_by(email: new_record.email) || current_user
         end
       end
       alias_method :subscriber, :upsert_subscriber
