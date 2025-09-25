@@ -15,7 +15,7 @@ module Spree
     validates :namespace, :key, :name, :resource_type, presence: true
     validates :metafield_type, presence: true, inclusion: { in: :valid_available_types }
     validates :resource_type, presence: true, inclusion: { in: :valid_available_resources }
-    validates :key, uniqueness: { scope: spree_base_uniqueness_scope.push(:resource_type, :namespace) }
+    validates :key, uniqueness: { scope: spree_base_uniqueness_scope + [:resource_type, :namespace] }
 
     #
     # Scopes
