@@ -191,8 +191,7 @@ module Spree
         if discount || created_line_items
           handle_coupon_code(discount, coupon_code) if discount
 
-          order.update_totals
-          order.persist_totals
+          order.update_with_updater!
           set_success_code :coupon_code_applied
         elsif order.promotions.with_coupon_code(order.coupon_code)
           # since CouponCode is disposable...
