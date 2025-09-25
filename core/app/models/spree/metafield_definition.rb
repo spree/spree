@@ -27,8 +27,8 @@ module Spree
     #
     normalizes :key, with: ->(value) { value.to_s.parameterize.underscore.strip }
     normalizes :namespace, with: ->(value) { value.to_s.parameterize.underscore.strip }
-    before_validation :set_default_type, if: -> { metafield_type.blank? }
-    before_validation :set_name_from_key, if: -> { name.blank? }
+    before_validation :set_default_type, if: -> { metafield_type.blank? }, on: :create
+    before_validation :set_name_from_key, if: -> { name.blank? }, on: :create
 
     #
     # Ransack

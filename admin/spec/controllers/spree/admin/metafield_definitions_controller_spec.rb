@@ -97,6 +97,7 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
       it 'does not update and re-renders edit' do
         put :update, params: { id: metafield_definition.id, metafield_definition: { name: '' } }
         expect(response).to render_template(:edit)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(assigns(:object).reload.name).not_to eq('')
       end
     end
