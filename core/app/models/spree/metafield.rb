@@ -21,6 +21,7 @@ module Spree
     #
     validates :metafield_definition, :type, :resource, :value, presence: true
     validates :metafield_definition_id, uniqueness: { scope: [:resource_type, :resource_id] }
+    validate :type_must_match_metafield_definition
 
     #
     # Scopes
@@ -37,6 +38,12 @@ module Spree
 
     def set_type_from_metafield_definition
       self.type ||= metafield_definition.metafield_type
+    end
+
+    def type_must_match_metafield_definition
+      return if metafield_definition.blank?
+
+      errors.add(:type, 'must match metafield definition') unless type == metafield_definition.metafield_type
     end
   end
 end

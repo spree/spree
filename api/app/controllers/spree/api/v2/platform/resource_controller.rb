@@ -117,12 +117,20 @@ module Spree
                           []
                         end
 
-            model_class.json_api_permitted_attributes + store_ids + metadata_params
+            model_class.json_api_permitted_attributes + store_ids + metadata_params + metafields_params
           end
 
           def metadata_params
             if model_class.include?(Metadata)
               [{ public_metadata: {}, private_metadata: {} }]
+            else
+              []
+            end
+          end
+
+          def metafields_params
+            if Spree::MetafieldDefinition.available_resources.map(&:name).include?(model_class.name) && model_class.method_defined?(:metafields)
+              [{ metafields_attributes: Spree::PermittedAttributes.metafield_attributes }]
             else
               []
             end

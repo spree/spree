@@ -90,6 +90,9 @@ module Spree
         storefront_wished_item_serializer: 'Spree::V2::Storefront::WishedItemSerializer',
         storefront_metafield_serializer: 'Spree::V2::Storefront::MetafieldSerializer',
 
+        # platform serializers
+        platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',
+
         # sorters
         storefront_collection_sorter: -> { Spree::Dependencies.collection_sorter },
         storefront_order_sorter: -> { Spree::Dependencies.collection_sorter },

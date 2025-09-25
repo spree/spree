@@ -172,8 +172,7 @@ module Spree
         option_type_ids: [],
         taxon_ids: [],
         store_ids: [],
-        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy],
-        metafields_attributes: [:id, :metafield_definition_id, :value, :_destroy]
+        product_option_types_attributes: [:id, :option_type_id, :position, :_destroy]
       }
     ]
 

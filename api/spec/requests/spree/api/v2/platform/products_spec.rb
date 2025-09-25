@@ -306,6 +306,28 @@ describe 'API V2 Platform Products Spec' do
         expect(json_response['data']['attributes']['private_metadata']).to eq private_metadata
       end
     end
+
+    context 'with metafields' do
+      let(:metafield_definition) { create(:metafield_definition, :short_text_field, resource_type: Spree::Product) }
+
+      let(:params) { { product: { metafields_attributes: [{ metafield_definition_id: metafield_definition.id, value: 'Test' }] }, include: 'metafields' } }
+
+      before { put "/api/v2/platform/products/#{product.id}", params: params, headers: bearer_token }
+
+      it 'returns product with metafields' do
+        product.reload
+
+        expect(product.has_metafield?(metafield_definition.full_key)).to be_truthy
+
+        expect(json_response['included'].count).to eq 1
+        expect(json_response['included'].first['type']).to eq 'metafield'
+        expect(json_response['included'].first['attributes']['name']).to eq metafield_definition.name
+        expect(json_response['included'].first['attributes']['type']).to eq 'Spree::Metafields::ShortText'
+        expect(json_response['included'].first['attributes']['value']).to eq 'Test'
+        expect(json_response['included'].first['attributes']['display_on']).to eq 'both'
+        expect(json_response['included'].first['attributes']['key']).to eq metafield_definition.full_key
+      end
+    end
   end
 
   describe 'products#show' do
