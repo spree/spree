@@ -12,7 +12,11 @@ module Spree
                                                                                    }
 
       scope :with_metafield_key, ->(namespace, key) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
-      scope :with_metafield_key_value, ->(namespace, key, value) { joins(:metafield_definitions).where(spree_metafield_definitions: { namespace: namespace, key: key, value: value }) }
+      scope :with_metafield_key_value, ->(namespace, key, value) {
+        joins(metafields: :metafield_definition)
+          .where(spree_metafield_definitions: { namespace: namespace, key: key })
+          .where(spree_metafields: { value: value })
+      }
 
       def set_metafield(key_with_namespace, value)
         namespace = key_with_namespace.to_s.split('.').first
