@@ -21,7 +21,7 @@ module SpreeSample
         Spree::Sample.load_sample('option_values')
         Spree::Sample.load_sample('products')
         Spree::Sample.load_sample('variants')
-        Spree::Sample.load_sample('product_properties')
+        Spree::Sample.load_sample('metafields')
         Spree::Sample.load_sample('stock')
 
         Spree::Sample.load_sample('orders')
