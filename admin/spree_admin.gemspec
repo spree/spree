@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'bootstrap', '~> 4.6', '>= 4.6.2.1'
   s.add_dependency 'breadcrumbs_on_rails', '~> 4.1'
   s.add_dependency 'chartkick', '~> 5.0'
-  s.add_dependency 'currency_select'
   s.add_dependency 'dartsass-rails', '~> 0.5'
   s.add_dependency 'groupdate', '~> 6.2'
   s.add_dependency 'hightop', '~> 0.3'

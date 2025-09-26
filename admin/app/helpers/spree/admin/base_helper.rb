@@ -225,7 +225,7 @@ module Spree
         case key
         when :currency
           content_tag(:div, form.label("preferred_#{key}", Spree.t(key, scope: i18n_scope)) +
-            form.currency_select("preferred_#{key}", current_store.supported_currencies.split(','), {}, { class: 'custom-select', disabled: current_store.supported_currencies.split(',').count == 1 }),
+            form.select("preferred_#{key}", current_store.supported_currencies.split(','), {}, { data: { controller: 'autocomplete-select' }, disabled: current_store.supported_currencies.split(',').count == 1 }),
                       class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
         else
           if object.preference_type(key).to_sym == :boolean
