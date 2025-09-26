@@ -18,10 +18,21 @@ RSpec.describe Spree::Metafield, type: :model do
   end
 
   context 'Scopes' do
-    it 'returns the metafields with the given key' do
-      metafield_definition = create(:metafield_definition, namespace: 'custom', key: 'foo')
-      metafield = create(:metafield, metafield_definition: metafield_definition)
-      expect(Spree::Metafield.with_key('custom', 'foo')).to include(metafield)
+    describe '.with_key' do
+      it 'returns the metafields with the given key' do
+        metafield_definition = create(:metafield_definition, namespace: 'custom', key: 'foo')
+        metafield = create(:metafield, metafield_definition: metafield_definition)
+        other_definition = create(:metafield_definition, namespace: 'custom', key: 'bar')
+        create(:metafield, metafield_definition: other_definition)
+        expect(described_class.with_key('custom', 'foo').ids).to contain_exactly(metafield.id)
+      end
+    end
+  end
+
+  describe '#serialize_value' do
+    it 'returns the value' do
+      metafield = build(:metafield, value: 'Test Value')
+      expect(metafield.serialize_value).to eq('Test Value')
     end
   end
 end

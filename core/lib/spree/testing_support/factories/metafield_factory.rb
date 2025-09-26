@@ -19,6 +19,7 @@ FactoryBot.define do
     end
 
     trait :long_text do
+      type { 'Spree::Metafields::LongText' }
       association :metafield_definition, :long_text_field
       value { 'This is a longer text value with more detailed information.' }
     end
@@ -29,16 +30,19 @@ FactoryBot.define do
     end
 
     trait :rich_text do
+      type { 'Spree::Metafields::RichText' }
       association :metafield_definition, :rich_text_field
       value { '<p>Rich text with <strong>formatting</strong></p>' }
     end
 
     trait :boolean do
+      type { 'Spree::Metafields::Boolean' }
       association :metafield_definition, :boolean_field
       value { true }
     end
 
     trait :json do
+      type { 'Spree::Metafields::Json' }
       association :metafield_definition, :json_field
       value { { 'key' => 'value' } }
     end
