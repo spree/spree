@@ -44,12 +44,6 @@ FactoryBot.define do
       value { true }
     end
 
-    trait :json do
-      type { 'Spree::Metafields::Json' }
-      association :metafield_definition, :json_field
-      value { { 'key' => 'value' } }
-    end
-
     trait :for_variant do
       association :resource, factory: :variant
       association :metafield_definition, :for_variant

@@ -257,10 +257,9 @@ module Spree
         Rails.application.config.spree.metafield_types = [
           Spree::Metafields::ShortText,
           Spree::Metafields::LongText,
-          Spree::Metafields::Number,
-          Spree::Metafields::Boolean,
-          Spree::Metafields::Json,
           Spree::Metafields::RichText,
+          Spree::Metafields::Number,
+          Spree::Metafields::Boolean
         ]
 
         Rails.application.config.spree.metafield_enabled_resources = [
