@@ -1,5 +1,3 @@
-require_relative 'metafields'
-
 module Spree
   module Metadata
     extend ActiveSupport::Concern

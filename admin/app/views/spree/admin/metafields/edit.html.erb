@@ -9,10 +9,16 @@
           <%= metafield_form.hidden_field :type %>
           <% metafield_definition = metafield_form.object.metafield_definition %>
           <div class="form-group">
-            <%= metafield_form.label :value do %>
-              <strong><%= metafield_definition.name %></strong>
-              <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
-            <% end %>
+            <div class="d-flex justify-content-between">
+              <%= metafield_form.label :value do %>
+                <strong><%= metafield_definition.name %></strong>
+                <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
+              <% end %>
+
+              <% if metafield_definition.display_on == 'back_end' %>
+                <%= icon('eye-off', title: Spree.t("admin.display_on_options.#{metafield_definition.display_on}"), class: 'with-tip text-muted') %>
+              <% end %>
+            </div>
             <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>
           </div>
         <% end %>

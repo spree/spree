@@ -117,11 +117,12 @@ module Spree
         icon_name = 'plus' if icon_name == 'add'
         icon_name = 'x' if icon_name == 'cancel'
 
-        styles = options[:style]
-        styles ||= ''
-        styles += ";font-size: #{options[:height]}px !important;line-height:#{options[:height]}px !important" if options[:height]
+        options[:style] ||= ''
+        options[:style] += ";font-size: #{options[:height]}px !important;line-height:#{options[:height]}px !important" if options[:height]
 
-        content_tag :i, nil, class: "ti ti-#{icon_name} #{options[:class]}", style: styles
+        options[:class] = "ti ti-#{icon_name} #{options[:class]}"
+
+        content_tag :i, nil, options
       end
 
       # returns the flag emoji for a country
