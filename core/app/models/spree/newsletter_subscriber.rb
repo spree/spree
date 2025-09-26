@@ -10,7 +10,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :user, optional: true, class_name: Spree.user_class.name
+    belongs_to :user, optional: true, class_name: Spree.user_class&.name
 
     #
     # Validations
