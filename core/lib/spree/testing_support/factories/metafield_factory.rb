@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :metafield, class: 'Spree::Metafield' do
     value { 'test_value' }
+    type { 'Spree::Metafields::ShortText' }
 
     association :resource, factory: :product
     association :metafield_definition
