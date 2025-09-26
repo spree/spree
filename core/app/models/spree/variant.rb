@@ -4,6 +4,7 @@ module Spree
     acts_as_list scope: :product
 
     include Spree::MemoizedData
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::Variant::Webhooks
 

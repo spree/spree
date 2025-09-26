@@ -38,7 +38,7 @@ module Spree
         @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories
-                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies].include?(controller_name)
+                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies metafield_definitions].include?(controller_name)
       end
 
       # @return [Array<String>] the available countries for checkout
@@ -76,8 +76,10 @@ module Spree
 
       # returns the available display on options, eg backend, frontend, both
       # @return [Array<Array<String, String>>] the available display on options
-      def display_on_options
-        Spree::DisplayOn::DISPLAY.map do |display_on|
+      def display_on_options(model = nil)
+        model ||= Spree::DisplayOn
+
+        model::DISPLAY.map do |display_on|
           [Spree.t("admin.display_on_options.#{display_on}"), display_on]
         end
       end
@@ -115,11 +117,12 @@ module Spree
         icon_name = 'plus' if icon_name == 'add'
         icon_name = 'x' if icon_name == 'cancel'
 
-        styles = options[:style]
-        styles ||= ''
-        styles += ";font-size: #{options[:height]}px !important;line-height:#{options[:height]}px !important" if options[:height]
+        options[:style] ||= ''
+        options[:style] += ";font-size: #{options[:height]}px !important;line-height:#{options[:height]}px !important" if options[:height]
 
-        content_tag :i, nil, class: "ti ti-#{icon_name} #{options[:class]}", style: styles
+        options[:class] = "ti ti-#{icon_name} #{options[:class]}"
+
+        content_tag :i, nil, options
       end
 
       # returns the flag emoji for a country

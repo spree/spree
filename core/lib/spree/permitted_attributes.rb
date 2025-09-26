@@ -21,6 +21,8 @@ module Spree
       :line_item_attributes,
       :menu_attributes,
       :menu_item_attributes,
+      :metafield_attributes,
+      :metafield_definition_attributes,
       :option_type_attributes,
       :option_value_attributes,
       :page_attributes,
@@ -126,6 +128,10 @@ module Spree
 
     @@menu_item_attributes = [:name, :subtitle, :destination, :new_window, :item_type,
                               :linked_resource_type, :linked_resource_id, :code, :menu_id]
+
+    @@metafield_attributes = [:id, :value, :type, :metafield_definition_id, :_destroy]
+
+    @@metafield_definition_attributes = [:key, :name, :namespace, :metafield_type, :resource_type, :display_on]
 
     @@option_type_attributes = [:name, :presentation, :position, :filterable,
                                 option_values_attributes: [:id, :name, :presentation, :position, :_destroy]]

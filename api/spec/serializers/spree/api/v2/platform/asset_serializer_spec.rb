@@ -34,6 +34,9 @@ describe Spree::Api::V2::Platform::AssetSerializer do
               id: viewable.id.to_s,
               type: :variant
             }
+          },
+          metafields: {
+            data: []
           }
         },
         type: type

@@ -1,6 +1,7 @@
 module Spree
   class CustomDomain < Spree::Base
     include Spree::SingleStoreResource
+    include Spree::Metafields
     include Spree::Metadata
 
     auto_strip_attributes :url

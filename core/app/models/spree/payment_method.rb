@@ -4,6 +4,7 @@ module Spree
     acts_as_list
 
     include Spree::MultiStoreResource
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
     if defined?(Spree::Security::PaymentMethods)

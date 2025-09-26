@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class PaymentSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :payment
 
         has_one :source, polymorphic: true

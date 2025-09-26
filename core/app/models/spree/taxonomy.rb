@@ -1,6 +1,7 @@
 module Spree
   class Taxonomy < Spree.base_class
     include Spree::TranslatableResource
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::SingleStoreResource
     if defined?(Spree::Webhooks::HasWebhooks)

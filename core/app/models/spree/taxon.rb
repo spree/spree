@@ -16,6 +16,7 @@ module Spree
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::MemoizedData
     include Spree::Linkable

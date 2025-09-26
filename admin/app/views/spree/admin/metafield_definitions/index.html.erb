@@ -1,0 +1,9 @@
+<%= content_for :page_title do %>
+  <%= Spree.t(:metafield_definitions) %>
+<% end %>
+
+<%= content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_metafield_definition), new_object_url, class: 'btn btn-primary' %>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table' %>

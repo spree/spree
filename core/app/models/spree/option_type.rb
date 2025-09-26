@@ -4,6 +4,7 @@ module Spree
 
     include Spree::ParameterizableName
     include Spree::UniqueName
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::TranslatableResource
     if defined?(Spree::Webhooks::HasWebhooks)

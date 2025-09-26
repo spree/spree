@@ -59,6 +59,7 @@ dialog:open {
   right: 0;
   left: auto;
   height: calc(100vh - 2rem);
+  max-height: calc(100vh - 2rem);
   width: calc(100vw - 2rem);
   max-width: 600px;
   min-width: 320px;
@@ -66,6 +67,12 @@ dialog:open {
   flex-direction: column;
   justify-content: space-between;
   padding: 0;
+  overflow-y: hidden;
+  overflow-x: hidden;
+
+  .drawer-title {
+    margin-bottom: 0;
+  }
 
   &:open {
     display: flex;
@@ -89,6 +96,7 @@ dialog:open {
     justify-content: space-between;
     align-items: center;
     padding: $modal-inner-padding;
+    border-bottom: 1px solid $gray-50;
   }
 
   .drawer-body {
@@ -98,10 +106,14 @@ dialog:open {
   }
 
   .drawer-footer {
+    position: sticky;
+    bottom: 0;
     padding: $modal-inner-padding;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: $gray-25;
+    border-top: 1px solid $gray-50;
   }
 }
 

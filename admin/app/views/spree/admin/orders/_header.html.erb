@@ -16,11 +16,6 @@
   <% end %>
 <% end %>
 
-<%# TODO: Fix mobile %>
-<% content_for :page_actions do %>
-
-<% end %>
-
 <% content_for(:page_actions_dropdown) do %>
   <% if @order.completed? && spree.respond_to?(:order_path) %>
     <%= link_to_with_icon "eye",

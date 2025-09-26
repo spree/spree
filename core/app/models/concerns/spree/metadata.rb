@@ -2,6 +2,8 @@ module Spree
   module Metadata
     extend ActiveSupport::Concern
 
+    include Spree::Metafields unless included_modules.include?(Spree::Metafields)
+
     included do
       attribute :public_metadata, default: {}
       attribute :private_metadata, default: {}

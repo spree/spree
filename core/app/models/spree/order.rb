@@ -29,6 +29,7 @@ module Spree
     include Spree::NumberAsParam
     include Spree::SingleStoreResource
     include Spree::MemoizedData
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::MultiSearchable
     if defined?(Spree::Security::Orders)

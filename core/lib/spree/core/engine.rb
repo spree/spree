@@ -23,6 +23,8 @@ module Spree
                                :page_blocks,
                                :reports,
                                :translatable_resources,
+                               :metafield_types,
+                               :metafield_enabled_resources,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations)
@@ -250,6 +252,45 @@ module Spree
           Spree::Taxonomy,
           Spree::Store,
           Spree::Policy
+        ]
+
+        Rails.application.config.spree.metafield_types = [
+          Spree::Metafields::ShortText,
+          Spree::Metafields::LongText,
+          Spree::Metafields::RichText,
+          Spree::Metafields::Number,
+          Spree::Metafields::Boolean
+        ]
+
+        Rails.application.config.spree.metafield_enabled_resources = [
+          Spree::Address,
+          Spree::Asset,
+          Spree::CreditCard,
+          Spree::CustomDomain,
+          Spree::CustomerReturn,
+          Spree::GiftCard,
+          Spree::LineItem,
+          Spree::NewsletterSubscriber,
+          Spree::OptionType,
+          Spree::OptionValue,
+          Spree::Order,
+          Spree::Payment,
+          Spree::PaymentMethod,
+          Spree::PaymentSource,
+          Spree::Product,
+          Spree::Promotion,
+          Spree::Refund,
+          Spree::Shipment,
+          Spree::ShippingMethod,
+          Spree::StockItem,
+          Spree::StockTransfer,
+          Spree::Store,
+          Spree::StoreCredit,
+          Spree::TaxRate,
+          Spree::Taxon,
+          Spree::Taxonomy,
+          Spree::Variant,
+          Spree.user_class
         ]
 
         Rails.application.config.spree.analytics_events = {

@@ -17,6 +17,12 @@ module Spree
               object.public_send(method_name).to_s
             end
           end
+
+          if Spree::MetafieldDefinition.available_resources.map(&:name).include?(model_klazz.name) && model_klazz.method_defined?(:metafields)
+            base.has_many :metafields, serializer: Spree::Api::Dependencies.platform_metafield_serializer.constantize,
+                                       record_type: :metafield,
+                                       object_method_name: :metafields
+          end
         end
 
         def self.display_getter_methods(model_klazz)

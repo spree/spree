@@ -1,5 +1,4 @@
 <% record = @object || @customer_return || @order || @product || @vendor || @user || @admin_user || @taxon || @store_credit %>
-<% record = nil if @user&.is_a?(Spree.admin_user_class) %>
 
 <% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
 <% content_for(:page_subtitle) do %>
@@ -26,7 +25,9 @@
           <% end %>
           <div class="dropdown-menu dropdown-menu-right">
             <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
-            <% if record %>
+            <% if record && record.persisted? %>
+              <%= link_to_edit_metafields(record) %>
+
               <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) && defined?(Audited) && can?(:read, Audited.audit_class) %>
                 <a href="<%= spree.admin_audits_path(q: { auditable_id_eq: record.id, auditable_type_eq: record.class.to_s }) %>" target="_blank" class="dropdown-item">
                   <%= icon 'history' %>

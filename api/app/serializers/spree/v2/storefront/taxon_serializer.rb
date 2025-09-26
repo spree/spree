@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class TaxonSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type   :taxon
 
         attributes :name, :pretty_name, :permalink, :seo_title, :meta_title, :meta_description,

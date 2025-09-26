@@ -60,6 +60,8 @@ en:
       spree/line_item:
         price: Price
         quantity: Quantity
+      spree/metafield_definition:
+        namespace: Namespace
       spree/option_type:
         filterable: Filterable
         name: Name
@@ -974,6 +976,7 @@ en:
     duplicating: Duplicating
     edit: Edit
     edit_address: Edit address
+    edit_metafields: Edit Metafields
     edit_refund: Edit refund
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
@@ -1220,6 +1223,7 @@ en:
     items_reimbursed: Items reimbursed
     items_to_be_reimbursed: Items to be reimbursed
     join_slack: Join Slack
+    key: Key
     kind: Kind
     language: Language
     last_name: Last Name
@@ -1275,6 +1279,8 @@ en:
     meta_keywords: Meta Keywords
     meta_title: Meta Title
     metadata: Metadata
+    metafield_definitions: Metafield Definitions
+    metafields: Metafields
     min: Min
     minimal_amount: Minimal Amount
     minimum_password_length:
@@ -1312,7 +1318,7 @@ en:
     new_gift_card: New Gift Card
     new_image: New Image
     new_line_item: Add line item
-    new_market: New market
+    new_metafield_definition: New Metafield Definition
     new_nested_taxon: New nested taxon
     new_option_type: New Option Type
     new_order: New Order
@@ -1802,6 +1808,7 @@ en:
     resellable: Resellable
     resend: Resend
     reset_password: Reset my password
+    resource: Resource
     response_code: Response Code
     restore_defaults: Restore defaults
     resume: resume

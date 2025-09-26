@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class AddressSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :address
 
         attributes :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name,

@@ -1,0 +1,40 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:metafields)) %>
+  <% if @metafields.present? %>
+    <%= form_for [:admin, @resource], url: spree.admin_metafield_path(@resource, resource_type: @resource.class.to_s), method: :put do |f| %>
+      <div class="drawer-body">
+        <%= f.fields_for :metafields, @metafields do |metafield_form| %>
+          <%= metafield_form.hidden_field :id %>
+          <%= metafield_form.hidden_field :metafield_definition_id %>
+          <%= metafield_form.hidden_field :type %>
+          <% metafield_definition = metafield_form.object.metafield_definition %>
+          <div class="form-group">
+            <div class="d-flex justify-content-between">
+              <%= metafield_form.label :value do %>
+                <strong><%= metafield_definition.name %></strong>
+                <small class="text-muted mt-2"><code><%= metafield_definition.full_key %></code></small>
+              <% end %>
+
+              <% if metafield_definition.display_on == 'back_end' %>
+                <%= icon('eye-off', title: Spree.t("admin.display_on_options.#{metafield_definition.display_on}"), class: 'with-tip text-muted') %>
+              <% end %>
+            </div>
+            <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>
+          </div>
+        <% end %>
+      </div>
+      <div class="drawer-footer">
+        <%= turbo_save_button_tag %>
+        <%= drawer_discard_button %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="drawer-body">
+      <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
+        <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+        <p>No metafield definitions configured for <%= @resource.class.name.demodulize.titleize.pluralize %>.</p>
+        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: @resource.class.to_s), class: 'btn btn-primary btn-sm ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -2,6 +2,7 @@ module Spree
   class StockItem < Spree.base_class
     acts_as_paranoid
 
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::StockItem::Webhooks
 

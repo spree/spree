@@ -3,6 +3,7 @@ module Spree
     module Storefront
       class ProductSerializer < BaseSerializer
         include ::Spree::Api::V2::DisplayMoneyHelper
+        include Spree::Api::V2::PublicMetafieldsConcern
 
         set_type :product
 

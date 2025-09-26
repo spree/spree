@@ -13,8 +13,7 @@ alwaysApply: true
 ```ruby
 # ✅ Core model structure
 class Spree::Product < Spree.base_class
-  include Spree::Metadata
-  include Spree::SoftDeletable
+  include Spree::Metafields
   
   has_many :variants, -> { order(:position) }, class_name: 'Spree::Variant', 
            dependent: :destroy, inverse_of: :product
@@ -115,13 +114,13 @@ class CreateSpreeMetafields < ActiveRecord::Migration[7.0]
       t.text :value, null: false
       t.string :kind, null: false, default: 'single_line_text_field'
       t.string :visibility, null: false, default: 'private'
-      t.references :owner, polymorphic: true, null: false, index: false
+      t.references :resource, polymorphic: true, null: false, index: false
       t.timestamps
       t.datetime :deleted_at, index: true
     end
     
-    add_index :spree_metafields, [:owner_type, :owner_id, :key, :visibility], 
-              name: 'index_spree_metafields_on_owner_and_key_and_visibility'
+    add_index :spree_metafields, [:resource_type, :resource_id, :key, :visibility], 
+              name: 'index_spree_metafields_on_resource_and_key_and_visibility'
     add_index :spree_metafields, :key
   end
 end

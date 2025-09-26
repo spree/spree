@@ -35,6 +35,9 @@ describe Spree::Api::V2::Platform::StockItemSerializer do
               id: resource.variant.id.to_s,
               type: :variant
             }
+          },
+          metafields: {
+            data: []
           }
         },
         type: type

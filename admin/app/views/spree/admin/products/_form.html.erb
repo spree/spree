@@ -8,6 +8,7 @@
     <%= render 'spree/admin/products/form/variants', f: f %>
     <%= render 'spree/admin/products/form/inventory', f: f unless @product.has_variants? %>
     <%= render 'spree/admin/products/form/properties', f: f %>
+
     <%= render_admin_partials(:product_form_partials, f: f, product: @product) %>
   </div>
   <div class="col-md-4">

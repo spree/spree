@@ -69,12 +69,12 @@ Always inherit from `Spree.base_class` when creating models.
 - Use ActiveRecord associations appropriately, always pass `class_name` and `dependent` options
 - Implement concerns for shared functionality
 - Use scopes for reusable query patterns
-- Include `Spree::Metadata` concern for models that need metadata support
+- Include `Spree::Metafields` concern for models that need metadata support
 
 ```ruby
 # ✅ Good model structure
 class Spree::Product < Spree.base_class
-  include Spree::Metadata
+  include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
   has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy

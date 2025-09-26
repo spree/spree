@@ -45,6 +45,9 @@ describe Spree::Api::V2::Platform::StockTransferSerializer do
               id: destination_location.id.to_s,
               type: :stock_location
             }
+          },
+          metafields: {
+            data: []
           }
         },
         type: type,

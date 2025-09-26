@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class StoreCreditSerializer < BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :store_credit
 
         belongs_to :category, serializer: Spree::Api::Dependencies.storefront_store_credit_category_serializer.constantize

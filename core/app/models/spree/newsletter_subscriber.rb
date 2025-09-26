@@ -3,13 +3,14 @@ require_dependency 'spree/newsletter_subscriber/emails'
 module Spree
   class NewsletterSubscriber < Spree.base_class
     include Spree::NewsletterSubscriber::Emails
+    include Spree::Metafields
 
     has_secure_token :verification_token
 
     #
     # Associations
     #
-    belongs_to :user, optional: true, class_name: Spree.user_class.name
+    belongs_to :user, optional: true, class_name: Spree.user_class&.name
 
     #
     # Validations

@@ -64,6 +64,9 @@ describe Spree::Api::V2::Platform::PromotionSerializer do
                   type: :store
                 }
               ]
+            },
+            metafields: {
+              data: []
             }
           }
         }

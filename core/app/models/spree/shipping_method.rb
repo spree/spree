@@ -2,6 +2,7 @@ module Spree
   class ShippingMethod < Spree.base_class
     acts_as_paranoid
     include Spree::CalculatedAdjustments
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
     if defined?(Spree::Webhooks::HasWebhooks)

@@ -1,3 +1,5 @@
+# this is actually a serializer for Spree::OrderPromotion, not Spree::Promotion
+# we should fix this in the future
 module Spree
   module V2
     module Storefront

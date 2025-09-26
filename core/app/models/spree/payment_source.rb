@@ -1,6 +1,7 @@
 # This model is used to store payment sources for non-credit card payments, eg wallet, account, etc.
 module Spree
   class PaymentSource < Spree.base_class
+    include Spree::Metafields
     include Spree::Metadata
     include Spree::PaymentSourceConcern
 

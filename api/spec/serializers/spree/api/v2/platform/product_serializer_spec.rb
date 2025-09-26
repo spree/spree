@@ -131,6 +131,9 @@ describe Spree::Api::V2::Platform::ProductSerializer do
               }
             ]
           },
+          metafields: {
+            data: []
+          }
         }
       }
     }

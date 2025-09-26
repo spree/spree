@@ -5,6 +5,7 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
+    include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Payments)
       include Spree::Security::Payments

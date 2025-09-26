@@ -136,6 +136,10 @@ Spree::Core::Engine.add_routes do
     # translations
     resources :translations, only: [:edit, :update], path: '/translations/:resource_type'
 
+    # metafields
+    resources :metafields, only: [:edit, :update], path: '/metafields/:resource_type'
+    resources :metafield_definitions, except: :show
+
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 
