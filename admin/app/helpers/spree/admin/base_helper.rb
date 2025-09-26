@@ -76,8 +76,10 @@ module Spree
 
       # returns the available display on options, eg backend, frontend, both
       # @return [Array<Array<String, String>>] the available display on options
-      def display_on_options
-        Spree::DisplayOn::DISPLAY.map do |display_on|
+      def display_on_options(model = nil)
+        model ||= Spree::DisplayOn
+
+        model::DISPLAY.map do |display_on|
           [Spree.t("admin.display_on_options.#{display_on}"), display_on]
         end
       end

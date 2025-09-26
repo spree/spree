@@ -7,6 +7,10 @@ module Spree
 
       private
 
+      def update_turbo_stream_enabled?
+        true
+      end
+
       def set_resource_type_from_params
         @object.resource_type = Spree::MetafieldDefinition.available_resources.find { |type| type.name.to_s == params[:resource_type] }
       end
