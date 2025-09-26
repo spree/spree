@@ -26,6 +26,7 @@ FactoryBot.define do
     end
 
     trait :number do
+      type { 'Spree::Metafields::Number' }
       association :metafield_definition, :number_field
       value { 42 }
     end
