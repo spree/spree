@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::Metafields::Number, type: :model do
   let(:product) { create(:product) }
   let(:metafield_definition) { create(:metafield_definition, :number_field) }
-  let(:metafield) { Spree::Metafields::Number.new(metafield_definition: metafield_definition, value: '123', resource: product) }
+  let(:metafield) { described_class.new(metafield_definition: metafield_definition, value: '123', resource: product) }
 
   describe 'Validations' do
     it 'returns false if the value is not a number' do

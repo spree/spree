@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Metafields::RichText, type: :model do
   let(:metafield_definition) { create(:metafield_definition, :rich_text_field) }
-  let(:metafield) { Spree::Metafields::RichText.new(metafield_definition: metafield_definition, value: '<p>Rich text with <strong>formatting</strong></p>') }
+  let(:metafield) { described_class.new(metafield_definition: metafield_definition, value: '<p>Rich text with <strong>formatting</strong></p>') }
 
   describe '#value' do
     it 'returns the rich text body' do
