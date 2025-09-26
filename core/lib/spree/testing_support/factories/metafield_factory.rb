@@ -15,6 +15,7 @@ FactoryBot.define do
     end
 
     trait :short_text do
+      type { 'Spree::Metafields::ShortText' }
       association :metafield_definition, :short_text_field
       value { 'Short text value' }
     end
