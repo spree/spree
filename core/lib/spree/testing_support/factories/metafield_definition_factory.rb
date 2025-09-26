@@ -58,7 +58,7 @@ FactoryBot.define do
     end
 
     trait :for_user do
-      resource_type { 'Spree::User' }
+      resource_type { Spree.user_class.name }
       key { 'user_preference' }
       name { 'User Preference' }
     end
