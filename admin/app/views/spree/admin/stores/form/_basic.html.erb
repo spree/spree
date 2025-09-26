@@ -91,7 +91,7 @@
         </p>
         <div class="form-group">
           <%= f.label :default_currency, Spree.t(:default_currency) %>
-          <%= f.currency_select :default_currency, preferred_currencies, {}, data: { controller: 'autocomplete-select' } %>
+          <%= f.select :default_currency, currency_options(@store.default_currency), {}, { data: { controller: 'autocomplete-select' } } %>
           <%= f.error_message_on :default_currency %>
         </div>
         <div class="form-group">
