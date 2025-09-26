@@ -271,6 +271,7 @@ module Spree
           Spree::CustomerReturn,
           Spree::GiftCard,
           Spree::LineItem,
+          Spree::NewsletterSubscriber,
           Spree::OptionType,
           Spree::OptionValue,
           Spree::Order,
