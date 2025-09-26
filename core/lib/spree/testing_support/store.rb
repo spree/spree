@@ -1,5 +1,16 @@
 # setup default store, to be always present
 RSpec.configure do |config|
+  config.before(:suite) do
+    if defined?(ActiveSupport::SafeBuffer)
+      ActiveSupport::SafeBuffer.class_eval do
+        # Make Psych serialize SafeBuffer as a plain string
+        def encode_with(coder)
+          coder.represent_scalar(nil, to_s)
+        end
+      end
+    end
+  end
+
   config.before(:all) do
     unless self.class.metadata[:without_global_store]
       @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
