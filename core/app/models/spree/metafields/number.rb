@@ -3,9 +3,8 @@ module Spree
     class Number < Spree::Metafield
       validates :value, numericality: true
 
-      # we need to typecast here, as value column is a text in the database
-      def value
-        BigDecimal(attributes['value']) if attributes['value'].present?
+      def serialize_value
+        value.to_d
       end
     end
   end

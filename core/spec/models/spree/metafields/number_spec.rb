@@ -12,11 +12,11 @@ describe Spree::Metafields::Number, type: :model do
     end
   end
 
-  describe '#value' do
+  describe '#serialize_value' do
     it 'returns the number' do
       expect(metafield.valid?).to be true
-      expect(metafield.value).to be_kind_of(BigDecimal)
-      expect(metafield.value).to eq(123)
+      expect(metafield.serialize_value).to be_kind_of(BigDecimal)
+      expect(metafield.serialize_value).to eq(123)
     end
   end
 end
