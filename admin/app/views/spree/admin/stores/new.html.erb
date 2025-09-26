@@ -32,7 +32,7 @@
 
                   <div class="form-group">
                     <%= f.label :default_currency, Spree.t(:currency) %>
-                    <%= f.currency_select :default_currency, preferred_currencies, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
+                    <%= f.select :default_currency, currency_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
                   </div>
 
                   <% if available_stores.any? %>
