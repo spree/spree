@@ -52,19 +52,6 @@ You can also pass a custom `active` condition.
 <%= active_link_to_with_icon 'eye', "View Order in ERP", spree.admin_order_path(order), class: "btn btn-primary", active: order.sent_to_erp_at.blank? %>
 ```
 
-## `currency_select`
-
-Available for forms to build a currency select dropdown. Provided via [currency_select gem](https://github.com/braingourmets/currency_select).
-
-```erb
-<div class="form-group">
-  <%= f.label :default_currency, Spree.t(:currency) %>
-  <%= f.currency_select :default_currency, preferred_currencies, {}, { data: { controller: 'autocomplete-select' } } %>
-</div>
-```
-
-Adding `data: { controller: 'autocomplete-select' }` will enable the autocomplete feature.
-
 ## `current_currency`
 
 Returns the currently selected currency. By default in Admin Dashboard this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
