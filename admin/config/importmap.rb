@@ -137,6 +137,12 @@ pin '@simonwep/pickr',
     to: '@simonwep--pickr.js',
     preload: ['application-spree-admin'] # @1.9.1
 
+# floating-ui
+pin "@floating-ui/dom", to: "@floating-ui--dom.js", preload: ['application-spree-admin'] # @1.7.4
+pin "@floating-ui/core", to: "@floating-ui--core.js", preload: ['application-spree-admin'] # @1.7.3
+pin "@floating-ui/utils", to: "@floating-ui--utils.js", preload: ['application-spree-admin'] # @0.2.10
+pin "@floating-ui/utils/dom", to: "@floating-ui--utils--dom.js", preload: ['application-spree-admin'] # @0.2.10
+
 pin_all_from Spree::Admin::Engine.root.join('app/javascript/spree/admin/controllers'),
              under: 'spree/admin/controllers',
              to: 'spree/admin/controllers',

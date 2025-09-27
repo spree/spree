@@ -2,7 +2,10 @@
 
 <% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
 <% content_for(:page_subtitle) do %>
-  <%= spree_time record.updated_at, class: 'badge badge-light with-tip', title: 'Last update' %>
+  <span class="badge badge-light" data-controller="tooltip">
+    <%= spree_time record.updated_at %>
+    <%= tooltip('Last update') %>
+  </span>
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>

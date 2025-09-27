@@ -9,9 +9,9 @@
   <%= order_payment_state(@order) %>
   <%= order_shipment_state(@order) %>
   <% if @order.completed? %>
-    <span class="text-muted font-size-sm font-weight-normal with-tip">
+    <span class="text-muted font-size-sm font-weight-normal">
       <%= I18n.t('activerecord.attributes.spree/order.completed_at') %>
-      <%= spree_time(@order.completed_at) %>
+      <%= spree_time_ago(@order.completed_at) %>
     </span>
   <% end %>
 <% end %>

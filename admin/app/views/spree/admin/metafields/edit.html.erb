@@ -16,7 +16,10 @@
               <% end %>
 
               <% if metafield_definition.display_on == 'back_end' %>
-                <%= icon('eye-off', title: Spree.t("admin.display_on_options.#{metafield_definition.display_on}"), class: 'with-tip text-muted') %>
+                <span data-controller="tooltip">
+                  <%= icon('eye-off', class: 'text-muted') %>
+                  <%= tooltip(Spree.t("admin.display_on_options.#{metafield_definition.display_on}")) %>
+                </span>
               <% end %>
             </div>
             <%= render "spree/admin/metafields/types/#{metafield_form.object.type.demodulize.underscore}", f: metafield_form %>

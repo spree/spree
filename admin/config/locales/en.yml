@@ -208,6 +208,8 @@ en:
       response_code: Response Code
       selected: selected
       send_payment_link: Send Payment Link
+      shipment:
+        please_provide_tracking_details: Before marking shipment as shipped please provide tracking details
       shipment_transfer:
         wrong_destination: Wrong destination
       stock_transfers:

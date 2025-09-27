@@ -1,8 +1,11 @@
 <header id="page-builder-header" class="fixed-top">
   <nav class="navbar navbar-expand-lg">
-    <%= link_to spree.admin_themes_path, class: 'btn hover-gray with-tip px-2', title: Spree.t('admin.back_to_dashboard') do %>
-      <%= icon('x', class: 'mr-0') %>
-    <% end %>
+    <div data-controller="tooltip">
+      <%= link_to spree.admin_themes_path, class: 'btn hover-gray px-2' do %>
+        <%= icon('x', class: 'mr-0') %>
+      <% end %>
+      <%= tooltip(Spree.t('admin.back_to_dashboard')) %>
+    </div>
     <% if @page.custom? %>
       <div class="px-3">
         <span class="text-muted mr-1"><%= I18n.t('activerecord.models.spree/page.one') %>:</span>
@@ -32,8 +35,8 @@
 
       <ul class="nav nav-pills" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active with-tip"
-                        title="Page sections"
+          <button class="nav-link active"
+                        data-controller="tooltip"
                         data-toggle="tab"
                         data-target="#sections"
                         type="button"
@@ -43,11 +46,12 @@
                         data-trigger="hover"
                         id="sidebar-icon-page">
             <%= icon 'section', class: 'mr-0' %>
+            <%= tooltip("Page sections") %>
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link with-tip"
-                  title="<%= Spree.t(:theme) %>"
+          <button class="nav-link"
+                  data-controller="tooltip"
                   data-toggle="tab"
                   data-target="#colors"
                   type="button"
@@ -57,11 +61,12 @@
                   data-trigger="hover"
                   id="sidebar-icon-colors">
             <%= icon 'palette', class: 'mr-0' %>
+            <%= tooltip(Spree.t(:theme)) %>
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link with-tip"
-                title="Fonts"
+          <button class="nav-link"
+                data-controller="tooltip"
                 type="button"
                 data-toggle="tab"
                 data-target="#fonts"
@@ -72,6 +77,7 @@
                 data-trigger="hover"
                 id="sidebar-icon-fonts">
             <%= icon 'typography', class: 'mr-0' %>
+            <%= tooltip("Fonts") %>
           </button>
         </li>
       </ul>
@@ -79,23 +85,25 @@
 
     <ul class="nav nav-pills ml-auto" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link with-tip" type="button"
-                title="Mobile"
+        <button class="nav-link" type="button"
+                data-controller="tooltip"
                 data-trigger="hover"
                 data-action="click->page-builder#setResponsiveBreakpoint"
                 data-page-builder-target="mobileButton"
                 data-page-builder-breakpoint-param="mobile">
           <%= icon 'device-mobile', class: 'mr-0' %>
+          <%= tooltip("Mobile") %>
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link active with-tip" type="button" 
-                title="Desktop"
+        <button class="nav-link active" type="button"
+                data-controller="tooltip"
                 data-action="click->page-builder#setResponsiveBreakpoint"
                 data-page-builder-breakpoint-param="desktop"
                 data-trigger="hover"
                 data-page-builder-target="desktopButton">
           <%= icon 'device-laptop', class: 'mr-0' %>
+          <%= tooltip("Desktop") %>
         </button>
       </li>
     </ul>

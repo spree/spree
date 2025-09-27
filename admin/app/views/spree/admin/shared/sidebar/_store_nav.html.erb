@@ -54,7 +54,10 @@
             <%= icon 'history' %>
             <%= Spree.t('admin.audit_log') %>
 
-            <span class="badge ml-auto with-tip rounded-pill" title="This feature is part of the Enterprise Edition.">Enterprise</span>
+            <span class="badge ml-auto rounded-pill" data-controller="tooltip">
+              Enterprise
+              <%= tooltip("This feature is part of the Enterprise Edition.") %>
+            </span>
           <% end %>
         </li>
       <% end %>

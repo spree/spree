@@ -107,17 +107,27 @@ module Spree
       # @param options [Hash] the options for the link
       # @return [String] the link with the icon
       def link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] ||= (options[:class].to_s + " with-tip").strip
-        options[:title] ||= text if options[:no_text]
         no_text = options[:no_text]
-        label = options[:no_text] ? '' : content_tag(:span, text)
+        tooltip_text = options[:title] || (no_text ? text : nil)
         options.delete(:no_text)
+        options.delete(:title) if tooltip_text
+
+        if tooltip_text
+          options[:data] ||= {}
+          options[:data][:controller] = 'tooltip'
+        end
+
+        label = no_text ? '' : content_tag(:span, text)
 
         if icon_name
           icon = icon(icon_name, class: "icon icon-#{icon_name} #{text.blank? || no_text ? 'mr-0' : ''}")
           text = "#{icon} #{label}"
         end
-        link_to(text.html_safe, url, options)
+
+        link_content = text.html_safe
+        link_content += tooltip(tooltip_text) if tooltip_text
+
+        link_to(link_content, url, options)
       end
 
       def link_to_export_modal
@@ -134,17 +144,27 @@ module Spree
       # @param options [Hash] the options for the link
       # @return [String] the active link with the icon
       def active_link_to_with_icon(icon_name, text, url, options = {})
-        options[:class] = (options[:class].to_s + " with-tip").strip
-        options[:title] = text if options[:no_text]
         no_text = options[:no_text]
-        label = options[:no_text] ? '' : content_tag(:span, text)
+        tooltip_text = options[:title] || (no_text ? text : nil)
         options.delete(:no_text)
+        options.delete(:title) if tooltip_text
+
+        if tooltip_text
+          options[:data] ||= {}
+          options[:data][:controller] = 'tooltip'
+        end
+
+        label = no_text ? '' : content_tag(:span, text)
 
         if icon_name
           icon = icon(icon_name, class: "icon icon-#{icon_name}")
           text = "#{icon} #{label}"
         end
-        active_link_to(text.html_safe, url, options)
+
+        link_content = text.html_safe
+        link_content += tooltip(tooltip_text) if tooltip_text
+
+        active_link_to(link_content, url, options)
       end
 
       # renders a button with an icon (optional)
@@ -275,9 +295,11 @@ module Spree
       # @param placement [String] the placement of the help bubble
       # @param css [String] the css class of the help bubble
       # @return [String] the help bubble with the icon
-      def help_bubble(text = '', placement = 'bottom', css: nil)
-        css ||= 'text-muted opacity-75 cursor-default'
-        content_tag :small, icon('info-square-rounded', class: css), data: { placement: placement }, class: "with-tip #{css}", title: text
+      def help_bubble(text = '', placement = 'top', css: nil)
+        css ||= 'text-xs text-muted cursor-default opacity-75'
+        content_tag :span, data: { controller: 'tooltip', tooltip_placement_value: placement } do
+          icon('info-square-rounded', class: css) + tooltip(text)
+        end
       end
 
       def render_breadcrumb_icon

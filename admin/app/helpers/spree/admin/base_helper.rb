@@ -259,16 +259,16 @@ module Spree
       # @option options [String] :title the title of the button
       # @return [String] the button
       def clipboard_button(options = {})
-        options[:class] ||= 'btn btn-clipboard with-tip'
+        options[:class] ||= 'btn btn-clipboard'
         options[:type] ||= 'button'
         options[:data] ||= {}
         options[:data][:action] = 'clipboard#copy'
         options[:data][:clipboard_target] = 'button'
-        options[:data][:title] = Spree.t('admin.copy_to_clipboard')
+        options[:data][:controller] = 'tooltip'
         options[:aria_label] ||= Spree.t('admin.copy_to_clipboard') # screen-reader label
 
         content_tag(:button, options) do
-          icon('copy', class: 'mr-0 font-size-sm')
+          icon('copy', class: 'mr-0 font-size-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
         end
       end
 
@@ -331,7 +331,20 @@ module Spree
       # @param time [Time] the time to format
       # @return [String] the local time ago
       def spree_time_ago(time, options = {})
-        local_time_ago(time, options)
+        options[:data] ||= {}
+        options[:data][:controller] = 'tooltip'
+
+        # Generate the time ago element with tooltip
+        content_tag(:span, options) do
+          tooltip_text = strip_tags(spree_time(time))
+          local_time_ago(time, class: '', title: nil) + tooltip(tooltip_text)
+        end
+      end
+
+      def tooltip(text)
+        content_tag(:span, role: 'tooltip', data: { tooltip_target: 'tooltip' }, class: 'tooltip-container') do
+          text
+        end
       end
     end
   end

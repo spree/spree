@@ -4,11 +4,11 @@ import { lockScroll, unlockScroll } from 'spree/core/helpers/scroll_lock'
 
 
 const initTooltips = () => {
-  $('.with-tip, .trix-button, .uppy-Dashboard-close, time').each(function() {
+  $('.with-tip, .trix-button, .uppy-Dashboard-close').each(function() {
     $(this).tooltip()
   })
 
-  $('.with-tip, .trix-button, .uppy-Dashboard-close, time').on('show.bs.tooltip', function(event) {
+  $('.with-tip, .trix-button, .uppy-Dashboard-close').on('show.bs.tooltip', function(event) {
     if (('ontouchstart' in window)) {
       event.preventDefault()
     }
@@ -16,7 +16,7 @@ const initTooltips = () => {
 }
 
 const removeTooltips = () => {
-  $('.with-tip, .trix-button, .uppy-Dashboard-close, time').each(function() {
+  $('.with-tip, .trix-button, .uppy-Dashboard-close').each(function() {
     $(this).tooltip('dispose')
   })
 }
