@@ -15,7 +15,7 @@
     <%= render "spree/admin/taxons/rule_forms/#{rf.object.type.demodulize.underscore}", rule_form: rf %>
   </div>
   <div class="col-lg-1 mb-3 d-flex align-items-center justify-content-center">
-    <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger px-2" data-controller="tooltip">
+    <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger px-2" data-controller="tooltip" aria-label="<%= Spree.t(:remove_condition) %>">
       <%= icon('x', class: 'mr-0') %>
       <span class="d-lg-none"><%= Spree.t(:remove_condition) %></span>
       <%= tooltip(Spree.t(:remove_condition)) %>
