@@ -3,8 +3,10 @@ module Spree
     module Orders
       class ReturnAuthorizationsController < ResourceController
         include Spree::Admin::OrderConcern
+        include Spree::Admin::OrderBreadcrumbConcern
 
         before_action :load_order
+        before_action :add_breadcrumb_for_order
 
         before_action :load_return_authorization
         before_action :load_form_data, only: [:new, :edit]
@@ -13,6 +15,11 @@ module Spree
         update.fails  :load_form_data
 
         private
+
+
+        def add_breadcrumb_for_order
+          add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
+        end
 
         def location_after_save
           spree.edit_admin_order_path(@order)
