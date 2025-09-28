@@ -12,7 +12,7 @@
     <button class="btn btn-primary" data-controller="tooltip">
       <%= icon('table-export') %>
       <%= Spree.t(:export) %>
-      <%= tooltip("Export report as CSV file") %>
+      <%= tooltip(Spree.t('admin.export_report')) %>
     </button>
   <% end %>
 <% end if can?(:create, Spree::Export) %>

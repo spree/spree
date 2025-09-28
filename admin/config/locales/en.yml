@@ -77,6 +77,8 @@ en:
       export_all: Export all records (can be slow for large datasets)
       export_created: Your export was started. You will receive an email with a download link when it is ready!
       export_only_filtered_records: Export only filtered records, matching the search criteria
+      export_coupons: Export coupons as CSV file
+      export_report: Export report as CSV file
       filters: Filters
       getting_started: Getting started
       gift_card_batches:

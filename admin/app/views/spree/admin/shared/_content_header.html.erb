@@ -4,7 +4,7 @@
 <% content_for(:page_subtitle) do %>
   <span class="badge badge-light" data-controller="tooltip">
     <%= spree_time record.updated_at %>
-    <%= tooltip('Last update') %>
+    <%= tooltip(Spree.t(:updated_at)) %>
   </span>
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
