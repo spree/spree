@@ -1,4 +1,4 @@
-<% returns_active = %[customer_returns return_authorizations].include?(controller_name) %>
+<% returns_active = %[customer_returns return_authorizations].include?(controller_name) && !@order %>
 
 <% if can?(:manage, Spree::CustomerReturn) || can?(:manage, Spree::ReturnAuthorization) %>
   <%= nav_item(Spree.t(:returns), spree.admin_customer_returns_path, icon: 'receipt-refund', active: returns_active) %>
