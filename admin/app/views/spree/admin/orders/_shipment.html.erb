@@ -6,7 +6,7 @@
       <strong class="shipment-number"><%= shipment.number %></strong>
       <% if shipment.shipped_at.present? %>
         <small class="text-muted">
-          <%= spree_time_ago(shipment.shipped_at, class: 'with-tip') %>
+          <%= spree_time_ago(shipment.shipped_at) %>
         </small>
       <% end %>
     </div>
@@ -55,7 +55,7 @@
       </div>
 
       <% if( (can? :update, shipment) and !shipment.shipped? && !order.canceled? && !shipment.canceled?) %>
-        <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_shipment_path(order, shipment), class: 'with-tip btn btn-sm btn-light', no_text: true %>
+        <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-sm btn-light', no_text: true %>
       <% end %>
     <% end %>
 
@@ -76,9 +76,9 @@
 
         <% if can?(:update, shipment) && (!order.canceled? && !shipment.canceled?) %>
           <% if shipment.tracking.present? %>
-            <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm with-tip', no_text: true, title: Spree.t(:edit) %>
+            <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm', no_text: true, title: Spree.t(:edit) %>
           <% else %>
-            <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm with-tip', no_text: true, title: Spree.t(:add_one) %>
+            <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.edit_admin_order_shipment_path(order, shipment), class: 'btn btn-light btn-sm', no_text: true, title: Spree.t(:add_one) %>
           <% end %>
         <% end %>
       <% end %>
@@ -89,9 +89,10 @@
         <% if shipment.tracked? %>
           <%= link_to_with_icon 'send.svg', Spree.t(:ship), spree.ship_admin_order_shipment_path(order, shipment), class: 'ml-auto btn btn-primary mb-0', data: {turbo_method: :post, turbo_confirm: Spree.t(:are_you_sure)} %>
         <% elsif !shipment.digital? %>
-          <span class="ship-tooltip with-tip ship ml-auto btn btn-primary disabled mb-0" data-toggle="tooltip" data-placement="left" title="Before marking shipment as shipped please provide tracking details">
+          <span class="ship ml-auto btn btn-primary disabled mb-0" data-controller="tooltip" data-tooltip-placement-value="left">
             <%= icon 'send' %>
             <%= Spree.t(:ship) %>
+            <%= tooltip(Spree.t('admin.shipment.please_provide_tracking_details')) %>
           </span>
         <% else %>
           <span class="text-muted w-100">

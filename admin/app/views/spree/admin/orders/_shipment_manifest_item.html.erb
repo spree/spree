@@ -11,7 +11,7 @@
   </span>
   <% if can?(:split, shipment) %>
     <span class="d-flex align-items-center justify-content-end">
-      <%= link_to_with_icon 'arrows-split', Spree.t(:split), spree.split_admin_order_shipment_path(@order, shipment, variant_id: item.variant), class: "btn btn-sm btn-light with-tip", no_text: true, data: { test_id: :split_item } %>
+      <%= link_to_with_icon 'arrows-split', Spree.t(:split), spree.split_admin_order_shipment_path(@order, shipment, variant_id: item.variant), class: "btn btn-sm btn-light", no_text: true, data: { test_id: :split_item } %>
     </span>
   <% end %>
 <% end %>

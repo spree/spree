@@ -50,18 +50,23 @@ module Spree
         options[:data][:url] ||= options[:url]
         options[:class] ||= 'btn btn-light'
 
+        tooltip_text = nil
         if options[:icon]
           if options[:only_icon]
-            options[:title] = text
+            tooltip_text = options[:title] || text
             text = icon(options[:icon], class: 'mr-0')
-            options[:class] += ' with-tip'
+            options[:data][:controller] = 'tooltip'
+            options.delete(:title)
           else
             text = icon(options[:icon]) + ' ' + text
           end
         end
 
+        link_content = text
+        link_content += tooltip(tooltip_text) if tooltip_text
+
         content_tag :span, data: { toggle: 'modal', target: '#bulk-modal' } do
-          link_to text, path, options
+          link_to link_content, path, options
         end
       end
 

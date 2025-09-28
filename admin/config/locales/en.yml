@@ -75,8 +75,10 @@ en:
       errors: Errors
       execution_time: Execution Time
       export_all: Export all records (can be slow for large datasets)
+      export_coupons: Export coupons as CSV file
       export_created: Your export was started. You will receive an email with a download link when it is ready!
       export_only_filtered_records: Export only filtered records, matching the search criteria
+      export_report: Export report as CSV file
       filters: Filters
       getting_started: Getting started
       gift_card_batches:
@@ -208,6 +210,8 @@ en:
       response_code: Response Code
       selected: selected
       send_payment_link: Send Payment Link
+      shipment:
+        please_provide_tracking_details: Before marking shipment as shipped please provide tracking details
       shipment_transfer:
         wrong_destination: Wrong destination
       stock_transfers:

@@ -21,18 +21,19 @@ export default class extends NestedForm {
   }
 
   updateDestinationLocation({ target: { value } }) {
-    const variantAddButtonTooltip = this.newVariantAddButtonTarget.querySelector('.with-tip')
+    const tooltipController = this.newVariantAddButtonTarget.querySelector('[data-controller*="tooltip"]')
 
     if (value != '') {
       this.newVariantAddButtonTarget.removeAttribute('disabled')
 
-      this.variantAddButtonTooltipTitle = variantAddButtonTooltip.getAttribute('data-original-title')
-      variantAddButtonTooltip.setAttribute('data-original-title', '')
+      // Enable tooltip by showing it when appropriate
+      if (tooltipController) {
+        // The Stimulus tooltip controller will handle visibility automatically
+      }
     } else {
       this.newVariantAddButtonTarget.setAttribute('disabled', '')
 
-      if (this.variantAddButtonTooltipTitle)
-        variantAddButtonTooltip.setAttribute('data-original-title', this.variantAddButtonTooltipTitle)
+      // The Stimulus tooltip controller will handle disabled state automatically
     }
 
     this.destinationInputTargets.forEach((input) => {

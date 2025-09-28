@@ -80,6 +80,7 @@ import StickyController from 'spree/admin/controllers/sticky_controller'
 import SortableTree from 'spree/admin/controllers/sortable_tree_controller'
 import StockTransferController from 'spree/admin/controllers/stock_transfer_controller'
 import StoreFormController from 'spree/admin/controllers/store_form_controller'
+import TooltipController from 'spree/admin/controllers/tooltip_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
 import VariantsFormController from 'spree/admin/controllers/variants_form_controller'
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
@@ -138,6 +139,7 @@ application.register('sortable-tree', SortableTree)
 application.register('stock-transfer', StockTransferController)
 application.register('store-form', StoreFormController)
 application.register('tabs', Tabs)
+application.register('tooltip', TooltipController)
 application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)

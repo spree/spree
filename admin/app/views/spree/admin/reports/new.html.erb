@@ -9,9 +9,10 @@
     <%= f.hidden_field :date_from %>
     <%= f.hidden_field :date_to %>
     <%= f.hidden_field :currency %>
-    <button class="btn btn-primary with-tip" title="Export report as CSV file">
+    <button class="btn btn-primary" data-controller="tooltip">
       <%= icon('table-export') %>
       <%= Spree.t(:export) %>
+      <%= tooltip(Spree.t('admin.export_report')) %>
     </button>
   <% end %>
 <% end if can?(:create, Spree::Export) %>

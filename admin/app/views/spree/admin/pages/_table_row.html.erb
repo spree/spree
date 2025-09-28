@@ -3,10 +3,10 @@
     <%= link_to page.name, spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), data: { row_link_target: :link, turbo_frame: '_top', turbo_prefetch: false } %>
   </td>
   <td data-action="click->row-link#openLink" class="w-15">
-    <%= spree_time_ago(page.created_at, class: 'with-tip') %>
+    <%= spree_time_ago(page.created_at) %>
   </td>
   <td data-action="click->row-link#openLink" class="w-15">
-    <%= spree_time_ago(page.updated_at, class: 'with-tip') %>
+    <%= spree_time_ago(page.updated_at) %>
   </td>
   <td class="w-10 text-right">
     <div class="dropdown">

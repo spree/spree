@@ -36,10 +36,12 @@ RSpec.feature 'Getting Started' do
 
       scenario 'Retailer adds and updates the customer support email' do
         click_on 'Set customer support email'
-        click_on 'Edit'
+        within '#set_customer_support_email' do
+          click_on 'Edit'
 
-        fill_in 'Customer Support Email', with: 'support@example.com'
-        click_on 'Save'
+          fill_in 'Customer Support Email', with: 'support@example.com'
+          click_on 'Save'
+        end
 
         expect(page).to have_content("Store \"#{store.name}\" has been successfully updated!")
       end

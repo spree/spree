@@ -27,10 +27,13 @@
       </div>
     </div>
 
-    <%= link_to spree.admin_promotion_coupon_codes_path(@promotion, format: :csv), class: 'btn btn-light bg-transparent with-tip', title: 'Download coupons as a CSV file' do %>
-      <%= icon 'download' %>
-      <%= Spree.t(:download) %>
-    <% end %>
+    <div data-controller="tooltip">
+      <%= link_to spree.admin_promotion_coupon_codes_path(@promotion, format: :csv), class: 'btn btn-light bg-transparent' do %>
+        <%= icon 'download' %>
+        <%= Spree.t(:download) %>
+      <% end %>
+      <%= tooltip(Spree.t('admin.export_coupons')) %>
+    </div>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>

@@ -1,0 +1,19 @@
+.tooltip-container {
+  position: absolute;
+  display: none;
+  opacity: 1 !important; // Ensure fully opaque
+  pointer-events: none;
+  z-index: $zindex-tooltip;
+  background-color: $tooltip-bg;
+  color: $tooltip-color;
+  border: 1px solid $border-color;
+  box-shadow: $box-shadow-xs;
+  border-radius: $tooltip-border-radius;
+  padding: $tooltip-padding-y $tooltip-padding-x;
+  font-size: $tooltip-font-size;
+  max-width: $tooltip-max-width;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-wrap: wrap;
+}

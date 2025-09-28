@@ -10,8 +10,9 @@
       <br />
     <% end %>
     <% unless defined?(current_vendor) && current_vendor %>
-      <span class="text-muted with-tip" title="<%= user.email %>">
+      <span class="text-muted" data-controller="tooltip">
         <%= user.email %>
+        <%= tooltip(user.email) %>
       </span>
       <%= clipboard_component(user.email) %>
     <% end %>

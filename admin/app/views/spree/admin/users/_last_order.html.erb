@@ -16,8 +16,9 @@
                   <%= order_payment_state(@last_order, class: 'ml-2') %>
                   <%= order_shipment_state(@last_order, class: 'ml-2') %>
                 </p>
-                <span class="text-muted">
-                  <%= spree_time_ago(@last_order.completed_at, class: 'with-tip') %>
+                <span class="text-muted" data-controller="tooltip">
+                  <%= spree_time_ago(@last_order.completed_at) %>
+                  <%= tooltip(spree_time(@last_order.completed_at)) %>
                 </span>
               </div>
               <div class="col-lg-3 text-lg-right font-weight-bold">

@@ -18,7 +18,7 @@
           <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
 
           <% if spree.respond_to?(:checkout_state_url) %>
-            <%= link_to_with_icon 'send', Spree.t('admin.send_payment_link'), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-light with-tip', title: Spree.t(:send_payment_link_title) %>
+            <%= link_to_with_icon 'send', Spree.t('admin.send_payment_link'), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-light', title: Spree.t(:send_payment_link_title) %>
 
             <div data-controller="clipboard" data-clipboard-success-content-value="<%= Spree.t('admin.copied') %>">
               <input type="hidden" value="<%= spree.checkout_state_url(@order.token, :payment, host: current_store.url_or_custom_domain) %>" readonly data-clipboard-target="source">
