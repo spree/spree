@@ -53,7 +53,7 @@ export default class extends Controller {
       this.tooltipTarget.style.left = "-9999px"
       this.tooltipTarget.style.top = "-9999px"
       // Force reflow and measure
-      this._originalWidth = this.tooltipTarget.offsetWidth
+      this._originalWidth = this.tooltipTarget.offsetWidth + 10
       // Height is now dynamic, so we do not set or store it
       this.tooltipTarget.style.width = `${this._originalWidth}px`
       this.tooltipTarget.style.height = "" // Remove any fixed height
