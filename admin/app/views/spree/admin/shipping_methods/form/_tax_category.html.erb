@@ -7,7 +7,7 @@
     </div>
 
     <div class="card-body">
-      <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none') } %>
+      <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none'), label: Spree.t(:tax_category) } %>
     </div>
   </div>
 <% end %>
