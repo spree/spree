@@ -12,8 +12,8 @@
   padding: $tooltip-padding-y $tooltip-padding-x;
   font-size: $tooltip-font-size;
   max-width: $tooltip-max-width;
-  white-space: wrap-all;
-  word-break: keep-all;
-  text-wrap: wrap-all;
-  max-width: 200px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-wrap: wrap;
 }
