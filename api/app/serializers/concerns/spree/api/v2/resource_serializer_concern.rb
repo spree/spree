@@ -18,7 +18,8 @@ module Spree
             end
           end
 
-          if Spree::MetafieldDefinition.available_resources.map(&:name).include?(model_klazz.name) && model_klazz.method_defined?(:metafields)
+          metafield_enabled_resources = Spree::MetafieldDefinition.available_resources || []
+          if metafield_enabled_resources.map(&:name).include?(model_klazz.name) && model_klazz.method_defined?(:metafields)
             base.has_many :metafields, serializer: Spree::Api::Dependencies.platform_metafield_serializer.constantize,
                                        record_type: :metafield,
                                        object_method_name: :metafields
