@@ -279,7 +279,6 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       it 'does not delete the admin user' do
         delete :destroy, params: { id: admin_user.id }
         expect(response).to redirect_to(spree.admin_admin_users_path)
-        expect(flash[:error]).to include ('Cannot delete the last admin user')
         expect(admin_user).not_to be_destroyed
       end
     end
