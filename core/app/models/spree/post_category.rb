@@ -1,6 +1,7 @@
 module Spree
   class PostCategory < Spree.base_class
     include Spree::SingleStoreResource
+    include Spree::Metafields
     extend FriendlyId
 
     friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id]
