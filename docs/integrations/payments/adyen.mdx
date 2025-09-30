@@ -1,0 +1,92 @@
+---
+title: "Connect Adyen payments to Spree Commerce"
+sidebarTitle: Adyen
+description: "Learn how to set up and manage Spree's native Adyen integration."
+---
+
+Adyen is a global payment platform that enables businesses to accept payments across multiple channels and markets. It supports a wide range of payment methods, provides advanced fraud protection, and offers seamless checkout experiences for customers worldwide.
+
+<Warning>
+  Adyen integration is currently in **private beta**. [Please contact us](https://spreecommerce.org/contact) to get access to the Adyen integration for your Spree store.
+</Warning>
+
+## Installation
+
+Before you can enable Adyen, it must be installed. To do so, you need to run the following command:
+
+```bash
+bundle add spree_adyen --github spree/spree_adyen && bundle exec rails g spree_adyen:install
+```
+
+After that, you need to make sure to restart the server.
+
+## Connect Adyen
+
+Sign in to your Spree admin dashboard and navigate to **Settings → Payments**.
+
+![](/images/integrations/adyen/1.get_started.png)
+
+Find Adyen under Available Payment Methods and click **Add**.
+
+This will redirect you to the Adyen setup form.
+
+![](/images/integrations/adyen/2.setup_form.png)
+
+In order to retrieve your API keys:
+1. Make sure to be logged into your Adyen Merchant Account
+2. Navigate to **Developers → API credentials**
+3. Configure a new **API credential**
+4. Copy the generated **API Key** (you won't be able to see it later)
+5. Click **Save changes**
+6. Paste the **API Key** into its respective field in the Adyen setup form in Spree
+7. Click **Create** to enable Adyen as a payment method on your store
+
+![](/images/integrations/adyen/3.adyen_enabled.png)
+
+### Additional Settings
+
+![](/images/integrations/adyen/4.additional_settings.png)
+
+You can optionally configure the following settings for your Adyen payment method:
+
+- **Name**: Customize the display name shown for this payment method on the storefront.
+- **Display**: Choose where Adyen should be available:
+  - Storefront only
+  - Admin panel only
+  - Both (recommended)
+- **Auto Capture**: Decide whether payments should be automatically captured at the time of authorization (recommended), or manually captured later.
+- **Active Status**: Enable or disable the payment method. Inactive methods are hidden from checkout but not removed.
+
+### Test Mode
+
+If you want to test your checkout flow without processing real payments, Adyen's test mode is a safe and effective way to simulate transactions. To enable it, simply switch your Adyen Customer Area to **Test mode** and paste the corresponding **test API credentials** into the payment method settings in Spree.
+
+## Features
+
+Spree's native Adyen integration supports a comprehensive range of features and payment methods to help you offer a fast, secure, and flexible checkout experience:
+
+- Support for 3D Secure and other security standards
+- Support for off-session payments
+- Support for Storefront API integration (see the API docs [here](/api-reference/storefront/adyen/create-an-adyen-payment-session))
+- Accept payments in over 150 currencies
+- Accept Credit Cards, Debit Cards, and Digital Wallets
+- Accept Buy Now, Pay Later (BNPL) payments
+- Accept Bank transfers and Direct Debit
+- Accept Local payment methods (iDEAL, SOFORT, Bancontact, etc.)
+- Accept Mobile payments (Apple Pay, Google Pay, Samsung Pay)
+- Accept Cryptocurrency payments
+- Advanced fraud protection and risk management
+- Real-time payment status updates
+- Comprehensive reporting and analytics
+
+### Storefront Display
+
+Spree's Adyen integration enhances the customer experience with dynamic, context-aware payment options across the storefront:
+
+- Dynamic payment method selection based on customer location
+- Real-time payment method availability
+- Seamless checkout experience with Adyen's Drop-in component
+- Support for one-click payments and saved payment methods
+- Mobile-optimized payment flows
+
+Feel free to [reach out](https://spreecommerce.org/contact) to learn more.
