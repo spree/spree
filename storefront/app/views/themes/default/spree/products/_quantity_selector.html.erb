@@ -1,5 +1,5 @@
 <% selected_variant ||= nil %>
-<p class="quantity-selector-label text-sm tracking-widest uppercase py-2"><%= Spree.t(:quantity) %></p>
+<p class="quantity-selector-label text-sm tracking-widest uppercase pb-2"><%= Spree.t(:quantity) %></p>
 <div class="inline-block">
   <div class="quantity-picker" data-controller="quantity-picker">
     <%= button_tag class: 'decrease-quantity',
@@ -22,7 +22,6 @@
     <% end %>
   </div>
 </div>
-<%= hidden_field_tag :variant_id, selected_variant&.id %>
 <% if selected_variant && !selected_variant.backorderable? %>
   <% if selected_variant.total_on_hand.between?(1, 4) %>
     <p class="text-red-500 text-center text-sm mt-1" style="width: 117px">

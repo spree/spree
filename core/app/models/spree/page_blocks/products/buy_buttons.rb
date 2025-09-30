@@ -2,7 +2,7 @@ module Spree
   module PageBlocks
     module Products
       class BuyButtons < Spree::PageBlock
-        TOP_PADDING_DEFAULT = 20
+        TOP_PADDING_DEFAULT = 0
         BOTTOM_PADDING_DEFAULT = 20
 
         preference :text_color, :string

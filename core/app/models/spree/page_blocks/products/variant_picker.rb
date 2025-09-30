@@ -5,7 +5,7 @@ module Spree
         preference :text_color, :string
 
         def icon_name
-          'select'
+          'list-details'
         end
       end
     end

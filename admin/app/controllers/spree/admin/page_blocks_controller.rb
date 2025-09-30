@@ -49,7 +49,8 @@ module Spree
         params.require(:page_block).permit(
           permitted_page_block_attributes +
           [link_attributes: permitted_page_link_attributes + [:id]] +
-          @object.preferences.keys.map { |key| "preferred_#{key}" }
+          @object.preferences.keys.map { |key| "preferred_#{key}" } +
+          [preferred_metafield_definition_ids: []]
         )
       end
     end
