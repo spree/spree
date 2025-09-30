@@ -2,6 +2,8 @@ module Spree
   module V2
     module Storefront
       class PostCategorySerializer < ::Spree::Api::V2::BaseSerializer
+        include Spree::Api::V2::PublicMetafieldsConcern
+
         set_type :post_category
 
         attributes :title, :slug, :created_at, :updated_at
