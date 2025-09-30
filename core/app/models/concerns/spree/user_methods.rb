@@ -137,7 +137,11 @@ module Spree
     # Returns true if the user can be deleted
     # @return [Boolean]
     def can_be_deleted?
-      orders.complete.none?
+      if has_spree_role?(Spree::Role::ADMIN_ROLE)
+        Spree::Store.current.users.where.not(id: id).exists?
+      else
+        orders.complete.none?
+      end
     end
 
     # Returns the CSV row representation of the user
@@ -156,7 +160,7 @@ module Spree
     private
 
     def check_completed_orders
-      raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
+      raise Spree::Core::DestroyWithOrdersError if !has_spree_role?(Spree::Role::ADMIN_ROLE) && orders.complete.present?
     end
 
     def clone_billing_address

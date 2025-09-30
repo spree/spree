@@ -17,7 +17,6 @@ module Spree
       has_many :exports, class_name: 'Spree::Export', foreign_key: :user_id
 
       # Callbacks
-      before_destroy :check_if_there_are_other_admin_users
       after_destroy :nullify_approver_id_in_approved_orders
       after_destroy :cleanup_admin_user_resources
     end
@@ -48,16 +47,6 @@ module Spree
       # resources to destroy
       reports.destroy_all
       exports.destroy_all
-    end
-
-    def check_if_there_are_other_admin_users
-      return if self.class != Spree.admin_user_class
-      return unless has_spree_role?(Spree::Role::ADMIN_ROLE)
-
-      if Spree::Store.current.users.where.not(id: id).none?
-        errors.add(:base, I18n.t('activerecord.errors.models.spree/admin_user.attributes.base.cannot_destroy_last_admin_user'))
-        throw(:abort)
-      end
     end
   end
 end

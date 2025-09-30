@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
+  describe '#can_be_deleted?' do
+    subject { user.can_be_deleted? }
+
+    context 'when user has completed orders' do
+      let(:user) { create(:user, orders: [create(:order, completed_at: Time.current)]) }
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'when user has no completed orders' do
+      let(:user) { create(:user, orders: [create(:order)]) }
+
+      it { is_expected.to be(true) }
+    end
+  end
+
   describe '#full_name' do
     let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
 
