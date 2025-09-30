@@ -3,14 +3,29 @@ require 'spec_helper'
 describe Spree::LegacyUser, type: :model do
   let(:admin_user) { create(:admin_user) }
 
-  context 'Callbacks' do
-    describe 'do not allow to delete last admin user' do
-      it 'raises an error' do
-        admin_user
-        expect { admin_user.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+  describe '#can_be_deleted?' do
+    subject { admin_user.can_be_deleted? }
+
+    context 'when store has other admin users' do
+      before do
+        create(:admin_user)
       end
+
+      it { is_expected.to be(true) }
     end
 
+    context 'when store has no other admin users' do
+      it { is_expected.to be(false) }
+    end
+
+    context 'when the user does not have admin role' do
+      let(:admin_user) { create(:admin_user, without_admin_role: true) }
+
+      it { is_expected.to be(true) }
+    end
+  end
+
+  context 'Callbacks' do
     describe 'cleans up admin user resources' do
       let!(:other_admin_user) { create(:admin_user) }
       let!(:cancelled_orders) { create_list(:order, 2, canceler: admin_user, state: 'canceled') }

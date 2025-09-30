@@ -218,10 +218,6 @@ en:
       messages:
         blank: can't be blank
       models:
-        spree/admin_user:
-          attributes:
-            base:
-              cannot_destroy_last_admin_user: Cannot delete the last admin user
         spree/calculator/tiered_flat_rate:
           attributes:
             base:
