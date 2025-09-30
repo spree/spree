@@ -42,6 +42,10 @@
                   <div <%= block_attributes(block) %>>
                     <% case block.class.name %>
                     <% when 'Spree::PageBlocks::Products::Title' %>
+                      <h1 class="text-2xl uppercase tracking-tight font-medium">
+                        <%= product.name %>
+                      </h1>
+                    <% when 'Spree::PageBlocks::Products::Brand' %>
                       <% if product.brand %>
                         <%= link_to spree.nested_taxons_path(product.brand), title: product.brand_name do %>
                           <h3 class="text-sm lg:mt-0 inline-block mb-1">
@@ -49,9 +53,6 @@
                           </h3>
                         <% end %>
                       <% end %>
-                      <h1 class="text-2xl uppercase tracking-tight font-medium">
-                        <%= product.name %>
-                      </h1>
                     <% when 'Spree::PageBlocks::Products::Price' %>
                       <%= render 'spree/products/price', product: product, use_variant: true, selected_variant: @selected_variant, price_class: "lg:text-lg lg:font-medium", price_container_class: "w-full" %>
                     <% when 'Spree::PageBlocks::Products::VariantPicker' %>
@@ -71,15 +72,15 @@
                         <% block.preferred_metafield_definition_ids.each do |definition_id| %>
                           <% metafield = @product.metafields.joins(:metafield_definition).find_by(metafield_definition: { id: definition_id }) %>
                           <% next unless metafield %>
-                          <div class="product-metafield border-b border-default">
-                            <%= link_to "#metafield_#{metafield.id}", class: 'text-sm uppercase tracking-widest inline-flex w-full justify-between !border-b-transparent py-4', data: { action: 'accordion#toggle' } do %>
-                              <%= metafield.name %>
-                              <%= render 'spree/shared/icons/chevron_down' %>
-                            <% end %>
-                            <div class="text-sm st-accordion__content" data-accordion-id="metafield_<%= metafield.id %>">
-                              <%= render "spree/metafields/#{metafield.type.demodulize.underscore}", metafield: metafield %>          
-                            </div>
-                          </div>
+                          <details class="product-metafield border-b border-default group" id="metafield_<%= metafield.id %>">
+                            <summary class="text-sm uppercase tracking-widest inline-flex w-full justify-between items-center py-4 cursor-pointer focus:outline-none">
+                              <span><%= metafield.name %></span>
+                              <span class="ml-2 transition-transform group-open:rotate-180">
+                                <%= render 'spree/shared/icons/chevron_down' %>
+                              </span>
+                            </summary>
+                            <%= render "spree/metafields/#{metafield.type.demodulize.underscore}", metafield: metafield %>
+                          </details>
                         <% end %>
                       </div>
                     <% end %>

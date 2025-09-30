@@ -13,6 +13,8 @@ module Spree
       end
 
       def default_blocks
+        product_metafield_definition_ids = Spree::MetafieldDefinition.where(resource_type: 'Spree::Product').ids
+
         [
           Spree::PageBlocks::Products::Brand.new,
           Spree::PageBlocks::Products::Title.new,
@@ -20,7 +22,8 @@ module Spree
           Spree::PageBlocks::Products::VariantPicker.new,
           Spree::PageBlocks::Products::QuantitySelector.new,
           Spree::PageBlocks::Products::BuyButtons.new,
-          Spree::PageBlocks::Products::Description.new
+          Spree::PageBlocks::Products::Description.new,
+          Spree::PageBlocks::Metafields.new(preferred_metafield_definition_ids: product_metafield_definition_ids),
         ]
       end
 

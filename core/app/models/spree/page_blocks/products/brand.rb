@@ -7,7 +7,7 @@ module Spree
         SIZE_DEFAULT = 'medium'
 
         def display_name
-          Spree.t(:product_brand)
+          Spree.t(:brand)
         end
       end
     end
