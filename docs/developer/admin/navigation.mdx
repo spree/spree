@@ -1,0 +1,392 @@
+---
+title: Extending Admin Navigation
+sidebarTitle: Navigation
+---
+
+Spree Admin Dashboard provides a flexible navigation system that allows you to easily extend the sidebar navigation with your own menu items without modifying the core codebase. This enables safe updates while maintaining your customizations.
+
+## How it works
+
+The admin navigation system works through injection points defined throughout the sidebar. You can inject custom navigation items into these predefined locations, add new top-level menu items, or create nested submenus.
+
+## Navigation Injection Points
+
+The main navigation file is located at `admin/app/views/spree/admin/shared/sidebar/_store_nav.html.erb` and provides several injection points:
+
+### Available Injection Points
+
+<AccordionGroup>
+  <Accordion title="store_nav_partials">
+    `store_nav_partials`
+
+    Injects navigation items into the main sidebar navigation, after the Reports item and before the Storefront and Integrations sections.
+
+    <Frame>
+      <img src="/images/developer/admin/store_nav_partials.png" alt="Main navigation injection point" />
+    </Frame>
+
+    This is the primary injection point for adding custom top-level navigation items.
+  </Accordion>
+
+  <Accordion title="store_products_nav_partials">
+    `store_products_nav_partials`
+
+    Injects navigation items into the Products submenu, after the Properties item.
+
+    Use this to add product-related navigation items that logically belong under the Products section.
+  </Accordion>
+
+  <Accordion title="store_orders_nav_partials">
+    `store_orders_nav_partials`
+
+    Injects navigation items into the Orders submenu, after the Draft Orders item.
+
+    Use this to add order-related navigation items.
+  </Accordion>
+
+  <Accordion title="store_settings_nav_partials">
+    `store_settings_nav_partials`
+
+    Injects navigation items into the Settings section, after the Policies item.
+
+    Use this when Settings mode is active to add configuration-related items.
+  </Accordion>
+
+  <Accordion title="settings_nav_partials">
+    `settings_nav_partials`
+
+    Injects navigation items at the end of the Settings section.
+
+    Use this to add additional settings-related navigation items.
+  </Accordion>
+</AccordionGroup>
+
+## Using the nav_item Helper
+
+The `nav_item` helper method is provided by `Spree::Admin::NavigationHelper` and makes it easy to create properly formatted navigation items.
+
+### Method Signature
+
+```ruby
+nav_item(label = nil, url, icon: nil, active: nil, data: {})
+```
+
+### Parameters
+
+<ParamField path="label" type="String">
+  The text label for the navigation item. Can be HTML-safe content.
+</ParamField>
+
+<ParamField path="url" type="String">
+  The URL the navigation item links to. Use the `spree.` route helper prefix.
+</ParamField>
+
+<ParamField path="icon" type="String" default="nil">
+  Optional icon name from [Tabler Icons](https://tabler.io/icons). The icon will be displayed before the label.
+</ParamField>
+
+<ParamField path="active" type="Boolean" default="nil">
+  Manually set whether the link should be marked as active. If not specified, it will be auto-detected based on the current URL.
+</ParamField>
+
+<ParamField path="data" type="Hash" default="{}">
+  Additional data attributes to add to the link element.
+</ParamField>
+
+### Basic Usage
+
+```erb
+<%= nav_item(Spree.t(:custom_section), spree.admin_custom_path, icon: 'star') %>
+```
+
+### With Active State
+
+```erb
+<%= nav_item(
+  Spree.t(:inventory),
+  spree.admin_inventory_path,
+  icon: 'boxes',
+  active: controller_name == 'inventory'
+) %>
+```
+
+### With Block Content
+
+```erb
+<%= nav_item(nil, spree.admin_dashboard_path, icon: 'home') do %>
+  <%= icon 'home' %>
+  <%= Spree.t(:dashboard) %>
+  <span class="badge ml-auto">New</span>
+<% end %>
+```
+
+## Adding a Simple Navigation Item
+
+Let's add a new "Inventory" navigation item to the main sidebar.
+
+### Step 1: Create the Partial
+
+```bash
+mkdir -p app/views/spree/admin/shared
+touch app/views/spree/admin/shared/_inventory_nav.html.erb
+```
+
+### Step 2: Add Navigation Code
+
+```erb
+<% if can?(:manage, Spree::Inventory) %>
+  <%= nav_item(
+    Spree.t(:inventory),
+    spree.admin_inventory_index_path,
+    icon: 'boxes',
+    active: controller_name == 'inventory'
+  ) %>
+<% end %>
+```
+
+<Tip>
+Always wrap your navigation items with authorization checks using `can?()` to ensure users only see menu items they have permission to access.
+</Tip>
+
+### Step 3: Register the Partial
+
+Add this to your `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/inventory_nav'
+```
+
+### Step 4: Add Translations
+
+In your `config/locales/en.yml`:
+
+```yaml
+en:
+  spree:
+    inventory: "Inventory"
+```
+
+### Step 5: Restart Your Server
+
+Restart your web server to load the initializer changes. The navigation item should now appear in the sidebar.
+
+## Creating Nested Navigation (Submenus)
+
+To create a navigation item with a submenu, you need to use the `nav-submenu` class and manage the visibility based on the active state.
+
+### Example: Adding a Nested Menu
+
+```erb
+<% inventory_active = %w[inventory warehouses stock_movements].include?(controller_name) %>
+
+<% if can?(:manage, Spree::Inventory) %>
+  <%= nav_item(
+    Spree.t(:inventory),
+    spree.admin_inventory_index_path,
+    icon: 'boxes',
+    active: inventory_active
+  ) %>
+
+  <ul class="nav-submenu <% unless inventory_active %>d-none<% end %>">
+    <% if can?(:manage, Spree::Warehouse) %>
+      <%= nav_item(
+        Spree.t(:warehouses),
+        spree.admin_warehouses_path,
+        active: controller_name == 'warehouses'
+      ) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::StockMovement) %>
+      <%= nav_item(
+        Spree.t(:stock_movements),
+        spree.admin_stock_movements_path,
+        active: controller_name == 'stock_movements'
+      ) %>
+    <% end %>
+
+    <%= render_admin_partials(:store_inventory_nav_partials) %>
+  </ul>
+<% end %>
+```
+
+### Key Points for Submenus
+
+1. **Active State Variable**: Define a variable to track when any item in the menu group is active:
+   ```erb
+   <% inventory_active = %w[inventory warehouses stock_movements].include?(controller_name) %>
+   ```
+
+2. **Parent Navigation Item**: Use the active state variable for the parent item:
+   ```erb
+   <%= nav_item(..., active: inventory_active) %>
+   ```
+
+3. **Submenu Container**: Use the `nav-submenu` class and conditionally add `d-none` to hide when inactive:
+   ```erb
+   <ul class="nav-submenu <% unless inventory_active %>d-none<% end %>">
+   ```
+
+4. **Child Items**: Add child navigation items within the submenu:
+   ```erb
+   <%= nav_item(Spree.t(:child_item), spree.admin_child_path) %>
+   ```
+
+5. **Nested Injection Point** (Optional): Add an injection point within the submenu for further extensibility:
+   ```erb
+   <%= render_admin_partials(:store_inventory_nav_partials) %>
+   ```
+
+## Advanced Examples
+
+### Navigation with Badge
+
+```erb
+<%= nav_item(nil, spree.admin_orders_path, icon: 'inbox', active: orders_active) do %>
+  <%= icon 'inbox' %>
+  <%= Spree.t(:orders) %>
+  <span class="badge ml-auto"><%= pending_orders_count %></span>
+<% end %>
+```
+
+### Navigation with Complex Active Logic
+
+```erb
+<% products_active = %w[products external_categories taxons taxonomies option_types option_values properties stock_items stock_transfers].include?(controller_name) || request.path.include?('products') %>
+
+<%= nav_item(
+  Spree.t(:products),
+  spree.admin_products_path,
+  icon: 'package',
+  active: products_active
+) %>
+```
+
+### Extending Existing Submenus
+
+To add an item to an existing submenu (e.g., Products), use the appropriate injection point:
+
+**Create:** `app/views/spree/admin/shared/_custom_products_nav.html.erb`
+
+```erb
+<% if can?(:manage, Spree::CustomProductFeature) %>
+  <%= nav_item(
+    Spree.t(:custom_feature),
+    spree.admin_custom_product_feature_path,
+    active: controller_name == 'custom_product_features'
+  ) %>
+<% end %>
+```
+
+**Register in** `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/custom_products_nav'
+```
+
+## Navigation in Settings Mode
+
+When the admin is in "Settings mode" (the dedicated settings view), use the `settings_nav_partials` injection point:
+
+```erb
+<% if settings_active? %>
+  <!-- Settings mode is active -->
+  <%= nav_item(Spree.t(:custom_settings), spree.edit_admin_store_path(section: 'custom-settings'), icon: 'adjustments') %>
+<% end %>
+```
+
+Register with:
+
+```ruby
+Rails.application.config.spree_admin.settings_nav_partials << 'spree/admin/shared/custom_settings_nav'
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Authorization" icon="shield-check">
+    Always use `can?()` checks to ensure users only see navigation items they have permission to access.
+  </Card>
+
+  <Card title="Translations" icon="language">
+    Use `Spree.t()` for all navigation labels to support internationalization.
+  </Card>
+
+  <Card title="Icons" icon="icons">
+    Use consistent icons from [Tabler Icons](https://tabler.io/icons) that match Spree's design language.
+  </Card>
+
+  <Card title="Active States" icon="pointer">
+    Define clear active state logic to highlight the current section in the navigation.
+  </Card>
+
+  <Card title="Route Helpers" icon="route">
+    Always use `spree.` prefixed route helpers to reference admin routes correctly.
+  </Card>
+
+  <Card title="Injection Points" icon="puzzle">
+    Add your own injection points in submenus to allow further extensions by other developers.
+  </Card>
+</CardGroup>
+
+## Common Patterns
+
+### Multiple Controller Check
+
+```erb
+<% active = %w[orders shipments payments].include?(controller_name) %>
+```
+
+### Path-based Check
+
+```erb
+<% active = request.path.include?('products') %>
+```
+
+### Controller and Action Check
+
+```erb
+<% active = controller_name == 'dashboard' && action_name == 'show' %>
+```
+
+### Parameters-based Check
+
+```erb
+<% active = params[:section] == 'general-settings' %>
+```
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Navigation item not appearing">
+    - Ensure you've restarted your web server after adding the initializer
+    - Check that the authorization check (`can?()`) is passing
+    - Verify the partial path is correct (without `_` prefix and `.html.erb` suffix)
+    - Check that the route helper exists and is correct
+  </Accordion>
+
+  <Accordion title="Icon not displaying">
+    - Verify the icon name exists in [Tabler Icons](https://tabler.io/icons)
+    - Check that you're using the correct parameter name: `icon:` not `icon_name:`
+    - Ensure the icon name is a string, e.g., `icon: 'boxes'`
+  </Accordion>
+
+  <Accordion title="Submenu not showing/hiding properly">
+    - Ensure the active state variable includes all relevant controller names
+    - Check that the `nav-submenu` class is applied to the `<ul>` element
+    - Verify the `d-none` class is conditionally added when not active
+    - Make sure the parent nav item uses the same active state variable
+  </Accordion>
+
+  <Accordion title="Translation missing">
+    - Add the translation key to your locale file
+    - Ensure the locale file is in the correct location
+    - Restart your server after adding translations
+    - Check for typos in the translation key
+  </Accordion>
+</AccordionGroup>
+
+## Related Documentation
+
+- [Extending Admin UI](/developer/admin/extending-ui) - Learn about other UI injection points
+- [Helper Methods](/developer/admin/helper-methods) - Explore other admin helper methods
+- [Permissions](/developer/admin/permissions) - Understand the authorization system
