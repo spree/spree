@@ -36,7 +36,7 @@
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
         <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
         <p>No metafield definitions configured for <%= @resource.class.name.demodulize.titleize.pluralize %>.</p>
-        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: @resource.class.to_s), class: 'btn btn-primary btn-sm ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: @resource.class.to_s), class: 'btn btn-primary ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
       </div>
     </div>
   <% end %>

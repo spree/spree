@@ -27,7 +27,11 @@
     <div class="drawer-body">
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
         <%= icon 'language', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
-        <p><%= Spree.t('admin.translations.no_translations_configured') %></p>
+        <p class="text-center"><%= Spree.t('admin.translations.no_translations_configured') %></p>
+
+        <% if can?(:edit, current_store) %>
+          <%= link_to_with_icon 'settings', Spree.t('admin.translations.configure_store'), spree.edit_admin_store_path(section: 'general-settings'), class: 'btn btn-primary', data: { 'turbo-frame': '_top' } %>
+        <% end %>
       </div>
     </div>
   <% end %>
