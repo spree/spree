@@ -1,13 +1,6 @@
 <%# locals: (f:, field:, locale:) %>
 
-<tr>
-  <td><%= Spree.t(field) %></td>
-  <td>
-    <%= @resource.send(field) %>
-  </td>
-  <td>
-    <div class="trix-container">
-      <%= f.text_area "#{field}_#{locale}", rows: 10, class: "form-control spree-rte" %>
-    </div>
-  </td>
-</tr>
+<%= f.label field, Spree.t(field) %>
+<div class="trix-container">
+  <%= f.text_area "#{field}_#{locale}", class: "spree-rte" %>
+</div>

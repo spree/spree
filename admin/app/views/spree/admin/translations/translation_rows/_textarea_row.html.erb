@@ -1,11 +1,4 @@
 <%# locals: (f:, field:, locale:) %>
 
-<tr>
-  <td><%= Spree.t(field) %></td>
-  <td>
-    <%= @resource.send(field) %>
-  </td>
-  <td>
-    <%= f.text_area "#{field}_#{locale}", rows: 5, class: "form-control", data: { controller: 'textarea-autogrow'} %>
-  </td>
-</tr>
+
+<%= f.spree_text_area "#{field}_#{locale}", label: Spree.t(field) %>

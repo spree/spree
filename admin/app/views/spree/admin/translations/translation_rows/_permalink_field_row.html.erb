@@ -10,24 +10,15 @@
   translated_value = f.object.send("#{field}_#{locale}")&.delete_prefix(base_permalink_translated)
 %>
 
-<tr>
-  <td><%= Spree.t(field) %></td>
-  <td>
-    <code>
-      <%= f.object.permalink %>
-    </code>
-  </td>
-  <td>
-    <div class="form-group">
-      <div class="input-group">
-        <% if base_permalink_translated.present? %>
-          <div class="input-group-prepend">
-            <span class="input-group-text"><%= base_permalink_translated %></span>
-          </div>
-        <% end %>
-
-        <%= f.text_field "#{field}_#{locale}", value: translated_value, class: 'form-control' %>
+<div class="form-group">
+  <%= f.label field, Spree.t(field) %>
+  <div class="input-group">
+    <% if base_permalink_translated.present? %>
+      <div class="input-group-prepend">
+        <span class="input-group-text"><%= base_permalink_translated %></span>
       </div>
-    </div>
-  </td>
-</tr>
+    <% end %>
+
+    <%= f.text_field "#{field}_#{locale}", value: translated_value, class: 'form-control' %>
+  </div>
+</div>

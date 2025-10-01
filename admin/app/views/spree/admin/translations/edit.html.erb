@@ -15,47 +15,7 @@
         <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
         <% options = { f: f, resource: @resource, locale: @selected_translation_locale } %>
 
-        <% @resource.class.translatable_fields.each do |field| %>
-          <% label = I18n.t("activerecord.attributes.spree/#{@resource.class.name.demodulize.underscore}.#{field}") %>
-
-          <% case field %>
-          <% when :description %>
-            <%= f.spree_rich_text_area "#{field}_#{@selected_translation_locale}", label: label %>
-          <% when :meta_description %>
-            <%= f.spree_text_area "#{field}_#{@selected_translation_locale}", label: label %>
-          <% else %>
-            <%= f.spree_text_field "#{field}_#{@selected_translation_locale}", label: label %>
-          <% end %>
-        <% end %>
-
-        <% case @resource.class.name %>
-        <% when 'Spree::OptionType' %>
-          <% if @resource.option_values.any? %>
-            <div class="form-group">
-              <h6><%= Spree.t(:option_values) %></h6>
-              <%= f.fields_for :option_values do |option_value_form| %>
-                <% option_value = option_value_form.object %>
-                <div class="form-group mb-3">
-                  <label class="form-label">
-                    <strong><%= option_value.name %></strong>
-                  </label>
-                  <div class="row">
-                    <div class="col-6">
-                      <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</label>
-                      <div class="form-control-plaintext border rounded p-2 bg-light">
-                        <%= option_value.name %>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></label>
-                      <%= option_value_form.text_field "name_#{@selected_translation_locale}", class: 'form-control' %>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        <% end %>
+        <%= render "spree/admin/translations/#{@resource.class.name.demodulize.underscore.pluralize}/form", options %>
       </div>
       <div class="drawer-footer">
         <%= turbo_save_button_tag %>
