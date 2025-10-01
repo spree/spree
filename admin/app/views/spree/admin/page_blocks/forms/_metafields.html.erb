@@ -2,17 +2,13 @@
   <div class="mb-2">
     <label class="form-label"><%= Spree.t(:metafields) %></label>
     <div class="p-1 border rounded d-flex flex-column gap-1 mb-3"
-         data-controller="sortable" 
-         data-sortable-handle-value=".handle"
-         data-sortable-resource-name-value="page_block"
-         data-sortable-param-name-value="preferred_metafield_definition_ids"
-         data-sortable-response-kind-value="turbo-stream"
+         data-controller="sortable-auto-submit" 
+         data-sortable-auto-submit-handle-value=".handle"
     >
       <% selected_keys = f.object.preferred_metafield_definition_ids.map(&:to_s) %>
       <% sorted_definitions = f.object.available_metafield_definitions.sort_by { |definition| selected_keys.index(definition.id.to_s) || selected_keys.length } %>
       <% sorted_definitions.each do |definition| %>
         <div class="rounded hover-light pl-2 pr-1 py-1 d-flex align-items-center justify-content-between"
-             data-sortable-update-url="<%= spree.admin_page_section_block_path(f.object.section, f.object, format: :turbo_stream) %>"
              id="<%= spree_dom_id(definition) %>"
         >
           <div class="custom-control custom-checkbox flex-grow-1 d-flex">
