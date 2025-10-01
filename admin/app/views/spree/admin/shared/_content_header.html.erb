@@ -1,4 +1,4 @@
-<% record = @object || @customer_return || @order || @product || @vendor || @user || @admin_user || @taxon || @store_credit %>
+<% record = @object || @customer_return || @order || @product || @vendor || @user || @admin_user || @taxon || @store_credit || @store %>
 
 <% show_record_subtitle = record && record.persisted? && record.has_attribute?(:updated_at) %>
 <% content_for(:page_subtitle) do %>
