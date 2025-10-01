@@ -39,7 +39,7 @@ RSpec.describe "Stores translations", type: :feature, js: true do
 
   context 'when there is only one language' do
     it 'shows message to add more languages' do
-      expect(page).to have_content('To use translations, configure more than one locale for the store.')
+      expect(page).to have_content('No translations configured')
     end
   end
 
@@ -72,9 +72,11 @@ RSpec.describe "Stores translations", type: :feature, js: true do
       fill_in :store_address_pl, with: 'ul. Sklep 123, 00-000 Sklep'
       fill_in :store_contact_phone_pl, with: '123 456 789'
 
-      click_on Spree.t(:update)
+      within '.drawer-footer' do
+        click_on Spree.t('actions.save')
+      end
 
-      expect(page).to have_content('Translations successfully saved')
+      expect(page).to have_content('successfully updated')
 
       I18n.with_locale(:en) do
         expect(store.reload.name).to eq('Store')
@@ -119,8 +121,7 @@ RSpec.describe "Stores translations", type: :feature, js: true do
     end
 
     it 'shows dropdown to select language' do
-      expect(page).to have_select('translation_locale')
-      select "Français (FR)", from: 'translation_locale'
+      click_on "Français (FR)"
 
       expect(page).to have_field('store_name_fr')
 
@@ -134,8 +135,11 @@ RSpec.describe "Stores translations", type: :feature, js: true do
       fill_in :store_address_fr, with: 'Magasin 123, 00-000 Magasin'
       fill_in :store_contact_phone_fr, with: '123 456 789'
 
-      click_on Spree.t(:update)
-      expect(page).to have_content('Translations successfully saved')
+      within '.drawer-footer' do
+        click_on Spree.t('actions.save')
+      end
+
+      expect(page).to have_content('successfully updated')
 
       I18n.with_locale(:fr) do
         expect(store.reload.name).to eq('Magasin')

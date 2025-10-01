@@ -1,4 +1,6 @@
-<%= turbo_frame_tag :alerts do %>
+<% frame_name ||= :alerts %>
+
+<%= turbo_frame_tag frame_name do %>
   <% flash.to_h.each do |msg_type, text| %>
     <div class="alerts-container" style="pointer-events: none;">
       <div class="d-flex justify-content-center px-2">

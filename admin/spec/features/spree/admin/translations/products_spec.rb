@@ -36,9 +36,11 @@ RSpec.describe "Product translations", type: :feature, js: true do
     fill_in :product_meta_title_fr, with: 'French seo title'
     fill_in :product_slug_fr, with: 'french-product-slug'
 
-    click_on Spree.t(:update)
+    within '.drawer-footer' do
+      click_on Spree.t('actions.save')
+    end
 
-    expect(page).to have_content('Translations successfully saved')
+    expect(page).to have_content('successfully updated')
 
     I18n.with_locale(:en) do
       expect(product.reload.name).to eq('product')

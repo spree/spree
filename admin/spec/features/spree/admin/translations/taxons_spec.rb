@@ -34,9 +34,11 @@ RSpec.describe "Taxon translations", type: :feature, js: true do
     fill_in :taxon_name_fr, with: 'French taxon'
     fill_in_rich_text_area 'taxon_description_fr', with: 'French description'
 
-    click_on Spree.t(:update)
+    within '.drawer-footer' do
+      click_on Spree.t('actions.save')
+    end
 
-    expect(page).to have_content('Translations successfully saved')
+    expect(page).to have_content('successfully updated')
 
     I18n.with_locale(:en) do
       expect(taxon.reload.name).to eq('taxon')
