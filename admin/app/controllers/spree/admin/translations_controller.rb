@@ -5,6 +5,8 @@ module Spree
       before_action :load_data, only: [:edit, :update]
       before_action :set_translation_locale, only: [:edit, :update]
 
+      helper_method :resource_class
+
       def edit; end
 
       def update
@@ -60,24 +62,6 @@ module Spree
 
       def load_data
         @locales = (current_store.supported_locales_list - [@default_locale]).sort
-        @resource_name = @resource.try(:name)
-
-        @back_path = case @resource.class.name
-          when 'Spree::OptionType'
-            spree.edit_admin_option_type_path(@resource)
-          when 'Spree::Product'
-            spree.edit_admin_product_path(@resource)
-          when 'Spree::Property'
-            spree.edit_admin_property_path(@resource)
-          when 'Spree::Store'
-            spree.edit_admin_store_path(section: "general-settings")
-          when 'Spree::Taxon'
-            spree.edit_admin_taxonomy_taxon_path(@resource.taxonomy, @resource.id)
-          when 'Spree::Taxonomy'
-            spree.admin_taxonomy_path(@resource)
-          else
-            [:edit, :admin, @resource]
-        end
       end
     end
   end

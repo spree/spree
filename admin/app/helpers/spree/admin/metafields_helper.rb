@@ -8,7 +8,7 @@ module Spree
         options[:class] ||= 'dropdown-item'
         options[:data]  ||= { action: 'drawer#open', turbo_frame: :drawer }
 
-        link_to_with_icon 'edit', Spree.t(:edit_metafields), spree.edit_admin_metafield_path(record, resource_type: record.class.name), options
+        link_to_with_icon 'edit', Spree.t(:metafields), spree.edit_admin_metafield_path(record, resource_type: record.class.name), options
       end
 
       def metafield_definition_resource_types
