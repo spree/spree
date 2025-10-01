@@ -30,6 +30,7 @@
             <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
             <% if record && record.persisted? %>
               <%= link_to_edit_metafields(record) %>
+              <%= link_to_edit_translations(record) %>
 
               <% if record.respond_to?(:audits) && spree.respond_to?(:admin_audits_path) && defined?(Audited) && can?(:read, Audited.audit_class) %>
                 <a href="<%= spree.admin_audits_path(q: { auditable_id_eq: record.id, auditable_type_eq: record.class.to_s }) %>" target="_blank" class="dropdown-item">

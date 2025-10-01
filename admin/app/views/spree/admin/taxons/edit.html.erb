@@ -4,7 +4,6 @@
 <% end %>
 
 <% content_for :page_actions_dropdown do %>
-  <%= link_to_edit_translations(@taxon) %>
   <%= external_page_preview_link(@taxon, name: Spree.t(:taxonomy)) %>
 <% end %>
 

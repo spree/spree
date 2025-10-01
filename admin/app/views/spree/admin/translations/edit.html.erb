@@ -1,57 +1,89 @@
-<% content_for :page_title do %>
-  <%= page_header_back_button @back_path %>
-  <span class="mr-3"><%= Spree.t(:translations_for, resource_name: @resource.try(:name)) %></span>
-<% end %>
-<% if @locales.any?%>
-  <% if @locales.many? %>
-    <%= form_with url: spree.edit_admin_translation_path(@resource, resource_type: @resource.class.to_s), class: "w-100 d-flex justify-content-end mb-3", data: { controller: 'auto-submit', turbo_frame: 'translations_table'}, method: :get do |f| %>
-      <div class="form-inline gap-2">
-        <%= f.label :translation_locale, Spree.t(:language) %>
-        <%= f.select :translation_locale, options_for_select(@locales.map { |locale| [Spree.t('i18n.this_file_language', locale: locale), locale] }, @selected_translation_locale), {}, { class: 'custom-select', data: { action: 'change->auto-submit#submit' } } %>
-      </div>
-    <% end %>
-  <% end %>
-  <%= form_with model: @resource, url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put, class: 'form-horizontal' do |f| %>
-    <div class="card mb-4">
-      <div class="card-body p-0">
-        <%= turbo_frame_tag :translations_table, refresh: "morph" do %>
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:translations_for, resource_name: @resource.try(:name))) %>
+  <% if @locales.any? %>
+    <%= form_for @resource, url: spree.admin_translation_path(@resource, resource_type: @resource.class.to_s), method: :put do |f| %>
+      <div class="drawer-body">
+        <% if @locales.many? %>
+          <div class="form-group mb-3">
+            <%= form_with url: spree.edit_admin_translation_path(@resource, resource_type: @resource.class.to_s), class: "d-flex gap-2", data: { controller: 'auto-submit', turbo_frame: 'translations_content'}, method: :get do |locale_form| %>
+              <%= locale_form.label :translation_locale, Spree.t(:language), class: 'form-label' %>
+              <%= locale_form.select :translation_locale, options_for_select(@locales.map { |locale| [Spree.t('i18n.this_file_language', locale: locale), locale] }, @selected_translation_locale), {}, { class: 'form-select', data: { action: 'change->auto-submit#submit' } } %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= turbo_frame_tag :translations_content do %>
           <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col" class="w-10"><%= Spree.t(:field) %></th>
-                <th scope="col" class="w-40"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</th>
-                <th scope="col" class="w-50"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <% options = { f: f, resource: @resource, locale: @selected_translation_locale } %>
-              <% case @resource.class.name %>
-              <% when 'Spree::OptionType' %>
-                <%= render 'spree/admin/translations/option_types/form', options %>
-              <% when 'Spree::Product' %>
-                <%= render 'spree/admin/translations/products/form', options %>
-              <% when 'Spree::Property' %>
-                <%= render 'spree/admin/translations/properties/form', options %>
-              <% when 'Spree::Store' %>
-                <%= render 'spree/admin/translations/stores/form', options %>
-              <% when 'Spree::Taxon' %>
-                <%= render 'spree/admin/translations/taxons/form', options %>
-              <% when 'Spree::Taxonomy' %>
-                <%= render 'spree/admin/translations/taxonomies/form', options %>
-              <% when 'Spree::Policy' %>
-                <%= render 'spree/admin/translations/policies/form', options %>
-              <% end %>
-            </tbody>
-          </table>
+          <% options = { f: f, resource: @resource, locale: @selected_translation_locale } %>
+
+          <% @resource.class.translatable_fields.each do |field| %>
+            <div class="form-group mb-3">
+              <label class="form-label">
+                <strong><%= Spree.t("activerecord.attributes.#{@resource.class.name.demodulize.underscore}.#{field}") %></strong>
+              </label>
+              <div class="row">
+                <div class="col-6">
+                  <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</label>
+                  <div class="form-control-plaintext border rounded p-2 bg-light">
+                    <%= @resource.public_send(field) %>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></label>
+                  <% case field %>
+                  <% when :description %>
+                    <%= f.spree_rich_text_area "#{field}_#{@selected_translation_locale}", class: 'form-control' %>
+                  <% when :meta_description %>
+                    <%= f.text_area "#{field}_#{@selected_translation_locale}", class: 'form-control', rows: 3 %>
+                  <% else %>
+                    <%= f.text_field "#{field}_#{@selected_translation_locale}", class: 'form-control' %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <% case @resource.class.name %>
+          <% when 'Spree::OptionType' %>
+            <% if @resource.option_values.any? %>
+              <div class="form-group">
+                <h6><%= Spree.t(:option_values) %></h6>
+                <%= f.fields_for :option_values do |option_value_form| %>
+                  <% option_value = option_value_form.object %>
+                  <div class="form-group mb-3">
+                    <label class="form-label">
+                      <strong><%= option_value.name %></strong>
+                    </label>
+                    <div class="row">
+                      <div class="col-6">
+                        <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @default_locale) %> (<%= Spree.t(:default) %>)</label>
+                        <div class="form-control-plaintext border rounded p-2 bg-light">
+                          <%= option_value.name %>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label text-muted small"><%= Spree.t('i18n.this_file_language', locale: @selected_translation_locale) %></label>
+                        <%= option_value_form.text_field "name_#{@selected_translation_locale}", class: 'form-control' %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
         <% end %>
       </div>
-    </div>
-    <div class="form-actions d-flex justify-content-between">
-      <%= turbo_save_button_tag Spree.t('actions.update') %>
-      <%= link_to Spree.t('actions.discard'), @back_path, class: 'btn btn-light', data: { turbo_frame: '_top' } %>
+      <div class="drawer-footer">
+        <%= turbo_save_button_tag %>
+        <%= drawer_discard_button %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="drawer-body">
+      <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
+        <%= icon 'language', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+        <p><%= Spree.t('admin.translations.no_translations_configured') %></p>
+      </div>
     </div>
   <% end %>
-<% else %>
-  <%= render partial: 'spree/admin/translations/translations_unavailable' %>
 <% end %>

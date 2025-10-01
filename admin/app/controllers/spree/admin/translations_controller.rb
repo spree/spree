@@ -2,21 +2,17 @@ module Spree
   module Admin
     class TranslationsController < Spree::Admin::BaseController
       before_action :set_resource, only: [:edit, :update]
-      before_action :load_data, only: [:edit]
+      before_action :load_data, only: [:edit, :update]
       before_action :set_translation_locale, only: [:edit, :update]
 
       def edit; end
 
       def update
-        @resource.update!(permitted_translation_params)
-
-        flash[:success] = Spree.t('notice_messages.translations_saved')
-
-        redirect_to spree.edit_admin_translation_path(
-          @resource,
-          resource_type: @resource.class.to_s,
-          translation_locale: @selected_translation_locale
-        )
+        if @resource.update(permitted_translation_params)
+          flash.now[:success] = flash_message_for(@resource, :successfully_updated)
+        else
+          flash.now[:error] = @resource.errors.full_messages.to_sentence
+        end
       end
 
       private
