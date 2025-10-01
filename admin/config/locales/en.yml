@@ -260,6 +260,9 @@ en:
         automatic_info: Automatically add products to this taxon if they match the rules you set.
         manual: Manual
         manual_info: Curate products manually. You can add or remove them in bulk.
+      translations:
+        configure_store: Configure store
+        no_translations_configured: No translations configured. Please configure more than one locale for the store to use translations.
       upload_new_asset: Upload new asset
       user:
         last_order_placed: Last order placed

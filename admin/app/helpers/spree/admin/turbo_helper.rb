@@ -23,9 +23,9 @@ module Spree
         end
       end
 
-      def turbo_render_alerts
-        turbo_stream.replace :alerts do
-          render 'spree/admin/shared/alerts'
+      def turbo_render_alerts(frame_name = :alerts)
+        turbo_stream.replace frame_name do
+          render 'spree/admin/shared/alerts', frame_name: frame_name
         end
       end
 

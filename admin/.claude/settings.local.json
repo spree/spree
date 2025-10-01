@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "Bash(bundle exec rake:*)"
+      "Bash(bundle exec rake:*)",
+      "Bash(grep:*)",
+      "Bash(bundle install:*)",
+      "Bash(bundle exec rails:*)",
+      "Bash(bundle exec rspec:*)"
     ],
     "deny": [],
     "ask": []

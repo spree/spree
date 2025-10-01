@@ -6,9 +6,6 @@
   <%= Spree.t(:settings) %>
 <% end %>
 
-<%= content_for(:page_actions_dropdown) do %>
-  <%= link_to_edit_translations(@store) %>
-<% end %>
 
 <%= content_for(:page_actions) do %>
   <%= turbo_save_button_tag Spree.t('actions.update'), form: "edit_store_#{@store.id}" %>
