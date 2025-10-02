@@ -69,9 +69,11 @@
                       <%= render 'spree/products/description', product: product, block: block, section: section %>
                     <% when 'Spree::PageBlocks::Metafields' %>
                       <div class="st-accordion" data-controller="accordion">
+                        <% metafields_by_definition = @product.metafields.index_by { |m| m.metafield_definition.id.to_s } %>
                         <% block.preferred_metafield_definition_ids.each do |definition_id| %>
-                          <% metafield = @product.metafields.joins(:metafield_definition).find_by(metafield_definition: { id: definition_id }) %>
+                          <% metafield = metafields_by_definition[definition_id.to_s] %>
                           <% next unless metafield %>
+                          
                           <details class="product-metafield border-b border-default group" id="metafield_<%= metafield.id %>">
                             <summary class="text-sm uppercase tracking-widest inline-flex w-full justify-between items-center py-4 cursor-pointer focus:outline-none">
                               <span><%= metafield.name %></span>
