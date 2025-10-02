@@ -260,7 +260,8 @@ module Spree
           Spree::Metafields::LongText,
           Spree::Metafields::RichText,
           Spree::Metafields::Number,
-          Spree::Metafields::Boolean
+          Spree::Metafields::Boolean,
+          Spree::Metafields::Json
         ]
 
         Rails.application.config.spree.metafield_enabled_resources = [

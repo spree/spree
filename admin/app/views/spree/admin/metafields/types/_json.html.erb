@@ -1,1 +1,4 @@
-<%= f.text_area :value, class: 'form-control', data: { controller: 'textarea-autogrow' } %>
+<div data-controller="codemirror" data-codemirror-language-value="json">
+  <div data-codemirror-target="editor"></div>
+  <%= f.text_area :value, data: { codemirror_target: 'input' } %>
+</div>
