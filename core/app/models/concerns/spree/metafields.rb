@@ -3,9 +3,9 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :metafields, -> { joins(:metafield_definition).includes(:metafield_definition) }, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
-      has_many :public_metafields, -> { joins(:metafield_definition).includes(:metafield_definition).available_on_front_end }, as: :resource, class_name: 'Spree::Metafield'
-      has_many :private_metafields, -> { joins(:metafield_definition).includes(:metafield_definition).available_on_back_end }, as: :resource, class_name: 'Spree::Metafield'
+      has_many :metafields, -> { includes(:metafield_definition) }, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
+      has_many :public_metafields, -> { includes(:metafield_definition).available_on_front_end }, as: :resource, class_name: 'Spree::Metafield'
+      has_many :private_metafields, -> { includes(:metafield_definition).available_on_back_end }, as: :resource, class_name: 'Spree::Metafield'
 
       accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
