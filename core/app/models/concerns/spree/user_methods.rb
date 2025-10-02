@@ -154,7 +154,7 @@ module Spree
     # Returns the full name of the user
     # @return [String]
     def full_name
-      name.full
+      name&.full
     end
 
     private
