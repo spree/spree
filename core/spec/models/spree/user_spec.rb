@@ -18,10 +18,21 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   end
 
   describe '#full_name' do
-    let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+    context 'when names are present' do
+      let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
 
-    it 'returns the full name of the user' do
-      expect(user.full_name).to eq('John Doe')
+      it 'returns the full name of the user' do
+        expect(user.full_name).to eq('John Doe')
+      end
+    end
+
+    context 'when both first and last names are nil' do
+      let(:user) { create(:user, first_name: nil, last_name: nil) }
+
+      it 'does not raise and returns nil' do
+        expect { user.full_name }.not_to raise_error
+        expect(user.full_name).to be_nil
+      end
     end
   end
 
