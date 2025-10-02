@@ -12,7 +12,7 @@
     <% if can?(:manage, Spree::OptionType) %>
       <%= nav_item(Spree.t(:options), spree.admin_option_types_path, active: %w[option_types option_values].include?(controller_name)) %>
     <% end %>
-    <% if can?(:manage, Spree::Property) %>
+    <% if can?(:manage, Spree::Property) && Spree::Config[:product_properties_enabled] %>
       <%= nav_item(Spree.t(:properties), spree.admin_properties_path) %>
     <% end %>
 

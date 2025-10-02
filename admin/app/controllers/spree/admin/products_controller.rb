@@ -322,6 +322,8 @@ module Spree
       end
 
       def build_product_properties
+        return unless Spree::Config[:product_properties_enabled]
+
         Spree::Property.all.each do |property|
           @product.product_properties.build(property: property) unless @product.product_properties.find { |product_property| product_property.property_id == property.id }
         end
