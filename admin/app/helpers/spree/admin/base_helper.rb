@@ -341,9 +341,13 @@ module Spree
         end
       end
 
-      def tooltip(text)
+      def tooltip(text = nil, &block)
         content_tag(:span, role: 'tooltip', data: { tooltip_target: 'tooltip' }, class: 'tooltip-container') do
-          text
+          if block_given?
+            capture(&block)
+          else
+            text
+          end
         end
       end
     end
