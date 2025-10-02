@@ -613,13 +613,11 @@ RSpec.describe 'Product detail page', type: :feature do
   end
 
   it 'shows taxon tree in breadcrumbs' do
-    within turbo_frame do |c|
-      within('nav#breadcrumbs') do
-        expect(c).to have_text('Men')
-        expect(c).to have_text('Clothing')
-        expect(c).to have_text('Shoes')
-        expect(c).to have_text(product.name)
-      end
+    within('nav#breadcrumbs') do
+      expect(page).to have_text('Men')
+      expect(page).to have_text('Clothing')
+      expect(page).to have_text('Shoes')
+      expect(page).to have_text(product.name)
     end
   end
 
