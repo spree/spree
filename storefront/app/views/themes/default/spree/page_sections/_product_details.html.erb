@@ -64,31 +64,16 @@
                         <%= render 'spree/products/add_to_cart_button', product: product, selected_variant: @selected_variant, sticky_button_classes: "w-full" %>
                         <%= render 'spree/products/add_to_wishlist', variant: current_variant, css_classes: 'btn-secondary ml-5 h-12 !py-0 !px-3 border-default', icon_size: 24 %>
                       </div>
-                      <%= render 'spree/products/add_to_waitlist', variant: current_variant if show_waitlist_modal %>
                     <% when 'Spree::PageBlocks::Products::Description' %>
                       <%= render 'spree/products/description', product: product, block: block, section: section %>
                     <% when 'Spree::PageBlocks::Metafields' %>
-                      <div class="st-accordion" data-controller="accordion">
-                        <% metafields_by_definition = @product.metafields.index_by { |m| m.metafield_definition.id.to_s } %>
-                        <% block.preferred_metafield_definition_ids.each do |definition_id| %>
-                          <% metafield = metafields_by_definition[definition_id.to_s] %>
-                          <% next unless metafield %>
-                          
-                          <details class="product-metafield border-b border-default group" id="metafield_<%= metafield.id %>">
-                            <summary class="text-sm uppercase tracking-widest inline-flex w-full justify-between items-center py-4 cursor-pointer focus:outline-none">
-                              <span><%= metafield.name %></span>
-                              <span class="ml-2 transition-transform group-open:rotate-180">
-                                <%= render 'spree/shared/icons/chevron_down' %>
-                              </span>
-                            </summary>
-                            <%= render "spree/metafields/#{metafield.type.demodulize.underscore}", metafield: metafield %>
-                          </details>
-                        <% end %>
-                      </div>
+                      <%= render 'spree/products/metafields', product: product, block: block, section: section %>
                     <% end %>
                   </div>
               <% end %>
             <% end %>
+
+            <%= render 'spree/products/add_to_waitlist', variant: current_variant if show_waitlist_modal %>
           </div>
         </div>
       </div>

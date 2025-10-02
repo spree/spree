@@ -3,7 +3,7 @@
   data-action="waitlist:created@window->modal#close click->modal#closeBackground keyup@window->modal#closeWithKeyboard"
   class="hidden animate-fadeIn fixed inset-0 overflow-y-auto flex items-end md:items-center justify-center z-[9999] h-dvh w-full"
   style="animation-duration: 150ms;">
-  <div class="w-full lg:w-[600px] relative h-auto lg:max-h-screen flex justify-center flex-col gap-4 bg-background p-5 ">
+  <div class="w-full lg:w-[600px] relative h-auto lg:max-h-screen flex justify-center flex-col gap-4 bg-background p-5 border border-default">
     <button
       type="button"
       data-waitlist-close-button
@@ -21,8 +21,8 @@
     </div>
     <%= form_for :waitlist, url: spree.waitlists_path, method: :post, class: "flex w-full gap-4 flex-col", data: { product_form_target: 'addToWaitlistForm', controller: 'turbo-stream-form enable-button' } do |f| %>
       <div class="w-full">
-        <%= f.hidden_field :variant_id, value: variant.id %>
-        <%= f.email_field :email, value: try_spree_current_user&.email, class: 'w-full', required: true, placeholder: Spree.t(:email), data: { enable_button_target: 'input' } %>
+        <%= f.hidden_field :variant_id, value: variant&.id %>
+        <%= f.email_field :email, value: try_spree_current_user&.email, class: 'w-full', required: true, placeholder: Spree.t(:email), data: { enable_button_target: 'input' }, autofocus: true %>
       </div>
       <div class="flex flex-col gap-2">
         <label class="flex items-center gap-2 cursor-pointer group text-sm">
