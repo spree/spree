@@ -54,6 +54,7 @@ import BulkOperationController from 'spree/admin/controllers/bulk_operation_cont
 import CalculatorFieldsController from 'spree/admin/controllers/calculator_fields_controller'
 import CalendarRangeController from 'spree/admin/controllers/calendar_range_controller'
 import Clipboard from 'spree/admin/controllers/clipboard_controller'
+import CodeMirrorController from 'spree/admin/controllers/codemirror_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
 import DrawerController from 'spree/admin/controllers/drawer_controller'
@@ -104,6 +105,7 @@ application.register('calculator-fields', CalculatorFieldsController)
 application.register('calendar-range', CalendarRangeController)
 application.register('checkbox-select-all', CheckboxSelectAll)
 application.register('clipboard', Clipboard)
+application.register('codemirror', CodeMirrorController)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
 application.register('dialog', Dialog)

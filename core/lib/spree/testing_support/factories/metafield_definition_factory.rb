@@ -45,6 +45,12 @@ FactoryBot.define do
       name { 'Featured' }
     end
 
+    trait :json_field do
+      metafield_type { 'Spree::Metafields::Json' }
+      key { 'metadata' }
+      name { 'Metadata' }
+    end
+
     trait :for_variant do
       resource_type { 'Spree::Variant' }
       key { 'variant_custom' }
