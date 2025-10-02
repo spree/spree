@@ -29,7 +29,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     context 'when both first and last names are nil' do
       let(:user) { create(:user, first_name: nil, last_name: nil) }
 
-      it 'does not raise and returns nil' do
+      it 'does not raise error and returns nil' do
         expect { user.full_name }.not_to raise_error
         expect(user.full_name).to be_nil
       end
