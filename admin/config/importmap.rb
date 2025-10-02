@@ -7,7 +7,7 @@ pin "@hotwired/stimulus-loading", to: "stimulus-loading.js"
 pin '@rails/actioncable', to: 'actioncable.esm.js', preload: ['application-spree-admin']
 pin '@rails/activestorage', to: 'activestorage.esm.js', preload: ['application-spree-admin']
 pin '@rails/actiontext', to: '@rails--actiontext@7.2.201.js', preload: ['application-spree-admin']
-pin 'trix', to: 'trix@2.1.12.js', preload: ['application-spree-admin']
+pin 'trix', to: 'trix@2.1.15.js', preload: ['application-spree-admin']
 
 pin 'sortablejs', preload: ['application-spree-admin'] # @1.15.6
 pin 'chartkick', to: 'chartkick.js', preload: ['application-spree-admin']
