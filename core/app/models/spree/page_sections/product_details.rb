@@ -1,7 +1,8 @@
 module Spree
   module PageSections
     class ProductDetails < Spree::PageSection
-      TOP_PADDING_DEFAULT = 20
+      TOP_BORDER_WIDTH_DEFAULT = 0
+      TOP_PADDING_DEFAULT = 0
       BOTTOM_PADDING_DEFAULT = 40
 
       def icon_name
