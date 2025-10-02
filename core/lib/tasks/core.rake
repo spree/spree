@@ -194,7 +194,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   end
 
   desc 'Migrate policies to store policies'
-  task migrate_policies_to_store_policies: :environment do |_t, _args|
+  task migrate_policies: :environment do |_t, _args|
     # Helper to consistently derive policy name
     derive_policy_name = lambda do |name_str|
       name_str.to_s.gsub(/customer_/, '').gsub(/_policy$/, '')
@@ -243,6 +243,28 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
           puts "Migrated #{policy_name} to store #{store.id}"
         end
+      end
+    end
+  end
+
+  desc 'Migrate product details sections to PDP 2.0 with blocks and metafields'
+  task migrate_product_details_pages: :environment do |_t, _args|
+    Spree::PageSections::ProductDetails.find_each do |section|
+      next if section.blocks.any?
+
+      section.send(:create_blocks)
+    end
+
+    Spree::Pages::ProductDetails.find_each do |page|
+      next if page.sections.exists?(type: 'Spree::PageSections::Breadcrumbs')
+
+      breadcrumbs = page.sections.create!(type: 'Spree::PageSections::Breadcrumbs')
+      breadcrumbs.move_to_top
+
+      page_details = page.sections.find_by(type: 'Spree::PageSections::ProductDetails')
+
+      if page_details.present?
+        page_details.update!(preferred_top_padding: 0, preferred_top_border_width: 0)
       end
     end
   end

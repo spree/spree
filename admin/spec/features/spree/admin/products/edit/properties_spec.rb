@@ -11,6 +11,12 @@ describe 'Product Properties', type: :feature, js: true do
 
   before do
     product.set_property('brand', 'Epsilon')
+
+    Spree::Config[:product_properties_enabled] = true
+  end
+
+  after do
+    Spree::Config[:product_properties_enabled] = false
   end
 
   it 'shows associated properties in the form plus a new property' do

@@ -1122,6 +1122,7 @@ html[aria-busy="true"] .hide-on-load {
   opacity: 1;
   transition: all 0.2s;
   visibility: visible;
+  margin-bottom: 1rem;
 }
 
 .st-accordion button {
@@ -1607,7 +1608,7 @@ html[aria-busy="true"] .hide-on-load {
 }
 
 /* PDP properties */
-.product-property {
+.product-property, .product-metafield {
   ul {
     list-style: disc;
     padding-left: 2rem;

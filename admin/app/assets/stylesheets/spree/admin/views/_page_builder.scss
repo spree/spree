@@ -2,7 +2,9 @@ $sidebar-width: 345px;
 $header-height: 43px;
 
 #page-builder {
-  background-color: $gray-100;
+  background-color: $gray-50;
+  height: 100vh;
+  overflow: hidden;
 
   #content {
     margin-left: 0;
@@ -20,18 +22,16 @@ $header-height: 43px;
 
   .nav-pills {
     border-radius: $border-radius;
-    background-color: $gray-100;
-    padding: 0.1rem;
+    background-color: $gray-50;
+    padding: 0.2rem;
 
     .nav-link {
       background-color: transparent;
       padding: 0.25rem 0.5rem;
       border-radius: $border-radius-sm;
-      border: 1px solid transparent;
 
       &.active {
         background-color: $white;
-        border: 1px solid $border-color;
       }
     }
   }
@@ -59,7 +59,6 @@ $header-height: 43px;
   left: 0px;
   background-color: $body-bg;
   border-right: 1px solid $border-color;
-  overflow-y: scroll;
   overflow-x: hidden;
   height: calc(100vh - $header-height);
   .sidebar-header {
@@ -96,7 +95,7 @@ $header-height: 43px;
 }
 #page-builder-preview {
   border-radius: $border-radius;
-  border: 1px solid $gray-300;
+  border: 1px solid $gray-200;
   margin-top: calc($header-height + 1rem);
 }
 
@@ -106,7 +105,7 @@ $header-height: 43px;
   &:hover,
   &:focus {
     color: theme-color('black') !important;
-    background-color: $gray-100 !important;
+    background-color: $gray-50 !important;
     a {
       text-decoration: none !important;
     }
@@ -120,7 +119,7 @@ $header-height: 43px;
     &:hover,
     &:focus,
     &:active {
-      background-color: $gray-200 !important;
+      background-color: $gray-100 !important;
     }
   }
 }

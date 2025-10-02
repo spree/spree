@@ -7,7 +7,11 @@ module Spree
         preference :text_color, :string
 
         def display_name
-          section.product_name.presence || 'Title'
+          I18n.t('activerecord.attributes.spree/product.name')
+        end
+
+        def icon_name
+          'h-1'
         end
       end
     end

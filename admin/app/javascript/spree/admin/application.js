@@ -77,6 +77,7 @@ import SelectController from 'spree/admin/controllers/select_controller'
 import SeoFormController from 'spree/admin/controllers/seo_form_controller'
 import SlugFormController from 'spree/admin/controllers/slug_form_controller'
 import StickyController from 'spree/admin/controllers/sticky_controller'
+import SortableAutoSubmit from 'spree/admin/controllers/sortable_auto_submit_controller'
 import SortableTree from 'spree/admin/controllers/sortable_tree_controller'
 import StockTransferController from 'spree/admin/controllers/stock_transfer_controller'
 import StoreFormController from 'spree/admin/controllers/store_form_controller'
@@ -135,6 +136,7 @@ application.register('seo-form', SeoFormController)
 application.register('slug-form', SlugFormController)
 application.register('sticky', StickyController)
 application.register('sortable', Sortable)
+application.register('sortable-auto-submit', SortableAutoSubmit)
 application.register('sortable-tree', SortableTree)
 application.register('stock-transfer', StockTransferController)
 application.register('store-form', StoreFormController)

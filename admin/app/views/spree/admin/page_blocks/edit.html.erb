@@ -21,7 +21,7 @@
       </div>
       <div class="tab-content" id="pills-tabContent">
         <div class="tab-pane fade <%= tab_selected == :content ? 'show active' : '' %>" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-          <%= render "spree/admin/page_blocks/forms/#{@page_block.type.demodulize.underscore}", f: f  %>
+          <%= render "spree/admin/page_blocks/forms/#{@page_block.form_partial_name}", f: f  %>
           <%= render 'spree/admin/page_blocks/form_tab_buttons', tab: :content %>
         </div>
         <div class="tab-pane fade <%= tab_selected == :design ? 'show active' : '' %>" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">

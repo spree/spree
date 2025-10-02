@@ -5,7 +5,7 @@ module Spree
     # Magic methods
     #
     acts_as_paranoid
-    acts_as_list scope: [:pageable_id, { deleted_at: nil }]
+    acts_as_list scope: [:pageable_type, :pageable_id, { deleted_at: nil }]
 
     #
     # Associations

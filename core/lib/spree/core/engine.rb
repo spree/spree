@@ -194,6 +194,7 @@ module Spree
         ]
 
         Rails.application.config.spree.page_sections = [
+          Spree::PageSections::Breadcrumbs,
           Spree::PageSections::FeaturedPosts,
           Spree::PageSections::TaxonGrid,
           Spree::PageSections::ImageWithText,

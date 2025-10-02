@@ -16,6 +16,7 @@ module Spree
 
       def default_sections
         [
+          Spree::PageSections::Breadcrumbs.new,
           Spree::PageSections::ProductDetails.new,
           Spree::PageSections::RelatedProducts.new
         ]

@@ -56,6 +56,10 @@ module Spree
       name
     end
 
+    def form_partial_name
+      type.demodulize.underscore
+    end
+
     def icon_name
       'fullscreen'
     end

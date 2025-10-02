@@ -10,7 +10,7 @@ module Spree
         end
 
         def display_name
-          'Price'
+          Spree.t(:price)
         end
       end
     end

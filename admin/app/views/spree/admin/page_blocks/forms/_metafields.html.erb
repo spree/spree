@@ -1,0 +1,34 @@
+<div class="form-group">
+  <div class="mb-2">
+    <label class="form-label"><%= Spree.t(:metafields) %></label>
+    <div class="p-1 border rounded d-flex flex-column gap-1 mb-3"
+         data-controller="sortable-auto-submit" 
+         data-sortable-auto-submit-handle-value=".handle"
+    >
+      <% selected_keys = f.object.preferred_metafield_definition_ids.map(&:to_s) %>
+      <% sorted_definitions = f.object.available_metafield_definitions.sort_by { |definition| selected_keys.index(definition.id.to_s) || selected_keys.length } %>
+      <% sorted_definitions.each do |definition| %>
+        <div class="rounded hover-light pl-2 pr-1 py-1 d-flex align-items-center justify-content-between"
+             id="<%= spree_dom_id(definition) %>"
+        >
+          <div class="custom-control custom-checkbox flex-grow-1 d-flex">
+            <input type="checkbox"
+                  class="custom-control-input"
+                  name="<%= "#{f.object_name}[preferred_metafield_definition_ids][]" %>"
+                  id="<%= "#{f.object_name}_preferred_metafield_definition_ids_#{definition.id}" %>"
+                  value="<%= definition.id %>"
+                  data-action="change->auto-submit#submit"
+                  <%= 'checked' if selected_keys.include?(definition.id.to_s) %>>
+            <label class="custom-control-label flex-grow-1" for="<%= "#{f.object_name}_preferred_metafield_definition_ids_#{definition.id}" %>" data-controller="tooltip">
+              <%= definition.name %>
+              <%= tooltip(definition.full_key) %>
+            </label>
+          </div>
+          <button class="btn btn-sm pr-0 handle hover-gray h-100 mr-1 px-1" type="button">
+            <%= icon('grip-vertical', class: 'mr-0') %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
