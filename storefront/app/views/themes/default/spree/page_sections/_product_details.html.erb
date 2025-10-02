@@ -35,7 +35,7 @@
             class="h-full w-full waitlist-modal"
             data-modal-backdrop-color-value="rgba(0,0,0,0.32)">
             <%= form_with(url: spree.line_items_path, method: :post, data: { controller: "turbo-stream-form", product_form_target: "form" }) do |f| %>
-              <%= hidden_field_tag :variant_id, @selected_variant&.id %>
+              <%= hidden_field_tag :variant_id, current_variant&.id %>
 
               <div data-product-form-target="productDetails">
                 <% section.blocks.each do |block| %>
