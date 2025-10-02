@@ -1009,13 +1009,28 @@
                 ]
               },
               {    
-                "group": "Multi-Vendor Marketplace",
+                "group": "B2B Commerce",
                 "pages": [
-                  "use-case/marketplace/model",
-                  "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard", 
-                  "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"  
+                  "use-case/b2b/b2b-commerce-model",
+                  "use-case/b2b/b2b-capabilities",
+                  "use-case/b2b/b2b-admin-capabilities", 
+                  "use-case/b2b/b2b-buyer-capabilities"
+                ]
+              },
+              {    
+                "group": "ChatGPT Integration",
+                "pages": [
+                  "use-case/chatgpt-integration/chatgpt-shopping", 
+                  "use-case/chatgpt-integration/chatgpt-instant-checkout",
+                  "use-case/chatgpt-integration/chatgpt-buyer-experience"  
+                ]
+              },
+              {    
+                "group": "Multi-Store Platform",
+                "pages": [
+                  "use-case/multi-store/model",
+                  "use-case/multi-store/capabilities",
+                  "use-case/multi-tenant/admin-capabilities"
                 ]
               },
               {    
@@ -1031,12 +1046,13 @@
                 ]
               },
                {    
-                "group": "B2B Commerce",
+                "group": "Multi-Vendor Marketplace",
                 "pages": [
-                  "use-case/b2b/b2b-commerce-model",
-                  "use-case/b2b/b2b-capabilities",
-                  "use-case/b2b/b2b-admin-capabilities", 
-                  "use-case/b2b/b2b-buyer-capabilities"
+                  "use-case/marketplace/model",
+                  "use-case/marketplace/capabilities",
+                  "use-case/marketplace/admin-dashboard", 
+                  "use-case/marketplace/vendor-dashboard",
+                  "use-case/marketplace/customer-ux"  
                 ]
               }
             ]
