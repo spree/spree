@@ -3,8 +3,9 @@ require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
   let!(:store) { @default_store }
-  let(:order) { build(:order, store: store) }
+  let(:order) { build(:order, store: store, accept_marketing: accept_marketing) }
   let(:country) { store.default_country || create(:country_us) }
+  let(:accept_marketing) { false }
   let!(:state) { country.states.first || create(:state, country: country, name: 'New York', abbr: 'NY') }
 
   def assert_state_changed(order, from, to)
@@ -469,6 +470,26 @@ describe Spree::Order, type: :model do
         order.updater.update
 
         order.save!
+      end
+
+      describe 'newsletter subscription' do
+        context 'when newsletter is accepted for the order' do
+          let(:accept_marketing) { true }
+
+          it 'subscribes to newsletter' do
+            expect(Spree::NewsletterSubscriber).to receive(:subscribe).with(email: order.email, user: order.user)
+            order.next!
+          end
+        end
+
+        context 'when newsletter is not accepted for the order' do
+          let(:accept_marketing) { false }
+
+          it 'does not subscribe to newsletter' do
+            expect(Spree::NewsletterSubscriber).not_to receive(:subscribe)
+            order.next!
+          end
+        end
       end
 
       it "makes the current credit card a user's default credit card" do

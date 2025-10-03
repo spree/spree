@@ -122,6 +122,7 @@ module Spree
               after_transition to: :complete, do: :redeem_gift_card
               after_transition to: :resumed, do: :after_resume
               after_transition to: :canceled, do: :after_cancel
+              after_transition to: :complete, do: :subscribe_to_newsletter
 
               after_transition from: any - :cart, to: any - [:confirm, :complete] do |order|
                 order.update_totals
@@ -130,6 +131,12 @@ module Spree
             end
 
             alias_method :save_state, :save
+          end
+
+          def subscribe_to_newsletter
+            return unless accept_marketing?
+
+            Spree::NewsletterSubscriber.subscribe(email: email, user: user)
           end
 
           def self.go_to_state(name, options = {})
