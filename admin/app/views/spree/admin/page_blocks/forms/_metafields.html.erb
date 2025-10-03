@@ -5,6 +5,7 @@
          data-controller="sortable-auto-submit" 
          data-sortable-auto-submit-handle-value=".handle"
     >
+      <%= hidden_field_tag "#{f.object_name}[preferred_metafield_definition_ids][]", "" %>
       <% selected_keys = f.object.preferred_metafield_definition_ids.map(&:to_s) %>
       <% sorted_definitions = f.object.available_metafield_definitions.sort_by { |definition| selected_keys.index(definition.id.to_s) || selected_keys.length } %>
       <% sorted_definitions.each do |definition| %>
