@@ -4,7 +4,7 @@ RSpec.describe Spree::Metafield, type: :model do
   context 'Callbacks' do
     it 'sets the type from the metafield definition' do
       metafield_definition = create(:metafield_definition, metafield_type: 'Spree::Metafields::ShortText')
-      metafield = create(:metafield, metafield_definition: metafield_definition)
+      metafield = create(:metafield, metafield_definition: metafield_definition, type: nil)
       expect(metafield.type).to eq('Spree::Metafields::ShortText')
     end
   end
@@ -48,12 +48,12 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::Boolean') }
 
       it 'returns Yes for true values' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: 'true')
+        metafield = Spree::Metafields::Boolean.new(metafield_definition: metafield_definition, value: 'true')
         expect(metafield.csv_value).to eq(Spree.t(:say_yes))
       end
 
       it 'returns No for false values' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: 'false')
+        metafield = Spree::Metafields::Boolean.new(metafield_definition: metafield_definition, value: 'false')
         expect(metafield.csv_value).to eq(Spree.t(:say_no))
       end
     end
@@ -62,7 +62,7 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::Number') }
 
       it 'returns the number as string' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: '123.45')
+        metafield = Spree::Metafields::Number.new(metafield_definition: metafield_definition, value: '123.45')
         expect(metafield.csv_value).to eq('123.45')
       end
     end
@@ -71,7 +71,7 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::Json') }
 
       it 'returns the JSON string' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: '{"key": "value"}')
+        metafield = Spree::Metafields::Json.new(metafield_definition: metafield_definition, value: '{"key": "value"}')
         expect(metafield.csv_value).to eq('{"key": "value"}')
       end
     end
@@ -80,7 +80,7 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::ShortText') }
 
       it 'returns the text value' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: 'Short text')
+        metafield = Spree::Metafields::ShortText.new(metafield_definition: metafield_definition, value: 'Short text')
         expect(metafield.csv_value).to eq('Short text')
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::LongText') }
 
       it 'returns the text value' do
-        metafield = create(:metafield, metafield_definition: metafield_definition, value: 'Long text content')
+        metafield = Spree::Metafields::LongText.new(metafield_definition: metafield_definition, value: 'Long text content')
         expect(metafield.csv_value).to eq('Long text content')
       end
     end
@@ -98,7 +98,7 @@ RSpec.describe Spree::Metafield, type: :model do
       let(:metafield_definition) { create(:metafield_definition, metafield_type: 'Spree::Metafields::RichText') }
 
       it 'returns plain text without HTML tags' do
-        metafield = create(:metafield, metafield_definition: metafield_definition)
+        metafield = Spree::Metafields::RichText.new(metafield_definition: metafield_definition)
         metafield.value = '<p>Rich <strong>text</strong> content</p>'
         expect(metafield.csv_value).to eq('Rich text content')
       end
