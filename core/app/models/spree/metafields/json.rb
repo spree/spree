@@ -9,6 +9,10 @@ module Spree
         value
       end
 
+      def csv_value
+        value.to_s
+      end
+
       private
 
       def value_must_be_valid_json

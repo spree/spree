@@ -29,22 +29,62 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
   end
 
   describe '#csv_headers' do
-    it 'returns the correct headers' do
-      expected_headers = [
-        'Code',
-        'Amount',
-        'Amount Used',
-        'Amount Remaining',
-        'Currency',
-        'Status',
-        'Expires At',
-        'Customer Email',
-        'Customer First Name',
-        'Customer Last Name',
-        'Created At',
-        'Updated At'
-      ]
-      expect(export.csv_headers).to eq(expected_headers)
+    context 'when no metafields exist' do
+      it 'returns gift card headers' do
+        expected_headers = [
+          'Code',
+          'Amount',
+          'Amount Used',
+          'Amount Remaining',
+          'Currency',
+          'Status',
+          'Expires At',
+          'Customer Email',
+          'Customer First Name',
+          'Customer Last Name',
+          'Created At',
+          'Updated At'
+        ]
+        expect(export.csv_headers).to eq(expected_headers)
+      end
+    end
+
+    context 'when metafields exist' do
+      let!(:metafield_definition) do
+        create(:metafield_definition,
+               resource_type: 'Spree::GiftCard',
+               namespace: 'custom',
+               key: 'purchase_location')
+      end
+
+      it 'includes metafield headers' do
+        expected_headers = [
+          'Code',
+          'Amount',
+          'Amount Used',
+          'Amount Remaining',
+          'Currency',
+          'Status',
+          'Expires At',
+          'Customer Email',
+          'Customer First Name',
+          'Customer Last Name',
+          'Created At',
+          'Updated At',
+          'metafield.custom.purchase_location'
+        ]
+        expect(export.csv_headers).to eq(expected_headers)
+      end
+    end
+  end
+
+  describe '#scope_includes' do
+    it 'includes metafields' do
+      expect(export.scope_includes).to include({ metafields: :metafield_definition })
+    end
+
+    it 'includes user' do
+      expect(export.scope_includes).to include(:user)
     end
   end
 end

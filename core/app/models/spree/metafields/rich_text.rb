@@ -9,6 +9,10 @@ module Spree
       def serialize_value
         value&.body&.to_s
       end
+
+      def csv_value
+        value&.body&.to_plain_text || ''
+      end
     end
   end
 end

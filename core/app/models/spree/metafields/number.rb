@@ -6,6 +6,10 @@ module Spree
       def serialize_value
         value.to_d
       end
+
+      def csv_value
+        value.to_s
+      end
     end
   end
 end

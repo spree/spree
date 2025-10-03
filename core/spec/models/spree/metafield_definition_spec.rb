@@ -42,4 +42,18 @@ RSpec.describe Spree::MetafieldDefinition, type: :model do
       end
     end
   end
+
+  describe '#csv_header_name' do
+    it 'returns the CSV header name with metafield prefix' do
+      metafield_definition = build(:metafield_definition, namespace: 'custom', key: 'field1')
+      expect(metafield_definition.csv_header_name).to eq('metafield.custom.field1')
+    end
+  end
+
+  describe '#full_key' do
+    it 'returns the full key with namespace' do
+      metafield_definition = build(:metafield_definition, namespace: 'custom', key: 'field1')
+      expect(metafield_definition.full_key).to eq('custom.field1')
+    end
+  end
 end

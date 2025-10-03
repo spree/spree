@@ -128,4 +128,39 @@ RSpec.describe Spree::CSV::CustomerPresenter do
       expect(described_class::HEADERS).to eq(expected_headers)
     end
   end
+
+  describe 'metafields' do
+    let!(:metafield_definition) do
+      create(:metafield_definition,
+             resource_type: customer.class.to_s,
+             namespace: 'custom',
+             key: 'loyalty_points')
+    end
+    let!(:metafield) do
+      customer.metafields.create!(
+        metafield_definition: metafield_definition,
+        value: '500'
+      )
+    end
+
+    it 'includes metafield values at the end of the array' do
+      result = presenter.call
+      expect(result.last).to eq '500'
+    end
+
+    context 'when customer has no metafield value' do
+      let(:customer_without_metafield) do
+        create(:user,
+               first_name: 'Jane',
+               last_name: 'Smith',
+               email: 'jane.smith@example.com')
+      end
+      let(:presenter) { described_class.new(customer_without_metafield) }
+
+      it 'returns nil for metafield' do
+        result = presenter.call
+        expect(result.last).to be_nil
+      end
+    end
+  end
 end

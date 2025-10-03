@@ -41,6 +41,12 @@ module Spree
       "#{namespace}.#{key}"
     end
 
+    # Returns the CSV header name for this metafield
+    # @return [String] eg. metafield.custom.id
+    def csv_header_name
+      "metafield.#{full_key}"
+    end
+
     # Returns the available types
     # @return [Array<Class>]
     def self.available_types

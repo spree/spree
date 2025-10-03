@@ -1,6 +1,8 @@
 module Spree
   module CSV
     class GiftCardPresenter
+      include Spree::CSV::MetafieldsHelper
+
       HEADERS = [
         'Code',
         'Amount',
@@ -23,7 +25,7 @@ module Spree
       attr_accessor :gift_card
 
       def call
-        [
+        csv = [
           gift_card.display_code,
           gift_card.display_amount,
           gift_card.display_amount_used,
@@ -37,6 +39,10 @@ module Spree
           gift_card.created_at&.strftime('%Y-%m-%d %H:%M:%S'),
           gift_card.updated_at&.strftime('%Y-%m-%d %H:%M:%S')
         ]
+
+        csv += metafields_for_csv(gift_card)
+
+        csv
       end
     end
   end

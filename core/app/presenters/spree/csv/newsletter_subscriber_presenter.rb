@@ -1,6 +1,8 @@
 module Spree
   module CSV
     class NewsletterSubscriberPresenter
+      include Spree::CSV::MetafieldsHelper
+
       HEADERS = [
         'Email',
         'Customer Name',
@@ -18,7 +20,7 @@ module Spree
       attr_accessor :newsletter_subscriber
 
       def call
-        [
+        csv = [
           newsletter_subscriber.email,
           newsletter_subscriber.user&.full_name,
           newsletter_subscriber.user_id,
@@ -27,6 +29,10 @@ module Spree
           newsletter_subscriber.created_at,
           newsletter_subscriber.updated_at
         ]
+
+        csv += metafields_for_csv(newsletter_subscriber)
+
+        csv
       end
     end
   end
