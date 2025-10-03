@@ -14,6 +14,10 @@ module Spree
         def display_name
           Spree.t('page_blocks.products.buy_buttons.display_name')
         end
+
+        def form_partial_name
+          'products/buy_buttons'
+        end
       end
     end
   end
