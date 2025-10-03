@@ -1,1 +1,4 @@
-<%= f.spree_check_box :value %>
+<div class="custom-control custom-checkbox">
+  <%= f.check_box :value, class: 'custom-control-input' %>
+  <%= f.label :value, Spree.t(:say_yes), class: 'custom-control-label' %>
+</div>
