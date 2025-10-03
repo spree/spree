@@ -5,7 +5,7 @@
       <%= raw(product.storefront_description) %>
     </div>
     <% if description_text.size > 250 %>
-      <%= button_tag Spree.t(:read_more), data: { action: "read-more#toggle" }, class: "font-bold underline text-sm" %>
+      <%= button_tag Spree.t(:read_more), type: 'button', data: { action: "read-more#toggle" }, class: "font-bold underline text-sm" %>
     <% end %>
   </div>
 <% end %>
