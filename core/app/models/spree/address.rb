@@ -179,7 +179,7 @@ module Spree
     end
 
     def require_phone?
-      Spree::Config[:address_requires_phone]
+      !quick_checkout && Spree::Config[:address_requires_phone]
     end
 
     def require_zipcode?
