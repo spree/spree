@@ -72,6 +72,8 @@ module Spree
       #
       # @return [Array] An array containing the combined product and variant CSV data.
       def call
+        total_on_hand = variant.total_on_hand
+
         csv = [
           product.id,
           variant.sku,
@@ -87,7 +89,7 @@ module Spree
           index.zero? ? product.tag_list.to_s : nil,
           index.zero? ? product.label_list.to_s : nil,
           variant.amount_in(currency).to_f,
-          variant.compare_at_price&.to_f,
+          variant.compare_at_amount_in(currency).to_f,
           currency,
           variant.width,
           variant.height,
@@ -98,7 +100,7 @@ module Spree
           variant.available_on&.strftime('%Y-%m-%d %H:%M:%S'),
           (variant.discontinue_on || product.discontinue_on)&.strftime('%Y-%m-%d %H:%M:%S'),
           variant.track_inventory?,
-          variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand,
+          total_on_hand == BigDecimal::INFINITY ? '∞' : total_on_hand,
           variant.backorderable?,
           variant.tax_category&.name,
           variant.digital?,

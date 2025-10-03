@@ -3,14 +3,14 @@ module Spree
     class Products < Spree::Export
       # to avoid N+1 queries
       def scope_includes
-        includes = [:tax_category, :master, { taxons: :taxonomy }, { variants_including_master: variant_includes }]
+        includes = [:tax_category, :master, :option_types, { taxons: :taxonomy }, { variants_including_master: variant_includes }]
         includes << { product_properties: [:property] } if Spree::Config[:product_properties_enabled]
         includes << { metafields: :metafield_definition }
         includes
       end
 
       def variant_includes
-        [:images, :prices, :stock_items, { option_values: [:option_type] }]
+        [:images, :prices, :stock_items, :stock_locations, { option_values: [:option_type] }]
       end
 
       def multi_line_csv?
