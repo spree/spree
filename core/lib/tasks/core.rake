@@ -252,19 +252,32 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     Spree::PageSections::ProductDetails.find_each do |section|
       next if section.blocks.any?
 
-      section.send(:create_blocks)
+      if defined?(SpreeMultiTenant)
+        SpreeMultiTenant.with_tenant(section.tenant) do
+          section.send(:create_blocks)
+        end
+      else
+        section.send(:create_blocks)
+      end
     end
 
     Spree::Pages::ProductDetails.find_each do |page|
       next if page.sections.exists?(type: 'Spree::PageSections::Breadcrumbs')
 
-      breadcrumbs = page.sections.create!(type: 'Spree::PageSections::Breadcrumbs')
-      breadcrumbs.move_to_top
+      block = proc do
+        breadcrumbs = page.sections.create!(type: 'Spree::PageSections::Breadcrumbs')
+        breadcrumbs.move_to_top
 
-      page_details = page.sections.find_by(type: 'Spree::PageSections::ProductDetails')
+        page_details = page.sections.find_by(type: 'Spree::PageSections::ProductDetails')
+        if page_details.present?
+          page_details.update!(preferred_top_padding: 0, preferred_top_border_width: 0)
+        end
+      end
 
-      if page_details.present?
-        page_details.update!(preferred_top_padding: 0, preferred_top_border_width: 0)
+      if defined?(SpreeMultiTenant)
+        SpreeMultiTenant.with_tenant(page.tenant, &block)
+      else
+        block.call
       end
     end
   end

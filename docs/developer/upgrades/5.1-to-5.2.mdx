@@ -1,0 +1,73 @@
+---
+title: Upgrading to Spree 5.2
+description: This guide covers upgrading a Spree 5.1 application to Spree 5.2.
+---
+
+<Warning>
+  Spree 5.2 isn't yet released. This guide is a work in progress. If you find any issues, please [report them](https://github.com/spree/spree/issues). If you want to contribute to this guide, please click "Suggest edits" at the bottom of this page. Thank you!
+</Warning>
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.1](/developer/upgrades/5.1-to-5.1)
+</Info>
+
+## Upgrade steps
+
+<AccordionGroup>
+  <Accordion title="1. Update gems">
+
+    ```bash
+    bundle update
+    ```
+  </Accordion>
+
+  <Accordion title="2. Install and run missing migrations">
+
+    ```bash
+    bin/rake spree:install:migrations && bin/rails db:migrate
+    ```
+  </Accordion>
+
+  <Accordion title="3. Migrate to metafields or keep using properties">
+    Spree 5.2 introduces Metafields, which are a new way to store additional information about an object. Previously, we used Product Properties to enrich products. Metafields are more powerful, more flexible and can be attached to any object not just products.
+
+    However we now that properties were available in Spree since it's beginning. So we decided to keep them for backward compatibility until Spree 6.0 to give you time to migrate to metafields.
+
+    To keep using properties, you will need to set a configuration flag in your `config/initializers/spree.rb` file:
+
+    ```bash
+    Spree.config do |config|
+      config.product_properties_enabled = true
+    end
+    ```
+
+    You can still use metafields, along side properties.
+
+    To migrate to metafields, you will need to run the following command:
+
+    ```bash
+    bin/rake db:migrate_product_properties_to_metafields
+    ```
+
+    This will migrate your current data to the new format.
+
+    Remember that you will need to update your API calls to fetch metafields instead of properties, eg.
+
+    ```curl
+    curl --request GET \
+         --url 'https://demo.spreecommerce.org/api/v2/storefront/products/1?include=metafields' \
+         --header 'Accept: application/vnd.api+json'
+    ```
+
+  </Accordion>
+
+  <Accordion title="4. Migrate Product Details pages to PDP 2.0 with blocks and metafields">
+    Spree 5.2 greatly enhances the product details page management in page builder with block support and metafields. To ensure your existing product details pages are migrated to the new system, run the following command:
+
+    ```bash
+    bin/rake db:migrate_product_details_pages
+    ```
+
+    This works great with our default storefront theme. If you're using a custom theme, you will need to adjust your templates.
+  </Accordion>
+</AccordionGroup>
