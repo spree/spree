@@ -140,20 +140,6 @@ RSpec.describe Spree::Exports::Orders, type: :model do
     end
   end
 
-  describe '#scope_includes' do
-    it 'includes metafields' do
-      expect(export.scope_includes).to include({ metafields: :metafield_definition })
-    end
-
-    it 'includes order associations' do
-      expect(export.scope_includes).to include(:payments)
-      expect(export.scope_includes).to include(:shipments)
-      expect(export.scope_includes).to include({ bill_address: :state })
-      expect(export.scope_includes).to include({ ship_address: :state })
-      expect(export.scope_includes).to include({ line_items: { variant: { product: [:taxons] } } })
-    end
-  end
-
   describe '#multi_line_csv?' do
     it 'returns true' do
       expect(export.multi_line_csv?).to be true

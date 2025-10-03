@@ -3,10 +3,11 @@ module Spree
     class Orders < Spree::Export
       def scope_includes
         [
+          :store,
           :payments,
           :shipments,
-          { bill_address: :state },
-          { ship_address: :state },
+          { bill_address: [:state, :country] },
+          { ship_address: [:state, :country] },
           { line_items: { variant: { product: [:taxons] } } },
           { metafields: :metafield_definition }
         ]

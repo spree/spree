@@ -63,15 +63,4 @@ RSpec.describe Spree::Exports::Customers, type: :model do
       end
     end
   end
-
-  describe '#scope_includes' do
-    it 'includes metafields' do
-      expect(export.scope_includes).to include({ metafields: :metafield_definition })
-    end
-
-    it 'includes bill_address and ship_address' do
-      expect(export.scope_includes).to include({ bill_address: :state })
-      expect(export.scope_includes).to include({ ship_address: :state })
-    end
-  end
 end

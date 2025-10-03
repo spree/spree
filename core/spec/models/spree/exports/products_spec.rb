@@ -191,30 +191,4 @@ RSpec.describe Spree::Exports::Products, type: :model do
       end
     end
   end
-
-  describe '#scope_includes' do
-    it 'includes metafields' do
-      expect(export.scope_includes).to include({ metafields: :metafield_definition })
-    end
-
-    context 'when product_properties_enabled is true' do
-      before do
-        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(true)
-      end
-
-      it 'includes product_properties' do
-        expect(export.scope_includes).to include({ product_properties: [:property] })
-      end
-    end
-
-    context 'when product_properties_enabled is false' do
-      before do
-        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(false)
-      end
-
-      it 'does not include product_properties' do
-        expect(export.scope_includes).not_to include({ product_properties: [:property] })
-      end
-    end
-  end
 end

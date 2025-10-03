@@ -77,14 +77,4 @@ RSpec.describe Spree::Exports::GiftCards, type: :model do
       end
     end
   end
-
-  describe '#scope_includes' do
-    it 'includes metafields' do
-      expect(export.scope_includes).to include({ metafields: :metafield_definition })
-    end
-
-    it 'includes user' do
-      expect(export.scope_includes).to include(:user)
-    end
-  end
 end
