@@ -90,6 +90,13 @@ module Spree
       raise NotImplementedError, 'csv_headers must be implemented'
     end
 
+    # Returns an array of metafield headers for the model
+    #
+    # @return [Array<String>]
+    def metafields_headers
+      @metafields_headers ||= Spree::MetafieldDefinition.for_resource_type(model_class.to_s).order(:namespace, :key).map(&:csv_header_name)
+    end
+
     def build_csv_line(_record)
       raise NotImplementedError, 'build_csv_line must be implemented'
     end

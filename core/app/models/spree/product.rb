@@ -618,11 +618,18 @@ module Spree
 
     def to_csv(store = nil)
       store ||= stores.default || stores.first
-      properties_for_csv ||= Spree::Property.order(:position).flat_map do |property|
-        [
-          property.name,
-          product_properties.find { |pp| pp.property_id == property.id }&.value
-        ]
+      properties_for_csv = if Spree::Config[:product_properties_enabled]
+        Spree::Property.order(:position).flat_map do |property|
+          [
+            property.name,
+            product_properties.find { |pp| pp.property_id == property.id }&.value
+          ]
+        end
+      else
+        []
+      end
+      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
+        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
       end
       taxons_for_csv ||= taxons.manual.reorder(depth: :desc).first(3).pluck(:pretty_name)
       taxons_for_csv.fill(nil, taxons_for_csv.size...3)
@@ -631,10 +638,10 @@ module Spree
 
       if has_variants?
         variants_including_master.each_with_index do |variant, index|
-          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store).call
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store, metafields_for_csv).call
         end
       else
-        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store).call
+        csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store, metafields_for_csv).call
       end
 
       csv_lines

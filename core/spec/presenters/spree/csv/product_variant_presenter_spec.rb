@@ -6,7 +6,8 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
   let(:variant) { product.master }
   let(:properties) { [] }
   let(:taxons) { [] }
-  let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store) }
+  let(:metafields) { [] }
+  let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, metafields) }
 
   let!(:variant_images) { create_list(:image, 3, viewable: variant) }
 
@@ -55,7 +56,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
     end
 
     context 'when index is not zero' do
-      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store) }
+      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, metafields) }
 
       let!(:color_option) { create(:option_type, name: 'Color', presentation: 'Color', products: [product]) }
       let!(:size_option) { create(:option_type, name: 'Size', presentation: 'Size', products: [product]) }
@@ -153,6 +154,30 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
     it 'returns nil for option type without value' do
       expect(presenter.option_value(create(:option_type))).to be_nil
+    end
+  end
+
+  describe 'metafields' do
+    context 'when index is zero' do
+      let(:metafields) { ['value1', 'value2'] }
+      let(:presenter) { described_class.new(product, variant, 0, properties, taxons, store, metafields) }
+
+      it 'includes metafields at the end of the array' do
+        result = presenter.call
+        expect(result[-2]).to eq 'value1'
+        expect(result[-1]).to eq 'value2'
+      end
+    end
+
+    context 'when index is not zero' do
+      let(:metafields) { ['value1', 'value2'] }
+      let(:presenter) { described_class.new(product, variant, 1, properties, taxons, store, metafields) }
+
+      it 'does not include metafields' do
+        result = presenter.call
+        expect(result).not_to include('value1')
+        expect(result).not_to include('value2')
+      end
     end
   end
 end

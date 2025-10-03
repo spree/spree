@@ -21,7 +21,6 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
 
     it 'returns the correct CSV data' do
       expect(subject).to be_an(Array)
-      expect(subject.length).to eq(12)
       expect(subject[0]).to eq('ABC123')           # Code
       expect(subject[4]).to eq('USD')              # Currency
       expect(subject[5]).to eq('active')           # Status
@@ -67,6 +66,36 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
         'Updated At'
       ]
       expect(Spree::CSV::GiftCardPresenter::HEADERS).to eq(expected_headers)
+    end
+  end
+
+  describe 'metafields' do
+    let!(:metafield_definition) do
+      create(:metafield_definition,
+             resource_type: 'Spree::GiftCard',
+             namespace: 'custom',
+             key: 'purchase_location')
+    end
+    let!(:metafield) do
+      gift_card.metafields.create!(
+        metafield_definition: metafield_definition,
+        value: 'Online Store'
+      )
+    end
+
+    it 'includes metafield values at the end of the array' do
+      result = presenter.call
+      expect(result.last).to eq 'Online Store'
+    end
+
+    context 'when gift card has no metafield value' do
+      let(:gift_card_without_metafield) { create(:gift_card, store: store) }
+      let(:presenter) { described_class.new(gift_card_without_metafield) }
+
+      it 'returns nil for metafield' do
+        result = presenter.call
+        expect(result.last).to be_nil
+      end
     end
   end
 end

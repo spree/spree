@@ -850,9 +850,13 @@ module Spree
     end
 
     def to_csv(_store = nil)
+      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
+        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      end
+
       csv_lines = []
       all_line_items.each_with_index do |line_item, index|
-        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index).call
+        csv_lines << Spree::CSV::OrderLineItemPresenter.new(self, line_item, index, metafields_for_csv).call
       end
       csv_lines
     end

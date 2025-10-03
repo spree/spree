@@ -34,6 +34,10 @@ module Spree
       value
     end
 
+    def csv_value
+      value.to_s
+    end
+
     private
 
     def set_type_from_metafield_definition

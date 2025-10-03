@@ -24,4 +24,197 @@ RSpec.describe Spree::Exports::Products, type: :model do
       end
     end
   end
+
+  describe '#csv_headers' do
+    context 'when product_properties_enabled is false and no metafields' do
+      before do
+        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(false)
+      end
+
+      it 'returns product variant headers without properties' do
+        expected_headers = [
+          'product_id',
+          'sku',
+          'name',
+          'slug',
+          'status',
+          'vendor_name',
+          'brand_name',
+          'description',
+          'meta_title',
+          'meta_description',
+          'meta_keywords',
+          'tags',
+          'labels',
+          'price',
+          'compare_at_price',
+          'currency',
+          'width',
+          'height',
+          'depth',
+          'dimensions_unit',
+          'weight',
+          'weight_unit',
+          'available_on',
+          'discontinue_on',
+          'track_inventory',
+          'inventory_count',
+          'inventory_backorderable',
+          'tax_category',
+          'digital',
+          'image1_src',
+          'image2_src',
+          'image3_src',
+          'option1_name',
+          'option1_value',
+          'option2_name',
+          'option2_value',
+          'option3_name',
+          'option3_value',
+          'category1',
+          'category2',
+          'category3'
+        ]
+        expect(export.csv_headers).to eq(expected_headers)
+      end
+    end
+
+    context 'when product_properties_enabled is true' do
+      before do
+        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(true)
+        create(:property)
+      end
+
+      it 'includes property headers' do
+        expected_headers = [
+          'product_id',
+          'sku',
+          'name',
+          'slug',
+          'status',
+          'vendor_name',
+          'brand_name',
+          'description',
+          'meta_title',
+          'meta_description',
+          'meta_keywords',
+          'tags',
+          'labels',
+          'price',
+          'compare_at_price',
+          'currency',
+          'width',
+          'height',
+          'depth',
+          'dimensions_unit',
+          'weight',
+          'weight_unit',
+          'available_on',
+          'discontinue_on',
+          'track_inventory',
+          'inventory_count',
+          'inventory_backorderable',
+          'tax_category',
+          'digital',
+          'image1_src',
+          'image2_src',
+          'image3_src',
+          'option1_name',
+          'option1_value',
+          'option2_name',
+          'option2_value',
+          'option3_name',
+          'option3_value',
+          'category1',
+          'category2',
+          'category3',
+          'property1_name',
+          'property1_value'
+        ]
+        expect(export.csv_headers).to eq(expected_headers)
+      end
+    end
+
+    context 'when metafields exist' do
+      before do
+        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(false)
+      end
+
+      let!(:metafield_definition) { create(:metafield_definition, resource_type: 'Spree::Product', namespace: 'custom', key: 'field1') }
+
+      it 'includes metafield headers' do
+        expected_headers = [
+          'product_id',
+          'sku',
+          'name',
+          'slug',
+          'status',
+          'vendor_name',
+          'brand_name',
+          'description',
+          'meta_title',
+          'meta_description',
+          'meta_keywords',
+          'tags',
+          'labels',
+          'price',
+          'compare_at_price',
+          'currency',
+          'width',
+          'height',
+          'depth',
+          'dimensions_unit',
+          'weight',
+          'weight_unit',
+          'available_on',
+          'discontinue_on',
+          'track_inventory',
+          'inventory_count',
+          'inventory_backorderable',
+          'tax_category',
+          'digital',
+          'image1_src',
+          'image2_src',
+          'image3_src',
+          'option1_name',
+          'option1_value',
+          'option2_name',
+          'option2_value',
+          'option3_name',
+          'option3_value',
+          'category1',
+          'category2',
+          'category3',
+          'metafield.custom.field1'
+        ]
+        expect(export.csv_headers).to eq(expected_headers)
+      end
+    end
+  end
+
+  describe '#scope_includes' do
+    it 'includes metafields' do
+      expect(export.scope_includes).to include({ metafields: :metafield_definition })
+    end
+
+    context 'when product_properties_enabled is true' do
+      before do
+        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(true)
+      end
+
+      it 'includes product_properties' do
+        expect(export.scope_includes).to include({ product_properties: [:property] })
+      end
+    end
+
+    context 'when product_properties_enabled is false' do
+      before do
+        allow(Spree::Config).to receive(:[]).with(:product_properties_enabled).and_return(false)
+      end
+
+      it 'does not include product_properties' do
+        expect(export.scope_includes).not_to include({ product_properties: [:property] })
+      end
+    end
+  end
 end

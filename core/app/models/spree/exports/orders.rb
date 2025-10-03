@@ -7,7 +7,8 @@ module Spree
           :shipments,
           { bill_address: :state },
           { ship_address: :state },
-          { line_items: { variant: { product: [:taxons] } } }
+          { line_items: { variant: { product: [:taxons] } } },
+          { metafields: :metafield_definition }
         ]
       end
 
@@ -16,7 +17,7 @@ module Spree
       end
 
       def csv_headers
-        Spree::CSV::OrderLineItemPresenter::HEADERS
+        Spree::CSV::OrderLineItemPresenter::HEADERS + metafields_headers
       end
     end
   end

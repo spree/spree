@@ -3,7 +3,10 @@ module Spree
     class Products < Spree::Export
       # to avoid N+1 queries
       def scope_includes
-        [:tax_category, :master, { taxons: :taxonomy }, { product_properties: [:property] }, { variants_including_master: variant_includes }]
+        includes = [:tax_category, :master, { taxons: :taxonomy }, { variants_including_master: variant_includes }]
+        includes << { product_properties: [:property] } if Spree::Config[:product_properties_enabled]
+        includes << { metafields: :metafield_definition }
+        includes
       end
 
       def variant_includes
@@ -24,7 +27,10 @@ module Spree
       end
 
       def csv_headers
-        @csv_headers ||= Spree::CSV::ProductVariantPresenter::CSV_HEADERS + properties_headers
+        headers = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.dup
+        headers += properties_headers if Spree::Config[:product_properties_enabled]
+        headers += metafields_headers
+        @csv_headers ||= headers
       end
 
       def properties_headers

@@ -1,6 +1,8 @@
 module Spree
   module CSV
     class CustomerPresenter
+      include Spree::CSV::MetafieldsHelper
+
       HEADERS = [
         'First Name',
         'Last Name',
@@ -28,7 +30,7 @@ module Spree
       attr_accessor :customer
 
       def call
-        [
+        csv = [
           customer.first_name,
           customer.last_name,
           customer.email,
@@ -47,6 +49,10 @@ module Spree
           customer.completed_orders.count,
           customer.tag_list
         ]
+
+        csv += metafields_for_csv(customer)
+
+        csv
       end
     end
   end
