@@ -29,7 +29,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[11]).to eq product.tag_list.to_s
       expect(subject[12]).to eq product.label_list.to_s
       expect(subject[13]).to eq variant.amount_in(store.default_currency).to_f
-      expect(subject[14]).to eq variant.compare_at_price&.to_f
+      expect(subject[14]).to eq variant.compare_at_amount_in(store.default_currency).to_f
       expect(subject[15]).to eq store.default_currency
       expect(subject[16]).to eq variant.width
       expect(subject[17]).to eq variant.height

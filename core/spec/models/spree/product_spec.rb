@@ -972,6 +972,14 @@ describe Spree::Product, type: :model do
     end
 
     context 'when product has no variants' do
+      before do
+        Spree::Config[:product_properties_enabled] = true
+      end
+
+      after do
+        Spree::Config[:product_properties_enabled] = false
+      end
+
       it 'returns an array with one line of CSV data' do
         csv_lines = product.to_csv(store)
         expect(csv_lines.size).to eq(1)
