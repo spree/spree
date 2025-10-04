@@ -26,10 +26,18 @@ describe Spree::Promotion::Rules::OptionValue do
       it { is_expected.to be true }
     end
 
-    context 'when promotable is not an order' do
+    context 'when promotable is a line item' do
       let(:promotable) { Spree::LineItem.new }
 
       it { is_expected.to be false }
+
+      context 'for an automatic promotion' do
+        before do
+          rule.promotion = build(:promotion, kind: :automatic)
+        end
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -52,6 +60,12 @@ describe Spree::Promotion::Rules::OptionValue do
       before do
         rule.preferred_eligible_values = [123235234, 4531236]
       end
+
+      it { is_expected.to be false }
+    end
+
+    context 'for a line item promotable' do
+      let(:promotable) { line_item }
 
       it { is_expected.to be false }
     end
