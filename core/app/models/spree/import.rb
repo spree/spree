@@ -2,7 +2,6 @@ require 'csv'
 
 module Spree
   class Import < Spree.base_class
-    include Spree::SingleStoreResource
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
 
@@ -67,7 +66,7 @@ module Spree
 
     # eg. Spree::Imports::Orders => orders-store-my-store-code-20241030133348.csv
     def import_file_name
-      "#{type.demodulize.underscore}-#{store.code}-#{created_at.strftime('%Y%m%d%H%M%S')}.csv"
+      "#{type.demodulize.underscore}-#{owner.type.demodulize.underscore}-#{owner.id}-#{created_at.strftime('%Y%m%d%H%M%S')}.csv"
     end
 
     def import_tmp_file_path
@@ -75,7 +74,7 @@ module Spree
     end
 
     def send_import_done_email
-      Spree::ImportMailer.import_done(self).deliver_later
+      # Spree::ImportMailer.import_done(self).deliver_later
     end
 
     def csv_headers
@@ -88,7 +87,7 @@ module Spree
     def create_mappings
       csv_headers.each do |header|
         mappings.find_or_create_by(
-          store: store,
+          owner: owner,
           import_type: type,
           external_column_key: header.parameterize
         ).tap do |mapping|
