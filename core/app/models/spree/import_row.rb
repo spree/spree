@@ -4,12 +4,12 @@ module Spree
     # Associations
     #
     belongs_to :import, class_name: 'Spree::Import'
-    belongs_to :item, polymorphic: true
+    belongs_to :item, polymorphic: true, optional: true # eg. Spree::Variant, Spree::Order, etc.
 
     #
     # Validations
     #
     validates :import, :data, presence: true
-    validate :row_number, uniqueness: { scope: :import_id }, numericality: { only_integer: true }, presence: true
+    validate :row_number, uniqueness: { scope: :import_id }, numericality: { only_integer: true, greater_than: 0 }, presence: true
   end
 end

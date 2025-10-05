@@ -1,10 +1,11 @@
 module Spree
   module Admin
-    class ExportsController < ResourceController
+    class ImportsController < ResourceController
       include ActiveStorage::SetCurrent # Needed for ActiveStorage to work on development env
 
       new_action.before :assign_params
       create.before :set_user
+      create.before :set_owner
 
       # GET /admin/imports/:id
       def show
@@ -17,16 +18,16 @@ module Spree
         @object.user = try_spree_current_user
       end
 
+      def set_owner
+        @object.owner = current_store
+      end
+
       def location_after_save
         spree.admin_import_path(@object)
       end
 
       def assign_params
-        @object.type = permitted_resource_params[:type] if available_types.map(&:to_s).include?(permitted_resource_params[:type])
-      end
-
-      def permitted_resource_params
-        params.require(:import).permit(permitted_import_attributes)
+        @object.type = available_types.map(&:to_s).find { |type| type == params.dig(:import, :type) } || available_types.first.to_s
       end
 
       def available_types
