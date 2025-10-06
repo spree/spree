@@ -162,6 +162,10 @@ pin "crelt" # @1.0.6
 pin "style-mod" # @4.1.2
 pin "w3c-keyname" # @2.2.8
 
+# Highlight.js
+pin "@highlightjs/cdn-assets/es/core.min.js", to: "@highlightjs--cdn-assets--es--core.min.js.js" # @11.11.1
+pin "@highlightjs/cdn-assets/es/languages/json.min.js", to: "@highlightjs--cdn-assets--es--languages--json.min.js.js" # @11.11.1
+
 pin_all_from Spree::Admin::Engine.root.join('app/javascript/spree/admin/controllers'),
              under: 'spree/admin/controllers',
              to: 'spree/admin/controllers',

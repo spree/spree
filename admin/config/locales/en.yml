@@ -5,6 +5,7 @@ en:
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
+      show_json: Show JSON
       back_to_dashboard: Back to Dashboard
       bulk_ops:
         products:
@@ -94,6 +95,8 @@ en:
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
+      json_preview:
+        no_api_response: No API response found for this resource
       manage_currencies: Manage Currencies
       manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations

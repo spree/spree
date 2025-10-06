@@ -1,0 +1,81 @@
+module Spree
+  module Admin
+    module JsonPreviewHelper
+      def link_to_show_json(record, options = {})
+        return unless json_serializers_available?(record)
+        return unless can?(:read, record)
+
+        options[:class] ||= 'dropdown-item'
+        options[:data] ||= { action: 'drawer#open', turbo_frame: :drawer }
+
+        link_to_with_icon(
+          'code',
+          Spree.t('admin.show_json'),
+          spree.admin_json_preview_resource_path(record, resource_type: record.class.to_s),
+          options
+        )
+      end
+
+      def json_serializers_available?(record)
+        storefront_serializer_exists?(record) || platform_serializer_exists?(record)
+      end
+
+      def storefront_serializer_exists?(record)
+        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
+        Object.const_defined?(serializer_class_name)
+      rescue NameError
+        false
+      end
+
+      def platform_serializer_exists?(record)
+        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
+        Object.const_defined?(serializer_class_name)
+      rescue NameError
+        false
+      end
+
+      def serialize_to_json(record, api_type: :storefront)
+        return unless record
+
+        serializer = case api_type.to_sym
+                     when :storefront
+                       storefront_serializer_for(record)
+                     when :platform
+                       platform_serializer_for(record)
+                     end
+
+        return nil unless serializer
+
+        serializable_hash = serializer.new(
+          record,
+          params: serializer_params(record)
+        ).serializable_hash
+
+        JSON.pretty_generate(serializable_hash)
+      end
+
+      private
+
+      def storefront_serializer_for(record)
+        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
+        serializer_class_name.constantize if Object.const_defined?(serializer_class_name)
+      rescue NameError
+        nil
+      end
+
+      def platform_serializer_for(record)
+        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
+        serializer_class_name.constantize if Object.const_defined?(serializer_class_name)
+      rescue NameError
+        nil
+      end
+
+      def serializer_params(record)
+        params = {}
+        params[:store] = current_store if defined?(current_store) && current_store.present?
+        params[:currency] = current_currency if defined?(current_currency) && current_currency.present?
+        params
+      end
+    end
+  end
+end

@@ -44,7 +44,7 @@ module Spree
 
         has_many   :line_items, serializer: Spree::Api::Dependencies.storefront_line_item_serializer.constantize
         has_many   :variants, serializer: Spree::Api::Dependencies.storefront_variant_serializer.constantize
-        has_many   :promotions, serializer: Spree::Api::Dependencies.storefront_promotion_serializer.constantize, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
+        has_many   :promotions, serializer: Spree::Api::Dependencies.storefront_order_promotion_serializer.constantize, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
         has_many   :payments, serializer: Spree::Api::Dependencies.storefront_payment_serializer.constantize do |cart|
           cart.payments.valid
         end
