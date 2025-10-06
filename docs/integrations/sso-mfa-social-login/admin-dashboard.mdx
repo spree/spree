@@ -1,0 +1,66 @@
+---
+title: "SSO and MFA for the Admin Panel"
+sidebarTitle: "Admin SSO & MFA"
+description: "Learn how to secure your Spree admin panel with SSO and MFA integration, using Microsoft Entra ID as an example."
+---
+
+Enterprise businesses require **Single Sign-On (SSO)** and **Multi-Factor Authentication (MFA)** to secure sensitive operations, maintain compliance, and simplify IT administration. For Spree Commerce, the **admin panel** is the heart of your business operations, which means securing access here is critical.
+
+## SSO providers
+
+There are many popular SSO providers, such as **Microsoft Entra ID**, **Okta**, **Ping Identity**, and **OneLogin**. Each provider may also offer multiple services under its ecosystem.
+
+For example, Microsoft’s SSO ecosystem includes:
+
+- **Entra ID (previously Azure Active Directory)** → secures your **Spree Commerce admin panel** for workforce users.
+- **Entra External ID (previously Active Directory B2C)** → secures your **Spree storefront** for customer-facing apps, with support for social logins like Google and Facebook.
+
+<Note>
+  For the purposes of this article, we are using **Microsoft** as the example provider.
+</Note>
+
+## Why integrate SSO with MFA for the Admin Panel
+
+- **Used by staff, merchants, and operators**
+- **Integration with Entra ID** ensures employees can log in using their corporate credentials
+- Benefits include:
+  - Higher security
+  - Regulatory compliance (SOC2, HIPAA, GDPR)
+  - Simplified IT administration
+  - Better user experience with SSO
+- With Microsoft solutions, you can also enable **Multi-Factor Authentication (MFA)** or **passwordless options** (Windows Hello, FIDO2 keys) to further strengthen access security
+
+## Get Started with SSO and MFA
+
+Each SSO integration needs to be scoped individually. The integration plan depends on multiple factors, such as:
+
+- **Required SSO provider**
+  - Decide whether you’ll use Microsoft Entra ID, Okta, Ping Identity, OneLogin, or another vendor. Each provider offers different features, protocols, and integration options.
+- **SSO provider settings**
+  - Each provider has unique configuration details, such as OAuth endpoints, certificates, tenant IDs, and federation settings. You’ll need to gather these to complete integration.
+- **Existing or planned Spree customizations**
+  - Custom authentication flows, extended user models, or unique admin permissions may affect how SSO is integrated. These should be reviewed before implementation.
+- **Spree and Ruby on Rails versions**
+  - Compatibility matters. Integration strategies can differ depending on whether you’re on the latest Spree release and which Rails version your project runs on.
+- **Use case: single tenant vs. multi-tenant**
+  - Single-tenant stores usually need straightforward workforce SSO. Multi-tenant or SaaS-style deployments may require isolated tenant directories and more complex provisioning.
+- **Identity governance requirements** (role-based access, just-in-time provisioning)
+- **User lifecycle management** (provisioning/de-provisioning)
+- **Security posture** (MFA enforcement, conditional access, passwordless policies)
+- **Compliance certifications required** (ISO, SOC2, HIPAA, PCI DSS)
+- **Traffic scale and performance** (concurrent users, global access, load balancing)
+- **Disaster recovery and redundancy** (failover strategies)
+- **Integration with third-party services** (analytics, CDPs, data warehouses)
+
+<Info>
+  Let's get in touch so we can scope your requirements and deliver this important integration for your project.
+</Info>
+
+<Columns cols={2}>
+  <Card title="Book a Call" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
+    Schedule a call to explore the options and get your questions answered
+  </Card>
+  <Card title="Ask a Question" icon="dollar-sign" href="https://spreecommerce.org/get-started/" cta="Click here">
+    Send us a message and share your thoughts
+  </Card>
+</Columns>

@@ -137,7 +137,6 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
-                      "developer/upgrades/5.1-to-5.2",
                       "developer/upgrades/5.0-to-5.1",
                       "developer/upgrades/4.10-to-5.0",
                       "developer/upgrades/4.9-to-4.10",
@@ -867,6 +866,13 @@
                 "pages": [
                   "integrations/marketing/klaviyo"
                 ]
+              },
+              {
+                "group": "SSO, MFA & Social Login",
+                "pages": [
+                  "integrations/sso-mfa-social-login/admin-dashboard",
+                  "integrations/sso-mfa-social-login/storefront"
+                ]
               }
             ]
           },
@@ -1019,6 +1025,14 @@
                 ]
               },
               {    
+                "group": "Digital Products",
+                "pages": [
+                  "use-case/digital-products/model",
+                  "use-case/digital-products/capabilities",
+                  "use-case/digital-products/admin-capabilities"
+                ]
+              },
+              {    
                 "group": "ChatGPT Integration",
                 "pages": [
                   "use-case/chatgpt-integration/chatgpt-shopping", 
@@ -1031,7 +1045,7 @@
                 "pages": [
                   "use-case/multi-store/model",
                   "use-case/multi-store/capabilities",
-                  "use-case/multi-tenant/admin-capabilities"
+                  "use-case/multi-store/admin-capabilities"
                 ]
               },
               {    

@@ -1,0 +1,65 @@
+---
+title: "SSO and Social Login for the Storefront"
+sidebarTitle: "Storefront SSO & Social Login"
+description: "Enable customer-facing SSO and social login on your Spree storefront, using Microsoft Entra External ID as an example."
+---
+
+Enterprise businesses benefit from offering **customer-facing SSO and social login** because it streamlines the shopping experience and improves conversions. Customers prefer using accounts they already trust instead of creating new ones.
+
+## SSO providers
+
+There are many popular SSO providers, such as **Microsoft Entra External ID**, **Auth0**, **Okta**, and **Ping Identity**. Each provider may offer several services with different target use cases.
+
+For example, Microsoft’s SSO ecosystem includes:
+
+- **Entra ID (previously Azure Active Directory)** → secures your **Spree Commerce admin panel** for workforce users.
+- **Entra External ID (previously Active Directory B2C)** → secures your **Spree storefront** for customer-facing apps, with support for social logins like Google and Facebook.
+
+<Note>
+  For the purposes of this article, we are using **Microsoft** as the example provider.
+</Note>
+
+## Why integrate SSO and Social Login for the Storefront
+
+- **Used by shoppers**
+- Integration with **Entra External ID (B2C)** or other customer identity providers enables frictionless sign-ups and sign-ins
+- Benefits include:
+  - Reduced cart abandonment
+  - Faster checkout
+  - Higher conversion rates
+- Supports **social login options**: Google, Facebook, Amazon, Apple ID, Microsoft
+
+## Get Started with SSO and Social Login
+
+Each storefront integration must be scoped individually. Consider the following:
+
+- **Required SSO provider**
+  - Choose from Microsoft Entra External ID, Auth0, Okta, Ping Identity, or others. Your decision depends on features, ecosystem compatibility, and scalability needs.
+- **SSO provider settings, including identity providers**
+  - Each SSO platform has unique configuration settings (OAuth endpoints, certificates, client IDs). If you want to enable social logins, you’ll also need to configure providers like Google, Facebook, or Apple.
+- **Scope: social login only vs. SSO + social login**
+  - Decide whether you only want to add social login on top of Spree’s existing authentication or fully replace it with a unified SSO + social login solution.
+- **Existing or planned Spree customizations**
+  - Customized signup flows, checkout flows, or customer segmentation logic may impact integration design. These need to be factored in during scoping.
+- **Spree and Ruby on Rails versions**
+  - Ensure compatibility with your Spree and Rails versions. Older projects may need adjustments to take advantage of newer identity management features.
+- **Identity governance requirements** (segmentation, customer role-based access)
+- **User lifecycle management** (account creation, deactivation, syncing)
+- **Security posture** (MFA for customers, adaptive login, fraud detection)
+- **Compliance certifications required** (GDPR, CCPA, PCI DSS)
+- **Traffic scale and performance** (millions of customer accounts, peak season load)
+- **Disaster recovery and redundancy** (failover, global availability zones)
+- **Integration with third-party services** (marketing automation, CDPs, analytics, loyalty programs)
+
+<Info>
+  Let's get in touch so we can scope your requirements and deliver this important integration for your project.
+</Info>
+
+<Columns cols={2}>
+  <Card title="Book a Call" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
+    Schedule a call to explore the options and get your questions answered
+  </Card>
+  <Card title="Ask a Question" icon="dollar-sign" href="https://spreecommerce.org/get-started/" cta="Click here">
+    Send us a message and share your thoughts
+  </Card>
+</Columns>
