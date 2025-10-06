@@ -22,16 +22,12 @@ module Spree
 
       def storefront_serializer_exists?(record)
         serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
-        Object.const_defined?(serializer_class_name)
-      rescue NameError
-        false
+        serializer_class_name.safe_constantize.present?
       end
 
       def platform_serializer_exists?(record)
         serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
-        Object.const_defined?(serializer_class_name)
-      rescue NameError
-        false
+        serializer_class_name.safe_constantize.present?
       end
 
       def serialize_to_json(record, api_type: :storefront)
@@ -58,16 +54,12 @@ module Spree
 
       def storefront_serializer_for(record)
         serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize if Object.const_defined?(serializer_class_name)
-      rescue NameError
-        nil
+        serializer_class_name.safe_constantize
       end
 
       def platform_serializer_for(record)
         serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize if Object.const_defined?(serializer_class_name)
-      rescue NameError
-        nil
+        serializer_class_name.safe_constantize
       end
 
       def serializer_params(record)
