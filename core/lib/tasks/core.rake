@@ -247,6 +247,27 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
   end
 
+  desc 'Migrate product properties to metafields'
+  task migrate_product_properties_to_metafields: :environment do |_t, _args|
+    Spree::Property.find_each do |property|
+      metafield_definition = Spree::MetafieldDefinition.find_or_initialize_by(
+        namespace: 'properties',
+        key: property.name,
+        resource_type: 'Spree::Product'
+      )
+      metafield_definition.assign_attributes(
+        metafield_type: property.kind_to_metafield_type,
+        display_on: property.display_on
+      )
+      metafield_definition.save!
+
+      property.product_properties.includes(:product).find_each do |product_property|
+        product_property.product.set_metafield("properties.#{property.name}", product_property.value)
+        puts "Migrated #{property.name} to product #{product_property.product.id}"
+      end
+    end
+  end
+
   desc 'Migrate product details sections to PDP 2.0 with blocks and metafields'
   task migrate_product_details_pages: :environment do |_t, _args|
     Spree::PageSections::ProductDetails.find_each do |section|

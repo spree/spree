@@ -70,4 +70,24 @@ description: This guide covers upgrading a Spree 5.1 application to Spree 5.2.
 
     This works great with our default storefront theme. If you're using a custom theme, you will need to adjust your templates.
   </Accordion>
+
+  <Accordion title="5. Migrate store policies">
+    Spree 5.2 introduces more flexible way to manage store policies (eg. terms of service, privacy policy, returns policy, shipping policy).
+
+    Previously they were just attributes (rich text fields) on the Store model. Now they are stored in the new Policy model.
+
+    To migrate to the new system, you will need to run the following command:
+
+    ```bash
+    bin/rake db:migrate_policies
+    ```
+
+    This will migrate your current data to the new format. 
+    
+    <Warning>
+      If you're using a custom theme, you will need to adjust [app/views/spree/checkout/_footer.html.erb](https://github.com/spree/spree/blob/main/storefront/app/views/spree/checkout/_footer.html.erb) template to be able to manage checkout footer links which was also expanded (now you can link to Pages, Policies, URLs and more).
+
+      `current_store.policies` won't work anymore, you will need to use `current_store.links` instead.
+    </Warning>
+  </Accordion>
 </AccordionGroup>
