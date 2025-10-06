@@ -686,8 +686,8 @@ en:
     and: and
     api_keys: API keys
     apis:
-      storefront: Storefront API
       platform: Platform API
+      storefront: Storefront API
     apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
     apply_store_credit: Apply Store Credit

@@ -5,7 +5,6 @@ en:
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
-      show_json: Show JSON
       back_to_dashboard: Back to Dashboard
       bulk_ops:
         products:
@@ -217,6 +216,7 @@ en:
         please_provide_tracking_details: Before marking shipment as shipped please provide tracking details
       shipment_transfer:
         wrong_destination: Wrong destination
+      show_json: Show JSON
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:
