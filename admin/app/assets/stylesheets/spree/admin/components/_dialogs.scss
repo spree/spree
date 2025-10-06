@@ -58,8 +58,8 @@ dialog:open {
   top: 0;
   right: 0;
   left: auto;
-  height: calc(100vh - 2rem);
-  max-height: calc(100vh - 2rem);
+  height: calc(100dvh - 2rem);
+  max-height: calc(100dvh - 2rem);
   width: calc(100vw - 2rem);
   max-width: 600px;
   min-width: 320px;

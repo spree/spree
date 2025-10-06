@@ -3,7 +3,7 @@
 module Spree
   module V2
     module Storefront
-      class PromotionSerializer < BaseSerializer
+      class OrderPromotionSerializer < BaseSerializer
         set_id     :promotion_id
         set_type   :promotion
 

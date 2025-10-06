@@ -140,6 +140,9 @@ Spree::Core::Engine.add_routes do
     resources :metafields, only: [:edit, :update], path: '/metafields/:resource_type'
     resources :metafield_definitions, except: :show
 
+    # json preview
+    resources :json_previews, only: [:show], path: '/json_preview/:resource_type', as: :json_preview_resource
+
     # audit log
     resources :exports, only: [:index, :new, :create, :show]
 

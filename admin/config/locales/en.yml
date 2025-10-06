@@ -94,6 +94,8 @@ en:
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
+      json_preview:
+        no_api_response: No API response found for this resource
       manage_currencies: Manage Currencies
       manage_properties: Manage Properties
       manage_stock_locations: Manage Stock Locations
@@ -214,6 +216,7 @@ en:
         please_provide_tracking_details: Before marking shipment as shipped please provide tracking details
       shipment_transfer:
         wrong_destination: Wrong destination
+      show_json: Show JSON
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:

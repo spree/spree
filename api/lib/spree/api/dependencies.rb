@@ -75,7 +75,7 @@ module Spree
         storefront_post_category_serializer: 'Spree::V2::Storefront::PostCategorySerializer',
         storefront_post_serializer: 'Spree::V2::Storefront::PostSerializer',
         storefront_product_property_serializer: 'Spree::V2::Storefront::ProductPropertySerializer',
-        storefront_promotion_serializer: 'Spree::V2::Storefront::PromotionSerializer',
+        storefront_order_promotion_serializer: 'Spree::V2::Storefront::OrderPromotionSerializer',
         storefront_shipping_method_serializer: 'Spree::V2::Storefront::ShippingMethodSerializer',
         storefront_shipping_rate_serializer: 'Spree::V2::Storefront::ShippingRateSerializer',
         storefront_stock_location_serializer: 'Spree::V2::Storefront::StockLocationSerializer',
