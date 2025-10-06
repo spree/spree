@@ -23,7 +23,7 @@ module Spree
       def resource_type
         @resource_type ||= begin
           klass_name = params[:resource_type]
-          klass_name.constantize if klass_name.present? && klass_name.start_with?('Spree::')
+          klass_name.safe_constantize if klass_name.present? && (Spree.base_class.descendants.include?(klass_name.constantize) || klass_name == Spree.user_class.to_s || klass_name == Spree.admin_user_class.to_s)
         rescue NameError
           nil
         end
