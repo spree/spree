@@ -21,9 +21,9 @@ describe Spree::Metafields::Number, type: :model do
   end
 
   describe '#csv_value' do
-    it 'returns the number' do
-      expect(metafield.csv_value).to be_kind_of(BigDecimal)
-      expect(metafield.csv_value).to eq(123)
+    it 'returns the number as a string' do
+      expect(metafield.csv_value).to be_kind_of(String)
+      expect(metafield.csv_value).to eq('123.0')
     end
   end
 end
