@@ -3,12 +3,12 @@
   <div class="drawer-body">
     <ul class="nav nav-pills">
       <%= nav_item(
-            'Storefront API',
+            Spree.t('apis.storefront'),
             spree.admin_json_preview_resource_path(@resource, resource_type: @resource.class.to_s, api_type: :storefront),
             active: (@api_type == :storefront)
           ) %>
       <%= nav_item(
-            'Platform API',
+            Spree.t('apis.platform'),
             spree.admin_json_preview_resource_path(@resource, resource_type: @resource.class.to_s, api_type: :platform),
             active: (@api_type == :platform)
           ) %>
