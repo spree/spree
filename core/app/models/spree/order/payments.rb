@@ -20,7 +20,7 @@ module Spree
         #   :allow_checkout_on_gateway_error is set to false
         #
         def process_payments!
-          process_payments_with(:process!)
+          with_lock { process_payments_with(:process!) }
         end
 
         def authorize_payments!
