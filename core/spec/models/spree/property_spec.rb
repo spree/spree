@@ -176,4 +176,36 @@ describe Spree::Property, type: :model do
       end
     end
   end
+
+  describe '#kind_to_metafield_type' do
+    let(:property) { create(:property, kind: 'short_text') }
+
+    it 'returns the correct metafield type' do
+      expect(property.kind_to_metafield_type).to eq('Spree::Metafields::ShortText')
+    end
+
+    context 'when the property kind is long_text' do
+      let(:property) { create(:property, kind: 'long_text') }
+
+      it 'returns the correct metafield type' do
+        expect(property.kind_to_metafield_type).to eq('Spree::Metafields::LongText')
+      end
+    end
+
+    context 'when the property kind is number' do
+      let(:property) { create(:property, kind: 'number') }
+
+      it 'returns the correct metafield type' do
+        expect(property.kind_to_metafield_type).to eq('Spree::Metafields::Number')
+      end
+    end
+
+    context 'when the property kind is rich_text' do
+      let(:property) { create(:property, kind: 'rich_text') }
+
+      it 'returns the correct metafield type' do
+        expect(property.kind_to_metafield_type).to eq('Spree::Metafields::RichText')
+      end
+    end
+  end
 end

@@ -50,6 +50,21 @@ module Spree
       end
     end
 
+    # Returns the metafield type for the property kind
+    # @return [String] eg. 'Spree::Metafields::ShortText'
+    def kind_to_metafield_type
+      case kind
+      when 'short_text'
+        'Spree::Metafields::ShortText'
+      when 'long_text'
+        'Spree::Metafields::LongText'
+      when 'number'
+        'Spree::Metafields::Number'
+      when 'rich_text'
+        'Spree::Metafields::RichText'
+      end
+    end
+
     private
 
     def touch_all_products
