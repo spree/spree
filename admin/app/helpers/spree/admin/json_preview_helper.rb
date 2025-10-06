@@ -58,14 +58,14 @@ module Spree
 
       def storefront_serializer_for(record)
         serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.constantize if Object.const_defined?(serializer_class_name)
+        serializer_class_name.safe_constantize if Object.const_defined?(serializer_class_name)
       rescue NameError
         nil
       end
 
       def platform_serializer_for(record)
         serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.constantize if Object.const_defined?(serializer_class_name)
+        serializer_class_name.safe_constantize if Object.const_defined?(serializer_class_name)
       rescue NameError
         nil
       end
