@@ -62,6 +62,10 @@ module Spree
       unscoped { find(*args) }
     end
 
+    def confirmation_required?
+      false
+    end
+
     def payment_profiles_supported?
       false
     end

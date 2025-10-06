@@ -72,6 +72,10 @@ module Spree
       true
     end
 
+    def confirmation_required?
+      true
+    end
+
     def payment_profiles_supported?
       true
     end
