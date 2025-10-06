@@ -62,6 +62,8 @@ module Spree
         'Spree::Metafields::Number'
       when 'rich_text'
         'Spree::Metafields::RichText'
+      else
+        'Spree::Metafields::ShortText'
       end
     end
 
