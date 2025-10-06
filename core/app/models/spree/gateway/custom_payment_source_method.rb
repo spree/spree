@@ -8,6 +8,10 @@ module Spree
       Spree::PaymentSource
     end
 
+    def confirmation_required?
+      true
+    end
+
     def payment_profiles_supported?
       true
     end

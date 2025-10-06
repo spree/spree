@@ -505,6 +505,8 @@ describe Spree::Order, type: :model do
   end
 
   describe '#confirmation_required?' do
+    subject { order.confirmation_required? }
+
     # Regression test for #4117
     it "is required if the state is currently 'confirm'" do
       order = Spree::Order.new
@@ -535,6 +537,26 @@ describe Spree::Order, type: :model do
         order.payments.build
         assert !order.confirmation_required?
       end
+    end
+
+    context 'when the payment does not require confirmation' do
+      before do
+        order.update_column(:total, 50)
+        create(:payment, order: order, amount: 50)
+
+        allow_any_instance_of(Spree::Gateway::Bogus).to receive(:confirmation_required?).and_return(false)
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'when at least one payment method requires confirmation' do
+      before do
+        order.update_column(:total, 50)
+        create(:payment, order: order, amount: 50)
+      end
+
+      it { is_expected.to be(true) }
     end
   end
 
