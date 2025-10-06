@@ -8,7 +8,7 @@ module Spree
       end
 
       def csv_value
-        value.to_s
+        value.to_d
       end
     end
   end
