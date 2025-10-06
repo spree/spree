@@ -23,7 +23,12 @@ module Spree
       def resource_type
         @resource_type ||= begin
           klass_name = params[:resource_type]
-          klass_name.safe_constantize if klass_name.present? && (Spree.base_class.descendants.include?(klass_name.constantize) || klass_name == Spree.user_class.to_s || klass_name == Spree.admin_user_class.to_s)
+          # Ensure all Spree models are loaded so that descendants is complete
+          Rails.application.eager_load! unless Rails.application.config.eager_load
+          klass = Spree.base_class.descendants.find { |spree_klass| spree_klass.name.to_s == klass_name }
+          klass ||= Spree.user_class if klass_name == Spree.user_class.to_s
+          klass ||= Spree.admin_user_class if klass_name == Spree.admin_user_class.to_s
+          klass
         rescue NameError
           nil
         end
