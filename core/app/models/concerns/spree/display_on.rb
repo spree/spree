@@ -10,6 +10,10 @@ module Spree
       scope :available_on_back_end,  -> { where(display_on: [:back_end, :both]) }
 
       validates :display_on, presence: true, inclusion: { in: DISPLAY.map(&:to_s) }
+
+      def available_on_front_end?
+        display_on == 'front_end' || display_on == 'both'
+      end
     end
   end
 end

@@ -59,6 +59,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
   describe 'PUT #update' do
     let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition) }
     let!(:metafield_definition_2) { create(:metafield_definition, :rich_text_field, resource_type: 'Spree::Product') }
+    let!(:metafield_definition_3) { create(:metafield_definition, :boolean_field, resource_type: 'Spree::Product') }
 
     let(:metafield_attributes) do
       {
@@ -74,6 +75,12 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
             type: metafield_definition_2.metafield_type,
             metafield_definition_id: metafield_definition_2.id,
             value: '<strong>Test Value</strong>'
+          },
+          "2" => {
+            id: nil,
+            type: metafield_definition_3.metafield_type,
+            metafield_definition_id: metafield_definition_3.id,
+            value: '0'
           }
         }
       }
@@ -95,6 +102,9 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
       metafield2 = product.metafields.find_by(metafield_definition_id: metafield_definition_2.id)
       expect(metafield2.value).to be_kind_of(ActionText::RichText)
       expect(metafield2.value.to_s).to include('<strong>Test Value</strong>')
+
+      metafield3 = product.metafields.find_by(metafield_definition_id: metafield_definition_3.id)
+      expect(metafield3.value).to eq('false')
     end
 
     context 'when resource_type is missing' do

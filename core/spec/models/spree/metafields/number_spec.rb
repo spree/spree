@@ -19,4 +19,11 @@ describe Spree::Metafields::Number, type: :model do
       expect(metafield.serialize_value).to eq(123)
     end
   end
+
+  describe '#csv_value' do
+    it 'returns the number as a string' do
+      expect(metafield.csv_value).to be_kind_of(String)
+      expect(metafield.csv_value).to eq('123.0')
+    end
+  end
 end
