@@ -9,7 +9,7 @@ describe Spree::CurrencyHelper, type: :helper do
   end
 
   describe '#supported_currency_options' do
-    it { expect(supported_currency_options).to contain_exactly(['zł PLN', 'PLN'], ['£ GBP', 'GBP'], ['€ EUR', 'EUR']) }
+    it { expect(supported_currency_options).to contain_exactly(['Polish Złoty (PLN)', 'PLN'], ['British Pound (GBP)', 'GBP'], ['Euro (EUR)', 'EUR']) }
   end
 
   describe '#should_render_currency_dropdown?' do
@@ -29,7 +29,7 @@ describe Spree::CurrencyHelper, type: :helper do
   end
 
   describe '#currency_presentation' do
-    it { expect(currency_presentation('EUR')).to eq(['€ EUR', 'EUR']) }
+    it { expect(currency_presentation('EUR')).to eq(['Euro (EUR)', 'EUR']) }
   end
 
   describe '#currency_money' do

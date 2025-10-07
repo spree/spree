@@ -6,7 +6,7 @@
 
 <div class="form-group">
   <%= f.label :currency, raw(Spree.t(:currency) + required_span_tag), class: 'form-label' %>
-  <%= f.select :currency, preferred_currencies_select_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
+  <%= f.select :currency, options_for_select(supported_currency_options, f.object.currency), {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
 </div>
 
 <div class="form-group">

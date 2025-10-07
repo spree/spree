@@ -1,9 +1,6 @@
 <div class="form-group">
   <%= f.select :preferred_currency,
-    currency_options_for_select(
-      f.object.preferred_currency,
-      current_store.supported_currencies.split(',')
-    ),
+    options_for_select(supported_currency_options, f.object.preferred_currency),
     {},
     { data: { controller: 'autocomplete-select' } } 
   %>
