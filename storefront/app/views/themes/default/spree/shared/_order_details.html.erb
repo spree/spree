@@ -37,24 +37,28 @@
 
 <div class="mt-6 bg-accent mb-24">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 p-4 lg:p-6 text-sm bg-border bg-accent-100">
-    <!-- billing address -->
-    <div>
-      <div class="uppercase tracking-widest mb-2">
-        <%= Spree.t(:billing_address) %>
+    <% if order.billing_address.present? %>
+      <!-- billing address -->
+      <div>
+        <div class="uppercase tracking-widest mb-2">
+          <%= Spree.t(:billing_address) %>
+        </div>
+        <div class="!leading-[1.375rem] text-neutral-800">
+          <%= render 'spree/shared/address', address: order.billing_address %>
+        </div>
       </div>
-      <div class="!leading-[1.375rem] text-neutral-800">
-        <%= render 'spree/shared/address', address: order.billing_address %>
+    <% end %>
+    <% if order.payments.valid.any? %>
+      <!-- payment into -->
+      <div class="mb-5 lg:mb-0">
+        <div class="uppercase tracking-widest mb-2">
+          <%= Spree.t(:payment_information) %>
+        </div>
+        <div class="!leading-[1.375rem] text-neutral-800">
+          <%= render collection: order.payments.valid, partial: 'spree/shared/payment', cached: spree_base_cache_scope %>
+        </div>
       </div>
-    </div>
-    <!-- payment into -->
-    <div class="mb-5 lg:mb-0">
-      <div class="uppercase tracking-widest mb-2">
-        <%= Spree.t(:payment_information) %>
-      </div>
-      <div class="!leading-[1.375rem] text-neutral-800">
-        <%= render collection: order.payments.valid, partial: 'spree/shared/payment', cached: spree_base_cache_scope %>
-      </div>
-    </div>
+    <% end %>
   </div>
   <!-- totals/summary -->
   <div class="p-4 lg:p-6 text-sm">
