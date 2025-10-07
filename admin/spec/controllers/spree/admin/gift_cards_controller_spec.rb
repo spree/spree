@@ -110,7 +110,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       {
         gift_card: {
           amount: 100,
-          currency: 'USD',
+          currency: 'EUR',
           user_id: user.id,
           expires_at: 1.year.from_now.to_date,
           code: '1234567890'
@@ -150,7 +150,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
         {
           gift_card: {
             amount: -100,
-            currency: 'USD'
+            currency: 'EUR'
           }
         }
       end

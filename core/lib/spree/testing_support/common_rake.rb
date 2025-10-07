@@ -30,13 +30,13 @@ namespace :common do
     Spree::DummyGenerator.start dummy_app_args
 
     unless skip_javascript
-      system('bin/rails importmap:install turbo:install stimulus:install')
+      system('bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
     # install devise if it's not the legacy user, useful for testing storefront
     if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
-      system('bin/rails g devise:install --force --auto-accept')
-      system("bin/rails g devise #{args[:user_class]} --force --auto-accept")
+      system('bundle exec rails g devise:install --force --auto-accept')
+      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
       system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
     end
 
@@ -59,7 +59,7 @@ namespace :common do
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
-      system('bin/rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
+      system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
       system('bundle exec rake db:drop db:create > /dev/null 2>&1')
       Spree::DummyModelGenerator.start
       system('bundle exec rake db:migrate > /dev/null 2>&1')
@@ -81,7 +81,7 @@ namespace :common do
 
   task :db_setup do |_t|
     puts 'Setting up dummy database...'
-    system('bin/rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
+    system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
     system('bundle exec rake db:drop db:create > /dev/null 2>&1')
     Spree::DummyModelGenerator.start
     system('bundle exec rake db:migrate > /dev/null 2>&1')
