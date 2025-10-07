@@ -6,20 +6,30 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
   let(:store) { @default_store }
 
+  describe '#new' do
+    it 'returns a success response' do
+      get :new
+      expect(response).to render_template(:new)
+    end
+  end
+
   describe '#create' do
-    subject { post :create }
+    subject { post :create, params: { order: { currency: 'EUR', email: 'test@example.com' } } }
 
     let(:order) { Spree::Order.last }
 
-    it 'creates a blank order' do
+    it 'creates a new order' do
       expect { subject }.to change(Spree::Order, :count).by(1)
 
       expect(assigns[:order]).to eq(order)
       expect(response).to redirect_to(spree.edit_admin_order_path(order))
+      expect(flash[:success]).to eq('Order has been successfully created!')
 
       expect(order.line_items).to be_empty
       expect(order.created_by).to eq(admin_user)
       expect(order.store).to eq(assigns[:current_store])
+      expect(order.currency).to eq('EUR')
+      expect(order.email).to eq('test@example.com')
     end
   end
 

@@ -136,6 +136,7 @@ en:
         orders_to_fulfill: Orders to fulfill
         partially_refunded: Partially Refunded
         payment_link_sent: Payment link was sent to the customer
+        provide_email: Provide an email address
         refunded: Refunded
         remove_user_from_this_order: Remove customer from this order
         unfulfilled: Unfulfilled

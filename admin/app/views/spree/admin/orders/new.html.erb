@@ -1,0 +1,22 @@
+<% content_for :title do %>
+  <%= Spree.t(:orders) %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_orders_path %>
+  <%= Spree.t(:new_order) %>
+<% end %>
+
+<%= form_for @order, url: spree.admin_orders_path do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <%= render 'form', f: f %>
+        </div>
+      </div>
+      <%= render partial: 'spree/admin/shared/new_resource_links', locals: { collection_url: spree.admin_orders_path } %>
+    </div>
+  </div>
+<% end %>

@@ -21,6 +21,13 @@
     <% end %>
 
     <li class="list-group-item d-flex justify-content-between align-items-center border-0">
+      <span><%= Spree.t(:currency) %></span>
+      <span id='currency'>
+        <%= @order.currency %>
+      </span>
+    </li>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center border-0">
       <span data-hook='admin_order_tab_subtotal_title'><%= Spree.t(:subtotal) %></span>
       <span id='item_total'>
         <%= @order.display_item_total.to_html %>

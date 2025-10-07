@@ -12,11 +12,21 @@ module Spree
 
       helper_method :model_class, :object_url
 
+      # GET /admin/orders/new
+      def new
+        @order = current_store.orders.new
+      end
+
       # POST /admin/orders
       def create
-        @order = Spree::Order.create(created_by: try_spree_current_user, store: current_store)
-
-        redirect_to spree.edit_admin_order_path(@order)
+        @order = current_store.orders.new(permitted_resource_params)
+        @order.created_by = try_spree_current_user
+        if @order.save
+          flash[:success] = flash_message_for(@order, :successfully_created)
+          redirect_to spree.edit_admin_order_path(@order)
+        else
+          render :new, status: :unprocessable_entity
+        end
       end
 
       # GET /admin/orders/:id/edit
@@ -112,6 +122,10 @@ module Spree
       # needed to show the delete button in the content header
       def object_url
         spree.admin_order_path(@order)
+      end
+
+      def permitted_resource_params
+        params.require(:order).permit(permitted_order_attributes)
       end
     end
   end
