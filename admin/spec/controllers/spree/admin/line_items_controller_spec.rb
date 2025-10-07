@@ -24,6 +24,22 @@ RSpec.describe Spree::Admin::LineItemsController, type: :controller do
       expect(response).to redirect_to(spree.edit_admin_order_path(order, line_item_updated: true))
       expect(order.line_items.count).to eq(1)
     end
+
+    context 'when order is non-default currency' do
+      let(:order) { create(:order, store: store, currency: 'EUR') }
+
+      before do
+        product.default_variant.prices.create(currency: 'EUR', amount: 89)
+      end
+
+      it 'returns a success response' do
+        post :create, params: { order_id: order.number, line_item: { variant_id: product.default_variant.id, quantity: 1 } }
+
+        line_items = order.line_items.last
+        expect(line_items.price).to eq(89)
+        expect(line_items.currency).to eq('EUR')
+      end
+    end
   end
 
   describe '#edit' do

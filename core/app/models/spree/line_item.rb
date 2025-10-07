@@ -68,7 +68,7 @@ module Spree
       if variant
         update_price if price.nil?
         self.cost_price = variant.cost_price if cost_price.nil?
-        self.currency = variant.currency if currency.nil?
+        self.currency = order.currency if currency.nil?
       end
     end
 
