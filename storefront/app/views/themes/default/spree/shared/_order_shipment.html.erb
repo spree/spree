@@ -1,14 +1,15 @@
 <li class="border border-accent mb-4">
   <div class="p-4 lg:p-6">
     <div class="flex flex-col lg:flex-row lg:gap-6 gap-4">
-      <% if shipment.order.requires_ship_address? %>
+      <% ship_address = shipment.address || shipment.order.ship_address %>
+      <% if shipment.order.requires_ship_address? && ship_address.present? %>
         <div class="text-sm lg:w-1/2">
           <div class="tracking-widest uppercase mb-2">
             <%= Spree.t(:delivery_address) %>
           </div>
           <div class="!leading-[1.375rem] text-neutral-800">
             <%= render "spree/shared/address",
-            address: shipment.address || shipment.order.ship_address %>
+            address: ship_address %>
           </div>
         </div>
       <% end %>
