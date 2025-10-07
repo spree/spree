@@ -120,7 +120,6 @@ describe Spree::OrdersController, type: :controller do
       end
     end
 
-
     context 'when order does not require ship address' do
       let(:digital_shipping_method) { create(:digital_shipping_method) }
       let(:digital_product) { create(:product, shipping_category: digital_shipping_method.shipping_categories.first) }
@@ -132,6 +131,16 @@ describe Spree::OrdersController, type: :controller do
         get :show, params: { id: order.number, token: order.token }
         expect(response).to render_template(:show)
         expect(response.body).not_to include(Spree.t(:delivery_address))
+      end
+    end
+
+    context 'when order was free and doesn\'t require billing address' do
+      let(:order) { create(:completed_order_with_totals, store: store, user: user, bill_address: nil) }
+
+      it 'renders the show template' do
+        get :show, params: { id: order.number, token: order.token }
+        expect(response).to render_template(:show)
+        expect(response.body).not_to include(Spree.t(:billing_address))
       end
     end
 
