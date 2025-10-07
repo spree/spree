@@ -27,7 +27,7 @@ describe Spree::Admin::GiftCardBatchesController, type: :controller do
         gift_card_batch: {
           prefix: 'BATCH001',
           amount: 10,
-          currency: 'USD',
+          currency: 'EUR',
           codes_count: 20,
           expires_at: 1.year.from_now.to_date
         }
@@ -43,7 +43,7 @@ describe Spree::Admin::GiftCardBatchesController, type: :controller do
         gift_card_batch = Spree::GiftCardBatch.last
         expect(gift_card_batch.prefix).to eq('BATCH001')
         expect(gift_card_batch.amount).to eq(10)
-        expect(gift_card_batch.currency).to eq('USD')
+        expect(gift_card_batch.currency).to eq('EUR')
         expect(gift_card_batch.codes_count).to eq(20)
         expect(gift_card_batch.expires_at).to eq(1.year.from_now.to_date)
         expect(gift_card_batch.store).to eq(store)
@@ -67,7 +67,7 @@ describe Spree::Admin::GiftCardBatchesController, type: :controller do
         {
           gift_card_batch: {
             amount: -100,
-            currency: 'USD'
+            currency: 'EUR'
           }
         }
       end

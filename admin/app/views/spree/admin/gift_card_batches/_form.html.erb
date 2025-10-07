@@ -8,6 +8,7 @@
   <div class="card-body">
     <%= f.spree_text_field :prefix, disabled: f.object.persisted?, label: Spree.t('admin.gift_card_batches.prefix') %>
     <%= f.spree_number_field :amount, required: true, disabled: f.object.persisted? %>
+    <%= f.spree_select :currency, options_for_select(supported_currency_options, f.object.currency), { label: Spree.t(:currency), autocomplete: true } %>
     <%= f.spree_number_field :codes_count, required: true, min: 1, max: Spree::Config[:gift_card_batch_limit], label: Spree.t('admin.gift_card_batches.codes_count') %>
     <%= f.spree_date_field :expires_at, disabled: f.object.persisted?, help: 'Gift cards will expire after this date.' %>
   </div>

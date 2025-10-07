@@ -5,6 +5,7 @@
     <% end %>
 
     <%= f.spree_number_field :amount, required: true %>
+    <%= f.spree_select :currency, options_for_select(supported_currency_options, f.object.currency), { label: Spree.t(:currency), autocomplete: true }, { disabled: f.object.persisted? } %>
 
     <div class="form-group">
       <%= f.label :user_id, Spree.t(:customer) %>
