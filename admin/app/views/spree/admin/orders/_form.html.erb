@@ -3,8 +3,8 @@
 <hr class="my-4" />
 
 <div class="form-group">
-  <%= label_tag :user_id, Spree.t(:select_user) %>
-  <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options } %>
+  <%= f.label :user_id, Spree.t(:select_user) %>
+  <%= tom_select_tag 'order[user_id]', { include_blank: Spree.t(:select_user), options: users_for_select_options } %>
 </div>
 
 <p class="text-center text-muted my-0"><%= Spree.t(:or) %></p>
