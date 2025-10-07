@@ -1,0 +1,12 @@
+<%= f.spree_select :currency, options_for_select(supported_currency_options, current_store.default_currency), { label: Spree.t(:currency), autocomplete: true } %>
+
+<hr class="my-4" />
+
+<div class="form-group">
+  <%= label_tag :user_id, Spree.t(:select_user) %>
+  <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options } %>
+</div>
+
+<p class="text-center text-muted my-0"><%= Spree.t(:or) %></p>
+
+<%= f.spree_email_field :email, autofocus: f.object.new_record?, label: Spree.t('admin.orders.provide_email') %>

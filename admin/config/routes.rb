@@ -54,7 +54,7 @@ Spree::Core::Engine.add_routes do
 
     # orders
     resources :checkouts, only: %i[index]
-    resources :orders, only: [:index, :edit, :create, :destroy] do
+    resources :orders, only: [:index, :edit, :new, :create, :destroy] do
       member do
         post :resend
         put :cancel
