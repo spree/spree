@@ -179,9 +179,9 @@ describe Spree::LineItem, type: :model do
       line_item.currency = nil
       line_item.copy_price
       variant = line_item.variant
-      expect(line_item.price).to eq(variant.price)
+      expect(line_item.price).to eq(variant.amount_in(order.currency))
       expect(line_item.cost_price).to eq(variant.cost_price)
-      expect(line_item.currency).to eq(variant.currency)
+      expect(line_item.currency).to eq(order.currency)
     end
 
     context "variant price amount is equal 0" do
