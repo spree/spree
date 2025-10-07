@@ -24,7 +24,10 @@ commands:
       - install_libvips
       - run:
           name: Install global dependencies
-          command: bundle check || bundle install
+          command: bundle update
+      - run:
+          name: Clean old gems
+          command: bundle clean
       - run:
           name: Install per-project gem dependencies
           command: bin/build-ci.rb install
