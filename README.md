@@ -34,7 +34,7 @@
     <img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" />
   </a>
   <a href="https://slack.spreecommerce.org">
-    <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-6.5K-blue" />
+    <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-7K-blue" />
   </a>
 </p>
 
@@ -48,6 +48,14 @@ If you like what you see, consider giving Spree a GitHub star :star:
 
 Thank you for supporting Spree open-source :heart:
 
+## Documentation
+
+- [Developer Docs](https://spreecommerce.org/docs/developer/getting-started/quickstart)
+- [Ecommerce API](https://spreecommerce.org/docs/api-reference/introduction)
+- [Integrations](https://spreecommerce.org/docs/integrations/integrations)
+- [User Docs](https://spreecommerce.org/docs/user/what-is-spree-commerce)
+- [Use Cases](https://spreecommerce.org/docs/use-case/overview)
+
 ## Spree 5 Announcement & Demo
 
 [![Spree Commerce 5 version](https://vendo-production-res.cloudinary.com/image/upload/w_2000/q_auto/v1742985405/docs/github/Spree_Commerce_open-source_eCommerce_myzurl.jpg)](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/)
@@ -57,16 +65,15 @@ We’re thrilled to unveil [Spree 5](https://spreecommerce.org/announcing-spree-
 - A completely revamped Admin Dashboard experience: boost your team's productivity 
 - A Mobile-First, No-code Customizable Storefront: raise conversions and loyalty
 - New integrations: a native [Stripe integration](https://github.com/spree/spree_stripe), and also Stripe Connect, Klaviyo integrations available with the Enterprise Edition
-- Enterprise Edition Admin Features: Audit Log, [Multi-Vendor Marketplace](https://spreecommerce.org/marketplace-ecommerce/), [Multi-tenant / White-label SaaS eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/)
+- Enterprise Edition Admin Features: Audit Log, [Multi-Vendor Marketplace eCommerce](https://spreecommerce.org/marketplace-ecommerce/) module, [Multi-tenant / White-label SaaS eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/) module, [B2B eCommerce](https://spreecommerce.org/use-cases/headless-b2b-ecommerce/) module 
 
 Read the [full Spree 5 announcement here](https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/).
 
 Check out the [Spree 5 demo](https://demo.spreecommerce.org/) for yourself.
 
-
 ## Enterprise support
 
-[Contact us](https://spreecommerce.org/contact/) for enterprise support and custom development services. We offer:
+[Contact us](https://spreecommerce.org/get-started/) for enterprise support and custom development services. We offer:
   * expert delivery of your Spree application,
   * migrations and upgrades,
   * optimizing your Spree stack.
@@ -75,7 +82,7 @@ Check out the [Spree 5 demo](https://demo.spreecommerce.org/) for yourself.
 
 Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
 
-To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spreecommerce.org/get-started/)
+To get access to the Enterprise Edition, contact our [Sales team](https://spreecommerce.org/get-started/)
 
 ## Features
 ### Customizable and modular
@@ -107,7 +114,7 @@ To get access to Spree Enterprise (Vendo), contact our [Sales team](https://spre
 <img alt="Spree Commerce - Multi-region   Multi-store" src="https://github.com/spree/spree/assets/12614496/e9c2edce-b80c-47ad-817b-a00a4ba54495">
 <img alt="Spree Commerce - Multi-region" src="https://github.com/spree/spree/assets/12614496/f8678baf-4efa-4de7-b092-b01ef3a4d8ea">
 
-### [Multi-Store](https://spreecommerce.org/multi-store-ecommerce/) ready
+### [Multi-Store eCommerce](https://spreecommerce.org/multi-store-ecommerce/) ready
   * host multiple brands / stores on a single Spree instance
   * each with different branding, configuration, payment methods, shipping options, product catalogs etc
 <img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
@@ -129,25 +136,34 @@ Manage orders, shipments, returns and refunds
 ## What you can build with Spree
 Use Spree for any use case. Innovate beyond what's out there.
 
-### A [headless eCommerce](https://spreecommerce.org/headless-ecommerce/) micro-service
+### [Headless eCommerce](https://spreecommerce.org/headless-ecommerce/) micro-service
 Capture orders and payments for whatever you're selling - physical or digital, products or services
-
 <img alt="Spree Commerce - headless open-source eCommerce" src="https://github.com/spree/spree/assets/12614496/2bca9fdf-5ae2-4433-83aa-431105906fc8">
 
-### A [Multi-vendor marketplace](https://spreecommerce.org/use-cases/multi-vendor-marketplace-demo/)
+### [Multi-vendor marketplace](https://spreecommerce.org/marketplace-ecommerce/)
 Run your own marketplace with multiple suppliers, each with a dedicated supplier dashboard
+- [Marketplace eCommerce Capabilities](https://spreecommerce.org/docs/use-case/marketplace/capabilities)
+- [Marketplace eCommerce Admin Panel](https://spreecommerce.org/docs/use-case/marketplace/admin-dashboard)
+- [Marketplace eCommerce Vendor Panel](https://spreecommerce.org/docs/use-case/marketplace/vendor-dashboard)
+- [Marketplace eCommerce Customer Experience](https://spreecommerce.org/docs/use-case/marketplace/customer-ux)
 <img alt="Spree Commerce - Marketplace" src="https://github.com/spree/spree/assets/12614496/c4ddd118-df4c-464e-b1fe-d43862e5cf25">
 
-### A [B2B eCommerce](https://spreecommerce.org/use-cases/headless-b2b-ecommerce/)
+### [B2B eCommerce](https://spreecommerce.org/use-cases/headless-b2b-ecommerce/)
 Start capturing 6+ figure orders from resellers with safe payments and a checkout process that fits your business model
+- [B2B eCommerce Capabilities](https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities)
+- [B2B eCommerce Admin Capabilities](https://spreecommerce.org/docs/use-case/b2b/b2b-admin-capabilities)
+- [B2B eCommerce Buyer Experience](https://spreecommerce.org/docs/use-case/b2b/b2b-buyer-capabilities)
 <img alt="Spree Commerce - B2B eCommerce" src="https://github.com/spree/spree/assets/12614496/e0a184f6-31ad-4f7f-b30b-6f8a501b6f63">
 
 ### [Wholesale eCommerce](https://spreecommerce.org/use-cases/wholesale-ecommerce/)
 Run your wholesale operation the way your retail partners expect
 <img alt="Spree Commerce - Wholesale" src="https://github.com/spree/spree/assets/12614496/bac1e551-f629-47d6-a983-b385aa65b1bd">
 
-### A [white-label SaaS or multi-tenant eCommerce](https://spreecommerce.org/multi-tenant-white-label-ecommerce/) platform
-Launch a [multi-tenant eCommerce platform](https://spreecommerce.org/multi-tenant-white-label-ecommerce/) for your customers, resellers, affiliates in any configuration, eg. B2B2B, B2B2C, B2B2E
+### [Multi-tenant eCommerce Platform](https://spreecommerce.org/multi-tenant-white-label-ecommerce/)
+Launch a multi-tenant eCommerce platform for your customers, resellers, affiliates in any configuration, eg. B2B2B, B2B2C, B2B2E
+- [Multi-Tenant Capabilities](https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-capabilities)
+- [Multi-Tenant Super Admin Capabilities](https://spreecommerce.org/docs/use-case/multi-tenant/super-admin-capabilities)
+- [Tenant Capabilities](https://spreecommerce.org/docs/use-case/multi-tenant/tenant-capabilities)
 
 <img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
 
