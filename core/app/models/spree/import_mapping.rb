@@ -9,7 +9,7 @@ module Spree
     #
     # Callbacks
     #
-    normalize :original_column_key, with: ->(value) { value.to_s.parameterize.underscore.strip }
+    normalizes :original_column_key, with: ->(value) { value.to_s.parameterize.underscore.strip }
 
     #
     # Validations

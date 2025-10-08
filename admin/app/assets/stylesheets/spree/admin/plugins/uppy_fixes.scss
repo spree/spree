@@ -1,3 +1,14 @@
+.uppy-Root {
+  font-family: $font-family-base !important;
+  font-size: $font-size-base !important;
+  color: $body-color !important;
+  line-height: $line-height-base !important;
+}
+
+.uppy-Dashboard-innerWrap, .uppy-Dashboard-inner, .uppy-Dashboard-AddFiles {
+  border-radius: $border-radius-lg !important;
+}
+
 .uppy-Dashboard--modal .uppy-Dashboard-overlay {
   background-color: $modal-backdrop-bg !important;
   opacity: $modal-backdrop-opacity !important;
@@ -23,3 +34,12 @@
   }
 }
 
+.uppy-StatusBar-actionBtn {
+  @extend .btn;
+  @extend .btn-sm;
+  @extend .btn-light;
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
+  background-color: theme-color('blue') !important;
+}

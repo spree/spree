@@ -35,6 +35,18 @@ module Spree
     #
     after_create :create_mappings, :create_rows_async
 
+    #
+    # State machine
+    #
+    state_machine initial: :pending, attribute: :status do
+      event :process do
+        transition to: :processing
+      end
+      event :complete do
+        transition from: :processing, to: :complete
+      end
+    end
+
     def generate
       validate_attachment
       handle_attachment
@@ -77,24 +89,36 @@ module Spree
       # Spree::ImportMailer.import_done(self).deliver_later
     end
 
+    # Returns the headers of the csv file
+    # @return [Array<String>]
     def csv_headers
       return [] if attachment.blank?
 
-      attachment.blob.headers['content-type'].split('/').last.split(';').first.split('=').last
+      @csv_headers ||= ::CSV.parse_line(attachment_file_content, col_sep: delimiter)
+    end
+
+    # Returns the content of the attachment file
+    # @return [String]
+    def attachment_file_content
+      @attachment_file_content ||= attachment.blob.download
     end
 
     # Creates mappings from the csv headers
     def create_mappings
       csv_headers.each do |header|
         mappings.find_or_create_by(
-          owner: owner,
+          mappable: owner,
           import_type: type,
-          external_column_key: header.parameterize
+          original_column_key: header.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '').parameterize
         ).tap do |mapping|
-          mapping.external_column_presentation ||= header
+          mapping.original_column_presentation ||= header
           mapping.save!
         end
       end
+    end
+
+    def create_rows_async
+
     end
 
     class << self

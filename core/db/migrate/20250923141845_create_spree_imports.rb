@@ -9,6 +9,8 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
       t.string :number, limit: 32, null: false, index: { unique: true }
       t.string :type, null: false, index: true
 
+      t.string :delimiter, null: false, default: ','
+
       t.timestamps
     end
 
@@ -34,7 +36,7 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
 
       t.string :original_column_key, null: false
       t.string :original_column_presentation, null: false
-      t.string :column, null: false
+      t.string :column
 
       t.timestamps
     end

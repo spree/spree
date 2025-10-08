@@ -117,7 +117,7 @@ module Spree
 
     @@image_attributes = [:alt, :attachment, :position, :viewable_type, :viewable_id]
 
-    @@import_attributes = [:type, :attachment]
+    @@import_attributes = [:type, :attachment, :delimiter]
 
     @@integration_attributes = [:type, :active]
 
