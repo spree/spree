@@ -17,7 +17,10 @@ export default class extends Controller {
     crop: { type: Boolean, default: false },
     allowedFileTypes: { type: Array, default: [] },
     closeAfterFinish: { type: Boolean, default: true },
-    inline: { type: Boolean, default: false }
+    inline: { type: Boolean, default: false },
+    height: Number,
+    hideCancelButton: { type: Boolean, default: false },
+    disableThumbnailGenerator: { type: Boolean, default: false }
   }
 
   connect() {
@@ -46,7 +49,13 @@ export default class extends Controller {
       dashboardOptions.inline = true
       dashboardOptions.closeAfterFinish = false
       dashboardOptions.target = this.element
+      if (this.heightValue) {
+        dashboardOptions.height = this.heightValue
+      }
     }
+
+    dashboardOptions.hideCancelButton = this.hideCancelButtonValue
+    dashboardOptions.disableThumbnailGenerator = this.disableThumbnailGeneratorValue
 
     this.uppy.use(Dashboard, dashboardOptions)
 
@@ -114,7 +123,13 @@ export default class extends Controller {
   }
 
   handleUI(file, response = null) {
-    this.placeholderTarget.style = 'display: none !important'
+    if (this.hasPlaceholderTarget) {
+      this.placeholderTarget.style = 'display: none !important'
+    }
+
+    if (this.hasToolbarTarget) {
+      this.toolbarTarget.style = 'display: none !important'
+    }
 
     const signedId = response?.signed_id || file.response?.signed_id
 

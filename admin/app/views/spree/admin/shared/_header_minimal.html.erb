@@ -1,0 +1,29 @@
+<div id="scroll-header"></div>
+
+<header id="header" class="sticky-top py-0">
+  <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center pr-3">
+    <div class="d-lg-none pr-3 border-right">
+      <button type="button" class="btn btn-light pull-bs-canvas-left px-2 ml-3 text-decoration-none">
+        <%= icon('menu-2', class: 'mr-0') %>
+      </button>
+    </div>
+
+    <%= link_to spree.admin_path, class: 'store-dropdown text-decoration-none px-2 justify-content-start', data: { admin_target: 'close', controller: 'tooltip', tooltip_placement_value: 'bottom', tooltip_offset_value: -10 } do %>
+      <%= icon 'x', class: 'mx-2' %>
+      <%= tooltip(Spree.t('admin.back_to_dashboard')) %>
+      <kbd>ESC</kbd>
+    <% end %>
+
+    <div class="d-none d-lg-block">
+      <%= render 'spree/admin/shared/breadcrumbs' %>
+    </div>
+
+    <div class="ml-auto d-flex align-items-center">
+      <%= render 'spree/admin/shared/user_dropdown' %>
+    </div>
+  </nav>
+</header>
+
+<div class="d-lg-none py-3 border-bottom">
+  <%= render 'spree/admin/shared/breadcrumbs' %>
+</div>
