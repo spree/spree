@@ -14,11 +14,13 @@ module Spree
 
       event :redeem do
         transition active: :redeemed
+        transition partially_redeemed: :redeemed
       end
       after_transition to: :redeemed, do: :after_redeem
 
       event :partial_redeem do
         transition active: :partially_redeemed
+        transition partially_redeemed: :partially_redeemed
       end
     end
 

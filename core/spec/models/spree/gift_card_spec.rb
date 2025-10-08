@@ -120,4 +120,47 @@ RSpec.describe Spree::GiftCard, type: :model do
       end
     end
   end
+
+  describe 'State transitions' do
+    let(:store) { Spree::Store.default }
+
+    context 'when active' do
+      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+
+      it 'transitions from active to partially_redeemed' do
+        expect { gift_card.partial_redeem! }
+          .to change(gift_card, :state).from('active').to('partially_redeemed')
+      end
+
+      it 'transitions from active to redeemed' do
+        expect { gift_card.redeem! }
+          .to change(gift_card, :state).from('active').to('redeemed')
+      end
+    end
+
+    context 'when partially_redeemed' do
+      let(:gift_card) { create(:gift_card, state: :partially_redeemed, amount: 100, amount_used: 50, store: store) }
+
+      it 'allows multiple partial redemptions (remains partially_redeemed)' do
+        expect { gift_card.partial_redeem! }
+          .to_not change(gift_card, :state)
+        expect(gift_card.state).to eq('partially_redeemed')
+      end
+
+      it 'transitions from partially_redeemed to redeemed when fully used' do
+        gift_card.update!(amount_used: 100)
+        expect { gift_card.redeem! }
+          .to change(gift_card, :state).from('partially_redeemed').to('redeemed')
+      end
+    end
+
+    context 'when redeemed' do
+      let(:gift_card) { create(:gift_card, state: :redeemed, amount: 100, amount_used: 100, store: store) }
+
+      it 'does not allow further redemption' do
+        expect { gift_card.partial_redeem! }.to raise_error(StateMachines::InvalidTransition)
+        expect { gift_card.redeem! }.to raise_error(StateMachines::InvalidTransition)
+      end
+    end
+  end
 end
