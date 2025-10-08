@@ -31,19 +31,26 @@ module Spree
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
     #
-    # Callbacks
-    #
-    after_create :create_mappings, :create_rows_async
-
-    #
     # State machine
     #
     state_machine initial: :pending, attribute: :status do
-      event :process do
+      event :started_processing do
         transition to: :processing
       end
+      after_transition to: :processing, do: :create_mappings
+      after_transition to: :processing, do: :create_rows_async
+
+      event :processed do
+        transition to: :processed
+      end
+
+      event :map do
+        transition to: :mapped
+      end
+      after_transition to: :mapped, do: :process_rows_async
+
       event :complete do
-        transition from: :processing, to: :complete
+        transition from: :mapped, to: :complete
       end
     end
 
@@ -97,6 +104,10 @@ module Spree
       @csv_headers ||= ::CSV.parse_line(attachment_file_content, col_sep: delimiter)
     end
 
+    def csv_body
+      @csv_body ||= ::CSV.parse(attachment_file_content, col_sep: delimiter).drop(1)
+    end
+
     # Returns the content of the attachment file
     # @return [String]
     def attachment_file_content
@@ -118,7 +129,11 @@ module Spree
     end
 
     def create_rows_async
+      Spree::Imports::CreateRowsJob.perform_later(id)
+    end
 
+    def process_rows_async
+      Spree::Imports::ProcessRowsJob.perform_later(id)
     end
 
     class << self

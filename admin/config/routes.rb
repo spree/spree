@@ -144,8 +144,8 @@ Spree::Core::Engine.add_routes do
     resources :json_previews, only: [:show], path: '/json_preview/:resource_type', as: :json_preview_resource
 
     # imports
-    resources :imports, only: [:index, :new, :create, :show] do
-      resources :mappings, only: [:new, :create, :edit, :update, :destroy]
+    resources :imports do
+      resources :mappings, only: [:edit, :update]
     end
 
     # audit log
