@@ -37,6 +37,12 @@ module Spree
       def permitted_resource_params
         params.require(:import).permit(permitted_import_attributes)
       end
+
+      def choose_layout
+        return 'turbo_rails/frame' if turbo_frame_request?
+
+        'spree/admin_minimal'
+      end
     end
   end
 end

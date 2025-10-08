@@ -12,14 +12,13 @@
 
     <%= render "spree/admin/shared/header_minimal" %>
 
-    <main id="content" data-controller="drawer">
+    <main id="content">
       <%= render "spree/admin/shared/content_header" %>
-      <div class="container">
+      <div class="container-fluid">
         <%= yield %>
       </div>
-      <%= render "spree/admin/shared/footer" %>
-      <%= render 'spree/admin/shared/drawer' %>
     </main>
+    
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
 
