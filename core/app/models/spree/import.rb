@@ -10,7 +10,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :owner, polymorphic: true # Store, Vendor, etc.
     belongs_to :user, class_name: Spree.admin_user_class.to_s
     has_many :mappings, class_name: 'Spree::ImportMapping', foreign_key: :import_type, primary_key: :type
     has_many :rows, class_name: 'Spree::ImportRow'
@@ -18,7 +18,7 @@ module Spree
     #
     # Validations
     #
-    validates :store, :user, :type, :attachment, presence: true
+    validates :owner, :user, :type, :attachment, presence: true
 
     #
     # Ransack configuration
