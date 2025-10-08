@@ -6,12 +6,11 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
 
       t.string :status, null: false, index: true
 
-      t.string :number, limit: 32, null: false
+      t.string :number, limit: 32, null: false, index: { unique: true }
       t.string :type, null: false, index: true
 
       t.timestamps
     end
-    add_index :spree_imports, [:owner_type, :owner_id, :number], unique: true
 
     create_table :spree_import_rows do |t|
       t.belongs_to :import, null: false

@@ -33,6 +33,10 @@ module Spree
       def available_types
         Spree::Import.available_types
       end
+
+      def permitted_resource_params
+        params.require(:import).permit(permitted_import_attributes)
+      end
     end
   end
 end
