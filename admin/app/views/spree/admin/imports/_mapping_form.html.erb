@@ -5,6 +5,6 @@
     <% if mapping.file_column.present? %>
       <% options.prepend([Spree.t(mapping.file_column), mapping.file_column]) %>
     <% end %>
-    <%= f.select :file_column, options_for_select(options, mapping.file_column), { include_blank: 'Please select a column' }, { data: { action: 'auto-submit#submit' }, class: 'custom-select', id: "import_mapping_file_column_#{mapping.id}" } %>
+    <%= f.select :file_column, options_for_select(options, mapping.file_column), { include_blank: 'Please select a column' }, { data: { action: 'auto-submit#submit', controller: 'autocomplete-select' }, id: "import_mapping_file_column_#{mapping.id}" } %>
   <% end %>
 <% end %>

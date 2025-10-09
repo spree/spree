@@ -9,38 +9,33 @@
 <% elsif @import.status == 'mapped' %>
 
 <% else %>
-  <div class="table-responsive border rounded mb-5">
-    <table class="table">
-      <thead>
-        <tr>
-          <th class="text-center w-10">
-            <%= Spree.t(:field_required) %>
-          </th>
-          <th>
-            <%= Spree.t(:schema_field) %>
-          </th>
-          <th><%= Spree.t(:file_column) %></th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @import.mappings.each do |mapping| %>
-        <tr>
-          <td class="text-center w-10">
-            <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
-          </td>
-          <td class="text-wrap w-40">
-            <%= Spree.t(mapping.schema_field) %>
-
-            <code class="ml-2"><%= mapping.schema_field %></code>
-          </td>
-          <td class="w-50">
-            <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping %>
-          </td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
+  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
+    <div class="w-10 p-2 text-center">
+      <%= Spree.t(:field_required) %>
+    </div>
+    <div class="w-40 p-2">
+      <%= Spree.t(:schema_field) %>
+    </div>
+    <div class="w-50 p-2">
+      <%= Spree.t(:file_column) %>
+    </div>
   </div>
+
+  <% @import.mappings.each do |mapping| %>
+    <div class="d-flex justify-content-between align-items-center border-bottom hover-light">
+      <div class="text-center w-10">
+        <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
+      </div>
+      <div class="text-wrap w-40 px-2 py-3">
+        <%= Spree.t(mapping.schema_field) %>
+
+        <code class="ml-2"><%= mapping.schema_field %></code>
+      </div>
+      <div class="w-50 px-2 py-3">
+        <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping %>
+      </div>
+    </div>
+  <% end %>
 
   <%= content_for :footer do %>
     <%= render 'spree/admin/imports/mapping_footer', import: @import %>
