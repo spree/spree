@@ -61,7 +61,7 @@ module Spree
           name_conditions << multi_search_condition(self, :last_name, full_name.last)
         end
 
-        where(email: sanitized_query).or(where(name_conditions.reduce(:or)))
+        where(arel_table[:email].lower.eq(query.downcase)).or(where(name_conditions.reduce(:or)))
       end
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles]

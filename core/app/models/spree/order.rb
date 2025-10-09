@@ -228,7 +228,7 @@ module Spree
         conditions << multi_search_condition(Spree::Address, :lastname, full_name.last)
       end
 
-      left_joins(:bill_address).where(email: sanitized_query).or(where(conditions.reduce(:or)))
+      left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
     end
 
     # Use this method in other gems that wish to register their own custom logic
