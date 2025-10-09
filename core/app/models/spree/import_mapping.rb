@@ -3,8 +3,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :mappable, polymorphic: true # Spree::Store, Spree::Vendor, etc.
-    has_many :imports, class_name: 'Spree::Import', foreign_key: :import_type, primary_key: :type
+    belongs_to :import
 
     #
     # Callbacks
@@ -14,7 +13,7 @@ module Spree
     #
     # Validations
     #
-    validates :mappable, :original_column_key, :original_column_presentation, presence: true
-    validates :original_column_key, uniqueness: { scope: [:mappable_type, :mappable_id] }
+    validates :import, :original_column_key, :original_column_presentation, presence: true
+    validates :original_column_key, uniqueness: { scope: [:import_id] }
   end
 end
