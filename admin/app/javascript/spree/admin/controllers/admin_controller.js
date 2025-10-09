@@ -3,22 +3,29 @@ import { Controller } from '@hotwired/stimulus'
 export default class extends Controller {
   static targets = ['close', 'save']
 
-  close(event) {
-    // https://github.com/hotwired/stimulus/issues/743
-    if (event.type == "keydown" && !(event instanceof KeyboardEvent)) return
+  handle(event) {
+    if (!this.isValidEvent(event)) return
 
-    if (this.hasCloseTarget) {
-      window.Turbo.visit(this.closeTarget.href)
-    }
+    const action = event.params?.action
+    if (action === 'close') this.visitTarget(this.closeTarget)
+    else if (action === 'save') this.clickTarget(this.saveTarget, event)
   }
 
-  save(event) {
-    // https://github.com/hotwired/stimulus/issues/743
-    if (event.type == "keydown" && !(event instanceof KeyboardEvent)) return
+  // --- helpers ---
 
-    if (this.hasSaveTarget) {
+  isValidEvent(event) {
+    // Fix for Stimulus bug: ignore synthetic keydown events
+    return !(event.type === 'keydown' && !(event instanceof KeyboardEvent))
+  }
+
+  visitTarget(target) {
+    if (target) window.Turbo.visit(target.href)
+  }
+
+  clickTarget(target, event) {
+    if (target) {
       event.preventDefault()
-      this.saveTarget.click()
+      target.click()
     }
   }
 }
