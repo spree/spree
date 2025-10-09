@@ -2,8 +2,12 @@
   <%= render 'spree/admin/imports/mapping_footer', import: @import_mapping.import %>
 <% end %>
 
-<% @import_mapping.import.mappings.each do |mapping| %>
-  <%= turbo_stream.replace "#{spree_dom_id(mapping)}-icon" do %>
-    <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
+<%= turbo_stream.replace "#{spree_dom_id(@import_mapping)}-icon" do %>
+  <%= render 'spree/admin/imports/mapping_icon', mapping: @import_mapping %>
+<% end %>
+
+<% @import_mapping.import.mappings.where.not(id: @import_mapping.id).each do |mapping| %>
+  <%= turbo_stream.replace spree_dom_id(mapping) do %>
+    <%= render 'spree/admin/imports/mapping_form', import: @import_mapping.import, mapping: mapping %>
   <% end %>
 <% end %>

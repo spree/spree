@@ -34,11 +34,7 @@
             <code class="ml-2"><%= mapping.schema_field %></code>
           </td>
           <td class="w-50">
-            <%= turbo_frame_tag spree_dom_id(mapping) do %>
-              <%= form_for mapping, url: spree.admin_import_mapping_path(@import, mapping), method: :put, data: { controller: 'auto-submit' } do |f| %>
-                <%= f.select :file_column, options_for_select(@import.schema_fields.map { |field| [Spree.t(field[:name]), field[:name]] }, mapping.file_column), { include_blank: 'Please select a column' }, { data: { controller: 'autocomplete-select', action: 'auto-submit#submit' } } %>
-              <% end %>
-            <% end %>
+            <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping %>
           </td>
         </tr>
       <% end %>

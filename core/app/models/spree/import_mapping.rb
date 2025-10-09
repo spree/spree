@@ -21,7 +21,7 @@ module Spree
     # Scopes
     #
     scope :required, -> { where(schema_field: import.required_fields) }
-    scope :mapped, -> { where.not(file_column: nil) }
+    scope :mapped, -> { where.not(file_column: [nil, '']) }
 
     def required?
       import.required_fields.include?(schema_field)
