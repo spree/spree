@@ -1,15 +1,123 @@
+# RuboCop Configuration for Spree Enhanced Edition
+# -------------------------------------------------
+# This configuration ensures modern, readable, and maintainable Ruby on Rails code.
 
-```yaml
+inherit_mode:
+  merge:
+    - Exclude
+
+require:
+  - rubocop-rails
+  - rubocop-rspec
+  - rubocop-performance
+
 AllCops:
-  TargetRubyVersion: 3.2
   NewCops: enable
+  TargetRubyVersion: 3.2
+  SuggestExtensions: false
+  Exclude:
+    - 'bin/**/*'
+    - 'db/schema.rb'
+    - 'db/migrate/**/*'
+    - 'vendor/**/*'
+    - 'node_modules/**/*'
+    - 'spec/fixtures/**/*'
+    - 'config/**/*'
+    - 'tmp/**/*'
+
+# --- Layout Rules -------------------------------------------------------------
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - 'config/**/*'
+    - 'db/**/*'
+
+Layout/TrailingWhitespace:
+  Enabled: true
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: true
+
+# --- Style Rules --------------------------------------------------------------
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Style/Documentation:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: true
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+# --- Metrics ------------------------------------------------------------------
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'db/**/*'
+
+Metrics/ClassLength:
+  Max: 200
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
+    - 'Rakefile'
+    - 'config/**/*'
 
-Style/FrozenStringLiteralComment:
+# --- Rails Rules --------------------------------------------------------------
+
+Rails:
+  Enabled: true
+
+Rails/Delegate:
+  Enabled: true
+
+Rails/Presence:
+  Enabled: true
+
+Rails/FindEach:
+  Enabled: true
+
+Rails/Output:
   Enabled: false
+
+# --- RSpec Rules --------------------------------------------------------------
+
+RSpec:
+  Enabled: true
+  AllCops:
+    TargetRubyVersion: 3.2
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/NestedGroups:
+  Max: 3
+
+RSpec/DescribedClass:
+  Enabled: true
+
+# --- Performance Rules --------------------------------------------------------
+
+Performance:
+  Enabled: true
+
+Performance/Casecmp:
+  Enabled: true
+
+Performance/StartWith:
+  Enabled: true
+
+Performance/EndWith:
+  Enabled: true
