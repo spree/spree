@@ -119,27 +119,31 @@ describe Spree::UserMethods do
     let!(:user_1) { create(:user, email: 'john.doe@example.com', first_name: 'John', last_name: 'Doe') }
     let!(:user_2) { create(:user, email: 'jane.doe@example.com', first_name: 'Jane', last_name: 'Gone') }
     let!(:user_3) { create(:user, email: 'mary.moe@example.com', first_name: 'Mary', last_name: 'Moe') }
+    let!(:user_4) { create(:user, email: 'john_doe@example.com', first_name: 'Ayn', last_name: 'Rand') }
+    let!(:user_5) { create(:user, email: 'johndoe@example.com', first_name: 'John', last_name: 'Doe') }
 
     it 'returns users based on an email' do
       expect(Spree.user_class.multi_search('john.doe@example.com')).to eq([user_1])
       expect(Spree.user_class.multi_search('jane.doe@example.com')).to eq([user_2])
+      expect(Spree.user_class.multi_search('john_doe@example.com')).to eq([user_4])
+      expect(Spree.user_class.multi_search('johndoe@example.com')).to eq([user_5])
       expect(Spree.user_class.multi_search('mary.moe@')).to eq([])
     end
 
     it 'returns users based on the first name' do
-      expect(Spree.user_class.multi_search('joh')).to eq([user_1])
+      expect(Spree.user_class.multi_search('joh')).to eq([user_1, user_5])
       expect(Spree.user_class.multi_search('jan')).to eq([user_2])
       expect(Spree.user_class.multi_search('greg')).to eq([])
     end
 
     it 'returns users based on the last name' do
-      expect(Spree.user_class.multi_search('do')).to eq([user_1])
+      expect(Spree.user_class.multi_search('do')).to eq([user_1, user_5])
       expect(Spree.user_class.multi_search('moe')).to eq([user_3])
       expect(Spree.user_class.multi_search('smith')).to eq([])
     end
 
     it 'returns users based on the full name' do
-      expect(Spree.user_class.multi_search('joh do')).to eq([user_1])
+      expect(Spree.user_class.multi_search('joh do')).to eq([user_1, user_5])
       expect(Spree.user_class.multi_search('ane gon')).to eq([user_2])
       expect(Spree.user_class.multi_search('mary moe')).to eq([user_3])
       expect(Spree.user_class.multi_search('jane moe')).to eq([user_2, user_3])

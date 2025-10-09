@@ -39,10 +39,14 @@ describe Spree::Order, type: :model do
       let!(:order_1) { create(:order, number: 'R100', user: create(:user, email: 'don.roe@example.com'), bill_address: create(:address, first_name: 'Don', last_name: 'Roe')) }
       let!(:order_2) { create(:order, number: 'R101', user: create(:user, email: 'jane.gone@example.com'), bill_address: create(:address, first_name: 'Jane', last_name: 'Gone')) }
       let!(:order_3) { create(:order, number: 'R200', user: create(:user, email: 'mary.moe@example.com'), bill_address: create(:address, first_name: 'Mary', last_name: 'Moe')) }
+      let!(:order_4) { create(:order, number: 'R300', user: create(:user, email: 'johndoe@example.com'), bill_address: create(:address, first_name: 'Ayn', last_name: 'Rand')) }
+      let!(:order_5) { create(:order, number: 'R400', user: create(:user, email: 'john_doe@example.com'), bill_address: create(:address, first_name: 'John', last_name: 'Doe')) }
 
       it 'returns orders based on an email' do
         expect(described_class.multi_search('don.roe@example.com')).to eq([order_1])
         expect(described_class.multi_search('jane.gone@example.com')).to eq([order_2])
+        expect(described_class.multi_search('johndoe@example.com')).to eq([order_4])
+        expect(described_class.multi_search('john_doe@example.com')).to eq([order_5])
         expect(described_class.multi_search('mary.moe@')).to eq([])
       end
 
