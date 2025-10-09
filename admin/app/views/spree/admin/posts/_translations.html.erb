@@ -1,0 +1,85 @@
+<div class="translations-tabs" data-controller="tabs">
+  <ul class="nav nav-tabs mb-3">
+    <% I18n.available_locales.each do |locale| %>
+      <li class="nav-item">
+        <a class="nav-link <%= 'active' if locale == I18n.locale %>" 
+           href="#translation_<%= locale %>" 
+           data-bs-toggle="tab" 
+           data-action="click->tabs#show"
+           data-tabs-target="tab"
+           data-locale="<%= locale %>">
+          <%= locale.upcase %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="tab-content">
+    <% I18n.available_locales.each do |locale| %>
+      <div class="tab-pane fade <%= 'show active' if locale == I18n.locale %>" 
+           id="translation_<%= locale %>" 
+           role="tabpanel">
+        
+        <% translation = @post.translations.find { |t| t.locale == locale.to_s } || @post.translations.build(locale: locale) %>
+        
+        <%= f.fields_for :translations, translation do |translation_form| %>
+          <%= translation_form.hidden_field :locale, value: locale %>
+          
+          <div class="form-group">
+            <%= translation_form.label :title, Spree.t(:title) %>
+            <%= translation_form.text_field :title, 
+                  class: 'form-control',
+                  data: {
+                    seo_form_target: 'titleInput',
+                    locale: locale,
+                    action: 'seo-form#updateTitle'
+                  } %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :content, Spree.t(:content) %>
+            <%= translation_form.rich_text_area :content, 
+                  class: 'form-control',
+                  data: {
+                    seo_form_target: 'descriptionInput',
+                    locale: locale,
+                    action: 'seo-form#updateDescription'
+                  } %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :excerpt, Spree.t(:excerpt) %>
+            <%= translation_form.text_area :excerpt, 
+                  class: 'form-control',
+                  rows: 3,
+                  data: {
+                    seo_form_target: 'excerptInput',
+                    locale: locale
+                  } %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :meta_title, Spree.t(:meta_title) %>
+            <%= translation_form.text_field :meta_title, class: 'form-control' %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :meta_description, Spree.t(:meta_description) %>
+            <%= translation_form.text_area :meta_description, class: 'form-control', rows: 3 %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :meta_keywords, Spree.t(:meta_keywords) %>
+            <%= translation_form.text_field :meta_keywords, class: 'form-control' %>
+          </div>
+          
+          <div class="form-group">
+            <%= translation_form.label :slug, Spree.t(:slug) %>
+            <%= translation_form.text_field :slug, class: 'form-control' %>
+          </div>
+          
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

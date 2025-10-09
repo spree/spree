@@ -1,0 +1,3 @@
+<!-- replace_contents #post_title -->
+<%= render 'spree/admin/posts/translations', f: f %>
+<!-- /replace_contents #post_title -->

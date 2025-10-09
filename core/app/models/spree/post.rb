@@ -4,11 +4,21 @@ module Spree
     include Spree::Linkable
     include Spree::Metafields
     extend FriendlyId
+    translates :title, :content, :meta_title, :meta_description, :meta_keywords, :slug
+    friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id deleted? locale]
 
-    friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id deleted?]
     acts_as_paranoid
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
+
+    # For globalize
+    globalize_accessors locales: I18n.available_locales, attributes: [:title, :content, :meta_title, :meta_description, :meta_keywords]
+    globalize_validations locales: [:en] # Validates only english locale
+    
+    # Ensure that the slug is updated when the title changes
+    def should_generate_new_friendly_id?
+      title_changed? || super
+    end
 
     if defined?(PgSearch)
       include PgSearch::Model
