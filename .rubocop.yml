@@ -34,12 +34,7 @@ Lint/UselessAssignment:
   Enabled: true
 
 RSpec:
-  AllCops:
-    Exclude:
-      - 'spec/fixtures/**/*'
-      - 'spec/support/**/*'
-      - 'spec/factories/**/*'
-  Language:
-    Enabled: true
-  FactoryBot:
-    Enabled:
+  Exclude:
+    - 'spec/fixtures/**/*'
+    - 'spec/support/**/*'
+    - 'spec/factories/**/*'
