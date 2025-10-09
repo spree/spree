@@ -43,6 +43,10 @@ module Spree
 
         'spree/admin_minimal'
       end
+
+      def create_turbo_stream_enabled?
+        true
+      end
     end
   end
 end

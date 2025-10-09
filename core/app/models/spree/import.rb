@@ -120,7 +120,7 @@ module Spree
         mappings.find_or_create_by(
           mappable: owner,
           import_type: type,
-          original_column_key: header.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '').parameterize
+          original_column_key: header.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '').parameterize.underscore.strip
         ).tap do |mapping|
           mapping.original_column_presentation ||= header
           mapping.save!

@@ -1,0 +1,9 @@
+<% if @import.valid? %>
+  <%= turbo_stream.update 'drawer' do %>
+    <script>
+      window.Turbo.visit("<%= spree.admin_import_path(@import) %>", { action: 'replace' })
+    </script>
+  <% end %>
+<% else %>
+  <%= turbo_render_alerts :drawer_alerts %>
+<% end %>
