@@ -150,4 +150,21 @@ describe Spree::UserMethods do
       expect(Spree.user_class.multi_search('greg smith')).to eq([])
     end
   end
+
+  describe '#can_be_deleted?' do
+    subject { test_user.can_be_deleted? }
+
+    context 'when user has a role on current store' do
+      it 'returns true if user has admin role on current store' do
+        test_user.add_role(Spree::Role::ADMIN_ROLE, current_store)
+        expect(subject).to be(true)
+      end
+
+      it 'returns true if user has other than admin role on current store' do
+        role = create(:role, name: 'test')
+        another_user.add_role(role.name, current_store)
+        expect(subject).to be(true)
+      end
+    end
+  end
 end
