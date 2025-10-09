@@ -30,9 +30,7 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
     add_index :spree_import_rows, [:import_id, :row_number], unique: true
 
     create_table :spree_import_mappings do |t|
-      t.belongs_to :mappable, polymorphic: true
-
-      t.string :import_type, null: false, index: true
+      t.belongs_to :import, null: false
 
       t.string :original_column_key, null: false
       t.string :original_column_presentation, null: false
@@ -41,6 +39,6 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    add_index :spree_import_mappings, [:mappable_type, :mappable_id, :import_type, :original_column_key], unique: true
+    add_index :spree_import_mappings, [:import_id, :original_column_key], unique: true
   end
 end

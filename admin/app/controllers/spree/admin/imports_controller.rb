@@ -7,8 +7,11 @@ module Spree
       create.before :set_user
       create.before :set_owner
 
+      add_breadcrumb_icon 'table-import'
+
       # GET /admin/imports/:id
       def show
+        add_breadcrumb @object.display_name, spree.admin_import_path(@object)
         @rows = @object.rows.includes(:item)
       end
 

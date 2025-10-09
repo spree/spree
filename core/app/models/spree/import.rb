@@ -12,7 +12,7 @@ module Spree
     #
     belongs_to :owner, polymorphic: true # Store, Vendor, etc.
     belongs_to :user, class_name: Spree.admin_user_class.to_s
-    has_many :mappings, class_name: 'Spree::ImportMapping', foreign_key: :import_type, primary_key: :type
+    has_many :mappings, class_name: 'Spree::ImportMapping'
     has_many :rows, class_name: 'Spree::ImportRow'
 
     #
@@ -83,6 +83,10 @@ module Spree
       end
     end
 
+    def display_name
+      "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
+    end
+
     # eg. Spree::Imports::Orders => orders-store-my-store-code-20241030133348.csv
     def import_file_name
       "#{type.demodulize.underscore}-#{owner.type.demodulize.underscore}-#{owner.id}-#{created_at.strftime('%Y%m%d%H%M%S')}.csv"
@@ -115,11 +119,10 @@ module Spree
     end
 
     # Creates mappings from the csv headers
+    # TODO: get mappings from the previous import if it exists, so user won't have to map the same columns again
     def create_mappings
       csv_headers.each do |header|
         mappings.find_or_create_by(
-          mappable: owner,
-          import_type: type,
           original_column_key: header.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '').parameterize.underscore.strip
         ).tap do |mapping|
           mapping.original_column_presentation ||= header
