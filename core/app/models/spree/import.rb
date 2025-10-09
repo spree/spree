@@ -87,6 +87,10 @@ module Spree
       import_schema.fields
     end
 
+    def schema_fields_without_already_mapped
+      schema_fields.reject { |field| mappings.mapped.exists?(schema_field: field[:name]) }
+    end
+
     def required_fields
       import_schema.required_fields
     end
