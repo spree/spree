@@ -1,0 +1,9 @@
+<%= turbo_stream.replace 'footer' do %>
+  <%= render 'spree/admin/imports/mapping_footer', import: @import_mapping.import %>
+<% end %>
+
+<% @import_mapping.import.mappings.each do |mapping| %>
+  <%= turbo_stream.replace "#{spree_dom_id(mapping)}-icon" do %>
+    <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
+  <% end %>
+<% end %>

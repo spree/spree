@@ -12,7 +12,6 @@ module Spree
       # GET /admin/imports/:id
       def show
         add_breadcrumb @object.display_name, spree.admin_import_path(@object)
-        @rows = @object.rows.includes(:item)
       end
 
       protected
@@ -44,7 +43,7 @@ module Spree
       def choose_layout
         return 'turbo_rails/frame' if turbo_frame_request?
 
-        'spree/admin_minimal'
+        'spree/admin_wizard'
       end
 
       def create_turbo_stream_enabled?

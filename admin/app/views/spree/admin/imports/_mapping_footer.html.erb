@@ -1,0 +1,13 @@
+<footer class="position-fixed bottom-0 start-0 w-100 border-top px-4 py-3 bg-white d-flex align-items-center justify-content-between gap-3" id="footer" style="z-index: 9999;">
+  <div class="flex-grow-1 d-flex flex-column">
+    <p>
+      Please map all the required fields to continue.
+    </p>
+    <%= progress_bar_component(import.mapped_fields.count, min: 0, max: import.required_fields.count) %>
+  </div>
+
+  <span data-controller="tooltip">
+    <%= button_to Spree.t(:mark_as_mapped), spree.admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.can_be_marked_as_mapped? %>
+    <%= tooltip('Please map all the required fields to continue.') %>
+  </span>
+</footer>

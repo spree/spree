@@ -13,12 +13,19 @@ module Spree
     belongs_to :owner, polymorphic: true # Store, Vendor, etc.
     belongs_to :user, class_name: Spree.admin_user_class.to_s
     has_many :mappings, class_name: 'Spree::ImportMapping'
+    alias import_mappings mappings
     has_many :rows, class_name: 'Spree::ImportRow'
+    alias import_rows rows
 
     #
     # Validations
     #
     validates :owner, :user, :type, :attachment, presence: true
+
+    #
+    # Callbacks
+    #
+    after_create :started_processing
 
     #
     # Ransack configuration
@@ -52,12 +59,7 @@ module Spree
       event :complete do
         transition from: :mapped, to: :complete
       end
-    end
-
-    def generate
-      validate_attachment
-      handle_attachment
-      send_import_done_email
+      after_transition to: :complete, do: :send_import_completed_email
     end
 
     def multi_line_csv?
@@ -68,35 +70,40 @@ module Spree
       raise NotImplementedError, 'handle_csv_line must be implemented'
     end
 
-    def handle_attachment
-      file = ::File.open(import_tmp_file_path)
-      attachment.attach(io: file, filename: import_file_name)
-      ::File.delete(import_tmp_file_path) if ::File.exist?(import_tmp_file_path)
-    end
-
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
       if type == 'Spree::Imports::Orders'
         Spree.user_class
       else
-        "Spree::#{type.demodulize.singularize}".constantize
+        "Spree::#{type.demodulize.singularize}".safe_constantize
       end
+    end
+
+    def import_schema
+      "Spree::ImportSchemas::#{type.demodulize}".safe_constantize.new
+    end
+
+    def schema_fields
+      import_schema.fields
+    end
+
+    def required_fields
+      import_schema.required_fields
+    end
+
+    def mapped_fields
+      @mapped_fields ||= mappings.mapped.where(schema_field: required_fields)
+    end
+
+    def can_be_marked_as_mapped?
+      mapped_fields.count == required_fields.count
     end
 
     def display_name
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
     end
 
-    # eg. Spree::Imports::Orders => orders-store-my-store-code-20241030133348.csv
-    def import_file_name
-      "#{type.demodulize.underscore}-#{owner.type.demodulize.underscore}-#{owner.id}-#{created_at.strftime('%Y%m%d%H%M%S')}.csv"
-    end
-
-    def import_tmp_file_path
-      Rails.root.join('tmp', import_file_name)
-    end
-
-    def send_import_done_email
+    def send_import_completed_email
       # Spree::ImportMailer.import_done(self).deliver_later
     end
 
@@ -118,16 +125,11 @@ module Spree
       @attachment_file_content ||= attachment.blob.download
     end
 
-    # Creates mappings from the csv headers
+    # Creates mappings from the schema fields
     # TODO: get mappings from the previous import if it exists, so user won't have to map the same columns again
     def create_mappings
-      csv_headers.each do |header|
-        mappings.find_or_create_by(
-          original_column_key: header.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '').parameterize.underscore.strip
-        ).tap do |mapping|
-          mapping.original_column_presentation ||= header
-          mapping.save!
-        end
+      schema_fields.each do |schema_field|
+        mappings.find_or_create_by!(schema_field: schema_field[:name])
       end
     end
 

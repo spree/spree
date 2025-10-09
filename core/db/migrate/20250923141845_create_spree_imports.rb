@@ -32,13 +32,13 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
     create_table :spree_import_mappings do |t|
       t.belongs_to :import, null: false
 
-      t.string :original_column_key, null: false
-      t.string :original_column_presentation, null: false
-      t.string :column
+      t.string :schema_field, null: false
+      t.string :file_column
+      t.string :file_column_key
 
       t.timestamps
     end
 
-    add_index :spree_import_mappings, [:import_id, :original_column_key], unique: true
+    add_index :spree_import_mappings, [:import_id, :schema_field], unique: true
   end
 end
