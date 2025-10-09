@@ -1,203 +1,45 @@
-require: rubocop-rspec
-
 AllCops:
   TargetRubyVersion: 3.2
   NewCops: enable
   Exclude:
-    - "**/sandbox/**/*"
-    - "**/db/migrate/*"
-    - "**/Gemfile"
-    - "**/Gemfile.lock"
-    - "**/Rakefile"
-    - "**/rails"
-    - "**/*.gemspec"
-    - "**/dummy/**/*"
-    - "**/vendor/**/*"
-    - "**/spec_helper.rb"
-    - "**/templates/**/*"
-
-Layout/MultilineOperationIndentation:
-  EnforcedStyle: indented
-
-Layout/ParameterAlignment:
-  Enabled: false
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'spec/fixtures/**/*'
+    - 'config/initializers/*'
+    - 'public/**/*'
 
 Layout/LineLength:
-  Max: 150
-  Exclude:
-    - "**/spec/**/*"
-
-Layout/DotPosition:
-  EnforcedStyle: trailing
-
-Layout/SpaceInsideArrayLiteralBrackets:
-  Exclude:
-    - "api/spec/integration/**/*.rb"
-    - "api/lib/spree/api/testing_support/v2/platform_contexts.rb"
-    - "spec/**/*"
-
-Metrics/ClassLength:
-  Max: 150
-  CountComments: false
-
-Metrics/ModuleLength:
-  Max: 250
-  CountComments: false
-  Exclude:
-    - "**/spec/**/*"
-
-Metrics/MethodLength:
-  Max: 50
-  CountComments: false
+  Max: 120
 
 Metrics/BlockLength:
-  Max: 50
-  CountComments: false
   Exclude:
-    - "**/spec/**/*"
-    - "**/*.rake"
-    - "**/factories/**/*"
-    - "**/config/routes.rb"
-    - "**/lib/**/testing_support/**/*"
+    - 'spec/**/*'
 
-Metrics/AbcSize:
-  Max: 45
+Metrics/MethodLength:
+  Max: 25
 
-Metrics/PerceivedComplexity:
-  Max: 10
-
-Metrics/CyclomaticComplexity:
-  Max: 10
-
-Style/Documentation:
-  Enabled: false
-
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
+Metrics/ClassLength:
+  Max: 200
 
 Style/FrozenStringLiteralComment:
   Enabled: false
 
-Style/ClassVars:
-  Exclude:
-    - "core/lib/spree/permitted_attributes.rb"
-
-Style/RegexpLiteral:
+Style/Documentation:
   Enabled: false
 
-Style/WordArray:
-  Enabled: false
+Lint/UselessAssignment:
+  Enabled: true
 
-Style/SymbolArray:
-  Enabled: false
-
-Style/SymbolProc:
-  Exclude:
-    - "**/app/serializers/**/*"
-
-Style/GuardClause:
-  Enabled: false
-
-Style/TrailingCommaInArrayLiteral:
-  Enabled: false
-
-Style/TrailingCommaInHashLiteral:
-  Enabled: false
-
-Style/BarePercentLiterals:
-  Enabled: false
-
-Style/MutableConstant:
-  Enabled: false
-
-Style/PercentLiteralDelimiters:
-  Enabled: false
-
-Style/IfUnlessModifier:
-  Enabled: false
-
-Style/RedundantPercentQ:
-  Enabled: false
-
-Style/NumericPredicate:
-  Enabled: false
-
-Style/ClassAndModuleChildren:
-  Enabled: false
-
-Style/AndOr:
-  Exclude:
-    - "**/*controller.rb"
-
-Style/HashEachMethods:
-  Enabled: false
-
-Style/HashTransformKeys:
-  Enabled: false
-
-Style/HashTransformValues:
-  Enabled: false
-
-Style/Alias:
-  Enabled: false
-
-Naming/VariableNumber:
-  Enabled: false
-
-Lint/ParenthesesAsGroupedExpression:
-  Enabled: false
-
-RSpec/NestedGroups:
-  Max: 7
-
-Lint/AmbiguousBlockAssociation:
-  Exclude:
-    - "**/spec/**/*"
-
-Style/NumericLiterals:
-  Enabled: false
-
-RSpec/DescribeClass:
-  Enabled: false
-
-RSpec/VerifiedDoubles:
-  Enabled: false
-
-RSpec/MessageChain:
-  Enabled: false
-
-RSpec/AnyInstance:
-  Enabled: false
-
-RSpec/InstanceVariable:
-  Enabled: false
-
-RSpec/ContextWording:
-  Enabled: false
-
-RSpec/ExpectInHook:
-  Enabled: false
-
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/MessageSpies:
-  Enabled: false
-
-RSpec/NamedSubject:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Enabled: false
-
-RSpec/LetSetup:
-  Enabled: false
-
-RSpec/SubjectStub:
-  Enabled: false
-
-RSpec/VoidExpect:
-  Enabled: false
-
-RSpec/BeforeAfterAll:
-  Enabled: false
+RSpec:
+  AllCops:
+    Exclude:
+      - 'spec/fixtures/**/*'
+      - 'spec/support/**/*'
+      - 'spec/factories/**/*'
+  Language:
+    Enabled: true
+  FactoryBot:
+    Enabled:
