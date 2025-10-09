@@ -1,4 +1,4 @@
-<% if @import.valid? %>
+<% if @import.persisted? %>
   <%= turbo_stream.update 'drawer' do %>
     <script>
       window.Turbo.visit("<%= spree.admin_import_path(@import) %>", { action: 'replace' })

@@ -145,7 +145,7 @@ Spree::Core::Engine.add_routes do
 
     # imports
     resources :imports do
-      resources :mappings, only: [:edit, :update]
+      resources :mappings, only: [:edit, :update], controller: 'import_mappings'
     end
 
     # audit log
