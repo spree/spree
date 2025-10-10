@@ -14,7 +14,7 @@
     </p>
     <p class="text-center" data-toggle="modal" data-target="#modal">
       <% if can?(:create, Spree::Classification) && @taxon.manual? %>
-        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-link', data: { turbo_frame: 'dialog_modal' } %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary', data: { turbo_frame: 'dialog_modal' } %>
       <% end %>
   <% end %>
 <% end %>

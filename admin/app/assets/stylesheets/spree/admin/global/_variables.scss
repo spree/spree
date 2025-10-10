@@ -35,7 +35,7 @@ $theme-colors: (
   "white": $white,
   "black": $black,
   "primary": $primary,
-  "secondary": rgba($blue, 0.1),
+  "secondary": rgba($blue, 0.05),
   "action": $action,
   "action-border": $action-border,
   "active": $gray-25,
@@ -52,8 +52,7 @@ $theme-colors: (
   "gray-600": $gray-600,
   "gray-700": $gray-700,
   "gray-800": $gray-800,
-  "gray-900": $gray-900,
-  "mint": #C7E15A
+  "gray-900": $gray-900
 );
 
 $body-color: #333 !default;
@@ -72,7 +71,7 @@ $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
 $border-radius-sm: 0.4rem !default;
 $border-radius-lg: 0.75rem !default;
-$border-color: $gray-100 !default;
+$border-color: rgba($gray-100, 0.75) !default;
 $input-border-color: $border-color !default;
 $list-group-border-color: $border-color !default;
 $list-group-hover-bg: $gray-25 !default;
@@ -93,7 +92,7 @@ $component-active-bg:         $blue !default;
 $input-placeholder-color: $gray-500;
 $input-padding-y:         .5rem !default;
 $input-disabled-bg: $gray-25 !default;
-$input-focus-border-color: $blue !default;
+$input-focus-border-color: rgba($blue, 0.75) !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-400 !default;
@@ -108,9 +107,9 @@ $nav-link-padding-y:                .5rem !default;
 $nav-link-padding-x:                .6rem !default;
 
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
-$box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
+$box-shadow-xs: rgba(43, 34, 51, 0.02) 0px 1px 2px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
-$input-box-shadow: none !default;
+$input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
 
 $card-border-width: 0px !default;
@@ -205,7 +204,7 @@ $embed-responsive-aspect-ratios: (
 ) !default;
 
 // tables
-$table-cell-padding: 1rem .50rem !default;
+$table-cell-padding: 1.15rem .75rem !default;
 
 $code-color: $gray-600 !default;
 $code-bg: $gray-25 !default;
@@ -218,4 +217,4 @@ $header-height: 60px !default;
 $sidebar-width: 220px !default;
 $sidebar-bg: $light !default;
 
-$progress-bar-bg: $blue !default;
+$progress-bar-bg: rgba($blue, 0.75) !default;

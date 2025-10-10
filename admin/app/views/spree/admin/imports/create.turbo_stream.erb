@@ -3,6 +3,17 @@
     <script>
       window.Turbo.visit("<%= spree.admin_import_path(@import) %>", { action: 'replace' })
     </script>
+
+    <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize)) %>
+
+    <div class="drawer-body">
+      <div class="d-flex flex-column align-items-center justify-content-center gap-3" id="import-spinner">
+        <p class="text-muted mb-3"><%= Spree.t(:loading) %>...</p>
+        <div class="spinner-border text-primary" role="status" aria-label="<%= Spree.t(:loading) %>">
+          <span class="sr-only"><%= Spree.t(:loading) %></span>
+        </div>
+      </div>
+    </div>
   <% end %>
 <% else %>
   <%= turbo_render_alerts :drawer_alerts %>

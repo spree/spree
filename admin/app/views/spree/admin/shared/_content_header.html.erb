@@ -23,7 +23,7 @@
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
         <div class="dropdown h-100" id="page_actions_dropdown">
-          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 p-2', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
+          <%= link_to '#', class: 'btn btn-light h-100 p-2', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <div class="dropdown-menu dropdown-menu-right">
