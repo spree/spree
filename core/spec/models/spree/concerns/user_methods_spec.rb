@@ -155,15 +155,33 @@ describe Spree::UserMethods do
     subject { test_user.can_be_deleted? }
 
     context 'when user has a role on current store' do
-      it 'returns true if user has admin role on current store' do
-        test_user.add_role(Spree::Role::ADMIN_ROLE, current_store)
+      let!(:role) { create(:role, name: 'test') }
+
+      it 'returns true if another user also has a role on the store' do
+        test_user.add_role(role.name, current_store)
+        another_user = create(:user)
+        another_user.add_role(role.name, current_store)
+
         expect(subject).to be(true)
       end
 
-      it 'returns true if user has other than admin role on current store' do
-        role = create(:role, name: 'test')
-        another_user.add_role(role.name, current_store)
+      it 'returns false if user is the last with a role on the store' do
+        current_store.role_users.destroy_all
+        test_user.add_role(role.name, current_store)
+
+        expect(subject).to be(false)
+      end
+    end
+
+    context 'when user has no role on current store' do
+      it 'returns true if user has no completed orders' do
         expect(subject).to be(true)
+      end
+
+      it 'returns false if user has completed orders' do
+        create(:order, user: test_user, completed_at: Time.current)
+
+        expect(subject).to be(false)
       end
     end
   end
