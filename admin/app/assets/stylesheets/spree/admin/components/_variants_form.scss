@@ -79,7 +79,7 @@
 
     .new_option_button {
       @extend .btn;
-      @extend .btn-link;
+      @extend .btn-secondary;
       @extend .py-3;
       @extend .mt-2;
       width: 100%;

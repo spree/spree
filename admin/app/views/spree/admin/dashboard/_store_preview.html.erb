@@ -32,7 +32,7 @@
     </div>
     <% unless current_store.default_custom_domain&.active? %>
       <div class="card-footer border-top p-2">
-        <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-link w-100 py-2' %>
+        <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary w-100 py-2' %>
       </div>
     <% end %>
   </div>

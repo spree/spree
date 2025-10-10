@@ -68,7 +68,7 @@ button[disabled]        .show-when-enabled { display: none; }
 
 .hover-light {
   &:hover, &:focus {
-    background-color: $gray-25;
+    background-color: rgba($gray-25, 0.5);
     text-decoration: none;
   }
 }
@@ -91,20 +91,9 @@ button[disabled]        .show-when-enabled { display: none; }
   }
 }
 
-.btn-link {
-  color: theme-color('primary') !important;
-  border-color: $border-color;
-
-  &:hover, &:focus {
-    text-decoration: none !important;
-    background-color: theme-color('action') !important;
-    border-color: theme-color('action-border') !important;
-  }
-}
-
 .btn-secondary {
   color: $primary;
-  border-color: transparent;
+  border-color: rgba($primary, 0.1);
 
   &:hover, &:focus {
     border-color: rgba($primary, 0.1) !important;
@@ -143,13 +132,13 @@ button[disabled]        .show-when-enabled { display: none; }
 }
 
 .btn-light {
-  background-color: $white;
+  background-color: $gray-25;
   border-color: $border-color;
   color: $gray-700;
 
   &:hover, &:focus {
     border-color: $border-color;
-    background-color: $gray-25;
+    background-color: $gray-50;
     color: $gray-900;
   }
 

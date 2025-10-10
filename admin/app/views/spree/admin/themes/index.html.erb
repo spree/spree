@@ -4,7 +4,7 @@
 
 <%= content_for :page_actions do %>
   <%= render_admin_partials(:themes_actions_partials) %>
-  <%= link_to_with_icon 'eye', Spree.t(:view_your_store), current_store.formatted_url_or_custom_domain, class: 'btn btn-light bg-transparent', target: '_blank' %>
+  <%= link_to_with_icon 'eye', Spree.t(:view_your_store), current_store.formatted_url_or_custom_domain, class: 'btn btn-light', target: '_blank' %>
 <% end %>
 
 <%= content_for :page_alerts do %>
@@ -21,7 +21,7 @@
         <span>
           You don't have domain connected to your store
         </span>
-        <%= link_to 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-link ml-3' %>
+        <%= link_to 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary ml-3' %>
       </div>
     </div>
   <% end %>
