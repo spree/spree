@@ -47,7 +47,9 @@
     padding-bottom: 0.4rem;
     margin-bottom: 0.15rem;
 
-    color: $gray-700;
+    transition-property: background-color, color;
+    transition-duration: 0.01s;
+    transition-timing-function: ease;
 
     &:hover {
       background-color: $dropdown-link-hover-bg;

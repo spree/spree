@@ -23,7 +23,7 @@
           <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options, select_data: {action: 'auto-submit#submit'}, disable_with: "<span class='spinner-border spinner-border-sm' role='status'></span>" } %>
         <% end %>
         <span class="d-flex w-100 justify-content-center align-items-center"><%= Spree.t(:or) %></span>
-        <%= link_to Spree.t(:create_new), spree.new_admin_order_user_path(@order, show_form: true), class: "btn btn-light w-100" %>
+        <%= link_to Spree.t(:create_new), spree.new_admin_order_user_path(@order, show_form: true), class: "btn btn-secondary w-100" %>
       </div>
     <% end %>
   </div>
