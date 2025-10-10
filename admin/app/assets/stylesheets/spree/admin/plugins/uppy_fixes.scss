@@ -5,6 +5,11 @@
   line-height: $line-height-base !important;
 }
 
+.uppy-Dashboard-inner {
+  background-color: $light;
+  border-color: $border-color;
+}
+
 .uppy-Dashboard-innerWrap, .uppy-Dashboard-inner, .uppy-Dashboard-AddFiles {
   border-radius: $border-radius-lg !important;
 }
