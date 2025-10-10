@@ -74,7 +74,7 @@ button[disabled]        .show-when-enabled { display: none; }
 }
 .hover-gray {
   &:hover, &:focus {
-    background-color: $gray-100;
+    background-color: $gray-50;
     text-decoration: none;
   }
 }
