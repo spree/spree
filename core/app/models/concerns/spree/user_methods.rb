@@ -137,7 +137,7 @@ module Spree
     # Returns true if the user can be deleted
     # @return [Boolean]
     def can_be_deleted?
-      if has_spree_role?(Spree::Role::ADMIN_ROLE)
+      if role_users.where(resource: Spree::Store.current).exists?
         Spree::Store.current.users.where.not(id: id).exists?
       else
         orders.complete.none?
