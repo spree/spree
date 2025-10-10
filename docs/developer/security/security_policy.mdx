@@ -1,0 +1,28 @@
+## Overview
+
+Proper application design, intelligent programming, and secure infrastructure are all essential in creating a secure e-commerce store using any software (Spree included). The Spree team has done its best to provide you with the tools to create a secure and profitable web presence, but it is up to you to take these tools and put them in good practice. We highly recommend reading and understanding the [Rails Security Guide](http://guides.rubyonrails.org/security.html).
+
+## Supported Versions
+
+This is a list of all Spree versions currently being supported by the Spree team.
+
+| Version | Release date | EOL date   |
+| ------- | ------------ | ---------- |
+| 5.0     | 26.03.2025   | 26.03.2028 |
+| 4.10    | 06.09.2024   | 06.09.2027 |
+
+If you're using an older version [please upgrade](../upgrades/). Have trouble upgrading? [Contact us for support](https://spreecommerce.org/contact/).
+
+**Versions that aren't supported will not receive any security patches and fixes!**
+
+## Reporting Security Issues
+
+Please do not announce potential security vulnerabilities in public. We have a dedicated email address [security@spreecommerce.org](mailto:security@spreecommerce.org). We will work quickly to determine the severity of the issue and provide a fix for the appropriate versions. We will credit you with the discovery of this patch by naming you in a blog post.
+
+If you would like to provide a patch yourself for the security issue **do not open a pull request for it**. Instead, create a commit on your fork of Spree and run this command:
+
+```bash
+git format-patch HEAD~1..HEAD --stdout > patch.txt
+```
+
+This command will generate a file called `patch.txt` with your changes. Please email a description of the patch along with the patch itself to our [dedicated email address](mailto:hi@spreecommerce.org).

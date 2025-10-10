@@ -1,0 +1,18 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_taxonomy_path(@taxon.taxonomy) %>
+  <%= @taxon.name %>
+<% end %>
+
+<% content_for :page_actions_dropdown do %>
+  <%= external_page_preview_link(@taxon, name: Spree.t(:taxonomy)) %>
+<% end %>
+
+<%# Because otherwise the form would attempt to use to_param of @taxon %>
+<% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxon } %>
+
+<%= form_for [:admin, @taxon], method: :put, url: form_url, html: { multipart: true }, data: { controller: 'auto-submit' } do |f| %>
+  <%= render 'form', f: f %>
+  <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+<% end %>

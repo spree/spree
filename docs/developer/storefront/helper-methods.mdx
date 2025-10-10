@@ -1,0 +1,109 @@
+---
+title: Storefront Helper Methods
+sidebarTitle: Helper Methods
+---
+
+import SpreeTheme from '/snippets/objects/spree_theme.mdx'
+import SpreeOrder from '/snippets/objects/spree_order.mdx'
+import SpreeStore from '/snippets/objects/spree_store.mdx'
+import SpreeUser from '/snippets/objects/spree_user.mdx'
+
+Here you can find a list of helper methods provided by Spree that are available in the Storefront that you can use in every template.
+
+<Warning>
+The list is incomplete. We're working on it!
+</Warning>
+
+## `current_currency`
+
+Returns the currently selected currency. By default in the Storefront this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
+
+```erb
+<%= current_currency %>
+```
+
+will return
+
+```
+USD
+```
+
+## `current_locale`
+
+Returns the currently selected locale. By default in the Storefront this will be `store.default_locale`. This can be changed in the `Settings -> Store Defaults` page. If there are multiple locales available, it will return the locale that is currently selected by the user.
+
+```erb
+<%= current_locale %>
+```
+
+<Info>
+  Locale also affects the storefront URLs. For example, if the default locale is `en` and the user selects `fr`, the URL will be `/fr/products/123`.
+</Info>
+
+## `current_order`
+
+<ResponseField name="current_order" type="Spree::Order" description="The current order object.">
+  <SpreeOrder />
+</ResponseField>
+
+Returns the current order object. If no order is found, it will return `nil`. 
+
+<Tip>
+  Order is automatically created when a user adds a product to the cart.
+</Tip>
+
+## `current_store`
+
+<ResponseField name="current_store" type="Spree::Store" description="The current store object.">
+  <SpreeStore />
+</ResponseField>
+
+Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+
+## `current_theme`
+
+<ResponseField name="current_theme" type="Spree::Theme" description="The current theme object.">
+  <SpreeTheme />
+</ResponseField>
+
+Returns the current theme [Spree::Theme](https://github.com/spree/spree/blob/master/core/app/models/spree/theme.rb) instance.
+
+## `local_time`
+
+Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+
+```erb
+<%= local_time(order.sent_to_erp_at) %>
+```
+
+Provided by [local_time gem](https://github.com/basecamp/local_time).
+
+## `supported_currencies`
+
+Returns the list of supported currencies for the current store as an array of strings.
+
+```erb
+<%= supported_currencies %>
+```
+
+will return
+
+```ruby
+["USD", "EUR"]
+```
+
+## `try_spree_current_user`
+
+<ResponseField name="try_spree_current_user" type="Spree.user_class" description="The current user object.">
+  <SpreeUser />
+</ResponseField>
+
+Returns the current user object (class depends on the `Spree.admin_user_class` configuration). If the user is not signed in, it will return `nil`.
+
+<Tip>
+  If you want to check if the user is signed in, you can use the following:
+
+  ```erb
+  <%= try_spree_current_user.present? %>
+  ```
+</Tip>

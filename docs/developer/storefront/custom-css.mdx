@@ -1,0 +1,99 @@
+---
+title: "Custom CSS for Spree Storefront"
+sidebarTitle: "Custom CSS"
+description: "Learn how to add custom CSS stylesheets of your Spree storefront"
+---
+
+Spree Storefront is built on top of Tailwind CSS. After installing Spree you should find 2 new files:
+
+* [app/assets/stylesheets/application.tailwind.css](https://github.com/spree/spree_starter/blob/main/app/assets/stylesheets/application.tailwind.css) - This is the main CSS file that includes all the Tailwind CSS classes and adds bare-bones styles to the storefront
+* [config/tailwind.config.js](https://github.com/spree/spree_starter/blob/main/config/tailwind.config.js) - This is the Tailwind CSS configuration (we recommend not changing this file, to allow for easier upgrades)
+
+You can add or modify styles to the storefront by adding new Tailwind classes to the `application.tailwind.css` but we recommend creating a new CSS file in the `app/assets/stylesheets` directory and then importing it in the `application.tailwind.css` file, eg.
+
+## Importing an additional CSS file
+
+```bash
+touch app/assets/stylesheets/my_custom_styles.css
+```
+
+in the `my_custom_styles.css` file, add the following:
+
+```css
+.my-custom-class {
+  color: red;
+}
+```
+
+and on top of the `application.tailwind.css` file, add the following:
+
+```css
+@import "my_custom_styles.css";
+```
+
+## Importing a 3rd party CSS library
+
+You can import a 3rd party CSS library directly from a CDN in the `application.tailwind.css` file, eg.
+
+```css
+@import url("https://esm.sh/swiper@11.2.2/swiper-bundle.min.css");
+```
+
+## CSS Variables
+
+Spree Storefront uses a handful of CSS variables that are automatically injected into the body tag. This allows customers to change colors, fonts, etc from the admin dashboard (via page builder).
+
+The default variables should be something like this:
+
+```css
+:root {
+  --primary: #000000;
+  --accent: #F0EFE9;
+  --danger: #C73528;
+  --success: #00C773;
+  --neutral: #999999;
+
+  --background: #FFFFFF;
+  --text: #000000;
+
+  --border-default-color: #E9E7DC;
+  --border-default-width: 1px;
+  --border-default-radius: 6px;
+
+  /* --border-default-shadow: 0px 4px 5px rgba(0, 0, 0, 0); */
+  --button: #000000;
+  --button-rgb: 0, 0, 0;
+  --button-text: #ffffff;
+  --button-border-radius: 100px;
+  --button-border-width: 1px;
+  --button-border-color: ;
+
+  --button-hover: #000000;
+  --button-hover-text: #ffffff;
+
+  --secondary-button: #FFFFFF;
+  --secondary-button-text: #000000;
+  --secondary-button-hover: #000000;
+  --secondary-button-hover-text: #FFFFFF;
+
+  --input: #E9E7DC;
+  --input-bg: #ffffff;
+  --input-text: #6b7280;
+  --input-focus-bg: #ffffff;
+  --input-border-radius: 8px;
+
+  --neutral-50: #F3F3F3;
+  --neutral-100: #EAEAEA;
+  --neutral-200: #D4D4D4;
+  --neutral-300: #B3B3B3;
+  --neutral-400: #999999;
+  --neutral-500: #808080;
+  --neutral-600: #666666;
+  --neutral-700: #4D4D4D;
+  --neutral-800: #333333;
+  --neutral-900: #1A1A1A;
+  --accent-100: #FBFAF8;
+}
+```
+
+They are defined in the [app/views/themes/default/spree/shared/_css_variables.html.erb](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/shared/_css_variables.html.erb) file which should be present in your theme.

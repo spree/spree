@@ -1,0 +1,18 @@
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>">
+    <div class="page-container rich-text">
+      <% section.blocks.each do |block| %>
+        <% case block.type %>
+        <% when 'Spree::PageBlocks::Heading' %>
+          <h2 class="w-full <%= block.preferred_size == 'small' ? 'text-xl' : (block.preferred_size == 'medium' ? 'text-xl' : 'text-4xl') %> rich-text--heading" <%= block_attributes(block) %>>
+            <%= block.text %>
+          </h2>
+        <% when 'Spree::PageBlocks::Text' %>
+          <div class="w-full rich-text--text" <%= block_attributes(block) %>>
+            <%= block.text %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

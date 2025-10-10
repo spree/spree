@@ -1,0 +1,40 @@
+base_locale: en
+data:
+  yaml:
+    write:
+      # do not wrap lines at 80 characters
+      line_width: -1
+
+# Find translate calls
+search:
+  paths:
+    - '../api/app'
+    - '../api/lib'
+
+#### For API v1 only, START ####
+  exclude:
+    - '../api/app/controllers/spree/api/v1/*'
+    - '../api/app/views/*'
+
+ignore_unused:
+  - 'spree.api.gateway_error'
+  - 'spree.api.invalid_api_key'
+  - 'spree.api.invalid_resource'
+  - 'spree.api.invalid_taxonomy_id'
+  - 'spree.api.must_specify_api_key'
+  - 'spree.api.negative_quantity'
+  - 'spree.api.order.could_not_transition'
+  - 'spree.api.order.insufficient_quantity'
+  - 'spree.api.order.invalid_shipping_method'
+  - 'spree.api.payment.credit_over_limit'
+  - 'spree.api.payment.update_forbidden'
+  - 'spree.api.shipment.cannot_ready'
+  - 'spree.api.shipment_transfer_errors_occurred'
+  - 'spree.api.shipment_transfer_success'
+  - 'spree.api.stock_location_required'
+  - 'spree.api.unauthorized'
+  - 'spree.api.wrong_shipment_target'
+#### For API v1 only, END ####
+
+# The PatternMapper for Spree.t
+<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>

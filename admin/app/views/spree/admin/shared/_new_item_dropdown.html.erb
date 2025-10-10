@@ -1,0 +1,32 @@
+<div class="dropdown">
+  <button type="button" class="btn btn-sm btn-light shadow-xs px-1" data-toggle="dropdown" aria-expanded="false">
+    <%= icon 'plus', class: 'mr-0' %>
+  </button>
+  <div class="dropdown-menu">
+    <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:manage, Spree::Order)  %>
+
+    <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>
+      <%= icon 'cube-plus' %>
+      <%= Spree.t(:new_product) %>
+    <% end if can?(:create, Spree::Product) %>
+    <%= link_to spree.new_admin_user_path, class: 'dropdown-item' do %>
+      <%= icon 'user-plus' %>
+      <%= Spree.t(:new_customer) %>
+    <% end if can?(:manage, Spree.user_class) %>
+
+    <%= link_to spree.new_admin_promotion_path, class: 'dropdown-item' do %>
+      <%= icon 'discount' %>
+      <%= Spree.t(:new_promotion) %>
+    <% end if can?(:create, Spree::Promotion) %>
+
+    <%= invite_vendor_button(class: 'dropdown-item') if defined?(invite_vendor_button) %>
+
+    <% if can?(:create, Spree::Store) && Spree.root_domain.present? %>
+      <div class="dropdown-divider"></div>
+
+      <span data-toggle="modal" data-target="#modal-lg">
+        <%= link_to_with_icon 'building-store', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal_lg' } %>
+      </span>
+    <% end %>
+  </div>
+</div>

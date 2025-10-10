@@ -1,0 +1,36 @@
+<div class="mb-4">
+  <h5 class="font-weight-bold">Links</h5>
+
+  <% if parent.links.any? %>
+    <ul class="list-group mb-3"
+        data-controller="sortable"
+        data-sortable-handle-value=".handle"
+        data-sortable-resource-name-value="page_link"
+        data-sortable-response-kind-value="turbo-stream">
+      <% parent.links.each do |link| %>
+        <li class="list-group-item p-0 d-flex align-items-center hover-gray"
+            data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
+        >
+          <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'd-block py-2 px-3 text-dark flex-fill' %>
+          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1">
+            <%= icon 'grip-vertical', class: 'mr-0' %>
+          </button>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted text-center p-5">
+      <%= Spree.t(:no_resource_found, resource: Spree::PageLink.model_name.human) %>
+    </p>
+  <% end %>
+
+  <% if show_add_link_button %>
+    <% if parent.is_a?(Spree::PageSection) %>
+      <% add_url = spree.admin_page_section_links_path(parent) %>
+    <% elsif parent.is_a?(Spree::PageBlock) %>
+      <% add_url = spree.admin_page_section_block_links_path(parent.section, parent) %>
+    <% end %>
+
+    <%= link_to_with_icon 'plus', Spree.t(:add_link), add_url, class: 'btn btn-primary w-100', data: { turbo_method: :post } if add_url && can?(:create, Spree::PageLink.new(parent: parent)) %>
+  <% end %>
+</div>

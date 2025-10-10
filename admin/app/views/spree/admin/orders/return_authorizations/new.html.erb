@@ -1,0 +1,13 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <%= Spree.t(:new_return_authorization) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @return_authorization } %>
+<%= form_for [:admin, @order, @return_authorization] do |f| %>
+  <fieldset>
+    <%= render 'form', f: f %>
+
+    <%= render 'spree/admin/shared/new_resource_links' %>
+  </fieldset>
+<% end %>

@@ -1,0 +1,35 @@
+<% if can?(:read, Spree::Payment) && (@order.payment_required? && @order.bill_address.present?) || @payments.any? %>
+  <div class="card mb-4 bg-transparent">
+    <div class="card-header d-flex align-items-center border-0">
+      <h6 class="card-title">
+        <%= icon('credit-card-pay', class: 'mr-2') %>
+        <%= Spree.t(:payments) %>
+      </h6>
+      <% if @payments.any? %>
+        <span class="badge badge-info ml-2"><%= @payments.count %></span>
+        <%= order_payment_state(@order, class: "ml-auto") %>
+      <% end %>
+    </div>
+    <div class="card-body d-flex flex-column gap-2 px-2 pt-0 pb-2">
+      <%= render collection: @payments, partial: 'spree/admin/payments/payment', as: :payment %>
+
+      <% if @order.payment_total < @order.total && can?(:create, Spree::Payment.new(order: @order)) %>
+        <div class="d-flex justify-content-center w-100 gap-3 p-3">
+          <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
+
+          <% if spree.respond_to?(:checkout_state_url) %>
+            <%= link_to_with_icon 'send', Spree.t('admin.send_payment_link'), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-light', title: Spree.t(:send_payment_link_title) %>
+
+            <div data-controller="clipboard" data-clipboard-success-content-value="<%= Spree.t('admin.copied') %>">
+              <input type="hidden" value="<%= spree.checkout_state_url(@order.token, :payment, host: current_store.url_or_custom_domain) %>" readonly data-clipboard-target="source">
+              <button class="btn btn-light" type="button" data-clipboard-target="button" data-action="click->clipboard#copy">
+                <%= icon('copy-check') %>
+                <%= Spree.t('admin.copy_payment_link') %>
+              </button>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

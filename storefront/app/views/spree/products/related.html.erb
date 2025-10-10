@@ -1,0 +1,3 @@
+<%= turbo_frame_tag "section-#{@section.id}" do %>
+  <%= render 'spree/page_sections/related_products', section: @section, product: @product, products: @products, loaded: true %>
+<% end %>

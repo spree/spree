@@ -1,0 +1,3 @@
+--color
+-r spec_helper
+-f documentation

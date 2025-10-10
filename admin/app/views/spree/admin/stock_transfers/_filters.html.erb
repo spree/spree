@@ -1,0 +1,39 @@
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters dropdown"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :number_cont, label: Spree.t(:number) %>
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
+    <div class="form-group">
+      <%= f.label :reference_cont, Spree.t(:reference) %>
+      <%= f.text_field :reference_cont, include_blank: true, size: 15, class: "form-control", data: { filters_target: :input } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :source_location_id_eq, Spree.t(:source) %>
+      <%= f.select :source_location_id_eq,
+              available_stock_locations_list,
+              { include_blank: true },
+              data: {
+                filters_target: :input,
+                controller: 'autocomplete-select'
+              } %>
+    </div>
+    <div class="form-group">
+      <%= f.label :destination_location_id_eq, Spree.t(:destination) %>
+      <%= f.select :destination_location_id_eq,
+              available_stock_locations_list,
+              { include_blank: true },
+              data: {
+                filters_target: :input,
+                controller: 'autocomplete-select'
+              } %>
+    </div>
+    <%= render_admin_partials(:stock_transfers_filters_partials, f: f) %>
+    <div class="form-actions">
+      <%= button Spree.t(:search), "search" %>
+    </div>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

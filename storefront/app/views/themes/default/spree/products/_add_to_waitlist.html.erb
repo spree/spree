@@ -1,0 +1,36 @@
+<div
+  data-modal-target="container"
+  data-action="waitlist:created@window->modal#close click->modal#closeBackground keyup@window->modal#closeWithKeyboard"
+  class="hidden animate-fadeIn fixed inset-0 overflow-y-auto flex items-end md:items-center justify-center z-[9999] h-dvh w-full"
+  style="animation-duration: 150ms;">
+  <div class="w-full lg:w-[600px] relative h-auto lg:max-h-screen flex justify-center flex-col gap-4 bg-background p-5 border border-default">
+    <button
+      type="button"
+      data-waitlist-close-button
+      data-action="modal#close"
+      class="absolute top-5 right-5">
+      <%= render 'spree/shared/icons/close' %>
+    </button>
+    <div>
+      <h4 class="text-xl">
+        <%= Spree.t(:product_sold_out)%>
+      </h4>
+      <p>
+        <%= Spree.t(:add_to_waitlist_description) %>
+      </p>
+    </div>
+    <%= form_for :waitlist, url: spree.waitlists_path, method: :post, class: "flex w-full gap-4 flex-col", data: { product_form_target: 'addToWaitlistForm', controller: 'turbo-stream-form enable-button' } do |f| %>
+      <div class="w-full">
+        <%= f.hidden_field :variant_id, value: variant&.id %>
+        <%= f.email_field :email, value: try_spree_current_user&.email, class: 'w-full', required: true, placeholder: Spree.t(:email), data: { enable_button_target: 'input' }, autofocus: true %>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label class="flex items-center gap-2 cursor-pointer group text-sm">
+          <%= f.check_box :subscribe_to_newsletter, class: 'input-checkbox group-focus-within:outline' %>
+          <%= Spree.t('storefront.newsletter_subscription.join') %>
+        </label>
+        <%= f.button Spree.t(:add_to_waitlist), type: 'submit', class: 'btn-primary w-full btn-icon h-12', disabled: true, data: { enable_button_target: 'button' } %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<%# locals: (f:, resource:, locale:) %>
+
+<% resource.class.translatable_fields.each do |field| %>
+  <% case field%>
+  <% when :description %>
+    <%= render "spree/admin/translations/translation_rows/tinymce_row", f: f, field: field, locale: locale %>
+  <% when :meta_description %>
+    <%= render "spree/admin/translations/translation_rows/textarea_row", f: f, field: field, locale: locale %>
+  <% else %>
+    <%= render "spree/admin/translations/translation_rows/text_field_row", f: f, field: field, locale: locale %>
+  <% end %>
+<% end %>
+
+<div class="pb-5"></div>

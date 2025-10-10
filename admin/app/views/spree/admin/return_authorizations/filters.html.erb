@@ -1,0 +1,39 @@
+<%= search_form_for [:admin, @search], url: spree.admin_return_authorizations_path, class: "filter-wrap", data: {controller: "filters"} do |f| %>
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render "spree/admin/shared/filters_search_bar", param: :number_cont %>
+
+    <div class="dropdown">
+      <button
+        class="btn btn-light dropdown-toggle"
+        type="button"
+        data-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="text-muted font-weight-normal mr-1">
+          <%= Spree.t(:show) %>:
+        </span>
+        <% if params.dig(:q, :state_eq).present? %>
+          <%= Spree.t("return_authorization_states.#{params.dig(:q, :state_eq)}") %>
+        <% else %>
+          <%= Spree.t(:all) %>
+        <% end %>
+      </button>
+      <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px">
+        <%= active_link_to Spree.t(:all),
+        params.to_unsafe_h.deep_merge({ q: { state_eq: "" } }),
+        class: "dropdown-item",
+        active: (params[:q] || {})[:state_eq].blank? %>
+        <%= link_to Spree.t("return_authorization_states.authorized"),
+        params.to_unsafe_h.deep_merge({ q: { state_eq: :authorized } }),
+        class: "dropdown-item #{"active" if params.dig(:q, :state_eq) == "authorized"}" %>
+        <%= link_to Spree.t("return_authorization_states.canceled"),
+        params.to_unsafe_h.deep_merge({ q: { state_eq: :canceled } }),
+        class: "dropdown-item #{"active" if params.dig(:q, :state_eq) == "canceled"}" %>
+      </div>
+    </div>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

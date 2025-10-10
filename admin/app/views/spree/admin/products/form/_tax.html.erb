@@ -1,0 +1,8 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:tax) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_select :tax_category_id, @tax_categories.pluck(:name, :id), { include_blank: false, label: Spree.t(:tax_category) } %>
+  </div>
+</div>

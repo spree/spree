@@ -1,0 +1,13 @@
+<% if can?(:manage, Spree::TaxCategory) %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title">
+        <%= Spree.t(:tax_category) %>
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <%= f.spree_collection_select :tax_category_id, @tax_categories, :id, :name, { include_blank: Spree.t('match_choices.none'), label: Spree.t(:tax_category) } %>
+    </div>
+  </div>
+<% end %>

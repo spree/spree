@@ -1,0 +1,123 @@
+/* Prevent scrolling while dialog is open */
+body:has(dialog[data-dialog-target="dialog"][open]) {
+  // overflow: hidden;
+}
+
+/* Customize the dialog backdrop */
+dialog {
+  box-shadow: 0 0 0 100vw rgba($modal-backdrop-bg, $modal-backdrop-opacity);
+}
+
+dialog:-internal-dialog-in-top-layer::backdrop {
+  background-color: rgba($modal-backdrop-bg, $modal-backdrop-opacity);
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Add animations */
+dialog[data-dialog-target="dialog"][open] {
+  animation: fade-in 200ms forwards;
+}
+
+dialog[data-dialog-target="dialog"][closing] {
+  animation: fade-out 200ms forwards;
+}
+
+dialog {
+  display: none;
+  z-index: $zindex-modal;
+  border-radius: $modal-content-border-radius;
+  border: $modal-content-border-width solid $modal-content-border-color;
+  background: $modal-content-bg;
+  box-shadow: $modal-content-box-shadow-xs;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+dialog:open {
+  display: block;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: auto;
+  height: calc(100dvh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  width: calc(100vw - 2rem);
+  max-width: 600px;
+  min-width: 320px;
+  margin: 1rem;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+  overflow-y: hidden;
+  overflow-x: hidden;
+
+  .drawer-title {
+    margin-bottom: 0;
+  }
+
+  &:open {
+    display: flex;
+  }
+
+  @media (max-width: 991.98px) {
+    max-width: 100vw;
+    min-width: 100vw;
+  }
+
+  > turbo-frame:not(#drawer_alerts), turbo-frame > form {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $modal-inner-padding;
+    border-bottom: 1px solid $gray-50;
+  }
+
+  .drawer-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: $modal-inner-padding;
+  }
+
+  .drawer-footer {
+    position: sticky;
+    bottom: 0;
+    padding: $modal-inner-padding;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $gray-25;
+    border-top: 1px solid $gray-50;
+  }
+}
+
+@media (min-width: 992px) {
+  .drawer {
+  }
+}

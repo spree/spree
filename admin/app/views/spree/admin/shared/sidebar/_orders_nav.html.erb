@@ -1,0 +1,25 @@
+<% orders_active = %[orders checkouts].include?(controller_name) || @order&.present? || @parent&.is_a?(Spree::Order) %>
+<% if can?(:manage, Spree::Order) %>
+  <% orders_label = Spree.t(:orders) %>
+  <% if ready_to_ship_orders_count&.positive? %>
+    <% orders_label += content_tag(:span, ready_to_ship_orders_count, class: 'badge ml-auto') %>
+  <% end %>
+  
+  <%= nav_item(orders_label.html_safe, spree.admin_orders_path, icon: 'inbox', active: orders_active) %>
+  
+  <% if orders_active && (ready_to_ship_orders_count&.positive? || can?(:manage, :checkouts)) %>
+    <ul class="nav-submenu">
+      <% if ready_to_ship_orders_count&.positive? %>
+        <% fulfill_label = Spree.t('admin.orders.orders_to_fulfill') %>
+        <% fulfill_label += content_tag(:span, ready_to_ship_orders_count, class: 'badge ml-auto') %>
+        <%= nav_item(fulfill_label.html_safe, spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}), active: params.dig(:q, :shipment_state_not_in).present?) %>
+      <% end %>
+
+      <% if can?(:manage, :checkouts) %>
+        <%= nav_item(Spree.t(:draft_orders), spree.admin_checkouts_path, active: controller_name == 'checkouts' || (@order.present? && !@order.completed?)) %>
+      <% end %>
+
+      <%= render_admin_partials(:store_orders_nav_partials) %>
+    </ul>
+  <% end %>
+<% end %>

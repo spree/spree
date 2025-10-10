@@ -1,0 +1,25 @@
+<tr id="<%= spree_dom_id property %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_property_path(property) %>">
+  <td class="w-5 move-handle text-center">
+    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+  </td>
+  <td class="w-20 cursor-pointer py-0" data-action="click->row-link#openLink">
+    <code><%= property.name %></code>
+  </td>
+  <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
+    <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+  </td>
+  <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
+    <span class="badge badge-light"><%= property.kind.humanize %></span>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= property.products.count %>
+  </td>
+  <td>
+    <%= form_with model: property, url: admin_property_path(property), method: :patch, data: { controller: 'auto-submit' } do |f| %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+    <% end %>
+  </td>
+  <td class="w-10 actions">
+    <%= link_to_edit(property, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, property) %>
+  </td>
+</tr>

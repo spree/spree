@@ -1,0 +1,12 @@
+<% width ||= 50 %>
+<% height ||= 50 %>
+<% image ||= object.default_image %>
+
+<% if image.present? && image.attached? && image.variable? %>
+  <% alt ||= image.alt || object.name %>
+  <div class="admin-product-image-container">
+    <%= spree_image_tag(image, width: width, height: height, alt: alt) %>
+  </div>
+<% else %>
+  <%= render 'spree/admin/shared/no_image', width: width, height: height %>
+<% end %>

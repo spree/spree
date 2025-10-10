@@ -1,0 +1,12 @@
+<div class="card mb-4">
+  <div class="card-body">
+
+    <%= f.spree_text_field :name, autofocus: f.object.new_record?, required: true %>
+
+    <%= f.spree_text_field :tax_code %>
+
+    <%= f.spree_text_area :description %>
+
+    <%= f.spree_check_box :is_default, label: Spree.t(:default) %>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+---
+title: "Connect Klaviyo email marketing platform to Spree Commerce"
+sidebarTitle: Klaviyo
+description: "Learn how to set up and manage Spree's native Klaviyo integration."
+---
+
+Klaviyo is a powerful marketing automation platform used for email and SMS campaigns. By connecting your store to Klaviyo, you can automatically track user interactions, build audience profiles, and grow your newsletter subscriber base - all without manual setup.
+
+With Spree’s native integration, you can start collecting meaningful data for segmentation and automation with just a few clicks.
+
+<Info>
+  You must have an existing Klaviyo account to connect this integration.
+</Info>
+
+## Installation
+
+To install the Klaviyo integration, you need to run the following command:
+
+```bash
+bundle add spree_klaviyo && bundle exec rails g spree_klaviyo:install
+```
+
+After that, you need to make sure to restart the server.
+
+## Connect Klaviyo
+
+Sign in to your Spree admin dashboard and navigate to the Integrations tab. 
+
+![](/images/integrations/klaviyo/1.klaviyo.png)
+
+To connect Klaviyo, locate the Klaviyo tile under the Marketing section and click Connect Klaviyo to open the setup form.
+
+![](/images/integrations/klaviyo/2.creation_form.png)
+
+You’ll need to enter the following:
+
+- **Public API Key**: This key identifies your account to Klaviyo.
+- **Private API Key**: Used to authorize and securely send event and profile data.
+- **Newsletter List ID**: The ID of the Klaviyo list you want to use for newsletter signups.
+  - This list will be used as the default newsletter list for customers signing up from the storefront or checkout.
+
+Click **Create** to finalize the integration.
+
+<Info>
+  You must configure your Private API Key in Klaviyo before you can finalize the integration (see below).
+</Info>
+
+## Configure API Key Permissions in Klaviyo
+
+Before you can finalize the creation of your Klaviyo integration, you’ll need to create a Private API Key. To do so navigate to Settings → Account → API Keys in Klaviyo.
+
+![](/images/integrations/klaviyo/3.create_private_key.png)
+
+Click Create Private API Key to open the key creation form.
+
+![](/images/integrations/klaviyo/4.configure_private_key.png)
+
+When generating your Private API Key in Klaviyo, you must enable specific access scopes for the integration to function properly:
+
+- **Events** - Read/Write Access
+- **Lists** - Read/Write Access
+- **Profiles** - Read/Write Access
+- **Subscriptions** - Read/Write Access
+
+You can configure this by selecting Custom Key during key configuration, then selecting the required scopes as mentioned above.
+
+<Warning>
+  Without the appropriate access levels, some tracked events or newsletter subscriptions may fail to reach Klaviyo.
+</Warning>
+
+## Event Tracking
+
+Once the integration is connected, Spree automatically tracks the following customer events and sends them to Klaviyo:
+
+- Product view
+- Product list view
+- Product search
+- Product added to cart
+- Product removed from cart
+- Checkout step view
+- Checkout step complete
+- Coupon entered/removed
+- Coupon applied/denied
+- Checkout email entered
+- Newsletter subscription
+- Unsubscribe from newsletter
+- Order Completed
+- Package Shipped
+- Cancelled Order
+
+<Note>
+  When a user subscribes to the newsletter on the storefront, they’re automatically added to the list you configured in the integration settings.
+</Note>
+
+These events populate the Audience → Profiles section in Klaviyo, where you can view each user's tracked activity and properties. Lists used for newsletter subscriptions can be found in Audience → Lists & Segments.
+
+## Managing Your Integration
+
+![](/images/integrations/klaviyo/5.manage_integration.png)
+
+After setup, you can revisit the integration form at any time to:
+
+- **Edit keys** - useful if you want to swap out a list ID or rotate API keys.
+- **Update configuration** - simply adjust the values and click Update.
+- **Delete the integration** - click the Delete button in the bottom right of the form.
+
+<Note>
+  Removing the integration stops data from being sent to Klaviyo, but it won’t affect historical data already collected.
+</Note>

@@ -1,0 +1,90 @@
+---
+en:
+  spree:
+    storefront:
+      account:
+        change_password: Change password
+        newsletter_settings: Newsletter settings
+        no_addresses_description: If you place an order, you will find address details here.
+        no_addresses_title: You currently have no Addresses
+        no_gift_cards: You currently have no gift cards
+        no_orders_description: If you place an order, you will find details here.
+        no_orders_title: You currently have no orders
+        no_store_credits: You don't have any store credit.
+        personal_details: Personal details
+        please_update_your_contact_details: Please update your contact details
+        store_credits_history: Store credits history
+      cart:
+        items_in_cart: Items in cart
+        shipping_and_taxes_calculated_at_checkout: Shipping & taxes calculated at checkout
+        view_bag: View bag
+      checkout:
+        all_transactions_are_secure_and_encrypted: All transactions are secure and encrypted
+        already_have_an_account: Already have an account?
+        backorder_notice: 'Some products in your cart will be dispatched a bit later than the rest of your order:'
+        by_placing_this_order_you_agree_to: By placing this order you agree to
+        calculated_at_next_step: Calculated at next step
+        continue_to_cart: Continue to cart
+        continue_to_checkout: Continue to checkout
+        delivery_method: Delivery method
+        errors:
+          invalid_line_items:
+            one: This item will be removed from your cart because there are no delivery methods available for your address.
+            other: These %{count} items will be removed from your cart because there are no delivery methods available for your address.
+        gift_card_amount_applied: Gift Card %{code} applied %{amount} to your order.
+        it_seems_you_already_have_an_account_html: It seems you already have an account with us. Please %{link} to continue.
+        or_continue_below: or continue below
+        order_already_paid: You don't need to pay anything, just click Place now button to confirm the order.
+        order_success: Your order is confirmed!
+        order_success_message: When your order is ready, you will receive an email confirmation.
+        payment_processing_message: You will receive an email confirmation when your payment is processed.
+        return_to_cart: Return to cart
+        shipping_not_available: Shipping not available
+        signup_for_an_account: Create an account for faster future purchases, order tracking, and more.
+        special_instructions_placeholder: Here you can add any special instructions for your order
+        store_credits_amount_applied: You applied a %{amount} store credit to your order.
+        thanks_for_your_order: Thanks %{name} for your order!
+        you_will_need_to_pay_only: You will need to pay only %{amount} with your payment method of choosing.
+      contacts:
+        customer_support_email_not_configured: Customer support email is not configured
+        message_not_sent: Unfortunately we weren't able to send the email at this time. Please try again later
+        message_sent: Message sent!
+      newsletter_subscribers:
+        already_subscribed: You are already subscribed to our newsletter
+        success: Thank you for subscribing to our newsletter!
+        verification_failed: Verification failed
+        verified: Your email has been verified!
+      newsletter_subscription:
+        description: Take control of your settings and tailor your experience according to your preferences. Customize your notifications to suit your needs.
+        join: Email me about new products, sales, and more. You can unsubscribe at any time.
+        status: You are currently %{status} to the newsletters.
+      products:
+        pinch_to_zoom_html: Pinch to<br>zoom
+        primary_image: primary image
+        secondary_image: secondary image
+      refund_action_not_required_message:
+        order_canceled:
+          fully: This order has been canceled. No further action is required. You will receive a refund within couple business days.
+          partially: This order has been partially canceled. No further action is required. You will receive a refund within couple business days.
+        order_refunded:
+          fully: This order has been refunded. No further action is required. You will receive a refund within couple business days.
+          partially: This order has been partially refunded. No further action is required. You will receive a refund within couple business days.
+      refund_action_required_message:
+        order_canceled:
+          fully: This order has been canceled. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+          partially: This order has been partially canceled. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+        order_refunded:
+          fully: This order has been refunded. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+          partially: This order has been partially refunded. The amount paid by the selected payment method will be refunded within couple business days. Please reach out to %{customer_support_email} to receive new voucher.
+      variant_picker:
+        please_choose: Please choose %{option_type}
+        please_choose_all_options: Please choose all options
+      wished_items:
+        add: Add to wishlist
+        no_wished_items:
+          description: You have no saved items yet.
+          title: You have no saved items
+        remove: Remove from wishlist
+        remove_error: You already removed this item from your wishlist
+        select_variant: Select variant to add to wishlist
+        unavailable: Unavailable

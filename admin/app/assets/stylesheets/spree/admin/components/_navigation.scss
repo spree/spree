@@ -1,0 +1,52 @@
+.nav-link.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.arrow {
+  width: 1rem;
+}
+
+.nav-link {
+  cursor: pointer;
+  position: relative;
+  transition: background 0.15s, color 0.1s;
+  will-change: background, color;
+  color: $gray-700;
+
+  &:hover {
+    color: theme-color('primary');
+  }
+}
+
+#header {
+  nav {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .dropdown-menu {
+    min-width: 12rem;
+  }
+}
+
+.nav-pills {
+  .nav-item {
+    @extend .mr-1;
+
+    &:last-child {
+      @extend .mr-0;
+    }
+
+    .nav-link {
+      &:hover {
+        color: theme-color('primary') !important;
+        background-color: theme-color('active');
+      }
+      &.active, &:focus, &:active {
+        background-color: $gray-50;
+        color: theme-color('primary') !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<% if @return_authorizations.exists? && can?(:read, Spree::ReturnAuthorization) %>
+  <div class="card mb-4">
+    <div class="card-header justify-content-between">
+      <h5 class="card-title">
+        <%= Spree.t(:return_authorizations) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="border-bottom">
+            <tr>
+              <th scope="col"><%= Spree.t(:rma_number) %></th>
+              <th scope="col"><%= Spree.t(:status) %></th>
+              <th scope="col"><%= Spree.t(:pre_tax_total) %></th>
+              <th scope="col"><%= "#{Spree.t("date")}/#{Spree.t("time")}" %></th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "spree/admin/orders/return_authorizations/return_authorization",
+            collection: @return_authorizations,
+            cached: ->(r) { [spree_base_cache_key, r.cache_key_with_version, r.return_items.maximum(:updated_at)] } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

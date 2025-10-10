@@ -1,0 +1,58 @@
+
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div class="w-full relative image-banner" style="<%= section_styles(section) %>;height: <%= section.preferred_height %>px">
+    <div class="w-full absolute left-0 image-banner--image-wrapper" style="height: <%= section.preferred_height %>px; opacity: <%= section.preferred_overlay_transparency %>%;">
+      <% if section.image.attached? && section.image.variable? %>
+        <picture>
+          <source media="(max-width: 640px)" srcset="<%= spree_image_url(section.image, width: 320, height: nil) %>">
+          <source media="(max-width: 750px)" srcset="<%= spree_image_url(section.image, width: 375, height: nil) %>">
+          <source media="(max-width: 828px)" srcset="<%= spree_image_url(section.image, width: 414, height: nil) %>">
+          <source media="(max-width: 1080px)" srcset="<%= spree_image_url(section.image, width: 540, height: nil) %>">
+          <source media="(max-width: 1200px)" srcset="<%= spree_image_url(section.image, width: 620, height: nil) %>">
+          <source media="(min-width: 1201px)" srcset="<%= spree_image_url(section.image, width: 1000, height: nil) %>">
+          <%= spree_image_tag(section.image, width: 1000, class: "w-full h-full object-cover", loading: "lazy", alt: section.image_alt) %>
+        </picture>
+      <% end %>
+    </div>
+    <%
+      vertical_alignment_class = case section.preferred_vertical_alignment
+                                when 'top'
+                                  'justify-start'
+                                when 'bottom'
+                                  'justify-end'
+                                else
+                                  'justify-center'
+                                end
+    %>
+    <div class="flex justify-center items-center w-full h-full">
+      <div class="flex flex-col <%= vertical_alignment_class %> p-5 z-10 w-full gap-y-2 h-full image-banner--block-wrapper">
+        <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
+          <% case block.type %>
+          <% when 'Spree::PageBlocks::Heading' %>
+            <h2 class="w-full font-medium <%= block.preferred_size == 'small' ? 'text-lg' : (block.preferred_size == 'medium' ? 'text-xl' : 'text-2xl lg:text-3xl') %> image-banner--heading" <%= block_attributes(block) %>>
+              <%= block.text %>
+            </h2>
+          <% when 'Spree::PageBlocks::Text' %>
+            <div class="w-full image-banner--text" <%= block_attributes(block) %>>
+              <%= block.text %>
+            </div>
+          <% when 'Spree::PageBlocks::Buttons' %>
+            <div <%= block_attributes(block) %> class="w-full text-center image-banner--buttons">
+              <div class="inline-block">
+                <div class="flex flex-col gap-4 lg:flex-row">
+                  <% if block.link.present? %>
+                    <% if block.link.linkable_url.present? %>
+                      <%= page_builder_link_to block.link, label: block.link.label, class: "btn-#{block.preferred_button_style_1}", target: (block.link.open_in_new_tab ? "_blank" : nil) %>
+                    <% else %>
+                      <%= button_tag block.link.label, class: "btn-#{block.preferred_button_style_1}", disabled: true %>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

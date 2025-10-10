@@ -1,0 +1,61 @@
+<%= turbo_frame_tag dom_id(line_item) do %>
+  <div class="order-line-items__form d-flex align-items-center">
+    <div class="w-35">
+      <%= render "spree/admin/variants/variant", variant: line_item.variant %>
+    </div>
+    <div class="w-10">
+      <%= line_item.single_money.to_html %>
+    </div>
+    <div class="w-10">
+      <%= line_item.quantity %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_amount %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_tax_total %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_promo_total %>
+    </div>
+    <div class="w-10">
+      <%= line_item.display_total %>
+    </div>
+    <div class="w-5">
+      <% if can?(:edit, line_item) %>
+        <div class="dropdown">
+          <button
+            class="btn btn-sm btn-light"
+            type="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <%= icon "dots-vertical", class: "mr-0" %>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right w-100">
+            <%= link_to_with_icon "edit",
+              Spree.t(:edit),
+              spree.edit_admin_order_line_item_path(@order, line_item),
+              class: "dropdown-item" %>
+            <% if line_item.digital_links.any? %>
+              <%= link_to_with_icon "refresh",
+              Spree.t("admin.reset_digital_link_download_limits"),
+              spree.reset_digital_links_limit_admin_order_line_item_path(@order, line_item),
+              data: {
+                turbo_method: :post,
+                turbo_confirm: Spree.t(:are_you_sure),
+                turbo_frame: :_top,
+              },
+              class: "dropdown-item" %>
+            <% end %>
+
+            <% if can?(:destroy, line_item) %>
+              <div class="dropdown-divider"></div>
+              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item btn-danger' %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:return_authorizations) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:return_authorizations_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:return_authorizations_header_partials) %>
+
+<%= render 'spree/admin/shared/index_table', new_object_url: nil %>

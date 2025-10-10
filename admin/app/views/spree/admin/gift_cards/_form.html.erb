@@ -1,0 +1,20 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <% unless f.object.persisted? %>
+      <%= f.spree_text_field :code, required: true, help_bubble: Spree.t('admin.gift_cards.code_help_text') %>
+    <% end %>
+
+    <%= f.spree_number_field :amount, required: true %>
+    <%= f.spree_select :currency, options_for_select(supported_currency_options, f.object.currency), { label: Spree.t(:currency), autocomplete: true }, { disabled: f.object.persisted? } %>
+
+    <div class="form-group">
+      <%= f.label :user_id, Spree.t(:customer) %>
+      <%= tom_select_tag 'gift_card[user_id]',
+            active_option: @user&.id || @object.user_id,
+            include_blank: true,
+            options: users_for_select_options %>
+    </div>
+
+    <%= f.spree_date_field :expires_at %>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:promotions) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:promotions_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_promotion), new_object_url, class: "btn btn-primary" %>
+<% end if can?(:create, Spree::Promotion) %>
+
+<%= render_admin_partials(:promotions_header_partials) %>
+
+<%= render 'spree/admin/shared/index_table' %>

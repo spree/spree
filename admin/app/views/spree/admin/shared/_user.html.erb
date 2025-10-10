@@ -1,0 +1,20 @@
+<%= link_to spree.admin_user_path(user), class: 'rounded p-2 d-flex justify-content-start align-items-center text-decoration-none hover-light', data: {turbo_frame: :_top, row_link_target: :link} do %>
+  <% if user.name.present? %>
+    <%= render_avatar(user, width: 48, height: 48, class: 'mr-3 avatar') %>
+  <% else %>
+    <div style="width: 48px; height: 48px" class="mr-3 avatar bg-light"></div>
+  <% end %>
+  <div class="text-left">
+    <% if customer_full_name(user) %>
+      <span class="font-weight-bold text-dark"><%= customer_full_name(user) %></span>
+      <br />
+    <% end %>
+    <% unless defined?(current_vendor) && current_vendor %>
+      <span class="text-muted" data-controller="tooltip">
+        <%= user.email %>
+        <%= tooltip(user.email) %>
+      </span>
+      <%= clipboard_component(user.email) %>
+    <% end %>
+  </div>
+<% end %>

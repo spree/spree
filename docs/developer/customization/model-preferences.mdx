@@ -1,0 +1,133 @@
+---
+title: Model Preferences
+icon: "list"
+---
+
+Model preferences allow you to easily extend Spree models with configuration options. Thanks to this you can store useful information on Spree models, eg.
+
+```ruby
+user.preferred_language = "English"
+user.save
+```
+
+## Defining Model Preferences
+
+To define a model preference, you need to add them to your model class.
+
+Make sure to generate a migration to add the `preferences` column to the table. This column will store the preferences in a serialized format.
+
+```ruby
+rails g migration AddPreferencesToSpreeUsers preferences:text
+```
+
+Run the migration.
+
+```ruby
+rails db:migrate
+```
+
+```ruby
+class Spree::User < ApplicationRecord
+  # ... you existing code ...
+
+  # include the preferable module
+  include Spree::Preferences::Preferable
+  # define the preferences
+  preference :language, :string, default: "English"
+  preference :sms_marketing, :boolean, default: false
+end
+```
+
+This will add a `language` preference to the `User` model. The preference will be stored in the newly created `preferences` column of the `spree_users` table. You can add more preferences to the model in the same way.
+
+## Accessing Model Preferences
+
+Once preferences have been defined for a model, they can be accessed either using the shortcut methods that are generated for each preference or the generic methods that are not specific to a particular preference.
+
+### Shortcut Methods
+
+There are several shortcut methods that are generated. They are shown below.
+
+Query methods:
+
+```ruby
+user.prefers_sms_marketing? # => false
+```
+
+Reader methods:
+
+```ruby
+user.preferred_sms_marketing      # => false
+user.preferred_language   # => "English"
+```
+
+Writer methods:
+
+```ruby
+user.prefers_sms_marketing = false         # => false
+user.preferred_language = "English"    # => "English"
+```
+
+<Note>
+  Remember to run `user.save` after setting the preference value to save the changes to the database.
+</Note>
+
+Check if a preference is available:
+
+```ruby
+user.has_preference? :sms_marketing
+```
+
+### Generic Methods
+
+Each shortcut method is essentially a wrapper for the various generic methods shown below:
+
+Query method:
+
+```ruby
+user.prefers?(:sms_marketing)       # => false
+user.prefers?(:language)  # => false
+```
+
+Reader methods:
+
+```ruby
+user.preferred(:sms_marketing)      # => false
+user.preferred(:language)   # => "English"
+```
+
+```ruby
+user.get_preference :sms_marketing
+user.get_preference :language
+```
+
+Writer method:
+
+```ruby
+user.set_preference(:sms_marketing, false)     # => false
+user.set_preference(:language, "English")  # => "English"
+```
+
+### Accessing All Preferences
+
+You can get a hash of all stored preferences by accessing the `preferences` helper:
+
+```ruby
+user.preferences # => {"language"=>"English", "sms_marketing"=>false}
+```
+
+This hash will contain the value for every preference that has been defined for the model instance, whether the value is the default or one that has been previously stored.
+
+## Models with preferences
+
+The following Spree models already have preferences defined:
+
+* `Spree::Calculator`
+* `Spree::Gateway`
+* `Spree::PageBlock`
+* `Spree::PageSection`
+* `Spree::Page`
+* `Spree::PaymentMethod`
+* `Spree::PromotionRule`
+* `Spree::Store`
+* `Spree::Theme`

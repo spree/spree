@@ -1,0 +1,65 @@
+<% content_for :title do %>
+  <%= @webhooks_subscriber.url %>
+<% end %>
+
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_webhooks_subscribers_path %>
+  <%= @webhooks_subscriber.url %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhooks_subscriber_path(@webhooks_subscriber), class: 'btn btn-light' %>
+<% end %>
+
+<ul class="list-group bg-white mb-4 rounded-lg">
+  <li class="list-group-item d-flex justify-content-between">
+    <strong class="text-uppercase"><%= Spree.t(:url) %></strong>
+    <%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url, class: 'text-blue text-decoration-none' %>
+  </li>
+  <li class="list-group-item d-flex justify-content-between">
+    <strong><%= Spree.t(:active) %></strong>
+    <%= active_badge(@webhooks_subscriber.active) %>
+  </li>
+  <li class="list-group-item d-flex justify-content-between">
+    <strong><%= Spree.t('admin.webhooks_subscribers.subscriptions') %></strong>
+    <div>
+      <% @webhooks_subscriber.subscriptions&.sort&.each do |subscription| %>
+        <span class="badge badge-light"><%= subscription %></span>
+      <% end %>
+    </div>
+  </li>
+</ul>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t('admin.webhooks_subscribers.webhooks_events') %>
+    </h5>
+  </div>
+  <table class="table card-body pb-0">
+    <thead>
+      <tr>
+        <th scope="col"><%= Spree.t('admin.name') %></th>
+        <th scope="col"><%= Spree.t('admin.successful') %></th>
+        <th scope="col"><%= Spree.t('admin.created_at') %></th>
+        <th scope="col"><%= Spree.t('admin.response_code') %></th>
+        <th scope="col"><%= Spree.t('admin.execution_time') %></th>
+        <th scope="col"><%= Spree.t('admin.errors') %></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @events.any? %>
+        <%= render partial: 'spree/admin/webhook_events/webhook_event', collection: @events, cached: spree_base_cache_scope %>
+      <% else %>
+        <tr>
+          <td colspan="7" class="text-center">
+            <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil, model_class: Spree::Webhooks::Event %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render 'spree/admin/shared/index_table_options', collection: @events %>
+</div>
+

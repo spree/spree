@@ -1,0 +1,28 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:general_settings) %>
+    </h5>
+  </div>
+  <div class="card-body" >
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_text_field :admin_name, label: Spree.t(:internal_name) %>
+    <% unless f.object.default? %>
+      <%= f.spree_check_box :active %>
+    <% end %>
+  </div>
+</div>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:address) %>
+    </h5>
+  </div>
+  <div class="card-body pb-0">
+    <%= render 'spree/addresses/form',
+                address_name: 'address',
+                address_form: f,
+                address_type: 'stock_location',
+                address: f.object %>
+  </div>
+</div>

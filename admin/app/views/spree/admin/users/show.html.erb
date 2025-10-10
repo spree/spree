@@ -1,0 +1,38 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_users_path, @user %>
+  <%= customer_full_name(@user) || @user.email %>
+  <span class="font-size-base font-weight-normal">
+    <%= customer_location_flag(@user) %>
+    <%= customer_location(@user) %>
+  </span>
+<% end %>
+
+<% content_for(:page_actions_dropdown) do %>
+  <% if can?(:create, Spree::GiftCard) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_gift_card), spree.new_admin_user_gift_card_path(@user), class: 'text-left dropdown-item' %>
+  <% end %>
+
+  <% if can?(:create, Spree::StoreCredit) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: 'text-left dropdown-item' %>
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-8 mb-4">
+    <%= render 'spree/admin/users/lifetime_stats' %>
+    <%= render 'spree/admin/users/last_order' %>
+
+    <%= render 'spree/admin/users/tabs' %>
+  </div>
+  <div class="col-lg-4">
+    <%= render 'spree/admin/users/details' %>
+    <%= render 'spree/admin/users/shipping' %>
+    <%= render 'spree/admin/users/billing' %>
+  </div>
+</div>
+
+<style>
+  .d-customer {
+    display: none;
+  }
+</style>

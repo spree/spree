@@ -1,0 +1,6 @@
+<%# locals: (f:, field:, locale:) %>
+
+<%= f.label field, Spree.t(field) %>
+<div class="trix-container">
+  <%= f.text_area "#{field}_#{locale}", class: "spree-rte" %>
+</div>

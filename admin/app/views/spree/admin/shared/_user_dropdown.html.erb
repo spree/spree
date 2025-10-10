@@ -1,0 +1,46 @@
+<% if try_spree_current_user.present? %>
+  <div class="dropdown" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
+    <button type="button"
+          class="btn d-flex align-items-center justify-content-between text-left w-100 pr-0"
+          data-toggle="dropdown" aria-expanded="false" id="accountNav">
+      <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" style="min-width: 250px;">
+      <div class="d-flex align-items-center p-2 bg-gray-25 rounded-lg">
+        <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
+        <span class="d-none d-lg-inline ml-lg-2">
+          <% if try_spree_current_user.name.present? %>
+            <%= try_spree_current_user.name&.full %><br />
+            <span class="small text-muted"><%= try_spree_current_user.email %></span>
+          <% else %>
+            <%= try_spree_current_user.email %><br />
+          <% end %>
+        </span>
+      </div>
+
+      <%= render_admin_partials(:user_dropdown_partials) %>
+
+      <% if can?(:update, try_spree_current_user) %>
+        <h6 class="dropdown-header mt-2">
+          <%= Spree.t(:account) %>
+        </h6>
+        <%= link_to_with_icon 'user-scan', Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, class: 'dropdown-item' %>
+      <% end %>
+
+      <% if can?(:manage, current_store) %>
+        <h6 class="dropdown-header mt-2">
+          <%= Spree.t(:support) %>
+        </h6>
+        <%= external_link_to Spree.t(:help_center), 'https://spreecommerce.org/docs/user', class: 'dropdown-item justify-content-between', target: '_blank' %>
+        <%= external_link_to Spree.t(:contact_us), 'https://spreecommerce.org/contact/', class: 'dropdown-item justify-content-between', target: '_blank' %>
+      <% end %>
+
+      <div class="dropdown-divider"></div>
+
+      <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0 btn-danger', method: :delete do %>
+        <%= icon('logout', class: "icon icon-logout")  %>
+        <%= Spree.t(:logout) %>
+      <% end if defined?(spree_admin_logout_path) %>
+    </div>
+  </div>
+<% end %>

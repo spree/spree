@@ -1,0 +1,33 @@
+<div class="card mb-4" id="user-ship-address">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title"><%= Spree.t(:shipping_address) %></h5>
+
+    <% if @user.shipping_address.present? %>
+      <%= link_to_with_icon 'edit', Spree.t(:edit),
+        spree.edit_admin_address_path(@user.shipping_address, type: 'shipping'),
+        class: 'btn btn-light btn-sm',
+        data: { turbo_frame: :edit_address_shipping } if can?(:update, @user.shipping_address) %>
+    <% else %>
+      <%= link_to_with_icon 'plus', Spree.t(:add),
+        spree.new_admin_address_path(user_id: @user.id, default_shipping: true, type: 'shipping'),
+        class: 'btn btn-light btn-sm',
+        data: { turbo_frame: :new_address_shipping } if can?(:create, Spree::Address) && can?(:update, @user) %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <% if @user.shipping_address %>
+      <%= turbo_frame_tag :edit_address_shipping do %>
+        <%= render 'spree/admin/shared/map', map_object: @user.ship_address, label: customer_full_name(@user) || @user.email %>
+        <div class="mt-3">
+          <%= render 'spree/admin/shared/address', address: @user.shipping_address %>
+        </div>
+      <% end %>
+    <% else %>
+      <%= turbo_frame_tag :new_address_shipping do %>
+        <div class="text-center p-5 text-muted">
+          <%= Spree.t(:not_available) %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

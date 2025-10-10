@@ -1,0 +1,70 @@
+<% edit_link =
+  if can?(:edit, customer_return)
+    spree.edit_admin_order_customer_return_path(@order, customer_return)
+  else
+    "#"
+  end %>
+
+<% can_create_reimbursement =
+  customer_return.can_create_reimbursement? &&
+    can?(:create, Spree::Reimbursement) %>
+
+  <tr
+    id="<%= spree_dom_id(customer_return) %>"
+    data-controller="row-link"
+    class="cursor-pointer"
+  >
+    <td data-action="click->row-link#openLink" class="font-weight-bolder">
+      <%= link_to customer_return.number, edit_link %>
+    </td>
+    <td data-action="click->row-link#openLink">
+      <% if customer_return.fully_reimbursed? %>
+        <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
+      <% else %>
+        <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
+      <% end %>
+    </td>
+    <td data-action="click->row-link#openLink"><%= customer_return.display_pre_tax_total.to_html %></td>
+    <td data-action="click->row-link#openLink"><%= spree_time(customer_return.created_at) %></td>
+    <td class="text-right">
+      <% if can_create_reimbursement %>
+        <span class="dropdown">
+          <button
+            class="btn btn-light btn-sm"
+            type="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <%= icon('dots-vertical', class: "mr-0") %>
+          </button>
+          <div class="dropdown-menu">
+            <%= link_to_edit(
+              customer_return,
+              data: {
+                row_link_target: :link,
+              },
+              class: "dropdown-item",
+              url: edit_link,
+            ) %>
+            <%= form_for [:admin, @order, Spree::Reimbursement.new] do |f| %>
+              <%= hidden_field_tag :build_from_customer_return_id, customer_return.id %>
+              <%= f.button class: 'dropdown-item' do %>
+                <%= icon "plus" %>
+                <%= Spree.t(:create_reimbursement) %>
+              <% end %>
+            <% end %>
+          </div>
+        </span>
+      <% else %>
+        <%= link_to_edit(
+          customer_return,
+          no_text: true,
+          data: {
+            row_link_target: :link,
+          },
+          class: "btn btn-light btn-sm",
+          url: edit_link,
+        ) %>
+      <% end %>
+    </td>
+  </tr>

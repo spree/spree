@@ -1,0 +1,131 @@
+<div class="bg-background border-default border-t overflow-x-hidden h-full w-screen overflow-y-hidden">
+  <div class="h-full flex transform has-[.currency-and-locale-modal:not(.hidden)]:transform-none relative transition-transform duration-300" data-controller="mobile-nav">
+    <div class="w-screen shrink-0 flex flex-col h-full flex-grow-0">
+      <div class="flex-grow overflow-y-scroll">
+        <% if section.blocks.any? %>
+          <% section.blocks.each do |block| %>
+            <% presenter = Spree::MegaNavPresenter.new(block) %>
+            <% main_link = presenter.main_link %>
+            <% next unless main_link.present? %>
+            <% if presenter.columns.any? %>
+              <button
+                data-action="click->mobile-nav#openSubmenu touch->mobile-nav#openSubmenu"
+                data-title="<%= main_link.label.downcase.strip %>"
+                class='text-base text-left tracking-widest p-4 w-full uppercase border-default border-b flex justify-between items-center header--nav-link'>
+                <%= main_link.label %>
+                <%= render 'spree/shared/icons/chevron_right', size: 12 %>
+                <template>
+                  <button data-action="click->mobile-nav#closeSubmenu touch->mobile-nav#closeSubmenu" class='flex gap-2 items-center text-base font-medium text-left tracking-widest p-4 w-full uppercase border-default border-b header--mega-nav-close-submenu bg-background sticky top-0'>
+                    <%= render 'spree/shared/icons/chevron', size: 12 %>
+                    <%= main_link.label %>
+                  </button>
+                  <div class="p-4 pt-0 w-full gap-2 flex flex-col">
+                    <% if block.try(:featured_taxon) %>
+                      <% cache spree_storefront_base_cache_scope.call(block.featured_taxon) do %>
+                        <% if block.featured_taxon.image.attached? && block.featured_taxon.image.variable? %>
+                          <%= link_to spree_storefront_resource_url(block.featured_taxon), class: "flex w-full pt-4" do %>
+                            <%= spree_image_tag(block.featured_taxon.image, width: 140, height: 140, class: 'h-auto aspect-1 w-2/5 max-w-[140px]', loading: :lazy, alt: block.featured_taxon.name) %>
+                            <span class="bg-accent w-full flex items-center justify-center header--mega-nav-featured-taxon-title text-sm tracking-widest font-semibold uppercase">
+                              <%= Spree.t(:explore_taxon, taxon_name: block.featured_taxon.name) %>
+                            </span>
+                          <% end %>
+                        <% end %>
+                      <% end %>
+                    <% end %>
+                    <% presenter.columns.each do |column| %>
+                      <div
+                        data-controller='toggle'
+                        data-toggle-class='hidden'
+                        class="w-full flex flex-col gap-2">
+                        <% unless presenter.columns.size == 1 %>
+                          <button
+                            type="button"
+                            class="text-base font-semibold tracking-widest uppercase w-full inline-flex justify-between py-3"
+                            data-action='click->toggle#toggle touch->toggle#toggle'>
+                            <%= column.title %>
+                            <span data-toggle-target='toggleable'>
+                              <%= render 'spree/shared/icons/chevron_down' %>
+                            </span>
+                            <span data-toggle-target='toggleable' class="hidden rotate-180">
+                              <%= render 'spree/shared/icons/chevron_down' %>
+                            </span>
+                          </button>
+                        <% end %>
+                        <div
+                          class="<%= class_names(hidden: presenter.columns.size != 1) %>"
+                          data-toggle-target='toggleable'>
+                          <% column.links.each do |link| %>
+                            <%= page_builder_link_to link, data: { title: link.label.downcase.strip }, class: "block text-base py-3 w-full uppercase header--nav-link", target: link.open_in_new_tab.presence && "_blank", rel: link.open_in_new_tab.presence && "noopener noreferrer" do %>
+                              <span><%= link.label %></span>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </template>
+              </button>
+            <% else %>
+              <%= page_builder_link_to main_link, data: { title: main_link.label.downcase.strip }, class: "block text-base tracking-widest p-4 w-full uppercase border-default border-b header--nav-link", target: main_link.open_in_new_tab.presence && "_blank", rel: main_link.open_in_new_tab.presence && "noopener noreferrer" do %>
+                <span><%= main_link.label %></span>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <% section.links.each do |link| %>
+            <%= page_builder_link_to link, data: { title: link.label.downcase.strip }, class: "block text-base tracking-widest p-4 w-full uppercase border-default border-b header--nav-link", target: link.open_in_new_tab.presence && "_blank", rel: link.open_in_new_tab.presence && "noopener noreferrer" do %>
+              <span><%= link.label %></span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class='p-4 bg-accent'>
+        <% if try_spree_current_user %>
+          <%= link_to spree.account_path, class: 'btn-secondary gap-2 flex justify-center items-center w-full' do %>
+            <span><%= Spree.t(:my_account) %></span>
+            <%= render 'spree/shared/icons/account' %>
+          <% end %>
+
+          <% if defined?(spree_logout_path) %>
+            <%= link_to spree_logout_path, method: :delete, data: { turbo_method: :delete }, class: 'btn-secondary gap-2 flex justify-center items-center w-full mt-2' do %>
+              <%= Spree.t(:sign_out) %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <button
+            id='mobile-menu'
+            data-action='click->slideover-account#toggle click@window->slideover-account#hide click->toggle-menu#hide touch->toggle-menu#hide'
+            class='btn-secondary gap-2 flex justify-center items-center w-full'>
+            <span><%= Spree.t(:my_account) %></span>
+            <%= render 'spree/shared/icons/account' %>
+          </button>
+        <% end %>
+
+        <% if should_render_currency_dropdown? || should_render_locale_dropdown? %>
+          <div class="flex mt-4 justify-end">
+            <div data-controller="modal" data-modal-disable-backdrop="true">
+              <%= button_tag class: 'flex gap-2 items-center', data: {action: 'modal#open'} do %>
+                <% if should_render_currency_dropdown? %>
+                  <span>
+                    <%= "#{current_currency} (#{currency_money(current_currency).symbol})" %>
+                  </span>
+                <% end %>
+                <% if should_render_locale_dropdown? %>
+                  <span class="uppercase <%= should_render_currency_dropdown?.presence && "border-l pl-2" %> flex items-center gap-1">
+                    <% country_code = current_locale.to_s.split("-").last %>
+                    <%= svg_country_icon(country_code) %>
+                    <span ><%= country_code %></span>
+                  </span>
+                <% end %>
+              <% end %>
+              <%= turbo_frame_tag :settings_modal, src: spree.settings_path, loading: :lazy %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <% if section.blocks.any? %>
+      <div class="w-screen shrink-0 relative overflow-y-scroll" data-mobile-nav-target="submenuContainer"></div>
+    <% end %>
+  </div>
+</div>

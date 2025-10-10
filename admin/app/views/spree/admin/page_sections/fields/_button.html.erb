@@ -1,0 +1,15 @@
+<% if f.object.respond_to?(:preferred_button_background_color) %>
+  <%= render 'spree/admin/page_builder/color_picker',
+              f: f, field: :preferred_button_background_color, value: f.object.preferred_button_background_color.presence,
+              label: Spree.t('admin.page_builder.button_background_color'),
+              clear: true,
+              action: 'change->auto-submit#submit' %>
+<% end %>
+
+<% if f.object.respond_to?(:preferred_button_text_color) %>
+  <%= render 'spree/admin/page_builder/color_picker',
+              f: f, field: :preferred_button_text_color, value: f.object.preferred_button_text_color.presence,
+              label: Spree.t('admin.page_builder.button_text_color'),
+              clear: true,
+              action: 'change->auto-submit#submit' %>
+<% end %>

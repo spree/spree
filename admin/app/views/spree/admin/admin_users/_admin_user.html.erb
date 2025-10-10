@@ -1,0 +1,19 @@
+<tr id="<%= spree_dom_id admin_user %>" class="cursor-pointer" data-controller="row-link">
+  <td class="w-50" data-action="click->row-link#openLink">
+    <%= link_to spree.admin_admin_user_path(admin_user), data: { row_link_target: :link, turbo_frame: '_top' }, class: 'd-flex align-items-center' do %>
+      <%= render_avatar(admin_user, width: 48, height: 48, class: 'mr-3 avatar') %>
+      <div class="d-flex flex-column">
+        <%= admin_user.name %>
+        <span class="text-muted"><%= admin_user.email %></span>
+      </div>
+    <% end %>
+  </td>
+  <td class="w-30" data-action="click->row-link#openLink">
+    <% admin_user.role_users.each do |role_user| %>
+      <span class="badge badge-light"><%= role_user.role.name %></span>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <%= spree_time(admin_user.created_at) %>
+  </td>
+</tr>

@@ -1,0 +1,94 @@
+---
+title: 4.0 to 4.1
+section: upgrades
+order: 1
+description: This guide covers upgrading a 4.0 Spree application to Spree 4.1.
+---
+
+<Note>
+If you're on an older version than 4.0 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
+
+1. [upgrade 3.5 to 3.6](3.5-to-3.6)
+2. [upgrade 3.6 to 3.7](3.6-to-3.7)
+3. [upgrade 3.7 to 4.0](3.7-to-4.0)
+</Note>
+
+## Update gems
+
+Run the following command to update your gems to 4.1:
+
+```bash
+bundle update
+```
+
+## Install missing migrations
+
+```bash
+rake railties:install:migrations
+```
+
+## Run migrations
+
+```bash
+rails db:migrate
+```
+
+## Storefront upgrade
+
+You have two options:
+
+1. Migrate to the new Storefront UI
+2. Stay at the current UI
+
+## Migrate to the new Storefront UI
+
+Spree 4.1 comes with a completely new mobile-first ultra-fast Storefront powered by Turbolinks.
+
+To replace your current frontend with the new Spree UI follow these steps:
+
+1. In your project root directory run:
+
+   ```bash
+    rails g spree:frontend:copy_storefront
+   ```
+
+   **WARNING** this will overwrite your current project templates, it's required for the new UI, so if you'll be asked by the generator what to do please choose **A** to proceed
+
+3. Next, you will need to copy over two files:
+   * [spree_storefront.rb](https://raw.githubusercontent.com/spree/spree/main/core/lib/generators/spree/install/templates/config/initializers/spree_storefront.rb) to `config/initializers/spree_storefront.rb`
+   * [spree_storefront.yml](https://raw.githubusercontent.com/spree/spree/main/core/lib/generators/spree/install/templates/config/spree_storefront.yml) to `config/spree_storefront.yml`
+4. If you overwrote any `spree_frontend` [controllers](https://github.com/spree/spree/tree/master/frontend/app/controllers) you will need to either remove your local copies or move your custom logic to [decorators](/developer/customization#extending-controllers)
+5. The same goes for [helpers](https://github.com/spree/spree/tree/master/frontend/app/helpers/spree)
+6. You will also need to remove this line:
+
+   ```javascript
+    //= require spree/frontend/spree_auth
+   ```
+
+   from `vendor/assets/javascripts/spree/frontend.all.js` file
+
+## Stay at the current UI
+
+If you wish to not move to the new Storefront UI it's still an option. Just proceed with the steps described below.
+
+1. Copy over all views from Spree 4.0
+
+   Copy overviews from: [https://github.com/spree/spree/tree/4-0-stable/frontend/app/views](https://github.com/spree/spree/tree/4-0-stable/frontend/app/views) to your application views directory: `app/views`
+
+   **WARNING** remember to not overwrite your customizations!
+
+2. Copy over all Stylesheets from Spree 4.0
+
+   Copy over stylesheets from: [https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/stylesheets](https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/stylesheets) to `app/stylesheets`
+
+   **WARNING** remember to not overwrite your customizations!
+
+3. Copy over all JavaScript from Spree 4.0
+
+   Copy over stylesheets from: [https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/javascripts](https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/javascripts) to `app/javascripts`
+
+   **WARNING** remember to not overwrite your customizations!
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [4.1.0 Release Notes](https://github.com/spree/spree/releases/tag/v4.1.0).

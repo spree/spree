@@ -1,0 +1,17 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_product_path(@product) %>
+  <%= @variant.human_name %>
+<% end %>
+
+<%= form_for [:admin, @product, @variant] do |f| %>
+  <div class="row">
+    <div class="col-lg-6 offset-lg-3">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
+      <%= render 'spree/admin/variants/form/basic', f: f %>
+      <%= render 'spree/admin/variants/form/pricing', f: f %>
+      <%= render 'spree/admin/variants/form/inventory', f: f %>
+      <%= render 'spree/admin/shared/media_form', viewable: @variant, viewable_type: 'Spree::Variant' %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+    </div>
+  </div>
+<% end %>

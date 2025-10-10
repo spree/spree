@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:shipping) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:shipping_categories_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_shipping_category), new_object_url, class: "btn btn-primary" if can? :create, Spree::ShippingCategory %>
+<% end %>
+
+<%= render_admin_partials(:shipping_categories_header_partials) %>
+
+<%= render partial: 'spree/admin/shared/shipping_nav' %>
+
+<%= render 'spree/admin/shared/index_table' %>

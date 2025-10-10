@@ -1,0 +1,54 @@
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(current_theme) do %>
+  <style data-turbo-track="reload">
+    <%= theme_setting(:custom_font_css_import) if theme_setting(:custom_font_css_import).present? %>
+
+    :root {
+      --primary: <%= theme_setting(:primary_color) %>;
+      --accent: <%= theme_setting(:accent_color) %>;
+      --danger: <%= theme_setting(:danger_color) %>;
+      --success: <%= theme_setting(:success_color) %>;
+      --neutral: <%= theme_setting(:neutral_color) %>;
+
+      --background: <%= theme_setting(:background_color) %>;
+      --text: <%= theme_setting(:text_color) %>;
+
+      --border-default-color: <%= theme_setting(:border_color) %>;
+      --border-default-width: <%= theme_setting(:border_width) %>px;
+      --border-default-radius: <%= theme_setting(:border_radius) %>px;
+
+      /* --border-default-shadow: <%= "#{theme_setting(:border_shadow_horizontal_offset)}px #{theme_setting(:border_shadow_vertical_offset)}px #{theme_setting(:border_shadow_blur)}px rgba(0, 0, 0, #{theme_setting(:border_shadow_opacity)})" %>; */
+      --button: <%= theme_setting(:button_background_color) || theme_setting(:primary_color) %>;
+      --button-rgb: <%= theme_setting_rgb_components(:button_background_color) || theme_setting_rgb_components(:primary_color) %>;
+      --button-text: <%= theme_setting(:button_text_color) %>;
+      --button-border-radius: <%= theme_setting(:button_border_radius) %>px;
+      --button-border-width: <%= theme_setting(:button_border_thickness) %>px;
+      --button-border-color: <%= theme_setting(:button_border_color).presence %>;
+
+      --button-hover: <%= theme_setting(:button_hover_background_color) ||  theme_setting(:button_background_color) || theme_setting(:primary_color)%>;
+      --button-hover-text: <%= theme_setting(:button_hover_text_color) || theme_setting(:button_text_color) || theme_setting(:background_color)%>;
+
+      --secondary-button: <%= theme_setting(:secondary_button_background_color) || theme_setting(:background_color) %>;
+      --secondary-button-text: <%= theme_setting(:secondary_button_text_color) || theme_setting(:button_background_color) || theme_setting(:primary_color) %>;
+      --secondary-button-hover: <%= theme_setting(:secondary_button_hover_background_color) || theme_setting(:button_background_color) || theme_setting(:primary_color) %>;
+      --secondary-button-hover-text: <%= theme_setting(:secondary_button_hover_text_color) || theme_setting(:background_color) %>;
+
+      --input: <%= theme_setting(:input_border_color) || theme_setting(:border_color) %>;
+      --input-bg: <%= theme_setting(:input_background_color) %>;
+      --input-text: <%= theme_setting(:input_text_color) %>;
+      --input-focus-bg: <%= theme_setting(:input_focus_background_color) || theme_setting(:input_background_color) %>;
+      --input-border-radius: <%= theme_setting(:input_border_radius) %>px;
+
+      --neutral-50: #F3F3F3;
+      --neutral-100: #EAEAEA;
+      --neutral-200: #D4D4D4;
+      --neutral-300: #B3B3B3;
+      --neutral-400: #999999;
+      --neutral-500: #808080;
+      --neutral-600: #666666;
+      --neutral-700: #4D4D4D;
+      --neutral-800: #333333;
+      --neutral-900: #1A1A1A;
+      --accent-100: #FBFAF8;
+    }
+  </style>
+<% end %>

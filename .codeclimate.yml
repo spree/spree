@@ -1,0 +1,25 @@
+version: "2"
+plugins:
+  rubocop:
+    enabled: true
+    checks:
+      Rubocop/Naming/RescuedExceptionsVariableName:
+        enabled: false
+      Rubocop/Layout/AlignArguments:
+        enabled: false
+      Rubocop/Style/MultilineWhenThen:
+        enabled: false
+      Rubocop/Layout/SpaceAroundOperators:
+        enabled: false
+      Rubocop/Style/FormatStringToken:
+        enabled: false
+    config:
+      file: .rubocop.yml
+    channel: "rubocop-1-50-3"
+exclude_patterns:
+  - "**/bin/"
+  - "**/script/"
+  - "**/vendor/"
+  - "**/spec/"
+  - "public/"
+  - "sample/db/samples"

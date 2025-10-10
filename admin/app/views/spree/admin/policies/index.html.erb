@@ -1,0 +1,9 @@
+<%= content_for :page_title do %>
+  <%= Spree.t(:policies) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_policy), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Policy) %>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table' %>

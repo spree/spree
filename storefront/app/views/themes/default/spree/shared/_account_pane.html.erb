@@ -1,0 +1,28 @@
+<div
+  id='account-pane'
+  data-turbo-permanent
+  data-slideover-account-target='overlay'
+  class='fixed inset-0 flex flex-row-reverse z-50 transition-opacity hidden'
+>
+  <div class='fixed inset-0'>
+    <div data-action='click->slideover-account#toggle' class='absolute inset-0 bg-background opacity-75'></div>
+  </div>
+  <div
+    id='slideover-account'
+    data-slideover-account-target='menu'
+    class='relative sidebar-pane flex-1 !flex flex-col w-full bg-background text-text md:border-l border-default transition ease-in-out duration-300 translate-x-full'
+  >
+    <div class='p-4 gap-4 flex-shrink-0 flex items-center justify-between border-b border-default z-50'>
+      <button
+        data-action='slideover-account#toggle'
+        class='flex items-center justify-center rounded-full focus:outline-none focus:bg-background'
+        aria-label='Close account sidebar'
+      >
+        <%= render 'spree/shared/icons/cross' %>
+      </button>
+      <span class='text-xl font-medium uppercase leading-none'><%= Spree.t(:account) %></span>
+      <span></span>
+    </div>
+    <%= turbo_frame_tag "login", src: spree_login_path, loading: "lazy" %>
+  </div>
+</div>

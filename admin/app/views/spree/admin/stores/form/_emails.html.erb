@@ -1,0 +1,43 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:emails) %>
+<% end %>
+
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:settings) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_check_box :preferred_send_consumer_transactional_emails, help: Spree.t('admin.store_form.send_consumer_transactional_emails_help'), label: Spree.t(:send_consumer_transactional_emails) %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">Email addresses</h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">
+      Please provide the email address that will be used as the sender of all emails sent from your store.
+    </p>
+
+    <%= f.spree_email_field :mail_from_address, required: true %>
+    <%= f.spree_email_field :customer_support_email, help: Spree.t('admin.store_form.customer_support_email_help') %>
+    <%= f.spree_email_field :new_order_notifications_email, help: Spree.t('admin.store_form.new_order_notifications_email_help') %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-muted">This logo is included in all email notifications such as order confirmation</p>
+    <%= render 'active_storage/upload_form', form: f, field_name: :mailer_logo, width: 204, height: 104 %>
+    <p class="form-text text-muted mb-0 mt-2">
+      We recommend images with a transparent background.
+      <br />
+      Only JPEG and PNG formats are supported.
+    </p>
+  </div>
+</div>

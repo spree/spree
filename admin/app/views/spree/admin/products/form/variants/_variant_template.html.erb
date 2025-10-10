@@ -1,0 +1,44 @@
+<% test_stock_item = Spree::StockItem.new(variant_id: @product.default_variant.id) %>
+<% test_price = Spree::Price.new(variant_id: @product.default_variant.id) %>
+<% can_manage_stock = @product.new_record? ? true : can?(:manage, test_stock_item) %>
+<% can_manage_prices = @product.new_record? ? true : can?(:manage, test_price) %>
+<template data-variants-form-target="variantTemplate">
+  <div class="variants-table__body__row hover-light" data-variants-form-target="variant">
+    <% if can?(:destroy, @product.default_variant) %>
+      <div class="variants-table__body__cell column-checkbox">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" value="1" class="custom-control-input"  data-variants-form-target="checkbox" id="checkbox_"  data-action="change->variants-form#refresh">
+          <label class="custom-control-label" for="checkbox_"><span></span></label>
+        </div>
+      </div>
+    <% end %>
+    <div class="variants-table__body__cell column-variant" data-slot="variantName">
+      Medium
+    </div>
+    <div class="variants-table__body__cell column-price">
+      <% supported_currencies.each_with_index do |currency, i| %>
+        <div class="form-control align-items-center py-0 focus-shadow focus-border mr-2 price-input-container <%= current_currency != currency ? 'd-none' : 'd-flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
+          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'form-control-plaintext px-0', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
+          <span><%= currency_symbol(currency) %></span>
+        </div>
+        <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][currency]", currency, data: {slot: "[prices_attributes][#{currency}][currency]_input"} %>
+        <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][id]", "", data: {slot: "[prices_attributes][#{currency}][id]_input"} %>
+      <% end %>
+    </div>
+    <div class="variants-table__body__cell column-quantity">
+      <% available_stock_locations_for_product(@product).ids.each_with_index do |id, i|  %>
+        <%= number_field_tag "product[variants_attributes][stock_items_attributes][#{i}][count_on_hand]", 0, class: class_names('form-control', default_stock_location.id == id ? 'd-block' : 'd-none'), data: {slot: "[stock_items_attributes][#{id}][count_on_hand]_input", stock_location_id: id, action: "variants-form#updateCountOnHand blur->variants-form#replaceBlankWithZero" }, readonly: !can_manage_stock %>
+        <%= hidden_field_tag "product[variants_attributes][stock_items_attributes][#{i}][stock_location_id]", id, data: { slot: "[stock_items_attributes][#{id}][stock_location_id]_input" } %>
+        <%= hidden_field_tag "product[variants_attributes][stock_items_attributes][#{i}][id]", "", data: { slot: "[stock_items_attributes][#{id}][id]_input" } %>
+      <% end %>
+    </div>
+    <% if can?(:manage, @product.default_variant) %>
+      <div class="variants-table__body__cell column-actions d-flex align-items-center">
+        <a href="#" class="btn btn-sm btn-light invisible ml-2" data-slot="variantEditButton">
+          <%= icon('edit') %>
+          <%= Spree.t(:edit)%>
+        </a>
+      </div>
+    <% end %>
+  </div>
+</template>

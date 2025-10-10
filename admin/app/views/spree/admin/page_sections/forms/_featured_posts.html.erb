@@ -1,0 +1,33 @@
+<div class="form-group">
+  <%= f.label :preferred_heading, Spree.t('admin.page_builder.heading') %>
+  <%= f.text_field :preferred_heading, data: { action: 'auto-submit#submit' }, class: "form-control" %>
+</div>
+<div class="form-group">
+  <%= f.label :preferred_heading_size, Spree.t('admin.page_builder.heading_size') %>
+  <%= f.select :preferred_heading_size, options_for_select([ ["Small", 'small'], ["Medium", 'medium'], ["Large", 'large'] ], @page_section.preferred_heading_size ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+</div>
+<div class="form-group">
+  <%= f.label :preferred_heading_alignment, Spree.t('admin.page_builder.heading_alignment') %>
+  <%= f.select :preferred_heading_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_heading_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+</div>
+<div class="form-group">
+  <%= f.label :description %>
+  <div class="trix-container">
+    <%= f.rich_text_area :description, data: {action: 'trix-change->auto-submit#submit'}, class: 'mb-3 w-full' %>
+  </div>
+</div>
+<div class="form-group">
+  <%= f.label :preferred_description_alignment, Spree.t('admin.page_builder.description_alignment') %>
+  <%= f.select :preferred_description_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_description_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+</div>
+
+<div class="form-group">
+  <div data-controller="better-slider">
+    <label><%= Spree.t('admin.page_builder.maximum_posts_to_show') %>: <span data-better-slider-target="currentValueLabel"></span></label>
+    <div class="flex flex-row w-full">
+      <span class="mr-2">2</span>
+      <%= f.range_field :preferred_max_posts_to_show, class: "custom-range w-full", min: 2, max: 8, data: {'better-slider-target': 'rangeInput', action: 'auto-submit#submit'} %>
+      <span class="ml-2">8</span>
+    </div>
+  </div>
+</div>

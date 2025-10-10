@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.select :preferred_currency,
+    options_for_select(supported_currency_options, f.object.preferred_currency),
+    {},
+    { data: { controller: 'autocomplete-select' } } 
+  %>
+</div>

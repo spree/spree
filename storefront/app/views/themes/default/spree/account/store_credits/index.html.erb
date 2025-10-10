@@ -1,0 +1,31 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'store_credits' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5">
+    <div class="flex gap-4">
+      <div class="uppercase font-medium pb-2">
+       <%= Spree.t(:store_credits) %>
+      </div>
+    </div>
+    <% if @store_credit_events.any? %>
+      <p class="text-neutral-600 mb-3"><%= Spree.t('storefront.account.store_credits_history') %></p>
+
+      <table class="inline-table md:table table-auto overflow-scroll w-full text-sm border-separate border-spacing-y-4 mb-24 mt-4">
+        <thead class="hidden md:table-row-group">
+          <tr class="text-left text-neutral text-xs">
+            <th class="font-normal px-4"><%= Spree.t(:date) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:change) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:action) %></th>
+            <th class="font-normal px-4"><%= Spree.t(:balance) %></th>
+          </tr>
+        </thead>
+        <tbody class="block md:table-row-group">
+          <%= render collection: @store_credit_events, partial: 'spree/account/store_credits/store_credit_event', cached: spree_storefront_base_cache_scope %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="text-neutral-600"><%= Spree.t('storefront.account.no_store_credits') %></p>
+    <% end %>
+  </div>
+</div>

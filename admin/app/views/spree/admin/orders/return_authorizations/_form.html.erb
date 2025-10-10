@@ -1,0 +1,164 @@
+<% allow_return_item_changes = !@return_authorization.customer_returned_items? %>
+
+<div data-controller="return-items">
+  <div class="table-responsive card-lg mb-4">
+    <table class="table table-condensed return-items-table">
+      <thead>
+        <tr>
+          <th scope="col">
+            <% if allow_return_item_changes %>
+              <div class="custom-control custom-checkbox ml-1">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="checkAllMasterCheckbox"
+                  data-return-items-target="checkboxAll"
+                >
+                <label class="custom-control-label" for="checkAllMasterCheckbox"><span></span></label>
+              </div>
+            <% end %>
+          </th>
+          <th scope="col"><%= Spree.t(:product) %></th>
+          <th scope="col"><%= Spree.t(:status) %></th>
+          <th scope="col"><%= Spree.t(:charged) %></th>
+          <th scope="col"><%= Spree.t(:purchased_quantity) %></th>
+          <th style="min-width:130px;"><%= Spree.t(:return_quantity) %></th>
+          <th style="min-width:150px;"><%= Spree.t(:pre_tax_refund_amount) %></th>
+          <th scope="col"><%= Spree.t(:reimbursement_type) %></th>
+          <th scope="col"><%= Spree.t(:exchange_for) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :return_items, @form_return_items do |item_fields| %>
+          <% return_item = item_fields.object %>
+          <% inventory_unit = return_item.inventory_unit %>
+          <% editable =
+            inventory_unit.shipped? && allow_return_item_changes &&
+              return_item.reimbursement.nil? %>
+          <tr>
+            <td class="inventory-unit-checkbox">
+              <% if editable %>
+                <div class="custom-control custom-checkbox ml-1">
+
+                  <%= item_fields.hidden_field :inventory_unit_id %>
+                  <%= item_fields.check_box :_destroy,
+                                        {
+                                          checked: return_item.persisted?,
+                                          class: "add-item custom-control-input",
+                                          data: {
+                                            return_items_target: "checkbox",
+                                            price: return_item.pre_tax_amount,
+                                          },
+                                        },
+                                        "0",
+                                        "1" %>
+                  <%= item_fields.label :_destroy, class: "custom-control-label" do %>
+                    <span></span>
+                  <% end %>
+                </div>
+              <% end %>
+            </td>
+            <td>
+              <div class="variant-name">
+                <%= link_to return_item.inventory_unit.variant.name,
+                spree.edit_admin_product_path(return_item.inventory_unit.variant.product) %>
+              </div>
+              <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
+            </td>
+            <td><%= inventory_unit.state.humanize %></td>
+            <td
+              class="charged-amount"
+              data-charged-amount="<%= inventory_unit.charged_amount %>"
+            >
+              <%= inventory_unit.display_charged_amount %>
+            </td>
+            <td class="purchased-quantity">
+              <%= inventory_unit.quantity %>
+            </td>
+            <td>
+              <% if editable %>
+                <%= item_fields.number_field :return_quantity,
+                                         {
+                                           class: "refund-quantity-input form-control",
+                                           min: 0,
+                                           required: true,
+                                           data: {
+                                             action: "return-items#updateSuggestedAmount",
+                                           },
+                                           max: return_item.return_quantity,
+                                         } %>
+              <% else %>
+                <%= return_item.return_quantity %>
+              <% end %>
+            </td>
+            <td>
+              <% if editable %>
+                <%= item_fields.text_field :pre_tax_amount,
+                                         {
+                                           class: "refund-amount-input form-control",
+                                           required: true,
+                                           data: {
+                                             action: "return-items#updateTotalRefundAmount",
+                                           },
+                                         } %>
+              <% else %>
+                <%= return_item.display_pre_tax_amount %>
+              <% end %>
+            </td>
+            <td>
+              <% if editable %>
+                <%= item_fields.select :preferred_reimbursement_type_id,
+                                   @reimbursement_types.collect { |r| [r.name.humanize, r.id] },
+                                   { include_blank: true },
+                                   { class: "custom-select" } %>
+              <% end %>
+            </td>
+            <td>
+              <% if editable %>
+                <% if return_item.exchange_processed? %>
+                  <%= return_item.exchange_variant.exchange_name %>
+                <% else %>
+                  <%= item_fields.collection_select :exchange_variant_id,
+                                                return_item.eligible_exchange_variants,
+                                                :id,
+                                                :exchange_name,
+                                                { include_blank: true },
+                                                {
+                                                  class:
+                                                    "custom-select return-item-exchange-selection",
+                                                } %>
+                <% end %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="alert alert-info">
+    <%= Spree.t(:total_pre_tax_refund) %>:
+    <span data-return-items-target="totalPreTaxRefund">0.00</span>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= f.spree_select :stock_location_id,
+               available_stock_locations_list,
+               { include_blank: Spree.t(:select_a_stock_location), label: Spree.t(:stock_location), required: true } %>
+
+      <%= f.spree_select :return_authorization_reason_id,
+               @reasons.collect { |r| [r.name, r.id] },
+               { include_blank: Spree.t(:select_a_return_authorization_reason), label: Spree.t(:reason), required: true } %>
+
+      <%= f.spree_text_area :memo %>
+    </div>
+  </div>
+</div>
+
+<% if Spree::Config[:expedited_exchanges] %>
+  <div class="expedited-exchanges-warning"><%= Spree.t(
+      :expedited_exchanges_warning,
+      days_window: Spree::Config[:expedited_exchanges_days_window],
+    ) %></div>
+<% end %>

@@ -1,0 +1,31 @@
+<tr id="<%= spree_dom_id promotion %>" data-controller="row-link">
+  <td class="w-30 p-0">
+    <%= link_to promotion.name, spree.admin_promotion_path(promotion), class: 'font-weight-bold d-block py-2 px-3 w-100 h-100', data: { row_link_target: :link, turbo_frame: '_top' } %>
+  </td>
+    <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
+      <% if promotion.coupon_code? && promotion.code.present? %>
+        <code><%= promotion.code.upcase %></code>
+      <% elsif promotion.multi_codes? && promotion.code_prefix.present? %>
+        <code><%= promotion.code_prefix %>-<%= '*' * 6 %></code>
+      <% else %>
+        <span class="text-muted small"><%= Spree.t(:not_available) %></span>
+      <% end %>
+    </td>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <span class="badge badge-<% if promotion.automatic? %>info<% else %>light<% end %>">
+      <% if promotion.automatic? %>
+        <%= icon('automation', class: 'mr-1') %>
+      <% else %>
+        <%= icon('ticket', class: 'mr-1') %>
+      <% end %>
+      <%= promotion.kind.humanize %>
+    </span>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= render 'spree/admin/promotions/usage_limit', promotion: promotion %>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= render 'spree/admin/promotions/status', promotion: promotion %>
+  </td>
+</tr>

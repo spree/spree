@@ -1,0 +1,21 @@
+<%= form_with model: @admin_user, url: spree.admin_admin_users_path(token: @invitation.token), method: :post, scope: :admin_user do |f| %>
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @admin_user } %>
+
+      <div class="rounded border p-3 mb-3 d-flex align-items-center gap-2">
+        <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
+        <%= @invitation.inviter.name %> has invited you to join <strong><%= @invitation.resource.name %></strong>
+      </div>
+
+      <%= render 'form', f: f %>
+      <div class="form-group">
+        <%= f.label :password %>
+        <%= f.password_field :password, class: 'form-control', required: true %>
+      </div>
+      <div class="form-group">
+        <%= f.label :password_confirmation %>
+        <%= f.password_field :password_confirmation, class: 'form-control', required: true %>
+      </div>
+
+    <%= turbo_save_button_tag(Spree.t('create_a_new_account')) %>
+<% end %>
+

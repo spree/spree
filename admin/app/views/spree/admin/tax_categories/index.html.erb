@@ -1,0 +1,14 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:taxes) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:tax_categories_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_tax_category), new_object_url, class: "btn btn-primary" if can? :create, Spree::TaxCategory %>
+<% end %>
+
+<%= render_admin_partials(:tax_categories_header_partials) %>
+
+<%= render 'spree/admin/shared/tax_nav' %>
+
+<%= render 'spree/admin/shared/index_table' %>

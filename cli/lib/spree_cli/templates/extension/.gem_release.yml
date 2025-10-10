@@ -1,0 +1,3 @@
+bump:
+  file: "lib/<%= file_name %>/version.rb"
+

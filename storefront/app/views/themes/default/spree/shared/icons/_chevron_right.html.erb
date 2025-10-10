@@ -1,0 +1,15 @@
+<% size ||= 24 %>
+<% color ||= theme_setting(:text_color) %>
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="<%= size %>"
+  height="<%= size %>"
+  fill="none"
+  viewBox="0 0 24 24">
+  <path
+    fill="<%= color %>"
+    fill-rule="evenodd"
+    d="M8.53 3.47 7.47 4.53 14.94 12l-7.47 7.47 1.06 1.06L17.06 12 8.53 3.47Z"
+    clip-rule="evenodd" />
+</svg>

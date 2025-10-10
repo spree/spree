@@ -1,0 +1,29 @@
+<%= content_for(:page_title) do %>
+  <%= Spree.t(:integrations) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:integrations_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:integrations_header_partials) %>
+
+<div class="row">
+  <div class="col-lg-8 offset-lg-2">
+    <div class="alert alert-info mb-4">
+      <%= Spree.t('admin.integrations.page_subtitle') %>
+    </div>
+
+    <% grouped_available_store_integrations.each do |group, integrations| %>
+      <% if group.present? %>
+        <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(group) %></div>
+      <% end %>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mb-4">
+        <% integrations.each do |integration| %>
+          <%= render 'spree/admin/integrations/integration', integration_class: integration %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

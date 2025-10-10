@@ -1,0 +1,10 @@
+<% if @page_link.parent.is_a?(Spree::Store) %>
+  <%= turbo_stream.replace :checkout_links do %>
+    <%= render 'spree/admin/stores/form/checkout_links' %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace :page_sidebar do %>
+    <%= render template: 'spree/admin/page_links/edit' %>
+  <% end %>
+  <%= render 'spree/admin/page_links/refresh_theme_preview' %>
+<% end %>

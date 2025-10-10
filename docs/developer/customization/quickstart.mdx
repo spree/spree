@@ -1,0 +1,80 @@
+---
+title: Quickstart
+og:title: Spree Customization Quickstart
+description: Learn how to customize every part of the Spree stack
+icon: wrench
+---
+
+Spree is a very flexible platform allowing you to customize every part of it, to suit your business needs.
+
+There are several ways you can achieve this:
+
+<AccordionGroup>
+  <Accordion title="Store settings">
+    There's a lot of Store settings you can change in the admin panel without touching the code.
+
+    Changing currency, shipping zones, languages - it's very easy to do.
+
+    Go to **Admin > Settings**
+
+    <img src="/images/spree_admin_store_settings.png" alt="Spree Admin Store Settings" />
+  </Accordion>
+
+  <Accordion title="Configuration">
+    Global application configuration allows you to tweak Spree's behavior without having to modify the source code.
+
+    Please see [Preferences](/developer/customization/configuration) section for more information.
+  </Accordion>
+
+  <Accordion title="Authentication">
+    Spree allows you to use your own authentication system.
+
+    To do this, you need to create a new authentication system and configure Spree to use it.
+
+    You can find more information in the [Authentication](authentication) section.
+  </Accordion>
+
+  <Accordion title="Checkout flow">
+    With Spree you can change the checkout flow to fit your business needs.
+
+    Please see [Checkout flow customization section](checkout) for more information.
+  </Accordion>
+
+  <Accordion title="Dependencies">
+    Spree allows you to swap core classes and services with your own, eg. you want to handle adding to cart differently.
+
+    In your `config/initializers/spree.rb` file, you can set the following:
+
+    ```ruby
+    Spree::Dependencies.cart_add_item_service = "MyCartAddItemService"
+    ```
+
+    which would use `MyCartAddItemService` to handle adding to cart.
+
+    You can find more information in the [Dependencies](dependencies) section.
+  </Accordion>
+
+  <Accordion title="Decorators">
+     Decorators allow you to add behavior to Spree classes in your application. We're using a neat feature of Ruby language called [Module.prepend](https://ruby-doc.org/core-2.6.3/Module.html#method-i-prepend) to add the behavior to the model.
+
+    For example, to add a method that returns the product name in uppercase, you would add the following to your decorator:
+
+    ```ruby
+    module Spree
+      module ProductDecorator
+        def custom_name
+          name.upcase
+        end
+      end
+
+      Product.prepend(ProductDecorator)
+    end
+    ```
+
+    <Warning>
+    Decorators should be used as a last resort. They can make upgrading Spree more difficult.
+    </Warning>
+
+    Please see [Decorators](decorators) section for more information.
+  </Accordion>
+</AccordionGroup>

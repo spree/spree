@@ -1,0 +1,30 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="form-group">
+      <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    </div>
+
+    <div class="row">
+      <div class="form-group col-lg-4">
+        <%= f.spree_text_field :namespace, required: true, placeholder: 'eg. custom' %>
+      </div>
+      <div class="form-group col-lg-8">
+        <%= f.spree_text_field :key, required: true, placeholder: 'eg. id' %>
+      </div>
+    </div>
+
+    <% if f.object.new_record? %>
+      <div class="form-group">
+        <%= f.spree_select :resource_type, metafield_definition_resource_types, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
+      </div>
+
+      <div class="form-group">
+        <%= f.spree_select :metafield_type, metafield_definition_types, { include_blank: true, autocomplete: true, label: Spree.t(:type) }, { required: true } %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.spree_select :display_on, display_on_options(Spree::MetafieldDefinition), { include_blank: true, autocomplete: true }, { required: true } %>
+    </div>
+  </div>
+</div>

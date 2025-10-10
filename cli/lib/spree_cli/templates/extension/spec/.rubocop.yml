@@ -1,0 +1,9 @@
+require: rubocop-rspec
+
+inherit_from: ../.rubocop.yml
+
+Metrics/BlockLength:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+ENGINE_ROOT = File.expand_path('..', __dir__)
+ENGINE_PATH = File.expand_path('../lib/spree/emails/engine', __dir__)
+
+# Set up gems listed in the Gemfile.
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __dir__)
+
+require "bundler/setup" if File.exist?(ENV["BUNDLE_GEMFILE"])
+require "rails/all"
+require "rails/engine/commands"

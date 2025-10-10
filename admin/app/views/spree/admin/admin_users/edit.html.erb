@@ -1,0 +1,32 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.admin_admin_users_path %>
+  <%= @admin_user.name %>
+<% end %>
+
+<%= content_for :title do %>
+  <%= @admin_user.name %>
+<% end %>
+
+<%= turbo_frame_tag :edit_user do %>
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+    <%= link_to Spree.t('actions.discard'), spree.admin_admin_user_path(@admin_user), class: 'btn btn-light btn-sm' %>
+  </div>
+  <%= form_for [:admin, @admin_user], as: :admin_user, url: spree.admin_admin_user_path(@admin_user), method: :put do |f| %>
+    <div class="card-body">    
+      <%= render'spree/admin/shared/error_messages', target: @admin_user %>
+      <%= render 'form', f: f %>
+      <% if can?(:manage, Spree::Role) && @roles.any? %>
+        <%= f.spree_select :spree_role_ids,
+                options_from_collection_for_select(@roles, 'id', 'name', @admin_user.spree_roles.pluck(:id)),
+                { prompt: false, label: Spree.t(:roles), autocomplete: true },
+                { multiple: true } %>          
+      <% end %>
+    </div>
+    <div class="card-footer">
+      <%= turbo_save_button_tag Spree.t('actions.update') %>
+    </div>
+  <% end %>
+<% end%>

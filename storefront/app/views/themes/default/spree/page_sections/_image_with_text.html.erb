@@ -1,0 +1,67 @@
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>" class="image-with-text <%= 'right-aligned' if section.preferred_desktop_image_alignment == 'right' %>">
+    <div class="page-container">
+      <div class="lg:grid lg:grid-cols-12 lg:gap-6 image-with-text--container">
+        <div class="lg:col-span-6 aspect-[6/7] <%= 'lg:col-start-7 lg:order-1' if section.preferred_desktop_image_alignment == 'right' %> image-with-text--image-wrapper">
+          <%= page_builder_link_to(section.link, title: section.link&.label,  target: (section.link&.open_in_new_tab ? '_blank' : nil)) do %>
+            <% if section.image.present? %>
+              <%= image_tag spree_image_url(section.image, width: 1000, height: nil),
+                class: "w-full h-full object-cover",
+                loading: :lazy,
+                alt: section.image_alt,
+                sizes: "(max-width: 1024px) 100vw, 50vw",
+                srcset: [640, 750, 828, 1080, 1200, 2000].map { |width|
+                  "#{spree_image_url(section.image, width: width / 2, height: nil)} #{width}w"
+                }.join(', ')
+              %>
+            <% else %>
+              <%= content_tag(:div, '', class: 'w-full h-full object-cover bg-gray-100') %>
+            <% end %>
+          <% end %>
+        </div>
+        <%
+          vertical_alignment_class = case section.preferred_vertical_alignment
+          when 'top'
+            'lg:content-start'
+          when 'bottom'
+            'lg:content-end'
+          else
+            'lg:content-center'
+          end
+        %>
+        <div class="lg:grid lg:col-span-5 <%= vertical_alignment_class %> <%= 'lg:col-start-8' if section.preferred_desktop_image_alignment == 'left' %> image-with-text--blocks-wrapper">
+          <% section.blocks.includes(:rich_text_text, :links).each do |block| %>
+            <% case block.type %>
+            <% when 'Spree::PageBlocks::Heading' %>
+              <h2 class="<%= block.preferred_size == 'small' ? 'text-lg' : (block.preferred_size == 'medium' ? 'text-xl' : 'text-2xl lg:text-3xl') %> font-medium" <%= block_attributes(block) %>>
+                <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--heading", style: block_background_color_style(block)) do %>
+                  <%= block.text %>
+                <% end %>
+              </h2>
+            <% when 'Spree::PageBlocks::Text' %>
+              <div <%= block_attributes(block) %>>
+                <%= page_builder_link_to(section.link, target: (section.link&.open_in_new_tab ? '_blank' : nil), class: "image-with-text--text", style: block_background_color_style(block)) do %>
+                  <%= block.text %>
+                <% end %>
+              </div>
+            <% when 'Spree::PageBlocks::Buttons' %>
+              <div class="w-full image-with-text--buttons" <%= block_attributes(block) %>>
+                <div class="inline-block">
+                  <div class="flex flex-col gap-4 lg:flex-row">
+                    <% if block.link %>
+                      <%= page_builder_link_to block.link,
+                          label: block.link.label,
+                          class: block.preferred_button_style_1 == 'secondary' ? 'btn-secondary' : 'btn-primary',
+                          target: (block.link.open_in_new_tab ? '_blank' : nil),
+                          rel: (block.link.open_in_new_tab ? 'noopener noreferrer' : nil) %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

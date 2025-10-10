@@ -1,0 +1,19 @@
+<% color_preview_class ||= '' %>
+<% color_preview_container_class ||= '' %>
+<% disabled ||= false %>
+<% with_name ||= false %>
+
+<div class='border border-default peer-checked:border-primary peer-checked:border-solid p-0.5 inline-flex items-center gap-2 label-container hover:border-dashed hover:border-primary rounded-full'>
+  <div class='color-preview w-[24px] h-[24px] shrink-0 lg:block relative rounded-full <%= color_preview_container_class %> <%= 'opacity-50' if disabled %>'>
+    <% if disabled %>
+      <div class='absolute <%= color_preview_class %>'>
+        <%= render 'spree/shared/icons/disabled', stroke: "var(--border-default-color)" %>
+      </div>
+    <% end %>
+  </div>
+  <% if with_name %>
+    <span class='color-label !leading-[30px] text-sm lg:!block lg:pr-2'>
+      <%= h(color) %>
+    </span>
+  <% end %>
+</div>

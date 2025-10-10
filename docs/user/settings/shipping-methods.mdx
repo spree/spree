@@ -1,0 +1,111 @@
+---
+title: "Shipping Methods"
+description: "In this Spree user doc, you'll learn how to setup up shipping methods for your store."
+---
+
+If you want to run a successful online business, having shipping methods in place is essential. These methods appear at checkout, representing the carriers and services used to deliver your products to customers.
+
+<Warning>
+  If you don’t set up at least one shipping method for each region you sell to, customers in those regions won’t be able to complete their checkout.
+</Warning>
+
+To set up shipping methods, navigate to the Shipping tab of the admin dashboard, found in Settings menu.
+
+![](/images/user/settings/shipping/10.10.1.1Shipping-NavigateToTab.png)
+
+## Add a New Shipping Method
+
+To add a new shipping method, click 'New Shipping Method’ in the top right corner. This will open the shipping method creation page.
+
+![](/images/user/settings/shipping/10.10.1.2Shipping-AddANewShippingMethod.png)
+
+This page is divided into seven sections, so let’s take a look at each individually.
+
+### Presentation
+
+![](/images/user/settings/shipping/10.10.1.3Shipping-Presentation.png)
+
+Here you can set a descriptive name for the shipping method (e.g., UPS Standard, Fed Ex Next Day), and choose where it should be displayed.
+
+<Warning>
+  Make sure the ‘Display on’ setting includes ‘storefront’ if you want customers to see this shipping method on the checkout.
+</Warning>
+
+### Tracking URL
+
+![](/images/user/settings/shipping/10.10.1.4Shipping-TrackingURL.png)
+
+Here you can add the tracking URL format for the shipping carrier that’s associated with the payment method, e.g.:
+
+- [<u>https://www.fedex.com/wtrk/track/?trknbr=:tracking</u>](https://www.fedex.com/wtrk/track/?trknbr=:tracking)
+- [<u>https://www.ups.com/track?loc=en_US&tracknum=:tracking</u>](https://www.ups.com/track?loc=en_US&tracknum=:tracking)
+- [<u>https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking</u>](https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking)
+
+This way, you can simply enter the tracking number when fulfilling an order that’s using the shipping method, and the customer will receive the correct tracking link to track their order.\
+\
+<Warning>
+  Make sure to verify the tracking link format for each shipping carrier you plan on using and test them before going live.
+</Warning>
+
+
+### Zones
+
+![](/images/user/settings/shipping/10.10.1.5Shipping-Zones.png)
+
+Even if you sell to multiple regions, not every shipping method should be available in every country. With Zones, you can set regional restrictions to control where each shipping method applies. Simply select the appropriate Zones for each method.
+
+<Note>
+  Customers will only see shipping methods that apply to their delivery address based on the assigned Zones.
+</Note>
+
+### Shipping Categories
+
+![](/images/user/settings/shipping/10.10.1.6Shipping-ShippingCategories.png)
+
+Shipping Categories allow you to specify which products a shipping method applies to.
+
+For example:
+
+- If you sell digital products, selecting the "Digital" category ensures they bypass the delivery address step at checkout.
+- If you offer large or heavy items, creating a "Freight" category helps separate those shipping methods from standard products.
+
+### Tax Category
+
+![](/images/user/settings/shipping/10.10.1.7Shipping-TaxCategory.png)
+
+Here you can select the tax category that should apply to the shipping method.
+
+Tax categories can impact shipping methods by determining the applicable tax rates based on the type of product being shipped. 
+
+Certain tax rules may apply differently to specific product categories, affecting the final shipping cost and compliance with regional tax regulations.
+
+### Calculator
+
+![](/images/user/settings/shipping/10.10.1.8Shipping-Calculator.png)
+
+The calculator section is where you can define the rules for calculating the cost of the shipping method. The calculator types are are follows:
+
+- Flat Percent
+- Flat Rate
+- Flexible Rate per package item
+- Flat Rate per package item
+- Price Sack
+- Digital Delivery
+
+For a more detailed guide on shipping calculators, please refer to another support article.
+
+### Estimated Transit Business Days
+
+![](/images/user/settings/shipping/10.10.1.9Shipping-EstimatedTransit.png)
+
+Here you can set an estimated delivery time that the customer will be able to see on both PDPs and checkout. 
+
+While it’s not necessary to add this, estimated delivery times can improve conversions by setting clear expectations, giving customers confidence in when they will receive their order. 
+
+### Click Create
+
+Once you’ve configured all of the above settings, all you need to do is click the ‘Create’ button at the bottom of the page to save your new shipping method. It will become immediately available to customers provided the order details match the method’s conditions.
+
+Congratulations, you’ve just created your first shipping method\!
+
+![](/images/user/settings/shipping/10.10.1.10Shipping-MethodCreated.png)

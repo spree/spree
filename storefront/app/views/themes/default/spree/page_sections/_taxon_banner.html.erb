@@ -1,0 +1,43 @@
+<% cache_unless page_builder_enabled?, [*spree_storefront_base_cache_scope.call(section), taxon].compact do %>
+  <div
+    style="<%= section_styles(section) %>"
+    id="taxon-banner-<%= taxon.id %>"
+    <%= 'data-turbo-permanent' unless page_builder_enabled? %>>
+    <div class="page-container">
+      <div class="lg:gap-6 lg:grid lg:grid-cols-12">
+        <% if taxon.image.present? %>
+          <div class="flex lg:col-span-7 lg:col-start-6 lg:order-1 lg:items-center lg:justify-end">
+            <% aspect_ratio_style = "aspect-ratio: #{spree_asset_aspect_ratio(taxon.image)};" %>
+            <%= spree_image_tag(taxon.image, width: 500, height: 280, alt: taxon.name, class: 'w-full lg:h-[280px] h-full lg:w-auto mb-6', style: aspect_ratio_style, loading: :lazy) %>
+          </div>
+        <% end %>
+        <div class="lg:col-span-5 flex flex-col justify-center items-start gap-1">
+          <div class="text-xs lg:text-sm tracking-widest" style="<%= section_heading_styles(section) %>">
+            <% if taxon.root? || taxon.parent.root? %>
+              <%= taxon.taxonomy.name.singularize %>
+            <% else%>
+              <%= link_to taxon.parent.name, spree.nested_taxons_path(taxon.parent) %>
+            <% end %>
+          </div>
+          <h1 class="self-stretch text-2xl lg:text-3xl font-medium" style="<%= section_heading_styles(section) %>"><%= taxon.name %></h1>
+          <% description_text = taxon.description.to_plain_text %>
+          <div
+            data-controller="read-more"
+            class="flex flex-col gap-4"
+            data-read-more-more-text-value="<%= Spree.t(:read_more) %>"
+            data-read-more-less-text-value="<%= Spree.t(:read_less) %>">
+            <div class="prose self-stretch text-lg font-normal <%= 'product-description-truncated' if description_text.length > 250 %>" data-read-more-target="content">
+              <%= taxon.description %>
+            </div>
+            <% if description_text.length > 250 %>
+              <%= button_tag Spree.t(:read_more),
+                            type: 'button',
+                            class: "font-bold underline",
+                            data: { action: "read-more#toggle" } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

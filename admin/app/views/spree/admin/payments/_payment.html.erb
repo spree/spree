@@ -1,0 +1,95 @@
+<div class="card" id="<%= dom_id(payment) %>">
+  <div class="card-header d-flex align-items-center gap-2">
+    <span class="badge badge-<%= payment.state %> gap-1">
+      <% if payment.completed? %>
+        <%= icon('check') %>
+      <% elsif payment.invalid? || payment.void? || payment.failed? %>
+        <%= icon('x') %>
+      <% else %>
+        <%= icon('progress') %>
+      <% end %>
+      <%= Spree.t('payment_states.' + payment.state) %>
+    </span>
+    <% if payment.payment_method.present? && payment.payment_method.payment_icon_name.present? %>
+      <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
+    <% end %>
+    <strong><%= payment.number.upcase %></strong>
+    <%= spree_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
+
+    <div class="dropdown">
+      <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">
+        <%= icon('dots-vertical', class: 'mr-0') %>
+      </button>
+      <div class="dropdown-menu">
+        <% if payment.try(:gateway_dashboard_payment_url).present? %>
+          <%= link_to_with_icon 'eye', Spree.t(:details), payment.gateway_dashboard_payment_url, class: 'dropdown-item', target: '_blank' %>
+        <% end %>
+        <% if payment.source.is_a?(Spree::StoreCredit) && payment.source.originator_type == 'Spree::GiftCard' %>
+          <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_gift_card_path(payment.source.originator), class: 'dropdown-item' %>
+        <% end %>
+
+        <% if can?(:update, payment) && (payment.checkout? || payment.pending?) && payment.payment_method.present? %>
+          <%= link_to_with_icon 'check', Spree.t(:capture), spree.capture_admin_order_payment_path(@order, payment), class: 'dropdown-item', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
+        <% end %>
+        <% if can?(:refund, @order) && payment.completed? && payment.can_credit? && payment.payment_method.present? %>
+          <%= link_to_with_icon 'credit-card-refund', Spree.t(:refund), spree.new_admin_order_payment_refund_path(@order, payment), class: 'dropdown-item' %>
+        <% end %>
+        <% if can?(:cancel, payment) && payment.pending? && payment.payment_method.present? %>
+          <div class="dropdown-divider"></div>
+          <%= link_to_with_icon 'cancel', Spree.t(:void), spree.void_admin_order_payment_path(@order, payment), class: 'dropdown-item btn-danger', data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
+        <% end %>
+        <% if can?(:destroy, payment) && payment.can_be_deleted? %>
+          <div class="dropdown-divider"></div>
+          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_order_payment_path(@order, payment), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="d-flex">
+      <div class="w-50">
+        <p class="mb-1"><%= Spree.t(:amount) %>:</p>
+        <strong><%= payment.display_amount %></strong>
+
+        <p class="mb-1 mt-2"><%= Spree.t(:payment_method) %>:</p>
+        <strong><%= payment_method_name(payment) %></strong>
+
+        <% if payment.transaction_id.present? %>
+          <p class="mb-1 mt-2">
+            <%= Spree.t(:transaction_id) %>
+            <%= help_bubble(Spree.t(:transaction_id_help)) %>
+          </p>
+          <strong><%= payment.transaction_id %></strong>
+        <% end %>
+      </div>
+      <% if payment.source.present? %>
+        <div class="w-50">
+          <p class="mb-2"><%= Spree.t(:payment_source) %>:</p>
+          <div class="rounded-lg bg-gray-25 border shadow-xs p-3">
+            <%= render 'spree/shared/payment', payment: payment %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% if payment.transaction_id.present? && !payment.store_credit? %>
+    <div class="card-footer border-top border-top-dashed">
+      <p class="mb-0 d-flex justify-content-between align-items-center">
+        <span>
+          <%= Spree.t(:risk_analysis) %>
+          &nbsp;
+          <% if @order.is_risky? %>
+            <span class="badge badge-warning"><%= icon('shield-off') %> <%= Spree.t(:risky) %></span>
+          <% else %>
+            <span class="text-success"><%= icon('shield-check-filled') %> <%= Spree.t(:not_risky) %></span>
+          <% end %>
+        </span>
+        <%= link_to "#risk-analysis-#{payment.id}", class: 'btn btn-light btn-sm bg-transparent', data: { toggle: 'collapse' } do %>
+          <%= Spree.t(:show_details) %>
+          <%= icon('selector', class: 'mr-0 ml-1') %>
+        <% end %>
+      </p>
+      <%= render 'spree/admin/orders/risk_analysis', payment: payment %>
+    </div>
+  <% end %>
+</div>

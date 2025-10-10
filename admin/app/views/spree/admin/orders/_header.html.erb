@@ -1,0 +1,74 @@
+<% content_for :page_title do %>
+  <% if controller_name == 'orders' %>
+    <% back_url = @order.present? && !@order.completed? ? spree.admin_checkouts_path : spree.admin_orders_path %>
+    <%= page_header_back_button back_url, @order %>
+  <% else %>
+    <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <% end %>
+  <%= @order.number %>
+  <%= order_payment_state(@order) %>
+  <%= order_shipment_state(@order) %>
+  <% if @order.completed? %>
+    <span class="text-muted font-size-sm font-weight-normal">
+      <%= I18n.t('activerecord.attributes.spree/order.completed_at') %>
+      <%= spree_time_ago(@order.completed_at) %>
+    </span>
+  <% end %>
+<% end %>
+
+<% content_for(:page_actions_dropdown) do %>
+  <% if @order.completed? && spree.respond_to?(:order_path) %>
+    <%= link_to_with_icon "eye",
+    Spree.t(:preview),
+    spree.order_path(@order, host: current_store.url, token: @order.token),
+    class: "text-left dropdown-item",
+    target: "_blank" %>
+  <% end %>
+  <% if @order.completed? && can?(:resend, @order) %>
+    <%= link_to_with_icon "send",
+    Spree.t(:resend),
+    spree.resend_admin_order_path(@order),
+    data: {
+      turbo_method: :post,
+      turbo_confirm: Spree.t(:are_you_sure),
+    },
+    class: "btn text-left dropdown-item" %>
+  <% end %>
+
+  <% if @order.shipments.any?(&:shipped?) %>
+    <% can_create_ra = can?(:create, Spree::ReturnAuthorization) %>
+    <% can_create_cr =
+      can?(:create, Spree::CustomerReturn) && @order.return_authorizations.exists? %>
+
+    <% if can_create_ra || can_create_cr %>
+      <div class="dropdown-divider"></div>
+
+      <% if can_create_ra %>
+        <%= link_to_with_icon "plus", Spree.t(:new_return_authorization),
+        spree.new_admin_order_return_authorization_path(@order),
+        class: "btn dropdown-item" %>
+      <% end %>
+
+      <% if can_create_cr  && controller_name != "customer_returns" %>
+        <%= link_to_with_icon "plus", Spree.t(:new_customer_return),
+        spree.new_admin_order_customer_return_path(@order),
+        class: "btn dropdown-item" %>
+      <% end %>
+
+      <div class="dropdown-divider"></div>
+    <% end %>
+  <% end %>
+
+  <%= render_admin_partials(:order_page_dropdown_partials, order: @order) %>
+
+  <% if can?(:cancel, @order) %>
+    <div class="dropdown-divider"></div>
+    <%= link_to spree.cancel_admin_order_path(@order),
+                class: 'text-left btn-danger dropdown-item',
+                data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } do %>
+      <%= icon "cancel" %>
+      <%= Spree.t(:cancel_order) %>
+    <% end %>
+    <div class="dropdown-divider"></div>
+  <% end %>
+<% end %>

@@ -1,0 +1,5 @@
+<% unless page_builder_enabled? %>
+  <%= render partial: 'spree/products/product', collection: products, cached: ->(product) { product_cache_key(product) } %>
+<% else %>
+  <%= render partial: 'spree/products/product', collection: products %>
+<% end %>

@@ -1,0 +1,25 @@
+---
+title: Routes
+description: Learn how to customize the routes in Spree
+icon: "route"
+---
+
+## Default configuration
+
+By default Spree is mounted at the root of your domain, this code will be inserted into `config/routes.rb`:
+
+```ruby
+mount Spree::Core::Engine, at: '/'
+```
+
+This means that Spree will be available at the root of your domain, for example `http://localhost:3000`.
+
+## Customizing the mount point
+
+You can customize this simply by changing the `:at` specification in `config/routes.rb` to be something else. For example, if you would like Spree to be mounted at `/shop`, you can write this:
+
+```ruby
+mount Spree::Core::Engine, at: `/shop`
+```
+
+The different parts of Spree (API, Admin) will be mounted there as well, eg. `http://localhost:3000/shop/products`.

@@ -1,0 +1,9 @@
+<tr data-controller="row-link" id="<%= dom_id(post_category) %>">
+  <td class="w-60 p-0">
+    <%= link_to post_category.title, spree.edit_admin_post_category_path(post_category), class: 'd-block w-100 h-100 px-3 py-2', data: { row_link_target: :link, turbo_frame: '_top' } %>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= post_category.posts.count %></td>
+  <td class="w-10 cursor-pointer text-right" data-action="click->row-link#openLink">
+    <%= link_to_edit(post_category, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can? :edit, post_category %>
+  </td>
+</tr>

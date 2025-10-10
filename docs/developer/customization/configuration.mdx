@@ -1,0 +1,58 @@
+---
+title: "Configuration"
+icon: "sliders"
+---
+
+Here is a list of all the configuration options that are available in Spree.
+
+ | Configuration Key                  | Description                                                                                           | Default Value       |
+      |------------------------------------|-------------------------------------------------------------------------------------------------------|---------------------|
+      | `allow_checkout_on_gateway_error`  | Continues the checkout process even if the payment gateway error failed.                             | `false`             |
+      | `address_requires_phone`            | Determines whether a phone number is required for Addresses. | `false`              |
+      | `alternative_shipping_phone`       | Determines if an alternative phone number should be present for the shipping address on the checkout page. | `false`         |
+      | `always_include_confirm_step`      | Determines if the confirmation step is always included in the checkout process, regardless of the payment method. | `false`             |
+      | `auto_capture`                     | Depending on whether or not Spree is configured to "auto capture" the credit card, either a purchase or an authorize operation will be performed on the card (via the current credit card gateway). | `true` |
+      | `auto_capture_on_dispatch`         | Captures payment for each shipment in Shipment#after_ship callback, and makes Shipment.ready when payment authorized. | `false` |
+      | `company`                          | Determines whether or not a field for "Company" displays on the address form. | `false`            |
+      | `credit_to_new_allocation`         | Determines if a new allocation is created anytime store credit is added. If not set, it will update the store credit's amount in place. | `false`             |
+      | `disable_sku_validation`             | Determines if the built-in SKU uniqueness validation is disabled. | `false`             |
+      | `disable_store_presence_validation` | Determines if Store presence validation for Products and Payment Methods is disabled. | `false`             |
+      | `expedited_exchanges`               | Determines if an exchange shipment is kicked off upon return authorization save. Requires payment profiles to be supported on your gateway and a configured delayed job handler. | `false`             |
+      | `expedited_exchanges_days_window`   | The number of days the customer has to return their item after the expedited exchange is shipped to avoid being charged. | `14`                |
+      | `restock_inventory`                 | Determines if inventory should be restocked when an order is canceled or returned                              | `true`              |
+      | `return_eligibility_number_of_days` | The number of days after purchase within which a return can be initiated. | `365` |
+      | `show_products_without_price`      | Determines if products without a price are shown in the storefront and Storefront API | `false`             |
+      | `tax_using_ship_address`           | Determines if tax information should be based on shipping address, rather than the billing address.  | `true`              |
+      | `track_inventory_levels`           | Determines if inventory levels should be tracked when products are purchased at checkout. This option causes new `InventoryUnit` objects to be created when a product is bought. | `true` |
+
+## Spree Initializer
+
+To change values for these preferences, you need to edit your `config/initializers/spree.rb` file.
+
+For example, to disable the `expedited_exchanges` feature, you would add the following line:
+
+```ruby
+Spree.config do |config|
+  config.expedited_exchanges = false
+end
+```
+
+<Note>
+  Remember to restart your Rails server after making changes to the `config/initializers/spree.rb` file.
+</Note>
+
+## Accessing Configuration
+
+To access these preferences in your application, you can use the `Spree::Config` module. For example, to access the `expedited_exchanges` preference, you can do the following:
+
+```ruby
+Spree::Config.expedited_exchanges
+```
+
+This will return the current value of the `expedited_exchanges` preference. You can also set the value of a preference using the `Spree::Config` module. For example, to set the `expedited_exchanges` preference to `true`, you can do the following:
+
+```ruby
+Spree::Config.expedited_exchanges = true
+```
+
+This will set the `expedited_exchanges` preference to `true` for the current process. After restarting the Rails server, the preference will return to the default value or the one set in the initializer.

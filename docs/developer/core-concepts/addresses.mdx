@@ -1,0 +1,72 @@
+---
+title: Addresses
+icon: "map"
+---
+
+The `Spree::Address` model is used to track address information, mainly for orders. Address information can also be tied to the `Spree.user_class` which by default is `Spree::User` ([More on Users](users)).
+
+Addresses have the following attributes:
+
+| Name               | Description                           | Example Value       |
+|--------------------|---------------------------------------|---------------------|
+| `firstname`        | The first name for the person at this address. | John               |
+| `lastname`         | The last name for the person at this address.  | Doe                |
+| `address1`         | The address's first line.             | 123 Main St         |
+| `address2`         | (Optional) The address's second line.            | Apt 4               |
+| `city`             | The city where the address is.        | Springfield         |
+| `zipcode`          | The postal code.                      | 12345               |
+| `phone`            | The phone number.                     | (123) 456-7890      |
+| `state_name`       | The name for the state.               | California          |
+| `alternative_phone`| (Optional) The alternative phone number.         | (098) 765-4321      |
+| `company`          | (Optional) A company name.                       | Acme Corporation    |
+| `country_id`        | The ID for the country.                | 1                   |
+| `state_id`          | (Optional) The ID for the state.                  | 2                   |
+| `user_id`            | (Optional) The ID of the user this address is associated with. | 10                  |
+| `label`             | (Optional) A label to identify the address. | Home               |
+
+
+
+
+<Note>
+An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
+</Note>
+
+## Customers
+
+`Spree::User` can have multiple addresses and can manage them on the Checkout and Account page (or via API). Each `Spree::Address` object has a `user_id` column which links to the User.
+
+Additionally in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
+
+## Checkout
+
+When a signed in User completes the Checkout Spree clones the selected Shipping and Billing Addresses and associates them with the Order. We do so that even if User modifies those addresses in the future their current state is preserved. Cloned addresses aren't associated to the User anymore. Originals will still be visible in their Address Books for future use.
+
+## Zones
+
+When an order's address is linked to a country or a state, that can ultimately affect different features of the order, including shipping availability and taxation. The way these effects work is through zones.
+
+A zone is comprised of many different "zone members", which can either be a set of countries or a set of states.
+
+Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxation](taxation) guide.
+
+In addition to tax zones, orders also have shipping methods. These are provided to the user based on their address information, and once selected lock in how an order is going to be shipped to that user. For more information, please see the [Shipments](shipments) guide.
+
+## Countries
+
+Countries within Spree are used as a container for states. Countries can be zone members, and also link to an address. The difference between one country and another on an address record can determine which tax rates and shipping methods are used for the order.
+
+Country data is provided by [Carmen gem](https://github.com/carmen-ruby/carmen) which is a library for manipulating country data.
+
+`Spree::Country` model includes these attributes:
+
+| Name               | Description                           | Example Value       |
+|--------------------|---------------------------------------|---------------------|
+| `iso_name`        | The ISO 3166-1 alpha-2 code for the country. | US                  |
+| `iso`              | The ISO 3166-1 alpha-3 code for the country. | USA                |
+| `iso_numeric`      | The ISO 3166-1 numeric code for the country. | 840                |
+| `name`             | The name of the country.               | United States      |
+
+## States
+
+States, or regions, provinces, or districts are used to scope address data slightly more than country. States are useful for tax purposes, as different states in a country may impose different tax rates on different products. In addition to this, different states may cause different tax rates and shipping methods to be used for an order, similar to how countries affect it also.
+

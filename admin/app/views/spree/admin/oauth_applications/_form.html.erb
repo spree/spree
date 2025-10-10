@@ -1,0 +1,6 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_select :scopes, [['Read Only', 'admin read'], ['Read & Write', 'admin write']], { selected: @oauth_application.scopes.to_s }, { required: true } %>
+  </div>
+</div>

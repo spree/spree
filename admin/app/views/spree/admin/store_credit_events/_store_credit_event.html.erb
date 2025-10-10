@@ -1,0 +1,29 @@
+<tr id="<%= spree_dom_id(store_credit_event) %>">
+  <td class="w-15">
+    <span class="badge badge-<%= store_credit_event.action %>">
+      <%= store_credit_event.display_action %>
+    </span>
+  </td>
+  <td class="w-15">
+    <%= store_credit_event.display_amount %>
+  </td>
+  <td class="w-30">
+    <% if defined?(Spree::GiftCard) && store_credit_event.originator.is_a?(Spree::GiftCard) %>
+      <%= link_to store_credit_event.originator.code.upcase, spree.admin_gift_card_path(store_credit_event.originator) %>
+    <% elsif store_credit_event.originator.is_a?(Spree.admin_user_class) %>
+      <%= link_to store_credit_event.originator.email, spree.admin_admin_user_path(store_credit_event.originator) %>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <% if store_credit_event.order %>
+      <%= link_to store_credit_event.order.number, spree.edit_admin_order_path(store_credit_event.order) %>
+    <% else %>
+      <span class="text-muted">
+        <%= Spree.t(:not_available) %>
+      </span>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <%= spree_date(store_credit_event.created_at) %>
+  </td>
+</tr>

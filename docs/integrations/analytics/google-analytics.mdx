@@ -1,0 +1,68 @@
+---
+title: "Connect Google Analytics 4 to Spree Commerce"
+sidebarTitle: Google Analytics 4
+description: "Learn how to set up and manage Spree’s native Google Analytics 4 integration."
+---
+
+Spree Commerce comes with a native Google Analytics 4 integration that allows you to track user behavior, sales performance, and marketing effectiveness across your store. 
+
+With minimal setup required, you can gain valuable insights into how visitors interact with your site, which can help you make informed decisions to improve conversions, user experience, and overall business strategy.
+
+<Warning>
+  To set up the Google Analytics integration, you must have a Google Analytics account and an associated property.
+</Warning>
+
+## Installation
+
+Before you can enable Google Analytics 4, it must be installed. To do so, you need to run the following command:
+
+```bash
+bundle add spree_google_analytics && bundle exec rails g spree_google_analytics:install
+```
+
+After that, make sure to restart your server if it was running.
+
+## Connect Google Analytics
+
+Sign in to your Spree admin dashboard and navigate to the **Integrations** tab.
+
+![](/images/integrations/google-analytics/1.get_started.png)
+
+Locate the Google Analytics tile under Analytics, and click **Connect Google Analytics**.
+
+This will redirect you to the setup page for Google Analytics integration.
+
+![](/images/integrations/google-analytics/2.setup_form.png)
+
+Simply enter the **Measurement ID** from your Google Analytics account into the field and click **Create** to finalize the integration.
+
+<Note>
+  You can find the **Measurement ID** in the Home screen of your Google Analytics dashboard, if no data has been collected yet. Otherwise, it can be found by navigating to Admin settings \> Data Streams and then clicking on the property associated with your Spree site.
+</Note>
+
+![](/images/integrations/google-analytics/3.integration_added.png)
+
+## Event Tracking
+
+By default, the following events will be tracked in Google Analytics:
+
+- page_view
+- first_visit
+- session_start
+- user_engagement
+- search
+- add_payment_info
+- add_shipping_info
+- add_to_cart
+- add_to_wishlist
+- begin_checkout
+- purchase
+- remove_from_cart
+- view_cart
+- view_item
+
+## Manage Your Integration
+
+If you’d like to remove Google Analytics from your site, simply revisit the integration’s setup form and click **Delete** on the lower right hand side.
+
+You can also switch out the Measurement ID if you’d like to switch the Google Analytics property that your site is connected to.

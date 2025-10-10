@@ -1,0 +1,124 @@
+---
+title: Dependencies
+section: customization
+icon: gears
+---
+
+## Overview
+
+With Dependencies, you can easily replace parts of Spree core with your custom code. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), CanCanCan Abilities (user for [Permissions](permissions)), and [API Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2) (used for generating JSON API responses).
+
+## Application (global) customization
+
+This will change every aspect of the application (both APIs, Admin Panel, and Storefront).
+
+In your `config/initializers/spree.rb` file, you can set the following:
+
+```ruby
+Spree::Dependencies.cart_add_item_service = 'MyAddToCartService'
+```
+
+or
+
+```ruby
+Spree.dependencies do |dependencies|
+  dependencies.cart_add_item_service = 'MyAddToCartService'
+end
+```
+
+Now let's create your custom service.
+
+```bash
+mkdir app/services -f && touch app/services/my_add_to_cart_service.rb
+```
+
+And add the following code to it:
+
+```ruby
+module MyAddToCartService < Spree::Cart::AddItem
+  def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
+    ApplicationRecord.transaction do
+      run :add_to_line_item
+      run Spree::Dependencies.cart_recalculate_service.constantize
+      run :update_in_external_system
+    end
+  end
+
+  private
+
+  def update_in_external_system(new_order_line_item)
+    # Your custom logic here
+  end
+end
+```
+
+This code will:
+
+1. Inherit from `Spree::Cart::AddItem`
+2. Override the `call` method to add your custom logic
+3. Call `run :add_to_line_item` to add the item to the cart
+4. Call `run Spree::Dependencies.cart_recalculate_service.constantize` to recalculate the cart
+5. Call `run :update_in_external_system` to execute your custom logic, eg. updating Order in an external system such as ERP
+
+<Warning>
+Values set in the initializer have to be strings, eg. `'MyNewAwesomeAddItemToCart'`
+</Warning>
+
+## Controller level customization
+
+If you need to replace [serializers](https://github.com/jsonapi-serializer/jsonapi-serializer) or Services in a specific API endpoint you can create a [code decorator](/developer/customization/decorators):
+
+```bash
+mkdir app/controllers/spree -f && touch app/controllers/spree/cart_controller_decorator.rb
+```
+
+and add the following code to it:
+
+```ruby
+module Spree
+  module CartControllerDecorator
+    def resource_serializer
+      MyNewAwesomeCartSerializer
+    end
+
+    def add_item_service
+      MyNewAwesomeAddItemToCart
+    end
+  end
+
+  CartController.prepend(CartControllerDecorator)
+end
+```
+
+This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.
+
+Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/master/api/app/controllers/spree/api/v2) to see what you can replace.
+
+## API level customization
+
+Storefront API and Platform API have separate Dependencies injection points so you can easily customize one without touching the other.
+
+In your Spree initializer (`config/initializers/spree.rb`) please add:
+
+```ruby
+Spree::Api::Dependencies.storefront_cart_serializer = 'MyNewAwesomeCartSerializer'
+Spree::Api::Dependencies.storefront_cart_add_item_service = 'MyNewAwesomeAddItemToCart'
+```
+
+This will swap the default Cart serializer and Add Item to Cart service for your custom ones within all Storefront API endpoints that use those classes.
+
+You can mix and match both global and API-level customizations:
+
+```ruby
+Spree::Dependencies.cart_add_item_service = 'MyNewAwesomeAddItemToCart'
+Spree::Api::Dependencies.storefront_cart_add_item_service = 'AnotherAddItemToCart'
+```
+
+The second line will have precedence over the first one, and the Storefront API will use `AnotherAddItemToCart` and the rest of the application will use `MyNewAwesomeAddItemToCart`
+
+## Default values
+
+By default values can be easily checked by looking at the source code of Dependencies classes:
+
+* [Application (global) dependencies](https://github.com/spree/spree/blob/main/core/lib/spree/core/dependencies.rb)
+* [API level dependencies](https://github.com/spree/spree/blob/main/api/lib/spree/api/dependencies.rb)

@@ -1,0 +1,34 @@
+<% if @result.error.blank? %>
+  <%= turbo_stream.replace :checkout_line_items do %>
+    <%= render 'line_items', order: @order %>
+  <% end %>
+  <%= turbo_stream.replace :checkout_summary do %>
+    <%= render 'summary', order: @order %>
+  <% end %>
+  <%= turbo_stream.replace :checkout_payment_methods do %>
+    <%= render 'payment_methods', order: @order %>
+  <% end %>
+  <%= turbo_stream.replace :quick_checkout do %>
+    <%= render 'quick_checkout', order: @order %>
+  <% end %>
+  <%= turbo_stream.update 'summary-order-total' do %>
+    <%= @order.display_total.to_html %>
+  <% end %>
+<% end %>
+<%= turbo_stream.replace :checkout_coupon_code do %>
+  <%= render 'coupon_code', promotion: @order.valid_coupon_promotions.first,
+                            result: @result, classes: @result.error.present? ? 'error' : '' %>
+<% end %>
+
+<% if @order.respond_to?(:gift_card) %>
+  <%= turbo_stream.replace :gift_card_code_field do %>
+    <%= turbo_frame_tag :gift_card_code_field do %>
+      <%= hidden_field_tag 'order[gift_card_code]', @order.gift_card&.code %>
+      <%= hidden_field_tag 'order[gift_card_amount]', @order.gift_card_total %>
+    <% end %>
+  <% end %>
+<% end%>
+
+<%= turbo_stream.replace :checkout_store_credit do %>
+  <%= render 'store_credit' %>
+<% end %>

@@ -1,0 +1,37 @@
+version: 2
+updates:
+- package-ecosystem: bundler
+  directory: "/core"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/cli"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/api"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/sample"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/storefront"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/admin"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+- package-ecosystem: bundler
+  directory: "/emails"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10

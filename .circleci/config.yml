@@ -1,0 +1,219 @@
+version: 2.1
+
+defaults: &defaults
+  environment: &environment
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
+    DB_HOST: localhost
+    DB: postgres # default value, this will speed up bundle install for all postgres builds
+    DB_USERNAME: postgres
+  working_directory: ~/spree
+  docker:
+    - image: &ruby_image cimg/ruby:3.3.0-browsers
+
+commands:
+  bundle_install:
+    steps:
+      - restore_cache:
+          keys:
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}
+      - install_libvips
+      - run:
+          name: Install global dependencies
+          command: bundle update
+      - run:
+          name: Clean old gems
+          command: bundle clean
+      - run:
+          name: Install per-project gem dependencies
+          command: bin/build-ci.rb install
+  install_libvips:
+    steps:
+      - run:
+          name: Fix APT mirrors
+          command: |
+            sudo apt-get update
+      - run:
+          name: Install libvips
+          command: |
+            sudo apt-get install -y libvips-dev
+  store_all_artifacts:
+    steps:
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: test-artifacts
+      - store_artifacts:
+          path: /tmp/failed_tests
+          destination: failed_tests
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - bundle_install
+      - save_cache:
+          key: spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          paths:
+            - ~/spree/vendor/bundle
+  test: &test
+    <<: *defaults
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
+    steps: &default_steps
+      - checkout
+      - attach_workspace:
+          at: /tmp
+      - bundle_install
+      - run:
+          name: Run tests
+          command: bin/build-ci.rb test
+      - store_all_artifacts
+
+  test_mysql: &test_mysql
+    <<: *test
+    docker:
+      - image: *ruby_image
+      - image: cimg/mysql:8.0
+        command: [--default-authentication-plugin=mysql_native_password]
+        environment:
+          MYSQL_ROOT_PASSWORD: password
+    environment: &mysql_environment
+      <<: *environment
+      DB: mysql
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_HOST: 127.0.0.1
+      RAILS_VERSION: 7.2.0
+
+  # postgres tests
+  test_core_postgres:
+    <<: *test
+    parallelism: 6
+    environment:
+      <<: *environment
+      PROJECTS: core
+  test_api_postgres:
+    <<: *test
+    parallelism: 4
+    environment:
+      <<: *environment
+      PROJECTS: api
+  test_admin_postgres:
+    <<: *test
+    parallelism: 2
+    environment:
+      <<: *environment
+      PROJECTS: admin
+  test_storefront_postgres:
+    <<: *test
+    parallelism: 2
+    environment:
+      <<: *environment
+      PROJECTS: storefront
+  test_other_postgres:
+    <<: *test
+    environment:
+      <<: *environment
+      PROJECTS: emails,sample
+
+  # mysql tests
+  test_core_mysql:
+    <<: *test_mysql
+    parallelism: 6
+    environment:
+      <<: *mysql_environment
+      PROJECTS: core
+  test_api_mysql:
+    <<: *test_mysql
+    parallelism: 4
+    environment:
+      <<: *mysql_environment
+      PROJECTS: api
+  test_admin_mysql:
+    <<: *test_mysql
+    parallelism: 2
+    environment:
+      <<: *mysql_environment
+      PROJECTS: admin
+  test_storefront_mysql:
+    <<: *test_mysql
+    parallelism: 2
+    environment:
+      <<: *mysql_environment
+      PROJECTS: storefront
+  test_other_mysql:
+    <<: *test_mysql
+    environment:
+      <<: *mysql_environment
+      PROJECTS: emails,sample
+
+  # brakeman
+  brakeman:
+    <<: *defaults
+    steps:
+      - checkout
+      - bundle_install
+      - run: bin/brakeman.sh
+      - run:
+          name: Move brakeman reports to artifacts directory
+          command: |
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman-*.* /tmp/test-artifacts/
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: brakeman-reports
+
+workflows:
+  main:
+    jobs:
+      - build
+      # postgres tests
+      - test_core_postgres:
+          requires:
+            - build
+      - test_api_postgres:
+          requires:
+            - build
+      - test_admin_postgres:
+          requires:
+            - build
+      - test_storefront_postgres:
+          requires:
+            - build
+      - test_other_postgres:
+          requires:
+            - build
+
+      # mysql tests
+      - test_core_mysql:
+          requires:
+            - build
+      - test_api_mysql:
+          requires:
+            - build
+      - test_admin_mysql:
+          requires:
+            - build
+      - test_storefront_mysql:
+          requires:
+            - build
+      - test_other_mysql:
+          requires:
+            - build
+
+      # brakeman
+      - brakeman:
+          requires:
+            - build

@@ -1,0 +1,22 @@
+<div class="card mb-4 bg-transparent">
+  <div class="card-header d-flex align-items-center border-0">
+    <h6 class="card-title">
+      <%= icon('truck', class: 'mr-2') %>
+      <%= Spree.t(:shipments) %>
+    </h6>
+    <% if @shipments.any? %>
+      <span class="badge badge-info ml-2"><%= @shipments.count %></span>
+
+      <%= order_shipment_state(@order, class: "ml-auto") %>
+    <% end %>
+  </div>
+  <div class="card-body px-2 pt-0 pb-2 d-flex flex-column gap-2">
+    <% if @shipments.any? %>
+      <%= render partial: "shipment", collection: @shipments %>
+    <% else %>
+      <p class="text-center text-muted p-5">
+        <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Shipment)) %>
+      </p>
+    <% end %>
+  </div>
+</div>

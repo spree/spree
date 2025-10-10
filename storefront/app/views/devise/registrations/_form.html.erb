@@ -1,0 +1,21 @@
+<div class="card-dialog mx-auto lg:w-1/3">
+  <% unless params[:checkout] %>
+    <h3 class="mb-5 font-semibold"><%= Spree.t(:create_a_new_account) %></h3>
+  <% end %>
+  <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
+  <%= form_for resource, as: :spree_user, url: spree.registration_path(checkout: params[:checkout]), data: { turbo: false } do |f| %>
+    <div class="flex flex-col gap-3 mb-3">
+      <%= f.email_field :email, class: 'text-input', placeholder: Spree.t(:email) %>
+
+      <div class="flex w-full">
+        <div class="w-1/2 pr-2">
+          <%= f.text_field :first_name, class: 'text-input w-full', placeholder: Spree.t(:first_name) %>
+        </div>
+        <div class="w-1/2 pl-2">
+          <%= f.text_field :last_name, class: 'text-input w-full', placeholder: Spree.t(:last_name) %>
+        </div>
+      </div>
+    </div>
+    <%= f.submit Spree.t(:create_a_new_account), class: 'btn-primary block w-full  lg:w-48  text-center mx-auto' %>
+  <% end %>
+</div>

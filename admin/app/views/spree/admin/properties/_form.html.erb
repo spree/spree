@@ -1,0 +1,8 @@
+<div data-controller="slug-form" class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :presentation, data: { slug_form_target: :name, action: 'input->slug-form#updateUrlFromName' }, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, required: true %>
+    <%= f.spree_select :kind, options_for_select(Spree::Property.kinds.map{ |k| [k.first.humanize, k.first.to_sym] }, @object.kind) %>
+    <%= f.spree_select :display_on, display_on_options, { label: Spree.t(:display_on) } %>
+  </div>
+</div>

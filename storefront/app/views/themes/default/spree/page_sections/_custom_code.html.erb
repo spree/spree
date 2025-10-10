@@ -1,0 +1,5 @@
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>">
+    <%= raw(section.preferred_custom_code) %>
+  </div>
+<% end %>

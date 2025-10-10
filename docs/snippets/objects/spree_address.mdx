@@ -1,0 +1,59 @@
+import SpreeState from '/snippets/objects/spree_state.mdx';
+import SpreeCountry from '/snippets/objects/spree_country.mdx';
+
+<Expandable title="properties">
+  <ResponseField name="id" type="integer">
+    Address ID
+    Example: 456
+  </ResponseField>
+
+  <ResponseField name="address1" type="string">
+    Address line 1
+    Example: `123 Main St`
+  </ResponseField>
+
+  <ResponseField name="address2" type="string">
+    Address line 2
+    Example: `Apt 1`
+  </ResponseField>
+
+  <ResponseField name="city" type="string">
+    City
+    Example: `Anytown`
+  </ResponseField>
+
+  <ResponseField name="zipcode" type="string">
+    Zipcode
+    Example: `12345`
+  </ResponseField>
+
+  <ResponseField name="state" type="Spree::State">
+    State object, if the country requires a state.
+    <SpreeState />
+  </ResponseField>
+
+  <ResponseField name="state_name" type="string">
+    State name, used when the country doesn't require a state object
+    Example: `Some Province`
+  </ResponseField>
+
+  <ResponseField name="state_text" type="string">
+    Returns either state.name (if state is present) or state_name
+    Example: `California` or `Some Province`
+  </ResponseField>
+
+  <ResponseField name="country_name" type="string">
+    Country name
+    Example: `United States`
+  </ResponseField>
+
+  <ResponseField name="country_iso" type="string">
+    Country ISO code
+    Example: `US`
+  </ResponseField>
+
+  <ResponseField name="country" type="Spree::Country">
+    Country object
+    <SpreeCountry />
+  </ResponseField>
+</Expandable>

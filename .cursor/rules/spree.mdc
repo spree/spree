@@ -1,0 +1,159 @@
+---
+alwaysApply: true
+---
+
+# General Spree Commerce Rules
+
+## Framework & Architecture
+- Spree is built on Ruby on Rails and follows MVC architecture
+- All Spree code must be namespaced under `Spree::` module
+- Spree is distributed as Rails engines with separate gems (core, admin, api, storefront, emails, etc.)
+- Follow Rails conventions and the Rails Security Guide
+- Prefer Rails idioms and standard patterns over custom solutions
+
+## Core Naming Conventions
+- Do NOT call `Spree::User` directly, use `Spree.user_class` instead
+- Do NOT call `Spree::AdminUser` directly, use `Spree.admin_user_class` instead
+- Always inherit from `Spree.base_class` when creating models
+- Use consistent file naming: `spree/product.rb` for `Spree::Product` class
+
+## Model Standards
+- Use ActiveRecord associations with `class_name` and `dependent` options
+- For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
+- Include `Spree::Metafields` concern for models that need metadata support
+- Use scopes for reusable query patterns
+
+```ruby
+# ✅ Correct model structure
+class Spree::Product < Spree.base_class
+  include Spree::Metafields
+  
+  has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
+  
+  scope :available, -> { where(available_on: ..Time.current) }
+  
+  validates :name, presence: true
+  validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+end
+```
+
+## Database & Migration Standards
+- Follow Rails migration conventions
+- Use proper indexing for performance
+- Do NOT include foreign key constraints
+- Always add `null: false` to required columns
+- Add unique indexes to columns used for uniqueness validation
+- Add `deleted_at` column to tables with soft delete functionality (paranoia gem)
+
+## Security Standards
+- Follow Rails Security Guide principles
+- Use strong parameters consistently
+- Always use `Spree::PermittedAttributes` to define allowed parameters
+- Never permit mass assignment without validation
+- Use allowlists, not blocklists for parameters
+
+## Performance Guidelines
+- Use includes/preload to avoid N+1 queries
+- Implement proper database indexing
+- Use scopes for reusable query logic
+- Consider caching for expensive operations
+
+## Error Handling
+- Use Rails error reporter
+- Use appropriate exception classes
+- Provide meaningful error messages
+- Implement proper error recovery where possible
+
+## Internationalization
+- Use `Spree.t` for translations instead of `I18n.t`
+- Do NOT repeat translations in multiple files
+- Try to use existing translations as much as possible
+
+## Testing Standards
+- Use RSpec for testing
+- Use `create` for persisted objects in tests
+- Use `build` for non-persisted objects (faster)
+- Add new factories in `lib/spree/testing_support/factories/`
+
+## Documentation
+- Document complex business logic
+- Use YARD documentation format for public APIs
+- Keep comments up-to-date with code changes
+# General Spree Commerce Rules
+
+## Framework & Architecture
+- Spree is built on Ruby on Rails and follows MVC architecture
+- All Spree code must be namespaced under `Spree::` module
+- Spree is distributed as Rails engines with separate gems (core, admin, api, storefront, emails, etc.)
+- Follow Rails conventions and the Rails Security Guide
+- Prefer Rails idioms and standard patterns over custom solutions
+
+## Core Naming Conventions
+- Do NOT call `Spree::User` directly, use `Spree.user_class` instead
+- Do NOT call `Spree::AdminUser` directly, use `Spree.admin_user_class` instead
+- Always inherit from `Spree.base_class` when creating models
+- Use consistent file naming: `spree/product.rb` for `Spree::Product` class
+
+## Model Standards
+- Use ActiveRecord associations with `class_name` and `dependent` options
+- For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
+- Include `Spree::Metafields` concern for models that need metadata support
+- Use scopes for reusable query patterns
+
+```ruby
+# ✅ Correct model structure
+class Spree::Product < Spree.base_class
+  include Spree::Metafields
+  
+  has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
+  has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy
+  
+  scope :available, -> { where(available_on: ..Time.current) }
+  
+  validates :name, presence: true
+  validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+end
+```
+
+## Database & Migration Standards
+- Follow Rails migration conventions
+- Use proper indexing for performance
+- Do NOT include foreign key constraints
+- Always add `null: false` to required columns
+- Add unique indexes to columns used for uniqueness validation
+- Add `deleted_at` column to tables with soft delete functionality (paranoia gem)
+
+## Security Standards
+- Follow Rails Security Guide principles
+- Use strong parameters consistently
+- Always use `Spree::PermittedAttributes` to define allowed parameters
+- Never permit mass assignment without validation
+- Use allowlists, not blocklists for parameters
+
+## Performance Guidelines
+- Use includes/preload to avoid N+1 queries
+- Implement proper database indexing
+- Use scopes for reusable query logic
+- Consider caching for expensive operations
+
+## Error Handling
+- Use Rails error reporter
+- Use appropriate exception classes
+- Provide meaningful error messages
+- Implement proper error recovery where possible
+
+## Internationalization
+- Use `Spree.t` for translations instead of `I18n.t`
+- Do NOT repeat translations in multiple files
+- Try to use existing translations as much as possible
+
+## Testing Standards
+- Use RSpec for testing
+- Use `create` for persisted objects in tests
+- Use `build` for non-persisted objects (faster)
+- Add new factories in `lib/spree/testing_support/factories/`
+
+## Documentation
+- Document complex business logic
+- Use YARD documentation format for public APIs
+- Keep comments up-to-date with code changes

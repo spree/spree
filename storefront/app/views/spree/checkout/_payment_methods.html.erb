@@ -1,0 +1,68 @@
+<%= turbo_frame_tag :checkout_payment_methods do %>
+  <% if !@order.payment_required? && @order.using_store_credit? %>
+    <div class="d-flex flex-column mb-5">
+      <p>
+        <% if @order.respond_to?(:gift_card) && @order.gift_card.present? %>
+          <%= Spree.t('storefront.checkout.gift_card_amount_applied', amount: @order.display_gift_card_total, code: @order.gift_card.code) %>
+        <% else %>
+          <%= Spree.t('storefront.checkout.store_credits_amount_applied', amount: @order.display_total_applicable_store_credit.abs) %>
+        <% end %>
+
+        <%= Spree.t('storefront.checkout.order_already_paid') %>
+      </p>
+    </div>
+    <div class="flex justify-end w-full">
+      <%= button_tag Spree.t(:place_order),
+                      class: 'btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4',
+                      data: { 'turbo-submits-with': (render 'spree/checkout/button_processing', is_hidden: false) } %>
+    </div>
+  <% else %>
+    <h5 class="mb-3 font-body font-semibold">
+      <%= Spree.t(:payment) %>
+    </h5>
+    <p class="text-muted mb-3 text-neutral-600">
+      <%= Spree.t('storefront.checkout.all_transactions_are_secure_and_encrypted') %>
+    </p>
+
+    <%= render partial: 'spree/checkout/payment/store_credit' %>
+
+    <% if checkout_available_payment_methods.size > 1 %>
+      <ul id="payment-method-fields" class="rounded-md list-group mb-4 border border-default border-b-0 text-sm border-default">
+        <% selected_method = params[:payment_method_id].present? ? checkout_available_payment_methods.find { |method| method.id.to_s == params[:payment_method_id].to_s } : checkout_available_payment_methods.first %>
+
+        <% checkout_available_payment_methods.each do |method| %>
+          <li class="list-group-item p-0 m-0 border-b delivery-list-item border-default">
+            <%= link_to spree.checkout_state_path(token: @order.token, state: 'payment', payment_method_id: method.id), class: 'custom-control custom-radio flex items-center px-5 py-4 cursor-pointer w-full' do %>
+              <%= radio_button_tag "order[payments_attributes][][payment_method_id]",
+                    method.id,
+                    selected_method == method,
+                    class: 'mr-3' %>
+              <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
+            <% end %>
+
+            <% if selected_method == method %>
+              <div class="px-5 py-4">
+                <%= render partial: "spree/checkout/payment/#{method.method_type}", locals: { payment_method: method } %>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% elsif checkout_available_payment_methods.any? %>
+      <%= hidden_field_tag "order[payments_attributes][][payment_method_id]", checkout_available_payment_methods.first&.id %>
+      <%= render partial: "spree/checkout/payment/#{checkout_available_payment_methods.first.method_type}", locals: { payment_method: checkout_available_payment_methods.first } %>
+    <% end %>
+  <% end %>
+
+  <%= render 'spree/checkout/terms_and_conditions' %>
+
+  <div class="flex justify-end w-full">
+    <button type="submit"
+            id="checkout-payment-submit"
+            class="btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4"
+    >
+      <%= render 'button_processing', is_hidden: true %>
+      <%= Spree.t(:pay) %>
+    </button>
+  </div>
+<% end %>

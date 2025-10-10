@@ -1,0 +1,13 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <%= render_breadcrumb_icon %>
+    <% if settings_active? %>
+      <li>
+        <%= active_link_to Spree.t(:settings), spree.edit_admin_store_path %>
+      </li>
+      <%= icon('slash', class: 'text-muted font-size-sm') %>
+    <% end %>
+
+    <%= render_breadcrumbs tag: :li, separator: icon('slash', class: 'text-muted font-size-sm') %>
+  </ol>
+</nav>

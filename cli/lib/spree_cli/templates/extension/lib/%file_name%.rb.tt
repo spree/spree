@@ -1,0 +1,13 @@
+require 'spree_core'
+require 'spree_extension'
+require '<%=file_name%>/engine'
+require '<%=file_name%>/version'
+require '<%=file_name%>/configuration'
+
+module <%= class_name %>
+  mattr_accessor :queue
+
+  def self.queue
+    @@queue ||= Spree.queues.default
+  end
+end

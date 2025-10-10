@@ -1,0 +1,24 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:general_settings) %></h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_text_field :name %>
+
+    <%= f.spree_text_field :description %>
+
+    <%= f.spree_check_box :default_tax, label: Spree.t(:default_tax_zone) %>
+
+    <h6 class="mb-2 mt-3"><%= Spree.t(:type) %></h6>
+    <%= f.spree_radio_button :kind, :country, id: 'country_based', data: { action: 'auto-submit#submit' }, label: Spree.t(:country_based) %>
+    <%= f.spree_radio_button :kind, :state, id: 'state_based', data: { action: 'auto-submit#submit' }, label: Spree.t(:state_based) %>
+  </div>
+</div>
+
+<% if @zone.country? %>
+  <%= render partial: 'country_members', locals: { zone_form: f } %>
+<% else %>
+  <%= render partial: 'state_members', locals: { zone_form: f } %>
+<% end %>
+

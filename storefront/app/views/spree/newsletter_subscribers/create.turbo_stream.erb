@@ -1,0 +1,7 @@
+<%= spree_turbo_update_flashes %>
+
+<% if @newsletter_section.present? %>
+  <%= turbo_stream.update "section-#{@newsletter_section.id}" do %>
+    <%= render 'spree/page_sections/newsletter', section: @newsletter_section, loaded: true %>
+  <% end %>
+<% end %>

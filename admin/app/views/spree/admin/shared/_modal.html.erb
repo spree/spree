@@ -1,0 +1,31 @@
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <%= turbo_frame_tag :dialog_modal do %>
+      <div class="modal-content">
+        <%= modal_header(Spree.t(:loading)) %>
+        <div class="modal-body text-center">
+          <div class="spinner-border text-light mx-auto my-5" role="status">
+            <span class="sr-only"><%= Spree.t(:loading) %>...</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-lg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <%= turbo_frame_tag :dialog_modal_lg do %>
+      <div class="modal-content">
+        <%= modal_header(Spree.t(:loading)) %>
+        <div class="modal-body text-center" style="min-height: 200px">
+          <div class="spinner-border text-light" role="status">
+            <span class="sr-only"><%= Spree.t(:loading) %>...</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= turbo_frame_tag :modal_scripts %>

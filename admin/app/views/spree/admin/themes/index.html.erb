@@ -1,0 +1,82 @@
+<%= content_for :page_title do %>
+  <%= Spree.t(:themes) %>
+<% end %>
+
+<%= content_for :page_actions do %>
+  <%= render_admin_partials(:themes_actions_partials) %>
+  <%= link_to_with_icon 'eye', Spree.t(:view_your_store), current_store.formatted_url_or_custom_domain, class: 'btn btn-light bg-transparent', target: '_blank' %>
+<% end %>
+
+<%= content_for :page_alerts do %>
+  <div class="alert alert-info">
+    If you wan't to make changes to theme but don't want to go live with them,
+    you can make a copy of the theme and make changes to the copy. And later promote that copy
+    to the live theme.
+  </div>
+  <br />
+
+  <% unless current_store.default_custom_domain&.active? %>
+    <div class="alert alert-info d-inline-flex align-items-center py-2 pr-2">
+      <div class="d-flex align-items-center">
+        <span>
+          You don't have domain connected to your store
+        </span>
+        <%= link_to 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-link ml-3' %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%= render_admin_partials(:themes_header_partials) %>
+
+<div class="card-lg">
+  <div class="table-responsive rounded-lg">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:theme) %></th>
+          <th><%= Spree.t(:status) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'spree/admin/themes/theme', collection: @themes, cached: spree_base_cache_scope %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if available_themes.any? %>
+  <div class="card-lg">
+    <div class="card-header">
+      <h5 class="card-title">Add a new theme</h5>
+    </div>
+    <div class="card-body pb-0">
+      <p>Pick a theme from the list of available themes</p>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+        <% available_themes.each do |theme| %>
+          <div class="col mb-4">
+            <div class="card hover-light">
+              <% if theme.preview_image_url.present? %>
+                <%= image_tag theme.preview_image_url, class: 'card-img-top' %>
+              <% end %>
+              <div class="card-body">
+                <h5 class="card-title"><%= theme.display_name %></h5>
+                <p class="text-muted">
+                  by <%= link_to theme.authors.join(', '), theme.website, target: '_blank' %>
+                </p>
+                <p><%= theme.description %></p>
+
+                <%= form_for :theme, url: spree.admin_themes_path do |f| %>
+                  <%= f.hidden_field :type, value: theme.to_s %>
+                  <%= f.submit Spree.t(:add), class: 'btn btn-primary' %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

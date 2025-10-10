@@ -1,0 +1,39 @@
+<tr class="flex flex-wrap w-full md:table-row md:h-[72px] border border-accent md:border-none mb-4 p-4 md:p-0 hover:bg-accent-100">
+  <td class="mb-4 w-1/2 md:w-auto -order-1 md:px-4 md:border-y border-accent md:border-l font-medium">
+    <%= link_to "##{order.number}", spree.account_order_path(order) %>
+  </td>
+  <td class="mb-4 w-full md:w-auto md:px-4 md:border-y border-accent"><%= local_date(order.completed_at.to_date) %></td>
+  <td class="md:w-auto pr-2 md:px-4 md:border-y border-accent">
+    <% if order.payment_state %>
+      <% if order.payment_state == 'void' %>
+        <% if order.order_refunded? %>
+          <span class="badge-refunded">
+            <%= Spree.t("payment_states.refunded") %>
+          </span>
+        <% else %>
+          <span class="badge-void">
+            <%= Spree.t("payment_states.#{order.payment_state}") %>
+          </span>
+        <% end %>
+      <% else %>
+        <span class="badge-success">
+          <%= Spree.t("payment_states.#{order.payment_state}") %>
+        </span>
+      <% end %>
+    <% end %>
+  </td>
+  <td class="md:w-auto md:px-4 md:border-y border-accent">
+    <% if order.shipment_state %>
+      <% if order.shipment_state == 'shipped' %>
+        <span class="badge-success">
+          <%= Spree.t("shipment_states.#{order.shipment_state}") %>
+        </span>
+      <% else %>
+        <span class="badge-<%= order.shipment_state %>">
+          <%= Spree.t("shipment_states.#{order.shipment_state}") %>
+        </span>
+      <% end %>
+    <% end %>
+  </td>
+  <td class="mb-4 w-1/2 md:w-auto -order-1 md:px-4 md:border-y md:border-r border-accent font-me text-right"><%= order.display_total_minus_store_credits %></td>
+</tr>

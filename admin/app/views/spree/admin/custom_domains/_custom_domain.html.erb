@@ -1,0 +1,11 @@
+<tr id="<%= spree_dom_id custom_domain %>">
+  <td><%= custom_domain.url %></td>
+  <td>
+    <%= active_badge(custom_domain.active?) %>
+  </td>
+
+  <td><%= active_badge(custom_domain.default?) %></td>
+  <td class="actions">
+    <%= link_to_edit(custom_domain, no_text: true, url: spree.edit_admin_custom_domain_path(custom_domain), data: { turbo: false }) %>
+  </td>
+</tr>

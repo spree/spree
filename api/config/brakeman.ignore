@@ -1,0 +1,24 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 114,
+      "fingerprint": "8275f584e7cced41c26890e574cdbf6804bddff54374058834a562294c99d6f6",
+      "check_name": "JSONEntityEscape",
+      "message": "HTML entities in JSON are not escaped by default",
+      "file": "config/environments/production.rb",
+      "line": 5,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "ActiveSupport::JSON::Encoding.escape_html_entities_in_json = false",
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "Medium",
+      "cwe_id": [
+        79
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.1.0"
+}

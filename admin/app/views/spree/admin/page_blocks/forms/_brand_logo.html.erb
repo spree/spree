@@ -1,0 +1,4 @@
+<div class="form-group">
+  <%= f.label :brand %>
+  <%= tom_select_tag 'page_block[brand_id]', active_option: @page_block.brand_id, class: 'w-100', url: spree.admin_brands_select_options_path(format: :json), select_data: {action: 'auto-submit#submit'} %>
+</div>

@@ -1,0 +1,36 @@
+<h1>
+  <%= Spree.t('shipment_mailer.shipped_email.dear_customer', name: name_for(@shipment.order)) %>
+</h1>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %>
+</p>
+<table class="purchase" role="presentation">
+  <tr>
+    <td>
+      <h3><%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %></h3>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <%= render 'spree/shared/purchased_items_table', line_items: @shipment.manifest.map(&:line_item), order: @shipment.order %>
+    </td>
+  </tr>
+</table>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.shipping_method', shipping_method: @shipment.shipping_method.name) %>
+</p>
+<% if @shipment.tracking %>
+  <p>
+    <%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking) %>
+  </p>
+<% end %>
+<% if @shipment.tracking_url %>
+  <p>
+    <%= Spree.t('shipment_mailer.shipped_email.track_link', url: shipment_tracking_link_to(shipment: @shipment)).html_safe %>
+  </p>
+<% end %>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.thanks') %>
+  <br />
+  <%= Spree.t('shipment_mailer.shipped_email.store_team', store_name: current_store.name) %>
+</p>

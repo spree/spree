@@ -1,0 +1,44 @@
+<% if @object.respond_to?(:configuration_guide_partial_name) %>
+  <%= render "spree/admin/payment_methods/configuration_guides/#{@object.configuration_guide_partial_name}", f: f %>
+<% end %>
+
+<% if !preference_fields(@object, f).empty? || @object.respond_to?(:custom_form_fields_partial_name) %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t(:payment_provider_settings) %></h5>
+    </div>
+    <div class="card-body">
+      <%= preference_fields(@object, f) unless preference_fields(@object, f).empty? %>
+
+      <% if @object.respond_to?(:custom_form_fields_partial_name) %>
+        <%= render "spree/admin/payment_methods/custom_form_fields/#{@object.custom_form_fields_partial_name}", f: f %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :name, help: 'This name will be used to identify the payment method on the storefront' %>
+
+    <% if can?(:manage, Spree::Store) && available_stores.count > 1 %>
+      <div class="form-group">
+        <%= label_tag :payment_method_stores, Spree.t(:stores) %>
+        <%= f.collection_check_boxes :store_ids, available_stores, :id, :name do |b| %>
+          <div class="custom-control custom-checkbox mb-1">
+            <%= b.check_box(class: 'custom-control-input') %>
+            <%= b.label(class: 'custom-control-label') %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= f.spree_select :display_on, display_on_options, { label: Spree.t(:display) } %>
+    <%= f.spree_select :auto_capture, [["#{Spree.t(:use_app_default)} (#{Spree::Config[:auto_capture]})", ''], [Spree.t(:say_yes).to_s, true], [Spree.t(:say_no).to_s, false]], { label: Spree.t(:auto_capture) } %>
+
+    <%= f.spree_check_box :active %>
+  </div>
+</div>

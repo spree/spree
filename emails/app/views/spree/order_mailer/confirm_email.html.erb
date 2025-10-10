@@ -1,0 +1,23 @@
+<h1>
+  <%= Spree.t('order_mailer.confirm_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('order_mailer.confirm_email.instructions') %>
+</p>
+<table class="purchase" role="presentation">
+  <tr>
+    <td>
+      <h3><%= Spree.t('order_mailer.confirm_email.order_summary', number: @order.number) %></h3>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
+    </td>
+  </tr>
+</table>
+<p>
+  <%= Spree.t('order_mailer.confirm_email.thanks') %>
+  <br />
+  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+</p>

@@ -1,0 +1,29 @@
+<tr class="flex flex-wrap w-full md:table-row md:h-[72px] border border-accent md:border-none mb-4 p-4 md:p-0 hover:bg-accent-100" id="<%= dom_id(store_credit_event) %>">
+  <td class="mb-2 w-full md:w-auto md:px-4 md:border-y border-accent md:border-l font-medium">
+    <%= local_date(store_credit_event.created_at) %>
+  </td>
+
+  <td class="w-full md:w-auto md:px-4 md:border-y border-accent">
+    <span class="md:hidden font-medium mr-1"><%= Spree.t(:change) %>:</span>
+
+    <% if store_credit_event.allocation? || store_credit_event.credit? %>
+      <span class="badge-success">+<%= store_credit_event.display_amount %></span>
+    <% else %>
+      <span class="badge-warning">-<%= store_credit_event.display_amount %></span>
+    <% end %>
+  </td>
+
+  <td class="w-full md:w-auto md:px-4 md:border-y border-accent">
+    <span class="md:hidden font-medium mr-1"><%= Spree.t(:action) %>:</span>
+    <%= store_credit_event.display_action %>
+
+    <% if store_credit_event.captured? && store_credit_event.order.present? %>
+      (<%= link_to "#{Spree.t(:order)} ##{store_credit_event.order.number}", spree.account_order_path(store_credit_event.order), class: 'font-medium' %>)
+    <% end %>
+  </td>
+
+  <td class="w-full md:w-auto md:px-4 md:border-y md:border-r border-accent">
+    <span class="md:hidden font-medium mr-1"><%= Spree.t(:new_balance) %>:</span>
+    <%= store_credit_event.display_user_total_amount %>
+  </td>
+</tr>

@@ -1,0 +1,112 @@
+---
+title: Promotions
+icon: "ticket"
+---
+
+## Overview
+
+Promotions within Spree are used to provide discounts to orders, offer free shipping or to add potential additional items at no extra cost (eg. samples).
+
+Promotions are one of the most complex areas within Spree, as there are a large number of moving parts to consider. Although this guide will explain Promotions from a developer's perspective, if you are new to this area you can learn a lot from the Admin &gt; Promotions tab where you can set up new Promotions, edit rules & actions, etc.
+
+Promotions can be activated in three different ways:
+
+* When a user adds a product to their cart (automatic promotions, eg. free shipping with a threshold)
+* When a user enters a coupon code during the checkout process
+
+Promotions for these individual ways are activated through their corresponding [PromotionHandler class](https://github.com/spree/spree/tree/main/core/app/models/spree/promotion_handler), once they've been checked for eligibility.
+
+Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
+
+Here is a table showcasing the attributes of the `Spree::Promotion` model along with a description for each attribute and example values:
+
+| Attribute                | Description                                           | Example Value          |
+|--------------------------|-------------------------------------------------------|------------------------|
+| `name`                   | The name of the promotion                             | Summer Sale          |
+| `description`            | A brief description of the promotion                  | Discounts for summer |
+| `expires_at`             | The expiration date and time of the promotion         | 2025-09-01 23:59:59  |
+| `starts_at`              | The start date and time of the promotion              | 2025-06-01 00:00:00  |
+| `code`                   | A code that users can enter to apply the promotion    | `SUMMER2023`           |
+| `usage_limit`            | The total number of times the promotion can be used   | 500                    |
+| `match_policy`           | The policy for how promotion rules are matched        | `all`                  |
+| `code_prefix`            | A prefix for generated coupon codes                | `SUMMER`               |
+| `number_of_codes`        | The number of unique codes to be generated for the promotion| 1000                   |
+| `kind`                   | The type of promotion (coupon_code or automatic)      | `coupon_code`          |
+| `multi_codes`            | Indicates if the promotion uses multiple coupon codes        | `false`                |
+
+## Actions
+
+There are four actions that come with Spree:
+
+<AccordionGroup>
+  <Accordion title="Creating an Adjustment">
+    <p>When a <code>CreateAdjustment</code> action is undertaken, an adjustment is automatically applied to the order, unless the promotion has already applied an adjustment to the order.</p>
+    <p>Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the <code>Promotion#eligible?</code> method, which uses <code>Promotion#eligible_rules</code> to determine if the promotion is still eligible based on its rules. For how this process works, please see the <a href="#rules">rules section</a> below.</p>
+    <p>An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the <a href="calculators">Calculators guide</a>.</p>
+  </Accordion>
+  <Accordion title="Creating an Item Adjustment">
+    <p>When a <code>CreateItemAdjustments</code> action is undertaken, an adjustment is automatically applied to each item within the order unless the action has already been performed on that line item.</p>
+    <p>The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based on the rules of the promotion.</p>
+    <p>An adjustment to order from a promotion depends on the calculators. For more information about calculators, please see the <a href="calculators">Calculators guide</a>.</p>
+  </Accordion>
+  <Accordion title="Free Shipping">
+    <p>When a <code>FreeShipping</code> action is undertaken, all shipments within the order have their prices negated. Just like with prior actions, the eligibility of this promotion is checked again whenever a shipment changes.</p>
+  </Accordion>
+  <Accordion title="Create Line Items">
+    <p>When a <code>CreateLineItem</code> action is undertaken, a series of line items are automatically added to the order, which may alter the order's price. The promotion with an action to add a line item can also have another action to add an adjustment to the order to nullify the cost of adding the product to the order.</p>
+  </Accordion>
+</AccordionGroup>
+
+## Rules
+
+Here's a list of all the rules that come with Spree:
+
+<AccordionGroup>
+  <Accordion title="FirstOrder">
+    The user's order is their first.
+  </Accordion>
+  <Accordion title="ItemTotal">
+    The order's total is greater than (or equal to) a given value.
+  </Accordion>
+  <Accordion title="Product">
+    An order contains a specific product.
+  </Accordion>
+  <Accordion title="User">
+    The order is by a specific user. Only customers who have an account can use this rule.
+  </Accordion>
+  <Accordion title="UserLoggedIn">
+    The user is logged in.
+  </Accordion>
+  <Accordion title="One Use Per User">
+    Can be used only once per customer. Only customers who have an account can use this rule.
+  </Accordion>
+  <Accordion title="Taxon(s)">
+    Order includes product(s) associated with Taxons that are selected for this rule.
+  </Accordion>
+  <Accordion title="Country">
+    Checks if Order's ship address country matches the selected country, eg. US-only Orders
+  </Accordion>
+</AccordionGroup>
+
+Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply.
+
+## Coupon Codes
+
+Coupon codes are a way to track the usage of a promotion. They are associated with a promotion and can be used to apply the promotion to an order.
+
+Coupon codes are generated when a promotion is created. The number of codes to be generated is set in the `number_of_codes` attribute on the `Promotion` object.
+
+Here is a list of attributes for the `CouponCode` model:
+
+| Attribute      | Description                                                                 | Example       |
+|----------------|-----------------------------------------------------------------------------|---------------|
+| `code`         | Auto-generated unique 16-character code for the promotion.                   | `22A0F62A230BD919`  |
+| `promotion_id` | ID of the associated promotion.                          | `12345`       |
+| `order_id`     | ID of the order to which the coupon code is applied.                            | `67890`       |
+| `state`        | Sate of the promotion code | `unused`, `used`           |
+
+If `code_prefix` is set in the `Promotion` object (eg. `PRM`), the `code` will be generated with that prefix, eg. `PRM22A0F62A230BD919`.
+
+## Extending Promotions
+
+Please follow our [extending Promotions guide](/developer/extending-spree/promotions) to learn how to create custom promotion rules and actions.

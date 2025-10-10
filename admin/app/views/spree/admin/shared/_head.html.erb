@@ -1,0 +1,62 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+<%= csrf_meta_tags %>
+
+<title>
+  <% if content_for? :title %>
+    <%= yield :title %>
+  <% else %>
+    <% if @object.present? && @object.persisted? %><%= @object.try(:name) || @object.try(:title) %> - <% end %>
+    <% if @order.present? && @order.persisted? %><%= @order.number %> - <% end %>
+    <%= Spree.t(controller_name, default: controller_name.titleize) %>
+  <% end %>
+  <% if defined?(current_store) && current_store.present? %>
+    - <%= current_store.name.capitalize %>
+  <% end %>
+</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+<%= stylesheet_link_tag 'spree/admin/application', media: :all, data: { turbo_track: "reload" } %>
+<%= stylesheet_link_tag 'spree/admin/actiontext', media: :all, data: { turbo_track: "reload" } %>
+<%= action_cable_meta_tag %>
+
+<%= favicon_link_tag 'favicon_256x256.png' %>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
+/>
+
+<%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
+
+<%= tinymce_assets %>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.12/dist/trix.css">
+
+<script async src="https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js" data-turbo-track="reload"></script>
+
+<%= javascript_importmap_tags 'application-spree-admin', importmap: Rails.application.config.spree_admin.importmap %>
+
+<%= yield :head %>
+
+<% if Rails.env.test? %>
+  <style>
+    .text-uppercase {
+      text-transform: none !important;
+    }
+  </style>
+<% end %>
+
+<%= render 'spree/shared/google_places_api_loader' %>
+
+<%= render_admin_partials(:head_partials) %>
+
+<script>
+  window.Spree = window.Spree || {}
+  Spree.adminPath = '<%= spree.admin_path %>'
+  Spree.locale = '<%= I18n.locale %>'
+</script>

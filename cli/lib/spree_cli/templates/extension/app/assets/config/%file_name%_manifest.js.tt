@@ -1,0 +1,5 @@
+//= link_tree ../images
+//= link <%= file_name %>/application.js
+//= link_tree ../../javascript/<%= file_name %>/controllers .js
+//= link_tree ../../../vendor/javascript .js
+//= link_tree ../../../vendor/stylesheets .css

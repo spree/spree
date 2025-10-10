@@ -1,0 +1,50 @@
+<% source = payment.source %>
+<div class="d-flex flex items-top align-items-top gap-3">
+  <% if source.is_a?(Spree::CreditCard) %>
+    <div class="flex-shrink-0">
+      <% # display wallet icon, eg. Apple Pay, Google Pay, etc. %>
+      <%= payment_method_icon_tag source.wallet_type, height: 30 if source.try(:wallet_type).present? %>
+      <% # display card type icon, eg. Visa, Mastercard, etc. %>
+      <%= payment_method_icon_tag source.cc_type, height: 30 %>
+    </div>
+    <div>
+      <p class="mb-1"> •••• <%=source.last_digits %></p>
+      <p class="mb-0"><%= Spree.t(:expiration) %> <%= source.month %>/<%= source.year %></p>
+    </div>
+  <% elsif source.is_a?(Spree::StoreCredit) %>
+    <% if source.originator_type == 'Spree::GiftCard' %>
+      <div class="d-flex align-items-center">
+        <%= icon('gift', height: 30, class: 'mr-3 text-muted opacity-50') %>
+        <div>
+          <p class="mb-1"><%= Spree.t(:gift_card) %>: <strong><%= source.originator.code.upcase %></strong></p>
+          <%= @order.display_gift_card_total %>
+        </div>
+      </div>
+    <% elsif payment.payment_method.present? && payment_method_icon_tag(payment.payment_method.payment_icon_name).present? %>
+      <div class="d-flex flex align-items-center items-center">
+        <div><%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %></div>
+        <div class="ml-3"><%= Spree.t(:store_credit_name) %></div>
+      </div>
+    <% end %>
+  <% elsif source.present? %>
+    <div class="flex-shrink-0">
+      <%= payment_method_icon_tag source.class.to_s.demodulize.downcase, height: 30 %>
+    </div>
+    <div>
+      <% if payment.payment_method.present? && payment.payment_method.respond_to?(:source_partial_name) %>
+        <%= render partial: "spree/payment_sources/#{payment.payment_method.source_partial_name}", locals: { payment: payment, source: source } %>
+      <% elsif source.respond_to?(:name) %>
+        <%= source.name %>
+      <% else %>
+        <%= source.class.to_s.demodulize.downcase %>
+      <% end %>
+    </div>
+  <% elsif payment.payment_method.present? %>
+    <div class="flex-shrink-0">
+      <%= payment_method_icon_tag payment.payment_method.payment_icon_name %>
+    </div>
+    <div>
+      <%= payment.payment_method.name %>
+    </div>
+  <% end %>
+</div>

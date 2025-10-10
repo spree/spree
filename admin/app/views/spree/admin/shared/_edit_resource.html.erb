@@ -1,0 +1,17 @@
+<% col_class ||= 'col-lg-6 offset-lg-3' %>
+<% page_header_back_button_url ||= collection_url %>
+
+<%= content_for :page_title do %>
+  <%= page_header_back_button(page_header_back_button_url) %>
+  <%= @object.try(:name) || @object.try(:title) || @object.try(:number) %>
+<% end %>
+
+<%= form_with model: [:admin, @object], url: object_url, scope: @resource.object_name, id: "edit_#{controller_name.singularize}_#{@object.id}", data: local_assigns[:data] || {} do |f| %>
+  <div class="row">
+    <div class="<%= col_class %>">
+      <%= render 'spree/admin/shared/error_messages', target: @object %>
+      <%= render 'form', f: f %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: f %>
+    </div>
+  </div>
+<% end %>

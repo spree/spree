@@ -1,0 +1,199 @@
+<% content_for :page_title do %>
+  <% if @user.present? %>
+    <%= page_header_back_button spree.admin_user_path(@user) %>
+  <% else %>
+    <%= page_header_back_button spree.admin_gift_cards_path %>
+  <% end %>
+
+  <%= @object.code.upcase %>
+  <span class="badge">
+    <%= active_badge(@object.active?, label: @object.display_state, class: 'badge-sm') %>
+  </span>
+<% end %>
+
+<% content_for :title do %>
+  <%= Spree.t(:gift_card) %>
+  <%= @object.code.upcase %>
+<% end %>
+
+<div class="row">
+  <div class="col-md-8">
+
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <%= Spree.t('admin.gift_cards.usage') %>
+        </h5>
+      </div>
+      <div class="card-body border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="w-75">
+            <%= progress_bar_component(@object.amount_used, max: @object.amount) %>
+          </div>
+          <div class="w-25 text-right">
+            <%= @object.display_amount_used %> <%= Spree.t(:used).downcase %> / <%= @object.display_amount %>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-0">
+        <% if @orders.any? %>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col"><%= Spree.t(:order) %></th>
+                  <th scope="col"><%= Spree.t(:status) %></th>
+                  <th scope="col"><%= Spree.t(:customer) %></th>
+                  <th class="text-right"><%= I18n.t('activerecord.attributes.spree/gift_card.amount_used') %></th>
+                  <th class="text-right"><%= Spree.t(:total) %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @orders.each do |order| %>
+                  <tr>
+                    <td>
+                      <%= link_to order.number, spree.edit_admin_order_path(order), class: 'text-dark font-weight-bold' %>
+                    </td>
+                    <td>
+                      <% if order.completed? %>
+                        <span class="badge badge-success">
+                          <%= icon('check') %>
+                          <%= Spree.t("state_machine_states.completed") %>
+                        </span>
+                      <% else %>
+                        <span class="badge badge-warning">
+                          <%= Spree.t("state_machine_states.#{order.state}") %>
+                        </span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <%= order.user.email %>
+                    </td>
+                    <td class="text-right">
+                      <%= order.display_gift_card_total %>
+                    </td>
+                    <td class="text-right">
+                      <%= order.display_total %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <%= render 'spree/admin/shared/no_resource_found', resource_name: Spree.t(:order), new_object_url: nil %>
+        <% end %>
+      </div>
+    </div>
+
+    </div>
+
+  <div class="col-md-4">
+    <%= turbo_frame_tag :gift_card_settings do %>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between">
+          <h5 class="card-title">
+            <%= Spree.t(:settings) %>
+          </h5>
+          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_gift_card_path(@object), icon: 'pencil', class: 'btn btn-sm btn-light', if: @gift_card.editable? %>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:code) %>
+              </span>
+              <span>
+                <code><%= @object.display_code %></code>
+                <%= clipboard_component(@object.display_code) %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:customer) %>
+              </span>
+              <span>
+                <% if @object.user %>
+                  <%= link_to @object.user.email, spree.admin_user_path(@object.user), data: { turbo_frame: '_top' } %>
+                <% else %>
+                  <span class="text-muted">
+                    <%= Spree.t(:not_available) %>
+                  </span>
+                <% end %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:amount) %>
+              </span>
+              <span>
+                <%= @object.display_amount %>
+              </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:used) %>
+              </span>
+              <span>
+                <%= @object.display_amount_used %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t('store_credit.remaining') %>
+              </span>
+              <span>
+                <%= @object.display_amount_remaining %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:currency) %>
+              </span>
+              <span>
+                <%= @object.currency %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:expires_at) %>
+              </span>
+              <% if @object.expires_at %>
+                <span><%= spree_time(@object.expires_at) %></span>
+              <% else %>
+                <span class="text-muted"><%= Spree.t(:not_available) %></span>
+              <% end %>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:created_by) %>
+              </span>
+              <span>
+                <% if @object.created_by %>
+                  <%= link_to @object.created_by.email, spree.admin_admin_user_path(@object.created_by), data: { turbo_frame: '_top' } %>
+                <% else %>
+                  <span class="text-muted">
+                    <%= Spree.t(:not_available) %>
+                  </span>
+                <% end %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:created_at) %>
+              </span>
+              <span><%= spree_time(@object.created_at) %></span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,145 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(spree.admin_user_path(@user)) %>
+  <%= Spree.t(:store_credit_name) %>
+  <%= @store_credit.display_amount %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">
+          <%= Spree.t(:store_credit_events) %>
+        </h5>
+      </div>
+      <div class="card-body p-0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col"><%= Spree.t(:action) %></th>
+              <th scope="col"><%= Spree.t(:amount) %></th>
+              <th scope="col"><%= Spree.t(:source) %></th>
+              <th scope="col"><%= Spree.t(:order) %></th>
+              <th scope="col"><%= Spree.t(:created_at) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: 'spree/admin/store_credit_events/store_credit_event', collection: @store_credit_events, as: :store_credit_event, cached: spree_base_cache_scope %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <%= turbo_frame_tag :store_credit_details do %>
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title">
+            <%= Spree.t(:details) %>
+          </h5>
+
+          <% if @store_credit.editable? %>
+            <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_user_store_credit_path(@user, @store_credit), class: 'btn btn-sm btn-light' %>
+          <% end %>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:customer) %>
+              </span>
+              <span>
+                <%= link_to @store_credit.user.email, spree.admin_user_path(@store_credit.user) %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:created_by) %>
+              </span>
+              <% if @store_credit.created_by %>
+                <span>
+                  <%= link_to @store_credit.created_by.email, spree.admin_admin_user_path(@store_credit.created_by) %>
+                </span>
+              <% else %>
+                <span class="text-muted">
+                  <%= Spree.t(:not_available) %>
+                </span>
+              <% end %>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:created_at) %>
+              </span>
+
+              <span>
+                <%= spree_time(@store_credit.created_at) %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:amount) %>
+              </span>
+
+              <span>
+                <%= @store_credit.display_amount %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:authorized) %>
+              </span>
+
+              <span>
+                <%= @store_credit.display_amount_authorized %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:used) %>
+              </span>
+
+              <span>
+                <%= @store_credit.display_amount_used %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t('store_credit.remaining') %>
+              </span>
+
+              <span>
+                <%= @store_credit.display_amount_remaining %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span class="text-muted">
+                <%= Spree.t(:currency) %>
+              </span>
+
+              <span>
+                <%= @store_credit.currency %>
+              </span>
+            </li>
+
+            <li class="list-group-item d-flex flex-column justify-content-between align-items-start">
+              <span class="text-muted mb-2">
+                <%= Spree.t(:memo) %>
+              </span>
+
+              <span>
+                <%= @store_credit.memo %>
+              </span>
+          </ul>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

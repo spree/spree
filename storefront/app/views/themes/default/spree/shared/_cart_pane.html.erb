@@ -1,0 +1,41 @@
+<% order ||= current_order %>
+<% item_count ||= order&.item_count %>
+
+<!-- begin sidebar/slideover -->
+<div
+  id="cart-pane"
+  data-slideover-target='overlay'
+  class='fixed inset-0 flex flex-row-reverse z-50 transition-opacity hidden'
+>
+  <div class='fixed inset-0'>
+    <div data-action='click->slideover#toggle' class='absolute inset-0 bg-background opacity-75'></div>
+  </div>
+  <div
+    id='slideover-cart'
+    data-slideover-target='menu'
+    class='relative sidebar-pane flex-1 !flex flex-col w-full bg-background text-text md:border-l border-default transition ease-in-out duration-300 translate-x-full'
+  >
+    <div class='p-4 gap-4 flex-shrink-0 flex items-center justify-between border-b border-default z-50'>
+      <%= button_tag(
+        type: 'button',
+        data: { action: 'slideover#toggle' },
+        class: 'flex items-center justify-center rounded-full focus:outline-none focus:bg-background',
+        aria: { label: 'Close sidebar' }
+      ) do %>
+        <%= render 'spree/shared/icons/close' %>
+      <% end %>
+      <span class='text-xl font-medium uppercase leading-none'><%= Spree.t(:cart) %></span>
+      <span class='relative block w-6'>
+        <%= render 'spree/shared/icons/cart' %>
+        <span class='cart-counter w-full text-[8px] font-extrabold absolute top-[10px] text-center'>
+          <%= item_count if item_count&.positive? %>
+        </span>
+        <span class='sr-only'><%= Spree.t('storefront.cart.items_in_cart') %>, <%= Spree.t('storefront.cart.view_bag') %></span>
+      </span>
+    </div>
+    <div class='flex-1 h-0 overflow-y-auto' id="cart-pane-container" data-turbo-permanent>
+      <%= turbo_frame_tag cart_id(order), class: 'cart-contents', src: spree.cart_path, loading: :lazy %>
+    </div>
+  </div>
+</div>
+<!-- end sidebar/slideover -->

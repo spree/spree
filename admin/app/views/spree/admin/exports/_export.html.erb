@@ -1,0 +1,42 @@
+<tr>
+  <td class="w-10"><%= export.number %></td>
+  <td class="text-center w-10">
+    <span class="badge badge-light border">
+      <%= Spree.t(export.type.demodulize) %>
+    </span>
+  </td>
+  <td class="text-center w-10">
+    <% if export.done? %>
+      <span class="badge badge-success">
+        <%= icon('check') %>
+        <%= Spree.t(:done) %>
+      </span>
+    <% else %>
+      <span class="badge badge-warning">
+        <%= icon('progress') %>
+        <%= Spree.t(:pending) %>
+      </span>
+    <% end %>
+  </td>
+
+  <td class="w-25">
+    <% if export.user %>
+      <span>
+        <%= export.user.name %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <%= export.attachment.filename if export.done? %>
+  </td>
+  <td class="w-15"><%= spree_time_ago(export.created_at) %></td>
+  <td>
+    <%= number_to_human_size(export.attachment.byte_size) if export.done? %>
+  </td>
+  <td class="w-15 text-center">
+    <%= link_to spree.admin_export_path(export), class: 'btn btn-sm btn-light mx-auto', target: '_blank' do %>
+      <%= icon 'download', class: 'mr-1' %>
+      <%= Spree.t(:download) %>
+    <% end if export.done? %>
+  </td>
+</tr>

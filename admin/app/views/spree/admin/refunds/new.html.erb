@@ -1,0 +1,32 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@order) %>
+  <%= Spree.t(:new_refund) %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6 offset-lg-3">
+    <%= render 'spree/admin/shared/error_messages', target: @refund %>
+
+    <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund] do |f| %>
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="card-title">
+            <%= Spree.t(:new_refund) %>
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="form-group">
+            <%= f.label :payment_amount, Spree.t(:payment_amount) %><br>
+            <%= @refund.payment.display_amount %>
+          </div>
+          <div class="form-group">
+            <%= f.label :credit_allowed, Spree.t(:credit_allowed) %><br>
+            <%= @refund.payment.display_credit_allowed %>
+          </div>
+          <%= render 'spree/admin/refunds/form', f: f %>
+        </div>
+      </div>
+      <%= render 'spree/admin/shared/new_resource_links' %>
+    <% end %>
+  </div>
+</div>

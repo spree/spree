@@ -1,0 +1,36 @@
+<div class="page-container grid grid-cols-1 lg:grid-cols-12 lg:gap-6 lg:mt-6">
+  <div class="lg:col-span-3">
+    <%= render 'spree/account/account_nav', current: 'account' %>
+  </div>
+  <div class="lg:col-span-8 lg:col-start-5 pb-6">
+    <h5 class="uppercase font-medium mb-4"><%= Spree.t('storefront.account.personal_details') %></h5>
+    <div class="flex justify-between">
+      <p class="mb-3 text-neutral-600">
+        <%= Spree.t('storefront.account.please_update_your_contact_details') %>
+      </p>
+      <% if defined?(spree_edit_password_path) %>
+        <%= link_to Spree.t('storefront.account.change_password'), spree_edit_password_path %>
+      <% end %>
+    </div>
+    <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
+    <%= form_for @user, url: spree.account_profile_path, html: {class: "flex flex-col gap-4"}, method: :put do |f| %>
+      <div>
+        <%= f.label :first_name, Spree.t(:first_name), class: 'text-xs text-neutral-600 block mb-2' %>
+        <%= f.text_field :first_name, class: 'text-input w-full', placeholder: Spree.t(:first_name), required: true %>
+      </div>
+      <div>
+        <%= f.label :last_name, Spree.t(:last_name), class: 'text-xs text-neutral-600 block mb-2' %>
+        <%= f.text_field :last_name, class: 'text-input w-full', placeholder: Spree.t(:last_name), required: true %>
+      </div>
+      <div>
+        <%= f.label :phone, Spree.t(:phone), class: 'text-xs text-neutral-600 block mb-2' %>
+        <%= f.telephone_field :phone, class: 'text-input w-full', placeholder: Spree.t(:phone) %>
+      </div>
+      <div>
+        <%= f.label :email, Spree.t(:email), class: 'text-xs text-neutral-600 block mb-2' %>
+        <%= f.text_field :email, class: 'text-input w-full', placeholder: Spree.t(:email), required: true %>
+      </div>
+      <%= f.submit Spree.t(:update), class: 'btn-primary w-full mb-6' %>
+    <% end %>
+  </div>
+</div>

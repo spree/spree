@@ -1,0 +1,192 @@
+.custom-checkbox .custom-control-label::before {
+  border-radius: 0.25rem !important;
+  border-color: $input-border-color;
+}
+
+label {
+  font-weight: 500;
+  font-size: 100%;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.form-actions {
+  @extend .d-flex;
+  @extend .align-items-center;
+
+  .or {
+    @extend .px-3;
+  }
+}
+
+.form-text {
+  font-size: $font-size-sm;
+  margin-top: 0;
+}
+
+.form-control, .text-input, .trix-container, .ts-control, trix-toolbar .trix-dialog .trix-input, .custom-select, .input-group-text, .custom-file-label {
+  box-shadow: $input-box-shadow;
+  transition-property: box-shadow;
+  transition-duration: 0.2s;
+
+  &:disabled, &[readonly] {
+    @extend .shadow-none;
+    @extend .text-muted;
+    background-color: $gray-50 !important;
+    border: 1px solid $border-color !important;
+    cursor: not-allowed;
+  }
+}
+
+.form-group {
+  .field_with_errors {
+    input {
+      @extend .is-invalid;
+    }
+  }
+  .formError {
+    @extend .invalid-feedback;
+    display: block;
+  }
+}
+
+input[type="file"] {
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-select, .ts-control {
+  background-color: $input-bg;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-size: 1.5em 1.5em !important;
+  background-position: right 0.5rem center !important;
+  background-repeat: no-repeat !important;
+  border-radius: $input-border-radius;
+  padding-right: 2.5rem;
+}
+.custom-select, .form-control, .ts-control {
+  &:hover:not(:focus):not(:active):not(.active):not(:focus-visible):not(:focus-within) {
+    border: 1px solid $gray-200;
+  }
+}
+
+.ts-control>input {
+  min-width: auto !important;
+}
+.ts-dropdown {
+  @extend .p-1;
+
+  .option {
+    @extend .p-2;
+    @extend .rounded-sm;
+  }
+
+  .ts-dropdown-content {
+    @extend .p-0;
+  }
+}
+.ts-wrapper.single .ts-control:after {
+  content: none;
+}
+.ts-wrapper.disabled {
+  @extend .disabled;
+  cursor: not-allowed !important;
+
+  &:hover:not(:focus) {
+    border: 0 none !important;
+  }
+}
+.ts-wrapper.disabled .ts-control {
+  @extend .disabled;
+  cursor: not-allowed !important;
+
+  &:hover:not(:focus) {
+    border: 1px solid transparent !important;
+  }
+}
+
+.ts-wrapper.plugin-remove_button .item .remove {
+  padding: 3px 6px;
+}
+
+// address form fixes
+#szipcode, #sstate, #scity, #bzipcode, #bstate, #bcity {
+  @extend .col-lg-4;
+  @extend .mb-0;
+}
+.has-float-label.mb-4 {
+  @extend .mb-3;
+}
+#scity, #bcity, #sstate, #bstate {
+  padding-right: 0;
+}
+
+
+.form-control-plaintext {
+  padding: $input-btn-padding-y $input-btn-padding-x;
+
+  &:focus {
+    @extend .shadow-none;
+    @extend .border-0;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}
+
+.custom-control {
+  a {
+    color: $body-color;
+  }
+}
+
+.custom-control-label {
+  font-weight: $font-weight-base;
+}
+
+.form-control .ti-search {
+  opacity: 0.5;
+}
+
+
+.form-control-bare {
+  @extend .border-left-0;
+  @extend .border-right-0;
+  @extend .border-top-0;
+  @extend .rounded-0;
+  @extend .shadow-none;
+  @extend .border-bottom;
+  @extend .px-0;
+
+  &:hover, &:active, &:focus {
+    @extend .border-black;
+  }
+}
+
+.form-check-input {
+  margin-top: 0.2rem;
+}
+
+.custom-radio:hover {
+  color: unset;
+  text-decoration: unset;
+}
+
+
+turbo-frame.blur-busy[busy] {
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  pointer-events: none;
+
+  * {
+    pointer-events: none;
+  }
+}
+
+.input-group-text {
+  background-color: transparent;
+}

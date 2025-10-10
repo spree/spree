@@ -1,0 +1,8 @@
+<template data-stock-transfer-target="template">
+  <%= f.fields_for :stock_movements, Spree::StockMovement.new, child_index: 'NEW_RECORD' do |destination_movement_form| %>
+    <%= render 'spree/admin/stock_transfers/destination_movement_form', f: destination_movement_form %>
+  <% end %>
+  <%= f.fields_for :stock_movements, Spree::StockMovement.new, child_index: 'NEW_RECORD2' do |source_movement_form| %>
+    <%= render 'spree/admin/stock_transfers/source_movement_form', f: source_movement_form %>
+  <% end %>
+</template>

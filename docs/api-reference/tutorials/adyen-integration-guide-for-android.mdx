@@ -1,0 +1,167 @@
+---
+title: Adyen Integration Guide for Android
+description: This guide provides step-by-step instructions for integrating Adyen Android Drop-in with spree_adyen using session flow and Drop-In component.
+---
+
+<Warning>
+This guide is aimed at advanced users who want to create adyen integration for their custom android application.
+You also need to install Spree Adyen extension before.
+</Warning>
+
+## Note
+
+The list of available library versions can be found on [Official Adyen Documentation for Android integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=Android&integration=Drop-in&version=5.13.1)
+Current newest version available at the moment of writing the tutorial is 5.13.1.
+This doc will be referring to the library version as YOUR_VERSION.
+
+## Resources
+
+- [Official Adyen Documentation for Android integration](https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=Android&integration=Drop-in&version=5.13.1)
+- Spree Adyen API docs - [create payment_session](/api-reference/storefront/adyen/create-an-adyen-payment-session) and [get payment_session](/api-reference/storefront/adyen/get-adyen-payment-session)
+- [Official Adyen example for Android integration](https://github.com/adyen-examples/adyen-android-online-payments)
+
+## Overview
+
+The integration consists of two main components:
+
+- **Spree Adyen**: Provides API for your client and receive payment result from Adyen
+- **Your Android client app**: Shows the Drop-in UI and handles payment flow
+
+## Step 1: Import the library
+
+Import the compatibility module:
+
+### Import the module with Jet Compose
+
+```bash
+implementation "com.adyen.checkout:drop-in-compose:YOUR_VERSION"
+```
+
+### Import without Jet Compose
+
+```bash
+implementation "com.adyen.checkout:drop-in:YOUR_VERSION"
+```
+
+## Step 2: Create a checkout session
+
+Create session using [this endpoint](/api-reference/storefront/adyen/create-an-adyen-payment-session).
+
+```kotlin
+val sessionModel = SessionModel.SERIALIZER.deserialize(sessionsResponseJSON)
+```
+
+sessionsResponseJSON should contain:
+- `sessionData` - available as `adyen_data` in payment_session API response
+- `id` - available as `adyen_id` in payment_session API response
+
+```kotlin
+val sessionModel = SessionModel.SERIALIZER.deserialize(sessionsResponseJSON)
+```
+
+## Step 3
+
+call `CheckoutSessionProvider.createSession` passing serialized session data (`sessionModel`) and `dropInConfiguration`
+
+dropInConfiguration example:
+
+```kotlin
+val checkoutConfiguration = CheckoutConfiguration(
+	    environment = environment,
+	    clientKey = clientKey,
+	    shopperLocale = shopperLocale, // Optional
+	) {
+	    // Optional: add Drop-in configuration.
+	    dropIn {
+	        setEnableRemovingStoredPaymentMethods(true)
+	    }
+	 
+	    // Optional: add or change default configuration for the card payment method.
+	    card {
+	        setHolderNameRequired(true)
+	        setShopperReference("...")
+	    }
+	 
+	    // Optional: change configuration for 3D Secure 2.
+	    adyen3DS2 {
+	        setThreeDSRequestorAppURL("...")
+	    }
+	}
+```
+see also: https://docs.adyen.com/online-payments/build-your-integration/sessions-flow/?platform=Web&integration=Drop-in&version=6.18.1#create-instance
+
+
+`environment` - enum: `live` or `test`
+`clientKey` - `client_key` from payment_sessions endpoint
+`shopperLocale` - shopper locale in ISO format
+
+
+```kotlin
+	// Create an object for the checkout session.
+	val result = CheckoutSessionProvider.createSession(sessionModel, dropInConfiguration)
+	 
+	// If the payment session is successful, handle the result.
+	// If the payment session encounters an error, handle the error.
+	when (result) {
+	    is CheckoutSessionResult.Success -> handleCheckoutSession(result.checkoutSession)
+	    is CheckoutSessionResult.Error -> handleError(result.exception)
+	}
+```
+
+## Step 4: Launch and show Drop-in
+
+```kotlin
+	override fun onDropInResult(sessionDropInResult: SessionDropInResult?) {
+	   when (sessionDropInResult) {
+	      // The payment finishes with a result.
+	      is SessionDropInResult.Finished -> handleResult(sessionDropInResult.result)
+	      // The shopper dismisses Drop-in.
+	      is SessionDropInResult.CancelledByUser ->
+	      // Drop-in encounters an error.
+	      is SessionDropInResult.Error -> handleError(sessionDropInResult.reason)
+	      // Drop-in encounters an unexpected state.
+	      null ->
+	   }
+	}
+```
+
+## Step 5: Create the Drop-in launcher
+
+DropIn.startPayment, passing:
+
+- `dropInLauncher` - The Drop-in launcher object
+- `checkoutSession` - result of `CheckoutSessionProvider.createSession`
+- `dropInConfiguration` - Your Drop-in configuration
+
+Example:
+
+```kotlin
+	import com.adyen.checkout.dropin.compose.startPayment
+	import com.adyen.checkout.dropin.compose.rememberLauncherForDropInResult
+	 
+	@Composable
+	private fun ComposableDropIn() {
+	    val dropInLauncher = rememberLauncherForDropInResult(sessionDropInCallback)
+	 
+	    DropIn.startPayment(dropInLauncher, checkoutSession, dropInConfiguration)
+	}
+```
+
+## Get payment outcome
+
+1. Wait for backend to process the payment
+2. Continue shopping experience
+
+### 1. Wait for backend to process the payment
+
+backend will change the state of `payment_session` to one of the following state
+
+- `pending` - chosen payment method can take a while to complete 
+- `completed` - payment resulted in success, order completed
+- `canceled` - payment canceled, payment is `void`
+- `refused` - payment failed
+
+### 2. Continue shopping experience
+
+if succeed - order is processed and completed
+if failed - payment can be retried using new payment session

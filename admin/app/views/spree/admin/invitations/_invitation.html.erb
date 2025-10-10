@@ -1,0 +1,52 @@
+<tr id="<%= spree_dom_id invitation %>">
+  <td class="w-30">
+    <%= invitation.email %>
+  </td>
+  <td class="w-10">
+    <% if can?(:read, invitation.inviter) %>
+      <%= link_to invitation.inviter.name, spree.admin_admin_user_path(invitation.inviter) %>
+    <% else %>
+      <%= invitation.inviter.name %>
+    <% end %>
+  </td>
+  <td class="w-20">
+    <span class="badge badge-light"><%= invitation.role.name %></span>
+  </td>
+  <td class="w-20">
+    <% if invitation.accepted? %>
+      <span class="badge badge-success"><%= Spree.t(:accepted) %></span>
+    <% elsif invitation.deleted? %>
+      <span class="badge badge-danger"><%= Spree.t(:deleted) %></span>
+    <% elsif invitation.expired? %>
+      <span class="badge badge-warning"><%= Spree.t(:expired) %></span>
+    <% else %>
+      <span class="badge badge-light"><%= Spree.t(:pending) %></span>
+      <p class="text-muted font-size-sm mb-0 mt-2 pl-1">Expires at: <%= spree_time(invitation.expires_at) %></p>
+    <% end %>
+  </td>
+  <td class="w-10">
+    <%= spree_time(invitation.created_at) %>
+  </td>
+  <td class="w-10 actions">
+    <% if invitation.pending? && !invitation.expired? %>
+      <div class="dropdown" data-controller="clipboard">
+        <%= hidden_field_tag nil, spree.admin_invitation_url(invitation, token: invitation.token),  data: { clipboard_target: "source" } %>
+
+        <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton-<%= invitation.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <%= icon('dots-vertical', class: 'mr-0') %>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-<%= invitation.id %>">
+          <%= link_to_with_icon 'copy', Spree.t(:copy_link), '#', 
+              class: "dropdown-item", 
+              data: { action: "clipboard#copy" } %>
+          <%= link_to_with_icon 'send', Spree.t('actions.resend'), spree.resend_admin_invitation_path(invitation), 
+              class: "dropdown-item", 
+              data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
+          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation), 
+              class: "dropdown-item btn-danger", 
+              data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } if can?(:destroy, invitation) %>
+        </div>
+      </div>
+    <% end %>
+  </td>
+</tr>

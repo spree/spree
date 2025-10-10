@@ -1,0 +1,113 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button spree.edit_admin_order_path(@reimbursement.order) %>
+  <div class="d-flex gap-3 align-items-center">
+    <span><%= Spree.t(:reimbursement) %></span>
+    <span><%= @reimbursement.number %></span>
+
+    <span class="badge badge-<%= reimbursement_status_color(@reimbursement) %>">
+      <%= @reimbursement.reimbursement_status %>
+    </span>
+  </div>
+<% end %>
+
+<%= render partial: "spree/admin/shared/error_messages",
+locals: {
+  target: @reimbursement,
+} %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:items_reimbursed) %></h5>
+  </div>
+  <div class="card-body p-0">
+    <table class="table reimbursement-reimbursement-items-table">
+      <thead>
+        <tr>
+          <th scope="col"><%= Spree.t(:product) %></th>
+          <th scope="col"><%= Spree.t(:preferred_reimbursement_type) %></th>
+          <th scope="col"><%= Spree.t(:reimbursement_type_override) %></th>
+          <th scope="col"><%= Spree.t(:exchange_for) %></th>
+          <th scope="col"><%= Spree.t(:pre_tax_amount) %></th>
+          <th scope="col"><%= Spree.t(:total) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reimbursement.return_items.each do |return_item| %>
+          <tr>
+            <td>
+              <%= render "spree/admin/variants/variant",
+              variant: return_item.inventory_unit.variant %>
+            </td>
+            <td>
+              <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
+            </td>
+            <td>
+              <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
+            </td>
+            <td>
+              <%= return_item.exchange_variant.try(:exchange_name) %>
+            </td>
+            <td>
+              <%= return_item.display_pre_tax_amount %>
+            </td>
+            <td>
+              <%= return_item.display_total %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:refunds) %></h5>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th scope="col"><%= Spree.t(:amount) %></th>
+          <th scope="col"><%= Spree.t(:date) %></th>
+          <th scope="col"><%= Spree.t(:reason) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reimbursement.refunds.includes(:reason).each do |refund| %>
+          <tr id="<%= spree_dom_id(refund) %>">
+            <td><%= refund.display_amount %></td>
+            <td><%= spree_time(refund.created_at) %></td>
+            <td><%= refund.reason&.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% if @reimbursement.credits.any? %>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t(:credits) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th scope="col"><%= Spree.t(:description) %></th>
+            <th scope="col"><%= Spree.t(:amount) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reimbursement.credits.each do |credit| %>
+            <tr id="<%= spree_dom_id(credit) %>">
+              <td><%= credit.description %></td>
+              <td><%= credit.display_amount %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

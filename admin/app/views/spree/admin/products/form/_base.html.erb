@@ -1,0 +1,12 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record?, data: { seo_form_target: 'sourceTitleInput', slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
+
+    <div class="form-group mb-0">
+      <%= f.label :description, Spree.t(:description) %>
+      <div class="trix-container mb-0">
+        <%= f.text_area :description, { rows: 10, class: "form-control spree-rte", data: { seo_form_target: 'sourceDescriptionInput' } } %>
+      </div>
+    </div>
+  </div>
+</div>

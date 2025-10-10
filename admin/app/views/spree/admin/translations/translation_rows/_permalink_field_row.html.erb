@@ -1,0 +1,24 @@
+<%# locals: (f:, field:, locale:) %>
+
+<%
+  parent = f.object.parent
+
+  base_permalink = parent.present? ? parent.send(field).to_s + "/" : ""
+  value = f.object.send(field)&.delete_prefix(base_permalink)
+
+  base_permalink_translated = parent.present? ? I18n.with_locale(locale) { parent.send(field) } + "/" : ""
+  translated_value = f.object.send("#{field}_#{locale}")&.delete_prefix(base_permalink_translated)
+%>
+
+<div class="form-group">
+  <%= f.label field, Spree.t(field) %>
+  <div class="input-group">
+    <% if base_permalink_translated.present? %>
+      <div class="input-group-prepend">
+        <span class="input-group-text"><%= base_permalink_translated %></span>
+      </div>
+    <% end %>
+
+    <%= f.text_field "#{field}_#{locale}", value: translated_value, class: 'form-control' %>
+  </div>
+</div>

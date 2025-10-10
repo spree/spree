@@ -1,0 +1,3 @@
+<% cache_if page_cache_enabled? && !page_builder_enabled?, spree_storefront_base_cache_scope.call(current_page), expires_in: Spree::Storefront::Config.page_cache_ttl do %>
+  <%= render_page(current_page) %>
+<% end %>

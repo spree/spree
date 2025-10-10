@@ -1,0 +1,50 @@
+<%= content_for(:page_title) do %>
+<%= Spree.t(:checkout) %> <%= Spree.t(:settings) %>
+<% end %>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:settings) %></h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { label: Spree.t(:shipping_zone), autocomplete: true } %>
+    <small class="form-text text-muted mb-3">
+      <%= Spree.t(:shipping_zone_help) %>
+      <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'text-blue' %>
+    </small>
+
+    <%= f.spree_select :default_country_iso, Spree::Country.pluck(:name, :iso), { include_blank: false, label: Spree.t(:default_country), autocomplete: true, help: Spree.t(:default_country_help) } %>
+
+    <hr />
+
+    <%= f.spree_check_box :preferred_guest_checkout, label: Spree.t('admin.checkout_settings.guest_checkout.label'), help: Spree.t('admin.checkout_settings.guest_checkout.description') %>
+    <%= f.spree_check_box :preferred_company_field_enabled, label: Spree.t('admin.store_form.company_field.label'), help: Spree.t('admin.store_form.company_field.description') %>
+    <%= f.spree_check_box :preferred_special_instructions_enabled, label: Spree.t('admin.checkout_settings.special_instructions.label'), help: Spree.t('admin.checkout_settings.special_instructions.description') %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:checkout_message) %></h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_rich_text_area :checkout_message, label: false, help: Spree.t('admin.checkout_settings.checkout_message_description') %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
+  </div>
+
+  <div class="card-body">
+    <div class="alert alert-info">
+      <div>
+        <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
+      </div>
+    </div>
+    <%= render 'spree/admin/stores/form/checkout_links' %>
+  </div>
+</div>

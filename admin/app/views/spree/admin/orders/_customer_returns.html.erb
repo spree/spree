@@ -1,0 +1,26 @@
+<% if @customer_returns.exists? && can?(:read, Spree::CustomerReturn) %>
+  <div class="card mb-4">
+    <div class="card-header justify-content-between">
+      <h5 class="card-title">
+        <%= Spree.t(:customer_returns) %></h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="border-bottom">
+            <tr>
+              <th scope="col"><%= Spree.t(:date) %></th>
+              <th scope="col"><%= Spree.t(:status) %></th>
+              <th scope="col"><%= Spree.t(:pre_tax_total) %></th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: "spree/admin/orders/customer_returns/customer_return",
+            collection: @customer_returns %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %>

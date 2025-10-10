@@ -1,0 +1,45 @@
+<%= turbo_frame_tag promotion_action do  %>
+  <div class="card" id="<%= spree_dom_id(promotion_action) %>">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="card-title"><%= promotion_action.human_name %></h5>
+
+      <% if can?(:update, promotion_action) || can?(:destroy, promotion_action) %>
+        <div class="dropdown">
+          <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">
+            <%= icon('dots-vertical', class: 'mr-0') %>
+        </button>
+        <div class="dropdown-menu">
+            <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item' if can?(:update, promotion_action) %> 
+            <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, promotion_action) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <p class="text-muted"><%= promotion_action.human_description %></p>
+
+      <% if promotion_action.preferences.present? %>
+        <%= render 'spree/admin/shared/preferences', object: promotion_action %>
+      <% end %>
+
+      <% if promotion_action.respond_to?(:calculator) && promotion_action.calculator.present? && promotion_action.calculator.preferences.present? %>
+        <h6><%= Spree.t(:calculator) %>: <%= promotion_action.calculator.description %></h6>
+        <%= render 'spree/admin/shared/preferences', object: promotion_action.calculator %>
+      <% end %>
+
+      <% if promotion_action.respond_to?(:promotion_action_line_items) %>
+        <h6><%= Spree.t(:line_items) %></h6>
+        <ul class="list-group">
+          <% promotion_action.promotion_action_line_items.each do |line_item| %>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <%= link_to line_item.variant.descriptive_name, spree.edit_admin_product_variant_path(line_item.variant.product, line_item.variant) %>
+              <span>
+                <%= Spree.t(:quantity) %>: <%= line_item.quantity %>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  </div>
+<% end %>

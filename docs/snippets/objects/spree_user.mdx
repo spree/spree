@@ -1,0 +1,42 @@
+import SpreeAddress from '/snippets/objects/spree_address.mdx';
+
+<Expandable title="properties">
+  <ResponseField name="id" type="integer">
+    User ID
+    Example: 123
+  </ResponseField>
+
+  <ResponseField name="email" type="string">
+    User email address
+    Example: `customer@example.com`
+  </ResponseField>
+
+  <ResponseField name="first_name" type="string">
+    User first name
+    Example: `John`
+  </ResponseField>
+
+  <ResponseField name="last_name" type="string">
+    User last name
+    Example: `Doe`
+  </ResponseField>
+
+  <ResponseField name="bill_address" type="Spree::Address">
+    Default billing address object
+    <SpreeAddress />
+  </ResponseField>
+
+  <ResponseField name="ship_address" type="Spree::Address">
+    Default shipping address object
+    <SpreeAddress />
+  </ResponseField>
+
+  <ResponseField name="tag_list" type="array">
+    User tags (tags are used manageable by store admins)
+    Example:
+
+    ```ruby
+    ["vip", "wholesale"]
+    ```
+  </ResponseField>
+</Expandable>

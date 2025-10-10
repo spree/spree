@@ -1,0 +1,3 @@
+<%= turbo_frame_tag :checkout_lock_version do %>
+  <%= hidden_field_tag 'order[state_lock_version]', order.state_lock_version %>
+<% end %>

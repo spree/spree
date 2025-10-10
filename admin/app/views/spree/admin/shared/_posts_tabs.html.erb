@@ -1,0 +1,8 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:posts) %>
+<% end %>
+
+<% content_for(:page_tabs) do %>
+  <%= nav_item(Spree.t(:posts), spree.admin_posts_path) if can?(:manage, Spree::Post) %>
+  <%= nav_item(Spree.t(:categories), spree.admin_post_categories_path) if can?(:manage, Spree::PostCategory) %>
+<% end %>

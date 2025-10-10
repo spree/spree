@@ -1,0 +1,17 @@
+<%= render 'spree/admin/promotions/header' %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:coupon_codes_actions_partials) %>
+<% end %>
+
+<%= render_admin_partials(:coupon_codes_header_partials) %>
+
+<div class="row">
+  <div class="col-12 col-lg-8">
+    <%= render 'spree/admin/shared/index_table', new_object_url: nil %>
+  </div>
+
+  <div class="col-12 col-lg-4">
+    <%= render 'spree/admin/promotions/sidebar' %>
+  </div>
+</div>

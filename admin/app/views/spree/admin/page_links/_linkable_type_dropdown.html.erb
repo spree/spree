@@ -1,0 +1,15 @@
+<% if page_link.linkable_type == 'Spree::Product' %>
+  <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.select_options_admin_products_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
+<% elsif page_link.linkable_type == 'Spree::Taxon' %>
+  <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json, with_automatic: true), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
+<% elsif page_link.linkable_type == 'Spree::Post' %>
+  <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.select_options_admin_posts_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
+<% elsif page_link.linkable_type == 'Spree::Page' %>
+  <%= select_tag "#{form_name}[linkable_id]", options_for_select(all_linkable_pages, page_link.linkable_id), { data: { controller: 'autocomplete-select', action: 'auto-submit#submit' } } %>
+<% elsif page_link.linkable_type == 'Spree::Policy' %>
+  <%= select_tag "#{form_name}[linkable_id]", options_for_select(all_linkable_policies, page_link.linkable_id), { data: { controller: 'autocomplete-select', action: 'auto-submit#submit' } } %>
+<% elsif page_link.linkable_type == 'Spree::Vendor' %>
+  <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-100', url: spree.select_options_admin_vendors_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
+<% else %>
+  <%= text_field_tag "#{form_name}[url]", page_link.url, class: "form-control", required: true, placeholder: 'eg. google.com', data: { action: 'blur->auto-submit#submit' } %>
+<% end %>

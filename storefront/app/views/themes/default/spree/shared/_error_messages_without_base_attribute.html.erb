@@ -1,0 +1,15 @@
+<% if target && target.errors.any? %>
+  <div id="errorExplanation" class="alert-error text-center mb-4 p-2">
+    <ul>
+      <% target.errors.messages.each do |msg| %>
+        <li>
+          <% if msg[0] != :base && !msg[0].to_s.ends_with?(".base") %>
+            <%= target.errors.full_messages_for(msg[0]).to_sentence %>
+          <% else %>
+            <%= msg[1].flatten.to_sentence %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

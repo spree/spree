@@ -1,0 +1,23 @@
+<div class="page-container">
+  <div class="card-dialog mx-auto lg:w-1/3 pt-5">
+    <h3 class="mb-5 font-semibold"><%= Spree.t(:contact_us) %></h3>
+    <%= form_for @contact, data: { controller: 'recaptcha-form', recaptcha_form_action_value: 'contacts/create' } do |f| %>
+      <div class="mb-5">
+        <p>
+          <%= f.text_field  :name, required: true, class: "text-input w-full", placeholder: Spree.t(:name) %>
+        </p>
+      </div>
+      <div class="mb-5">
+        <p>
+          <%= f.email_field :email, required: true, class: "text-input w-full", placeholder: Spree.t(:email) %>
+        </p>
+      </div>
+      <div class="mb-5">
+        <p>
+          <%= f.text_area :message, rows: 8, cols: 40, required: true, class: "text-input w-full", placeholder: Spree.t(:send_us_a_message), style: 'min-height: 8rem' %>
+        </p>
+      </div>
+      <%= f.submit Spree.t(:send_message), class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+</div>

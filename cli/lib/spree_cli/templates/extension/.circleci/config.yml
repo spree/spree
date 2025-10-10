@@ -1,0 +1,143 @@
+version: 2.1
+
+defaults: &defaults
+  environment: &environment
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
+  working_directory: ~/spree
+  docker:
+    - image: &ruby_image cimg/ruby:3.3-browsers
+
+run_tests: &run_tests
+  <<: *defaults
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-{{ .Branch }}
+    - run:
+        name: Add keyserver
+        command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
+    - run:
+        name: Install libvips
+        command: sudo apt-get update && sudo apt-get install libvips
+    - run:
+        name: Set bundle path
+        command: bundle config --local path vendor/bundle
+    - run:
+        name: Ensure bundle Install
+        command: |
+          bundle check || bundle install
+    - run:
+        name: Create test app
+        command: |
+          bundle exec rake test_app
+    - run:
+        name: Run Rspec
+        command: |
+          TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+          bundle exec rspec --format documentation \
+                            --format RspecJunitFormatter \
+                            -o ~/rspec/rspec.xml \
+                            -- ${TESTFILES}
+    - store_test_results:
+        path: ~/rspec
+    - store_artifacts:
+        path: tmp/capybara
+
+jobs:
+  bundle:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-{{ .Branch }}
+      - run:
+          name: Add keyserver
+          command: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4EB27DB2A3B88B8B
+      - run:
+          name: Install libvips
+          command: sudo apt-get update && sudo apt-get install libvips
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Bundle Install
+          command: |
+            bundle check || bundle install
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: spree-bundle-{{ .Branch }}
+
+  tests_postgres: &tests_postgres
+    <<: *run_tests
+    environment: &postgres_environment
+      <<: *environment
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+    docker:
+      - image: *ruby_image
+      - image: &postgres_image cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
+
+  tests_mysql: &tests_mysql
+    <<: *run_tests
+    environment: &mysql_environment
+      <<: *environment
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      COVERAGE: true
+      COVERAGE_DIR: /tmp/workspace/simplecov
+    docker:
+      - image: *ruby_image
+      - image: &mysql_image cimg/mysql:8.0
+
+  brakeman:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-{{ .Branch }}
+      - run:
+          name: Set bundle path
+          command: bundle config --local path vendor/bundle
+      - run:
+          name: Ensure bundle Install
+          command: |
+            bundle check || bundle install
+      - run:
+          name: Brakeman
+          command: bundle exec brakeman --exit-on-warn --exit-on-error -o brakeman.json -o brakeman.html
+      - run:
+          name: Move brakeman reports to artifacts directory
+          command: |
+            mkdir -p /tmp/test-artifacts/
+            mv brakeman.json /tmp/test-artifacts/
+            mv brakeman.html /tmp/test-artifacts/
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: brakeman-reports
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - bundle
+      - tests_postgres:
+          requires:
+            - bundle
+      - tests_mysql:
+          requires:
+            - bundle
+      - brakeman:
+          requires:
+            - bundle

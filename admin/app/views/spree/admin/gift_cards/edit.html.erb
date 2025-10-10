@@ -1,0 +1,20 @@
+<%= turbo_frame_tag :gift_card_settings do %>
+  <%= form_for [:admin, @user, @object] do |f| %>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between">
+        <h5 class="card-title">
+          <%= Spree.t(:settings) %>
+        </h5>
+      </div>
+      <div class="card-body">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
+        <%= render 'form', f: f %>
+      </div>
+      <div class="card-footer d-flex justify-content-between">
+        <%= turbo_save_button_tag Spree.t('actions.update') %>
+
+        <%= link_to Spree.t('actions.discard'), spree.admin_gift_card_path(@object), class: 'btn btn-light' %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

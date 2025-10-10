@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.label :user_ids_to_add, Spree.t('user_rule.choose_users') %>
+  <%= f.select :user_ids_to_add,
+              Spree.user_class.pluck(:email, :id),
+              { selected: f.object.user_ids },
+              { multiple: true, data: { controller: 'autocomplete-select' }, required: true } %>
+</div>

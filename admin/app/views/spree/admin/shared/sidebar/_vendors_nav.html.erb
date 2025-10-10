@@ -1,0 +1,17 @@
+<% if can?(:manage, current_store) %>
+  <% if enterprise_edition? %>
+    <%= render_admin_partials(:vendors_nav_partials) %>
+  <% else %>
+    <li class="nav-item">
+      <%= external_link_to nil, 'https://spreecommerce.org/pricing', class: 'nav-link d-flex align-items-center w-100', data: { controller: 'tooltip' } do %>
+        <%= icon 'heart-handshake' %>
+        <%= Spree.t(:vendors) %>
+
+        <span class="badge ml-auto rounded-pill">
+          Enterprise
+        </span>
+        <%= tooltip('This feature is part of the Enterprise Edition.') %>
+      <% end %>
+    </li>
+  <% end %>
+<% end%>

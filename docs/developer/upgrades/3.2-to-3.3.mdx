@@ -1,0 +1,70 @@
+---
+title: 3.2 to 3.3
+section: upgrades
+order: 7
+description: 'This guide covers upgrading a 3.2 Spree store, to a 3.3 store.'
+---
+
+### Update your Rails version to 5.1
+
+Spree 3.3 requires Rails 5.1 at a minimum. Please follow the [official Rails guide](http://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-0-to-rails-5-1) to upgrade your application.
+
+### Update gems
+
+```bash
+bundle update
+```
+
+### Install missing migrations
+
+```bash
+rake railties:install:migrations
+```
+
+### Run migrations
+
+```bash
+rails db:migrate
+```
+
+### Include `UserMethods` in your `User` class
+
+With this release, we're not including this automatically. You need to do it manually if you're not using `spree_auth_devise`.
+
+You need to include `Spree::UserMethods` in your user class, eg.
+
+```ruby
+class User
+  include UserAddress
+  include UserMethods
+  include UserPaymentSource
+end
+```
+
+### Update `aws-sdk` gem to `>= 2.0`
+
+Spree 3.3 comes with paperclip 5.1 support so if you're using Amazon S3 storage you need to change in your Gemfile, from:
+
+```ruby
+gem 'aws-sdk', '< 2.0'
+```
+
+to:
+
+```ruby
+gem 'aws-sdk', '>= 2.0'
+```
+
+and run `bundle update aws-sdk`
+
+In your paperclip configuration, you also need to specify `s3_region` attribute eg. [https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3_storage.md\#L27](https://github.com/spree/spree/blame/master/guides/content/developer/customization/s3_storage#L27)
+
+See also [RubyThursday episode](https://rubythursday.com/episodes/ruby-snack-27-upgrade-paperclip-and-aws-sdk-in-prep-for-rails-5) walkthrough of upgrading paperclip in your project.
+
+### Add jquery.validate to your project if you've used it directly from Spree
+
+If your application.js file includes line `//= require jquery.validate/jquery.validate.min` you will need to add this file manually to your project because this library was [removed from Spree in favor of native HTML5 validation](https://github.com/spree/spree/pull/8173).
+
+## Read the release notes
+
+For information about changes contained within this release, please read the [3.3.0 Release Notes](https://github.com/spree/spree/releases/tag/v3.3.0).

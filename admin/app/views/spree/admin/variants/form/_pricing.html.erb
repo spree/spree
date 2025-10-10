@@ -1,0 +1,49 @@
+<div class="card mb-4" data-product-form-target="pricesForm">
+  <div class="card-header d-flex align-items-center justify-content-between">
+    <h5 class="card-title">
+      <%= Spree.t(:pricing) %>
+    </h5>
+
+    <% if can?(:manage, Spree::Store) %>
+      <%= link_to_with_icon 'adjustments', Spree.t('admin.manage_currencies'), spree.edit_admin_store_path(section: 'general-settings'), class: 'btn btn-sm btn-light' %>
+    <% end %>
+  </div>
+  <div class="card-body p-0">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col"><%= Spree.t(:currency) %></th>
+          <th scope="col">
+            <%= Spree.t(:amount) %>
+          </th>
+          <th scope="col">
+            <%= Spree.t(:compare_at_amount) %>
+            <%= help_bubble(Spree.t('admin.variants_form.compare_at_price_description')) %>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :prices do |price_form| %>
+          <%= price_form.hidden_field :id if price_form.object.persisted? %>
+          <%= price_form.hidden_field :currency %>
+          <tr>
+            <td><%= price_form.object.currency %></td>
+            <td>
+              <div class="form-control align-items-center py-0 focus-shadow focus-border mr-2 price-input-container d-flex">
+                <%= price_form.text_field :amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: price_form.object.amount.present? ? Spree::Money.new(price_form.object.amount, currency: price_form.object.currency, symbol: '').to_s : '' %>
+                <span><%= currency_symbol(price_form.object.currency) %></span>
+              </div>
+            </td>
+            <td>
+              <div class="form-control align-items-center py-0 focus-shadow focus-border mr-2 price-input-container d-flex">
+                <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: price_form.object.compare_at_amount.present? ? Spree::Money.new(price_form.object.compare_at_amount, currency: price_form.object.currency, symbol: '').to_s : '' %>
+                <span><%= currency_symbol(price_form.object.currency) %></span>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+

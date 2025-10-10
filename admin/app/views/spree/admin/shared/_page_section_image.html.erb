@@ -1,0 +1,7 @@
+<%= render 'active_storage/upload_form', form: f, field_name: :asset, width: 400, height: 128, auto_submit: true %>
+<% if f.object.has_preference?(:image_alt) %>
+  <div class="form-group">
+    <%= f.label :preferred_image_alt, Spree.t(:alt_text) %>
+    <%= f.text_field :preferred_image_alt, data: { action: 'auto-submit#submit' }, class: 'form-control' %>
+  </div>
+<% end %>

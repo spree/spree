@@ -1,0 +1,59 @@
+<% use_variant ||= false %>
+<% sold_out ||= !product.available? %>
+<% price_class ||= ''%>
+<% price_container_class ||= '' %>
+<% selected_variant ||= nil %>
+<div class="<%= price_class %>">
+  <div class="flex flex-col gap-3 <%= price_container_class %>">
+    <%
+      if use_variant
+        target = selected_variant
+        sold_out = selected_variant.nil?
+        if sold_out
+          target = @variant_from_options
+          sold_out = @variant_from_options.nil?
+        end
+      else
+        target = product
+        sold_out = !product.available?
+      end
+
+      target ||= product
+
+      price = target.price_in(current_currency)
+      money_price = price.display_amount
+
+      if target.is_a?(Spree::Product) && !use_variant && product.price_varies?(current_currency)
+        price = target.lowest_price(current_currency)
+        money_price = price.display_amount
+        money_price = "#{Spree.t(:from)}: #{money_price}"
+      end
+    %>
+    <div>
+      <% if price.compare_at_amount.present? && price.compare_at_amount > price.amount %>
+        <span class="hidden">
+          <%= Spree.t(:regular_price) %>
+        </span>
+        <p class="inline pr-2 opacity-50 line-through">
+          <%= price.display_compare_at_amount %>
+        </p>
+        <span class="hidden pr-2">
+          <%= Spree.t(:sale_price) %>
+        </span>
+        <p class="inline text-danger">
+          <%= money_price %>
+        </p>
+      <% else %>
+        <span class="hidden">
+          <%= Spree.t(:regular_price) %>
+        </span>
+
+        <% if price&.amount.nil? %>
+          <span class="uppercase"><%= Spree.t(:not_available) %></span>
+        <% else %>
+          <p><%= money_price %></p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<%= render 'spree/admin/shared/team_nav' %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:roles_actions_partials) %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_role), new_object_url, class: "btn btn-primary" if can? :create, Spree::Role %>
+<% end %>
+
+<%= render_admin_partials(:roles_header_partials) %>
+
+<div class="card-lg">
+  <% if @collection.any? %>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+            <th scope="col"><%= Spree.t(:permissions) %></th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collection.each do |role| %>
+            <tr id="<%= spree_dom_id role %>">
+              <td class="w-20">
+                <code><%= role.name %></code>
+              </td>
+              <td class="w-80">
+                <%= Spree.t(:all) %>
+              </td>
+              <td class="actions">
+                <%= link_to_edit(role, data: { turbo_frame: '_top' }) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <%= render 'spree/admin/shared/no_resource_found' %>
+  <% end %>
+</div>

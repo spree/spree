@@ -1,0 +1,176 @@
+---
+title: Admin Dashboard Helper Methods
+sidebarTitle: Helper Methods
+---
+
+import SpreeStore from '/snippets/objects/spree_store.mdx'
+import SpreeVendor from '/snippets/objects/spree_vendor.mdx'
+
+Here you can find a list of helper methods that are available in the Admin Dashboard that you can use in every template.
+
+<Warning>
+The list is incomplete.
+</Warning>
+
+## `active_badge`
+
+Displays a badge with a color based on the condition.
+
+```erb
+<%= active_badge(order.sent_to_erp_at.blank?) %>
+```
+
+If the condition is true, it will render
+
+```html
+<span class="badge badge-success">Active</span>
+```
+
+If the condition is false, it will render
+
+```html
+<span class="badge badge-danger">Inactive</span>
+```
+
+You can also pass a custom label to the badge:
+
+<ParamField query="label" type="string">
+  Custom text to display in the badge. If not provided, will show "Active"/"Inactive" based on the condition.
+</ParamField>
+
+## `active_link_to_with_icon`
+
+Same as [link_to_with_icon](/developer/admin/helper-methods#link-to-with-icon), but it will add the `active` class if the current page is the same as the link.
+
+```erb
+<%= active_link_to_with_icon 'eye', "View Order in ERP", spree.admin_order_path(order), class: "btn btn-primary" %>
+```
+
+You can also pass a custom `active` condition.
+
+```erb
+<%= active_link_to_with_icon 'eye', "View Order in ERP", spree.admin_order_path(order), class: "btn btn-primary", active: order.sent_to_erp_at.blank? %>
+```
+
+## `current_currency`
+
+Returns the currently selected currency. By default in Admin Dashboard this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
+
+```erb
+<%= current_currency %>
+```
+
+will return
+
+```
+USD
+```
+
+## `current_store`
+
+<ResponseField name="current_store" type="Spree::Store" description="The current store object.">
+  <SpreeStore />
+</ResponseField>
+
+Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+
+## `current_vendor`
+
+<Info>
+  Available only in [Spree Enterprise Edition](https://spreecommerce.com/pricing).
+</Info>
+
+<ResponseField name="current_vendor" type="Spree::Vendor" description="The current vendor object.">
+  <SpreeVendor />
+</ResponseField>
+
+## `icon`
+
+Displays an icon.
+
+```erb
+<%= icon('eye') %>
+```
+
+Will render
+
+```html
+<i class="ti ti-eye"></i>
+```
+
+We use [Tabler Icons](https://tabler.io/icons) library for icons.
+
+You can also pass additional options such as:
+
+<ParamField query="class" type="string">
+  Add additional CSS classes to the icon
+</ParamField>
+
+<ParamField query="style" type="string">
+  Add additional inline styles to the icon
+</ParamField>
+
+<ParamField query="height" type="integer">
+  Set the height of the icon in pixels
+</ParamField>
+
+```erb
+<%= icon('eye', class: 'mr-2', height: 20, style: 'color: red;') %>
+```
+
+will render
+
+```html
+<i class="ti ti-eye mr-2" style="font-size: 20px; color: red;"></i>
+```
+
+## `local_time`
+
+Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+
+```erb
+<%= local_time(order.sent_to_erp_at) %>
+```
+
+Provided by [local_time gem](https://github.com/basecamp/local_time).
+
+## `link_to_with_icon`
+
+Creates a link with an icon.
+
+```erb
+<%= link_to_with_icon 'eye', "View Order in ERP", "https://erp.com/orders/#{order.number}", class: "btn btn-primary" %>
+```
+
+* `eye` is the icon name.
+* `View Order in ERP` is the link text.
+* `https://erp.com/orders/#{order.number}` is the link url. For internal links, please use `spree.` routes helper, eg. `spree.admin_order_path(order)`.
+* `btn btn-primary` is the bootstrap class for styling the link
+
+## `supported_currencies`
+
+Returns the list of supported currencies for the current store as an array of strings.
+
+```erb
+<%= supported_currencies %>
+```
+
+will return
+
+```ruby
+["USD", "EUR"]
+```
+
+## `try_spree_current_user`
+
+Returns the current user object (class depends on the `Spree.admin_user_class` configuration). If the user is not signed in, it will return `nil`.
+
+```erb
+<%= try_spree_current_user.email %>
+```
+
+If you want to check if the user is signed in, you can use the following:
+
+```erb
+<%= try_spree_current_user.present? %>
+```

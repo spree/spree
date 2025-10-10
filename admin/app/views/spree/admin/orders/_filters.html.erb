@@ -1,0 +1,108 @@
+<% frame_name ||= nil %>
+
+<% search_form_path = if @user.present?
+                        spree.admin_user_orders_path(@user)
+                      elsif @vendor.present? && spree.respond_to?(:admin_vendor_orders_path)
+                        spree.admin_vendor_orders_path(@vendor)
+                      elsif controller_name == 'checkouts'
+                        spree.admin_checkouts_path
+                      else
+                        spree.admin_orders_path
+                      end %>
+
+<%= search_form_for [:admin, @vendor || @user, @search],
+  url: search_form_path,
+  class: "filter-wrap",
+  data: {
+    controller: "filters dropdown",
+    filters_url_value: request.url
+  } do |f| %>
+  <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
+
+  <div class="d-flex flex-column flex-lg-row gap-2">
+    <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search %>
+
+    <% if controller_name == 'checkouts' %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[created_at_gt]",
+      date_to_input_name: "q[created_at_lt]",
+      date_from_value: params.dig(:q, :created_at_gt),
+      date_to_value: params.dig(:q, :created_at_lt),
+      dropdown_direction: "right" %>
+    <% else %>
+      <%= render "spree/admin/shared/calendar_range_picker",
+      date_from_input_name: "q[completed_at_gt]",
+      date_to_input_name: "q[completed_at_lt]",
+      date_from_value: params.dig(:q, :completed_at_gt),
+      date_to_value: params.dig(:q, :completed_at_lt),
+      dropdown_direction: "right" %>
+    <% end %>
+
+    <%= render "spree/admin/orders/table_filter_dropdown" %>
+    <%= render 'spree/admin/shared/filters_button' %>
+  </div>
+  <div data-dropdown-target="menu" id="table-filter" class="hidden">
+    <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
+    <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
+    <%= f.hidden_field :user_id_eq, value: @user.try(:id) %>
+    <%= f.hidden_field :shipment_state_eq, value: params.dig(:q, :shipment_state_eq) %>
+    <% Array(params.dig(:q, :shipment_state_not_in)).each do |state| %>
+      <%= hidden_field_tag 'q[shipment_state_not_in][]', state %>
+    <% end %>
+    <%= f.hidden_field :state_eq, value: params.dig(:q, :state_eq) %>
+    <% Array(params.dig(:q, :state_in)).each do |state| %>
+      <%= hidden_field_tag 'q[state_in][]', state %>
+    <% end %>
+    <%= f.hidden_field :refunded, value: params.dig(:q, :refunded) %>
+    <%= f.hidden_field :partially_refunded, value: params.dig(:q, :partially_refunded) %>
+
+
+    <% unless @user %>
+      <div class="form-group">
+        <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
+        <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
+        <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
+      </div>
+      <div class="form-group">
+        <%= label_tag :q_email_eq, Spree.t(:email) %>
+        <%= f.email_field :email_eq, class: "form-control", data: { filters_target: :input } %>
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
+      <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { filters_target: :input } %>
+    </div>
+
+    <div class="form-group">
+      <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+      <%= f.select :promotions_id_in,
+              Spree::Promotion.applied.pluck(:name, :id),
+              { include_blank: true },
+              data: {
+                controller: "autocomplete-select",
+                filters_target: :input,
+              } %>
+    </div>
+    <div class="form-group">
+      <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+      <% payment_state_options = Spree::Order::PAYMENT_STATES.map { |state| [Spree.t("payment_states.#{state}"), state] } %>
+      <% payment_state_options += [
+            [Spree.t('payment_states.refunded'), 'refunded'],
+            [Spree.t('payment_states.partially_refunded'), 'partially_refunded']
+          ] %>
+      <%= f.select :payment_state_eq,
+                    payment_state_options,
+                    { include_blank: true },
+                    { class: "custom-select", data: { filters_target: :input } } %>
+    </div>
+
+    <%= render_admin_partials(:orders_filters_partials, f: f) %>
+    <%= render 'spree/admin/shared/filter_submit' %>
+  </div>
+
+  <%= render "spree/admin/shared/filter_badge_template" %>
+  <div data-filters-target="badgesContainer" class="filter-badges-container"></div>
+<% end %>

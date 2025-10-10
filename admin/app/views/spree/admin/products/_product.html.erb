@@ -1,0 +1,29 @@
+<tr id="<%= dom_id product %>" data-controller="row-link">
+  <td class="pr-0 w-5">
+    <%= bulk_operations_checkbox(product) %>
+  </td>
+  <td scope="row" class="w-40 py-0 text-wrap" data-action="click->row-link#openLink">
+    <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center w-100 text-decoration-none h-100 py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
+      <div class="mr-3">
+        <%= render 'spree/admin/shared/product_image', object: product %>
+      </div>
+      <span class="text-dark font-weight-semibold">
+        <%= product.name %>
+      </span>
+    <% end %>
+  </td>
+  <%= render 'spree/admin/products/product_status', product: product %>
+  <td class="text-muted w-20 cursor-pointer text-wrap" data-action="click->row-link#openLink">
+    <%= display_inventory(product) %>
+  </td>
+  <% if defined?(current_vendor) %>
+    <td class="d-vendor w-15 cursor-pointer" data-action="click->row-link#openLink">
+      <%= product.vendor&.name %>
+    </td>
+  <% end %>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= display_admin_price(product) %>
+  </td>
+
+  <%= render_admin_partials(:products_table_row_partials, product: product) %>
+</tr>

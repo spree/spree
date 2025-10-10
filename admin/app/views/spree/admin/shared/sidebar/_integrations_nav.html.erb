@@ -1,0 +1,3 @@
+<% if can?(:manage, Spree::Integration) %>
+  <%= nav_item(Spree.t(:integrations), spree.admin_integrations_path, icon: 'plug-connected') %>
+<% end %>

@@ -1,0 +1,41 @@
+---
+en:
+  spree:
+    api:
+      gateway_error: 'There was a problem with the payment gateway: %{text}'
+      invalid_api_key: Invalid API key (%{key}) specified.
+      invalid_resource: Invalid resource. Please fix errors and try again.
+      invalid_taxonomy_id: Invalid taxonomy id.
+      must_specify_api_key: You must specify an API key.
+      negative_quantity: quantity is negative
+      order:
+        could_not_transition: The order could not be transitioned. Please fix the errors and try again.
+        insufficient_quantity: An item in your cart has become unavailable.
+        invalid_shipping_method: Invalid shipping method specified.
+      payment:
+        credit_over_limit: This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number.
+        update_forbidden: This payment cannot be updated because it is %{state}.
+      resource_not_found: The resource you were looking for could not be found.
+      shipment:
+        cannot_ready: Cannot ready shipment.
+      shipment_transfer_errors_occurred: 'Following errors occurred while attempting this action:'
+      shipment_transfer_success: Variants successfully transferred
+      stock_location_required: A stock_location_id parameter must be provided in order to retrieve stock movements.
+      unauthorized: You are not authorized to perform that action.
+      v2:
+        cart:
+          no_coupon_code: No coupon code provided and the Order doesn't have any coupon code promotions applied
+          wrong_quantity: Quantity has to be greater than 0
+        digitals:
+          missing_file: 'Missing Digital Item: attachment'
+          unauthorized: Error, you are not authorized to access this asset
+        gift_card:
+          amount_not_valid: Gift card amount is not valid
+          not_found: Gift card is not found
+        metadata:
+          invalid_params: Public and private metadata parameters should be objects
+        wishlist:
+          errors:
+            the_wishlist_could_not_be_destroyed: The wishlist could not be destroyed.
+          wrong_quantity: Quantity has to be greater than 0
+      wrong_shipment_target: target shipment is the same as original shipment

@@ -1,0 +1,17 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name, autofocus: f.object.new_record?, required: true %>
+
+    <%= f.spree_select :type,
+              options_for_select(
+                Spree::ReimbursementType::KINDS.map do |kind|
+                  [kind.demodulize.titleize, kind]
+                end,
+              ),
+              { include_blank: false, label: Spree.t(:type), autocomplete: true } %>
+
+    <%= f.spree_check_box :active, label: Spree.t(:active) %>
+
+    <%= f.spree_check_box :mutable, label: Spree.t(:mutable) %>
+  </div>
+</div>

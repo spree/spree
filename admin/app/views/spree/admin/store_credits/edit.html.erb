@@ -1,0 +1,21 @@
+<%= turbo_frame_tag :store_credit_details do %>
+  <%= form_for @store_credit, url: spree.admin_user_store_credit_path(@user, @store_credit), method: :put do |f| %>
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title">
+          <%= Spree.t(:details) %>
+        </h5>
+
+        <%= link_to Spree.t('actions.discard'), spree.admin_user_store_credit_path(@user, @store_credit), class: 'btn btn-sm btn-light' %>
+      </div>
+
+      <div class="card-body">
+        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store_credit } %>
+        <%= render 'form', f: f %>
+      </div>
+      <div class="card-footer">
+        <%= render 'spree/admin/shared/edit_resource_links', f: f, destroy_url: spree.admin_user_store_credit_path(@user, @store_credit) %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,71 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:customers) %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= render_admin_partials(:users_actions_partials) %>
+  <%= link_to_export_modal %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_customer), spree.new_admin_user_path, class: "btn btn-primary" if can? :create, Spree::user_class %>
+<% end %>
+
+<%= render_admin_partials(:users_header_partials) %>
+
+<div class="card-lg">
+  <%= turbo_frame_tag "customers", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+    <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Customers %>
+    <%= render "spree/admin/users/filters" %>
+
+    <% if @collection.any? %>
+      <div data-controller="bulk-operation" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
+        <%= form_tag spree.admin_users_path, data: { 'bulk-operation-target': 'form' } do %>
+          <%= render 'spree/admin/shared/bulk_modal' %>
+          <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
+            <div class="bulk-panel-container">
+              <%= bulk_operations_counter %>
+
+              <% if can?(:manage_tags, Spree.user_class) %>
+                <%= bulk_action_link(
+                  Spree.t("admin.bulk_ops.users.title.add_tags"),
+                  spree.bulk_modal_admin_users_path(kind: :add_tags),
+                  icon: "tag-plus",
+                  url: spree.bulk_add_tags_admin_users_path
+                ) %>
+                <%= bulk_action_link(
+                  Spree.t("admin.bulk_ops.users.title.remove_tags"),
+                  spree.bulk_modal_admin_users_path(kind: :remove_tags),
+                  icon: "tag-minus",
+                  url: spree.bulk_remove_tags_admin_users_path
+                ) %>
+              <% end %>
+              <%= bulk_operations_close_button %>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table" id="listing_users">
+              <thead>
+                <tr data-hook="admin_users_index_headers">
+                  <th scope="col" class="pr-0 w-5">
+                    <%= bulk_operations_select_all_checkbox %>
+                  </th>
+                  <th scope="col"><%= Spree.t(:name) %></th>
+                  <th scope="col"><%= Spree.t(:email_marketing) %></th>
+                  <th scope="col"><%= Spree.t(:location) %></th>
+                  <th scope="col"><%= Spree.t('admin.num_orders') %></th>
+                  <th scope="col"><%= Spree.t('admin.amount_spent') %></th>
+                  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render collection: @collection, partial: "spree/admin/users/user", cached: spree_base_cache_scope %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection if @collection.any? %>
+    <% else %>
+      <%= render "spree/admin/shared/no_resource_found" %>
+    <% end %>
+  <% end %>
+</div>

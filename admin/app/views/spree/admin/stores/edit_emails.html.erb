@@ -1,0 +1,11 @@
+<%= turbo_frame_tag :set_customer_support_email, class: 'w-100' do %>
+  <%= form_for current_store, url: spree.admin_store_path, as: :store do |f| %>
+    <div class="form-group">
+      <%= f.label :customer_support_email, Spree.t(:customer_support_email) %>
+      <%= f.email_field :customer_support_email, class: 'form-control', required: true %>
+    </div>
+    <div class="d-flex justify-content-between">
+      <%= turbo_save_button_tag %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,31 @@
+<fieldset>
+  <legend><%= Spree.t(:store_credits) %></legend>
+  <div class="table-responsive border rounded bg-white">
+    <table class="table table-condensed border rounded">
+      <tr>
+        <th width="20%"><%= Spree.t(:used) %>:</th>
+        <td><%= payment.source.display_amount_used %></td>
+      </tr>
+      <tr>
+        <th scope="col"><%= Spree.t(:amount) %>:</th>
+        <td><%= payment.source.display_amount %></td>
+      </tr>
+      <tr>
+        <th scope="col"><%= Spree.t(:memo) %>:</th>
+        <td><%= payment.source.memo %></td>
+      </tr>
+      <tr>
+        <th scope="col"><%= Spree.t(:type) %>:</th>
+        <td><%= payment.source.category_name %></td>
+      </tr>
+      <tr>
+        <th scope="col"><%= Spree.t(:created_by) %>:</th>
+        <td><%= payment.source.created_by_email %></td>
+      </tr>
+      <tr>
+        <th scope="col"><%= Spree.t(:issued_on) %>:</th>
+        <td><%= spree_time(payment.source.created_at) %></td>
+      </tr>
+    </table>
+  </div>
+</fieldset>

@@ -1,0 +1,202 @@
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0
+  Exclude:
+    - "**/sandbox/**/*"
+    - "**/db/migrate/*"
+    - "**/Gemfile"
+    - "**/Gemfile.lock"
+    - "**/Rakefile"
+    - "**/rails"
+    - "**/*.gemspec"
+    - "**/dummy/**/*"
+    - "**/vendor/**/*"
+    - "**/spec_helper.rb"
+    - "**/templates/**/*"
+
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+Layout/ParameterAlignment:
+  Enabled: false
+
+Metrics/ClassLength:
+  CountComments: false
+  Max: 150
+
+Metrics/ModuleLength:
+  CountComments: false
+  Max: 250
+  Exclude:
+    - "**/spec/**/*"
+
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 150
+  Exclude:
+    - "**/spec/**/*"
+
+Metrics/MethodLength:
+  CountComments: false
+  Max: 50
+
+Metrics/BlockLength:
+  CountComments: false
+  Max: 50
+  Exclude:
+    - "**/spec/**/*"
+    - "**/*.rake"
+    - "**/factories/**/*"
+    - "**/config/routes.rb"
+    - "**/lib/**/testing_support/**/*"
+
+Metrics/AbcSize:
+  Max: 45
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+  Enabled: true
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Exclude:
+    - "api/spec/integration/**/*.rb"
+    - "api/lib/spree/api/testing_support/v2/platform_contexts.rb"
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/ClassVars:
+  Exclude:
+    - "core/lib/spree/permitted_attributes.rb"
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+Style/SymbolProc:
+  Exclude:
+    - "**/app/serializers/**/*"
+
+Style/GuardClause:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: false
+
+Style/BarePercentLiterals:
+  Enabled: false
+
+Style/MutableConstant:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Style/RedundantPercentQ:
+  Enabled: false
+
+Lint/ParenthesesAsGroupedExpression:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/AndOr:
+  Exclude:
+    - "**/*controller.rb"
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
+
+Style/Alias:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 7
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - "**/spec/**/*"
+
+Style/NumericLiterals:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/MessageChain:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/ExpectInHook:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
+
+RSpec/VoidExpect:
+  Enabled: false
+
+RSpec/BeforeAfterAll:
+  Enabled: false
