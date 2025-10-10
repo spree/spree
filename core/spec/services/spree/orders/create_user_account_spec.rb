@@ -44,5 +44,15 @@ describe Spree::Orders::CreateUserAccount do
     it 'does not create a new user' do
       expect { subject }.to change { Spree.user_class.count }.by(0)
     end
+
+    it 'assigns the user to the order' do
+      subject
+      expect(order.reload.user).to eq(user)
+    end
+
+    it 'returns success with the user' do
+      expect(subject).to be_success
+      expect(subject.value).to eq(user)
+    end
   end
 end

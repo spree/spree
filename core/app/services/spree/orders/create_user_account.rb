@@ -7,7 +7,11 @@ module Spree
 
       def call(order:, accepts_email_marketing: false)
         existing_user = Spree.user_class.find_by(email: order.email)
-        return existing_user if existing_user.present?
+        if existing_user.present?
+          order.update_columns(user_id: existing_user.id, updated_at: Time.current)
+          order.user = existing_user
+          return success(existing_user)
+        end
 
         user = create_new_user(order, accepts_email_marketing)
         return failure(:user_creation_failed) unless user.persisted?
