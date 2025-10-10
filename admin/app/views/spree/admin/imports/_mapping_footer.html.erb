@@ -7,7 +7,7 @@
   </div>
 
   <span data-controller="tooltip">
-    <%= button_to Spree.t(:mark_as_mapped), spree.admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.can_be_marked_as_mapped? %>
+    <%= button_to Spree.t(:mark_as_mapped), spree.mark_as_mapped_admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.can_be_marked_as_mapped? %>
     <%= tooltip('Please map all the required fields to continue.') %>
   </span>
 </footer>
