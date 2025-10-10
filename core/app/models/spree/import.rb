@@ -87,8 +87,8 @@ module Spree
       import_schema.fields
     end
 
-    def schema_fields_without_already_mapped
-      schema_fields.reject { |field| mappings.mapped.exists?(schema_field: field[:name]) }
+    def unmapped_file_columns
+      csv_headers.reject { |header| mappings.mapped.exists?(file_column: header) }
     end
 
     def required_fields
