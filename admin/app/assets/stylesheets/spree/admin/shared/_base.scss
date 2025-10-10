@@ -698,6 +698,7 @@ div.uppy-Root {
   gap: 0.5rem;
   align-items: center;
   
+  
   i {
     opacity: 0.5;
   }
@@ -706,9 +707,12 @@ div.uppy-Root {
     a {
       color: $gray-500;
       text-decoration: none;
+      border-radius: $border-radius;
+      padding: 0.35rem 0.5rem;
 
       &:hover {
         color: $primary;
+        background-color: $gray-25;
       }
     }
   }
