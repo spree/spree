@@ -87,7 +87,7 @@ $select-spinner-border-color:					$select-color-border !default;
 .#{$select-ns}-wrapper.single{
 	.#{$select-ns}-control {
 		&, input {
-			cursor: pointer;
+			cursor: default;
 		}
 	}
 }

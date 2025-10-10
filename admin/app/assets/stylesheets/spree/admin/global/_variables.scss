@@ -12,7 +12,7 @@ $gray-700: #4D4D4D !default;
 $gray-800: #333333 !default;
 $gray-900: #1A1A1A !default;
 
-$light: $gray-50 !default;
+$light: $gray-25 !default;
 
 $primary: #061932 !default;
 $black: #000000 !default;
@@ -216,6 +216,6 @@ $list-group-item-padding-x:         1rem !default;
 $header-bg: $body-bg !default;
 $header-height: 60px !default;
 $sidebar-width: 220px !default;
-$sidebar-bg: $gray-25 !default;
+$sidebar-bg: $light !default;
 
 $progress-bar-bg: $blue !default;
