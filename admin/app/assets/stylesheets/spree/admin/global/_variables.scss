@@ -112,6 +112,8 @@ $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 $input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
 
+$btn-font-weight: 500 !default;
+
 $card-border-width: 0px !default;
 $card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
 $card-bg: $white !default;
@@ -160,9 +162,10 @@ $display2-weight:             400 !default;
 $display3-weight:             400 !default;
 $display4-weight:             400 !default;
 
+$dropdown-bg: $white !default;
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
-$dropdown-link-hover-bg: $gray-50 !default;
+$dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
 $dropdown-box-shadow:    0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
