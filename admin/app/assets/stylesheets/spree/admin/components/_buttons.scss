@@ -96,7 +96,7 @@ button[disabled]        .show-when-enabled { display: none; }
   border-color: rgba($primary, 0.1);
 
   &:hover, &:focus {
-    border-color: rgba($primary, 0.1) !important;
+    border-color: rgba($primary, 0.2) !important;
     color: $primary !important;
   }
 
