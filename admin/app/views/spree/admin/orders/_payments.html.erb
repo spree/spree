@@ -1,5 +1,5 @@
 <% if can?(:read, Spree::Payment) && (@order.payment_required? && @order.bill_address.present?) || @payments.any? %>
-  <div class="card mb-4 bg-transparent">
+  <div class="card mb-4">
     <div class="card-header d-flex align-items-center border-0">
       <h6 class="card-title">
         <%= icon('credit-card-pay', class: 'mr-2') %>
