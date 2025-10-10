@@ -159,8 +159,8 @@ describe Spree::UserMethods do
 
       it 'returns true if another user also has a role on the store' do
         test_user.add_role(role.name, current_store)
-        another_user = create(:user)
-        another_user.add_role(role.name, current_store)
+        other_user = create(:user)
+        other_user.add_role(role.name, current_store)
 
         expect(subject).to be(true)
       end
