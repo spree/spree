@@ -6,7 +6,7 @@
   <%= render 'spree/admin/imports/mapping_icon', mapping: @import_mapping %>
 <% end %>
 
-<% options = @import_mapping.import.schema_fields_without_already_mapped.map { |field| [Spree.t(field[:name]), field[:name]] } %>
+<% options = @import_mapping.import.unmapped_file_columns.map { |file_column| [file_column, file_column] } %>
 
 <% @import_mapping.import.mappings.where.not(id: @import_mapping.id).each do |mapping| %>
   <%= turbo_stream.replace spree_dom_id(mapping) do %>

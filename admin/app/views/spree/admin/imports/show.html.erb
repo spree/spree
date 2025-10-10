@@ -27,7 +27,7 @@
         <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
       </div>
       <div class="text-wrap w-40 px-2 py-3">
-        <%= Spree.t(mapping.schema_field) %>
+        <%= @import.import_schema.fields.find { |field| field[:name] == mapping.schema_field }[:label] %>
 
         <code class="ml-2"><%= mapping.schema_field %></code>
       </div>
