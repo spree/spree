@@ -1,7 +1,11 @@
 <% cache_unless page_builder_enabled?, [spree_storefront_base_cache_scope.call(section), request.path] do %>
   <% layout = section.preferred_layout %>
   <header
+<<<<<<< HEAD
     class='header-<%= layout %> relative z-50'
+=======
+    class='header-<%= layout %>'
+>>>>>>> 4e180864ff6f2cc1cbee12820fb1d12c56c35919
     data-controller='header toggle-menu slideover <%= "slideover-account" if show_account_pane? %>'
     data-toggle-menu-class='hamburger-visible'
     data-slideover-invisible-class='translate-x-full,opacity-0'
@@ -14,7 +18,11 @@
     <nav
       aria-label='Top'
       style="<%= section_styles(section) %>"
+<<<<<<< HEAD
       class="relative transition-transform duration-300 z-50">
+=======
+      class="relative transition-transform duration-300">
+>>>>>>> 4e180864ff6f2cc1cbee12820fb1d12c56c35919
       <div class='page-container'>
         <div class='flex items-center<%= " lg:items-end" if layout == "logo-centered" %> <%= " lg:items-center" unless layout == "logo-centered" %> justify-between '>
           <% unless layout == 'logo-centered' %>
