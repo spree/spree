@@ -2,11 +2,10 @@ module Spree
   module ImportSchemas
     class Products < Spree::ImportSchema
       FIELDS = [
-        { name: 'product_id', label: 'Product ID', required: true },
+        { name: 'slug', label: 'Slug', required: true },
         { name: 'sku', label: 'SKU', required: true },
         { name: 'name', label: 'Name', required: true },
         { name: 'price', label: 'Price', required: true },
-        { name: 'slug', label: 'Slug' },
         { name: 'status', label: 'Status' },
         { name: 'description', label: 'Description' },
         { name: 'meta_title', label: 'Meta Title' },

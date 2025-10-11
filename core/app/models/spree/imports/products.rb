@@ -5,8 +5,8 @@ module Spree
         true
       end
 
-      def handle_csv_line(record)
-
+      def row_handler_class
+        Spree::Imports::RowHandlers::ProductVariant
       end
     end
   end
