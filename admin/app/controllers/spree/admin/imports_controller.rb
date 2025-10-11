@@ -16,7 +16,7 @@ module Spree
 
       # PUT /admin/imports/:id/mark_as_mapped
       def mark_as_mapped
-        @object.mark_as_mapped if @object.can_be_marked_as_mapped?
+        @object.map! if @object.can_be_marked_as_mapped?
 
         flash[:success] = flash_message_for(@object, :successfully_updated)
         redirect_to spree.admin_import_path(@object)
