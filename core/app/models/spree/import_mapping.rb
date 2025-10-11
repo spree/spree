@@ -30,5 +30,9 @@ module Spree
     def mapped?
       file_column.present?
     end
+
+    def try_to_auto_assign_file_column(csv_headers)
+      self.file_column = csv_headers.find { |header| header.parameterize.downcase.strip == schema_field.parameterize.downcase.strip }
+    end
   end
 end

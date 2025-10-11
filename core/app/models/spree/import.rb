@@ -116,7 +116,10 @@ module Spree
     def csv_headers
       return [] if attachment.blank?
 
-      @csv_headers ||= ::CSV.parse_line(attachment_file_content, col_sep: delimiter)
+      @csv_headers ||= ::CSV.parse_line(
+        attachment_file_content.force_encoding('UTF-8'),
+        col_sep: delimiter
+      )
     end
 
     def csv_body
@@ -133,7 +136,9 @@ module Spree
     # TODO: get mappings from the previous import if it exists, so user won't have to map the same columns again
     def create_mappings
       schema_fields.each do |schema_field|
-        mappings.find_or_create_by!(schema_field: schema_field[:name])
+        mapping = mappings.find_or_create_by!(schema_field: schema_field[:name])
+        mapping.try_to_auto_assign_file_column(csv_headers)
+        mapping.save!
       end
     end
 
