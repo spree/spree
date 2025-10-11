@@ -30,14 +30,47 @@ module Spree
       after_transition to: :completed, do: :mark_import_as_completed
     end
 
+    #
+    # Scopes
+    #
+    scope :pending_and_failed, -> { where(status: %i[pending failed]) }
+    scope :completed, -> { where(status: :completed) }
+
     def mark_import_as_completed
-      import.completed! if import.rows.completed.count == import.rows.count
+      import.complete! if import.rows.completed.count == import.rows.count
     end
 
     def data_json
       @data_json ||= JSON.parse(data)
     rescue JSON::ParserError
       {}
+    end
+
+    def to_schema_hash
+      @to_schema_hash ||= begin
+        mappings = import.mappings.mapped
+        schema_fields = import.schema_fields
+
+        attributes = {}
+        schema_fields.each do |field|
+          attributes[field[:name]] = attribute_by_schema_field(field[:name], mappings, schema_fields)
+        end
+        attributes
+      end
+    end
+
+    def attribute_by_schema_field(schema_field, mappings, schema_fields)
+      mapping = mappings.find { |m| m.schema_field == schema_field }
+      schema_field = schema_fields.find { |f| f[:name] == schema_field }
+      data_json[mapping.file_column]
+    end
+
+    def process!
+      started_processing!
+      self.item = import.row_handler_class.new(self).process!
+      complete!
+    # rescue StandardError => e
+      # fail!(e.message)
     end
   end
 end

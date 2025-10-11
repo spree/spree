@@ -33,8 +33,7 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
       t.belongs_to :import, null: false
 
       t.string :schema_field, null: false
-      t.string :file_column
-      t.string :file_column_key
+      t.string :file_column, index: true
 
       t.timestamps
     end

@@ -83,6 +83,10 @@ module Spree
       "Spree::ImportSchemas::#{type.demodulize}".safe_constantize.new
     end
 
+    def row_handler_class
+      "Spree::ImportRowHandlers::#{type.demodulize.singularize}".safe_constantize
+    end
+
     def schema_fields
       import_schema.fields
     end
