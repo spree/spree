@@ -4,7 +4,7 @@ module Spree
       before_action :set_resource, only: [:edit, :update]
       before_action :load_data, only: [:edit, :update]
       before_action :set_translation_locale, only: [:edit, :update]
-
+      helper_method :normalized_locale
       helper_method :resource_class
 
       def edit; end
