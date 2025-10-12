@@ -9,6 +9,10 @@ module Spree
 
       def edit; end
 
+      def normalized_locale(locale)
+        locale.to_s.downcase.tr('-', '_')
+      end
+
       def update
         if @resource.update(permitted_translation_params)
           flash.now[:success] = flash_message_for(@resource, :successfully_updated)
@@ -33,7 +37,7 @@ module Spree
       end
 
       def translation_fields(klass)
-        klass.translatable_fields.map { |field| "#{field}_#{@selected_translation_locale}" }
+        klass.translatable_fields.map { |field| "#{field}_#{normalized_locale(@selected_translation_locale)}" }
       end
 
       def resource_class
@@ -56,8 +60,13 @@ module Spree
                     end
       end
 
+  
       def set_translation_locale
-        @selected_translation_locale = params[:translation_locale].presence || @locales&.first || current_store.supported_locales_list.first
+        raw_locale = params[:translation_locale].presence ||
+                     @locales&.first ||
+                     current_store.supported_locales_list.first
+
+        @selected_translation_locale = normalized_locale(raw_locale)
       end
 
       def load_data
