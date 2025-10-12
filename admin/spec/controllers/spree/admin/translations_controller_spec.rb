@@ -88,7 +88,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
   end
 
   describe 'Spree::Admin::TranslationsController translation_fields and normalized_locale' do
-    let(:controller_instance) { Spree::Admin::TranslationsController.new }
+    let(:controller_instance) { described_class.new }
     let(:product_class) { Spree::Product }
 
     describe '#normalized_locale' do
