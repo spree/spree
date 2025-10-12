@@ -63,8 +63,9 @@ module Spree
   
       def set_translation_locale
         raw_locale = params[:translation_locale].presence ||
-                     @locales&.first ||
-                     current_store.supported_locales_list.first
+             @locales&.first ||
+             current_store.default_locale ||
+             current_store.supported_locales_list.first
 
         @selected_translation_locale = normalized_locale(raw_locale)
       end
