@@ -3,9 +3,25 @@
     <%= row.row_number %>
   </div>
   <div class="text-wrap w-20 px-2 py-3">
-    <%= Spree.t(row.status) %>
+    <% badge_class = case row.status
+       when 'completed'
+         'success'
+       when 'failed'
+         'danger'
+       else
+         'light'
+       end %>
+    <span class="badge badge-pill badge-<%= badge_class %>">
+      <%= Spree.t(row.status) %>
+    </span>
   </div>
   <div class="w-70 px-2 py-3">
-    <%= row.updated_at %>
+    <% if row.status == 'failed' %>
+      <%= row.validation_errors %>
+    <% elsif row.status == 'completed' && row.item.present? %>
+      <%= render "spree/admin/import_rows/#{row.item_type.demodulize.underscore}", item: row.item %>
+    <% else %>
+      Processing...
+    <% end %>
   </div>
 </div>

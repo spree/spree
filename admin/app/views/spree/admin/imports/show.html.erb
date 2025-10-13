@@ -1,6 +1,6 @@
 <% content_for :steps do %>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center active bg-white font-weight-bold">1. Map fields</li>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center">2. Process rows</li>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'mapping' %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'processing' %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
   <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center">3. Complete</li>
 <% end %>
 
@@ -38,6 +38,6 @@
   </div>
 
   <div id="rows">
-    <%= render collection: @import.rows.includes(:item), partial: 'spree/admin/imports/row' %>
+    <%= render collection: @import.rows.includes(:item), partial: 'spree/admin/imports/row', cached: spree_base_cache_scope %>
   </div>
 <% end %>
