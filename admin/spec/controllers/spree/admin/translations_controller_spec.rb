@@ -86,4 +86,32 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
       end
     end
   end
+
+  describe 'Spree::Admin::TranslationsController translation_fields and normalized_locale' do
+    let(:controller_instance) { described_class.new }
+    let(:product_class) { Spree::Product }
+
+    describe '#normalized_locale' do
+      it 'converts en-GB to en_gb' do
+        expect(controller_instance.normalized_locale('en-GB')).to eq('en_gb')
+      end
+
+      it 'converts fr to fr' do
+        expect(controller_instance.normalized_locale('fr')).to eq('fr')
+      end
+    end
+
+    describe '#translation_fields' do
+      before do
+        controller_instance.instance_variable_set(:@selected_translation_locale, 'en_gb')
+        allow(product_class).to receive(:translatable_fields).and_return(['name', 'description'])
+      end
+
+      it 'returns fields with normalized locale suffix' do
+        fields = controller_instance.send(:translation_fields, product_class)
+        expect(fields).to eq(['name_en_gb', 'description_en_gb'])
+      end
+    end
+  end
+
 end

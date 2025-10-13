@@ -5,10 +5,12 @@
       <div class="drawer-body">
         <ul class="nav nav-pills mb-3">
           <% @locales.each do |locale| %>
+            <% normalized = normalized_locale(locale) %>
             <%= nav_item(
-                  Spree.t('i18n.this_file_language', locale: locale),
-                  spree.edit_admin_translation_path(@resource, resource_type: resource_class.to_s, translation_locale: locale),
-                  active: (locale == @selected_translation_locale)
+                 Spree.t('i18n.this_file_language', locale: locale),
+                 spree.edit_admin_translation_path(@resource, resource_type: resource_class.to_s, translation_locale: locale),
+                 active: (normalized == @selected_translation_locale)
+      
                 ) %>
           <% end %>
         </ul>
