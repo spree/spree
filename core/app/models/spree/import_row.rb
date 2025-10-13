@@ -80,10 +80,14 @@ module Spree
     end
 
     def add_row_to_import_view
+      return unless defined?(broadcast_append_to)
+
       broadcast_append_to "import_#{@import.id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
     end
 
     def update_row_in_import_view
+      return unless defined?(broadcast_replace_to)
+
       broadcast_replace_to "import_#{import.id}_rows", target: self, partial: 'spree/admin/imports/row', locals: { row: self }
     end
   end
