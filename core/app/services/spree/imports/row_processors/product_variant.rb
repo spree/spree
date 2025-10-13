@@ -1,6 +1,6 @@
 module Spree
   module Imports
-    module RowHandlers
+    module RowProcessors
       class ProductVariant < Base
         def initialize(row)
           super
@@ -47,15 +47,15 @@ module Spree
         def ensure_product_exists
           product = Spree::Product.new
           if attributes['slug'].present?
-            product = Spree::Product.find_by(slug: attributes['slug'])
+            product = Spree::Product.find_by(slug: attributes['slug'].strip.downcase)
           end
 
-          product.stores << store unless product.stores.include?(store)
-          product.name = attributes['name']
-          product.description = attributes['description']
-          product.meta_title = attributes['meta_title']
-          product.meta_description = attributes['meta_description']
-          product.meta_keywords = attributes['meta_keywords']
+          product.stores << store if product.new_record? && product.stores.exclude?(store)
+          product.name = attributes['name'] if attributes['name'].present?
+          product.description = attributes['description'] if attributes['description'].present?
+          product.meta_title = attributes['meta_title'] if attributes['meta_title'].present?
+          product.meta_description = attributes['meta_description'] if attributes['meta_description'].present?
+          product.meta_keywords = attributes['meta_keywords'] if attributes['meta_keywords'].present?
           product.status = to_spree_status(attributes['status']) if attributes['status'].present?
           product.save!
           product

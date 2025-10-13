@@ -25,7 +25,7 @@ module Spree
     #
     # Callbacks
     #
-    after_create :started_processing
+    after_create :started_mapping
 
     #
     # Ransack configuration
@@ -41,23 +41,26 @@ module Spree
     # State machine
     #
     state_machine initial: :pending, attribute: :status do
+      event :started_mapping do
+        transition to: :mapping
+      end
+      before_transition to: :mapping, do: :create_mappings
+
+      event :completed_mapping do
+        transition from: :mapping, to: :completed_mapping
+      end
+      after_transition to: :completed_mapping, do: :create_rows_async
+
       event :started_processing do
-        transition to: :processing
-      end
-      after_transition to: :processing, do: :create_mappings
-      after_transition to: :processing, do: :create_rows_async
-
-      event :processed do
-        transition to: :processed
+        transition from: :completed_mapping, to: :processing
       end
 
-      event :map do
-        transition to: :mapped
+      event :completed_processing do
+        transition from: :processing, to: :completed_processing
       end
-      after_transition to: :mapped, do: :process_rows_async
 
       event :complete do
-        transition from: :mapped, to: :complete
+        transition from: :processing, to: :complete
       end
       after_transition to: :complete, do: :send_import_completed_email
     end
@@ -83,8 +86,8 @@ module Spree
       "Spree::ImportSchemas::#{type.demodulize}".safe_constantize.new
     end
 
-    def row_handler_class
-      "Spree::ImportRowHandlers::#{type.demodulize.singularize}".safe_constantize
+    def row_processor_class
+      "Spree::ImportRowProcessors::#{type.demodulize.singularize}".safe_constantize
     end
 
     def schema_fields
@@ -103,7 +106,7 @@ module Spree
       @mapped_fields ||= mappings.mapped.where(schema_field: required_fields)
     end
 
-    def can_be_marked_as_mapped?
+    def mapping_done?
       mapped_fields.count == required_fields.count
     end
 

@@ -7,20 +7,26 @@ module Spree
 
       def perform(import_id)
         import = Spree::Import.find(import_id)
+        import.started_processing! unless import.processing?
 
-        process_csv_sequentially(import)
+        create_rows_sequentially(import)
 
-        # Mark as processed when complete
-        import.processed!
+        # enqueue processing rows job after creating rows in a separate job
+        import.process_rows_async
       end
 
       private
 
-      def process_csv_sequentially(import)
+      def create_rows_sequentially(import)
         rows_to_insert = []
         row_number = 1
 
         created_at = updated_at = Time.current
+
+        upsert_options = {}
+        if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' || ActiveRecord::Base.connection.adapter_name == 'SQLite'
+          upsert_options[:unique_by] = %i[import_id row_number]
+        end
 
         # Stream CSV to avoid loading entire file in memory
         # This maintains order by processing sequentially
@@ -42,14 +48,14 @@ module Spree
 
           # Bulk upsert when we reach batch size
           if rows_to_insert.size >= BATCH_SIZE
-            Spree::ImportRow.upsert_all(rows_to_insert)
+            Spree::ImportRow.upsert_all(rows_to_insert, **upsert_options)
             rows_to_insert.clear
           end
         end
 
         # Upsert any remaining rows
         if rows_to_insert.any?
-          Spree::ImportRow.upsert_all(rows_to_insert)
+          Spree::ImportRow.upsert_all(rows_to_insert, **upsert_options)
         end
       end
     end

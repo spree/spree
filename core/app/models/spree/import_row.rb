@@ -67,7 +67,7 @@ module Spree
 
     def process!
       started_processing!
-      self.item = import.row_handler_class.new(self).process!
+      self.item = import.row_processor_class.new(self).process!
       complete!
     # rescue StandardError => e
       # fail!(e.message)

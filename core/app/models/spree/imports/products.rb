@@ -5,8 +5,8 @@ module Spree
         true
       end
 
-      def row_handler_class
-        Spree::Imports::RowHandlers::ProductVariant
+      def row_processor_class
+        Spree::Imports::RowProcessors::ProductVariant
       end
     end
   end

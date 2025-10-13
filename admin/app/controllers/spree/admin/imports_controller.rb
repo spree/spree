@@ -14,9 +14,9 @@ module Spree
         add_breadcrumb @object.display_name, spree.admin_import_path(@object)
       end
 
-      # PUT /admin/imports/:id/mark_as_mapped
-      def mark_as_mapped
-        @object.map! if @object.can_be_marked_as_mapped?
+      # PUT /admin/imports/:id/completed_mapping
+      def complete_mapping
+        @object.completed_mapping! if @object.mapping_done?
 
         flash[:success] = flash_message_for(@object, :successfully_updated)
         redirect_to spree.admin_import_path(@object)

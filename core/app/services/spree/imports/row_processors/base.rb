@@ -1,6 +1,6 @@
 module Spree
   module Imports
-    module RowHandlers
+    module RowProcessors
       class Base
         def initialize(row)
           @row = row

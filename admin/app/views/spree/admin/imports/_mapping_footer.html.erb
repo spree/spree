@@ -1,13 +1,20 @@
 <footer class="position-fixed bottom-0 start-0 w-100 border-top px-4 py-3 bg-white d-flex align-items-center justify-content-between gap-3" id="footer" style="z-index: 9999;">
   <div class="flex-grow-1 d-flex flex-column">
-    <p>
-      Please map all the required fields to continue.
-    </p>
+    <% if import.mapping_done? %>
+      <p>
+        <%= icon('check', class: 'text-success') %>
+        Good job, all required columns are mapped!
+      </p>
+    <% else %>
+      <p>
+        Please map all the required columns to continue.
+      </p>
+    <% end %>
     <%= progress_bar_component(import.mapped_fields.count, min: 0, max: import.required_fields.count) %>
   </div>
 
   <span data-controller="tooltip">
-    <%= button_to Spree.t(:mark_as_mapped), spree.mark_as_mapped_admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.can_be_marked_as_mapped? %>
-    <%= tooltip('Please map all the required fields to continue.') %>
+    <%= button_to Spree.t('actions.continue'), spree.complete_mapping_admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.mapping_done? %>
+    <%= tooltip('Please map all the required fields to continue.') unless import.mapping_done? %>
   </span>
 </footer>
