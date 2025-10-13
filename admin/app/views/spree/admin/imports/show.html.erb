@@ -4,11 +4,8 @@
   <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center">3. Complete</li>
 <% end %>
 
-<% if @import.status == 'complete' %>
 
-<% elsif @import.status == 'mapped' %>
-
-<% else %>
+<% if @import.status == 'mapping' %>
   <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
     <div class="w-10 p-2 text-center">
       <%= Spree.t(:field_required) %>
@@ -20,24 +17,27 @@
       <%= Spree.t(:file_column) %>
     </div>
   </div>
-
-  <% @import.mappings.each do |mapping| %>
-    <div class="d-flex justify-content-between align-items-center border-bottom hover-light">
-      <div class="text-center w-10">
-        <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
-      </div>
-      <div class="text-wrap w-40 px-2 py-3">
-        <%= @import.import_schema.fields.find { |field| field[:name] == mapping.schema_field }[:label] %>
-
-        <code class="ml-2"><%= mapping.schema_field %></code>
-      </div>
-      <div class="w-50 px-2 py-3">
-        <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping %>
-      </div>
-    </div>
-  <% end %>
+  <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping' %>
 
   <%= content_for :footer do %>
     <%= render 'spree/admin/imports/mapping_footer', import: @import %>
   <% end %>
+<% else %>
+  <%= turbo_stream_from "import_#{@import.id}_rows" %>
+
+  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
+    <div class="w-10 p-2 text-center">
+      <%= I18n.t('activerecord.attributes.spree/import_row.row_number') %>
+    </div>
+    <div class="w-20 p-2">
+      <%= Spree.t(:status) %>
+    </div>
+    <div class="w-70 p-2">
+      <%= Spree.t(:item) %>
+    </div>
+  </div>
+
+  <div id="rows">
+    <%= render collection: @import.rows.includes(:item), partial: 'spree/admin/imports/row' %>
+  </div>
 <% end %>

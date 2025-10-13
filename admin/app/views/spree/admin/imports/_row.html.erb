@@ -1,0 +1,11 @@
+<div class="d-flex justify-content-between align-items-center border-bottom hover-light" id="<%= dom_id(row) %>">
+  <div class="text-center w-10">
+    <%= row.row_number %>
+  </div>
+  <div class="text-wrap w-20 px-2 py-3">
+    <%= Spree.t(row.status) %>
+  </div>
+  <div class="w-70 px-2 py-3">
+    <%= row.updated_at %>
+  </div>
+</div>

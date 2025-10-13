@@ -31,6 +31,12 @@ module Spree
     end
 
     #
+    # Callbacks
+    #
+    after_create :add_row_to_import_view
+    after_update :update_row_in_import_view
+
+    #
     # Scopes
     #
     scope :pending_and_failed, -> { where(status: %i[pending failed]) }
@@ -71,6 +77,14 @@ module Spree
       complete!
     # rescue StandardError => e
       # fail!(e.message)
+    end
+
+    def add_row_to_import_view
+      broadcast_append_to "import_#{@import.id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
+    end
+
+    def update_row_in_import_view
+      broadcast_replace_to "import_#{import.id}_rows", target: self, partial: 'spree/admin/imports/row', locals: { row: self }
     end
   end
 end
