@@ -48,6 +48,17 @@ RSpec.describe Spree::Policy, type: :model do
       expect(policy.to_param).to eq('new-slug')
       expect(policy.friendly_id_config.uses?(:history)).to be true
     end
+
+    context 'when the policy is destroyed' do
+      it 'fully destroys the slug' do
+        policy = create(:policy, name: 'Test policy 123', slug: 'test-policy-123')
+        expect(policy.slugs.count).to eq(1)
+
+        policy.destroy
+
+        expect(FriendlyId::Slug.with_deleted.find_by(slug: 'test-policy-123')).to be_blank
+      end
+    end
   end
 
   describe 'Translations' do
