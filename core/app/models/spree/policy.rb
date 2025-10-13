@@ -45,6 +45,8 @@ module Spree
     #
     self.whitelisted_ransackable_attributes = %w[name owner_type owner_id]
 
+    before_destroy :really_destroy_slugs!
+
     def page_builder_url
       return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:policy_path)
 
@@ -53,6 +55,10 @@ module Spree
 
     def with_body?
       body.present?
+    end
+
+    def really_destroy_slugs!
+      slugs.with_deleted.each(&:really_destroy!)
     end
   end
 end
