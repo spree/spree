@@ -6,7 +6,6 @@ module Spree
       has_many :metafields, -> { includes(:metafield_definition) }, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
       has_many :public_metafields, -> { includes(:metafield_definition).available_on_front_end }, as: :resource, class_name: 'Spree::Metafield'
       has_many :private_metafields, -> { includes(:metafield_definition).available_on_back_end }, as: :resource, class_name: 'Spree::Metafield'
-      has_many :metafield_definitions, class_name: 'Spree::MetafieldDefinition', foreign_key: :resource_type, primary_key: :resource_type
 
       accepts_nested_attributes_for :metafields, allow_destroy: true, reject_if: lambda { |mf|
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
@@ -18,15 +17,6 @@ module Spree
           .where(spree_metafield_definitions: { namespace: namespace, key: key })
           .where(spree_metafields: { value: value })
       }
-
-      module ClassMethods
-        def ensure_metafield_definition_exists(namespace, key, metafield_type = nil)
-          Spree::MetafieldDefinition.where(namespace: namespace, key: key, resource_type: self.name).first_or_initialize.tap do |metafield_definition|
-            metafield_definition.metafield_type = metafield_type
-            metafield_definition.save!
-          end
-        end
-      end
 
       def set_metafield(key_with_namespace, value)
         namespace = key_with_namespace.to_s.split('.').first
