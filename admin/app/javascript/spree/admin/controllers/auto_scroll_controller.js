@@ -28,7 +28,6 @@ export default class extends Controller {
   }
 
   scrollToElement(element) {
-    console.log('element', element)
     element.scrollIntoView({ behavior: "smooth", block: "end" })
   }
 }

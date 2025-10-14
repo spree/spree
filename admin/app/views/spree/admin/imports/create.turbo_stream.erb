@@ -4,7 +4,7 @@
       window.Turbo.visit("<%= spree.admin_import_path(@import) %>", { action: 'replace' })
     </script>
 
-    <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize)) %>
+    <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize.downcase)) %>
 
     <div class="drawer-body">
       <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
