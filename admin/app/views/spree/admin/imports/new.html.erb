@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :drawer do %>
-  <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize)) %>
+  <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize.downcase)) %>
   <%= form_for @import, url: spree.admin_imports_path do |f| %>
     <div class="drawer-body">
       <%= f.hidden_field :type %>
