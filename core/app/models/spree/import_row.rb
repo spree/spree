@@ -75,8 +75,9 @@ module Spree
       started_processing!
       self.item = import.row_processor_class.new(self).process!
       complete!
-    # rescue StandardError => e
-      # fail!(e.message)
+    rescue StandardError => e
+      self.validation_errors = e.message
+      fail!
     end
 
     def add_row_to_import_view
