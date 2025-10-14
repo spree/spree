@@ -23,23 +23,24 @@ module Spree
       event :fail do
         transition to: :failed
       end
+      after_transition to: :failed, do: :add_row_to_import_view
+      after_transition to: :failed, do: :update_footer_in_import_view
 
       event :complete do
         transition to: :completed
       end
-    end
 
-    #
-    # Callbacks
-    #
-    after_update :update_row_in_import_view
-    after_update :update_footer_in_import_view
+      after_transition to: :completed, do: :add_row_to_import_view
+      after_transition to: :completed, do: :update_footer_in_import_view
+    end
 
     #
     # Scopes
     #
     scope :pending_and_failed, -> { where(status: %i[pending failed]) }
     scope :completed, -> { where(status: :completed) }
+    scope :failed, -> { where(status: :failed) }
+    scope :processed, -> { where(status: %i[completed failed]) }
 
     def mark_import_as_completed
       import.complete! if import.rows.completed.count == import.rows.count
@@ -81,19 +82,13 @@ module Spree
     def add_row_to_import_view
       return unless defined?(broadcast_append_to)
 
-      broadcast_append_to "import_#{@import.id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
-    end
-
-    def update_row_in_import_view
-      return unless defined?(broadcast_replace_to)
-
-      broadcast_replace_to "import_#{import.id}_rows", target: self, partial: 'spree/admin/imports/row', locals: { row: self }
+      broadcast_append_to "import_#{import_id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
     end
 
     def update_footer_in_import_view
       return unless defined?(broadcast_replace_to)
 
-      broadcast_replace_to "import_#{import.id}_footer", target: 'footer', partial: 'spree/admin/imports/footer', locals: { import: import }
+      broadcast_replace_to "import_#{import_id}_footer", target: 'footer', partial: 'spree/admin/imports/footer', locals: { import: import }
     end
   end
 end

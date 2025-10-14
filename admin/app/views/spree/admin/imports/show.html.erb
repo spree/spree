@@ -24,6 +24,7 @@
 <% else %>
   <%= turbo_stream_from "import_#{@import.id}_rows" %>
   <%= turbo_stream_from "import_#{@import.id}_footer" %>
+  <%= turbo_stream_from "import_#{@import.id}_loader" %>
 
   <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
     <div class="w-10 p-2 text-center">
@@ -37,9 +38,11 @@
     </div>
   </div>
 
-  <div id="rows">
-    <%= render collection: @import.rows.includes(:item), partial: 'spree/admin/imports/row', cached: spree_base_cache_scope %>
+  <div id="rows" data-controller="auto-scroll">
+    <%= render collection: @import.rows.processed.includes(:item), partial: 'spree/admin/imports/row', cached: spree_base_cache_scope %>
   </div>
+
+  <%= render 'spree/admin/imports/loader', import: @import %>
 
   <%= content_for :footer do %>
     <%= render 'spree/admin/imports/footer', import: @import %>

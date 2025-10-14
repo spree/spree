@@ -18,7 +18,6 @@ module Spree
       def complete_mapping
         @object.completed_mapping! if @object.mapping_done?
 
-        flash[:success] = flash_message_for(@object, :successfully_updated)
         redirect_to spree.admin_import_path(@object)
       end
 

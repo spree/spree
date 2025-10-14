@@ -47,6 +47,7 @@ import ActiveStorageUpload from 'spree/admin/controllers/active_storage_upload_c
 import AdminController from 'spree/admin/controllers/admin_controller'
 import AssetUploaderController from 'spree/admin/controllers/asset_uploader_controller'
 import AutocompleteSelectController from 'spree/admin/controllers/autocomplete_select_controller'
+import AutoScrollController from 'spree/admin/controllers/auto_scroll_controller'
 import BetterSliderController from 'spree/admin/controllers/better_slider_controller'
 import BlockFormController from 'spree/admin/controllers/block_form_controller'
 import BootstrapTabs from 'spree/admin/controllers/bootstrap_tabs_controller'
@@ -96,6 +97,7 @@ application.register('address-autocomplete', AddressAutocompleteController)
 application.register('address-form', AddressFormController)
 application.register('admin', AdminController)
 application.register('asset-uploader', AssetUploaderController)
+application.register('auto-scroll', AutoScrollController)
 application.register('auto-submit', AutoSubmit)
 application.register('autocomplete-select', AutocompleteSelectController)
 application.register('better-slider', BetterSliderController)

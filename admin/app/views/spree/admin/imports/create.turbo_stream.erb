@@ -7,11 +7,11 @@
     <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize)) %>
 
     <div class="drawer-body">
-      <div class="d-flex flex-column align-items-center justify-content-center gap-3" id="import-spinner">
-        <p class="text-muted mb-3"><%= Spree.t(:loading) %>...</p>
-        <div class="spinner-border text-primary" role="status" aria-label="<%= Spree.t(:loading) %>">
-          <span class="sr-only"><%= Spree.t(:loading) %></span>
+      <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
+        <div class="spinner-border mb-3 text-muted" role="status" style="width: 4rem; height: 4rem;">
+          <span class="sr-only"><%= Spree.t(:processing) %>...</span>
         </div>
+        <p class="text-muted"><%= Spree.t(:processing) %>...</p>
       </div>
     </div>
   <% end %>

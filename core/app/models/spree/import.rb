@@ -56,9 +56,10 @@ module Spree
       end
 
       event :complete do
-        transition from: :processing, to: :complete
+        transition from: :processing, to: :completed
       end
-      after_transition to: :complete, do: :send_import_completed_email
+      after_transition to: :completed, do: :send_import_completed_email
+      after_transition to: :completed, do: :update_loader_in_import_view
     end
 
     def multi_line_csv?
@@ -151,6 +152,12 @@ module Spree
 
     def process_rows_async
       Spree::Imports::ProcessRowsJob.perform_later(id)
+    end
+
+    def update_loader_in_import_view
+      return unless defined?(broadcast_replace_to)
+
+      broadcast_replace_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
     end
 
     class << self
