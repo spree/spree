@@ -32,9 +32,8 @@ module Spree
     #
     # Callbacks
     #
-    after_create_commit :add_row_to_import_view
-    after_update_commit :update_row_in_import_view
-    after_update_commit :update_footer_in_import_view
+    after_update :update_row_in_import_view
+    after_update :update_footer_in_import_view
 
     #
     # Scopes
