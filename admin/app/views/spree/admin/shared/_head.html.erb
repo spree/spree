@@ -39,7 +39,12 @@
 
 <script async src="https://ga.jspm.io/npm:es-module-shims@1.8.2/dist/es-module-shims.js" data-turbo-track="reload"></script>
 
-<%= javascript_importmap_tags 'application-spree-admin', importmap: Rails.application.config.spree_admin.importmap %>
+<% if Rails.application.importmap.packages["application"].present? && Spree::Admin::RuntimeConfig.include_application_importmap %>
+  <%= javascript_importmap_tags "application" %>
+  <%= javascript_import_module_tag "application-spree-admin" %>
+<% else %>
+  <%= javascript_importmap_tags "application-spree-admin", importmap: Rails.application.config.spree_admin.importmap %>
+<% end %>
 
 <%= yield :head %>
 
