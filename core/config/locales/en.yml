@@ -1160,6 +1160,7 @@ en:
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
+    import: Import
     import_payment_methods_from: Import payment methods from
     import_products_from: Import products from
     in_stock: In Stock
