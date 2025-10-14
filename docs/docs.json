@@ -851,6 +851,7 @@
                 "group": "Payments",
                 "pages": [
                   "integrations/payments/stripe",
+                  "integrations/payments/adyen",
                   "integrations/payments/paypal",
                   "integrations/payments/razorpay"
                 ]
