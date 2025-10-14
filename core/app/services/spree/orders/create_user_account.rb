@@ -24,6 +24,8 @@ module Spree
         order.update_columns(user_id: user.id, updated_at: Time.current)
         order.user = user
 
+        order.associate_user!(user, false)
+
         # send welcome email
         user.send_welcome_email if user.respond_to?(:send_welcome_email)
 
