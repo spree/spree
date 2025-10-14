@@ -1,9 +1,8 @@
 <% content_for :steps do %>
   <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'mapping' %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
   <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'processing' %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
-  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center">3. Complete</li>
+  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'complete' %>active bg-white font-weight-bold<% end %>">3. Complete</li>
 <% end %>
-
 
 <% if @import.status == 'mapping' %>
   <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
@@ -24,6 +23,7 @@
   <% end %>
 <% else %>
   <%= turbo_stream_from "import_#{@import.id}_rows" %>
+  <%= turbo_stream_from "import_#{@import.id}_footer" %>
 
   <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
     <div class="w-10 p-2 text-center">
@@ -40,4 +40,8 @@
   <div id="rows">
     <%= render collection: @import.rows.includes(:item), partial: 'spree/admin/imports/row', cached: spree_base_cache_scope %>
   </div>
+
+  <%= content_for :footer do %>
+    <%= render 'spree/admin/imports/footer', import: @import %>
+  <% end %>
 <% end %>

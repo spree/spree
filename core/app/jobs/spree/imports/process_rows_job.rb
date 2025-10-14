@@ -11,8 +11,8 @@ module Spree
           row.process!
         end
 
-        # mark as completed processing after processing all rows
-        import.completed_processing!
+        # mark as complete
+        import.complete!
       end
     end
   end

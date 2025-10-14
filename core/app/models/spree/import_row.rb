@@ -27,14 +27,14 @@ module Spree
       event :complete do
         transition to: :completed
       end
-      after_transition to: :completed, do: :mark_import_as_completed
     end
 
     #
     # Callbacks
     #
-    after_create :add_row_to_import_view
-    after_update :update_row_in_import_view
+    after_create_commit :add_row_to_import_view
+    after_update_commit :update_row_in_import_view
+    after_update_commit :update_footer_in_import_view
 
     #
     # Scopes
@@ -89,6 +89,12 @@ module Spree
       return unless defined?(broadcast_replace_to)
 
       broadcast_replace_to "import_#{import.id}_rows", target: self, partial: 'spree/admin/imports/row', locals: { row: self }
+    end
+
+    def update_footer_in_import_view
+      return unless defined?(broadcast_replace_to)
+
+      broadcast_replace_to "import_#{import.id}_footer", target: 'footer', partial: 'spree/admin/imports/footer', locals: { import: import }
     end
   end
 end

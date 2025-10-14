@@ -55,10 +55,6 @@ module Spree
         transition from: :completed_mapping, to: :processing
       end
 
-      event :completed_processing do
-        transition from: :processing, to: :completed_processing
-      end
-
       event :complete do
         transition from: :processing, to: :complete
       end
