@@ -1,0 +1,78 @@
+---
+title: "Connect Google Tag Manager to Spree Commerce"
+sidebarTitle: Google Tag Manager
+description: "Learn how to set up and manage Spree’s native Google Tag Manager integration."
+---
+
+Spree’s Google Tag Manager integration allows you to connect your store to GTM, giving you full control over custom tags, marketing scripts, and other analytics tools all from within your GTM workspace. This setup uses Spree’s ecommerce dataLayer to send rich event data to GTM with no custom coding required.
+
+<Warning>
+  This integration allows you to use either Google Tag Manager or Google Analytics 4 - but not both at the same time. Only one key (GTM or GA4) should be active in the integration settings. If you plan to use GA4 with GTM, you must set up GA4 inside of GTM manually.
+</Warning>
+
+## Requirements
+
+To use this integration, you’ll need:
+
+- An active Google Tag Manager account
+- A GTM container set up for your store
+- Any additional tools (e.g., Google Analytics 4, conversion tracking, custom tags) configured within GTM
+
+Spree will automatically push ecommerce events to the dataLayer, but it’s up to you to configure tags and triggers in your GTM workspace.
+
+## Installation
+
+Before you can enable Google Tag Manager, it must be installed. To do so, you need to run the following command:
+
+```bash
+bundle add spree_google_analytics && bundle exec rails g spree_google_analytics:install
+```
+
+After that, make sure to restart your server if it was running.
+
+## Connect Google Tag Manager
+
+Sign in to your Spree admin dashboard and navigate to the Integrations tab.
+
+![](/images/integrations/google-tag-manager/1.integrations_tab.png)
+
+Locate the Google Analytics tile under Analytics and click **Connect Google Analytics.**
+
+This will redirect you to the setup page for Google Tag Manager integration.
+
+![](/images/integrations/google-tag-manager/2.gtm_form.png)
+
+Ignore the GA4 Measurement ID field.
+
+Paste your GTM Container ID (e.g., GTM-XXXXXXX) into the Google Tag Manager Key field.
+
+![](/images/integrations/google-tag-manager/3.gtm_id.png)
+
+Finally, click **Create** to activate the integration.
+
+## Event Tracking
+
+Spree sends a full suite of ecommerce events to the GTM dataLayer. This allows you to create triggers and tags based on:
+
+- Product views
+- Cart actions (add/remove)
+- Checkout progress
+- Payment info added
+- Purchase confirmation
+- Search activity
+- Wishlist adds
+- Newsletter signups
+- User engagement (sessions, first visits, etc.)
+
+To make use of these events, you'll need to configure appropriate tags and triggers inside your GTM container.
+
+## Manage Your Integration
+
+To remove the integration or switch between GTM and GA4:
+
+Return to the integration setup page in Spree and either:
+
+- Clear the GTM field and enter a GA4 Measurement ID, or
+- Click Delete in the lower-right corner to remove the integration completely
+
+<Note>Only one analytics key should be set at a time (GA4 or GTM).</Note>

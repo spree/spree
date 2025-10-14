@@ -858,7 +858,8 @@
               {
                 "group": "Analytics",
                 "pages": [
-                  "integrations/analytics/google-analytics"
+                  "integrations/analytics/google-analytics",
+                  "integrations/analytics/google-tag-manager"
                 ]
               },
               {
