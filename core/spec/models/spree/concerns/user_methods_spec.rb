@@ -150,4 +150,39 @@ describe Spree::UserMethods do
       expect(Spree.user_class.multi_search('greg smith')).to eq([])
     end
   end
+
+  describe '#can_be_deleted?' do
+    subject { test_user.can_be_deleted? }
+
+    context 'when user has a role on current store' do
+      let!(:role) { create(:role, name: 'test') }
+
+      it 'returns true if another user also has a role on the store' do
+        test_user.add_role(role.name, current_store)
+        other_user = create(:user)
+        other_user.add_role(role.name, current_store)
+
+        expect(subject).to be(true)
+      end
+
+      it 'returns false if user is the last with a role on the store' do
+        current_store.role_users.destroy_all
+        test_user.add_role(role.name, current_store)
+
+        expect(subject).to be(false)
+      end
+    end
+
+    context 'when user has no role on current store' do
+      it 'returns true if user has no completed orders' do
+        expect(subject).to be(true)
+      end
+
+      it 'returns false if user has completed orders' do
+        create(:order, user: test_user, completed_at: Time.current)
+
+        expect(subject).to be(false)
+      end
+    end
+  end
 end
