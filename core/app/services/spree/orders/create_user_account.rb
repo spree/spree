@@ -24,6 +24,9 @@ module Spree
         order.update_columns(user_id: user.id, updated_at: Time.current)
         order.user = user
 
+        # create payment customer if order was completed as a guest
+        order.create_payment_customer if order.respond_to?(:create_payment_customer)
+        
         # send welcome email
         user.send_welcome_email if user.respond_to?(:send_welcome_email)
 
