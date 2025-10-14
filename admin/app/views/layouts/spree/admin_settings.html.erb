@@ -2,22 +2,26 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <%= render "spree/admin/shared/head" %>
-    <%= render "spree/admin/shared/custom_head" %>
   </head>
 
-  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>"
-    data-controller="admin"
+  <body class="admin admin-settings min-vh-100 <%= controller_name %> <%= action_name %>"
+    data-controller="admin drawer"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
-    <%= render "spree/admin/shared/header" %>
+    <header id="settings-header">
+      <%= render 'spree/admin/shared/back_to_dashboard' %>
+      <div class="flex-grow-1">
+        <%= render 'spree/admin/shared/content_header' %>
+      </div>
+    </header>
+
     <%= render "spree/admin/shared/sidebar" %>
-    <main id="content" data-controller="drawer">
-      <%= render "spree/admin/shared/content_header" %>
+    <main id="content">
       <%= render "spree/admin/shared/page_tabs" %>
-      <%= render "spree/admin/shared/page_alerts" %>
-      <div class="container">
+      <div class="container pt-4">
+        <%= yield(:page_alerts) %>
         <%= yield %>
       </div>
       <%= render "spree/admin/shared/footer" %>

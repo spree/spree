@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ReturnAuthorizationReasonsController < ResourceController
-      add_breadcrumb Spree.t(:return_authorization_reasons), :admin_return_authorization_reasons_path
+      include Spree::Admin::SettingsConcern
 
       private
 

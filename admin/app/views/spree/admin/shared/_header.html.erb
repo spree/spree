@@ -10,7 +10,7 @@
       </button>
     </div>
 
-    <% if settings_active? %>
+    <% if settings_area? %>
       <%= render 'spree/admin/shared/back_to_dashboard' %>
     <% else %>
       <% if defined?(current_vendor) && current_vendor.present? %>

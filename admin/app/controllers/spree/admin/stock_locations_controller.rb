@@ -1,9 +1,9 @@
 module Spree
   module Admin
     class StockLocationsController < ResourceController
-      before_action :set_country, only: :new
+      include Spree::Admin::SettingsConcern
 
-      add_breadcrumb Spree.t(:stock_locations), :admin_stock_locations_path
+      before_action :set_country, only: :new
 
       # PUT /admin/stock_locations/:id/mark_as_default
       def mark_as_default

@@ -31,10 +31,34 @@ module Spree
         Spree::Admin::RuntimeConfig.admin_updater_enabled && can?(:manage, current_store) && spree_update_available? && !updater_notice_dismissed?
       end
 
+      # @return [String] the current layout name
+      def layout_name
+        layout = controller.class._layout
+
+        # Handle dynamic layouts (method symbols or procs)
+        layout =
+          case layout
+          when Symbol
+            controller.send(layout)
+          when Proc
+            controller.instance_exec(&layout)
+          else
+            layout
+          end
+
+        # Normalize result (e.g., "layouts/application")
+        layout.to_s.sub(/^layouts\//, '').presence || 'application'
+      end
+
       # check if the current controller is a settings controller
       # this is used to display different sidebar navigation for settings pages
       # @return [Boolean]
+      def settings_area?
+        layout_name == 'spree/admin_settings'
+      end
+
       def settings_active?
+        Spree::Deprecation.warn('settings_active? is deprecated and will be removed in Spree 6.0. Please use settings_area? instead')
         @settings_active || %w[admin_users audits custom_domains exports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories

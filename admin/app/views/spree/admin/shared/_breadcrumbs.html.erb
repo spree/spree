@@ -1,7 +1,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <%= render_breadcrumb_icon %>
-    <% if settings_active? %>
+    <% if settings_area? %>
       <li>
         <%= active_link_to Spree.t(:settings), spree.edit_admin_store_path %>
       </li>

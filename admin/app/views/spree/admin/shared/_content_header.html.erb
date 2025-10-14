@@ -67,18 +67,3 @@
     </div>
   </header>
 <% end %>
-
-<% if content_for?(:page_tabs) %>
-  <div class="container-fluid" id="page-tabs">
-    <ul class="nav">
-      <%= yield :page_tabs %>
-    </ul>
-  </div>
-<% end %>
-<% if content_for(:page_alerts) %>
-  <div class="container">
-    <div class="page-alerts">
-      <%= yield(:page_alerts) %>
-    </div>
-  </div>
-<% end %>

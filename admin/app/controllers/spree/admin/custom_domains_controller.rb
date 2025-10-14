@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class CustomDomainsController < ResourceController
-      add_breadcrumb Spree.t(:domains), :admin_custom_domains_path
+      include Spree::Admin::SettingsConcern
 
       protected
 
