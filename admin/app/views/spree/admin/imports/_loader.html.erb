@@ -1,15 +1,13 @@
-<div id="loader">
-  <% if import.completed? %>
-    <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
-      <%= icon('check', class: 'text-success', style: 'font-size: 4rem;') %>
-      <p class="text-success"><%= Spree.t(:all_done) %>!</p>
+<% if import.completed? %>
+  <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
+    <%= icon('check', class: 'text-success', style: 'font-size: 4rem;') %>
+    <p class="text-success"><%= Spree.t(:all_done) %>!</p>
+  </div>
+<% else %>
+  <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
+    <div class="spinner-border mb-3 text-muted" role="status" style="width: 4rem; height: 4rem;">
+      <span class="sr-only"><%= Spree.t(:processing) %>...</span>
     </div>
-  <% else %>
-    <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
-      <div class="spinner-border mb-3 text-muted" role="status" style="width: 4rem; height: 4rem;">
-        <span class="sr-only"><%= Spree.t(:processing) %>...</span>
-      </div>
-      <p class="text-muted"><%= Spree.t(:processing) %>...</p>
-    </div>
-  <% end %>
-</div>
+    <p class="text-muted"><%= Spree.t(:processing) %>...</p>
+  </div>
+<% end %>

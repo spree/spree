@@ -42,7 +42,9 @@
     <%= render collection: @import.rows.processed.includes(:item), partial: 'spree/admin/imports/row', cached: spree_base_cache_scope %>
   </div>
 
-  <%= render 'spree/admin/imports/loader', import: @import %>
+  <div id="loader" data-controller="auto-scroll">
+    <%= render 'spree/admin/imports/loader', import: @import %>
+  </div>
 
   <%= content_for :footer do %>
     <%= render 'spree/admin/imports/footer', import: @import %>

@@ -18,7 +18,7 @@ export default class extends Controller {
         // Find the first added node that is not a HTML comment node
         // Rails injects a HTML comments when rendering partials
         const newNode = Array.from(mutation.addedNodes).find(
-          node => node.nodeType !== Node.COMMENT_NODE
+          node => node.nodeType !== Node.COMMENT_NODE && node.nodeType !== Node.TEXT_NODE
         )
         if (newNode) {
           this.scrollToElement(newNode)
@@ -28,6 +28,7 @@ export default class extends Controller {
   }
 
   scrollToElement(element) {
+    console.log('element', element)
     element.scrollIntoView({ behavior: "smooth", block: "end" })
   }
 }
