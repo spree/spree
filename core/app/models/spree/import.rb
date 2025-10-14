@@ -62,6 +62,11 @@ module Spree
       after_transition to: :completed, do: :update_loader_in_import_view
     end
 
+    #
+    # Preferences
+    #
+    preference :delimiter, :string, default: ','
+
     def multi_line_csv?
       false
     end
@@ -122,12 +127,12 @@ module Spree
 
       @csv_headers ||= ::CSV.parse_line(
         attachment_file_content.force_encoding('UTF-8'),
-        col_sep: delimiter
+        col_sep: preferred_delimiter
       )
     end
 
     def csv_body
-      @csv_body ||= ::CSV.parse(attachment_file_content, col_sep: delimiter).drop(1)
+      @csv_body ||= ::CSV.parse(attachment_file_content, col_sep: preferred_delimiter).drop(1)
     end
 
     # Returns the content of the attachment file
@@ -155,9 +160,9 @@ module Spree
     end
 
     def update_loader_in_import_view
-      return unless defined?(broadcast_replace_to)
+      return unless defined?(broadcast_update_to)
 
-      broadcast_replace_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
+      broadcast_update_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
     end
 
     class << self

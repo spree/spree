@@ -53,6 +53,8 @@ en:
       spree/gift_card:
         amount_used: Amount used
         expires_at: Expires at
+      spree/import:
+        preferred_delimiter: Delimiter
       spree/import_row:
         row_number: Number
       spree/inventory_unit:

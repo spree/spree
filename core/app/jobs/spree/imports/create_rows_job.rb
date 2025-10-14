@@ -32,7 +32,7 @@ module Spree
         # This maintains order by processing sequentially
         ::CSV.foreach(StringIO.new(import.attachment_file_content),
                    headers: true,
-                   col_sep: import.delimiter,
+                   col_sep: import.preferred_delimiter,
                    encoding: 'UTF-8') do |csv_row|
 
           rows_to_insert << {
