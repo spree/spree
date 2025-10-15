@@ -13,7 +13,11 @@
     </div>
   <% elsif source.is_a?(Spree::StoreCredit) %>
     <% if source.originator_type == 'Spree::GiftCard' %>
-      <%= heroicon 'gift', options: { style: 'margin-right: 0 !important;' } %>
+      <% if respond_to?(:heroicon) %>
+        <%= heroicon('gift', options: { style: 'margin-right: 0 !important;' }) %>
+      <% else %>
+        <%= icon('gift', height: 30) %>
+      <% end %>
       <div>
         <p class="mb-1"><%= Spree.t(:gift_card) %>: <strong><%= source.originator.code.upcase %></strong></p>
         <%= @order.display_gift_card_total %>
