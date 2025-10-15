@@ -25,9 +25,9 @@
 }
 
 .uppy-Dashboard-browse {
-  color: $blue !important;
-  text-decoration: none !important;
-  border-bottom: 0 !important;
+  @extend .btn;
+  @extend .btn-light;
+  @extend .ml-2;
 }
 
 .uppy-Dashboard-close {
@@ -47,4 +47,9 @@
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
   background-color: theme-color('blue') !important;
+}
+
+.uppy-Dashboard-AddFiles-title {
+  font-weight: $font-weight-base !important;
+  font-size: $font-size-base !important;
 }

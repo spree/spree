@@ -156,6 +156,7 @@
       width: 100%;
       padding: 0 1rem;
       gap: 0.25rem;
+      background-color: rgba($gray-25, 0.5);
 
       &__cell {
         display: inline-block;
@@ -163,7 +164,6 @@
     }
 
     &__footer {
-      background-color: $gray-25;
       justify-content: center;
       align-items: center;
       padding-top: 0.5rem;
