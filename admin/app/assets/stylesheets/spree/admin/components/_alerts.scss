@@ -16,7 +16,9 @@
     margin-bottom: 0;
   }
 
-  box-shadow: $box-shadow-xs;
+  a {
+    font-weight: $font-weight-bold;
+  }
 }
 
 .alert-info {
@@ -49,5 +51,17 @@
 .page-alerts {
   .alert {
     @extend .rounded-lg;
+  }
+}
+
+.alerts-container {
+  position: fixed;
+  width: 100%;
+  z-index: 1070;
+  top: 1rem;
+
+  .alert {
+    border-width: 1px;
+    box-shadow: $box-shadow-xs;
   }
 }

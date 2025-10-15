@@ -287,6 +287,8 @@
   font-size: $font-size-sm;
   padding: 0.5rem 1rem;
   margin: 0.75rem;
+  border-width: 1px;
+  box-shadow: $box-shadow-xs;
   p {
     margin-bottom: 0.5rem;
   }
@@ -323,11 +325,4 @@
   text-align: center;
   margin-top: 2rem;
   color: $gray-400;
-}
-
-.alerts-container {
-  position: fixed;
-  width: 100%;
-  z-index: 1070;
-  top: 1rem;
 }
