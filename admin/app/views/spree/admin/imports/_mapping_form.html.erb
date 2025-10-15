@@ -1,6 +1,6 @@
 <% options ||= import.unmapped_file_columns.map { |file_column| [file_column, file_column] } %>
 
-<%= turbo_frame_tag spree_dom_id(mapping) do %>
+<%= turbo_frame_tag spree_dom_id(mapping) + '_form' do %>
   <%= form_for mapping, url: spree.admin_import_mapping_path(import, mapping), method: :put, data: { controller: 'auto-submit' } do |f| %>
     <% select_options = options.dup %>
     <% if mapping.file_column.present? %>
