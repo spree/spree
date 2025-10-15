@@ -78,6 +78,10 @@ dialog:open {
     display: flex;
   }
 
+  .alerts-container {
+    position: absolute;
+  } 
+
   @media (max-width: 991.98px) {
     max-width: 100vw;
     min-width: 100vw;

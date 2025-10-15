@@ -324,3 +324,10 @@
   margin-top: 2rem;
   color: $gray-400;
 }
+
+.alerts-container {
+  position: fixed;
+  width: 100%;
+  z-index: 1070;
+  top: 1rem;
+}
