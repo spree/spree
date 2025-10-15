@@ -32,10 +32,6 @@ module Spree
         @collection = @search.result.page(params[:page]).per(params[:per_page])
       end
 
-      def update_turbo_stream_enabled?
-        true
-      end
-
       def require_payment_type
         redirect_to spree.admin_payment_methods_path unless params.dig(:payment_method, :type).present?
       end
