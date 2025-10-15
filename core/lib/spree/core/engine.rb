@@ -276,6 +276,7 @@ module Spree
           Spree::CustomDomain,
           Spree::CustomerReturn,
           Spree::GiftCard,
+          Spree::Image,
           Spree::LineItem,
           Spree::NewsletterSubscriber,
           Spree::OptionType,

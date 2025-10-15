@@ -22,12 +22,12 @@ RSpec.describe Spree::Metafields, type: :concern do
     let!(:metafield) { create(:metafield, resource: product, metafield_definition: definition) }
 
     it 'returns products with the given metafield key' do
-      expect(Spree::Product.with_metafield_key('custom', 'foo')).to include(product)
+      expect(Spree::Product.with_metafield_key('custom.foo')).to include(product)
     end
 
     it 'does not return products without the given metafield key' do
       other_product = create(:product)
-      expect(Spree::Product.with_metafield_key('custom', 'foo')).not_to include(other_product)
+      expect(Spree::Product.with_metafield_key('custom.foo')).not_to include(other_product)
     end
   end
 
@@ -36,11 +36,11 @@ RSpec.describe Spree::Metafields, type: :concern do
     let!(:metafield) { create(:metafield, resource: product, metafield_definition: definition, value: 'baz') }
 
     it 'returns products with the given metafield key and value' do
-      expect(Spree::Product.with_metafield_key_value('custom', 'bar', 'baz')).to include(product)
+      expect(Spree::Product.with_metafield_key_value('custom.bar', 'baz')).to include(product)
     end
 
     it 'does not return products with the key but different value' do
-      expect(Spree::Product.with_metafield_key_value('custom', 'bar', 'other')).not_to include(product)
+      expect(Spree::Product.with_metafield_key_value('custom.bar', 'other')).not_to include(product)
     end
   end
 

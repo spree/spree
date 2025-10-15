@@ -11,16 +11,37 @@ module Spree
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
 
-      scope :with_metafield_key, ->(namespace, key) { joins(metafields: :metafield_definition).where(spree_metafield_definitions: { namespace: namespace, key: key }) }
-      scope :with_metafield_key_value, ->(namespace, key, value) {
+      scope :with_metafield_key, ->(key_with_namespace) {
+        namespace, key = extract_namespace_and_key(key_with_namespace)
+        joins(metafields: :metafield_definition).where(spree_metafield_definitions: { namespace: namespace, key: key })
+      }
+      scope :with_metafield_key_value, ->(key_with_namespace, value) {
+        namespace, key = extract_namespace_and_key(key_with_namespace)
+
         joins(metafields: :metafield_definition)
           .where(spree_metafield_definitions: { namespace: namespace, key: key })
           .where(spree_metafields: { value: value })
       }
 
+      module ClassMethods
+        def ensure_metafield_definition_exists!(key_with_namespace)
+          namespace, key = extract_namespace_and_key(key_with_namespace)
+          Spree::MetafieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.name)
+        end
+
+        def extract_namespace_and_key(key_with_namespace)
+          namespace = key_with_namespace.to_s.split('.').first
+          key = key_with_namespace.to_s.split('.').last
+          [namespace, key]
+        end
+      end
+
+      def extract_namespace_and_key(key_with_namespace)
+        self.class.extract_namespace_and_key(key_with_namespace)
+      end
+
       def set_metafield(key_with_namespace, value)
-        namespace = key_with_namespace.to_s.split('.').first
-        key = key_with_namespace.to_s.split('.').last
+        namespace, key = extract_namespace_and_key(key_with_namespace)
         metafield_definition = Spree::MetafieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.class.name)
 
         metafield = metafields.find_or_initialize_by(metafield_definition: metafield_definition)
@@ -30,8 +51,7 @@ module Spree
       end
 
       def get_metafield(key_with_namespace)
-        namespace = key_with_namespace.to_s.split('.').first
-        key = key_with_namespace.to_s.split('.').last
+        namespace, key = extract_namespace_and_key(key_with_namespace)
         metafields.with_key(namespace, key).first
       end
 
@@ -40,8 +60,7 @@ module Spree
           namespace = key_with_namespace.namespace
           key = key_with_namespace.key
         elsif key_with_namespace.is_a?(String)
-          namespace = key_with_namespace.to_s.split('.').first
-          key = key_with_namespace.to_s.split('.').last
+          namespace, key = extract_namespace_and_key(key_with_namespace)
         else
           raise ArgumentError, "Invalid key_with_namespace: #{key_with_namespace.inspect}"
         end
