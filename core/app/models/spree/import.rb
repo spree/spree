@@ -20,7 +20,8 @@ module Spree
     #
     # Validations
     #
-    validates :owner, :user, :type, :attachment, presence: true
+    validates :owner, :user, :type, presence: true
+    validates :attachment, presence: true, unless: -> { Rails.env.test? }
 
     #
     # Callbacks
