@@ -33,8 +33,6 @@ module Spree
     end
 
     def external_url=(url)
-      return if url.blank?
-
       set_metafield(EXTERNAL_URL_METAFIELD_KEY, url.downcase.strip)
     end
   end

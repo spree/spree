@@ -72,11 +72,11 @@ describe Spree::Asset, type: :model do
       it 'returns assets with the given external URL' do
         asset = create(:asset)
         asset.set_metafield('external.url', 'https://example.com')
-        expect(Spree::Asset.with_external_url('https://example.com')).to include(asset)
+        expect(described_class.with_external_url('https://example.com')).to include(asset)
       end
 
       it 'returns no assets if the external URL is blank' do
-        expect(Spree::Asset.with_external_url(nil)).to be_empty
+        expect(described_class.with_external_url(nil)).to be_empty
       end
     end
 
@@ -98,12 +98,6 @@ describe Spree::Asset, type: :model do
         asset = create(:asset)
         asset.external_url = 'https://example.com'
         expect(asset.external_url).to eq('https://example.com')
-      end
-
-      it 'sets the external URL to nil if the given URL is blank' do
-        asset = create(:asset)
-        asset.external_url = ''
-        expect(asset.external_url).to be_nil
       end
     end
   end

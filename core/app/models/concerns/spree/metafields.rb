@@ -2,6 +2,19 @@ module Spree
   module Metafields
     extend ActiveSupport::Concern
 
+    module ClassMethods
+      def ensure_metafield_definition_exists!(key_with_namespace)
+        namespace, key = extract_namespace_and_key(key_with_namespace)
+        Spree::MetafieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.name)
+      end
+
+      def extract_namespace_and_key(key_with_namespace)
+        namespace = key_with_namespace.to_s.split('.').first
+        key = key_with_namespace.to_s.split('.').last
+        [namespace, key]
+      end
+    end
+
     included do
       has_many :metafields, -> { includes(:metafield_definition) }, as: :resource, class_name: 'Spree::Metafield', dependent: :destroy
       has_many :public_metafields, -> { includes(:metafield_definition).available_on_front_end }, as: :resource, class_name: 'Spree::Metafield'
@@ -22,19 +35,6 @@ module Spree
           .where(spree_metafield_definitions: { namespace: namespace, key: key })
           .where(spree_metafields: { value: value })
       }
-
-      module ClassMethods
-        def ensure_metafield_definition_exists!(key_with_namespace)
-          namespace, key = extract_namespace_and_key(key_with_namespace)
-          Spree::MetafieldDefinition.find_or_create_by!(namespace: namespace, key: key, resource_type: self.name)
-        end
-
-        def extract_namespace_and_key(key_with_namespace)
-          namespace = key_with_namespace.to_s.split('.').first
-          key = key_with_namespace.to_s.split('.').last
-          [namespace, key]
-        end
-      end
 
       def extract_namespace_and_key(key_with_namespace)
         self.class.extract_namespace_and_key(key_with_namespace)
