@@ -69,14 +69,6 @@ module Spree
     #
     preference :delimiter, :string, default: ','
 
-    def multi_line_csv?
-      false
-    end
-
-    def handle_csv_line(_record)
-      raise NotImplementedError, 'handle_csv_line must be implemented'
-    end
-
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
       if type == 'Spree::Imports::Customers'
