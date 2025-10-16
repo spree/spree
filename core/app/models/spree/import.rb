@@ -12,9 +12,9 @@ module Spree
     #
     belongs_to :owner, polymorphic: true # Store, Vendor, etc.
     belongs_to :user, class_name: Spree.admin_user_class.to_s
-    has_many :mappings, class_name: 'Spree::ImportMapping'
+    has_many :mappings, class_name: 'Spree::ImportMapping', dependent: :destroy, inverse_of: :import
     alias import_mappings mappings
-    has_many :rows, class_name: 'Spree::ImportRow'
+    has_many :rows, class_name: 'Spree::ImportRow', dependent: :destroy_async, inverse_of: :import
     alias import_rows rows
 
     #
@@ -22,6 +22,7 @@ module Spree
     #
     validates :owner, :user, :type, presence: true
     validates :attachment, presence: true, unless: -> { Rails.env.test? }
+    validate :ensure_whitelisted_type
 
     #
     # Callbacks
@@ -183,6 +184,15 @@ module Spree
       def model_class
         "Spree::#{to_s.demodulize.singularize}".constantize
       end
+    end
+
+    private
+
+    def ensure_whitelisted_type
+      return if type.blank?
+
+      allowed = self.class.available_types.map(&:to_s)
+      errors.add(:type, :inclusion) unless allowed.include?(type)
     end
   end
 end
