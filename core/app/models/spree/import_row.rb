@@ -5,6 +5,7 @@ module Spree
     #
     belongs_to :import, class_name: 'Spree::Import'
     belongs_to :item, polymorphic: true, optional: true # eg. Spree::Variant, Spree::Order, etc.
+    delegate :store, to: :import
 
     #
     # Validations
@@ -83,13 +84,26 @@ module Spree
     def add_row_to_import_view
       return unless defined?(broadcast_append_to)
 
-      broadcast_append_to "import_#{import_id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
+      # we need to render this partial with store context to properly generate image URLs
+      with_store_context do
+        broadcast_append_to "import_#{import_id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
+      end
     end
 
     def update_footer_in_import_view
       return unless defined?(broadcast_replace_to)
 
       broadcast_replace_to "import_#{import_id}_footer", target: 'footer', partial: 'spree/admin/imports/footer', locals: { import: import }
+    end
+
+    private
+
+    def with_store_context
+      Spree::Current.store = store
+      Rails.application.routes.default_url_options[:host] = store.url_or_custom_domain
+      yield
+    ensure
+      Spree::Current.reset if defined?(Spree::Current)
     end
   end
 end

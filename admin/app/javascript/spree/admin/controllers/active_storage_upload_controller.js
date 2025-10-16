@@ -41,7 +41,8 @@ export default class extends Controller {
     let dashboardOptions = {}
     if (this.cropValue == true) {
       dashboardOptions = {
-        autoOpen: 'imageEditor'
+        autoOpen: 'imageEditor',
+        closeAfterFinish: this.closeAfterFinishValue
       }
     }
 

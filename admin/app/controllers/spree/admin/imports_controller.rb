@@ -4,6 +4,7 @@ module Spree
       include ActiveStorage::SetCurrent # Needed for ActiveStorage to work on development env
 
       new_action.before :assign_params
+      create.before :assign_params
       create.before :set_user
       create.before :set_owner
 

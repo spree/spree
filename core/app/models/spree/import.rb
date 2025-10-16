@@ -149,12 +149,17 @@ module Spree
       Spree::Imports::ProcessRowsJob.perform_later(id)
     end
 
+    # Returns the store for the import
+    # @return [Spree::Store]
+    def store
+      owner.is_a?(Spree::Store) ? owner : owner.respond_to?(:store) ? owner.store : Spree::Store.default
+    end
+
     def update_loader_in_import_view
       return unless defined?(broadcast_update_to)
 
       broadcast_update_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
     end
-
     class << self
       def available_types
         Rails.application.config.spree.import_types
