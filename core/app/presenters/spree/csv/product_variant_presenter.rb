@@ -4,9 +4,10 @@ module Spree
       include Spree::ImagesHelper
 
       CSV_HEADERS = [
-        'slug',
+        'product_id',
         'sku',
         'name',
+        'slug',
         'status',
         'vendor_name',
         'brand_name',
@@ -74,9 +75,10 @@ module Spree
         total_on_hand = variant.total_on_hand
 
         csv = [
-          product.slug,
+          product.id,
           variant.sku,
           index.zero? ? product.name : nil,
+          product.slug,
           index.zero? ? product.status : nil,
           index.zero? ? product.try(:vendor_name) : nil,
           index.zero? ? product.try(:brand_name) : nil,
