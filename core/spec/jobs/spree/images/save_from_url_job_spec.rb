@@ -33,6 +33,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
 
     before do
       allow(URI).to receive(:parse).with(external_url.downcase.strip).and_return(uri_double)
+      allow(uri_double).to receive(:scheme).and_return('https')
     end
 
     it "downloads and attaches image from the URL" do

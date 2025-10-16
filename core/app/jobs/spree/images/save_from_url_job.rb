@@ -29,6 +29,10 @@ module Spree
         image.save! and return if image_already_saved?(image, external_url)
 
         uri = URI.parse(external_url)
+        unless %w[http https].include?(uri.scheme)
+          raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}. Only http and https are allowed."
+        end
+
         file = uri.open
         filename = uri.path.split('/').last
 
