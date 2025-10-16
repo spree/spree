@@ -15,7 +15,7 @@ module Spree
       @quantity = params[:quantity].to_i || 1
       options   = params[:options] || {}
 
-      cookies.permanent.signed[:token] = @order.token if @order.persisted?
+      create_token_cookie(@order.token) if @order.persisted?
 
       result = cart_add_item_service.call(order: @order,
                                           variant: @variant,
