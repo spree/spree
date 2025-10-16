@@ -82,7 +82,7 @@ end
 RUBY
 
 # configure actioncable to use redis
-rm config/cable.yml
+rm -rf config/cable.yml
 touch config/cable.yml
 cat <<RUBY >> config/cable.yml
 development:
