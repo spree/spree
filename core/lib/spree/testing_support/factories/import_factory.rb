@@ -6,11 +6,11 @@ FactoryBot.define do
 
     factory :product_import, class: 'Spree::Imports::Products', parent: :import do
       type { 'Spree::Imports::Products' }
-      # attachment { Rack::Test::UploadedFile.new(Spree::Core::Engine.root.join('spec', 'fixtures', 'products_import.csv'), 'text/csv') }
+      # attachment { Rack::Test::UploadedFile.new(Spree::Core::Engine.root.join('spec', 'fixtures', 'files', 'products_import.csv'), 'text/csv') }
 
       after(:create) do |import|
         import.attachment.attach(
-          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'products_import.csv')),
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'files', 'products_import.csv')),
           filename: 'products_import.csv',
           content_type: 'text/csv'
         )
