@@ -1,12 +1,13 @@
 <% col_class ||= 'col-lg-6 offset-lg-3' %>
 <% page_header_back_button_url ||= collection_url %>
+<% form_url ||= collection_url %>
 
 <%= content_for :page_title do %>
   <%= page_header_back_button(page_header_back_button_url) %>
   <%= Spree.t("new_#{controller_name.singularize}") %>
 <% end %>
 
-<%= form_with model: [:admin, @object], url: collection_url, id: "new_#{controller_name.singularize}", data: local_assigns[:data] || {} do |f| %>
+<%= form_with model: [:admin, @object], url: form_url, id: "new_#{controller_name.singularize}", data: local_assigns[:data] || {} do |f| %>
   <div class="row">
     <div class="<%= col_class %>">
       <%= render 'spree/admin/shared/error_messages', target: @object %>
