@@ -52,6 +52,7 @@ export default class extends Controller {
       if (this.heightValue) {
         dashboardOptions.height = this.heightValue
       }
+      dashboardOptions.doneButtonHandler = null
     }
 
     dashboardOptions.hideCancelButton = this.hideCancelButtonValue
@@ -160,6 +161,17 @@ export default class extends Controller {
       }
 
       this.element.appendChild(hiddenField)
+
+      // Propagate a custom 'active-storage-upload:success' event when upload completes and field updated
+      const event = new CustomEvent('active-storage-upload:success', {
+        detail: { 
+          file: file,
+          signedId: signedId,
+          controller: this 
+        },
+        bubbles: true
+      })
+      this.element.dispatchEvent(event)
     }
 
     // show toolbar if attached

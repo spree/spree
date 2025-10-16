@@ -62,6 +62,7 @@ import DrawerController from 'spree/admin/controllers/drawer_controller'
 import FiltersController from 'spree/admin/controllers/filters_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import HighlightController from 'spree/admin/controllers/highlight_controller'
+import ImportFormController from 'spree/admin/controllers/import_form_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
 import MultiTomSelectController from 'spree/admin/controllers/multi_tom_select_controller'
@@ -119,6 +120,7 @@ application.register('enable-button', EnableButtonController)
 application.register('filters', FiltersController)
 application.register('font-picker', FontPickerController)
 application.register('highlight', HighlightController)
+application.register('import-form', ImportFormController)
 application.register('media-form', MediaFormController)
 application.register('multi-input', MultiInputController)
 application.register('multi-tom-select', MultiTomSelectController)

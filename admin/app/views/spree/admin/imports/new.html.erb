@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize.downcase)) %>
-  <%= form_for @import, url: spree.admin_imports_path do |f| %>
+  <%= form_for @import, url: spree.admin_imports_path, data: { controller: 'import-form' } do |f| %>
     <div class="drawer-body">
       <%= f.hidden_field :type %>
 
@@ -19,7 +19,7 @@
     </div>
 
     <div class="drawer-footer">
-      <%= turbo_save_button_tag Spree.t('actions.create') %>
+      <%= turbo_save_button_tag Spree.t('actions.create'), data: { import_form_target: 'button' }, disabled: true %>
       <%= drawer_discard_button %>
     </div>
   <% end %>
