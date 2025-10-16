@@ -79,7 +79,7 @@ module Spree
 
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
-      if type == 'Spree::Imports::Orders'
+      if type == 'Spree::Imports::Customers'
         Spree.user_class
       else
         "Spree::#{type.demodulize.singularize}".safe_constantize
@@ -131,10 +131,6 @@ module Spree
         attachment_file_content.force_encoding('UTF-8'),
         col_sep: preferred_delimiter
       )
-    end
-
-    def csv_body
-      @csv_body ||= ::CSV.parse(attachment_file_content, col_sep: preferred_delimiter).drop(1)
     end
 
     # Returns the content of the attachment file
