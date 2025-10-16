@@ -25,11 +25,6 @@ module Spree
     validate :ensure_whitelisted_type
 
     #
-    # Callbacks
-    #
-    after_create :started_mapping
-
-    #
     # Ransack configuration
     #
     self.whitelisted_ransackable_attributes = %w[number type]

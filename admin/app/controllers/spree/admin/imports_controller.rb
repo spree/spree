@@ -7,6 +7,7 @@ module Spree
       create.before :assign_params
       create.before :set_user
       create.before :set_owner
+      create.after :start_mapping
 
       add_breadcrumb_icon 'table-import'
 
@@ -30,6 +31,10 @@ module Spree
 
       def set_owner
         @object.owner = current_store
+      end
+
+      def start_mapping
+        @object.started_mapping!
       end
 
       def location_after_save

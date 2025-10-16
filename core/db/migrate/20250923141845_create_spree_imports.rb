@@ -9,6 +9,8 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
       t.string :number, limit: 32, null: false, index: { unique: true }
       t.string :type, null: false, index: true
 
+      t.text :processing_errors
+
       t.text :preferences
 
       t.timestamps

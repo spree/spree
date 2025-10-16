@@ -3,6 +3,12 @@ module Spree
     class CreateRowsJob < Spree::BaseJob
       queue_as Spree.queues.imports
 
+      discard_on ::CSV::MalformedCSVError, EncodingError do |job, error|
+        import = Spree::Import.find(job.arguments.first)
+        import.update_columns(processing_errors: error.message, status: :failed, updated_at: Time.current)
+        Rails.error.report error
+      end
+
       BATCH_SIZE = 1000
 
       def perform(import_id)
