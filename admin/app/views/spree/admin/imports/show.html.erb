@@ -7,13 +7,13 @@
 <% if @import.status == 'mapping' %>
   <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
     <div class="w-10 p-2 text-center">
-      <%= Spree.t(:field_required) %>
+      <%= Spree.t('admin.imports.field_required') %>
     </div>
     <div class="w-40 p-2">
-      <%= Spree.t(:schema_field) %>
+      <%= I18n.t('activerecord.attributes.spree/import_mapping.file_column') %>
     </div>
     <div class="w-50 p-2">
-      <%= Spree.t(:file_column) %>
+      <%= I18n.t('activerecord.attributes.spree/import_mapping.schema_field') %>
     </div>
   </div>
   <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping' %>

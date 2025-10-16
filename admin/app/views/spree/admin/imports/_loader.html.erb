@@ -1,7 +1,7 @@
 <% if import.completed? %>
   <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
     <%= icon('check', class: 'text-success', style: 'font-size: 4rem;') %>
-    <p class="text-success"><%= Spree.t(:all_done) %>!</p>
+    <p class="text-success"><%= Spree.t('admin.imports.import_done') %>!</p>
   </div>
 <% else %>
   <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">

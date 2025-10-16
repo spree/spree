@@ -91,6 +91,9 @@ en:
         code_help_text: If you leave it blank, we will generate code for you
         redeemed: Redeemed
         usage: Usage
+      imports:
+        field_required: Field required
+        import_done: All done!
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
