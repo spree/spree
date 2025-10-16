@@ -124,6 +124,28 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  context 'with images' do
+    let!(:product) do
+      create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+    end
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'image1_src' => 'https://example.com/image1.jpg',
+        'image2_src' => 'https://example.com/image2.jpg',
+        'image3_src' => 'https://example.com/image3.jpg'
+      )
+    end
+
+    it 'saves the images' do
+      expect { subject.process! }.to have_enqueued_job(Spree::Images::SaveFromUrlJob).exactly(3).times.on_queue(Spree.queues.images)
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image1_src'])
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image2_src'])
+        .and have_enqueued_job(Spree::Images::SaveFromUrlJob).with(variant.id, 'Spree::Variant', row_data['image3_src'])
+    end
+  end
+
   context 'when importing a variant with all option columns empty' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])

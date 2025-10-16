@@ -44,6 +44,8 @@ module Spree
             variant.set_stock(attributes['inventory_count'].to_i, attributes['inventory_backorderable']&.to_b, store.default_stock_location)
           end
 
+          handle_images(variant)
+
           variant
         end
 
@@ -84,6 +86,20 @@ module Spree
             Spree::ProductOptionType.find_or_create_by!(product: product, option_type: option_type)
 
             Spree::OptionValueVariant.new(option_value: option_value)
+          end
+        end
+
+        def handle_images(variant)
+          image_urls = [
+            attributes['image1_src'],
+            attributes['image2_src'],
+            attributes['image3_src'],
+          ].compact.map(&:strip).compact_blank.uniq
+
+          return if image_urls.empty?
+
+          image_urls.each do |image_url|
+            Spree::Images::SaveFromUrlJob.perform_later(variant.id, 'Spree::Variant', image_url)
           end
         end
 
