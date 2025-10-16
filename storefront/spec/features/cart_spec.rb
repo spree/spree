@@ -89,6 +89,11 @@ describe 'Cart', type: :feature do
   context 'order by cookie' do
     context 'order exists', js: true do
       before do
+        # Mock store url to match Capybara url for cookie domain
+        allow_any_instance_of(Spree::LineItemsController).to receive(:current_store)
+          .and_return(store)
+        host = Capybara.current_session.server.host
+        allow(store).to receive(:url_or_custom_domain).and_return(host)
         add_to_cart(product)
       end
 
