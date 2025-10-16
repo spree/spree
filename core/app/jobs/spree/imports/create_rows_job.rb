@@ -24,9 +24,10 @@ module Spree
         created_at = updated_at = Time.current
 
         upsert_options = {}
-        if ActiveRecord::Base.connection.adapter_name == 'PostgreSQL' || ActiveRecord::Base.connection.adapter_name == 'SQLite'
+        if %w[PostgreSQL SQLite].include?(ActiveRecord::Base.connection.adapter_name)
           upsert_options[:unique_by] = %i[import_id row_number]
         end
+        # NOTE: Ensure a DB-level unique index on [:import_id, :row_number] for all adapters.
 
         # Stream CSV to avoid loading entire file in memory
         # This maintains order by processing sequentially

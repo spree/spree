@@ -1,6 +1,6 @@
-<div id="<%= spree_dom_id(mapping) %>-icon" data-controller="tooltip">
-  <% if mapping.required? %>
+<% if mapping.required? %>
+  <div id="<%= spree_dom_id(mapping) %>-icon" data-controller="tooltip">
     <%= icon('checklist', class: mapping.mapped? ? 'text-success' : 'text-muted') %>
-  <% end %>
-  <%= tooltip('This field is required') %>
-</div>
+    <%= tooltip(Spree.t('admin.imports.mapping_required')) %>
+  </div>
+<% end %>

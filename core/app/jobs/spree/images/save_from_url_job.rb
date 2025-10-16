@@ -4,7 +4,7 @@ module Spree
   module Images
     class SaveFromUrlJob < ::Spree::BaseJob
       queue_as Spree.queues.images
-      retry_on ActiveRecord::RecordInvalid, OpenURI::HTTPError, wait: :exponentially_longer, attempts: 2
+      retry_on ActiveRecord::RecordInvalid, OpenURI::HTTPError, URI::InvalidURIError, wait: :exponentially_longer, attempts: 2
 
       def perform(viewable_id, viewable_type, external_url, position = nil)
         viewable = viewable_type.safe_constantize.find(viewable_id)

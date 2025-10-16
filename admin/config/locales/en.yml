@@ -92,8 +92,11 @@ en:
         redeemed: Redeemed
         usage: Usage
       imports:
+        all_required_columns_mapped: Good job, all required columns are mapped!
         field_required: Field required
         import_done: All done!
+        mapping_required: This field is required
+        please_map_all_required_fields: Please map all the required fields to continue.
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
