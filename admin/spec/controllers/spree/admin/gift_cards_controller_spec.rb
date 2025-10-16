@@ -79,6 +79,47 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       subject
       expect(assigns(:object)).to eq(gift_card)
     end
+
+    context 'for a redeemed gift card' do
+      let!(:order) { create(:order, email: 'user@example.com', user: user, gift_card: gift_card) }
+      let(:gift_card) { create(:gift_card, :redeemed, user: user) }
+
+      it 'renders the show template' do
+        subject
+        expect(response).to render_template(:show)
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'assigns the gift card' do
+        subject
+        expect(assigns(:object)).to eq(gift_card)
+      end
+
+      it 'assigns the order' do
+        subject
+        expect(assigns(:orders)).to eq([order])
+      end
+
+      context 'when the order is a guest order' do
+        let(:user) { nil }
+
+        it 'renders the show template' do
+          subject
+          expect(response).to render_template(:show)
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'assigns the gift card' do
+          subject
+          expect(assigns(:object)).to eq(gift_card)
+        end
+
+        it 'assigns the order' do
+          subject
+          expect(assigns(:orders)).to eq([order])
+        end
+      end
+    end
   end
 
   describe '#new' do

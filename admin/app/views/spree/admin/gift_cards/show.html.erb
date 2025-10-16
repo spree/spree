@@ -67,7 +67,7 @@
                       <% end %>
                     </td>
                     <td>
-                      <%= order.user.email %>
+                      <%= render 'spree/admin/orders/customer_summary', order: order %>
                     </td>
                     <td class="text-right">
                       <%= order.display_gift_card_total %>
