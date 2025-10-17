@@ -2025,6 +2025,26 @@ describe Spree::Order, type: :model do
           expect(subject).to be false
         end
       end
+
+      context 'when payment is void' do
+        let(:amount) { 70 }
+
+        before { order.update_column(:payment_state, 'void') }
+
+        it 'returns false' do
+          expect(subject).to be(false)
+        end
+      end
+
+      context 'when payment is failed' do
+        let(:amount) { 70 }
+
+        before { order.update_column(:payment_state, 'failed') }
+
+        it 'returns false' do
+          expect(subject).to be(false)
+        end
+      end
     end
 
     context 'when order does not have refunds' do
@@ -2032,6 +2052,62 @@ describe Spree::Order, type: :model do
 
       it 'returns false' do
         expect(subject).to be false
+      end
+    end
+  end
+
+  describe '#order_refunded?' do
+    subject { order.order_refunded? }
+
+    context 'when orders has refunds' do
+      let!(:order) { create(:order_ready_to_ship) }
+      let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
+
+      let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
+      let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
+
+      before do
+        order.update_column(:total, 110)
+        order.update_column(:additional_tax_total, 10)
+        order.update_column(:payment_total, 95)
+
+        order.payments.first.update_column(:amount, 95)
+
+        create(:store_credit_payment, amount: 15, order: order)
+      end
+
+      context 'when sum of refunds is less than max amount which could be refunded' do
+        let(:amount) { 50 }
+
+        it 'returns false' do
+          expect(subject).to be(false)
+        end
+      end
+
+      context 'when sum of refunds is equal to max amount which could be refunded' do
+        let(:amount) { 85 }
+
+        it 'returns true' do
+          expect(subject).to be(true)
+        end
+      end
+
+      context 'when payment is void' do
+        let(:amount) { 85 }
+
+        before { order.update_column(:state, 'void') }
+
+        it 'returns true' do
+          expect(subject).to be(true)
+        end
+      end
+    end
+
+    context 'when order does not have refunds' do
+      let!(:order) { create(:order_ready_to_ship) }
+
+      it 'returns false' do
+        expect(subject).to be(false)
       end
     end
   end
