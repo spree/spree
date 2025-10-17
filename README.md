@@ -120,7 +120,7 @@ To get access to the Enterprise Edition, contact our [Sales team](https://spreec
 <img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
 
 ### Responsive Admin Panel
-Manage and curate products, users, orders, returns, shipments & more
+Manage and create products, users, orders, returns, shipments & more
 <img alt="Spree Commerce - Inventory management" src="https://github.com/spree/spree/assets/12614496/cdc7af4d-41ba-44f2-9595-efc948865107">
 
 ### Orders & Post-purchase management
