@@ -707,4 +707,36 @@ describe Spree::Address, type: :model do
       address.valid?
     end
   end
+
+  context 'require_phone?' do
+    context 'when quick_checkout is true' do
+      let(:address) { create(:address, quick_checkout: true) }
+
+      it 'returns false' do
+        expect(address.require_phone?).to be(false)
+      end
+    end
+
+    context 'when quick_checkout is false' do
+      let(:address) { build_stubbed(:address, quick_checkout: false) }
+
+      context 'and Spree::Config[:address_requires_phone] is true' do
+        before { Spree::Config[:address_requires_phone] = true }
+
+        after { Spree::Config[:address_requires_phone] = false }
+
+        it 'returns true' do
+          expect(address.require_phone?).to be(true)
+        end
+      end
+      
+      context 'and Spree::Config[:address_requires_phone] is false' do
+        before { Spree::Config[:address_requires_phone] = false }
+
+        it 'returns false' do
+          expect(address.require_phone?).to be(false)
+        end
+      end
+    end
+  end
 end
