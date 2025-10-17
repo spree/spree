@@ -136,6 +136,11 @@ RSpec.describe 'Product detail page', type: :feature do
       it_behaves_like 'can be added to cart'
 
       it 'cannot add more than available quantity', js: true do
+        # Mock store url to match Capybara url for cookie domain
+        allow_any_instance_of(Spree::LineItemsController).to receive(:current_store)
+          .and_return(store)
+        host = Capybara.current_session.server.host
+        allow(store).to receive(:url_or_custom_domain).and_return(host)
         # we need to populate cart first
         within turbo_frame do
           fill_in 'quantity', with: 10
