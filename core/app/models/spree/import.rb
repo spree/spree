@@ -137,7 +137,7 @@ module Spree
     end
 
     def create_rows_async
-      Spree::Imports::CreateRowsJob.perform_later(id)
+      Spree::Imports::CreateRowsJob.set(wait: 2.seconds).perform_later(id)
     end
 
     def process_rows_async

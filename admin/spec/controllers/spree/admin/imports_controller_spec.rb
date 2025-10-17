@@ -71,7 +71,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
   end
 
   describe 'PUT #complete_mapping' do
-    let(:import) { create(:product_import) }
+    let(:import) { create(:product_import, status: :mapping) }
 
     context 'when mapping is done' do
       before do

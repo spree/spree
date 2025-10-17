@@ -97,6 +97,7 @@ en:
         import_done: All done!
         mapping_required: This field is required
         please_map_all_required_fields: Please map all the required fields to continue.
+        waiting_for_file_to_be_processed: Waiting for file to be processed...
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.
