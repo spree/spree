@@ -33,6 +33,8 @@ module Spree
     validates :amount, presence: true, numericality: { greater_than: 0 }
     validates :amount_used, :amount_authorized, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
+    validate :gift_card_validators, on: [:create, :update]
+
     #
     # Associations
     #
@@ -138,6 +140,12 @@ module Spree
     end
 
     private
+
+    def gift_card_validators
+      Rails.application.config.spree.validators.gift_cards.each do |validator|
+        validates_with validator
+      end
+    end
 
     def generate_code
       return if code.present?
