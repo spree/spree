@@ -156,6 +156,7 @@ en:
         description_alignment: Description alignment
         desktop_image_alignment: Image alignment for desktop
         desktop_logo_height: Logo height (desktop)
+        enabled: Enabled?
         heading: Heading
         heading_alignment: Heading alignment
         heading_size: Heading size
