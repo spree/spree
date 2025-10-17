@@ -179,6 +179,8 @@ module Spree
     end
 
     def require_phone?
+      # We want to collect phone number for quick checkout but not to validate it
+      # as it's not available before payment by browser.
       !quick_checkout && Spree::Config[:address_requires_phone]
     end
 
