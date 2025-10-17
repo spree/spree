@@ -46,7 +46,7 @@ RSpec.describe Spree::Imports::CreateRowsJob, type: :job do
   end
 
   it 'transitions import to processing if not already processing' do
-    expect_any_instance_of(Spree::Import).to receive(:started_processing!).once
+    expect_any_instance_of(Spree::Import).to receive(:start_processing!).once
     described_class.perform_now(import.id)
   end
 

@@ -54,19 +54,39 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
         expect(assigns(:import).type).to eq('Spree::Imports::Products')
       end
     end
+
+    context 'when attachment is not a CSV file' do
+      let(:attachment) { Rack::Test::UploadedFile.new(File.join(Spree::Admin::Engine.root, 'spec/fixtures/files', 'logo.png'), 'image/png') }
+
+      it 'does not create an import and redirects to new' do
+        expect {
+          post :create, params: { import: import_params }
+        }.not_to change(Spree::Import, :count)
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   describe 'GET #show' do
     let(:import) do
-      # Stub the file content reading since ActiveStorage doesn't persist files properly in transactional tests
-      allow_any_instance_of(Spree::Import).to receive(:attachment_file_content).and_return(csv_content)
-      create(:product_import)
+      create(:product_import, status: :mapping)
+    end
+
+    before do
+      import.create_mappings
     end
 
     it 'renders the show template' do
       get :show, params: { id: import.id }
       expect(response).to render_template(:show)
       expect(assigns(:import)).to eq(import)
+    end
+
+    context 'when mapping is done' do
+      before do
+        import.complete_mapping!
+      end
     end
   end
 
@@ -76,11 +96,11 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
     context 'when mapping is done' do
       before do
         allow_any_instance_of(Spree::Import).to receive(:mapping_done?).and_return(true)
-        allow_any_instance_of(Spree::Import).to receive(:completed_mapping!).and_call_original
+        allow_any_instance_of(Spree::Import).to receive(:complete_mapping!).and_call_original
       end
 
       it 'marks import as completed and redirects to show' do
-        expect_any_instance_of(Spree::Import).to receive(:completed_mapping!)
+        expect_any_instance_of(Spree::Import).to receive(:complete_mapping!)
         put :complete_mapping, params: { id: import.id }
         expect(response).to redirect_to(spree.admin_import_path(import))
       end
@@ -92,7 +112,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
       end
 
       it 'does not mark import as completed but still redirects to show' do
-        expect_any_instance_of(Spree::Import).not_to receive(:completed_mapping!)
+        expect_any_instance_of(Spree::Import).not_to receive(:complete_mapping!)
         put :complete_mapping, params: { id: import.id }
         expect(response).to redirect_to(spree.admin_import_path(import))
       end

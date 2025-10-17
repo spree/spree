@@ -11,7 +11,7 @@ module Spree
     # Associations
     #
     belongs_to :owner, polymorphic: true # Store, Vendor, etc.
-    belongs_to :user, class_name: Spree.admin_user_class.to_s
+    belongs_to :user, class_name: Spree.admin_user_class.to_s, optional: true
     has_many :mappings, class_name: 'Spree::ImportMapping', dependent: :destroy, inverse_of: :import
     alias import_mappings mappings
     has_many :rows, class_name: 'Spree::ImportRow', dependent: :destroy_async, inverse_of: :import
@@ -23,6 +23,7 @@ module Spree
     validates :owner, :user, :type, presence: true
     validates :attachment, presence: true, unless: -> { Rails.env.test? }
     validate :ensure_whitelisted_type
+    validate :ensure_attachment_content_type
 
     #
     # Ransack configuration
@@ -38,17 +39,17 @@ module Spree
     # State machine
     #
     state_machine initial: :pending, attribute: :status do
-      event :started_mapping do
+      event :start_mapping do
         transition to: :mapping
       end
       before_transition to: :mapping, do: :create_mappings
 
-      event :completed_mapping do
+      event :complete_mapping do
         transition from: :mapping, to: :completed_mapping
       end
       after_transition to: :completed_mapping, do: :create_rows_async
 
-      event :started_processing do
+      event :start_processing do
         transition from: :completed_mapping, to: :processing
       end
 
@@ -112,10 +113,10 @@ module Spree
     # Returns the headers of the csv file
     # @return [Array<String>]
     def csv_headers
-      return [] if attachment.blank?
+      return [] if attachment_file_content.blank?
 
       @csv_headers ||= ::CSV.parse_line(
-        attachment_file_content.force_encoding('UTF-8'),
+        attachment_file_content,
         col_sep: preferred_delimiter
       )
     end
@@ -123,7 +124,7 @@ module Spree
     # Returns the content of the attachment file
     # @return [String]
     def attachment_file_content
-      @attachment_file_content ||= attachment.blob.download
+      @attachment_file_content ||= attachment.attached? ? attachment.blob.download&.force_encoding('UTF-8') : nil
     end
 
     # Creates mappings from the schema fields
@@ -185,6 +186,12 @@ module Spree
 
       allowed = self.class.available_types.map(&:to_s)
       errors.add(:type, :inclusion) unless allowed.include?(type)
+    end
+
+    def ensure_attachment_content_type
+      return if attachment.blank?
+
+      errors.add(:attachment, :content_type) unless attachment.content_type.in?(%w[text/csv])
     end
   end
 end

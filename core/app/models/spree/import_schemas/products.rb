@@ -9,7 +9,7 @@ module Spree
         { name: 'status', label: 'Status' },
         { name: 'description', label: 'Description' },
         { name: 'meta_title', label: 'Meta Title' },
-        { name: 'meta_description' },
+        { name: 'meta_description', label: 'Meta Description' },
         { name: 'meta_keywords', label: 'Meta Keywords' },
         { name: 'tags', label: 'Tags' },
         { name: 'compare_at_price', label: 'Compare at Price' },

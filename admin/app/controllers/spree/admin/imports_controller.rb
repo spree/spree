@@ -9,16 +9,14 @@ module Spree
       create.before :set_owner
       create.after :start_mapping
 
-      add_breadcrumb_icon 'table-import'
-
       # GET /admin/imports/:id
       def show
         add_breadcrumb @object.display_name, spree.admin_import_path(@object)
       end
 
-      # PUT /admin/imports/:id/completed_mapping
+      # PUT /admin/imports/:id/complete_mapping
       def complete_mapping
-        @object.completed_mapping! if @object.mapping_done?
+        @object.complete_mapping! if @object.mapping_done?
 
         redirect_to spree.admin_import_path(@object)
       end
@@ -34,7 +32,7 @@ module Spree
       end
 
       def start_mapping
-        @object.started_mapping!
+        @object.start_mapping!
       end
 
       def location_after_save

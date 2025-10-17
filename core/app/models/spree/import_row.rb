@@ -17,7 +17,7 @@ module Spree
     # State machine
     #
     state_machine initial: :pending, attribute: :status do
-      event :started_processing do
+      event :start_processing do
         transition to: :processing
       end
 
@@ -66,14 +66,17 @@ module Spree
       end
     end
 
-    def attribute_by_schema_field(schema_field, mappings, schema_fields)
+    def attribute_by_schema_field(schema_field, mappings = nil, schema_fields = nil)
+      mappings ||= import.mappings.mapped
+      schema_fields ||= import.schema_fields
+
       mapping = mappings.find { |m| m.schema_field == schema_field }
       schema_field = schema_fields.find { |f| f[:name] == schema_field }
       data_json[mapping.file_column]
     end
 
     def process!
-      started_processing!
+      start_processing!
       self.item = import.row_processor_class.new(self).process!
       complete!
     rescue StandardError => e
