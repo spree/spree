@@ -13,7 +13,7 @@ module Spree
 
       def perform(import_id)
         import = Spree::Import.find(import_id)
-        import.start_processing! unless import.processing?
+        import.start_processing! if import.status != 'processing'
 
         create_rows_sequentially(import)
 
