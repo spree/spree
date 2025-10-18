@@ -60,18 +60,18 @@ module Spree
 
         attributes = {}
         schema_fields.each do |field|
-          attributes[field[:name]] = attribute_by_schema_field(field[:name], mappings, schema_fields)
+          attributes[field[:name]] = attribute_by_schema_field(field[:name], mappings)
         end
         attributes
       end
     end
 
-    def attribute_by_schema_field(schema_field, mappings = nil, schema_fields = nil)
+    def attribute_by_schema_field(schema_field, mappings = nil)
       mappings ||= import.mappings.mapped
-      schema_fields ||= import.schema_fields
 
       mapping = mappings.find { |m| m.schema_field == schema_field }
-      schema_field = schema_fields.find { |f| f[:name] == schema_field }
+      return unless mapping&.mapped?
+
       data_json[mapping.file_column]
     end
 
