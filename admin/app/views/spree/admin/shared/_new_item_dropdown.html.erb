@@ -1,9 +1,9 @@
 <div class="dropdown">
-  <button type="button" class="btn btn-sm btn-light shadow-xs px-1" data-toggle="dropdown" aria-expanded="false">
+  <button type="button" class="btn btn-sm btn-light px-1" data-toggle="dropdown" aria-expanded="false">
     <%= icon 'plus', class: 'mr-0' %>
   </button>
   <div class="dropdown-menu">
-    <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.admin_orders_path, class: "dropdown-item", data: { turbo_method: :post } if can?(:manage, Spree::Order)  %>
+    <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.new_admin_order_path, class: "dropdown-item" if can?(:manage, Spree::Order)  %>
 
     <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>
       <%= icon 'cube-plus' %>

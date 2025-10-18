@@ -9,7 +9,7 @@
     <%= render "spree/admin/shared/product_image", object: variant %>
     <div class="ml-3">
       <strong><%= variant.name %></strong>
-      <% if variant.options_text.present? %>
+      <% if !variant.is_master? && variant.options_text.present? %>
         <p class="text-muted my-1 font-size-sm">
           <%= variant.options_text %>
         </p>

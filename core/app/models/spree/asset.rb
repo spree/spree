@@ -7,6 +7,8 @@ module Spree
       include Spree::Webhooks::HasWebhooks
     end
 
+    EXTERNAL_URL_METAFIELD_KEY = 'external.url'
+
     belongs_to :viewable, polymorphic: true, touch: true
     acts_as_list scope: [:viewable_id, :viewable_type]
 
@@ -20,9 +22,18 @@ module Spree
     scope :with_session_uploaded_assets_uuid, lambda { |uuid|
       where(session_id: uuid)
     }
+    scope :with_external_url, ->(url) { url.present? ? with_metafield_key_value(EXTERNAL_URL_METAFIELD_KEY, url.downcase.strip) : none }
 
     def product
       @product ||= viewable_type == 'Spree::Variant' ? viewable&.product : nil
+    end
+
+    def external_url
+      get_metafield(EXTERNAL_URL_METAFIELD_KEY)&.value
+    end
+
+    def external_url=(url)
+      set_metafield(EXTERNAL_URL_METAFIELD_KEY, url.downcase.strip)
     end
   end
 end

@@ -6,7 +6,8 @@
       "Bash(grep:*)",
       "Bash(bundle install:*)",
       "Bash(bundle exec rails:*)",
-      "Bash(bundle exec rspec:*)"
+      "Bash(bundle exec rspec:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

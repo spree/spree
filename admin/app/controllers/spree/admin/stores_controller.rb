@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class StoresController < Spree::Admin::BaseController
+      include Spree::Admin::SettingsConcern
+
       before_action :load_store, only: [:edit, :update]
       before_action :normalize_supported_currencies, only: [:update]
       before_action :normalize_supported_locales, only: [:update]

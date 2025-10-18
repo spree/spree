@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ReimbursementTypesController < ResourceController
-      add_breadcrumb Spree.t(:reimbursement_types), :admin_reimbursement_types_path
+      include Spree::Admin::SettingsConcern
 
       private
 

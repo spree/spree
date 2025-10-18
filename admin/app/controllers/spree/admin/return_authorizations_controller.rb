@@ -1,8 +1,7 @@
 module Spree
   module Admin
     class ReturnAuthorizationsController < ResourceController
-      add_breadcrumb_icon 'receipt-refund'
-      add_breadcrumb Spree.t(:returns), :admin_customer_returns_path
+      include Spree::Admin::SettingsConcern
 
       def index; end
 

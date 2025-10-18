@@ -1,0 +1,11 @@
+<% options ||= import.unmapped_file_columns.map { |file_column| [file_column, file_column] } %>
+
+<%= turbo_frame_tag spree_dom_id(mapping) + '_form' do %>
+  <%= form_for mapping, url: spree.admin_import_mapping_path(import, mapping), method: :put, data: { controller: 'auto-submit' } do |f| %>
+    <% select_options = options.dup %>
+    <% if mapping.file_column.present? %>
+      <% select_options.prepend([mapping.file_column, mapping.file_column]) %>
+    <% end %>
+    <%= f.select :file_column, options_for_select(select_options, mapping.file_column), { include_blank: 'Please select a column' }, { data: { action: 'auto-submit#submit', controller: 'autocomplete-select' }, id: "import_mapping_file_column_#{mapping.id}" } %>
+  <% end %>
+<% end %>

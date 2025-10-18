@@ -85,7 +85,7 @@
     <% end %>
 
     <% if can_ship?(shipment) %>
-      <div class="card-footer d-flex justify-content-end border-top bg-gray-25">
+      <div class="card-footer d-flex justify-content-end border-top bg-light">
         <% if shipment.tracked? %>
           <%= link_to_with_icon 'send.svg', Spree.t(:ship), spree.ship_admin_order_shipment_path(order, shipment), class: 'ml-auto btn btn-primary mb-0', data: {turbo_method: :post, turbo_confirm: Spree.t(:are_you_sure)} %>
         <% elsif !shipment.digital? %>

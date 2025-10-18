@@ -3,9 +3,6 @@ module Spree
     class InvitationsController < BaseController
       skip_before_action :authorize_admin, only: [:show, :accept]
 
-      add_breadcrumb Spree.t(:users), :admin_admin_users_path
-      add_breadcrumb Spree.t(:invitations), :admin_invitations_path
-
       before_action :load_parent, except: [:show]
       before_action :load_invitation, only: [:destroy]
       before_action :load_roles, only: [:new, :create]
@@ -117,7 +114,7 @@ module Spree
       end
 
       def choose_layout
-        action_name == 'show' ? 'spree/minimal' : 'spree/admin'
+        action_name == 'show' ? 'spree/minimal' : 'spree/admin_settings'
       end
 
       def model_class

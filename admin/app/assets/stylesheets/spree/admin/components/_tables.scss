@@ -33,7 +33,7 @@ table.table {
 
   thead {
     th {
-      background-color: rgba($gray-25, 0.75);
+      background-color: $light;
       @extend .text-muted;
       font-size: $font-size-sm;
       font-weight: $font-weight-normal;

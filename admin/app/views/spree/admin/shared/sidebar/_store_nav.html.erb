@@ -1,4 +1,4 @@
-<% if settings_active? %>
+<% if settings_area? %>
   <ul class="nav flex-column">
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>

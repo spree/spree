@@ -1,13 +1,12 @@
 module Spree
   module Admin
     class WebhooksSubscribersController < ResourceController
+      include Spree::Admin::SettingsConcern
+
       before_action :set_supported_events, except: [:index, :show]
 
       create.before :process_subscriptions
       update.before :process_subscriptions
-
-      add_breadcrumb Spree.t(:developers), :admin_oauth_applications_path
-      add_breadcrumb Spree.t(:webhooks), :admin_webhooks_subscribers_path
 
       def show
         @webhooks_subscriber = Webhooks::Subscriber.find(params[:id])

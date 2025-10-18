@@ -4,6 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= render_admin_partials(:products_actions_partials) %>
+  <%= link_to_with_icon 'table-import', Spree.t(:import), spree.new_admin_import_path(type: 'Spree::Imports::Products'), class: 'btn btn-light', data: { action: 'drawer#open',turbo_frame: :drawer } if can?(:create, Spree::Import) %>
   <%= link_to_export_modal %>
   <%= link_to_with_icon 'plus', Spree.t(:new_product), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Product) %>
 <% end %>

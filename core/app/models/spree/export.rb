@@ -188,7 +188,11 @@ module Spree
 
       # eg. Spree::Exports::Products => Spree::Product
       def model_class
-        "Spree::#{to_s.demodulize.singularize}".constantize
+        klass = "Spree::#{to_s.demodulize.singularize}".safe_constantize
+
+        raise NameError, "Missing model class for #{to_s}" unless klass
+
+        klass
       end
     end
 

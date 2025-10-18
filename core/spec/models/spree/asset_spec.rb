@@ -62,4 +62,43 @@ describe Spree::Asset, type: :model do
       expect(subject).to contain_exactly(*assets)
     end
   end
+
+  context 'external URL' do
+    before do
+      create(:metafield_definition, namespace: 'external', key: 'url', resource_type: 'Spree::Asset')
+    end
+
+    describe '.with_external_url' do
+      it 'returns assets with the given external URL' do
+        asset = create(:asset)
+        asset.set_metafield('external.url', 'https://example.com')
+        expect(described_class.with_external_url('https://example.com')).to include(asset)
+      end
+
+      it 'returns no assets if the external URL is blank' do
+        expect(described_class.with_external_url(nil)).to be_empty
+      end
+    end
+
+    describe '#external_url' do
+      it 'returns the external URL' do
+        asset = create(:asset)
+        asset.set_metafield('external.url', 'https://example.com')
+        expect(asset.external_url).to eq('https://example.com')
+      end
+
+      it 'returns nil if the external URL is blank' do
+        asset = create(:asset)
+        expect(asset.external_url).to be_nil
+      end
+    end
+
+    describe '#external_url=' do
+      it 'sets the external URL' do
+        asset = create(:asset)
+        asset.external_url = 'https://example.com'
+        expect(asset.external_url).to eq('https://example.com')
+      end
+    end
+  end
 end

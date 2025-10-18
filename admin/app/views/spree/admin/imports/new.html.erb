@@ -1,0 +1,26 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:import) + ' ' + Spree.t(@import.type.demodulize.pluralize.downcase)) %>
+  <%= form_for @import, url: spree.admin_imports_path, data: { controller: 'import-form' } do |f| %>
+    <div class="drawer-body">
+      <%= f.hidden_field :type %>
+
+      <div data-controller="active-storage-upload"
+        data-active-storage-upload-auto-submit-value="false"
+        data-active-storage-upload-field-name-value="<%= f.object_name %>[attachment]"
+        data-active-storage-upload-allowed-file-types-value="<%= ["text/csv"].to_json %>"
+        data-active-storage-upload-height-value="200"
+        data-active-storage-upload-inline-value="true"
+        data-active-storage-upload-hide-cancel-button-value="true"
+        data-active-storage-upload-disable-thumbnail-generator-value="true"
+        class="d-flex flex-column justify-content-center w-100 position-relative mb-4">
+      </div>
+
+      <%= f.spree_select :preferred_delimiter, options_for_select([',', ';', '|', '\t'], @import.preferred_delimiter) %>
+    </div>
+
+    <div class="drawer-footer">
+      <%= turbo_save_button_tag Spree.t('actions.create'), data: { import_form_target: 'button' }, disabled: true %>
+      <%= drawer_discard_button %>
+    </div>
+  <% end %>
+<% end %>

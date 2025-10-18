@@ -78,7 +78,7 @@ module Spree
           product.id,
           variant.sku,
           index.zero? ? product.name : nil,
-          index.zero? ? product.slug : nil,
+          product.slug,
           index.zero? ? product.status : nil,
           index.zero? ? product.try(:vendor_name) : nil,
           index.zero? ? product.try(:brand_name) : nil,

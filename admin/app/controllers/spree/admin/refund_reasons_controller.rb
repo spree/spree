@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class RefundReasonsController < ResourceController
-      add_breadcrumb Spree.t(:refund_reasons), :admin_refund_reasons_path
+      include Spree::Admin::SettingsConcern
 
       private
 

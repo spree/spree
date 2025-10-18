@@ -1,9 +1,9 @@
 module Spree
   module Admin
     class OauthApplicationsController < ResourceController
-      before_action :set_default_scopes, only: [:new, :edit]
+      include Spree::Admin::SettingsConcern
 
-      add_breadcrumb Spree.t(:developers), :admin_oauth_applications_path
+      before_action :set_default_scopes, only: [:new, :edit]
 
       private
 

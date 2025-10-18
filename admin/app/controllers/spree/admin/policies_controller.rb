@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class PoliciesController < ResourceController
-      add_breadcrumb Spree.t(:policies), :admin_policies_path
+      include Spree::Admin::SettingsConcern
 
       before_action :set_policy_owner, only: %i[create update]
 

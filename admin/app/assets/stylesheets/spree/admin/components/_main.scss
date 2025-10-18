@@ -21,6 +21,24 @@
   }
 }
 
+#settings-header {
+  height: $header-height;
+  background-color: $header-bg;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 0;
+
+  #page-header {
+    margin-bottom: 0;
+    height: $header-height;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 .page-header-title {
   font-size: 1.25rem;
 }
@@ -53,6 +71,15 @@
         font-weight: 600;
       }
     }
+  }
+}
+
+.admin-settings {
+  #page-tabs, #page-alerts {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
@@ -260,6 +287,8 @@
   font-size: $font-size-sm;
   padding: 0.5rem 1rem;
   margin: 0.75rem;
+  border-width: 1px;
+  box-shadow: $box-shadow-xs;
   p {
     margin-bottom: 0.5rem;
   }

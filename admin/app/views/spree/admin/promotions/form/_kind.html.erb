@@ -2,7 +2,7 @@
   <%= f.radio_button :kind, :coupon_code, data: { toggle: :collapse, target: '#coupon-code' }, class: 'custom-control-input' %>
   <%= f.label :kind_coupon_code, Spree.t(:coupon_code), class: 'custom-control-label' %>
 
-  <div id="coupon-code" class="rounded p-3 bg-gray-25 mt-3 collapse <% unless @promotion.automatic? %>show<% end %>">
+  <div id="coupon-code" class="rounded p-3 bg-light mt-3 collapse <% unless @promotion.automatic? %>show<% end %>">
     <div class="d-flex align-items-start custom-control custom-radio">
       <%= f.radio_button :multi_codes, false, data: { toggle: :collapse, target: '#single-code' }, class: 'custom-control-input' %>
       <%= f.label :multi_codes_false, class: 'custom-control-label' do %>

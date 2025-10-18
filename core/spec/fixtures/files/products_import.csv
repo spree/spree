@@ -1,0 +1,18 @@
+slug,sku,name,status,vendor_name,brand_name,description,meta_title,meta_description,meta_keywords,tags,labels,price,compare_at_price,currency,width,height,depth,dimensions_unit,weight,weight_unit,available_on,discontinue_on,track_inventory,inventory_count,inventory_backorderable,tax_category,digital,image1_src,image2_src,image3_src,option1_name,option1_value,option2_name,option2_value,option3_name,option3_value,category1,category2,category3,metafield.properties.fit,metafield.properties.manufacturer,metafield.properties.material
+denim-shirt,"",Denim Shirt,draft,,,Adipisci sapiente velit nihil ullam. Placeat cumque ipsa cupiditate velit magni sapiente mollitia dolorum. Veritatis esse illo eos perferendis. Perspiciatis vel iusto odio eveniet quam officia quidem. Fugiat a ipsum tempore optio accusantium autem in fugit.,,,,"","",0.0,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Default,false,,,,,,,,,,Categories -> Men -> Shirts,Categories -> Women,Categories -> Sportswear,Lose,Wannabe,90% Cotton 10% Elastan
+denim-shirt,DENIM-SHIRT-XS-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Blue,Size,XS,,
+denim-shirt,DENIM-SHIRT-S-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Blue,Size,S,,
+denim-shirt,DENIM-SHIRT-M-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Blue,Size,M,,
+denim-shirt,DENIM-SHIRT-L-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Blue,Size,L,,
+denim-shirt,DENIM-SHIRT-XL-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Blue,Size,XL,,
+denim-shirt,DENIM-SHIRT-XS-LIGHT-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Light Blue,Size,XS,,
+denim-shirt,DENIM-SHIRT-S-LIGHT-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Light Blue,Size,S,,
+denim-shirt,DENIM-SHIRT-M-LIGHT-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Light Blue,Size,M,,
+denim-shirt,DENIM-SHIRT-L-LIGHT-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Light Blue,Size,L,,
+denim-shirt,DENIM-SHIRT-XL-LIGHT-BLUE,,,,,,,,,,,62.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:53,,true,100,true,Clothing,false,,,,Color,Light Blue,Size,XL,,
+checked-shirt,"",Checked Shirt,draft,,,Et ipsam repudiandae itaque tenetur laborum. Cupiditate nulla blanditiis quia tenetur doloremque possimus explicabo asperiores. Facere adipisci veniam aut nemo magnam.,,,,"","",0.0,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Default,false,,,,,,,,,,Categories -> Men -> Shirts,Categories -> Women,Categories -> Sportswear,Lose,Wannabe,10% Cotton 90% Elastan
+checked-shirt,CHECKED-SHIRT-XS-RED,,,,,,,,,,,22.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Clothing,false,,,,Color,Red,Size,XS,,
+checked-shirt,CHECKED-SHIRT-S-RED,,,,,,,,,,,22.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Clothing,false,,,,Color,Red,Size,S,,
+checked-shirt,CHECKED-SHIRT-M-RED,,,,,,,,,,,22.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Clothing,false,,,,Color,Red,Size,M,,
+checked-shirt,CHECKED-SHIRT-L-RED,,,,,,,,,,,22.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Clothing,false,,,,Color,Red,Size,L,,
+checked-shirt,CHECKED-SHIRT-XL-RED,,,,,,,,,,,22.99,0.0,USD,,,,,0.0,lb,2025-10-09 14:35:54,,true,100,true,Clothing,false,,,,Color,Red,Size,XL,,
