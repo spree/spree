@@ -65,6 +65,18 @@ module Spree
     #
     preference :delimiter, :string, default: ','
 
+    def mapping?
+      status == 'mapping'
+    end
+
+    def processing?
+      ['processing', 'completed_mapping'].include?(status)
+    end
+
+    def complete?
+      status == 'completed'
+    end
+
     # eg. Spree::Exports::Products => Spree::Product
     def model_class
       if type == 'Spree::Imports::Customers'

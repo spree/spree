@@ -1,7 +1,7 @@
 <% content_for :steps do %>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'mapping' %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'processing' %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
-  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.status == 'complete' %>active bg-white font-weight-bold<% end %>">3. Complete</li>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.mapping? %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.processing? %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
+  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.complete? %>active bg-white font-weight-bold<% end %>">3. Complete</li>
 <% end %>
 
 <% if @import.status == 'mapping' %>
@@ -16,11 +16,11 @@
       <%= I18n.t('activerecord.attributes.spree/import_mapping.schema_field') %>
     </div>
   </div>
-  <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping' %>
+  <div id="mappings" class="mb-5">
+    <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping' %>
+  </div>
 
-  <%= content_for :footer do %>
-    <%= render 'spree/admin/imports/mapping_footer', import: @import %>
-  <% end %>
+  <%= render 'spree/admin/imports/mapping_footer', import: @import %>
 <% else %>
   <%= turbo_stream_from "import_#{@import.id}_rows" %>
   <%= turbo_stream_from "import_#{@import.id}_footer" %>
@@ -46,7 +46,5 @@
     <%= render 'spree/admin/imports/loader', import: @import %>
   </div>
 
-  <%= content_for :footer do %>
-    <%= render 'spree/admin/imports/footer', import: @import %>
-  <% end %>
+  <%= render 'spree/admin/imports/footer', import: @import %>
 <% end %>
