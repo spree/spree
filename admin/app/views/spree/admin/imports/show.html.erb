@@ -1,3 +1,7 @@
+<% content_for :head do %>
+  <%= turbo_page_requires_reload_tag %>
+<% end %>
+
 <% content_for :steps do %>
   <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.mapping? %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
   <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.processing? %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
@@ -17,7 +21,8 @@
     </div>
   </div>
   <div id="mappings" class="mb-5">
-    <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping' %>
+    <% options = @import.unmapped_file_columns.map { |file_column| [file_column, file_column] } %>
+    <%= render collection: @import.mappings, partial: 'spree/admin/imports/mapping', locals: { options: options } %>
   </div>
 
   <%= render 'spree/admin/imports/mapping_footer', import: @import %>

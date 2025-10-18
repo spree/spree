@@ -10,9 +10,7 @@ module Spree
       create.after :start_mapping
 
       # GET /admin/imports/:id
-      def show
-        add_breadcrumb @object.display_name, spree.admin_import_path(@object)
-      end
+      def show; end
 
       # PUT /admin/imports/:id/complete_mapping
       def complete_mapping
@@ -52,13 +50,9 @@ module Spree
       end
 
       def choose_layout
-        return 'turbo_rails/frame' if turbo_frame_request?
+        return 'turbo_rails/frame' if turbo_frame_request? && action_name != 'show'
 
         'spree/admin_wizard'
-      end
-
-      def create_turbo_stream_enabled?
-        true
       end
     end
   end

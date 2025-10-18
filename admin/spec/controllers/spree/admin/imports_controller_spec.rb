@@ -36,7 +36,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
 
     it 'creates a new import and redirects to show' do
       expect {
-        post :create, params: { import: import_params }
+        post :create, params: { import: import_params }, format: :turbo_stream
       }.to change(Spree::Import, :count).by(1)
 
       import = Spree::Import.last
