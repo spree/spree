@@ -256,6 +256,12 @@ en:
             attachment:
               attachment_must_be_present: must be present
               not_allowed_content_type: has not allowed content type
+        spree/import:
+          attributes:
+            attachment:
+              content_type: has not allowed content type
+            type:
+              inclusion: is not included in the list of allowed types
         spree/legacy_user:
           attributes:
             bill_address_id:
@@ -268,12 +274,6 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
-        spree/import:
-          attributes:
-            type:
-              inclusion: is not included in the list of allowed types
-            attachment:
-              content_type: has not allowed content type
         spree/payment:
           attributes:
             amount:
