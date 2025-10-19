@@ -36,7 +36,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
 
     it 'creates a new import and redirects to show' do
       expect {
-        post :create, params: { import: import_params }, format: :turbo_stream
+        post :create, params: { import: import_params }
       }.to change(Spree::Import, :count).by(1)
 
       import = Spree::Import.last
@@ -69,23 +69,26 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
   end
 
   describe 'GET #show' do
-    let(:import) do
-      create(:product_import, status: :mapping)
-    end
-
-    before do
-      import.create_mappings
-    end
+    let(:import) { create(:product_import, status: :mapping) }
+    let!(:mapping) { create(:import_mapping, import: import) }
 
     it 'renders the show template' do
       get :show, params: { id: import.id }
       expect(response).to render_template(:show)
       expect(assigns(:import)).to eq(import)
+      expect(assigns(:mappings)).to eq([mapping])
     end
 
     context 'when mapping is done' do
-      before do
-        import.complete_mapping!
+      let(:import) { create(:product_import, status: :completed_mapping) }
+      let!(:row) { create(:import_row, import: import, status: :completed) }
+      let!(:incomplete_row) { create(:import_row, import: import, status: :pending) }
+
+      it 'renders the show template' do
+        get :show, params: { id: import.id }
+        expect(response).to render_template(:show)
+        expect(assigns(:import)).to eq(import)
+        expect(assigns(:rows)).to eq([row])
       end
     end
   end

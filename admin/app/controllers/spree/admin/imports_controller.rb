@@ -10,7 +10,14 @@ module Spree
       create.after :start_mapping
 
       # GET /admin/imports/:id
-      def show; end
+      def show
+        if @object.status == 'mapping'
+          @mappings = @object.mappings
+          @mappings_options = @import.unmapped_file_columns.map { |file_column| [file_column, file_column] }
+        else
+          @rows = @object.rows.processed.includes(:item)
+        end
+      end
 
       # PUT /admin/imports/:id/complete_mapping
       def complete_mapping
