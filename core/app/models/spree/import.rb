@@ -58,6 +58,10 @@ module Spree
       end
       after_transition to: :completed, do: :send_import_completed_email
       after_transition to: :completed, do: :update_loader_in_import_view
+
+      event :fail do
+        transition to: :failed
+      end
     end
 
     #

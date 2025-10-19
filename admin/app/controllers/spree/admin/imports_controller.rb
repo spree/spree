@@ -13,7 +13,7 @@ module Spree
       def show
         if @object.status == 'mapping'
           @mappings = @object.mappings
-          @mappings_options = @import.unmapped_file_columns.map { |file_column| [file_column, file_column] }
+          @mappings_options = @object.unmapped_file_columns.map { |file_column| [file_column, file_column] }
         else
           @rows = @object.rows.processed.includes(:item)
         end
