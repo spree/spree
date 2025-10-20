@@ -30,6 +30,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         'weight' => '0.0',
         'inventory_count' => '100',
         'inventory_backorderable' => 'true',
+        'tags' => 'ECO, Gold'
       )
     end
 
@@ -42,6 +43,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(product.status).to eq 'draft'
       expect(product.description).to eq row_data['description']
       expect(product.stores).to include(store)
+      expect(product.tag_list).to contain_exactly('ECO', 'Gold')
       expect(product.master).to eq variant
       expect(variant.sku).to be_blank
       expect(variant.price_in('USD').amount.to_f).to eq 62.99

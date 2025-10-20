@@ -71,6 +71,7 @@ module Spree
           product.meta_description = attributes['meta_description'] if attributes['meta_description'].present?
           product.meta_keywords = attributes['meta_keywords'] if attributes['meta_keywords'].present?
           product.status = to_spree_status(attributes['status']) if attributes['status'].present?
+          product.tag_list = attributes['tags'] if attributes['tags'].present?
           product.save!
           product
         end
