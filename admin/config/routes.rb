@@ -146,6 +146,7 @@ Spree::Core::Engine.add_routes do
     # imports
     resources :imports, only: [:new, :create, :show] do
       resources :mappings, only: [:edit, :update], controller: 'import_mappings'
+      resources :rows, only: :show, controller: 'import_rows'
 
       member do
         put :complete_mapping

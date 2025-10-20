@@ -44,7 +44,7 @@ module Spree
     scope :processed, -> { where(status: %i[completed failed]) }
 
     def mark_import_as_completed
-      import.complete! if import.rows.completed.count == import.rows.count
+      import.complete! if import.rows.completed.count == import.rows_count
     end
 
     def data_json
@@ -89,7 +89,7 @@ module Spree
 
       # we need to render this partial with store context to properly generate image URLs
       with_store_context do
-        broadcast_append_to "import_#{import_id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self }
+        broadcast_append_to "import_#{import.id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self, import: import }
       end
     end
 
