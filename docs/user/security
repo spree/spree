@@ -1,0 +1,154 @@
+---
+title: "Enterprise Edition Security Overview"
+sidebarTitle: "Enterprise Edition Security Overview"
+description: "Learn how Spree Enterprise is built to meet the highest standards of data protection and risk management."
+---
+
+Spree Commerce and its Enterprise Edition are engineered with robust security practices designed to meet the expectations of enterprise customers performing formal security reviews aligned with **SOC 2 Type 2** and **ISO/IEC 27001** standards.
+
+This document summarizes Spree’s security principles, development practices, infrastructure protections, and data-handling safeguards, providing assurance for procurement teams, risk assessors, and compliance auditors.
+
+## 1. Secure Software Development Lifecycle (SDLC)
+
+Our Secure Software Development Lifecycle (SDLC) ensures that every Spree Commerce release - Community or Enterprise - is developed, tested, and maintained following industry best practices.
+
+### Governance and Oversight
+
+- Managed directly by the CTO and senior leadership.
+- Regular internal and external code reviews ensure continuous improvement.
+- Third-party penetration testing to identify and mitigate security weaknesses early.
+
+### Secure Development Practices
+
+- Compliance with **OWASP Top 10** and **Ruby on Rails security guidelines** to prevent injection, CSRF, XSS, and mass-assignment vulnerabilities.
+- All code undergoes **peer review** and **CTO approval** before merging.
+- Dependencies are automatically updated using **GitHub Dependabot** or **GitLab Dependency Scanning**.
+- **SAST**, **DAST**, and **SCA** scanning.
+
+### Vulnerability Management & Incident Response
+
+- Vulnerabilities are triaged by severity, ensuring critical issues are addressed immediately.
+- Customers receive proactive notifications for relevant security updates.
+- Incident response includes identification, containment, mitigation, and transparent communication.
+
+### Data Protection
+
+- All customer data is encrypted **in transit (TLS)** and **at rest (AES-256)**.
+- Access control follows **least-privilege principles**.
+
+## 2. Security-by-Design (Ruby on Rails Foundation)
+
+Spree is built on **Ruby on Rails**, a framework known for its strong “security-by-default” architecture. Rails powers global companies like Shopify, GitHub, Airbnb, Kickstarter, and Square—proving its enterprise readiness.
+
+### Core Security Features
+
+- **Injection Prevention**: ORM layer prevents SQL injection via parameterized queries.
+- **CSRF Protection**: Rails automatically embeds authenticity tokens in forms to prevent cross-site request forgery.
+- **XSS Mitigation**: Built-in HTML escaping and sanitization in views.
+- **Strong Parameters**: Whitelists input attributes to prevent mass assignment.
+- **Session & Cookie Security**: Signed, encrypted cookies and session management by default.
+
+These features make security intrinsic to Spree’s architecture—not an afterthought.
+
+## 3. PCI Compliance
+
+Spree Commerce **does not store or process payment card data**. Instead, it integrates with **PCI-DSS compliant processors** (e.g., Stripe, Adyen).
+
+- Only **encrypted payment tokens** are stored to link users with payment profiles in the processor’s system.
+- For convenience, Spree retains limited metadata (card type, last four digits, expiry date) to enhance UX without exposing sensitive data.
+- To satisfy PCI requirements **6.4.3** and **11.6.1**, we recommend using **Cloudflare PageShield** for client-side integrity monitoring, ensuring protection against form-jacking or malicious scripts.
+
+## 4. Production Security
+
+Spree’s production environments are recommended to be secured using modern infrastructure and trusted third-party services, for example:
+- **PCI-compliant payment processors** (Stripe, Adyen)
+- **Cloudflare**: DDoS protection, WAF, rate limiting, bot mitigation
+- **GitHub/GitLab**: Source integrity, dependency scanning, vulnerability alerts
+- **Strict change management** via Git-based workflows and CI/CD validation
+- **Automated backups** with reliable recovery 
+- **Continuous monitoring** and logging for audit readiness
+
+## 5. Authentication, SSO, and MFA
+
+Spree supports **modern authentication mechanisms** for both the storefront and admin dashboard.
+
+### Built-in Security
+
+- Secure session handling, password hashing (bcrypt), and rate-limited login attempts.
+- Role-based access control with least privilege enforced.
+
+### SSO & MFA Integrations
+
+- **Admin Dashboard Single Sign-on**: Integrates with Okta, Auth0, Azure AD, Google Workspace, etc.
+- **Storefront Social Login**: Supports OAuth, OpenID Connect, and social logins (Google, Facebook, Apple).
+- **MFA**: Can be enforced at the identity provider level or through custom add-ons.
+
+## 6. Enterprise Edition Security Enhancements
+
+The **Spree Commerce Enterprise Edition** includes additional enterprise-grade security and governance capabilities, among others:
+- **Data Encryption**: Full encryption in-transit (TLS 1.2+) and at-rest (AES-256).
+- **Single Sign-On (SSO)**: Optional integration for centralized identity management.
+- **Granular Roles & Permissions**: Fine-grained access control across admin and API endpoints.
+- **Audit Trail**: Every admin action is logged and reviewable for compliance audits.
+- **Custom Hosting Support**: Enterprise customers can deploy Spree in ISO 27001 or SOC 2 compliant hosting environments (Render.com, AWS, GCP, Azure).
+
+## 7. Compliance Alignment (SOC 2 / ISO 27001)
+
+While Spree Commerce is a self-hosted platform—meaning its overall security depends on each customer’s infrastructure, configuration, and operational practices—it cannot itself be formally certified under SOC 2 or ISO 27001. However, its security controls are closely aligned with these standards and modeled on equivalent best-practice frameworks.
+
+### Control Domains Alignment
+| **Domain**         | **Practice**                                                               |
+| :----------------- | :------------------------------------------------------------------------- |
+| Security           | Access controls, vulnerability management, encryption, secure SDLC         |
+| Availability       | High availability design, backup and disaster recovery                     |
+| Confidentiality    | Encryption of data, least-privilege access, NDAs                           |
+| Integrity          | Code reviews, CI/CD with automated testing                                 |
+| Privacy            | Data minimization, no storage of payment or personal card data             |
+
+### Security Testing
+
+- **Penetration testing** and **vulnerability assessments** performed before major releases.
+- **Static and dynamic scanning** across code and infrastructure.
+- **Annual independent third-party testing** (available for Enterprise customers under NDA).
+
+### Business Continuity and Disaster Recovery
+
+- Regular **offsite encrypted backups** with retention policies.
+- **Disaster Recovery (DR)** procedures tested annually.
+- **RTO/RPO** objectives designed to maintain service continuity and data integrity.
+
+## 8. Transparency and Open Source Assurance
+
+Spree’s open-source transparency is a unique security advantage:
+- Publicly reviewable source code eliminates supply-chain opacity.
+- Rapid community-driven identification and patching of vulnerabilities.
+- Optional enterprise-only repositories provide controlled, hardened distributions.
+
+## 9. Continuous Improvement
+
+Security is never static. Spree maintains an evolving program of **policy reviews**, **training**, and **threat intelligence** updates to anticipate new risks. Lessons learned are integrated back into the SDLC to continuously strengthen the platform.
+
+## 10. Enterprise Support
+
+The **Spree Commerce Enterprise Edition** includes access to **Premium Support**, a partnership-level service designed to enhance **security**, **compliance**, **performance**, and **innovation**.
+
+Premium Support provides direct access to the Spree core engineering team offering **priority assistance** covering, among others:
+- **Security & compliance** – proactive patching, vulnerability guidance, and configuration reviews.
+- **Performance & reliability** – optimization of caching, scaling, and infrastructure.
+- **Custom development & integrations** – secure enhancements and system interconnections.
+- **Continuous improvement** – upgrades aligned with the Spree roadmap and underlying software versions.
+
+This ensures enterprise customers remain **secure, compliant, and high-performing** while continuously evolving their digital commerce environments.
+
+## Get Started
+
+<Columns cols={2}>
+  <Card title="Book a Demo" icon="eye" href="https://getvendo.com/book-a-demo/" cta="Click here">
+    Schedule a demo to explore the platform and get your questions answered
+  </Card>
+  <Card title="Ask for Pricing" icon="dollar-sign" href="https://spreecommerce.org/get-started/" cta="Click here">
+    See Enterprise pricing for your use case
+  </Card>
+</Columns>
+
+
