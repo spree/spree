@@ -1,0 +1,57 @@
+<% content_for :head do %>
+  <%= turbo_page_requires_reload_tag %>
+<% end %>
+
+<% content_for :steps do %>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.mapping? %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
+  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.processing? %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
+  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.complete? %>active bg-white font-weight-bold<% end %>">3. Complete</li>
+<% end %>
+
+<% if @import.status == 'mapping' %>
+  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
+    <div class="w-10 p-2 text-center">
+      <%= Spree.t('admin.imports.field_required') %>
+    </div>
+    <div class="w-40 p-2">
+      <%= I18n.t('activerecord.attributes.spree/import_mapping.file_column') %>
+    </div>
+    <div class="w-50 p-2">
+      <%= I18n.t('activerecord.attributes.spree/import_mapping.schema_field') %>
+    </div>
+  </div>
+  <div id="mappings" class="mb-5">
+    <%= render collection: @mappings, partial: 'spree/admin/imports/mapping', locals: { options: @mappings_options } %>
+  </div>
+
+  <%= render 'spree/admin/imports/mapping_footer', import: @import %>
+<% else %>
+  <%= turbo_stream_from "import_#{@import.id}_rows" %>
+  <%= turbo_stream_from "import_#{@import.id}_footer" %>
+  <%= turbo_stream_from "import_#{@import.id}_loader" %>
+
+  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top font-size-sm">
+    <div class="w-10 p-2 text-center">
+      <%= I18n.t('activerecord.attributes.spree/import_row.row_number') %>
+    </div>
+    <div class="w-20 p-2">
+      <%= Spree.t(:status) %>
+    </div>
+    <div class="w-60 p-2">
+      <%= Spree.t(:item) %>
+    </div>
+    <div class="w-10 p-2">
+      <%= Spree.t(:details) %>
+    </div>
+  </div>
+
+  <div id="rows" data-controller="auto-scroll">
+    <%= render collection: @rows, partial: 'spree/admin/imports/row', cached: spree_base_cache_scope, locals: { import: @import } %>
+  </div>
+
+  <div id="loader" data-controller="auto-scroll">
+    <%= render 'spree/admin/imports/loader', import: @import %>
+  </div>
+
+  <%= render 'spree/admin/imports/footer', import: @import %>
+<% end %>

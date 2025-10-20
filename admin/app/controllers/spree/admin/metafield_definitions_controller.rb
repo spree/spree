@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class MetafieldDefinitionsController < ResourceController
-      add_breadcrumb Spree.t(:metafield_definitions), :admin_metafield_definitions_path
+      include Spree::Admin::SettingsConcern
 
       new_action.before :set_resource_type_from_params
 

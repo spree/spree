@@ -1,0 +1,15 @@
+<%= turbo_stream.replace 'footer' do %>
+  <%= render 'spree/admin/imports/mapping_footer', import: @import_mapping.import %>
+<% end %>
+
+<%= turbo_stream.replace "#{spree_dom_id(@import_mapping)}-icon" do %>
+  <%= render 'spree/admin/imports/mapping_icon', mapping: @import_mapping %>
+<% end %>
+
+<% options = @import.unmapped_file_columns.map { |file_column| [file_column, file_column] } %>
+
+<% @import.mappings.where.not(id: @import_mapping.id).each do |mapping| %>
+  <%= turbo_stream.replace spree_dom_id(mapping) + '_form' do %>
+    <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping, options: options %>
+  <% end %>
+<% end %>

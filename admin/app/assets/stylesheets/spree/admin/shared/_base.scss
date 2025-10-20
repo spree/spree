@@ -313,13 +313,6 @@ small,
   font-size: $font-size-sm !important;
 }
 
-.alerts-container {
-  position: absolute;
-  width: 100%;
-  z-index: 1070;
-  top: 1rem;
-}
-
 // tailwind matchers
 
 .gap-1 {
@@ -697,8 +690,7 @@ div.uppy-Root {
 .breadcrumb {
   gap: 0.5rem;
   align-items: center;
-  color: $gray-500;
-  font-size: $font-size-sm;
+  
   
   i {
     opacity: 0.5;
@@ -708,9 +700,12 @@ div.uppy-Root {
     a {
       color: $gray-500;
       text-decoration: none;
+      border-radius: $border-radius;
+      padding: 0.35rem 0.5rem;
 
       &:hover {
         color: $primary;
+        background-color: $gray-25;
       }
     }
   }

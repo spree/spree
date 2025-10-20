@@ -1,0 +1,14 @@
+<% if import.completed? %>
+  <div class="d-flex justify-content-center align-items-center my-5 flex-column pb-5">
+    <%= icon('check', class: 'text-success', style: 'font-size: 4rem;') %>
+    <p class="text-success"><%= Spree.t('admin.imports.import_done') %>!</p>
+    <%= link_to_with_icon 'arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_path, class: 'btn btn-light mb-5' %>
+  </div>
+<% else %>
+  <div class="d-flex justify-content-center align-items-center my-5 flex-column" style="height: 200px;">
+    <div class="spinner-border mb-3 text-muted" role="status" style="width: 4rem; height: 4rem;">
+      <span class="sr-only"><%= Spree.t(:processing) %>...</span>
+    </div>
+    <p class="text-muted"><%= Spree.t(:processing) %>...</p>
+  </div>
+<% end %>

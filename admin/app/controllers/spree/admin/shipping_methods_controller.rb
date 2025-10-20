@@ -1,10 +1,10 @@
 module Spree
   module Admin
     class ShippingMethodsController < ResourceController
+      include Spree::Admin::SettingsConcern
+
       before_action :load_data, except: :index
       before_action :set_default_values, only: :new
-
-      add_breadcrumb Spree.t(:shipping_methods), :admin_shipping_methods_path
 
       private
 

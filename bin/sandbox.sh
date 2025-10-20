@@ -50,6 +50,7 @@ fi
 cd ./sandbox
 
 cat <<RUBY >> Gemfile
+gem 'redis'
 gem 'devise'
 gem 'spree', path: '..'
 gem 'spree_emails', path: '../emails'
@@ -78,6 +79,15 @@ if Rails.env.development? && defined?(Bullet)
   Bullet.rails_logger = true
   Bullet.stacktrace_includes = [ 'spree_core', 'spree_storefront', 'spree_api', 'spree_admin', 'spree_emails' ]
 end
+RUBY
+
+# configure actioncable to use redis
+rm -rf config/cable.yml
+touch config/cable.yml
+cat <<RUBY >> config/cable.yml
+development:
+  adapter: redis
+  url: redis://localhost:6379/0
 RUBY
 
 bundle update

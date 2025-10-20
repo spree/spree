@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class AdminUsersController < BaseController
-      add_breadcrumb Spree.t(:users), :admin_admin_users_path
+      include Spree::Admin::SettingsConcern
 
       skip_before_action :authorize_admin, only: [:new, :create]
       before_action :load_parent, except: [:new, :create]
@@ -10,8 +10,6 @@ module Spree
       before_action :load_admin_user, only: [:show, :edit, :update, :destroy]
 
       helper_method :object_url
-
-      layout :choose_layout
 
       # GET /admin/admin_users
       def index
@@ -110,7 +108,7 @@ module Spree
 
       # for self signup flow, we use the minimal layout
       def choose_layout
-        @invitation.present? ? 'spree/minimal' : 'spree/admin'
+        @invitation.present? ? 'spree/minimal' : 'spree/admin_settings'
       end
 
       def load_roles

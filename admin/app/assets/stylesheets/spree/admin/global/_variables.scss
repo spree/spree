@@ -1,6 +1,6 @@
 // https://github.com/twbs/bootstrap/blob/v4.6.2/scss/_variables.scss
 
-$gray-25: #F8F8F9;
+$gray-25: #FAFAFB;
 $gray-50: #F3F3F3;
 $gray-100: #E3E3E3 !default;
 $gray-200: #D5D5D5 !default;
@@ -12,7 +12,7 @@ $gray-700: #4D4D4D !default;
 $gray-800: #333333 !default;
 $gray-900: #1A1A1A !default;
 
-$light: $gray-50 !default;
+$light: $gray-25 !default;
 
 $primary: #061932 !default;
 $black: #000000 !default;
@@ -27,7 +27,7 @@ $container-max-widths: (
   sm: 540px,
   md: 720px,
   lg: 960px,
-  xl: 1260px
+  xl: 1250px
 ) !default;
 $grid-gutter-width: 16px !default;
 
@@ -35,7 +35,7 @@ $theme-colors: (
   "white": $white,
   "black": $black,
   "primary": $primary,
-  "secondary": rgba($blue, 0.1),
+  "secondary": rgba($blue, 0.05),
   "action": $action,
   "action-border": $action-border,
   "active": $gray-25,
@@ -52,8 +52,7 @@ $theme-colors: (
   "gray-600": $gray-600,
   "gray-700": $gray-700,
   "gray-800": $gray-800,
-  "gray-900": $gray-900,
-  "mint": #C7E15A
+  "gray-900": $gray-900
 );
 
 $body-color: #333 !default;
@@ -66,13 +65,13 @@ $font-size-plus:   0.875rem !default;
 $font-size-sm:    0.75rem !default;
 $font-size-lg:    1rem !default;
 $font-weight-normal: 400 !default;
-$font-weight-bold:            600 !default;
+$font-weight-bold:            500 !default;
 $headings-font-family: $font-family-sans-serif;
 $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
 $border-radius-sm: 0.4rem !default;
 $border-radius-lg: 0.75rem !default;
-$border-color: $gray-100 !default;
+$border-color: rgba($gray-100, 0.85) !default;
 $input-border-color: $border-color !default;
 $list-group-border-color: $border-color !default;
 $list-group-hover-bg: $gray-25 !default;
@@ -91,9 +90,9 @@ $card-spacer-x:                     1rem !default;
 $component-active-bg:         $blue !default;
 
 $input-placeholder-color: $gray-500;
-$input-padding-y:         .5rem !default;
+$input-padding-y:         .55rem !default;
 $input-disabled-bg: $gray-25 !default;
-$input-focus-border-color: $blue !default;
+$input-focus-border-color: rgba($blue, 0.75) !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-400 !default;
@@ -108,10 +107,12 @@ $nav-link-padding-y:                .5rem !default;
 $nav-link-padding-x:                .6rem !default;
 
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
-$box-shadow-xs: rgba(43, 34, 51, 0.04) 0px 1px 2px !default;
+$box-shadow-xs: rgba(43, 34, 51, 0.02) 0px 1px 2px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
-$input-box-shadow: none !default;
+$input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
+
+$btn-font-weight: 500 !default;
 
 $card-border-width: 0px !default;
 $card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
@@ -161,10 +162,11 @@ $display2-weight:             400 !default;
 $display3-weight:             400 !default;
 $display4-weight:             400 !default;
 
+$dropdown-bg: $white !default;
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
-$dropdown-link-hover-bg: $gray-50 !default;
-$dropdown-box-shadow:    0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f !default;
+$dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
+$dropdown-box-shadow:    0px 0px 0px 1px $border-color, 0px 6px 12px -3px $gray-50, 0px 6px 18px 0px $gray-50 !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
@@ -183,13 +185,14 @@ $modal-show-transform:              none !default;
 $modal-transition:                  transform .2s ease-out !default;
 $modal-scale-transform:             scale(1.02) !default;
 $modal-header-border-width: 1px !default;
-$modal-content-box-shadow-xs: 0px 0px 0px 1px #d1d9e080, 0px 6px 12px -3px #25292e0a, 0px 6px 18px 0px #25292e1f;
+$modal-content-box-shadow-xs: $dropdown-box-shadow;
 $modal-content-box-shadow-sm-up: $modal-content-box-shadow-xs !default;
 $modal-footer-margin-between: 0 !default;
 
 $alert-padding-y:                   0.5rem !default;
 $alert-padding-x:                   1rem !default;
-$alert-border-radius: $border-radius-lg;
+$alert-border-radius: $border-radius;
+$alert-border-width: 0px !default;
 
 $breadcrumb-bg: transparent !default;
 $breadcrumb-padding-y: 0 !default;
@@ -205,7 +208,7 @@ $embed-responsive-aspect-ratios: (
 ) !default;
 
 // tables
-$table-cell-padding: 1rem .50rem !default;
+$table-cell-padding: 1.15rem .75rem !default;
 
 $code-color: $gray-600 !default;
 $code-bg: $gray-25 !default;
@@ -216,6 +219,6 @@ $list-group-item-padding-x:         1rem !default;
 $header-bg: $body-bg !default;
 $header-height: 60px !default;
 $sidebar-width: 220px !default;
-$sidebar-bg: $gray-25 !default;
+$sidebar-bg: $light !default;
 
-$progress-bar-bg: $blue !default;
+$progress-bar-bg: rgba($blue, 0.75) !default;

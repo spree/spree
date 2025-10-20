@@ -8,7 +8,7 @@
   <% if content_for? :title %>
     <%= yield :title %>
   <% else %>
-    <% if @object.present? && @object.persisted? %><%= @object.try(:name) || @object.try(:title) %> - <% end %>
+    <% if @object.present? && @object.persisted? %><%= @object.try(:name) || @object.try(:title) || @object.try(:display_name) || @object.try(:number) %> - <% end %>
     <% if @order.present? && @order.persisted? %><%= @order.number %> - <% end %>
     <%= Spree.t(controller_name, default: controller_name.titleize) %>
   <% end %>

@@ -1,0 +1,32 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:row) + ' ' + @import_row.row_number.to_s) %>
+
+  <div class="drawer-body" data-controller="highlight tabs">
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item">
+        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select">JSON</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select">Schema</a>
+      </li>
+    </ul>
+
+    <div data-tabs-target="panel" class="animate__animated animate__fadeIn">
+      <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= JSON.pretty_generate(@import_row.data_json) %></code></pre>
+    </div>
+    <div data-tabs-target="panel" class="animate__animated animate__fadeIn" hidden>
+      <dl class="row rounded border p-2 overflow-auto" style="height: calc(100dvh - 11rem);">
+        <% @import_row.to_schema_hash.each do |field_name, value| %>
+          <dt class="col-sm-3"><%= field_name.humanize %></dt>
+          <dd class="col-sm-9">
+            <% if value.present? %>
+              <%= h(value) %>
+            <% else %>
+              <span class="text-muted">—</span>
+            <% end %>
+          </dd>
+        <% end %>
+      </dl>
+    </div>
+  </div>
+<% end %>

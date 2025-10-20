@@ -10,12 +10,8 @@
       </button>
     </div>
 
-    <% if settings_active? %>
-      <%= link_to spree.admin_path, class: 'store-dropdown text-decoration-none px-2 justify-content-start', data: { admin_target: 'close', controller: 'tooltip', tooltip_placement_value: 'bottom', tooltip_offset_value: -10 } do %>
-        <%= icon 'x', class: 'mx-2' %>
-        <%= tooltip(Spree.t('admin.back_to_dashboard')) %>
-        <kbd>ESC</kbd>
-      <% end %>
+    <% if settings_area? %>
+      <%= render 'spree/admin/shared/back_to_dashboard' %>
     <% else %>
       <% if defined?(current_vendor) && current_vendor.present? %>
         <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>

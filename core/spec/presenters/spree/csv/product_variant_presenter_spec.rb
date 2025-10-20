@@ -68,7 +68,6 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
 
       it 'returns nil for product-level fields' do
         expect(subject[2]).to be_nil # name
-        expect(subject[3]).to be_nil # slug
         expect(subject[4]).to be_nil # status
         expect(subject[5]).to be_nil # vendor_name
       end

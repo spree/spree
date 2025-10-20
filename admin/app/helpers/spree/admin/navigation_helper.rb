@@ -303,7 +303,7 @@ module Spree
       end
 
       def render_breadcrumb_icon
-        if settings_active?
+        if settings_area?
           icon('settings')
         elsif @breadcrumb_icon
           icon(@breadcrumb_icon)

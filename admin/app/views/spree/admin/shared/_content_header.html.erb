@@ -23,7 +23,7 @@
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
         <div class="dropdown h-100" id="page_actions_dropdown">
-          <%= link_to '#', class: 'btn btn-light bg-transparent h-100 p-2', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
+          <%= link_to '#', class: 'btn btn-light h-100 p-2', data: { toggle: 'dropdown' }, id: 'more-actions-link' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <div class="dropdown-menu dropdown-menu-right">
@@ -66,19 +66,4 @@
       <% end %>
     </div>
   </header>
-<% end %>
-
-<% if content_for?(:page_tabs) %>
-  <div class="container-fluid" id="page-tabs">
-    <ul class="nav">
-      <%= yield :page_tabs %>
-    </ul>
-  </div>
-<% end %>
-<% if content_for(:page_alerts) %>
-  <div class="container">
-    <div class="page-alerts">
-      <%= yield(:page_alerts) %>
-    </div>
-  </div>
 <% end %>

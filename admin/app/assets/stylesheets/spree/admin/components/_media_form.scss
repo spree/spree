@@ -7,15 +7,23 @@
   overflow: hidden;
   border-radius: $border-radius-lg;
   border: 1px dashed $border-color;
-  background-color: rgba($gray-25, 0.5);
+  background-color: $light;
   padding: 0.5rem;
   cursor: pointer;
   color: $gray-500;
 
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.5s;
+  transition-timing-function: ease;
+
   &:hover {
     background-color: $action;
-    border-color: rgba($blue, 0.5);
-    color: rgba($blue, 0.8);
+    border-color: rgba($blue, 0.25);
+    color: rgba($primary, 0.75);
+
+    .text-muted {
+      color: rgba($primary, 0.5) !important;
+    }
   }
 
   &:active {

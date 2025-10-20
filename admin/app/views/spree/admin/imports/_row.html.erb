@@ -1,0 +1,35 @@
+<div class="import_row d-flex justify-content-between align-items-center border-bottom hover-light" id="<%= dom_id(row) %>">
+  <div class="text-center w-10">
+    <%= row.row_number %>
+  </div>
+  <div class="text-wrap w-20 px-2 py-3">
+    <% badge_class = case row.status
+       when 'completed'
+         'success'
+       when 'failed'
+         'danger'
+       else
+         'light'
+       end %>
+    <span class="badge badge-pill badge-<%= badge_class %>">
+      <%= Spree.t(row.status) %>
+    </span>
+  </div>
+  <div class="w-60 px-2 py-3">
+    <% if row.status == 'failed' %>
+      <div class="text-danger"><%= row.validation_errors %></div>
+    <% elsif row.status == 'completed' && row.item.present? %>
+      <%= render "spree/admin/import_rows/#{row.item_type.demodulize.underscore}", item: row.item %>
+    <% else %>
+      <div class="d-flex align-items-center gap-2">
+        <div class="spinner-border text-muted" role="status">
+          <span class="sr-only"><%= Spree.t(:processing) %>...</span>
+        </div>
+        <%= Spree.t(:processing) %>...
+      </div>
+    <% end %>
+  </div>
+  <div class="w-10 px-2 py-3">
+    <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_import_row_path(import, row), class: 'btn btn-sm btn-light', data: { action: 'drawer#open', turbo_frame: :drawer }, no_text: true %>
+  </div>
+</div>

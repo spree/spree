@@ -394,6 +394,23 @@ module Spree
       price_in(currency).try(:compare_at_amount)
     end
 
+    def set_price(currency, amount, compare_at_amount = nil)
+      prices.find_or_initialize_by(currency: currency) do |price|
+        price.amount = amount
+        price.compare_at_amount = compare_at_amount if compare_at_amount.present?
+        price.save!
+      end
+    end
+
+    def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
+      stock_location ||= Spree::Store.current.default_stock_location
+      stock_items.find_or_initialize_by(stock_location: stock_location) do |stock_item|
+        stock_item.count_on_hand = count_on_hand
+        stock_item.backorderable = backorderable if backorderable.present?
+        stock_item.save!
+      end
+    end
+
     def price_modifier_amount_in(currency, options = {})
       return 0 unless options.present?
 

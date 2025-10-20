@@ -53,6 +53,13 @@ en:
       spree/gift_card:
         amount_used: Amount used
         expires_at: Expires at
+      spree/import:
+        preferred_delimiter: Delimiter
+      spree/import_mapping:
+        file_column: File Column
+        schema_field: Schema Field
+      spree/import_row:
+        row_number: Number
       spree/inventory_unit:
         state: State
       spree/invitation:
@@ -249,6 +256,12 @@ en:
             attachment:
               attachment_must_be_present: must be present
               not_allowed_content_type: has not allowed content type
+        spree/import:
+          attributes:
+            attachment:
+              content_type: has not allowed content type
+            type:
+              inclusion: is not included in the list of allowed types
         spree/legacy_user:
           attributes:
             bill_address_id:
@@ -1156,6 +1169,7 @@ en:
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
+    import: Import
     import_payment_methods_from: Import payment methods from
     import_products_from: Import products from
     in_stock: In Stock
@@ -1842,6 +1856,7 @@ en:
     rma_value: RMA Value
     role_id: Role ID
     roles: Roles
+    row: Row
     rules: Rules
     safe: Safe
     sale: Sale

@@ -1,0 +1,20 @@
+<footer class="position-fixed bottom-0 start-0 w-100 border-top px-4 py-3 bg-light   d-flex align-items-center justify-content-between gap-3" id="footer" style="z-index: 9999;">
+  <div class="flex-grow-1 d-flex flex-column">
+    <% if import.mapping_done? %>
+      <p>
+        <%= icon('check', class: 'text-success') %>
+        <%= Spree.t('admin.imports.all_required_columns_mapped') %>
+      </p>
+    <% else %>
+      <p>
+        <%= Spree.t('admin.imports.please_map_all_required_fields') %>
+      </p>
+    <% end %>
+    <%= progress_bar_component(import.mapped_fields.count, min: 0, max: import.required_fields.count) %>
+  </div>
+
+  <span <% unless import.mapping_done? %>data-controller="tooltip"<% end %>>
+    <%= button_to Spree.t('actions.continue'), spree.complete_mapping_admin_import_path(import), method: :put, class: 'btn btn-primary btn-lg', disabled: !import.mapping_done? %>
+    <%= tooltip(Spree.t('admin.imports.please_map_all_required_fields')) unless import.mapping_done? %>
+  </span>
+</footer>

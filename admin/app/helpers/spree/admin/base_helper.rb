@@ -34,11 +34,16 @@ module Spree
       # check if the current controller is a settings controller
       # this is used to display different sidebar navigation for settings pages
       # @return [Boolean]
+      def settings_area?
+        @settings_area.present?
+      end
+
       def settings_active?
-        @settings_active || %w[admin_users audits custom_domains exports imports invitations oauth_applications
+        Spree::Deprecation.warn('settings_active? is deprecated and will be removed in Spree 6.0. Please use settings_area? instead')
+        @settings_active || %w[admin_users audits custom_domains exports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories
-                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies metafield_definitions].include?(controller_name)
+                               stores tax_categories tax_rates webhooks webhooks_subscribers zones policies metafield_definitions].include?(controller_name) || settings_area?
       end
 
       # @return [Array<String>] the available countries for checkout

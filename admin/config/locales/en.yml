@@ -5,7 +5,7 @@ en:
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
-      back_to_dashboard: Back to Dashboard
+      back_to_dashboard: Back to dashboard
       bulk_ops:
         products:
           body:
@@ -91,6 +91,13 @@ en:
         code_help_text: If you leave it blank, we will generate code for you
         redeemed: Redeemed
         usage: Usage
+      imports:
+        all_required_columns_mapped: Good job, all required columns are mapped!
+        field_required: Field required
+        import_done: All done!
+        mapping_required: This field is required
+        please_map_all_required_fields: Please map all the required fields to continue.
+        waiting_for_file_to_be_processed: Waiting for file to be processed...
       integrations:
         invalid_integration_type: This integration is not allowed
         page_subtitle: Connect your store to third-party services to enhance customer experience.

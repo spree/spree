@@ -78,6 +78,10 @@ dialog:open {
     display: flex;
   }
 
+  .alerts-container {
+    position: absolute;
+  } 
+
   @media (max-width: 991.98px) {
     max-width: 100vw;
     min-width: 100vw;
@@ -112,8 +116,8 @@ dialog:open {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: $gray-25;
     border-top: 1px solid $gray-50;
+    background-color: $gray-25;
   }
 }
 
