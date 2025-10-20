@@ -6,7 +6,7 @@ module Spree
 
         def initialize(row)
           super
-          @store = Spree::Store.current || Spree::Store.default
+          @store = row.store
           @product = ensure_product_exists
         end
 
@@ -35,8 +35,8 @@ module Spree
           variant.option_value_variants = prepare_option_value_variants
           variant.save!
 
-          if attributes['currency'].present? && attributes['price'].present?
-            currency = attributes['currency'].strip.upcase || store.default_currency
+          if attributes['price'].present?
+            currency = (attributes['currency'].presence || store.default_currency).to_s.strip.upcase
             variant.set_price(currency, attributes['price'], attributes['compare_at_price'])
           end
 
@@ -64,7 +64,7 @@ module Spree
             product.sku = attributes['sku'] if attributes['sku'].present? && options.empty?
           end
 
-          product.stores << store if product.new_record? && product.stores.exclude?(store)
+          product.stores << store if product.stores.exclude?(store)
           product.name = attributes['name'] if attributes['name'].present?
           product.description = attributes['description'] if attributes['description'].present?
           product.meta_title = attributes['meta_title'] if attributes['meta_title'].present?
