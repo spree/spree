@@ -1,5 +1,1 @@
-<%= link_to spree.admin_path, class: 'store-dropdown hover-gray text-decoration-none px-2 justify-content-start', data: { admin_target: 'close', controller: 'tooltip', tooltip_placement_value: 'bottom', tooltip_offset_value: -10 } do %>
-  <%= icon 'x', class: 'mx-2' %>
-  <%= tooltip(Spree.t('admin.back_to_dashboard')) %>
-  <kbd>ESC</kbd>
-<% end %>
+<%= link_to_with_icon 'arrow-back', Spree.t('admin.back_to_dashboard'), spree.admin_path, class: 'store-dropdown hover-gray justify-content-start gap-2 px-4' %>
