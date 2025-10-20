@@ -64,6 +64,8 @@ module Spree
         if rows_to_insert.any?
           Spree::ImportRow.upsert_all(rows_to_insert, **upsert_options)
         end
+
+        Spree::Import.reset_counters(import.id, :rows)
       end
     end
   end

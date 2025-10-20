@@ -49,6 +49,10 @@ RSpec.describe Spree::Imports::CreateRowsJob, type: :job do
     expect { described_class.perform_now(import.id) }.to change { import.reload.status }.from('completed_mapping').to('processing')
   end
 
+  it 'persists rows count' do
+    expect { described_class.perform_now(import.id) }.to change { import.reload.rows_count }.from(0).to(2)
+  end
+
   it 'enqueues process_rows_async after rows creation' do
     expect_any_instance_of(Spree::Import).to receive(:process_rows_async).once
     described_class.perform_now(import.id)

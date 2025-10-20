@@ -13,6 +13,8 @@ class CreateSpreeImports < ActiveRecord::Migration[7.2]
 
       t.text :preferences
 
+      t.integer :rows_count, null: false, default: 0
+
       t.timestamps
     end
 

@@ -3,7 +3,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :import, class_name: 'Spree::Import'
+    belongs_to :import, class_name: 'Spree::Import', counter_cache: :rows_count
     belongs_to :item, polymorphic: true, optional: true # eg. Spree::Variant, Spree::Order, etc.
     delegate :store, to: :import
 
