@@ -20,7 +20,15 @@ module Spree
       def order_payment_state(order, options = {})
         return if order.payment_state.blank?
 
-        content_tag :span, class: "badge  #{options[:class]} badge-#{order.partially_refunded? ? 'warning' : order.payment_state}" do
+        badge_class = if order.order_refunded?
+                        'badge-danger'
+                      elsif order.partially_refunded?
+                        'badge-warning'
+                      else
+                        "badge-#{order.payment_state}"
+                      end
+
+        content_tag :span, class: "badge #{options[:class]} #{badge_class}" do
           if order.order_refunded?
             icon('credit-card-refund') + Spree.t('payment_states.refunded')
           elsif order.partially_refunded?
