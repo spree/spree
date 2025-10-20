@@ -126,27 +126,6 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
     end
   end
 
-  describe '#mark_import_as_completed' do
-    let!(:row1) { create(:import_row, import: import, status: 'completed') }
-    let!(:row2) { create(:import_row, import: import, status: 'completed') }
-
-    context 'when all rows are completed' do
-      it 'marks import as completed' do
-        expect(import).to receive(:complete!)
-        row1.mark_import_as_completed
-      end
-    end
-
-    context 'when not all rows are completed' do
-      let!(:pending_row) { create(:import_row, import: import, status: 'pending') }
-
-      it 'does not mark import as completed' do
-        expect(import).not_to receive(:complete!)
-        row1.mark_import_as_completed
-      end
-    end
-  end
-
   describe '#data_json' do
     context 'with valid JSON data' do
       it 'returns parsed JSON' do

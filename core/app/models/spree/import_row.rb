@@ -43,10 +43,6 @@ module Spree
     scope :failed, -> { where(status: :failed) }
     scope :processed, -> { where(status: %i[completed failed]) }
 
-    def mark_import_as_completed
-      import.complete! if import.rows.completed.count == import.rows_count
-    end
-
     def data_json
       @data_json ||= JSON.parse(data)
     rescue JSON::ParserError

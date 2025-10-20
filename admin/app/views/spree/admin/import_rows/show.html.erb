@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :drawer do %>
-  <%= drawer_header(Spree.t(:import_row) + ' ' + @import_row.row_number.to_s) %>
+  <%= drawer_header(Spree.t(:row) + ' ' + @import_row.row_number.to_s) %>
 
   <div class="drawer-body" data-controller="highlight tabs">
     <ul class="nav nav-pills mb-3">
@@ -20,7 +20,7 @@
           <dt class="col-sm-3"><%= field_name.humanize %></dt>
           <dd class="col-sm-9">
             <% if value.present? %>
-              <%= value %>
+              <%= h(value) %>
             <% else %>
               <span class="text-muted">—</span>
             <% end %>
@@ -28,5 +28,5 @@
         <% end %>
       </dl>
     </div>
-  </ul>
+  </div>
 <% end %>

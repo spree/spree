@@ -5,7 +5,7 @@ en:
       amount_spent: Amount spent
       audit_log: Audit Log
       avg_order_value: Avg. Order Value
-      back_to_dashboard: Back to Dashboard
+      back_to_dashboard: Back to dashboard
       bulk_ops:
         products:
           body:
