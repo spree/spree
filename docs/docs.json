@@ -1005,6 +1005,12 @@
                   "user/settings/tax",
                   "user/settings/returns-configuration"
                 ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "user/security"
+                ]
               }
             ]
           },
