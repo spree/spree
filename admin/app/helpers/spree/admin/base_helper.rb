@@ -336,12 +336,13 @@ module Spree
       # @param time [Time] the time to format
       # @return [String] the local time ago
       def spree_time_ago(time, options = {})
+        return '' if time.blank?
         options[:data] ||= {}
         options[:data][:controller] = 'tooltip'
 
         # Generate the time ago element with tooltip
         content_tag(:span, options) do
-          tooltip_text = strip_tags(spree_time(time))
+          tooltip_text = strip_tags(content_tag(:time, spree_time(time), datetime: time.iso8601))
           local_time_ago(time, class: '', title: nil) + tooltip(tooltip_text)
         end
       end
