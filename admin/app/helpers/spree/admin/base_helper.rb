@@ -342,7 +342,7 @@ module Spree
 
         # Generate the time ago element with tooltip
         content_tag(:span, options) do
-          tooltip_text = strip_tags(content_tag(:time, spree_time(time), datetime: time.iso8601))
+          tooltip_text = spree_time(time)
           local_time_ago(time, class: '', title: nil) + tooltip(tooltip_text)
         end
       end
