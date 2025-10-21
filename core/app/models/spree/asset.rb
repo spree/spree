@@ -35,5 +35,9 @@ module Spree
     def external_url=(url)
       set_metafield(EXTERNAL_URL_METAFIELD_KEY, url.downcase.strip)
     end
+
+    def skip_import?
+      false
+    end
   end
 end
