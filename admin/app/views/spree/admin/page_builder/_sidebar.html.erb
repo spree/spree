@@ -1,13 +1,13 @@
 <aside id="page-builder-sidebar" class="overflow-y-auto">
-  <div class="tab-content mb5">
-    <div class="tab-pane fade show active" id="sections" role="tabpanel" aria-labelledby="sidebar-icon-page">
+  <div class="mb5">
+    <div data-tabs-target="panel" id="sections" role="tabpanel" aria-labelledby="sidebar-icon-page" class="animate__animated animate__fadeIn">
       <%= render 'spree/admin/page_builder/sidebar_sections' %>
       <%= render 'spree/admin/page_builder/sidebar_sections_toolbar' %>
     </div>
-    <div class="tab-pane fade" role="tabpanel" aria-labelledby="sidebar-icon-colors" id="colors">
+    <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-colors" id="colors" hidden class="animate__animated animate__fadeIn">
       <%= render 'spree/admin/page_builder/sidebar_colors' %>
     </div>
-    <div class="tab-pane fade" role="tabpanel" aria-labelledby="sidebar-icon-fonts" id="fonts">
+    <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-fonts" id="fonts" hidden class="animate__animated animate__fadeIn">
       <%= render 'spree/admin/page_builder/sidebar_fonts' %>
     </div>
   </div>

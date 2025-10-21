@@ -4,79 +4,81 @@
   </h6>
 
   <%= form_for @theme_preview, as: :theme, url: spree.admin_theme_path(@theme_preview), method: :put, data: { 'page-builder-target': 'form' } do |f| %>
-    <ul class="nav nav-pills nav-fill m-3" id="pills-tab" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="btn nav-link w-100 active" id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Color scheme</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="btn nav-link w-100" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Elements</button>
-      </li>
-    </ul>
-    <div class="tab-content" id="pills-tabContent">
-      <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-        <div class="px-3 py-2" data-controller="color-palette">
-          <% color_palettes.each do |color_palette| %>
-            <%#= render 'spree/admin/page_builder/color_palette',
-              active: color_palette_active?(color_palette),
-              primary_color: color_palette[:primary_color],
-              text_color: color_palette[:text_color],
-              border_color: color_palette[:border_color],
-              button_background_color: color_palette[:button_background_color],
-              button_text_color: color_palette[:button_text_color],
-              background_color: color_palette[:background_color]
-            %>
-          <% end %>
+    <div data-controller="tabs">
+      <ul class="nav nav-pills nav-fill m-3" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="btn nav-link w-100 active" id="pills-home-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Color scheme</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="btn nav-link w-100" id="pills-profile-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Elements</button>
+        </li>
+      </ul>
+      <div id="pills-tabContent">
+        <div data-tabs-target="panel" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" class="animate__animated animate__fadeIn">
+          <div class="px-3 py-2" data-controller="color-palette">
+            <% color_palettes.each do |color_palette| %>
+              <%#= render 'spree/admin/page_builder/color_palette',
+                active: color_palette_active?(color_palette),
+                primary_color: color_palette[:primary_color],
+                text_color: color_palette[:text_color],
+                border_color: color_palette[:border_color],
+                button_background_color: color_palette[:button_background_color],
+                button_text_color: color_palette[:button_text_color],
+                background_color: color_palette[:background_color]
+              %>
+            <% end %>
 
-          <%# <hr class="my-4 bg-light" /> %>
+            <%# <hr class="my-4 bg-light" /> %>
 
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_primary_color, label: Spree.t("theme_settings.brand_color"),
-                        value: @theme_preview.preferred_primary_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_text_color, label: Spree.t("theme_settings.text_color"),
-                        value: @theme_preview.preferred_text_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_button_text_color, label: Spree.t("theme_settings.button_text_color"),
-                        value: @theme_preview.preferred_button_text_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_input_text_color, label: Spree.t("theme_settings.input_text_color"),
-                        value: @theme_preview.preferred_input_text_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_border_color, label: Spree.t("theme_settings.border_color"),
-                        value: @theme_preview.preferred_border_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_button_border_color, label: Spree.t("theme_settings.button_border_color"),
-                        value: @theme_preview.preferred_button_border_color, action: 'change->page-builder#refreshPreview', clear: true %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_background_color, label: Spree.t("theme_settings.background_color"),
-                        value: @theme_preview.preferred_background_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_accent_color, label: Spree.t("theme_settings.accent_color"),
-                        value: @theme_preview.preferred_accent_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_danger_color, label: Spree.t("theme_settings.danger_color"),
-                        value: @theme_preview.preferred_danger_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_neutral_color, label: Spree.t("theme_settings.neutral_color"),
-                        value: @theme_preview.preferred_neutral_color, action: 'change->page-builder#refreshPreview' %>
-          <%= render 'spree/admin/page_builder/color_picker', f: f,
-                        field: :preferred_success_color, label: Spree.t("theme_settings.success_color"),
-                        value: @theme_preview.preferred_success_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_primary_color, label: Spree.t("theme_settings.brand_color"),
+                          value: @theme_preview.preferred_primary_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_text_color, label: Spree.t("theme_settings.text_color"),
+                          value: @theme_preview.preferred_text_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_button_text_color, label: Spree.t("theme_settings.button_text_color"),
+                          value: @theme_preview.preferred_button_text_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_input_text_color, label: Spree.t("theme_settings.input_text_color"),
+                          value: @theme_preview.preferred_input_text_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_border_color, label: Spree.t("theme_settings.border_color"),
+                          value: @theme_preview.preferred_border_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_button_border_color, label: Spree.t("theme_settings.button_border_color"),
+                          value: @theme_preview.preferred_button_border_color, action: 'change->page-builder#refreshPreview', clear: true %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_background_color, label: Spree.t("theme_settings.background_color"),
+                          value: @theme_preview.preferred_background_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_accent_color, label: Spree.t("theme_settings.accent_color"),
+                          value: @theme_preview.preferred_accent_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_danger_color, label: Spree.t("theme_settings.danger_color"),
+                          value: @theme_preview.preferred_danger_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_neutral_color, label: Spree.t("theme_settings.neutral_color"),
+                          value: @theme_preview.preferred_neutral_color, action: 'change->page-builder#refreshPreview' %>
+            <%= render 'spree/admin/page_builder/color_picker', f: f,
+                          field: :preferred_success_color, label: Spree.t("theme_settings.success_color"),
+                          value: @theme_preview.preferred_success_color, action: 'change->page-builder#refreshPreview' %>
+          </div>
         </div>
-      </div>
-      <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-        <div class="px-3 py-2">
-          <%= render 'spree/admin/page_builder/range_input',
-            f: f, field: :preferred_button_border_radius, min: 0, max: 100, unit: 'px', action: 'change->page-builder#refreshPreview'
-          %>
-          <%= render 'spree/admin/page_builder/range_input',
-            f: f, field: :preferred_button_border_thickness, min: 0, max: 10, unit: 'px', action: 'change->page-builder#refreshPreview'
-          %>
-          <hr>
+        <div data-tabs-target="panel" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" hidden class="animate__animated animate__fadeIn">
+          <div class="px-3 py-2">
+            <%= render 'spree/admin/page_builder/range_input',
+              f: f, field: :preferred_button_border_radius, min: 0, max: 100, unit: 'px', action: 'change->page-builder#refreshPreview'
+            %>
+            <%= render 'spree/admin/page_builder/range_input',
+              f: f, field: :preferred_button_border_thickness, min: 0, max: 10, unit: 'px', action: 'change->page-builder#refreshPreview'
+            %>
+            <hr>
 
-          <%= render 'spree/admin/page_builder/range_input',
-            f: f, field: :preferred_input_border_radius, min: 0, max: 100, unit: 'px', action: 'change->page-builder#refreshPreview'
-          %>
+            <%= render 'spree/admin/page_builder/range_input',
+              f: f, field: :preferred_input_border_radius, min: 0, max: 100, unit: 'px', action: 'change->page-builder#refreshPreview'
+            %>
+          </div>
         </div>
       </div>
     </div>

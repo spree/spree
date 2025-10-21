@@ -49,7 +49,6 @@ import AutocompleteSelectController from 'spree/admin/controllers/autocomplete_s
 import AutoScrollController from 'spree/admin/controllers/auto_scroll_controller'
 import BetterSliderController from 'spree/admin/controllers/better_slider_controller'
 import BlockFormController from 'spree/admin/controllers/block_form_controller'
-import BootstrapTabs from 'spree/admin/controllers/bootstrap_tabs_controller'
 import BulkOperationController from 'spree/admin/controllers/bulk_operation_controller'
 import CalculatorFieldsController from 'spree/admin/controllers/calculator_fields_controller'
 import CalendarRangeController from 'spree/admin/controllers/calendar_range_controller'
@@ -103,7 +102,6 @@ application.register('auto-submit', AutoSubmit)
 application.register('autocomplete-select', AutocompleteSelectController)
 application.register('better-slider', BetterSliderController)
 application.register('block-form', BlockFormController)
-application.register('bootstrap-tabs', BootstrapTabs) // We should merge with tabs controller/remove this
 application.register('bulk-operation', BulkOperationController)
 application.register('calculator-fields', CalculatorFieldsController)
 application.register('calendar-range', CalendarRangeController)
