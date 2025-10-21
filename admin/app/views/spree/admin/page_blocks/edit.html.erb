@@ -8,23 +8,20 @@
   </h6>
   <div class="px-3 pb-5 mb-5 edit-block" style="margin-bottom: 6rem;">
     <%= form_for @page_block, url: spree.admin_page_section_block_path(@page_block.section, @page_block), data: { controller: 'auto-submit' }, as: :page_block do |f| %>
-      <div data-controller="bootstrap-tabs">
+      <div data-controller="tabs">
         <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="btn nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-toggle="pill" data-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>" data-action="bootstrap-tabs#change" data-bootstrap-tabs-tab-param="content">Content</button>
+            <button class="btn nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>">Content</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="btn nav-link w-100 <%= tab_selected == :design ? 'active' : '' %>" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="<%= tab_selected == :design %>" data-action="bootstrap-tabs#change" data-bootstrap-tabs-tab-param="design">Design</button>
+            <button class="btn nav-link w-100 <%= tab_selected == :design ? 'active' : '' %>" id="pills-profile-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-profile" aria-selected="<%= tab_selected == :design %>">Design</button>
           </li>
         </ul>
-        <%= hidden_field_tag :tab_selected, tab_selected, data: { bootstrap_tabs_target: "input" } %>
-      </div>
-      <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade <%= tab_selected == :content ? 'show active' : '' %>" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <div data-tabs-target="panel" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" class="animate__animated animate__fadeIn" <%= 'hidden' unless tab_selected == :content %>>
           <%= render "spree/admin/page_blocks/forms/#{@page_block.form_partial_name}", f: f  %>
           <%= render 'spree/admin/page_blocks/form_tab_buttons', tab: :content %>
         </div>
-        <div class="tab-pane fade <%= tab_selected == :design ? 'show active' : '' %>" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <div data-tabs-target="panel" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" class="animate__animated animate__fadeIn" <%= 'hidden' unless tab_selected == :design %>>
           <%= render 'spree/admin/page_sections/fields/top_padding', f: f %>
           <%= render 'spree/admin/page_sections/fields/bottom_padding', f: f %>
           <% if @page_block.respond_to?(:preferred_text_color) %>
