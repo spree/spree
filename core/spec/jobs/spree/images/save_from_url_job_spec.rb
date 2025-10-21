@@ -4,11 +4,12 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
   let!(:variant) { create(:variant) }
   let(:external_url) { "https://cdn.example.com/foo/bar_image.png" }
   let(:position) { nil }
+  let(:external_id) { nil }
   let(:viewable_id) { variant.id }
   let(:viewable_type) { 'Spree::Variant' }
   let(:queue_name) { Spree.queues.images }
 
-  subject(:job) { described_class.new(viewable_id, viewable_type, external_url, position).perform_now }
+  subject(:job) { described_class.new(viewable_id, viewable_type, external_url, external_id, position).perform_now }
 
   it "is queued in the correct queue" do
     expect(described_class.queue_name).to eq(queue_name.to_s)
@@ -61,6 +62,22 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
 
       it "does not re-download but triggers save!" do
+        expect(URI).not_to receive(:parse)
+        expect(URI).not_to receive(:open)
+        expect { subject }.not_to change(image, :attachment)
+      end
+    end
+
+    context 'when skip_import? returns true' do
+      before do
+        allow(image).to receive(:skip_import?).and_return(true)
+        image.external_url = external_url.downcase.strip
+        image.save!
+      end
+
+      let!(:image) { create(:image, viewable: variant) }
+
+      it "does not download the image" do
         expect(URI).not_to receive(:parse)
         expect(URI).not_to receive(:open)
         expect { subject }.not_to change(image, :attachment)
