@@ -54,10 +54,20 @@ module Spree
         def ensure_product_exists
           product = Spree::Product.new
           if attributes['slug'].present?
-            existing_product = Spree::Product.find_by(slug: attributes['slug'].strip.downcase)
+            existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
             product = existing_product if existing_product.present?
           end
 
+          product = assign_attributes_to_product(product)
+          product.save!
+          product
+        end
+
+        def product_scope
+          Spree::Product.accessible_by(import.current_ability, :manage)
+        end
+
+        def assign_attributes_to_product(product)
           # setting SKU for master variant so it will be picked up in process! and won't try to create a non-master variant
           if product.new_record?
             product.slug = attributes['slug']
@@ -74,8 +84,6 @@ module Spree
           product.tag_list = attributes['tags'] if attributes['tags'].present?
 
           product.taxons = prepare_taxons if options.empty?
-
-          product.save!
           product
         end
 
