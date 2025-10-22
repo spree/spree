@@ -172,6 +172,11 @@ module Spree
 
       broadcast_update_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
     end
+
+    def current_ability
+      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user, { store: store })
+    end
+
     class << self
       def available_types
         Rails.application.config.spree.import_types
