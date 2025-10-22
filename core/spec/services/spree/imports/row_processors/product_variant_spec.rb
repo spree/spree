@@ -174,22 +174,31 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     context 'when the taxons already exist' do
       let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
       let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
-      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
+      let!(:clothing_taxon) { create(:taxon, name: 'clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
       let!(:shirts_category_taxon) { create(:taxon, name: 'Shirts', taxonomy: categories_taxonomy, parent: clothing_taxon) }
 
       let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') }
-      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome Brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
+      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
 
       let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') }
       let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
       let!(:shirts_collection_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
 
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'category1' => 'categories -> Men -> Clothing -> Shirts',
+          'category2' => 'brands -> awesome brand',
+          'category3' => 'Collections -> Summer -> Shirts'
+        )
+      end
+
       it 'assigns the existing taxons to the product' do
         expect { subject.process! }.to change { Spree::Taxon.count }.by(0)
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
-          'Categories -> Men -> Clothing -> Shirts',
-          'Brands -> Awesome Brand',
+          'Categories -> Men -> clothing -> Shirts',
+          'Brands -> Awesome brand',
           'Collections -> Summer -> Shirts'
         )
       end

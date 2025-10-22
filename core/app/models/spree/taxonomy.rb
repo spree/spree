@@ -25,6 +25,16 @@ module Spree
 
     default_scope { order("#{table_name}.position, #{table_name}.created_at") }
 
+    scope :with_matching_name, ->(name_to_match) do
+      value = name_to_match.to_s.strip.downcase
+
+      if Spree.use_translations?
+        i18n { name.lower.eq(value) }
+      else
+        where(arel_table[:name].lower.eq(value))
+      end
+    end
+
     self.whitelisted_ransackable_attributes = %w[name]
     self.whitelisted_ransackable_associations = %w[root]
 

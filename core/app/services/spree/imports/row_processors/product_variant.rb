@@ -97,12 +97,12 @@ module Spree
           return if taxon_names.empty?
 
           taxonomy_name = taxon_names.shift
-          taxonomy = store.taxonomies.find_or_create_by!(name: taxonomy_name)
+          taxonomy = store.taxonomies.with_matching_name(taxonomy_name).first || store.taxonomies.create!(name: taxonomy_name)
 
           last_taxon = taxonomy.root
 
           taxon_names.each do |taxon_name|
-            last_taxon = taxonomy.taxons.find_or_create_by!(name: taxon_name, parent: last_taxon)
+            last_taxon = taxonomy.taxons.with_matching_name(taxon_name).where(parent: last_taxon).first || taxonomy.taxons.create!(name: taxon_name, parent: last_taxon)
           end
 
           last_taxon

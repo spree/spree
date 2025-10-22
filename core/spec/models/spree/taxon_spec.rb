@@ -78,6 +78,42 @@ describe Spree::Taxon, type: :model do
         end
       end
     end
+
+    describe '.with_matching_name' do
+      let!(:taxon1) { create(:taxon, name: 'shoes', taxonomy: taxonomy) }
+      let!(:taxon2) { create(:taxon, name: 'Premium Shoes', taxonomy: taxonomy) }
+
+      it 'returns the taxon with the matching name', :aggregate_failures do
+        expect(described_class.with_matching_name('SHOES')).to eq([taxon1])
+        expect(described_class.with_matching_name('Shoes')).to eq([taxon1])
+        expect(described_class.with_matching_name('shoes')).to eq([taxon1])
+
+        expect(described_class.with_matching_name('premium SHOES')).to eq([taxon2])
+        expect(described_class.with_matching_name('Premium shoes')).to eq([taxon2])
+        expect(described_class.with_matching_name('premium shoes')).to eq([taxon2])
+      end
+
+      context 'with translations' do
+        before do
+          I18n.with_locale(:pl) do
+            taxon1.update!(name: 'Buty')
+            taxon2.update!(name: 'Buty Premium')
+          end
+        end
+
+        it 'returns the taxon with the matching name', :aggregate_failures do
+          I18n.with_locale(:pl) do
+            expect(described_class.with_matching_name('BUTY')).to eq([taxon1])
+            expect(described_class.with_matching_name('Buty')).to eq([taxon1])
+            expect(described_class.with_matching_name('buty')).to eq([taxon1])
+
+            expect(described_class.with_matching_name('Buty PREMIUM')).to eq([taxon2])
+            expect(described_class.with_matching_name('Buty premium')).to eq([taxon2])
+            expect(described_class.with_matching_name('buty premium')).to eq([taxon2])
+          end
+        end
+      end
+    end
   end
 
   describe 'callbacks' do
