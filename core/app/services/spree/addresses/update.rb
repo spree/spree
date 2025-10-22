@@ -11,13 +11,18 @@ module Spree
         default_billing = opts.fetch(:default_billing, false)
         default_shipping = opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
-        create_new_address_on_update = opts.fetch(:create_new_address_on_update, false)
 
         prepare_address_params!(address, address_params)
         address.assign_attributes(address_params)
 
-        address_changed = address.changes.except(*address_changes_except).any?
+        address_changes = address.changes.except(*address_changes_except)
 
+        # Ignore changes that are only different in case as encrypted fields are processd by rails as downcased
+        address_changes.reject! do |attr, (old_val, new_val)|
+          old_val.to_s.casecmp?(new_val.to_s)
+        end
+        
+        address_changed = address_changes.any?
         if !address_changed && defaults_changed?(address, default_billing, default_shipping)
           assign_to_user_as_default(
             user: address.user,
@@ -29,7 +34,7 @@ module Spree
 
         return success(address) unless address_changed
 
-        if address.editable? && !create_new_address_on_update
+        if address.editable?
           if address.update(address_params)
             if address.user.present?
               assign_to_user_as_default(
@@ -47,23 +52,20 @@ module Spree
             failure(address)
           end
         elsif new_address(address_params).valid?
-          address.destroy unless create_new_address_on_update
+          address.destroy
 
           if new_address.user.present?
-            default_billing = (!create_new_address_on_update && address.user_default_billing?) || default_billing
-            default_shipping = (!create_new_address_on_update && address.user_default_shipping?) || default_shipping
-
             assign_to_user_as_default(
               user: new_address.user,
               address_id: new_address.id,
-              default_billing: default_billing,
-              default_shipping: default_shipping
+              default_billing: address.user_default_billing? || default_billing,
+              default_shipping: address.user_default_shipping? || default_shipping
             )
           end
 
           if order.present?
-            order.ship_address = new_address if !create_new_address_on_update && order.ship_address_id == address.id
-            order.bill_address = new_address if !create_new_address_on_update && order.bill_address_id == address.id
+            order.ship_address = new_address if order.ship_address_id == address.id
+            order.bill_address = new_address if order.bill_address_id == address.id
             order.state = 'address'
             order.save
           end
