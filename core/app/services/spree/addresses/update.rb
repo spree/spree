@@ -17,11 +17,11 @@ module Spree
 
         address_changes = address.changes.except(*address_changes_except)
 
-        # Ignore changes that are only different in case as encrypted fields are processd by rails as downcased
+        # Ignore changes that are only different in case as encrypted fields are processed by rails as downcased
         address_changes.reject! do |attr, (old_val, new_val)|
           old_val.to_s.casecmp?(new_val.to_s)
         end
-        
+
         address_changed = address_changes.any?
         if !address_changed && defaults_changed?(address, default_billing, default_shipping)
           assign_to_user_as_default(
