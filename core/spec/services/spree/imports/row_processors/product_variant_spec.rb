@@ -148,6 +148,137 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  context 'with taxons' do
+    let!(:product) { create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store], taxons: taxons) }
+    let(:taxons) { [] }
+
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'denim-shirt',
+        'category1' => 'Categories -> Men -> Clothing -> Shirts',
+        'category2' => 'Brands -> Awesome Brand',
+        'category3' => 'Collections -> Summer -> Shirts'
+      )
+    end
+
+    it 'assigns taxons to the product' do
+      expect { subject.process! }.to change { Spree::Taxon.count }.by(6)
+
+      expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+        'Categories -> Men -> Clothing -> Shirts',
+        'Brands -> Awesome Brand',
+        'Collections -> Summer -> Shirts'
+      )
+    end
+
+    context 'when the taxons already exist' do
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
+      let!(:clothing_taxon) { create(:taxon, name: 'clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
+      let!(:shirts_category_taxon) { create(:taxon, name: 'Shirts', taxonomy: categories_taxonomy, parent: clothing_taxon) }
+
+      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') }
+      let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
+
+      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') }
+      let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
+      let!(:shirts_collection_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'category1' => 'categories -> Men -> Clothing -> Shirts',
+          'category2' => 'brands -> awesome brand',
+          'category3' => 'Collections -> Summer -> Shirts'
+        )
+      end
+
+      it 'assigns the existing taxons to the product' do
+        expect { subject.process! }.to change { Spree::Taxon.count }.by(0)
+
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Categories -> Men -> clothing -> Shirts',
+          'Brands -> Awesome brand',
+          'Collections -> Summer -> Shirts'
+        )
+      end
+    end
+
+    context 'when taxons are not provided' do
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
+      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
+
+      let(:taxons) { [clothing_taxon] }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'category1' => '',
+          'category2' => nil
+        )
+      end
+
+      it 'assigns no taxons to the product' do
+        expect { subject.process! }.to change { Spree::Taxon.count }.by(0)
+        expect(product.reload.taxons).to be_empty
+      end
+    end
+
+    context 'when taxons format is invalid' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'category1' => 'Categories -> Men -> -> Shirts',
+          'category2' => ' -> ',
+          'category3' => '   '
+        )
+      end
+
+      it 'skips invalid taxons' do
+        expect { subject.process! }.to change { Spree::Taxon.count }.by(2)
+
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Categories -> Men -> Shirts'
+        )
+      end
+    end
+
+    context 'when importing a variant row with no taxons' do
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
+      let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
+
+      let(:taxons) { [clothing_taxon] }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-XS-BLUE',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'weight' => '0.0',
+          'inventory_count' => '100',
+          'inventory_backorderable' => 'true',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue',
+          'option2_name' => 'Size',
+          'option2_value' => 'XS',
+        )
+      end
+
+      it 'keeps the product taxons' do
+        expect(variant).to be_persisted
+        expect(variant.sku).to eq 'DENIM-SHIRT-XS-BLUE'
+        expect(variant.product).to eq(product)
+
+        expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
+          'Categories -> Men -> Clothing'
+        )
+      end
+    end
+  end
+
   context 'when importing a variant with all option columns empty' do
     let!(:product) do
       create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])

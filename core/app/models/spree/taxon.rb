@@ -118,6 +118,16 @@ module Spree
       end
     end
 
+    scope :with_matching_name, ->(name_to_match) do
+      value = name_to_match.to_s.strip.downcase
+
+      if Spree.use_translations?
+        i18n { name.lower.eq(value) }
+      else
+        where(arel_table[:name].lower.eq(value))
+      end
+    end
+
     #
     #  Ransack
     #

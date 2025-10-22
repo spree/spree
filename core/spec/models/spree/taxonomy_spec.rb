@@ -3,6 +3,44 @@ require 'spec_helper'
 describe Spree::Taxonomy, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'scopes' do
+    describe '.with_matching_name' do
+      let!(:taxonomy1) { create(:taxonomy, name: 'Winter 2024') }
+      let!(:taxonomy2) { create(:taxonomy, name: 'Winter 2025') }
+
+      it 'returns the taxonomy with the matching name', :aggregate_failures do
+        expect(described_class.with_matching_name('WINTER 2024')).to eq([taxonomy1])
+        expect(described_class.with_matching_name('Winter 2024')).to eq([taxonomy1])
+        expect(described_class.with_matching_name('winter 2024')).to eq([taxonomy1])
+
+        expect(described_class.with_matching_name('WINTER 2025')).to eq([taxonomy2])
+        expect(described_class.with_matching_name('Winter 2025')).to eq([taxonomy2])
+        expect(described_class.with_matching_name('winter 2025')).to eq([taxonomy2])
+      end
+
+      context 'with translations' do
+        before do
+          I18n.with_locale(:pl) do
+            taxonomy1.update!(name: 'Zima 2024')
+            taxonomy2.update!(name: 'Zima 2025')
+          end
+        end
+
+        it 'returns the taxonomy with the matching name', :aggregate_failures do
+          I18n.with_locale(:pl) do
+            expect(described_class.with_matching_name('ZIMA 2024')).to eq([taxonomy1])
+            expect(described_class.with_matching_name('Zima 2024')).to eq([taxonomy1])
+            expect(described_class.with_matching_name('zima 2024')).to eq([taxonomy1])
+
+            expect(described_class.with_matching_name('ZIMA 2025')).to eq([taxonomy2])
+            expect(described_class.with_matching_name('Zima 2025')).to eq([taxonomy2])
+            expect(described_class.with_matching_name('zima 2025')).to eq([taxonomy2])
+          end
+        end
+      end
+    end
+  end
+
   context '#destroy' do
     before do
       @taxonomy = create(:taxonomy)
