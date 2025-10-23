@@ -30,19 +30,19 @@ module Spree
     include Spree::DefaultPrice
 
     with_options inverse_of: :variant do
-      has_many :inventory_units
-      has_many :line_items
-      has_many :stock_items, dependent: :destroy
+      has_many :inventory_units, class_name: 'Spree::InventoryUnit'
+      has_many :line_items, class_name: 'Spree::LineItem'
+      has_many :stock_items, class_name: 'Spree::StockItem', dependent: :destroy
     end
 
-    has_many :orders, through: :line_items
+    has_many :orders, through: :line_items, class_name: 'Spree::Order'
     with_options through: :stock_items do
-      has_many :stock_locations
-      has_many :stock_movements
+      has_many :stock_locations, class_name: 'Spree::StockLocation'
+      has_many :stock_movements, class_name: 'Spree::StockMovement'
     end
 
-    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
-    has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
+    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', dependent: :destroy
+    has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
 
@@ -51,9 +51,9 @@ module Spree
              dependent: :destroy,
              inverse_of: :variant
 
-    has_many :wished_items, dependent: :destroy
+    has_many :wished_items, class_name: 'Spree::WishedItem', dependent: :destroy
 
-    has_many :digitals
+    has_many :digitals, class_name: 'Spree::Digital', dependent: :destroy
 
     before_validation :set_cost_currency
 

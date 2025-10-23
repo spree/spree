@@ -1,10 +1,6 @@
 module Spree
   class DigitalLink < Spree.base_class
-    if Rails::VERSION::STRING >= '7.1.0'
-      has_secure_token on: :save
-    else
-      has_secure_token
-    end
+    has_secure_token on: :save
 
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks
@@ -13,8 +9,8 @@ module Spree
       include Spree::Security::DigitalLinks
     end
 
-    belongs_to :digital
-    belongs_to :line_item
+    belongs_to :digital, class_name: 'Spree::Digital', touch: true, inverse_of: :digital_links
+    belongs_to :line_item, class_name: 'Spree::LineItem'
 
     before_validation :set_defaults, on: :create
     validates :digital, :line_item, presence: true

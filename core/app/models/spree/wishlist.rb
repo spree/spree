@@ -11,8 +11,8 @@ module Spree
       has_secure_token
     end
 
-    belongs_to :user, class_name: "::#{Spree.user_class}", touch: true
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :user, class_name: "::#{Spree.user_class}", touch: true, inverse_of: :wishlists
+    belongs_to :store, class_name: 'Spree::Store', inverse_of: :wishlists
 
     has_many :wished_items, class_name: 'Spree::WishedItem', dependent: :destroy
     has_many :variants, through: :wished_items, source: :variant, class_name: 'Spree::Variant'
