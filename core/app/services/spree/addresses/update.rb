@@ -12,12 +12,19 @@ module Spree
         default_shipping = opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
         create_new_address_on_update = opts.fetch(:create_new_address_on_update, false)
+        Spree::Deprecation.warn('Spree::Addresses::Update create_new_address_on_update parameter is deprecated and will be removed in Spree 6.') if create_new_address_on_update
 
         prepare_address_params!(address, address_params)
         address.assign_attributes(address_params)
 
-        address_changed = address.changes.except(*address_changes_except).any?
+        address_changes = address.changes.except(*address_changes_except)
 
+        # Ignore changes that are only different in case as encrypted fields are processed by rails as downcased
+        address_changes.reject! do |attr, (old_val, new_val)|
+          old_val.to_s.casecmp?(new_val.to_s)
+        end
+
+        address_changed = address_changes.any?
         if !address_changed && defaults_changed?(address, default_billing, default_shipping)
           assign_to_user_as_default(
             user: address.user,

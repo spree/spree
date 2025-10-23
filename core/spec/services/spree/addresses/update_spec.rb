@@ -50,6 +50,14 @@ RSpec.describe Spree::Addresses::Update do
             expect { subject.call(address: address, address_params: new_address_params, order: order) }.not_to change { Spree::Address.count }
           end
 
+          it 'does not update address nor create when attribute changed only in case' do
+            result.value.update(address1: '123 Main St')
+
+            new_address_params[:address1] = '123 MAIN ST'
+            expect { subject.call(address: address, address_params: new_address_params, order: order) }.not_to change { address.reload }
+            expect { subject.call(address: address, address_params: new_address_params, order: order) }.not_to change { Spree::Address.count }
+          end
+
           context 'when setting the create_new_address_on_update param to true' do
             it 'does not create new address' do
               expect { subject.call(address: address, address_params: new_address_params, order: order, create_new_address_on_update: true) }.not_to change { Spree::Address.count }
