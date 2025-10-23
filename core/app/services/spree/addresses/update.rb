@@ -11,8 +11,8 @@ module Spree
         default_billing = opts.fetch(:default_billing, false)
         default_shipping = opts.fetch(:default_shipping, false)
         address_changes_except = opts.fetch(:address_changes_except, [])
-        Spree::Deprecation.warn('Spree::Addresses::Update create_new_address_on_update parameter is deprecated and will be removed in Spree 6.')
         create_new_address_on_update = opts.fetch(:create_new_address_on_update, false)
+        Spree::Deprecation.warn('Spree::Addresses::Update create_new_address_on_update parameter is deprecated and will be removed in Spree 6.') if create_new_address_on_update
 
         prepare_address_params!(address, address_params)
         address.assign_attributes(address_params)
