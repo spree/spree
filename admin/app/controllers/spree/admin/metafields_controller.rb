@@ -38,9 +38,9 @@ module Spree
         raise ActiveRecord::RecordNotFound if resource_type.blank?
 
         @resource = if resource_type.respond_to?(:friendly)
-                   resource_type.friendly.find(params[:id])
+                   resource_type.friendly.accessible_by(current_ability, :update).find(params[:id])
                  else
-                   resource_type.find(params[:id])
+                   resource_type.accessible_by(current_ability, :update).find(params[:id])
                  end
       end
 
