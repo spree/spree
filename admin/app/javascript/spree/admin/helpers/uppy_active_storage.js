@@ -45,7 +45,7 @@ export default class ActiveStorageUpload extends BasePlugin {
     this.uppy.removeUploader(this.handleUpload)
     this.uppy.off('file-editor:complete', this.onEditorComplete)
   }
-  
+
   onEditorComplete = (updatedFile) => {
     this.handleUpload([updatedFile.id])
 

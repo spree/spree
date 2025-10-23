@@ -165,10 +165,10 @@ export default class extends Controller {
 
       // Propagate a custom 'active-storage-upload:success' event when upload completes and field updated
       const event = new CustomEvent('active-storage-upload:success', {
-        detail: { 
+        detail: {
           file: file,
           signedId: signedId,
-          controller: this 
+          controller: this
         },
         bubbles: true
       })

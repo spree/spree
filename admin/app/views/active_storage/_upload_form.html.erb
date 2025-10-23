@@ -4,6 +4,7 @@
 <% auto_submit ||= false %>
 <% show_delete_button = defined?(can_delete) ? can_delete : true %>
 <% css ||= '' %>
+<% close_after_finish ||= true unless defined?(close_after_finish) %>
 
 <% if field_name && form %>
   <div data-controller="active-storage-upload"
@@ -11,6 +12,7 @@
       data-active-storage-upload-thumb-height-value="<%= height %>"
       data-active-storage-upload-crop-value="<%= crop.presence || false %>"
       data-active-storage-upload-auto-submit-value="<%= auto_submit %>"
+      data-active-storage-upload-close-after-finish-value="<%= close_after_finish %>"
       data-active-storage-upload-field-name-value="<%= form.object_name %>[<%= field_name %>]"
       data-active-storage-upload-allowed-file-types-value="<%= Rails.application.config.active_storage.web_image_content_types %>"
       class="d-flex flex-column justify-content-center w-100 position-relative">

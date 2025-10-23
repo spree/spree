@@ -92,7 +92,7 @@
         <p class="text-muted form-text">
           Used for the featured image on the homepage.
         </p>
-        <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true %>
+        <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true, close_after_finish: false %>
         <%= f.error_message_on :square_image %>
       </div>
     </div>
