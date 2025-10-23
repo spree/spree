@@ -57,6 +57,12 @@ RSpec.describe Spree::Addresses::Update do
             expect { subject.call(address: address, address_params: new_address_params, order: order) }.not_to change { address.reload }
             expect { subject.call(address: address, address_params: new_address_params, order: order) }.not_to change { Spree::Address.count }
           end
+
+          context 'when setting the create_new_address_on_update param to true' do
+            it 'does not create new address' do
+              expect { subject.call(address: address, address_params: new_address_params, order: order, create_new_address_on_update: true) }.not_to change { Spree::Address.count }
+            end
+          end
         end
 
         context 'when user only sets the address as default shipping' do
@@ -82,6 +88,72 @@ RSpec.describe Spree::Addresses::Update do
             expect(user.bill_address_id).to eq(previous_address.id)
             result
             expect(user.reload.bill_address_id).to eq(value.id)
+          end
+        end
+      end
+
+      shared_examples 'always create a new address on update' do
+        context 'when the create_new_address_on_update param is set to true' do
+          let(:result) { subject.call(address: address, address_params: new_address_params, order: order, **params) }
+          let(:params) { { create_new_address_on_update: true } }
+
+          it 'creates a new address and keeps the previous one' do
+            expect { result }.to change(Spree::Address, :count).by(1)
+
+            expect(result).to be_success
+            expect(value).to have_attributes(new_address_params)
+            expect(value.id).not_to eq(address.id)
+            expect(value.country).to eq(country)
+            expect(value.state).to eq(state)
+            expect(value.user).to eq(user)
+            expect(address.deleted_at).to be_nil
+          end
+
+          context 'with a user' do
+            before do
+              new_address_params.merge!(user_id: user.id)
+              user.update!(ship_address: address, bill_address: address)
+            end
+
+            it "doesn't change the user's bill and ship addresses by default" do
+              expect(result).to be_success
+
+              expect(user.reload.bill_address).to eq(address.reload)
+              expect(user.ship_address).to eq(address)
+            end
+
+            context 'when the default_billing param is set to true' do
+              let(:params) { { create_new_address_on_update: true, default_billing: true } }
+
+              it 'changes user\'s bill address' do
+                expect(result).to be_success
+
+                expect(user.reload.bill_address).to eq(value)
+                expect(user.ship_address).to eq(address.reload)
+              end
+            end
+
+            context 'when the default_shipping param is set to true' do
+              let(:params) { { create_new_address_on_update: true, default_shipping: true } }
+
+              it 'changes user\'s ship address' do
+                expect(result).to be_success
+
+                expect(user.reload.ship_address).to eq(value)
+                expect(user.bill_address).to eq(address.reload)
+              end
+            end
+          end
+
+          context 'with an order' do
+            let(:order) { create(:order, user: user, state: 'delivery', ship_address: address, bill_address: address) }
+
+            it "doesn't change the order addresses" do
+              expect(result).to be_success
+
+              expect(order.reload.bill_address).to eq(address)
+              expect(order.reload.ship_address).to eq(address)
+            end
           end
         end
       end
@@ -130,6 +202,7 @@ RSpec.describe Spree::Addresses::Update do
         end
 
         it_behaves_like 'updating with same params'
+        include_examples 'always create a new address on update'
       end
 
       context 'when address is uneditable' do
@@ -242,6 +315,7 @@ RSpec.describe Spree::Addresses::Update do
         end
 
         it_behaves_like 'updating with same params'
+        include_examples 'always create a new address on update'
       end
     end
 
