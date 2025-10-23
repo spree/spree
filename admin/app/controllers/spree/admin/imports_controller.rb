@@ -53,7 +53,7 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:import).permit(permitted_import_attributes)
+        params.require(:import).permit(permitted_import_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
       end
 
       def choose_layout

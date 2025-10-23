@@ -48,6 +48,15 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
       expect(import.attachment.filename.to_s).to eq('products_import.csv')
     end
 
+    context 'with preferences' do
+      let(:import_params) { { type: Spree::Import.available_types.first.to_s, attachment: attachment, preferred_delimiter: ';' } }
+
+      it 'creates a new import with preferences' do
+        post :create, params: { import: import_params }
+        expect(assigns(:import).preferred_delimiter).to eq(';')
+      end
+    end
+
     context 'when type parameter is present' do
       it 'assigns the type' do
         post :create, params: { import: import_params }
