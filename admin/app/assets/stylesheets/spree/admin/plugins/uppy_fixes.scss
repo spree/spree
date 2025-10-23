@@ -30,10 +30,16 @@
   border-color: $modal-content-border-color !important;
 }
 
-.uppy-Dashboard-browse {
+.uppy-Dashboard-browse, .uppy-DashboardContent-back {
   @extend .btn;
   @extend .btn-light;
+}
+.uppy-Dashboard-browse {
   @extend .ml-2;
+}
+.uppy-DashboardContent-save {
+  @extend .btn;
+  @extend .btn-primary;
 }
 
 .uppy-Dashboard-close {
