@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class InvitationsController < BaseController
+      include Spree::Admin::SettingsConcern
+
       skip_before_action :authorize_admin, only: [:show, :accept]
 
       before_action :load_parent, except: [:show]
