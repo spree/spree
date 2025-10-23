@@ -33,8 +33,13 @@ module Spree
         opts[:class] ||= 'btn btn-primary text-center'
         opts[:class] << ' d-flex align-items-center justify-content-center' if opts[:class].exclude?('d-block') && opts[:class].exclude?('d-flex')
 
-        opts['data-turbo-submits-with'] ||= "#{content_tag(:span, '', class: 'spinner-border spinner-border-sm mr-2', role: 'status')}Saving..."
+        opts['data-turbo-submits-with'] ||= "#{content_tag(:span, '', class: 'spinner-border spinner-border-sm', role: 'status')}"
         opts['data-enable-button-target'] = 'button'
+        if opts['data-controller'].present?
+          opts['data-controller'] += ' turbo-submit-button'
+        else
+          opts['data-controller'] = 'turbo-submit-button'
+        end
 
         if block_given?
           button_tag opts, &block
