@@ -4,6 +4,8 @@ module Spree
       def link_to_edit_metafields(record, options = {})
         return unless Spree::MetafieldDefinition.available_resources.map(&:name).include?(record.class.name)
         return unless record.respond_to?(:metafields)
+        return unless can?(:manage, record)
+        return unless can?(:manage, Spree::Metafield)
 
         options[:class] ||= 'dropdown-item'
         options[:data]  ||= { action: 'drawer#open', turbo_frame: :drawer }

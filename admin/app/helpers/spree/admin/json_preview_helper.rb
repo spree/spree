@@ -4,6 +4,7 @@ module Spree
       def link_to_show_json(record, options = {})
         return unless json_serializers_available?(record)
         return unless can?(:read, record)
+        return unless can?(:read, :json_preview)
 
         options[:class] ||= 'dropdown-item'
         options[:data] ||= { action: 'drawer#open', turbo_frame: :drawer }

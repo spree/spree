@@ -2,7 +2,7 @@ module Spree
   module Admin
     class TranslationsController < Spree::Admin::BaseController
       # Set the resource being translated and any related data
-      before_action :set_resource, only: [:edit, :update]
+      before_action :load_resource, only: [:edit, :update]
       before_action :load_data, only: [:edit, :update]
       before_action :set_translation_locale, only: [:edit, :update]
       helper_method :normalized_locale
@@ -63,11 +63,11 @@ module Spree
       end
 
       # Set the resource object using friendly find if available
-      def set_resource
+      def load_resource
         @resource = if resource_class.respond_to?(:friendly)
-                      resource_class.friendly.find(params[:id])
+                      resource_class.friendly.accessible_by(current_ability, :update).find(params[:id])
                     else
-                      resource_class.find(params[:id])
+                      resource_class.accessible_by(current_ability, :update).find(params[:id])
                     end
       end
 

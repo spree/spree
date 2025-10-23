@@ -4,6 +4,7 @@ module Spree
       def link_to_edit_translations(resource, options = {})
         return unless Rails.application.config.spree.translatable_resources.map(&:name).include?(resource.class.name)
         return unless can?(:update, resource)
+        return unless can?(:update, :translations)
 
         options[:class] ||= 'dropdown-item'
         options[:data]  ||= { action: 'drawer#open', turbo_frame: :drawer }
