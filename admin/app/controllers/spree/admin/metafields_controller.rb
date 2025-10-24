@@ -1,51 +1,38 @@
 module Spree
   module Admin
-    class MetafieldsController < BaseController
-      before_action :load_resource
+    class MetafieldsController < ResourceController
+      edit_action.before :build_metafields
 
-      # GET /admin/<resource_name_plural>/<id>/edit
-      def edit
-        @metafields = @resource.metafields
-        @metafield_definitions = Spree::MetafieldDefinition.where(resource_type: @resource.class.name)
+      def build_metafields
+        @metafields = @object.metafields
+        @metafield_definitions = Spree::MetafieldDefinition.where(resource_type: model_class.name)
 
         @metafield_definitions.each do |metafield_definition|
-          @resource.metafields.build(type: metafield_definition.metafield_type, metafield_definition: metafield_definition) unless @resource.has_metafield?(metafield_definition)
-        end
-      end
-
-      # PUT /admin/<resource_name_plural>/<id>
-      def update
-        if @resource.update(permitted_metafields_params)
-          flash.now[:success] = flash_message_for(@resource, :successfully_updated)
-        else
-          flash.now[:error] = @resource.errors.full_messages.to_sentence
+          @object.metafields.build(type: metafield_definition.metafield_type, metafield_definition: metafield_definition) unless @object.has_metafield?(metafield_definition)
         end
       end
 
       private
 
-      def permitted_metafields_params
-        params.require(resource_type.model_name.param_key).permit(metafields_attributes: permitted_metafield_attributes)
+      def permitted_resource_params
+        params.require(@object.model_name.param_key).permit(metafields_attributes: permitted_metafield_attributes)
       end
 
       # eg. Spree::Product
-      def resource_type
-        @resource_type ||= allowed_resource_types.find { |type| type.name == params[:resource_type] }
+      def model_class
+        @model_class ||= begin
+          klass = params[:resource_type]
+          allowed_model_classes.find { |allowed_class| allowed_class.to_s == klass } ||
+            raise(ActiveRecord::RecordNotFound, "Resource type not found")
+        end
       end
 
-      def load_resource
-        raise ActiveRecord::RecordNotFound if params[:resource_type].blank?
-        raise ActiveRecord::RecordNotFound if resource_type.blank?
-
-        @resource = if resource_type.respond_to?(:friendly)
-                   resource_type.friendly.accessible_by(current_ability, :update).find(params[:id])
-                 else
-                   resource_type.accessible_by(current_ability, :update).find(params[:id])
-                 end
+      def allowed_model_classes
+        @allowed_model_classes ||= Rails.application.config.spree.metafield_enabled_resources
       end
 
-      def allowed_resource_types
-        @allowed_resource_types ||= Rails.application.config.spree.metafield_enabled_resources
+      def update_turbo_stream_enabled?
+        true
       end
     end
   end

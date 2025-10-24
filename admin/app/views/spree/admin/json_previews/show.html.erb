@@ -1,29 +1,37 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t('admin.show_json')) %>
-  <div class="drawer-body">
-    <ul class="nav nav-pills">
-      <%= nav_item(
-            Spree.t('apis.storefront'),
-            spree.admin_json_preview_resource_path(@resource, resource_type: @resource.class.to_s, api_type: :storefront),
-            active: (@api_type == :storefront)
-          ) %>
-      <%= nav_item(
-            Spree.t('apis.platform'),
-            spree.admin_json_preview_resource_path(@resource, resource_type: @resource.class.to_s, api_type: :platform),
-            active: (@api_type == :platform)
-          ) %>
+  <div class="drawer-body" data-controller="highlight tabs">
+    <ul class="nav nav-pills mb-3">
+      <li class="nav-item">
+        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.storefront') %></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.platform') %></a>
+      </li>
     </ul>
-  </div>
-  <div class="drawer-body pt-0" data-controller="highlight">
-    <% if @api_type == :storefront && storefront_serializer_exists?(@resource) || @api_type == :platform && platform_serializer_exists?(@resource) %>
-    <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@resource, api_type: @api_type) %></code></pre>
-    <% else %>
-      <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
-        <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
-        <p>
-          <%= Spree.t('admin.json_preview.no_api_response') %>
-        </p>
-      </div>
-    <% end %>
+    <div data-tabs-target="panel" class="animate__animated">
+      <% if storefront_serializer_exists?(@object) %>
+        <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
+      <% else %>
+        <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
+          <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+          <p>
+            <%= Spree.t('admin.json_preview.no_api_response') %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+    <div data-tabs-target="panel" class="animate__animated" hidden>
+      <% if platform_serializer_exists?(@object) %>
+        <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
+      <% else %>
+        <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
+          <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+          <p>
+            <%= Spree.t('admin.json_preview.no_api_response') %>
+          </p>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>

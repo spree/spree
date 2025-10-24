@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:metafields)) %>
   <% if @metafields.present? %>
-    <%= form_for [:admin, @resource], url: spree.admin_metafield_path(@resource, resource_type: @resource.class.to_s), method: :put do |f| %>
+    <%= form_for @object, url: spree.admin_metafield_path(@object.id, resource_type: model_class.to_s), method: :put do |f| %>
       <div class="drawer-body">
         <%= f.fields_for :metafields, @metafields do |metafield_form| %>
           <%= metafield_form.hidden_field :id %>
@@ -34,9 +34,9 @@
   <% else %>
     <div class="drawer-body">
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
-        <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
-        <p>No metafield definitions configured for <%= @resource.class.name.demodulize.titleize.pluralize %>.</p>
-        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: @resource.class.to_s), class: 'btn btn-primary ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
+        <%= icon 'map-search', class: 'mb-3', style: 'font-size: 2rem;' %>
+        <p>No metafield definitions configured for <%= model_class.name.demodulize.titleize.pluralize %>.</p>
+        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: model_class.to_s), class: 'btn btn-primary ml-3', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
       </div>
     </div>
   <% end %>

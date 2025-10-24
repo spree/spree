@@ -9,10 +9,10 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
   let(:resource_type) { 'Spree::Product' }
 
   describe 'GET #edit' do
-    it 'assigns @resource and @metafields and renders the edit template' do
-      get :edit, params: { resource_type: resource_type, id: product.slug }
+    it 'assigns @object and @metafields and renders the edit template' do
+      get :edit, params: { resource_type: resource_type, id: product.id }
       expect(response).to render_template(:edit)
-      expect(assigns(:resource)).to eq(product)
+      expect(assigns(:object)).to eq(product)
       expect(assigns(:metafields)).to be_present
       expect(assigns(:metafields).map(&:metafield_definition)).to include(metafield_definition)
       expect(assigns(:metafields).first.value).to be_blank
@@ -27,9 +27,9 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
       let!(:metafield) { create(:metafield, resource: product, metafield_definition: metafield_definition) }
 
       it 'assigns @resource and @metafields and renders the edit template' do
-        get :edit, params: { resource_type: resource_type, id: product.slug }
+        get :edit, params: { resource_type: resource_type, id: product.id }
         expect(response).to render_template(:edit)
-        expect(assigns(:resource)).to eq(product)
+        expect(assigns(:object)).to eq(product)
         expect(assigns(:metafields)).to be_present
         expect(assigns(:metafields).map(&:metafield_definition)).to contain_exactly(metafield_definition, metafield_definition_2)
         expect(assigns(:metafields).map(&:value)).to contain_exactly(metafield.value, nil)
@@ -42,7 +42,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { id: product.slug, resource_type: '' }
+          get :edit, params: { id: product.id, resource_type: '' }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -50,7 +50,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { resource_type: 'InvalidType', id: product.slug }
+          get :edit, params: { resource_type: 'InvalidType', id: product.id }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     it 'updates metafields and sets flash success' do
       put :update, format: :turbo_stream, params: {
         resource_type: resource_type,
-        id: product.slug,
+        id: product.id,
         product: metafield_attributes
       }
       expect(response).to have_http_status(:ok)
@@ -110,7 +110,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          put :update, format: :turbo_stream, params: { id: product.slug, resource_type: '', product: metafield_attributes }
+          put :update, format: :turbo_stream, params: { id: product.id, resource_type: '', product: metafield_attributes }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -118,7 +118,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          put :update, format: :turbo_stream, params: { resource_type: 'InvalidType', id: product.slug, product: metafield_attributes }
+          put :update, format: :turbo_stream, params: { resource_type: 'InvalidType', id: product.id, product: metafield_attributes }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

@@ -1,14 +1,14 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:translations)) %>
   <% if @locales.any? %>
-    <%= form_for @resource, url: spree.admin_translation_path(@resource, resource_type: resource_class.to_s), method: :put do |f| %>
+    <%= form_for @object, url: spree.admin_translation_path(@object.id, resource_type: model_class.to_s), method: :put do |f| %>
       <div class="drawer-body">
         <ul class="nav nav-pills mb-3">
           <% @locales.each do |locale| %>
             <% normalized = normalized_locale(locale) %>
             <%= nav_item(
                  Spree.t('i18n.this_file_language', locale: locale),
-                 spree.edit_admin_translation_path(@resource, resource_type: resource_class.to_s, translation_locale: locale),
+                 spree.edit_admin_translation_path(@object, resource_type: model_class.to_s, translation_locale: locale),
                  active: (normalized == @selected_translation_locale)
       
                 ) %>
@@ -16,9 +16,9 @@
         </ul>
 
         <%= hidden_field_tag :translation_locale, @selected_translation_locale %>
-        <% options = { f: f, resource: @resource, locale: @selected_translation_locale } %>
+        <% options = { f: f, resource: @object, locale: @selected_translation_locale } %>
 
-        <%= render "spree/admin/translations/#{resource_class.name.demodulize.underscore.pluralize}/form", options %>
+        <%= render "spree/admin/translations/#{model_class.name.demodulize.underscore.pluralize}/form", options %>
       </div>
       <div class="drawer-footer">
         <%= turbo_save_button_tag %>
