@@ -42,10 +42,10 @@ table.table {
       padding-bottom: 0.3rem;
     }
     th:first-child {
-      border-top-left-radius: $border-radius-lg;
+      border-top-left-radius: $card-border-radius;
     }
     th:last-child {
-      border-top-right-radius: $border-radius-lg;
+      border-top-right-radius: $card-border-radius;
     }
   }
 
@@ -85,10 +85,10 @@ table.table {
 
     tr:last-child {
       td:first-child {
-        border-bottom-left-radius: $border-radius-lg;
+        border-bottom-left-radius: $card-border-radius;
       }
       td:last-child {
-        border-bottom-right-radius: $border-radius-lg;
+        border-bottom-right-radius: $card-border-radius;
       }
     }
   }
@@ -209,8 +209,8 @@ td.actions {
   bottom: 0;
   background-color: $card-bg;
   z-index: 100;
-  border-bottom-left-radius: $border-radius-lg;
-  border-bottom-right-radius: $border-radius-lg;
+  border-bottom-left-radius: $card-border-radius;
+  border-bottom-right-radius: $card-border-radius;
 
   .page-link {
     @extend .btn;

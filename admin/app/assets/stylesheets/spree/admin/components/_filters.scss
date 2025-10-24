@@ -6,8 +6,8 @@
   top: $header-height;
   z-index: 1000;
   background-color: $card-bg;
-  border-top-left-radius: $border-radius-lg;
-  border-top-right-radius: $border-radius-lg;
+  border-top-left-radius: $card-border-radius;
+  border-top-right-radius: $card-border-radius;
 
   .btn {
     height: 2.125rem;

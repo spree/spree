@@ -38,13 +38,13 @@
 
   .dropdown-item {
     margin-bottom: 0.25rem;
-    border-radius: $border-radius;
+    border-radius: $dropdown-inner-border-radius;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     background: transparent;
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
 
     transition-property: background-color, color;
     transition-duration: 0.01s;

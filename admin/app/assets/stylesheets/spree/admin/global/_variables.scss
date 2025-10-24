@@ -116,7 +116,7 @@ $btn-font-weight: 500 !default;
 
 $card-border-width: 1px !default;
 $card-bg: $white !default;
-$card-border-radius: $border-radius-lg !default;
+$card-border-radius: 1rem !default;
 
 $tooltip-border-radius: $border-radius !default;
 $tooltip-opacity: 1 !default;
@@ -163,7 +163,8 @@ $display4-weight:             400 !default;
 
 $dropdown-bg: $white !default;
 $dropdown-border-width:  0px !default;
-$dropdown-border-radius: $border-radius-lg !default;
+$dropdown-border-radius: 1rem !default;
+$dropdown-inner-border-radius: 0.75rem !default;
 $dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
 $dropdown-box-shadow:    0px 0px 0px 1px $border-color, 0px 6px 12px -3px $gray-100, 0px 6px 18px 0px $gray-100 !default;
 $dropdown-padding-x:    0.25rem !default;
@@ -227,3 +228,6 @@ $btn-border-radius-lg:        $border-radius-lg !default;
 $btn-border-radius-sm:        $border-radius !default;
 
 $nav-pills-border-radius: $border-radius-lg !default;
+
+$modal-content-inner-border-radius: 1rem !default;
+$modal-content-border-radius: 1rem !default;
