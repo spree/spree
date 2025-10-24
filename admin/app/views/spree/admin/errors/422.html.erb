@@ -1,0 +1,14 @@
+<%= content_for :title do %>
+  <%= Spree.t(:forbidden) %>
+<% end %>
+
+<div class="page-container py-12">
+  <div class="not-found-page text-center pt-5">
+    <h1 class="display-4 text-primary">422</h1>
+    <p class="display-5"><%= Spree.t(:unprocessable_entity) %></p>
+    <p class="display-6"><%= Spree.t(:unprocessable_entity_message) %></p>
+    <%= link_to Spree.t("admin.back_to_dashboard"),
+    spree.admin_dashboard_path,
+    class: "btn btn-primary" %>
+  </div>
+</div>

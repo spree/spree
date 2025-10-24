@@ -40,7 +40,7 @@ module Spree
     def render_404_if_store_not_exists
       return if current_store.present?
 
-      render 'errors/404', layout: 'application', status: :not_found
+      render 'spree/errors/404', layout: 'application', status: :not_found
     end
 
     def current_taxon
