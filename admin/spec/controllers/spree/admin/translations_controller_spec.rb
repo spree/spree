@@ -15,10 +15,10 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    it 'assigns @resource and renders the edit template' do
-      get :edit, params: { resource_type: resource_type, id: product.slug, translation_locale: translation_locale }
+    it 'assigns @object and renders the edit template' do
+      get :edit, params: { resource_type: resource_type, id: product.id, translation_locale: translation_locale }
       expect(response).to render_template(:edit)
-      expect(assigns(:resource)).to eq(product)
+      expect(assigns(:object)).to eq(product)
       expect(assigns(:locales)).to include('fr')
       expect(assigns(:locales)).not_to include('en')
     end
@@ -26,7 +26,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { id: product.slug, resource_type: '', translation_locale: translation_locale }
+          get :edit, params: { id: product.id, resource_type: '', translation_locale: translation_locale }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -34,7 +34,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     context 'when resource_type is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { resource_type: 'InvalidType', id: product.slug, translation_locale: translation_locale }
+          get :edit, params: { resource_type: 'InvalidType', id: product.id, translation_locale: translation_locale }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -50,7 +50,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     it 'updates the translation and sets flash success' do
       put :update, format: :turbo_stream, params: {
         resource_type: resource_type,
-        id: product.slug,
+        id: product.id,
         translation_locale: translation_locale,
         product: product_params
       }
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
           put :update, format: :turbo_stream, params: {
-            id: product.slug,
+            id: product.id,
             resource_type: '',
             translation_locale: translation_locale,
             product: product_params
@@ -78,7 +78,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
         expect {
           put :update, format: :turbo_stream, params: {
             resource_type: 'InvalidType',
-            id: product.slug,
+            id: product.id,
             translation_locale: translation_locale,
             product: product_params
           }

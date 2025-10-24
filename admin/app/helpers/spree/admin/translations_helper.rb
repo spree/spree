@@ -12,7 +12,7 @@ module Spree
         link_to_with_icon(
           'language',
           Spree.t(:translations),
-          spree.edit_admin_translation_path(resource, resource_type: resource.class.to_s),
+          spree.edit_admin_translation_path(resource.id, resource_type: resource.class.to_s),
           options
         )
       end
