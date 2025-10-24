@@ -22,13 +22,13 @@ module Spree
       def model_class
         @model_class ||= begin
           klass = params[:resource_type]
-          allowed_model_classes.find { |allowed_class| allowed_class.to_s == klass } ||
+          allowed_model_classeses.find { |allowed_class| allowed_class.to_s == klass } ||
             raise(ActiveRecord::RecordNotFound, "Resource type not found")
         end
       end
 
-      def allowed_model_classes
-        @allowed_model_classes ||= Rails.application.config.spree.metafield_enabled_resources
+      def allowed_model_classeses
+        @allowed_model_classeses ||= Rails.application.config.spree.metafield_enabled_resources
       end
 
       def update_turbo_stream_enabled?

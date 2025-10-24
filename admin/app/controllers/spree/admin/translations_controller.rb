@@ -35,13 +35,13 @@ module Spree
       def model_class
         @model_class ||= begin
           klass = params[:resource_type]
-          allowed_model_class.find { |allowed_class| allowed_class.to_s == klass } ||
+          allowed_model_classes.find { |allowed_class| allowed_class.to_s == klass } ||
             raise(ActiveRecord::RecordNotFound, "Resource type not found")
         end
       end
 
       # Allowed translatable resources configured in Spree
-      def allowed_model_class
+      def allowed_model_classes
         Rails.application.config.spree.translatable_resources
       end
 
