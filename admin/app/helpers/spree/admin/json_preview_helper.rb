@@ -12,7 +12,7 @@ module Spree
         link_to_with_icon(
           'code',
           Spree.t('admin.show_json'),
-          spree.admin_json_preview_resource_path(record.id, resource_type: model_class.to_s),
+          spree.admin_json_preview_resource_path(record.id, resource_type: record.class.to_s),
           options
         )
       end
@@ -22,12 +22,12 @@ module Spree
       end
 
       def storefront_serializer_exists?(record)
-        serializer_class_name = "Spree::V2::Storefront::#{model_class.name.demodulize}Serializer"
+        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
         serializer_class_name.safe_constantize.present?
       end
 
       def platform_serializer_exists?(record)
-        serializer_class_name = "Spree::Api::V2::Platform::#{model_class.name.demodulize}Serializer"
+        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
         serializer_class_name.safe_constantize.present?
       end
 
@@ -54,12 +54,12 @@ module Spree
       private
 
       def storefront_serializer_for(record)
-        serializer_class_name = "Spree::V2::Storefront::#{model_class.name.demodulize}Serializer"
+        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
         serializer_class_name.safe_constantize
       end
 
       def platform_serializer_for(record)
-        serializer_class_name = "Spree::Api::V2::Platform::#{model_class.name.demodulize}Serializer"
+        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
         serializer_class_name.safe_constantize
       end
 
@@ -67,6 +67,7 @@ module Spree
         params = {}
         params[:store] = current_store if defined?(current_store) && current_store.present?
         params[:currency] = current_currency if defined?(current_currency) && current_currency.present?
+        params[:locale] = current_locale if defined?(current_locale) && current_locale.present?
         params
       end
     end

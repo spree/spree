@@ -3,10 +3,10 @@
   <div class="drawer-body" data-controller="highlight tabs">
     <ul class="nav nav-pills mb-3">
       <li class="nav-item">
-        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select">Storefront</a>
+        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.storefront') %></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select">Platform</a>
+        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.platform') %></a>
       </li>
     </ul>
     <div data-tabs-target="panel" class="animate__animated">

@@ -2,9 +2,8 @@ module Spree
   module Admin
     class TranslationsController < ResourceController
       # Set the resource being translated and any related data
-      before_action :load_resource, only: [:edit, :update]
-      before_action :load_data, only: [:edit, :update]
-      before_action :set_translation_locale, only: [:edit, :update]
+      before_action :load_data
+      before_action :set_translation_locale
       helper_method :normalized_locale
 
       # Normalizes a locale string by replacing '-' with '_' and downcasing
