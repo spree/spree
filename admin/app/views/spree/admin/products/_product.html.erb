@@ -13,7 +13,7 @@
     <% end %>
   </td>
   <%= render 'spree/admin/products/product_status', product: product %>
-  <td class="text-muted w-20 cursor-pointer text-wrap" data-action="click->row-link#openLink">
+  <td class="w-20 cursor-pointer text-wrap" data-action="click->row-link#openLink">
     <%= display_inventory(product) %>
   </td>
   <% if defined?(current_vendor) %>

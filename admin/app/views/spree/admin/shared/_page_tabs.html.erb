@@ -1,7 +1,9 @@
 <% if content_for?(:page_tabs) %>
-  <div class="container-fluid" id="page-tabs">
-    <ul class="nav">
-      <%= yield :page_tabs %>
-    </ul>
+  <div id="page-tabs">
+    <div class="container mb-2">
+      <ul class="nav">
+        <%= yield :page_tabs %>
+      </ul>
+    </div>
   </div>
 <% end %>

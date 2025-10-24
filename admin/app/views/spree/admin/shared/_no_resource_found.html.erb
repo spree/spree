@@ -5,5 +5,5 @@
   <p>
     <%= Spree.t(:no_resource_found, resource: resource_name) %>
   </p>
-  <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-secondary btn-sm ml-3', data: { 'turbo-frame': '_top' } if can?(:create, model_class) && defined?(new_object_url) && new_object_url.present? %>
+  <%= link_to_with_icon 'plus', Spree.t(:add_one), new_object_url, class: 'btn btn-primary btn-sm ml-3', data: { 'turbo-frame': '_top' } if can?(:create, model_class) && defined?(new_object_url) && new_object_url.present? %>
 </div>

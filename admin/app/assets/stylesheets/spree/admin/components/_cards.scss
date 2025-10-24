@@ -55,13 +55,18 @@
     font-family: $font-family-sans-serif;
   }
 }
+.card-footer {
+  border-top-width: 0;
+}
 
 .card-footer.border-top, .card-body.border-top, .card .border-top, .card .border-bottom, .card .list-group-item  {
   border-color: $gray-50 !important;
 }
 
 .card, .card-lg {
-  box-shadow: $card-box-shadow;
+  border-width: $card-border-width;
+  border-style: solid;
+  border-color: $card-border-color;
   background-color: $card-bg;
   border-radius: $card-border-radius;
 }

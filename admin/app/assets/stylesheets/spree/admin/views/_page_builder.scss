@@ -1,5 +1,5 @@
 $sidebar-width: 345px;
-$header-height: 43px;
+$header-height: 50px;
 
 #page-builder {
   background-color: $gray-50;
@@ -21,14 +21,14 @@ $header-height: 43px;
   }
 
   .nav-pills {
-    border-radius: $border-radius;
     background-color: $gray-50;
-    padding: 0.2rem;
+    padding: 0.25rem;
+    border-radius: $nav-pills-border-radius;
 
     .nav-link {
       background-color: transparent;
       padding: 0.25rem 0.5rem;
-      border-radius: $border-radius-sm;
+      border-radius: $border-radius;
 
       &.active {
         background-color: $white;
@@ -46,6 +46,7 @@ $header-height: 43px;
   height: $header-height;
   nav {
     width: 100%;
+    height: $header-height;
     display: flex;
     align-items: center;
     gap: 0.5rem;

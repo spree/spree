@@ -690,22 +690,15 @@ div.uppy-Root {
 .breadcrumb {
   gap: 0.5rem;
   align-items: center;
+  color: $text-muted;
   
-  
-  i {
-    opacity: 0.5;
-  }
-
   li {
     a {
-      color: $gray-500;
       text-decoration: none;
-      border-radius: $border-radius;
-      padding: 0.35rem 0.5rem;
 
       &:hover {
         color: $primary;
-        background-color: $gray-25;
+        text-decoration: underline;
       }
     }
   }

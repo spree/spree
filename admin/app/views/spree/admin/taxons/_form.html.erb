@@ -60,7 +60,7 @@
           <% end %>
         </div>
 
-        <div class="card-body border-bottom">
+        <div class="card-body border-bottom pb-0">
           <div class="d-flex align-items-center">
             <%= f.spree_select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto ml-2',  data: { action: 'change->auto-submit#submit' } } %>
           </div>

@@ -9,7 +9,7 @@
 
   <div class="card-body">
     <%= f.spree_select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { label: Spree.t(:shipping_zone), autocomplete: true } %>
-    <small class="form-text text-muted mb-3">
+    <small class="form-text mb-3">
       <%= Spree.t(:shipping_zone_help) %>
       <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'text-blue' %>
     </small>

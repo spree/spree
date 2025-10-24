@@ -9,7 +9,7 @@
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>
-  <header id="page-header" class="container-fluid" data-controller="sticky">
+  <header id="page-header" class="container" data-controller="sticky">
     <h3 class="page-header-title mb-0 d-flex align-items-center gap-3">
       <%= yield :page_title %>
     </h3>

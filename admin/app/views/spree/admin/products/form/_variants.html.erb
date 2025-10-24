@@ -63,7 +63,7 @@
                     action: "variants-form#handleSelectedOptionName tomSelectInitialized->variants-form#refreshOptionNameSelect"
                   } %>
                 <% if can?(:manage, Spree::OptionType) %>
-                  <p class="form-text text-muted mt-2">
+                  <p class="form-text mt-2">
                     <%= Spree.t('admin.products.variants.option_types_link', link: spree.admin_option_types_path).html_safe %>
                   </p>
                 <% end %>

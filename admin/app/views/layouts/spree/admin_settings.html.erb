@@ -18,10 +18,10 @@
     </header>
 
     <%= render "spree/admin/shared/sidebar" %>
-    <main id="content">
+    <main id="content" class="pt-4">
       <%= render "spree/admin/shared/page_tabs" %>
-      <div class="container pt-4">
-        <%= yield(:page_alerts) %>
+      <%= render "spree/admin/shared/page_alerts" %>
+      <div class="container">
         <%= yield %>
       </div>
       <%= render "spree/admin/shared/footer" %>

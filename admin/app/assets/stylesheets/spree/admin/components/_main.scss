@@ -7,10 +7,6 @@
   display: flex;
   align-items: center;
   background-color: $body-bg;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  border-bottom: 1px solid $border-color;
-  margin-bottom: 1rem;
 
   &.sticky-top {
     padding-left: 1rem;
@@ -18,6 +14,8 @@
     animation: slideDown 0.3s ease-out;
     height: $header-height;
     border-bottom: 1px solid $border-color;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -36,6 +34,12 @@
     height: $header-height;
     padding-left: 1rem;
     padding-right: 1rem;
+    max-width: 100%;
+    border-bottom: 1px solid $border-color;
+  }
+
+  #page-tabs {
+    border-bottom: 1px solid $border-color;
   }
 }
 
@@ -44,10 +48,6 @@
 }
 
 #page-tabs {
-  border-bottom: 1px solid $border-color;
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
   margin-top: -1rem;
 
   .nav {
@@ -74,15 +74,6 @@
   }
 }
 
-.admin-settings {
-  #page-tabs, #page-alerts {
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
 .store-dropdown {
   display: flex;
   align-items: center;
@@ -92,8 +83,7 @@
   background-color: $sidebar-bg;
   width: $sidebar-width;
   border-right: 1px solid $border-color;
-  border-bottom: 1px solid $border-color;
-  height: $header-height;
+  height: calc($header-height + 1px);
 }
 
 .store-dropdown-button {
@@ -150,7 +140,6 @@
   overflow-x: hidden;
   position: fixed;
   top: $header-height;
-  color: $gray-600;
   padding-top: 0.8rem;
 
   @media (max-width: 992px) {
@@ -166,7 +155,7 @@
   }
 
   .nav-link {
-    border-radius: $border-radius;
+    border-radius: $nav-pills-border-radius;
     display: flex;
     align-items: center;
     padding-left: 0.35rem;
@@ -178,7 +167,7 @@
     .ti {
       font-size: 1.125rem !important;
       margin-right: 0.5rem;
-      border-radius: $border-radius-sm;
+      border-radius: $border-radius;
       padding: 0.2rem 0.2rem;
     }
 
@@ -198,7 +187,6 @@
       .ti {
         background-color: theme-color('primary');
         color: $white;
-        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.05) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
       }
     }
 

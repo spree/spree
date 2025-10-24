@@ -95,7 +95,7 @@ $input-disabled-bg: $gray-25 !default;
 $input-focus-border-color: rgba($blue, 0.75) !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
-$text-muted: $gray-400 !default;
+$text-muted: $gray-600 !default;
 
 $link-color: $primary !default;
 $link-hover-decoration:                   underline !default;
@@ -114,8 +114,7 @@ $btn-box-shadow: $input-box-shadow !default;
 
 $btn-font-weight: 500 !default;
 
-$card-border-width: 0px !default;
-$card-box-shadow: 0 0 0 1px $card-border-color, 0 1px 2px 0 rgba(0, 0, 0, 0.05) !default;
+$card-border-width: 1px !default;
 $card-bg: $white !default;
 $card-border-radius: $border-radius-lg !default;
 
@@ -166,12 +165,12 @@ $dropdown-bg: $white !default;
 $dropdown-border-width:  0px !default;
 $dropdown-border-radius: $border-radius-lg !default;
 $dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
-$dropdown-box-shadow:    0px 0px 0px 1px $border-color, 0px 6px 12px -3px $gray-50, 0px 6px 18px 0px $gray-50 !default;
+$dropdown-box-shadow:    0px 0px 0px 1px $border-color, 0px 6px 12px -3px $gray-100, 0px 6px 18px 0px $gray-100 !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
 $dropdown-divider-margin-y: 0.25rem !default;
-$dropdown-header-color: $gray-500 !default;
+$dropdown-header-color: $text-muted !default;
 $zindex-dropdown: 1050;
 
 $modal-backdrop-bg:                 $body-bg !default;
@@ -210,8 +209,8 @@ $embed-responsive-aspect-ratios: (
 // tables
 $table-cell-padding: 1.15rem .75rem !default;
 
-$code-color: $gray-600 !default;
-$code-bg: $gray-25 !default;
+$code-color: $body-color !default;
+$code-bg: $gray-50 !default;
 
 $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
@@ -222,3 +221,9 @@ $sidebar-width: 220px !default;
 $sidebar-bg: $light !default;
 
 $progress-bar-bg: rgba($blue, 0.75) !default;
+
+$btn-border-radius:           $border-radius-lg !default;
+$btn-border-radius-lg:        $border-radius-lg !default;
+$btn-border-radius-sm:        $border-radius !default;
+
+$nav-pills-border-radius: $border-radius-lg !default;

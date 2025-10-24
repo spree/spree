@@ -65,3 +65,10 @@
   font-weight: $font-weight-base !important;
   font-size: $font-size-base !important;
 }
+
+.uppy-size--md .uppy-DashboardContent-bar {
+  height: 56px !important;
+}
+.uppy-size--md .uppy-DashboardContent-title {
+  line-height: 56px !important;
+}

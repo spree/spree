@@ -215,7 +215,7 @@ module Spree
       # @option options [String] :help help text to display
       # @return [String] HTML string containing the help text or empty string
       def field_help(_method, options = {})
-        @template.content_tag(:span, options[:help], class: 'form-text text-muted mt-2')
+        @template.content_tag(:span, options[:help], class: 'form-text mt-2')
       end
 
       private
