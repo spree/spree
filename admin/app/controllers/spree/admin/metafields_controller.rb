@@ -5,7 +5,7 @@ module Spree
 
       def build_metafields
         @metafields = @object.metafields
-        @metafield_definitions = Spree::MetafieldDefinition.where(resource_type: @object.class.name)
+        @metafield_definitions = Spree::MetafieldDefinition.where(resource_type: model_class.name)
 
         @metafield_definitions.each do |metafield_definition|
           @object.metafields.build(type: metafield_definition.metafield_type, metafield_definition: metafield_definition) unless @object.has_metafield?(metafield_definition)
