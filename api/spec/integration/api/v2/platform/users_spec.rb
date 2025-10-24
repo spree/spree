@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-xdescribe 'Users API', swagger: true do
+describe 'Users API', swagger: true do
   include_context 'Platform API v2'
 
   let!(:another_admin_user) { create(:admin_user) }
