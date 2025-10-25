@@ -62,7 +62,7 @@ button[disabled]        .show-when-enabled { display: none; }
   &:hover {
     background: rgba($danger, 0.1) !important;
     border-color: rgba($danger, 0.1) !important;
-    color: rgba($danger, 0.8) !important;
+    color: $danger !important;
   }
 }
 

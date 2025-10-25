@@ -118,22 +118,23 @@ $card-border-width: 1px !default;
 $card-bg: $white !default;
 $card-border-radius: 1rem !default;
 
-$tooltip-border-radius: $border-radius !default;
+$tooltip-border-radius: $border-radius-lg !default;
 $tooltip-opacity: 1 !default;
 $tooltip-margin:                    0.25rem 0 !default;
-$tooltip-padding-y:                 .25rem !default;
-$tooltip-padding-x:                 .5rem !default;
+$tooltip-padding-y:                 .35rem !default;
+$tooltip-padding-x:                 .65rem !default;
 $tooltip-bg: $white !default;
 $tooltip-color: $body-color !default;
 $tooltip-arrow-color: transparent !default;
 $tooltip-max-width: 210px !default;
+$tooltip-font-size: $font-size-base !default;
 
 $transition-base:             all .1s ease-in-out !default;
 $transition-fade:             opacity .15s linear !default;
 $transition-collapse:         height .15s ease !default;
 $transition-collapse-width:   width .15s ease !default;
 
-$badge-font-size:                   0.70rem !default;
+$badge-font-size:                   $font-size-sm !default;
 $badge-font-weight:                 500 !default;
 $badge-padding-y:                   .25em !default;
 $badge-padding-x:                   .45em !default;

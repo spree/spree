@@ -28,11 +28,11 @@
   .dropdown-item, .dropdown-header {
     padding-top: $input-btn-padding-y;
     padding-bottom: $input-btn-padding-y;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
   }
   .dropdown-header {
-    padding-left: 0.5rem;
+    padding-left: 0.65rem;
     padding-right: 0.5rem;
   }
 
@@ -78,7 +78,7 @@
       content: '';
       display: inline-block;
       position: absolute;
-      right: 0.5rem;
+      right: 0.75rem;
       width: 1rem;
       height: 1rem;
       background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-primary"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
