@@ -1091,6 +1091,75 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
+    context 'with multi-store taxon preservation' do
+      let(:other_store) { create(:store) }
+      let(:store_taxonomy) { create(:taxonomy, store: store) }
+      let(:other_store_taxonomy) { create(:taxonomy, store: other_store) }
+      let(:store_taxon) { create(:taxon, taxonomy: store_taxonomy, name: 'Current Store Category') }
+      let(:new_store_taxon) { create(:taxon, taxonomy: store_taxonomy, name: 'New Store Category') }
+      let(:other_store_taxon) { create(:taxon, taxonomy: other_store_taxonomy, name: 'Other Store Category') }
+
+      before do
+        product.update(stores: [store, other_store])
+        product.taxons << [store_taxon, other_store_taxon]
+      end
+
+      let(:product_params) do
+        {
+          name: 'Updated Product',
+          taxon_ids: [new_store_taxon.id]
+        }
+      end
+
+      it 'preserves taxons from other stores when updating' do
+        expect(product.taxons).to include(store_taxon, other_store_taxon)
+
+        send_request
+
+        product.reload
+        expect(product.taxons).to include(other_store_taxon)
+        expect(product.taxons).to include(new_store_taxon)
+        expect(product.taxons).not_to include(store_taxon)
+      end
+
+      context 'when removing all taxons from current store' do
+        let(:product_params) do
+          {
+            name: 'Updated Product',
+            taxon_ids: ['']
+          }
+        end
+
+        it 'preserves taxons from other stores' do
+          send_request
+
+          product.reload
+          expect(product.taxons).to include(other_store_taxon)
+          expect(product.taxons).not_to include(store_taxon)
+        end
+      end
+
+      context 'with multiple other stores' do
+        let(:third_store) { create(:store) }
+        let(:third_store_taxonomy) { create(:taxonomy, store: third_store) }
+        let(:third_store_taxon) { create(:taxon, taxonomy: third_store_taxonomy, name: 'Third Store Category') }
+
+        before do
+          product.stores << third_store
+          product.taxons << third_store_taxon
+        end
+
+        it 'preserves taxons from all other stores' do
+          send_request
+
+          product.reload
+          expect(product.taxons).to include(other_store_taxon, third_store_taxon, new_store_taxon)
+          expect(product.taxons).not_to include(store_taxon)
+          expect(product.taxons.count).to eq 3
+        end
+      end
+    end
+
     it 'will successfully update product' do
       send_request
       expect(flash[:success]).to eq("Product #{product.name.inspect} has been successfully updated!")

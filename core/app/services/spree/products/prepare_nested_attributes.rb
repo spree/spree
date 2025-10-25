@@ -1,5 +1,21 @@
 module Spree
   module Products
+    # Prepares nested attributes for product updates, handling multi-store scenarios
+    # and permissions.
+    #
+    # This service ensures that when editing a product in one store, taxon associations
+    # from other stores are preserved. This prevents accidental data loss when a store
+    # admin updates product categories in their store without affecting other stores.
+    #
+    # @example
+    #   service = Spree::Products::PrepareNestedAttributes.new(
+    #     product,
+    #     current_store,
+    #     params,
+    #     current_ability
+    #   )
+    #   prepared_params = service.call
+    #
     class PrepareNestedAttributes
       def initialize(product, store, params, ability)
         @product = product
@@ -59,6 +75,12 @@ module Spree
 
         # ensure there is at least one store
         params[:store_ids] = [store.id] if params[:store_ids].blank?
+
+        # Preserve taxon associations from other stores
+        # Only merge taxon_ids from other stores if taxon_ids are being updated
+        if params.key?(:taxon_ids)
+          params[:taxon_ids] = merge_taxons_from_other_stores(params[:taxon_ids])
+        end
 
         # Add empty list for option_type_ids and mark variants as removed if there are no variants and options
         if params[:variants_attributes].blank? && variants_to_remove.any? && !params.key?(:option_type_ids)
@@ -131,6 +153,28 @@ module Spree
         end
 
         attributes
+      end
+
+      # Merges taxon IDs from other stores with submitted taxon IDs from current store.
+      #
+      # This prevents the loss of taxon associations from other stores when a product
+      # is edited in one store. Each store's taxonomy is independent, so editing
+      # categories in Store A should not affect categories in Store B.
+      #
+      # @param submitted_taxon_ids [Array<String>] Taxon IDs from the current store
+      # @return [Array<String>] Combined unique taxon IDs
+      def merge_taxons_from_other_stores(submitted_taxon_ids)
+        return submitted_taxon_ids if product.new_record?
+
+        # Get taxon IDs from other stores that should be preserved
+        other_stores_taxon_ids = product.taxons
+                                        .joins(:taxonomy)
+                                        .where.not(spree_taxonomies: { store_id: store.id })
+                                        .pluck(:id)
+                                        .map(&:to_s)
+
+        # Merge with submitted taxon IDs from current store and remove duplicates
+        (submitted_taxon_ids + other_stores_taxon_ids).uniq
       end
 
       def update_option_value_variants(option_value_params, existing_variant)
