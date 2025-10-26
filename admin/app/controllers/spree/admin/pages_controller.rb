@@ -28,15 +28,7 @@ module Spree
       end
 
       def collection
-        return @collection if @collection.present?
-
-        @collection = current_store.pages.custom
-
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(params[:per_page])
+        super.custom.without_previews
       end
 
       def permitted_resource_params

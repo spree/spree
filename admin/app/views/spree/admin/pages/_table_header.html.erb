@@ -1,6 +1,6 @@
 <tr>
-  <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
-  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
-  <th scope="col"><%= sort_link @search, :updated_at, Spree.t(:updated_at) %></th>
+  <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+  <th scope="col"><%= sort_link search_collection, :created_at, Spree.t(:created_at) %></th>
+  <th scope="col"><%= sort_link search_collection, :updated_at, Spree.t(:updated_at) %></th>
   <th scope="col"></th>
 </tr>
