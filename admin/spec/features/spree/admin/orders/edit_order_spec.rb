@@ -30,6 +30,8 @@ describe 'Edit Order Spec', type: :feature do
         click_on Spree.t('admin.edit_shipping_address')
       end
 
+      expect(page).to have_content('Update shipping address')
+
       fill_in_address
       click_on 'Update'
       wait_for_turbo
@@ -77,6 +79,8 @@ describe 'Edit Order Spec', type: :feature do
         click_on Spree.t('admin.edit_shipping_address')
       end
       wait_for_turbo
+
+      expect(page).to have_content('Update shipping address')
 
       fill_in_address
       click_on 'Update'
@@ -139,6 +143,8 @@ describe 'Edit Order Spec', type: :feature do
           click_on Spree.t('admin.edit_shipping_address')
         end
         wait_for_turbo
+
+        expect(page).to have_content('Update shipping address')
 
         fill_in_address
         click_on 'Update'
