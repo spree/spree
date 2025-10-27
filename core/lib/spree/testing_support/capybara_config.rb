@@ -19,10 +19,17 @@ end
 
 Capybara.register_driver :selenium_chrome_headless do |app|
   options = ::Selenium::WebDriver::Chrome::Options.new
-  options.add_argument '--headless'
+
+  # Use new headless mode for Chrome 128+, which has better dialog support
+  # If using older Chrome, this falls back to old headless automatically
+  options.add_argument '--headless=new'
   options.add_argument '--disable-gpu'
   options.add_argument '--window-size=1440,900'
   options.add_argument '--disable-search-engine-choice-screen'
+
+  # Required for running in Docker containers (CircleCI)
+  options.add_argument '--no-sandbox'
+  options.add_argument '--disable-dev-shm-usage'
 
   # Disable timers being throttled in background pages/tabs. Useful for parallel test runs.
   options.add_argument '--disable-background-timer-throttling'
@@ -33,7 +40,6 @@ Capybara.register_driver :selenium_chrome_headless do |app|
 
   # This disables non-foreground tabs from getting a lower process priority. Useful for parallel test runs.
   options.add_argument '--disable-renderer-backgrounding'
-
 
   Capybara::Selenium::Driver.new(app, browser: :chrome, options: options)
 end
