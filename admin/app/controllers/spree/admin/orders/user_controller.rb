@@ -4,7 +4,6 @@ module Spree
       class UserController < Spree::Admin::BaseController
         include Spree::Admin::OrderConcern
         before_action :load_order
-        before_action :check_authorization
 
         def new
           @user = @order.build_user
@@ -25,11 +24,16 @@ module Spree
 
               result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
 
-              flash[:error] = result.error.value.full_messages.to_sentence unless result.success?
-
-              render :create, status: :ok
+              if result.success?
+                flash[:success] = flash_message_for(@order, :successfully_updated)
+                redirect_to spree.edit_admin_order_path(@order)
+              else
+                flash[:error] = result.error.value.full_messages.to_sentence
+                redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
+              end
             else
-              render :create, status: :unprocessable_entity
+              flash[:error] = @user.errors.full_messages.to_sentence
+              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
             end
           else
             @user = @order.build_user(user_params)
@@ -39,9 +43,11 @@ module Spree
             if @user.save
               @order.associate_user!(@user)
 
-              render :create, status: :ok
+              flash[:success] = flash_message_for(@order, :successfully_updated)
+              redirect_to spree.edit_admin_order_path(@order)
             else
-              render :create, status: :unprocessable_entity
+              flash[:error] = @user.errors.full_messages.to_sentence
+              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
             end
           end
         end
@@ -66,7 +72,8 @@ module Spree
             end
           end
 
-          render :update, status: :ok
+          flash[:success] = flash_message_for(@order, :successfully_updated)
+          redirect_to spree.edit_admin_order_path(@order)
         end
 
         def destroy
@@ -75,7 +82,6 @@ module Spree
           @order.save
 
           flash[:error] = @order.errors.full_messages.to_sentence if @order.invalid?
-
           redirect_to spree.edit_admin_order_path(@order)
         end
 
@@ -85,7 +91,7 @@ module Spree
           params.require(:user).permit(permitted_user_attributes)
         end
 
-        def check_authorization
+        def authorize_admin
           authorize! :update_customer, @order
         end
       end
