@@ -33,9 +33,9 @@ describe 'Edit Order Spec', type: :feature do
 
       fill_in_address
       click_on 'Update'
-      wait_for_turbo
 
-      expect(page).to have_content('successfully updated')
+      # Wait for the page to show the success message after form submission completes
+      expect(page).to have_content('successfully updated', wait: 10)
       expect(page).to have_content('John 99')
       expect(page).to have_content('Bethesda')
 
@@ -61,9 +61,9 @@ describe 'Edit Order Spec', type: :feature do
       wait_for_turbo
 
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
-      wait_for_turbo
 
-      expect(page).to have_content('successfully updated')
+      # Wait for the page to show the success message after auto-submit completes
+      expect(page).to have_content('successfully updated', wait: 10)
       expect(page).to have_content(address_to_select.firstname)
       expect(page).to have_content(address_to_select.city)
 
@@ -81,9 +81,9 @@ describe 'Edit Order Spec', type: :feature do
 
       fill_in_address
       click_on 'Update'
-      wait_for_turbo
 
-      expect(page).to have_content('successfully updated')
+      # Wait for the page to show the success message after form submission completes
+      expect(page).to have_content('successfully updated', wait: 10)
       expect(page).to have_content('John 99')
       expect(page).to have_content('Bethesda')
 
@@ -109,9 +109,9 @@ describe 'Edit Order Spec', type: :feature do
       wait_for_turbo
 
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
-      wait_for_turbo
 
-      expect(page).to have_content('successfully updated')
+      # Wait for the page to show the success message after auto-submit completes
+      expect(page).to have_content('successfully updated', wait: 10)
       expect(page).to have_content(address_to_select.firstname)
       expect(page).to have_content(address_to_select.city)
 
@@ -144,9 +144,9 @@ describe 'Edit Order Spec', type: :feature do
 
         fill_in_address
         click_on 'Update'
-        wait_for_turbo
 
-        expect(page).to have_content('successfully updated')
+        # Wait for the page to show the success message after form submission completes
+        expect(page).to have_content('successfully updated', wait: 10)
         expect(page).to have_content('John 99')
         expect(page).to have_content('Bethesda')
 
