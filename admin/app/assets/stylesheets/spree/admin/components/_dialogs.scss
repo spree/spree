@@ -46,7 +46,8 @@ dialog {
   border: $modal-content-border-width solid $modal-content-border-color;
   background: $modal-content-bg;
   box-shadow: $modal-content-box-shadow-xs;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 dialog:open {
   display: block;
@@ -79,7 +80,7 @@ dialog:open {
 
   .alerts-container {
     position: absolute;
-  }
+  } 
 
   @media (max-width: 991.98px) {
     max-width: 100vw;
@@ -117,8 +118,6 @@ dialog:open {
     align-items: center;
     border-top: 1px solid $gray-50;
     background-color: $gray-25;
-    border-bottom-left-radius: $modal-content-border-radius;
-    border-bottom-right-radius: $modal-content-border-radius;
   }
 }
 
@@ -134,7 +133,8 @@ dialog:open {
   margin: 0;
   padding: 0;
   flex-direction: column;
-  overflow: visible;
+  overflow-y: hidden;
+  overflow-x: hidden;
 
   &.dialog-lg {
     max-width: 800px;
@@ -179,7 +179,7 @@ dialog:open {
 
   .dialog-body {
     flex: 1 1 auto;
-    overflow-y: visible; // needed for TomSelect dropdowns
+    overflow-y: auto;
     padding: $modal-inner-padding;
     max-height: calc(90vh - 200px);
   }
