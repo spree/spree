@@ -41,11 +41,19 @@ module Spree
           wait_for_turbo(timeout)
 
           # Wait for the dialog element to be present and open
-          has_css?("#{selector}[open]", visible: true, wait: timeout)
+          # Note: In headless Chrome, dialog elements may not be considered "visible"
+          # by Capybara even when shown via showModal(), so we check with visible: :all
+          has_css?("#{selector}[open]", visible: :all, wait: timeout)
+
+          # Verify the dialog is actually open using JavaScript
+          # This works around headless Chrome visibility issues
+          unless page.evaluate_script("document.querySelector('#{selector}')?.open")
+            raise "Dialog #{selector} is not open"
+          end
 
           # Additional wait to ensure dialog is fully rendered and interactive
           # This is especially important for headless browsers in CI
-          sleep 0.1
+          sleep 0.2
         end
       end
     end

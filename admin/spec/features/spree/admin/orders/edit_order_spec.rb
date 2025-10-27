@@ -31,7 +31,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      within('#main-dialog') do
+      within('#main-dialog', visible: :all) do
         fill_in_address
         click_on 'Update'
       end
@@ -62,7 +62,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      within('#main-dialog') do
+      within('#main-dialog', visible: :all) do
         select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
       end
 
@@ -83,7 +83,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      within('#main-dialog') do
+      within('#main-dialog', visible: :all) do
         fill_in_address
         click_on 'Update'
       end
@@ -114,7 +114,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      within('#main-dialog') do
+      within('#main-dialog', visible: :all) do
         select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
       end
 
@@ -150,7 +150,7 @@ describe 'Edit Order Spec', type: :feature do
         end
         wait_for_dialog
 
-        within('#main-dialog') do
+        within('#main-dialog', visible: :all) do
           fill_in_address
           click_on 'Update'
         end
