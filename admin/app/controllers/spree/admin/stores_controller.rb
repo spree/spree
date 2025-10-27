@@ -14,6 +14,7 @@ module Spree
           default_country_iso: current_store.default_country_iso,
           default_currency: current_store.default_currency
         )
+        render :new, layout: 'spree/admin_wizard'
       end
 
       def create
