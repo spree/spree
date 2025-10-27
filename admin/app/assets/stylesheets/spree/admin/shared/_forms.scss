@@ -82,6 +82,7 @@ input[type="file"] {
 }
 .ts-dropdown {
   @extend .p-1;
+  z-index: 10000000 !important;
 
   .option {
     @extend .p-2;

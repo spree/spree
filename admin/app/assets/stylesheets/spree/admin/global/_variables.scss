@@ -135,7 +135,7 @@ $transition-collapse:         height .15s ease !default;
 $transition-collapse-width:   width .15s ease !default;
 
 $badge-font-size:                   $font-size-sm !default;
-$badge-font-weight:                 500 !default;
+$badge-font-weight:                 $font-weight-normal !default;
 $badge-padding-y:                   .35em !default;
 $badge-padding-x:                   .45em !default;
 $badge-border-radius:               $border-radius-sm !default;
