@@ -123,8 +123,7 @@
       </div>
     </div>
   </div>
-  <footer id="footer">
-    <%= dialog_discard_button %>
-    <%= turbo_save_button_tag Spree.t('actions.create') %>
+  <footer id="footer" class="d-flex justify-content-end">
+    <%= turbo_save_button_tag Spree.t('actions.create'), data: { admin_target: 'save' } %>
   </footer>
 <% end %>
