@@ -31,8 +31,10 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      fill_in_address
-      click_on 'Update'
+      within('#main-dialog') do
+        fill_in_address
+        click_on 'Update'
+      end
 
       # Wait for the page to show the success message after form submission completes
       expect(page).to have_content('successfully updated', wait: 10)
@@ -60,7 +62,9 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+      within('#main-dialog') do
+        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+      end
 
       # Wait for the page to show the success message after auto-submit completes
       expect(page).to have_content('successfully updated', wait: 10)
@@ -79,8 +83,10 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      fill_in_address
-      click_on 'Update'
+      within('#main-dialog') do
+        fill_in_address
+        click_on 'Update'
+      end
 
       # Wait for the page to show the success message after form submission completes
       expect(page).to have_content('successfully updated', wait: 10)
@@ -108,7 +114,9 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_dialog
 
-      select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+      within('#main-dialog') do
+        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+      end
 
       # Wait for the page to show the success message after auto-submit completes
       expect(page).to have_content('successfully updated', wait: 10)
@@ -142,8 +150,10 @@ describe 'Edit Order Spec', type: :feature do
         end
         wait_for_dialog
 
-        fill_in_address
-        click_on 'Update'
+        within('#main-dialog') do
+          fill_in_address
+          click_on 'Update'
+        end
 
         # Wait for the page to show the success message after form submission completes
         expect(page).to have_content('successfully updated', wait: 10)
