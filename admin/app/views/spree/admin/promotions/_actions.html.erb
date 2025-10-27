@@ -5,7 +5,7 @@
       <%= Spree.t(:promotion_actions) %>
     </h5>
     <% if can?(:create, Spree::PromotionAction.new(promotion: @promotion)) %>
-      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
     <% end %>
   </div>
   <div class="card-body d-flex flex-column gap-2 px-2 pt-0 pb-2">
@@ -13,7 +13,7 @@
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionAction)) %>
         <% if can?(:create, Spree::PromotionAction.new(promotion: @promotion)) %>
-          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm ml-3', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
+          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm ml-3', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
         <% end %>
       </div>
     <% else %>

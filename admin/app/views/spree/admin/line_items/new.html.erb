@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :dialog do %>
-  <div class="dialog-content" data-controller="search-picker">
+  <div data-controller="search-picker">
     <%= dialog_header(Spree.t(:add_variant)) %>
-    <div class="dialog-body border-bottom">
+    <div class="dialog-body">
       <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
         <%= form.hidden_field :param_name, value: 'line_item' %>

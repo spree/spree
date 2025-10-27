@@ -8,11 +8,11 @@
         <%= link_to_with_icon 'dots-vertical', nil, '#', class: 'btn btn-light btn-sm px-1', data: { toggle: 'dropdown', test_id: 'dropdown-toggle' } %>
         <div class="dropdown-menu dropdown-menu-right" >
           <% if can?(:update_customer, @order) && !@order.user.present? %>
-            <%= link_to Spree.t('admin.edit_contact_information'), spree.edit_admin_order_contact_information_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
+            <%= link_to Spree.t('admin.edit_contact_information'), spree.edit_admin_order_contact_information_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>
           <% if can?(:update_addresses, @order) %>
-            <%= link_to Spree.t('admin.edit_shipping_address'), spree.edit_admin_order_shipping_address_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open'  } if @order.shipping_address.present? %>
-            <%= link_to Spree.t('admin.edit_billing_address'), spree.edit_admin_order_billing_address_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open'  } if @order.billing_address.present? %>
+            <%= link_to Spree.t('admin.edit_shipping_address'), spree.edit_admin_order_shipping_address_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open' } if @order.shipping_address.present? %>
+            <%= link_to Spree.t('admin.edit_billing_address'), spree.edit_admin_order_billing_address_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open' } if @order.billing_address.present? %>
           <% end %>
           <% if can?(:update_customer, @order) %>
             <% if @order.user.present? %>
@@ -54,7 +54,7 @@
       <% if @order.ship_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.ship_address %>
       <% elsif can?(:update_addresses, @order) %>
-        <%= link_to_with_icon 'plus', Spree.t(:new_shipping_address), spree.new_admin_order_shipping_address_path(@order), class: "btn btn-secondary w-100", data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
+        <%= link_to_with_icon 'plus', Spree.t(:new_shipping_address), spree.new_admin_order_shipping_address_path(@order), class: "btn btn-secondary w-100", data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
       <% else %>
         <span class="text-muted"><%= Spree.t(:no_shipping_address_available) %></span>
       <% end %>
@@ -66,7 +66,7 @@
       <% elsif @order.bill_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.bill_address %>
       <% elsif can?(:update_addresses, @order) %>
-        <%= link_to_with_icon 'plus', Spree.t(:new_billing_address), spree.new_admin_order_billing_address_path(@order), class: "btn btn-secondary w-100", data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
+        <%= link_to_with_icon 'plus', Spree.t(:new_billing_address), spree.new_admin_order_billing_address_path(@order), class: "btn btn-secondary w-100", data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
       <% else %>
         <span class="text-muted"><%= Spree.t(:no_billing_address_available) %></span>
       <% end %>
