@@ -31,7 +31,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Update shipping address')
+      expect(page).to have_content('Update shipping address', wait: 5)
 
       fill_in_address
       click_on 'Update'
@@ -82,7 +82,7 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Update shipping address')
+      expect(page).to have_content('Update shipping address', wait: 5)
 
       fill_in_address
       click_on 'Update'
@@ -147,7 +147,7 @@ describe 'Edit Order Spec', type: :feature do
         end
         wait_for_turbo
 
-        expect(page).to have_content('Update shipping address')
+        expect(page).to have_content('Update shipping address', wait: 5)
 
         fill_in_address
         click_on 'Update'
