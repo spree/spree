@@ -589,6 +589,10 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
     background-color: rgba($gray-500, 0.25);
   }
 }
+.overflow-visible {
+  overflow-y: visible !important;
+  overflow-x: visible !important;
+}
 
 .outline-none	{
   outline: none !important;
