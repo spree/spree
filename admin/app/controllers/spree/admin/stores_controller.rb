@@ -28,7 +28,7 @@ module Spree
           end
 
           flash[:success] = flash_message_for(@store, :successfully_created)
-          # redirect in view, Turbo doesn't support redirecting to a different host
+          redirect_to spree.admin_getting_started_url(host: @store.url), allow_other_host: true
         else
           render :new, status: :unprocessable_entity
         end

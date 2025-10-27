@@ -1,4 +1,4 @@
-<%= form_for @store, url: spree.admin_stores_path, data: { turbo_frame: '_top', controller: 'store-form enable-button' } do |f| %>
+<%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'store-form enable-button' } do |f| %>
   <div class="container pt-5">
     <h1><%= Spree.t(:new_store) %></h1>
 
