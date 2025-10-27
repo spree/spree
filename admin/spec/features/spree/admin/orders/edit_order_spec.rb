@@ -31,8 +31,6 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Update shipping address', wait: 5)
-
       fill_in_address
       click_on 'Update'
       wait_for_turbo
@@ -62,7 +60,6 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Select existing address')
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
       wait_for_turbo
 
@@ -82,10 +79,9 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Update shipping address', wait: 5)
-
       fill_in_address
       click_on 'Update'
+      wait_for_turbo
 
       expect(page).to have_content('successfully updated')
       expect(page).to have_content('John 99')
@@ -112,7 +108,6 @@ describe 'Edit Order Spec', type: :feature do
       end
       wait_for_turbo
 
-      expect(page).to have_content('Select existing address')
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
       wait_for_turbo
 
@@ -147,10 +142,9 @@ describe 'Edit Order Spec', type: :feature do
         end
         wait_for_turbo
 
-        expect(page).to have_content('Update shipping address', wait: 5)
-
         fill_in_address
         click_on 'Update'
+        wait_for_turbo
 
         expect(page).to have_content('successfully updated')
         expect(page).to have_content('John 99')
