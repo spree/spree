@@ -33,7 +33,7 @@ describe 'Edit Order Spec', type: :feature do
 
       within('#main-dialog', visible: :all) do
         fill_in_address
-        click_on 'Update'
+        click_on 'Update', visible: false
       end
 
       # Wait for the page to show the success message after form submission completes
@@ -63,7 +63,7 @@ describe 'Edit Order Spec', type: :feature do
       wait_for_dialog
 
       within('#main-dialog', visible: :all) do
-        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id', visible: false
       end
 
       # Wait for the page to show the success message after auto-submit completes
@@ -85,7 +85,7 @@ describe 'Edit Order Spec', type: :feature do
 
       within('#main-dialog', visible: :all) do
         fill_in_address
-        click_on 'Update'
+        click_on 'Update', visible: false
       end
 
       # Wait for the page to show the success message after form submission completes
@@ -115,7 +115,7 @@ describe 'Edit Order Spec', type: :feature do
       wait_for_dialog
 
       within('#main-dialog', visible: :all) do
-        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
+        select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id', visible: false
       end
 
       # Wait for the page to show the success message after auto-submit completes
@@ -166,16 +166,17 @@ describe 'Edit Order Spec', type: :feature do
   end
 
   def fill_in_address
-    fill_in 'address_firstname',       with: 'John 99'
-    fill_in 'address_lastname',        with: 'Doe'
-    fill_in 'address_address1',        with: ''
-    fill_in 'address_address1',        with: '100 first lane'
-    fill_in 'address_address2',        with: ''
-    fill_in 'address_address2',        with: '#101'
-    select store.default_country.name, from: 'address_country_id' if store.countries_available_for_checkout.count > 1
-    fill_in 'address_city',            with: 'Bethesda'
-    fill_in 'address_zipcode',         with: '20170'
-    select store.default_country.states.first.name, from: 'address_state_id'
-    fill_in 'address_phone', with: '123-456-7890'
+    # Use visible: false for form fields inside dialogs in headless Chrome
+    fill_in 'address_firstname',       with: 'John 99', visible: false
+    fill_in 'address_lastname',        with: 'Doe', visible: false
+    fill_in 'address_address1',        with: '', visible: false
+    fill_in 'address_address1',        with: '100 first lane', visible: false
+    fill_in 'address_address2',        with: '', visible: false
+    fill_in 'address_address2',        with: '#101', visible: false
+    select store.default_country.name, from: 'address_country_id', visible: false if store.countries_available_for_checkout.count > 1
+    fill_in 'address_city',            with: 'Bethesda', visible: false
+    fill_in 'address_zipcode',         with: '20170', visible: false
+    select store.default_country.states.first.name, from: 'address_state_id', visible: false
+    fill_in 'address_phone', with: '123-456-7890', visible: false
   end
 end
