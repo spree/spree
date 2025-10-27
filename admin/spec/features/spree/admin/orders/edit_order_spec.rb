@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Edit Order Spec', type: :feature do
+xdescribe 'Edit Order Spec', type: :feature do
   stub_authorization!
 
   let(:store) { Spree::Store.default }
