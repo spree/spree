@@ -20,11 +20,11 @@ end
 Capybara.register_driver :selenium_chrome_headless do |app|
   options = ::Selenium::WebDriver::Chrome::Options.new
 
-  # Use new headless mode for Chrome 128+, which has better dialog support
-  # If using older Chrome, this falls back to old headless automatically
   options.add_argument '--headless=new'
   options.add_argument '--disable-gpu'
-  options.add_argument '--window-size=1440,900'
+
+  # Larger window size helps with dialog rendering in headless mode
+  options.add_argument '--window-size=1920,1080'
   options.add_argument '--disable-search-engine-choice-screen'
 
   # Required for running in Docker containers (CircleCI)
