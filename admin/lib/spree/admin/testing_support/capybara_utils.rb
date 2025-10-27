@@ -35,6 +35,18 @@ module Spree
         rescue Selenium::WebDriver::Error::TimeoutError
           default_options[:error].nil? ? false : raise(default_options[:error])
         end
+
+        def wait_for_dialog(selector = '#main-dialog', timeout: 5)
+          # Wait for turbo to finish loading the dialog content
+          wait_for_turbo(timeout)
+
+          # Wait for the dialog element to be present and open
+          has_css?("#{selector}[open]", visible: true, wait: timeout)
+
+          # Additional wait to ensure dialog is fully rendered and interactive
+          # This is especially important for headless browsers in CI
+          sleep 0.1
+        end
       end
     end
   end

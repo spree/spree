@@ -29,7 +29,7 @@ describe 'Edit Order Spec', type: :feature do
         click_on 'dropdown-toggle'
         click_on Spree.t('admin.edit_shipping_address')
       end
-      wait_for_turbo
+      wait_for_dialog
 
       fill_in_address
       click_on 'Update'
@@ -58,7 +58,7 @@ describe 'Edit Order Spec', type: :feature do
         click_on 'dropdown-toggle'
         click_on Spree.t('admin.edit_shipping_address')
       end
-      wait_for_turbo
+      wait_for_dialog
 
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
 
@@ -77,7 +77,7 @@ describe 'Edit Order Spec', type: :feature do
         click_on 'dropdown-toggle'
         click_on Spree.t('admin.edit_shipping_address')
       end
-      wait_for_turbo
+      wait_for_dialog
 
       fill_in_address
       click_on 'Update'
@@ -106,7 +106,7 @@ describe 'Edit Order Spec', type: :feature do
         click_on 'dropdown-toggle'
         click_on Spree.t('admin.edit_shipping_address')
       end
-      wait_for_turbo
+      wait_for_dialog
 
       select address_to_select.to_s.gsub('<br/>', ", "), from: 'shipping_address_id'
 
@@ -140,7 +140,7 @@ describe 'Edit Order Spec', type: :feature do
           click_on 'dropdown-toggle'
           click_on Spree.t('admin.edit_shipping_address')
         end
-        wait_for_turbo
+        wait_for_dialog
 
         fill_in_address
         click_on 'Update'
