@@ -52,7 +52,7 @@
           <%= Spree.t(:products) %>
         </h5>
         <span data-controller="tooltip">
-          <%= button_tag type: 'button', class: 'btn btn-primary btn-sm', disabled: @stock_transfer.destination_location_id.blank?, data: { stock_transfer_target: :newVariantAddButton, action: 'dialog#open' , dialog_id: 'stock_transfer_dialog' } do %>
+          <%= button_tag type: 'button', class: 'btn btn-primary btn-sm', disabled: @stock_transfer.destination_location_id.blank?, data: { stock_transfer_target: :newVariantAddButton, action: 'dialog#open', dialog_id: 'stock_transfer_dialog' } do %>
             <%= icon('plus', class: 'icon icon-plus') %>
             <%= Spree.t(:add_products) %>
           <% end %>
