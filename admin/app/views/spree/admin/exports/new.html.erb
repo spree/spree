@@ -1,10 +1,15 @@
-<%= turbo_frame_tag :export_modal do %>
+<%= turbo_frame_tag :export_dialog do %>
   <%= form_for @export, url: spree.admin_exports_path do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>
-    <div class="modal-content">
-      <%= modal_header(Spree.t(:export) + ' ' + plural_resource_name(@export.model_class)) %>
-      <div class="modal-body">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h5 class="dialog-title">
+          <%= Spree.t(:export) + ' ' + plural_resource_name(@export.model_class) %>
+        </h5>
+        <button type="button" class="btn-close" data-action="click->export-dialog#close" aria-label="Close"></button>
+      </div>
+      <div class="dialog-body">
         <%= render 'spree/admin/shared/error_messages', target: @export %>
         <div class="custom-control custom-radio">
           <%= f.radio_button :record_selection, 'filtered', class: 'custom-control-input' %>
@@ -27,8 +32,10 @@
           <% end %>
         </div>
       </div>
-      <div class="modal-footer">
-        <%= modal_discard_button %>
+      <div class="dialog-footer">
+        <button type="button" class="btn btn-light" data-action="click->export-dialog#close" aria-label="Close">
+          <%= Spree.t('actions.discard') %>
+        </button>
         <%= turbo_save_button_tag Spree.t(:export), class: 'btn btn-primary' %>
       </div>
     </div>

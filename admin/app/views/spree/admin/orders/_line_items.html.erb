@@ -9,9 +9,7 @@
       </h5>
       <div class="d-flex gap-2">
         <% if can?(:create, Spree::LineItem.new(order: @order)) %>
-          <div data-toggle="modal" data-target="#modal">
-            <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: :dialog_modal }, class: "btn btn-secondary btn-sm" %>
-          </div>
+          <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open'  }, class: "btn btn-secondary btn-sm" %>
         <% end %>
         <% if @order.completed? %>
           <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#line-items" aria-expanded="false" aria-controls="collapseExample">
@@ -59,9 +57,7 @@
       </h5>
     </div>
     <div class="card-body">
-      <div data-toggle="modal" data-target="#modal">
-        <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: :dialog_modal }, class: "btn btn-secondary w-100 py-3" %>
-      </div>
+      <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open'  }, class: "btn btn-secondary w-100 py-3" %>
     </div>
   <% end %>
 <% end %>

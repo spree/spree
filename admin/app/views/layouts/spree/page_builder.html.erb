@@ -7,7 +7,7 @@
 
   <body class="admin page-builder"
         id="page-builder"
-        data-controller="page-builder tabs"
+        data-controller="page-builder tabs dialog"
         data-page-builder-preview-url-value="<%= page_preview_url %>"
   >
 
@@ -39,6 +39,7 @@
       </main>
     </main>
 
+    <%= render 'spree/admin/shared/dialog' %>
     <%= render 'spree/admin/shared/modal' %>
     <%= render 'spree/admin/shared/alerts' %>
   </body>

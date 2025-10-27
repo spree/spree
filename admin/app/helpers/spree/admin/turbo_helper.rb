@@ -17,9 +17,9 @@ module Spree
         end
       end
 
-      def turbo_hide_drawer
-        turbo_stream.replace 'drawer-dialog' do
-          render 'spree/admin/shared/drawer'
+      def turbo_close_dialog
+        turbo_stream.replace 'main-dialog' do
+          render 'spree/admin/shared/dialog'
         end
       end
 

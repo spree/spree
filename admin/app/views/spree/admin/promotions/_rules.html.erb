@@ -5,9 +5,7 @@
       <%= Spree.t(:rules) %>
     </h5>
     <% if can?(:create, Spree::PromotionRule.new(promotion: @promotion)) %>
-      <span data-toggle="modal" data-target="#modal">
-        <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog_modal' } %>
-      </span>
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
     <% end %>
   </div>
   <div class="card-body">
@@ -29,9 +27,7 @@
       <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionRule)) %>
         <% if can?(:create, Spree::PromotionRule.new(promotion: @promotion)) %>
-          <span data-toggle="modal" data-target="#modal">
-            <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm ml-3', data: { turbo_frame: 'dialog_modal' } %>
-          </span>
+          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm ml-3', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
         <% end %>
       </div>
     <% else %>

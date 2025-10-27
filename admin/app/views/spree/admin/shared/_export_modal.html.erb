@@ -1,5 +1,3 @@
-<div class="modal fade" id="export-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <%= turbo_frame_tag :export_modal, src: spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: export_type }) %>
-  </div>
-</div>
+<dialog class="dialog" data-export-dialog-target="dialog" id="export-dialog">
+  <%= turbo_frame_tag :export_dialog, src: spree.new_admin_export_path(export: { search_params: params[:q]&.to_json, type: export_type }) %>
+</dialog>

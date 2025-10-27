@@ -12,9 +12,9 @@
     <p class="text-center text-muted px-5 pt-5 pb-2">
       <%= Spree.t(:no_products_added) %>
     </p>
-    <p class="text-center" data-toggle="modal" data-target="#modal">
+    <p class="text-center">
       <% if can?(:create, Spree::Classification) && @taxon.manual? %>
-        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary', data: { turbo_frame: 'dialog_modal' } %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
       <% end %>
   <% end %>
 <% end %>

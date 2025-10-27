@@ -1,5 +1,5 @@
 <%= turbo_render_alerts %>
-<%= turbo_close_modal('modal-lg') %>
+<%= turbo_close_dialog %>
 
 <!-- Uploader operates on Spree::Asset, but the edit page uses Spree::Image for the dom_id -->
 <%= turbo_stream.replace spree_dom_id(Spree::Image.new(id: @asset.id)) do %>

@@ -51,14 +51,12 @@
         <h5 class="card-title">
           <%= Spree.t(:products) %>
         </h5>
-        <span data-toggle="modal" data-target="#stock_transfer_modal">
-          <%= button_tag type: 'button', class: 'btn btn-secondary btn-sm', disabled: @stock_transfer.destination_location_id.blank?, data: { stock_transfer_target: :newVariantAddButton } do %>
-            <span data-controller="tooltip">
-              <%= icon('plus', class: 'icon icon-plus') %>
-              <%= Spree.t(:add_products) %>
-              <%= tooltip(Spree.t('admin.stock_transfers.add_products_tip')) %>
-            </span>
+        <span data-controller="tooltip">
+          <%= button_tag type: 'button', class: 'btn btn-primary btn-sm', disabled: @stock_transfer.destination_location_id.blank?, data: { stock_transfer_target: :newVariantAddButton, action: 'dialog#open' , dialog_id: 'stock_transfer_dialog' } do %>
+            <%= icon('plus', class: 'icon icon-plus') %>
+            <%= Spree.t(:add_products) %>
           <% end %>
+          <%= tooltip(Spree.t('admin.stock_transfers.add_products_tip')) %>
         </span>
       </div>
       <div class="card-body p-0" style="min-height: 300px">

@@ -1,8 +1,8 @@
-<%= turbo_stream.update :dialog_modal do %>
+<%= turbo_stream.update :dialog do %>
   <%= form_for @address, url: spree.admin_order_billing_address_path(@order), data: {controller: 'auto-submit', form_target: 'form', turbo_frame: :_top}, method: :post do |f| %>
-    <div class="modal-content">
-      <%= modal_header(Spree.t(:new_billing_address)) %>
-      <div class="modal-body d-flex flex-col gap-3" data-controller="order-billing-address">
+    <div class="dialog-content">
+      <%= dialog_header(Spree.t(:new_billing_address)) %>
+      <div class="dialog-body d-flex flex-col gap-3" data-controller="order-billing-address">
         <div>
           <% if @order.shipping_address.present? %>
             <%= label_tag nil, class: 'form-control custom-radio' do %>
@@ -23,8 +23,8 @@
         </div>
         <%= render 'form', address: @address, f: f %>
       </div>
-      <div class="modal-footer">
-        <%= modal_discard_button %>
+      <div class="dialog-footer">
+        <%= dialog_discard_button %>
         <%= turbo_save_button_tag Spree.t('actions.save') %>
       </div>
     </div>

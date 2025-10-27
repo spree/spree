@@ -3,7 +3,7 @@
   <head>
     <%= render "spree/admin/shared/head" %>
   </head>
-  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>">
+  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>" data-controller="dialog">
     <div class="container-fluid">
       <div class="row bg-white">
         <div
@@ -16,6 +16,7 @@
         </div>
       </div>
     </div>
+    <%= render "spree/admin/shared/dialog" %>
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
   </body>

@@ -11,6 +11,8 @@ button[disabled]        .show-when-enabled { display: none; }
 
 .btn {
   box-shadow: $btn-box-shadow;
+
+  transition: background-color 0.1s linear 0s, border-color 0.2s linear 0s !important;
 }
 
 .btn,

@@ -131,10 +131,12 @@ module Spree
       end
 
       def link_to_export_modal
-        link_to '#', data: { toggle: 'modal', target: '#export-modal' }, class: 'btn btn-light' do
+        return unless can?(:create, Spree::Export)
+
+        button_tag(type: 'button', class: 'btn btn-light', data: { action: 'click->export-dialog#open' }) do
           icon('table-export', class: 'mr-0 mr-lg-2') +
           content_tag(:span, Spree.t(:export), class: 'd-none d-lg-inline')
-        end if can?(:create, Spree::Export)
+        end
       end
 
       # renders an active link with an icon, using the active_link_to method from https://github.com/comfy/active_link_to gem

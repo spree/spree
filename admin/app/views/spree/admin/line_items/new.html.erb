@@ -1,7 +1,7 @@
-<%= turbo_frame_tag :dialog_modal do %>
-  <div class="modal-content" data-controller="search-picker">
-    <%= modal_header(Spree.t(:add_variant)) %>
-    <div class="modal-body border-bottom">
+<%= turbo_frame_tag :dialog do %>
+  <div class="dialog-content" data-controller="search-picker">
+    <%= dialog_header(Spree.t(:add_variant)) %>
+    <div class="dialog-body border-bottom">
       <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
         <%= form.hidden_field :param_name, value: 'line_item' %>
@@ -10,14 +10,14 @@
       <% end %>
     </div>
     <%= form_with model: @line_item, url: spree.admin_order_line_items_path(@order), data: {turbo_frame: '_top'} do |form| %>
-      <div class="modal-body p-0">
+      <div class="dialog-body p-0">
         <div id="variants_search_results" class="search-results">
           <p class="text-muted text-center py-5">
             <%= Spree.t(:start_typing_to_search_for_variants) %>
           </p>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="dialog-footer">
         <div class="d-flex gap-2 m-0 align-items-center mr-auto">
           <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
           <%= form.number_field :quantity, class: "form-control", min: 1 %>

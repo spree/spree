@@ -36,7 +36,7 @@
 .badge-reimbursed,
 .badge-allocation,
 .bg-success {
-  border: 1px solid rgba($success, 0.05);
+  border: 1px solid transparent !important;
   background-color: #C6F6D5 !important;
   color: #22543D !important;
 }
@@ -54,6 +54,7 @@
 .badge-partially_canceled,
 .badge-void,
 .badge-danger {
+  border: 1px solid transparent;
   background-color: #fee2e1 !important;
   color: #8e1f0b !important;
 }
@@ -70,7 +71,7 @@
 .badge-ready, // unfulfilled
 .bg-warning
 {
-  border: 1px solid rgba($warning, 0.25);
+  border: 1px solid transparent;
   background-color: rgba(255, 235, 120, 1);
   color: rgba(79, 71, 0, 1);
 }
@@ -109,7 +110,7 @@
 .badge-partial,
 .badge-capture,
 .badge-info {
-  border: 1px solid rgba($info, 0.05);
+  border: 1px solid transparent;
   background-color: #E0EFFE;
   color: #00527c;
 }

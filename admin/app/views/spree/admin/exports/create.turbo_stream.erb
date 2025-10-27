@@ -1,2 +1,5 @@
 <%= turbo_render_alerts %>
-<%= turbo_close_modal('export-modal') %>
+
+<%= turbo_stream.replace 'export-dialog' do %>
+  <%= render 'spree/admin/shared/export_modal', export_type: @export.type %>
+<% end %>

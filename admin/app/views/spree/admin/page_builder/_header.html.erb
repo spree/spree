@@ -13,9 +13,7 @@
         <strong><%= @page.display_name %></strong>
       </div>
 
-      <span data-toggle="modal" data-target="#modal">
-        <%= link_to_with_icon 'settings', Spree.t(:settings), spree.edit_admin_page_path(@page.id), class: 'btn btn-light', data: { turbo_frame: 'dialog_modal' } %>
-      </span>
+      <%= link_to_with_icon 'settings', Spree.t(:settings), spree.edit_admin_page_path(@page.id), class: 'btn btn-light', data: { turbo_frame: 'dialog', action: 'dialog#open'  } %>
     <% else %>
       <div class="px-3">
         <span class="text-muted mr-1"><%= Spree.t(:theme) %>:</span>

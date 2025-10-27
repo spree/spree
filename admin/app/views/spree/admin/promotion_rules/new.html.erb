@@ -1,43 +1,37 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :dialog do %>
   <%= form_with model: @promotion_rule, url: spree.admin_promotion_rules_path(@promotion), method: :post, scope: :promotion_rule do |f| %>
-    <div class="modal-content">
+    <% if @promotion_rule.type.nil? %>
+      <%= dialog_header(Spree.t(:add_rule_of_type)) %>
+    <% else %>
+      <%= dialog_header(@promotion_rule.human_name) %>
+    <% end %>
+    <div class="dialog-body">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
       <% if @promotion_rule.type.nil? %>
-        <%= modal_header(Spree.t(:add_rule_of_type)) %>
-      <% else %>
-        <%= modal_header(@promotion_rule.human_name) %>
-      <% end %>
-      <div class="modal-body">
-        <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
-        <% if @promotion_rule.type.nil? %>
-          <%= render 'spree/admin/shared/spinner' %>
-          <ul class="list-group">
-            <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
-              <% key = rule_type.demodulize.underscore %>
-              <li class="list-group-item p-0 overflow-hidden">
-                <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-3 hover-light text-primary', data: { turbo_prefetch: false } do %>
-                  <%= radio_button_tag :type, rule_type %>
-                  <div class="ml-3">
-                    <h6><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
-                    <p class="text-muted mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
-                  </div>
-                <% end %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <p class="text-muted">
-            <%= @promotion_rule.human_description %>
-          </p>
-          <%= f.hidden_field :type, value: @promotion_rule.type %>
-          <%= render "spree/admin/promotion_rules/forms/#{@promotion_rule.key}", f: f %>
+        <%= render 'spree/admin/shared/spinner' %>
+        <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
+          <% key = rule_type.demodulize.underscore %>
+          <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-3 hover-gray rounded-lg mb-2', data: { turbo_prefetch: false } do %>
+            <%= radio_button_tag :type, rule_type %>
+            <div class="ml-3">
+              <h6 class="font-weight-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
+              <p class="text-muted mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
+            </div>
+          <% end %>
         <% end %>
-      </div>
-      <% if @promotion_rule.type.present? %>
-        <div class="modal-footer">
-          <%= modal_discard_button %>
-          <%= turbo_save_button_tag Spree.t('actions.create'), data: { turbo_frame: '_top' } %>
-        </div>
+      <% else %>
+        <p class="text-muted">
+          <%= @promotion_rule.human_description %>
+        </p>
+        <%= f.hidden_field :type, value: @promotion_rule.type %>
+        <%= render "spree/admin/promotion_rules/forms/#{@promotion_rule.key}", f: f %>
       <% end %>
     </div>
+    <% if @promotion_rule.type.present? %>
+      <div class="dialog-footer">
+        <%= dialog_discard_button %>
+        <%= turbo_save_button_tag Spree.t('actions.create'), data: { turbo_frame: '_top' } %>
+      </div>
+    <% end %>
   <% end %>
 <% end %>

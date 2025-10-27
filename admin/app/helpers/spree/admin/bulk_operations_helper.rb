@@ -45,10 +45,10 @@ module Spree
       # @return [String]
       def bulk_action_link(text, path, options = {})
         options[:data] ||= {}
-        options[:data][:action] ||= 'click->bulk-operation#setBulkAction'
-        options[:data][:turbo_frame] ||= :bulk_modal
+        options[:data][:action] ||= 'click->bulk-operation#setBulkAction click->bulk-dialog#open'
+        options[:data][:turbo_frame] ||= :bulk_dialog
         options[:data][:url] ||= options[:url]
-        options[:class] ||= 'btn btn-light'
+        options[:class] ||= 'btn'
 
         tooltip_text = nil
         if options[:icon]
@@ -65,9 +65,7 @@ module Spree
         link_content = text
         link_content += tooltip(tooltip_text) if tooltip_text
 
-        content_tag :span, data: { toggle: 'modal', target: '#bulk-modal' } do
-          link_to link_content, path, options
-        end
+        link_to link_content, path, options
       end
 
       # render a close button for the bulk modal
@@ -75,11 +73,10 @@ module Spree
         button_tag(
           '',
           type: 'button',
-          class: 'btn-close',
+          class: 'btn-close mr-1',
           data: {
-            dismiss: 'modal',
-            aria_label: Spree.t(:close),
-            action: 'bulk-operation#cancel'
+            action: 'bulk-operation#cancel',
+            aria_label: Spree.t(:close)
           }
         )
       end
