@@ -395,11 +395,10 @@ module Spree
     end
 
     def set_price(currency, amount, compare_at_amount = nil)
-      prices.find_or_initialize_by(currency: currency) do |price|
-        price.amount = amount
-        price.compare_at_amount = compare_at_amount if compare_at_amount.present?
-        price.save!
-      end
+      price = prices.find_or_initialize_by(currency: currency)
+      price.amount = amount
+      price.compare_at_amount = compare_at_amount if compare_at_amount.present?
+      price.save!
     end
 
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
