@@ -13,13 +13,27 @@
       </div>
     </div>
 
-    <% if f.object.new_record? %>
+    <% if f.object.new_record? || f.object.metafields.empty? %>
       <div class="form-group">
         <%= f.spree_select :resource_type, metafield_definition_resource_types, { include_blank: true, autocomplete: true, label: Spree.t(:resource) }, { required: true } %>
       </div>
 
       <div class="form-group">
         <%= f.spree_select :metafield_type, metafield_definition_types, { include_blank: true, autocomplete: true, label: Spree.t(:type) }, { required: true } %>
+      </div>
+    <% else %>
+      <div class="alert alert-warning">
+        <%= Spree.t('admin.metafield_definitions.edit_warning') %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :resource_type, Spree.t(:resource) %>
+        <p class="font-weight-bold"><%= f.object.resource_type.demodulize.titleize %></p>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :metafield_type, Spree.t(:type) %>
+        <p class="font-weight-bold"><%= f.object.metafield_type.demodulize.titleize %></p>
       </div>
     <% end %>
 

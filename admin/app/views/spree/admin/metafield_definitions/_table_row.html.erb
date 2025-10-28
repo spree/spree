@@ -8,6 +8,14 @@
       <%= f.select :display_on, display_on_options(Spree::MetafieldDefinition), {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
     <% end %>
   </td>
+  <td>
+    <% if metafield_definition.metafields.count.positive? %>
+      <%= metafield_definition.metafields.count %>
+      <%= Spree.t(metafield_definition.resource_type.demodulize.pluralize.to_sym) %>
+    <% else %>
+      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+    <% end %>
+  </td>
   <td class="text-right">
     <%= link_to_edit(metafield_definition, data: { turbo_frame: '_top' }) %>
   </td>
