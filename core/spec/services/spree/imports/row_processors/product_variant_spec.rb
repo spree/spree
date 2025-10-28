@@ -96,6 +96,19 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(color_option_type.option_values.find_by(presentation: 'Blue')).to be_present
       expect(size_option_type.option_values.find_by(presentation: 'XS')).to be_present
     end
+
+    context 'when importing a variant row for existing variant' do
+      let(:color_option_type) { Spree::OptionType.find_by(name: 'color') || create(:option_type, name: 'color', presentation: 'Color') }
+      let(:size_option_type) { Spree::OptionType.find_by(name: 'size') || create(:option_type, name: 'size', presentation: 'Size') }
+      let(:blue_option_value) { create(:option_value, name: 'Blue', presentation: 'Blue', option_type: color_option_type) }
+      let(:xs_option_value) { create(:option_value, name: 'XS', presentation: 'XS', option_type: size_option_type) }
+      let!(:variant) { create(:variant, product: product, sku: 'DENIM-SHIRT-XS-BLUE', price: 50.99, option_values: [blue_option_value, xs_option_value]) }
+
+      it 'updates the variant' do
+        expect { subject.process! }.to change { variant.reload.price }.from(50.99).to(62.99)
+        expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+      end
+    end
   end
 
   context 'when importing a variant row with a new option type/value' do
