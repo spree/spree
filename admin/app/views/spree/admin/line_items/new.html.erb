@@ -10,7 +10,7 @@
       <% end %>
     </div>
     <%= form_with model: @line_item, url: spree.admin_order_line_items_path(@order), data: {turbo_frame: '_top'} do |form| %>
-      <div class="dialog-body p-0">
+      <div class="dialog-body">
         <div id="variants_search_results" class="search-results">
           <p class="text-muted text-center py-5">
             <%= Spree.t(:start_typing_to_search_for_variants) %>

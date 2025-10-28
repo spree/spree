@@ -1,13 +1,5 @@
 .search-results {
-  @extend .overflow-y-auto;
-
   height: 250px;
-  overflow-x: hidden;
-  padding-left: 1.25rem;
-  padding-right: 0.25rem;
-  margin-right: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
 }
 
 .search-picker__option {
