@@ -10,7 +10,7 @@
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
-      "canonical": "https://spreecommerce.org"
+      "canonical": "https://spreecommerce.org/docs"
     }
   },
   "navigation": {
