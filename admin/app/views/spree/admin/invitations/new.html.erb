@@ -1,23 +1,21 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :dialog do %>
   <%= form_for @invitation,
     url: spree.admin_invitations_path,
     data: { controller: "enable-button" } do |f| %>
-    <div class="modal-content">
-      <%= modal_header Spree.t('actions.send_invitation') %>
-      <div class="modal-body">
-        <%= render 'spree/admin/shared/error_messages', target: @invitation %>
-        <%= f.spree_email_field :email, required: true, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com', autofocus: true %>
-        <% if @roles.any? %>
-          <%= f.spree_select :role_id, @roles.map { |role| [role.name, role.id] }, { label: Spree.t(:role_id), autocomplete: true, required: true }, { data: { 'enable-button-target': 'input' } } %>
-        <% end %>
-        <%= f.spree_date_field :expires_at, required: true, data: { 'enable-button-target': 'input' } %>
-      </div>
-      <div class="modal-footer">
-        <%= turbo_save_button_tag nil, class: 'btn btn-primary', data: { 'enable-button-target': 'button' } do %>
-          <%= icon 'send' %>
-          <%= Spree.t('actions.send_invitation') %>
-        <% end %>
-      </div>
+    <%= dialog_header Spree.t('actions.send_invitation') %>
+    <div class="dialog-body">
+      <%= render 'spree/admin/shared/error_messages', target: @invitation %>
+      <%= f.spree_email_field :email, required: true, data: { 'enable-button-target': 'input' }, placeholder: 'eg. steve@apple.com', autofocus: true %>
+      <% if @roles.any? %>
+        <%= f.spree_select :role_id, @roles.map { |role| [role.name, role.id] }, { label: Spree.t(:role_id), autocomplete: true, required: true }, { data: { 'enable-button-target': 'input' } } %>
+      <% end %>
+      <%= f.spree_date_field :expires_at, required: true, data: { 'enable-button-target': 'input' } %>
+    </div>
+    <div class="dialog-footer">
+      <%= turbo_save_button_tag nil, class: 'btn btn-primary', data: { 'enable-button-target': 'button' } do %>
+        <%= icon 'send' %>
+        <%= Spree.t('actions.send_invitation') %>
+      <% end %>
     </div>
   <% end %>
 <% end %>

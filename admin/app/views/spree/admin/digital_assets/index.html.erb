@@ -6,15 +6,14 @@
 <% content_for :page_actions do %>
   <%= render_admin_partials(:digital_assets_actions_partials) %>
   <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
-    <span data-toggle="modal" data-target="#modal">
-      <%= link_to_with_icon "plus",
-      Spree.t(:new_digital_asset),
-      spree.new_admin_product_digital_asset_path(@product),
-      class: "btn btn-primary",
-      data: {
-        turbo_frame: "dialog_modal",
-      } %>
-    </span>
+    <%= link_to_with_icon "plus",
+    Spree.t(:new_digital_asset),
+    spree.new_admin_product_digital_asset_path(@product),
+    class: "btn btn-primary",
+    data: {
+      turbo_frame: "dialog",
+      action: 'dialog#open',
+    } %>
   <% end %>
 <% end %>
 

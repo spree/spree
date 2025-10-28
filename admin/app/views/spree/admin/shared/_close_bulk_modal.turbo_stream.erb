@@ -1,2 +1,5 @@
 <%= turbo_render_alerts %>
-<%= turbo_close_modal('bulk-modal') %>
+
+<%= turbo_stream.replace 'bulk-dialog' do %>
+  <%= render 'spree/admin/shared/bulk_modal' %>
+<% end %>

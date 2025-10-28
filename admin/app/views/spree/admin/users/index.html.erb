@@ -16,7 +16,7 @@
     <%= render "spree/admin/users/filters" %>
 
     <% if @collection.any? %>
-      <div data-controller="bulk-operation" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
+      <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
         <%= form_tag spree.admin_users_path, data: { 'bulk-operation-target': 'form' } do %>
           <%= render 'spree/admin/shared/bulk_modal' %>
           <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">

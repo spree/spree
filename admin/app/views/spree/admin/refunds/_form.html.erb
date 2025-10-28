@@ -10,4 +10,4 @@
   </div>
 <% end %>
 
-<%= f.spree_collection_select :refund_reason_id, refund_reasons, :id, :name, { include_blank: true, label: Spree.t(:reason), required: true, autocomplete: true } %>
+<%= f.spree_collection_select :refund_reason_id, refund_reasons, :id, :name, { include_blank: true, label: Spree.t(:reason), required: true } %>

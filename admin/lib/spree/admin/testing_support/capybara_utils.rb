@@ -35,6 +35,25 @@ module Spree
         rescue Selenium::WebDriver::Error::TimeoutError
           default_options[:error].nil? ? false : raise(default_options[:error])
         end
+
+        def wait_for_dialog(selector = '#main-dialog', timeout: 5)
+          # Wait for turbo to finish loading the dialog content
+          wait_for_turbo(timeout)
+
+          # Wait for the dialog element to be present and open
+          # Note: Using visible: :all because headless Chrome may not consider dialogs "visible"
+          # even when properly opened via showModal()
+          has_css?("#{selector}[open]", visible: :all, wait: timeout)
+
+          # Verify the dialog is actually open and rendered
+          unless page.evaluate_script("document.querySelector('#{selector}')?.open")
+            raise "Dialog #{selector} is not open"
+          end
+
+          # Give Chrome time to fully render the dialog and make elements interactable
+          # The old headless mode is better but still needs a brief render pause
+          sleep 0.3
+        end
       end
     end
   end

@@ -1,15 +1,13 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :dialog do %>
   <%= form_with model: @page, url: spree.admin_page_path(@page), data: { controller: 'slug-form seo-form' }, scope: :page do |f| %>
-    <div class="modal-content">
-      <%= modal_header(@page.display_name) %>
-      <div class="modal-body">
-        <%= render 'spree/admin/shared/error_messages', target: @page %>
-        <%= render 'form', f: f, vertical: true %>
-      </div>
-      <div class="modal-footer">
-        <%= turbo_save_button_tag Spree.t('actions.save'), data: {turbo_frame: :_top} %>
-        <%= link_to Spree.t('actions.destroy'), spree.admin_page_path(@page.id), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'btn btn-danger ml-auto' %>
-      </div>
+    <%= dialog_header(@page.display_name) %>
+    <div class="dialog-body">
+      <%= render 'spree/admin/shared/error_messages', target: @page %>
+      <%= render 'form', f: f, vertical: true %>
+    </div>
+    <div class="dialog-footer">
+      <%= turbo_save_button_tag Spree.t('actions.save'), data: {turbo_frame: :_top} %>
+      <%= link_to Spree.t('actions.destroy'), spree.admin_page_path(@page.id), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'btn btn-danger ml-auto' %>
     </div>
   <% end %>
 <% end %>

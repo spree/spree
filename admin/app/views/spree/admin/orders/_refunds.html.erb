@@ -34,9 +34,7 @@
                 <td><%= spree_time(refund.created_at) %></td>
                 <% if refund.editable? && can?(:edit, refund) %>
                   <td class="actions">
-                    <span data-toggle="modal" data-target="#modal">
-                      <%= link_to_with_icon('edit', Spree.t(:edit), spree.edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, data: { turbo_frame: 'dialog_modal' }, class: "btn btn-light btn-sm") if can?(:edit, refund) %>
-                    </span>
+                    <%= link_to_with_icon('edit', Spree.t(:edit), spree.edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-light btn-sm") if can?(:edit, refund) %>
                   </td>
                 <% end %>
               </tr>

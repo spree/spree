@@ -1,14 +1,12 @@
-<%= turbo_stream.update :dialog_modal do %>
+<%= turbo_stream.update :dialog do %>
   <%= form_for @address, url: spree.admin_order_shipping_address_path(@order), data: {turbo_frame: :_top}, method: :post do |f| %>
-    <div class="modal-content">
-      <%= modal_header(Spree.t(:new_shipping_address)) %>
-      <div class="modal-body d-flex flex-col gap-3">
-        <%= render 'form', address: @address, f: f%>
-      </div>
-      <div class="modal-footer">
-        <%= modal_discard_button %>
-        <%= turbo_save_button_tag Spree.t('actions.save') %>
-      </div>
+    <%= dialog_header(Spree.t(:new_shipping_address)) %>
+    <div class="dialog-body d-flex flex-col gap-3">
+      <%= render 'form', address: @address, f: f%>
+    </div>
+    <div class="dialog-footer">
+      <%= dialog_discard_button %>
+      <%= turbo_save_button_tag Spree.t('actions.save') %>
     </div>
   <% end %>
 <% end %>

@@ -1,138 +1,128 @@
-<div class="modal fade" id="new-store-modal" tabindex="-1" aria-labelledby="newStoreModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <%= turbo_frame_tag :dialog_modal_lg do %>
-      <%= form_for @store, url: spree.admin_stores_path, data: { turbo_frame: '_top', controller: 'store-form enable-button' } do |f| %>
-        <div class="modal-content">
-          <%= modal_header(Spree.t(:new_store)) %>
-          <div class="modal-body">
-            <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
-            <div class="row">
-              <div class="col-lg-6">
-                <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
-                  <div class="form-group">
-                    <%= f.label :name %>
-                    <%= f.text_field :name, class: 'form-control',
-                                          placeholder: Spree.t(:store_name),
-                                          required: true,
-                                          autofocus: true,
-                                          data: {
-                                            enable_button_target: 'input',
-                                          } %>
-                  </div>
+<%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'store-form enable-button' } do |f| %>
+  <div class="container pt-5">
+    <h1><%= Spree.t(:new_store) %></h1>
 
-                  <div class="form-group">
-                    <%= f.label :default_country_iso, Spree.t(:country) %>
-                    <%= f.collection_select :default_country_iso, Spree::Country.order(:name), :iso, :name, { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
-                  </div>
-
-                  <div class="form-group">
-                    <%= f.label :default_locale %>
-                    <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, current_store.default_locale || I18n.locale), { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
-                  </div>
-
-                  <div class="form-group">
-                    <%= f.label :default_currency, Spree.t(:currency) %>
-                    <%= f.select :default_currency, currency_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
-                  </div>
-
-                  <% if available_stores.any? %>
-                    <div class="form-group">
-                      <%= f.label :import_products_from_store_id, Spree.t(:import_products_from) %>
-                      <%= f.select :import_products_from_store_id,
-                                  options_for_select(available_stores.pluck(:name, :id)),
-                                  { include_blank: Spree.t(:do_not_import) },
-                                  {
-                                    data: { controller: 'autocomplete-select' }
-                                    } %>
-                    </div>
-
-                    <div class="form-group">
-                      <%= f.label :import_payment_methods_from_store_id, Spree.t(:import_payment_methods_from) %>
-                      <%= f.select :import_payment_methods_from_store_id,
-                                  options_for_select(available_stores.pluck(:name, :id)),
-                                  { include_blank: Spree.t(:do_not_import) },
-                                  {
-                                    data: { controller: 'autocomplete-select' }
-                                    } %>
-                    </div>
-                  <% end %>
-                </div>
-                <div class="col-lg-6">
-                  <h5>What will be shared with this new store:</h5>
-                  <ul class="list-unstyled">
-                    <li>
-                      <%= icon('check', class: 'text-success') %>
-                      <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
-                      <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
-                    </li>
-                    <li>
-                      <%= icon('check', class: 'text-success') %>
-                      <%= Spree.t(:customers) %>
-                    </li>
-                    <li>
-                      <%= icon('check', class: 'text-success') %>
-                      Shipping methods, rates and markets
-                    </li>
-                    <li>
-                      <%= icon('check', class: 'text-success') %>
-                      <%= Spree.t(:payment_methods) %><br />
-                      <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
-                    </li>
-                    <li>
-                      <%= icon('check', class: 'text-success') %>
-                      Admin user privileges
-                    </li>
-                  </ul>
-
-                  <h5>What will not be shared with this new store:</h5>
-                  <ul class="list-unstyled">
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:orders) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:shipments) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:payments) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:refunds) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:store_credits) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:gift_cards) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:blogs_posts) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:themes) %> & <%= Spree.t(:pages) %>
-                    </li>
-                    <li>
-                      <%= icon('x', class: 'text-danger') %>
-                      <%= Spree.t(:integrations) %> eg. Google Analytics, Meta Pixel, etc.
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <%= modal_discard_button %>
-              <%= turbo_save_button_tag Spree.t('actions.create') %>
-            </div>
+    <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
+    <div class="row">
+      <div class="col-lg-6">
+          <div class="form-group">
+            <%= f.label :name %>
+            <%= f.text_field :name, class: 'form-control',
+                                  placeholder: Spree.t(:store_name),
+                                  required: true,
+                                  autofocus: true,
+                                  data: {
+                                    enable_button_target: 'input',
+                                  } %>
           </div>
+
+          <div class="form-group">
+            <%= f.label :default_country_iso, Spree.t(:country) %>
+            <%= f.collection_select :default_country_iso, Spree::Country.order(:name), :iso, :name, { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :default_locale %>
+            <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, current_store.default_locale || I18n.locale), { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label :default_currency, Spree.t(:currency) %>
+            <%= f.select :default_currency, currency_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
+          </div>
+
+          <% if available_stores.any? %>
+            <div class="form-group">
+              <%= f.label :import_products_from_store_id, Spree.t(:import_products_from) %>
+              <%= f.select :import_products_from_store_id,
+                          options_for_select(available_stores.pluck(:name, :id)),
+                          { include_blank: Spree.t(:do_not_import) },
+                          {
+                            data: { controller: 'autocomplete-select' }
+                            } %>
+            </div>
+
+            <div class="form-group">
+              <%= f.label :import_payment_methods_from_store_id, Spree.t(:import_payment_methods_from) %>
+              <%= f.select :import_payment_methods_from_store_id,
+                          options_for_select(available_stores.pluck(:name, :id)),
+                          { include_blank: Spree.t(:do_not_import) },
+                          {
+                            data: { controller: 'autocomplete-select' }
+                            } %>
+            </div>
+          <% end %>
         </div>
-      <% end %>
-    <% end %>
+        <div class="col-lg-5 offset-lg-1">
+          <h5>What will be shared with this new store:</h5>
+          <ul class="list-unstyled">
+            <li>
+              <%= icon('check', class: 'text-success') %>
+              <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
+              <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
+            </li>
+            <li>
+              <%= icon('check', class: 'text-success') %>
+              <%= Spree.t(:customers) %>
+            </li>
+            <li>
+              <%= icon('check', class: 'text-success') %>
+              Shipping methods, rates and markets
+            </li>
+            <li>
+              <%= icon('check', class: 'text-success') %>
+              <%= Spree.t(:payment_methods) %><br />
+              <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
+            </li>
+            <li>
+              <%= icon('check', class: 'text-success') %>
+              Admin user privileges
+            </li>
+          </ul>
+
+          <h5>What will not be shared with this new store:</h5>
+          <ul class="list-unstyled">
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:orders) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:shipments) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:payments) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:refunds) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:store_credits) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:gift_cards) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:blogs_posts) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:themes) %> & <%= Spree.t(:pages) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:integrations) %> eg. Google Analytics, Meta Pixel, etc.
+            </li>
+          </ul>
+      </div>
+    </div>
   </div>
-</div>
+  <footer id="footer" class="d-flex justify-content-end">
+    <%= turbo_save_button_tag Spree.t('actions.create'), data: { admin_target: 'save' } %>
+  </footer>
+<% end %>

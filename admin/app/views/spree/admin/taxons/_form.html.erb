@@ -54,9 +54,7 @@
           </h5>
 
           <% if @taxon.manual? && can?(:create, Spree::Classification) %>
-            <span data-toggle="modal" data-target="#modal">
-              <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog_modal' } %>
-            </span>
+            <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>
         </div>
 

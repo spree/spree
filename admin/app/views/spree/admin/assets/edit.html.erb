@@ -1,19 +1,17 @@
-<%= turbo_frame_tag :dialog_modal_lg do %>
-  <div class="modal-content">
-    <%= modal_header(Spree.t(:edit) + ' ' + Spree.t(:image)) %>
-    <%= form_with model: @asset, url: spree.admin_asset_path(@asset), method: :put, scope: :asset do |f| %>
-      <div class="modal-body pb-0" data-turbo-permanent id="asset-<%= @asset.key.parameterize %>">
-        <%= render 'active_storage/upload_form', form: f, field_name: :attachment, width: 200, height: 200, can_delete: false %>
-      </div>
-      <div class="modal-body" style="min-height: 200px">
-        <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 4 %>
-      </div>
-      <div class="modal-footer">
-        <%= turbo_save_button_tag %>
-        <%= link_to Spree.t('actions.destroy'), object_url(@asset),
-            data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: '_top' },
-            class: 'btn btn-danger ml-auto' if can?(:destroy, @asset) %>
-      </div>
-    <% end %>
-  </div>
+<%= turbo_frame_tag :dialog do %>
+  <%= dialog_header(Spree.t(:edit) + ' ' + Spree.t(:image)) %>
+  <%= form_with model: @asset, url: spree.admin_asset_path(@asset), method: :put, scope: :asset do |f| %>
+    <div class="dialog-body pb-0" data-turbo-permanent id="asset-<%= @asset.key.parameterize %>">
+      <%= render 'active_storage/upload_form', form: f, field_name: :attachment, width: 200, height: 200, can_delete: false %>
+    </div>
+    <div class="dialog-body" style="min-height: 200px">
+      <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 4 %>
+    </div>
+    <div class="dialog-footer">
+      <%= turbo_save_button_tag %>
+      <%= link_to Spree.t('actions.destroy'), object_url(@asset),
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure_delete), turbo_frame: '_top' },
+          class: 'btn btn-danger ml-auto' if can?(:destroy, @asset) %>
+    </div>
+  <% end %>
 <% end %>

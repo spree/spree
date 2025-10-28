@@ -1,28 +1,23 @@
 .bulk-panel-container {
   display: inline-flex;
   align-items: center;
-  border-radius: $border-radius-lg;
-  background-color: $white;
+  border-radius: 1rem;
+  background-color: $dropdown-bg;
   box-shadow: $dropdown-box-shadow;
   animation: bounceInUp;
   animation-duration: 0.5s;
+  height: 3rem;
+  gap: 0.5rem;
 
   .btn {
-    border-width: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    height: 2.75rem;
-    border-radius: 0;
-    background-color: transparent;
-    box-shadow: none;
-
+    height: 2.5rem;
     &:hover {
       background-color: $gray-50;
     }
   }
 
   > * {
-    height: 2.75rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,11 +25,6 @@
     &:first-child {
       border-top-left-radius: $border-radius-lg;
       border-bottom-left-radius: $border-radius-lg;
-
-      .btn {
-        border-top-left-radius: $border-radius-lg;
-        border-bottom-left-radius: $border-radius-lg;
-      }
     }
 
     &:last-child {
@@ -45,18 +35,6 @@
         border-top-right-radius: $border-radius-lg;
         border-bottom-right-radius: $border-radius-lg;
       }
-    }
-
-    &:after {
-      content: '';
-      display: block;
-      width: 1px;
-      height: 100%;
-      background-color: $gray-50;
-    }
-
-    &:last-child:after {
-      display: none;
     }
   }
 
@@ -93,10 +71,11 @@
   padding-right: 0;
 
   .bulk-operations-counter-label {
-    margin-right: 1rem;
+    padding-right: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    border-right: 1px solid $border-color;
   }
 }

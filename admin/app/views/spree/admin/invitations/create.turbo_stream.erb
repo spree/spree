@@ -1,4 +1,4 @@
 <%= turbo_render_alerts %>
-<%= turbo_close_modal %>
+<%= turbo_close_dialog %>
 
 <%= turbo_stream.prepend 'invitations', partial: 'spree/admin/invitations/invitation', locals: { invitation: @invitation } %>

@@ -1,32 +1,30 @@
-<%= turbo_stream.update :dialog_modal do %>
+<%= turbo_stream.update :dialog do %>
   <%= form_for @address, url: spree.admin_order_billing_address_path(@order), data: {controller: 'auto-submit', form_target: 'form', turbo_frame: :_top}, method: :post do |f| %>
-    <div class="modal-content">
-      <%= modal_header(Spree.t(:new_billing_address)) %>
-      <div class="modal-body d-flex flex-col gap-3" data-controller="order-billing-address">
-        <div>
-          <% if @order.shipping_address.present? %>
-            <%= label_tag nil, class: 'form-control custom-radio' do %>
-              <%= radio_button_tag :billing_address_type, :same_as_shipping, true, class: 'custom-control-input', data: {action: 'order-billing-address#hideForms'} %>
-              <span class="custom-control-label ml-4"><%= Spree.t(:same_as_shipping_address) %></span>
-            <% end %>
-          <% end %>
+    <%= dialog_header(Spree.t(:new_billing_address)) %>
+    <div class="dialog-body d-flex flex-col gap-3" data-controller="order-billing-address">
+      <div>
+        <% if @order.shipping_address.present? %>
           <%= label_tag nil, class: 'form-control custom-radio' do %>
-            <%= radio_button_tag :billing_address_type, :new, @order.shipping_address.nil?, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "new_address"} %>
-            <span class="custom-control-label ml-4"><%= Spree.t(:add_new_address) %></span>
+            <%= radio_button_tag :billing_address_type, :same_as_shipping, true, class: 'custom-control-input', data: {action: 'order-billing-address#hideForms'} %>
+            <span class="custom-control-label ml-4"><%= Spree.t(:same_as_shipping_address) %></span>
           <% end %>
-          <% if @order.user.present? && @order.user.addresses.many? %>
-            <%= label_tag nil, class: 'form-control custom-radio' do %>
-              <%= radio_button_tag :billing_address_type, :existing, false, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "existing_address"} %>
-              <span class="custom-control-label ml-4"><%= Spree.t(:select_existing_address) %></span>
-            <% end %>
+        <% end %>
+        <%= label_tag nil, class: 'form-control custom-radio' do %>
+          <%= radio_button_tag :billing_address_type, :new, @order.shipping_address.nil?, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "new_address"} %>
+          <span class="custom-control-label ml-4"><%= Spree.t(:add_new_address) %></span>
+        <% end %>
+        <% if @order.user.present? && @order.user.addresses.many? %>
+          <%= label_tag nil, class: 'form-control custom-radio' do %>
+            <%= radio_button_tag :billing_address_type, :existing, false, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "existing_address"} %>
+            <span class="custom-control-label ml-4"><%= Spree.t(:select_existing_address) %></span>
           <% end %>
-        </div>
-        <%= render 'form', address: @address, f: f %>
+        <% end %>
       </div>
-      <div class="modal-footer">
-        <%= modal_discard_button %>
-        <%= turbo_save_button_tag Spree.t('actions.save') %>
-      </div>
+      <%= render 'form', address: @address, f: f %>
+    </div>
+    <div class="dialog-footer">
+      <%= dialog_discard_button %>
+      <%= turbo_save_button_tag Spree.t('actions.save') %>
     </div>
   <% end %>
 <% end %>

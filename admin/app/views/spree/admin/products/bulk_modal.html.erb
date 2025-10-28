@@ -1,18 +1,16 @@
-<%= turbo_frame_tag :bulk_modal do %>
-  <div class="modal-content">
-    <%= modal_header(@title) %>
-    <div class="modal-body">
-      <p><%= @body %></p>
+<%= turbo_frame_tag :bulk_dialog do %>
+  <%= dialog_header(@title, 'bulk-dialog') %>
+  <div class="dialog-body overflow-visible">
+    <p><%= @body %></p>
 
-      <% if params[:kind] == 'add_to_taxons' || params[:kind] == 'remove_from_taxons' %>
-        <%= tom_select_tag 'taxon_ids', multiple: true, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json), required: true %>
-      <% elsif params[:kind] == 'add_tags' || params[:kind] == 'remove_tags' %>
-        <%= tom_select_tag 'tags', multiple: true, class: 'w-100', options: tags_json_array, required: true, value_field: :name, create: params[:kind] == 'add_tags' %>
-      <% end %>
-    </div>
-    <div class="modal-footer">
-      <%= modal_discard_button %>
-      <%= turbo_save_button_tag %>
-    </div>
+    <% if params[:kind] == 'add_to_taxons' || params[:kind] == 'remove_from_taxons' %>
+      <%= tom_select_tag 'taxon_ids', multiple: true, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json), required: true %>
+    <% elsif params[:kind] == 'add_tags' || params[:kind] == 'remove_tags' %>
+      <%= tom_select_tag 'tags', multiple: true, class: 'w-100', options: tags_json_array, required: true, value_field: :name, create: params[:kind] == 'add_tags' %>
+    <% end %>
+  </div>
+  <div class="dialog-footer">
+    <%= dialog_discard_button('bulk-dialog') %>
+    <%= turbo_save_button_tag %>
   </div>
 <% end %>

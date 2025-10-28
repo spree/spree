@@ -24,9 +24,7 @@
     <% if can?(:create, Spree::Store) && Spree.root_domain.present? %>
       <div class="dropdown-divider"></div>
 
-      <span data-toggle="modal" data-target="#modal-lg">
-        <%= link_to_with_icon 'building-store', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item', data: { turbo_frame: 'dialog_modal_lg' } %>
-      </span>
+      <%= link_to_with_icon 'building-store', Spree.t(:new_store), spree.new_admin_store_path, class: 'dropdown-item' %>
     <% end %>
   </div>
 </div>

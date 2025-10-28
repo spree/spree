@@ -1,0 +1,27 @@
+.admin-wizard {
+  .store-dropdown {
+    border-bottom: 1px solid $border-color;
+  }
+
+  h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 1px solid $border-color;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: $gray-25;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 1000;
+  }
+}

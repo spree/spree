@@ -1,5 +1,0 @@
-<%= turbo_stream.append :modal_scripts  do %>
-  <%= javascript_tag do %>
-    Turbo.visit("<%= spree.edit_admin_order_path(@order) %>", { action: "replace" })
-  <% end %>
-<% end %>

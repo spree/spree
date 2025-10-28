@@ -5,7 +5,7 @@
   </head>
 
   <body class="admin admin-wizard min-vh-100 <%= controller_name %> <%= action_name %>"
-    data-controller="admin drawer"
+    data-controller="admin drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
@@ -25,6 +25,7 @@
     </main>
     
     <%= render 'spree/admin/shared/drawer' %>
+    <%= render "spree/admin/shared/dialog" %>
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
 

@@ -65,7 +65,7 @@ $font-size-plus:   0.875rem !default;
 $font-size-sm:    0.75rem !default;
 $font-size-lg:    1rem !default;
 $font-weight-normal: 400 !default;
-$font-weight-bold:            500 !default;
+$font-weight-bold:            600 !default;
 $headings-font-family: $font-family-sans-serif;
 $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
@@ -135,8 +135,8 @@ $transition-collapse:         height .15s ease !default;
 $transition-collapse-width:   width .15s ease !default;
 
 $badge-font-size:                   $font-size-sm !default;
-$badge-font-weight:                 500 !default;
-$badge-padding-y:                   .25em !default;
+$badge-font-weight:                 $font-weight-normal !default;
+$badge-padding-y:                   .35em !default;
 $badge-padding-x:                   .45em !default;
 $badge-border-radius:               $border-radius-sm !default;
 
@@ -167,7 +167,7 @@ $dropdown-border-width:  0px !default;
 $dropdown-border-radius: 1rem !default;
 $dropdown-inner-border-radius: 0.75rem !default;
 $dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
-$dropdown-box-shadow:    0px 0px 0px 1px $border-color, 0px 6px 12px -3px $gray-100, 0px 6px 18px 0px $gray-100 !default;
+$dropdown-box-shadow:    0px 0px 0px 1px $gray-200, 0px 6px 12px -3px $gray-200, 0px 6px 18px 0px $gray-200 !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;

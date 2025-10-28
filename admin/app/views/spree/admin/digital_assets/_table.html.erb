@@ -22,15 +22,14 @@
           >
             <%= Spree.t(:no_resource_found, resource: Spree.t(:digital_assets)) %>
             <% if can?(:create, Spree::Digital.new(variant: @product.default_variant)) %>
-              <span data-toggle="modal" data-target="#modal">
-                <%= link_to_with_icon "plus",
-                Spree.t(:add_one),
-                spree.new_admin_product_digital_asset_path(@product),
-                class: "btn btn-light ml-3",
-                data: {
-                  turbo_frame: "dialog_modal",
-                } %>
-              </span>
+              <%= link_to_with_icon "plus",
+              Spree.t(:add_one),
+              spree.new_admin_product_digital_asset_path(@product),
+              class: "btn btn-light ml-3",
+              data: {
+                turbo_frame: "dialog",
+                action: 'dialog#open',
+              } %>
             <% end %>
           </div>
         </td>

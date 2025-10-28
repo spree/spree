@@ -22,6 +22,8 @@ const removeTooltips = () => {
 }
 
 const resetDialogModal = () => {
+  console.warn('resetDialogModal is deprecated and will be removed in Spree 6')
+
   const modalElement = document.getElementById('dialog_modal')
   const modalTitle = modalElement ? modalElement.querySelector('.modal-title') : null
   const modalBody = modalElement ? modalElement.querySelector('.modal-body') : null

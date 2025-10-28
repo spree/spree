@@ -1,14 +1,12 @@
-<%= turbo_frame_tag :dialog_modal do %>
+<%= turbo_frame_tag :dialog do %>
   <%= form_for :digital_asset, url: spree.admin_product_digital_asset_path(@product, @digital_asset), method: :put do |f| %>
-    <div class="modal-content">
-      <%= modal_header(@digital_asset.attachment.filename) %>
-      <div class="modal-body">
-        <%= render "spree/admin/digital_assets/form", f: f %>
-      </div>
-      <div class="modal-footer">
-        <%= modal_discard_button %>
-        <%= turbo_save_button_tag Spree.t("actions.save"), data: { turbo_frame: :_top } %>
-      </div>
+    <%= dialog_header(@digital_asset.attachment.filename) %>
+    <div class="dialog-body">
+      <%= render "spree/admin/digital_assets/form", f: f %>
+    </div>
+    <div class="dialog-footer">
+      <%= dialog_discard_button %>
+      <%= turbo_save_button_tag Spree.t("actions.save"), data: { turbo_frame: :_top } %>
     </div>
   <% end %>
 <% end %>

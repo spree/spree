@@ -7,7 +7,9 @@
 <% if @order.user.present? && @order.user.addresses.many? %>
   <div>
     <div class="w-100 text-center mb-2"><%= Spree.t(:or_select_other_address) %></div>
-    <%= label_tag :shipping_address_id, Spree.t(:existing_address), class: "sr-only" %>
-    <%= tom_select_tag :shipping_address_id, {include_blank: Spree.t(:existing_address), class: "mb-2", options: @order.user.addresses.map { |a| {id: a.id, name: a.to_s.gsub('<br/>', ", ")}}.as_json, select_data: {action: 'auto-submit#submit'} }  %>
+    <%= label_tag :shipping_address_id, Spree.t(:existing_address), class: 'sr-only' %>
+    <%= select_tag :shipping_address_id, 
+                   options_for_select(@order.user.addresses.map { |a| [a.to_s.gsub('<br/>', ", "), a.id]}), 
+                   { include_blank: Spree.t(:select_existing_address), class: "custom-select", data: { action: 'auto-submit#submit' } } %>
   </div>
 <% end %>

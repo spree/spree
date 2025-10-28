@@ -10,6 +10,10 @@ describe 'Store admin', type: :feature, js: true do
   before do
     allow(Spree).to receive(:root_domain).and_return('lvh.me')
     allow_any_instance_of(Spree::Admin::BaseController).to receive(:try_spree_current_user).and_return(admin_user)
+
+    # Allow new store subdomain hosts for testing
+    Rails.application.config.hosts << 'new-store.lvh.me'
+    Rails.application.config.hosts << /.*\.lvh\.me/
   end
 
   describe 'creating another store' do
@@ -17,10 +21,16 @@ describe 'Store admin', type: :feature, js: true do
       visit spree.admin_root_path
       find('#store-menu .dropdown:last-child button').click
       click_on 'New Store'
+
+      expect(page).to have_content('New Store')
       fill_in 'store_name', with: 'New Store Name'
       click_button 'Create'
-      # Wait for the redirect to complete
-      expect(page).to have_content('New Store Name')
+
+      expect(page).to have_content('Getting started')
+
+      new_store = Spree::Store.last
+
+      expect(page).to have_current_path(spree.admin_getting_started_url(host: new_store.url, port: Capybara.current_session.server.port))
     end
   end
 

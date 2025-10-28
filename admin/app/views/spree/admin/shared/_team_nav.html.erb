@@ -8,7 +8,5 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <span data-toggle="modal" data-target="#modal">
-    <%= link_to_with_icon 'send', Spree.t('actions.send_invitation'), spree.new_admin_invitation_path, class: "btn btn-primary", data: { turbo_frame: 'dialog_modal' } %>
-  </span>
+  <%= link_to_with_icon 'send', Spree.t('actions.send_invitation'), spree.new_admin_invitation_path, class: "btn btn-primary", data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
 <% end if can? :create, Spree::Invitation %>

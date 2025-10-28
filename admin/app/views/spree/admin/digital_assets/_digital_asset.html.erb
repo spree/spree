@@ -6,16 +6,15 @@
   <td><%= number_to_human_size(digital_asset.attachment.byte_size) %></td>
   <td class="actions">
     <% if can? :edit, digital_asset %>
-      <span data-toggle="modal" data-target="#modal">
-        <%= link_to_edit(
-          digital_asset,
-          no_text: true,
-          url: spree.edit_admin_product_digital_asset_path(digital_asset.product, digital_asset),
-          data: {
-            turbo_frame: "dialog_modal",
-          },
-        ) %>
-      </span>
+      <%= link_to_edit(
+        digital_asset,
+        no_text: true,
+        url: spree.edit_admin_product_digital_asset_path(digital_asset.product, digital_asset),
+        data: {
+          turbo_frame: "dialog",
+          action: 'dialog#open',
+        },
+      ) %>
     <% end %>
     <% if can? :destroy, digital_asset %>
       <%= link_to_delete(

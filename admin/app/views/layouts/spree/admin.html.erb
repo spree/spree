@@ -13,7 +13,7 @@
 
     <%= render "spree/admin/shared/header" %>
     <%= render "spree/admin/shared/sidebar" %>
-    <main id="content" data-controller="drawer">
+    <main id="content" data-controller="drawer dialog export-dialog">
       <%= render "spree/admin/shared/content_header" %>
       <%= render "spree/admin/shared/page_tabs" %>
       <%= render "spree/admin/shared/page_alerts" %>
@@ -22,6 +22,7 @@
       </div>
       <%= render "spree/admin/shared/footer" %>
       <%= render 'spree/admin/shared/drawer' %>
+      <%= render "spree/admin/shared/dialog" %>
     </main>
     <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
