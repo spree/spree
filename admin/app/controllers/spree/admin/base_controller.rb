@@ -34,7 +34,7 @@ module Spree
       def redirect_unauthorized_access
         if try_spree_current_user
           flash[:error] = Spree.t(:authorization_failure)
-          redirect_to spree.admin_forbidden_path, allow_other_host: true
+          redirect_back(fallback_location: spree.admin_forbidden_path)
         else
           store_location
           try_to_redirect_to_login_path
