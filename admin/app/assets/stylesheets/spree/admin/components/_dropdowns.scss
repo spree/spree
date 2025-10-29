@@ -26,14 +26,14 @@
   box-shadow: $dropdown-box-shadow;
 
   .dropdown-item, .dropdown-header {
-    padding-top: $input-btn-padding-y;
-    padding-bottom: $input-btn-padding-y;
-    padding-left: 0.65rem;
-    padding-right: 0.65rem;
+    padding-top: $dropdown-item-padding-y;
+    padding-bottom: $dropdown-item-padding-y;
+    padding-left: $dropdown-item-padding-x;
+    padding-right: $dropdown-item-padding-x;
   }
   .dropdown-header {
-    padding-left: 0.65rem;
-    padding-right: 0.5rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
   }
 
   .dropdown-item {
@@ -43,8 +43,6 @@
     align-items: center;
     justify-content: flex-start;
     background: transparent;
-    padding-top: 0.45rem;
-    padding-bottom: 0.45rem;
 
     transition-property: background-color, color;
     transition-duration: 0.01s;
@@ -93,6 +91,7 @@
   }
   .dropdown-header {
     font-weight: $font-weight-base;
+    font-size: $font-size-base;
   }
 
   .dropdown-item:last-child {

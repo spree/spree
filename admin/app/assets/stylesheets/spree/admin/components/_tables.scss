@@ -35,11 +35,11 @@ table.table {
     th {
       background-color: $light;
       @extend .text-muted;
-      font-size: $font-size-sm;
+      font-size: $font-size-base;
       font-weight: $font-weight-normal;
       vertical-align: middle;
-      padding-top: 0.3rem;
-      padding-bottom: 0.3rem;
+      padding-top: 0.45rem;
+      padding-bottom: 0.45rem;
     }
     th:first-child {
       border-top-left-radius: $card-border-radius;

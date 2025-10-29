@@ -1,7 +1,7 @@
 .filter-wrap {
-  padding: 0.5rem;
+  padding: 0.55rem;
   border-bottom: 1px solid $table-border-color;
-  gap: 0.5rem;
+  gap: 0.55rem;
   position: sticky;
   top: $header-height;
   z-index: 1000;
@@ -69,7 +69,7 @@ i.js-delete-filter {
   }
 
   &.asc, &.desc {
-    font-weight: $font-weight-bold;
+    font-weight: $font-weight-medium;
     svg {
       color: $gray-600 !important;
     }

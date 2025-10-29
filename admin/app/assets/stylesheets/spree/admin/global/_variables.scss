@@ -60,12 +60,13 @@ $body-bg: $white !default;
 $enable-shadows: false;
 $enable-responsive-font-sizes: true;
 $font-family-sans-serif: Inter, sans-serif !default;
-$font-size-base:   0.813rem !default;
+$font-size-base:   0.8125rem !default;
 $font-size-plus:   0.875rem !default;
 $font-size-sm:    0.75rem !default;
 $font-size-lg:    1rem !default;
 $font-weight-normal: 400 !default;
-$font-weight-bold:            600 !default;
+$font-weight-medium: 500 !default;
+$font-weight-bold: 600 !default;
 $headings-font-family: $font-family-sans-serif;
 $line-height-base:            1.5 !default;
 $border-radius: 0.5rem !default;
@@ -112,7 +113,7 @@ $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 $input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
 
-$btn-font-weight: 500 !default;
+$btn-font-weight: $font-weight-medium !default;
 
 $card-border-width: 1px !default;
 $card-bg: $white !default;
@@ -173,6 +174,9 @@ $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
 $dropdown-divider-margin-y: 0.25rem !default;
 $dropdown-header-color: $text-muted !default;
+$dropdown-item-padding-y:           0.45rem !default;
+$dropdown-item-padding-x:           0.65rem !default;
+
 $zindex-dropdown: 1050;
 
 $modal-backdrop-bg:                 $body-bg !default;
@@ -218,7 +222,7 @@ $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1rem !default;
 
 $header-bg: $body-bg !default;
-$header-height: 60px !default;
+$header-height: 54px !default;
 $sidebar-width: 220px !default;
 $sidebar-bg: $light !default;
 

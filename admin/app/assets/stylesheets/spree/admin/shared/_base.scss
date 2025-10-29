@@ -2,6 +2,8 @@
 html {
   min-height: 100%;
   letter-spacing: normal;
+  text-rendering: optimizeLegibility;
+  text-size-adjust: 100%;
 }
 body {
   @extend .h-100;
@@ -23,7 +25,7 @@ strong {
 }
 
 .font-weight-semibold {
-  font-weight: 500 !important;
+  font-weight: $font-weight-medium !important;
 }
 
 .text-size-lg, .font-size-lg {
@@ -517,7 +519,7 @@ turbo-frame[loading] .spinner-border, turbo-frame[busy] .spinner-border {
   @extend .rounded-pill;
   @extend .text-uppercase;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   padding: 5px 16px ;
   letter-spacing: 2.24px;
   border: 1px solid $gray-200;
@@ -685,7 +687,7 @@ div.uppy-Root {
   background-color: $gray-200;
   color: $gray-500;
   font-size: $font-size-base;
-  font-weight: 500;
+  font-weight: $font-weight-medium;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -695,6 +697,7 @@ div.uppy-Root {
   gap: 0.5rem;
   align-items: center;
   color: $text-muted;
+  font-weight: $font-weight-medium;
   
   li {
     a {
