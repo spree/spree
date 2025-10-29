@@ -32,6 +32,12 @@ describe Spree::Admin::BaseController, type: :controller do
         expect(response).to redirect_to('/admin/products')
         expect(flash[:error]).to eq(Spree.t(:authorization_failure))
       end
+
+      it 'redirects to forbidden path as fallback when no referer and shows a flash error' do
+        get :index
+        expect(response).to redirect_to('/admin/forbidden')
+        expect(flash[:error]).to eq(Spree.t(:authorization_failure))
+      end
     end
 
     context 'when guest user' do
