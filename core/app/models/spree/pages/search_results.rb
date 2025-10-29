@@ -30,7 +30,7 @@ module Spree
 
       def default_sections
         [
-          Spree::PageSections::PageTitle.new,
+          Spree::PageSections::PageTitle.new(preferred_title: 'Search Results'),
           Spree::PageSections::ProductGrid.new
         ]
       end

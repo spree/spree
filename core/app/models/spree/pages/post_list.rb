@@ -15,7 +15,7 @@ module Spree
 
       def default_sections
         [
-          Spree::PageSections::PageTitle.new,
+          Spree::PageSections::PageTitle.new(preferred_title: DISPLAY_NAME),
           Spree::PageSections::PostGrid.new
         ]
       end
