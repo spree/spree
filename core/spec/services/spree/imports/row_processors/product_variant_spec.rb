@@ -333,4 +333,113 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.sku).to eq 'NEW-MISSING-SHIRT-SKU'
     end
   end
+
+  context 'with metafields' do
+    let!(:brand_metafield_definition) do
+      create(:metafield_definition,
+             namespace: 'custom',
+             key: 'brand',
+             name: 'Brand',
+             resource_type: 'Spree::Product',
+             metafield_type: 'Spree::Metafields::ShortText')
+    end
+
+    let!(:material_metafield_definition) do
+      create(:metafield_definition,
+             namespace: 'custom',
+             key: 'material',
+             name: 'Material',
+             resource_type: 'Spree::Product',
+             metafield_type: 'Spree::Metafields::ShortText')
+    end
+
+    let(:row_data) do
+      base_data = csv_row_hash(
+        'slug' => 'denim-shirt',
+        'name' => 'Denim Shirt',
+        'status' => 'active',
+        'price' => '62.99',
+        'currency' => 'USD'
+      )
+      # Add metafield keys directly to the hash
+      base_data.merge(
+        'metafield.custom.brand' => 'Awesome Brand',
+        'metafield.custom.material' => 'Cotton'
+      )
+    end
+
+    # Override the top-level before to create mappings after metafield definitions exist
+    before do
+      import.create_mappings
+    end
+
+    it 'creates mappings for metafields automatically' do
+      expect(import.mappings.where(schema_field: 'metafield.custom.brand').exists?).to be true
+      expect(import.mappings.where(schema_field: 'metafield.custom.material').exists?).to be true
+    end
+
+    it 'auto-assigns file_column for metafield mappings when CSV headers match' do
+      # Verify CSV headers include metafield keys
+      expect(import.csv_headers).to include('metafield.custom.brand', 'metafield.custom.material')
+
+      brand_mapping = import.mappings.find_by(schema_field: 'metafield.custom.brand')
+      material_mapping = import.mappings.find_by(schema_field: 'metafield.custom.material')
+
+      expect(brand_mapping.file_column).to eq('metafield.custom.brand')
+      expect(material_mapping.file_column).to eq('metafield.custom.material')
+      expect(brand_mapping.mapped?).to be true
+      expect(material_mapping.mapped?).to be true
+    end
+
+    it 'sets metafields on the product' do
+      product = variant.product
+
+      expect(product).to be_persisted
+      expect(product.has_metafield?('custom.brand')).to be true
+      expect(product.has_metafield?('custom.material')).to be true
+      expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+      expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+    end
+
+    context 'when updating an existing product with metafields' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p.set_metafield('custom.brand', 'Old Brand')
+        p.set_metafield('custom.material', 'Old Material')
+        p
+      end
+
+      it 'updates existing metafields' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+      end
+    end
+
+    context 'when metafield value is blank' do
+      let(:row_data) do
+        base_data = csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'status' => 'active',
+          'price' => '62.99',
+          'currency' => 'USD'
+        )
+        base_data.merge(
+          'metafield.custom.brand' => 'Awesome Brand',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'skips blank metafield values' do
+        product = variant.product
+
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_metafield?('custom.material')).to be false
+      end
+    end
+  end
 end

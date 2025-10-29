@@ -99,7 +99,21 @@ module Spree
     end
 
     def schema_fields
-      import_schema.fields
+      base_fields = import_schema.fields
+
+      # Dynamically add metafield definitions if the model supports metafields
+      if model_class_supports_metafields?
+        metafield_fields = metafield_definitions_for_model.map do |definition|
+          {
+            name: definition.csv_header_name,
+            label: definition.name,
+            required: false
+          }
+        end
+        base_fields + metafield_fields
+      else
+        base_fields
+      end
     end
 
     def unmapped_file_columns
@@ -213,6 +227,18 @@ module Spree
       return if attachment.blank?
 
       errors.add(:attachment, :content_type) unless attachment.content_type.in?(%w[text/csv])
+    end
+
+    def model_class_supports_metafields?
+      return false unless model_class.present?
+
+      model_class.included_modules.include?(Spree::Metafields)
+    end
+
+    def metafield_definitions_for_model
+      return [] unless model_class.present?
+
+      Spree::MetafieldDefinition.for_resource_type(model_class.name)
     end
   end
 end

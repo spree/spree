@@ -60,6 +60,7 @@ module Spree
 
           product = assign_attributes_to_product(product)
           product.save!
+          handle_metafields(product)
           product
         end
 
@@ -160,6 +161,20 @@ module Spree
             end
 
             options
+          end
+        end
+
+        def handle_metafields(product)
+          return unless product.class.included_modules.include?(Spree::Metafields)
+
+          metafield_attributes = attributes.select { |key, _value| key.to_s.start_with?('metafield.') }
+          
+          metafield_attributes.each do |attribute_key, value|
+            next if value.blank?
+            
+            # Extract namespace.key from "metafield.namespace.key"
+            full_key = attribute_key.to_s.sub(/^metafield\./, '')
+            product.set_metafield(full_key, value.to_s.strip)
           end
         end
 
