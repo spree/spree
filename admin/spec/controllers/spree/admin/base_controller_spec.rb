@@ -26,7 +26,7 @@ describe Spree::Admin::BaseController, type: :controller do
                                                                              persisted?: true, selected_locale: nil))
       end
 
-      it 'redirects to forbidden path as fallback and shows a flash error' do
+      it 'redirects back to referer when present and shows a flash error' do
         request.env['HTTP_REFERER'] = '/admin/products'
         get :index
         expect(response).to redirect_to('/admin/products')
