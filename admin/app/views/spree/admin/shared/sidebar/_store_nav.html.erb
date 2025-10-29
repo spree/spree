@@ -67,6 +67,8 @@
       <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     <% end %>
 
+    <%= nav_item(Spree.t('admin.edit_profile'), spree.edit_admin_profile_path, icon: 'user-scan') %>
+
     <%= render_admin_partials(:settings_nav_partials) %>
   </ul>
 <% else %>

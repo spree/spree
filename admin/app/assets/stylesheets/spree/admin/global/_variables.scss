@@ -1,6 +1,6 @@
 // https://github.com/twbs/bootstrap/blob/v4.6.2/scss/_variables.scss
 
-$gray-25: #FAFAFB;
+$gray-25: #FAFAFA;
 $gray-50: #F3F3F3;
 $gray-100: #E3E3E3 !default;
 $gray-200: #D5D5D5 !default;
@@ -92,7 +92,7 @@ $component-active-bg:         $blue !default;
 $input-placeholder-color: $gray-500;
 $input-padding-y:         .55rem !default;
 $input-disabled-bg: $gray-25 !default;
-$input-focus-border-color: rgba($blue, 0.75) !default;
+$input-focus-border-color: $blue !default;
 $custom-select-disabled-bg: $gray-50 !default;
 
 $text-muted: $gray-600 !default;
@@ -107,7 +107,7 @@ $nav-link-padding-y:                .5rem !default;
 $nav-link-padding-x:                .6rem !default;
 
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
-$box-shadow-xs: rgba(43, 34, 51, 0.02) 0px 1px 2px !default;
+$box-shadow-xs: rgba(43, 34, 51, 0.03) 0px 1px 1px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 $input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
@@ -167,7 +167,7 @@ $dropdown-border-width:  0px !default;
 $dropdown-border-radius: 1rem !default;
 $dropdown-inner-border-radius: 0.75rem !default;
 $dropdown-link-hover-bg: rgba($gray-100, 0.5) !default;
-$dropdown-box-shadow:    0px 0px 0px 1px $gray-200, 0px 6px 12px -3px $gray-200, 0px 6px 18px 0px $gray-200 !default;
+$dropdown-box-shadow:    0px 0px 0px 1px $gray-200, 0px 6px 12px -3px rgba($gray-300, 0.35), 0px 6px 18px 0px rgba($gray-300, 0.35) !default;
 $dropdown-padding-x:    0.25rem !default;
 $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;

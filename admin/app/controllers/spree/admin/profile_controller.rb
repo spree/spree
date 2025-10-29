@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class ProfileController < BaseController
+      include Spree::Admin::SettingsConcern
+
       def edit
         @user = try_spree_current_user
       end

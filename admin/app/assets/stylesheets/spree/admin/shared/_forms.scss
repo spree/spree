@@ -30,7 +30,7 @@ label {
 .form-control, .text-input, .trix-container, .ts-control, trix-toolbar .trix-dialog .trix-input, .custom-select, .input-group-text, .custom-file-label {
   box-shadow: $input-box-shadow;
   transition-property: box-shadow, border-color;
-  transition-duration: 0.25s;
+  transition-duration: 0.15s;
   transition-timing-function: ease;
 
   &:disabled, &[readonly] {
