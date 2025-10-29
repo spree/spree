@@ -23,7 +23,7 @@ module Spree
 
       def default_sections
         [
-          Spree::PageSections::PageTitle.new,
+          Spree::PageSections::PageTitle.new(preferred_title: Spree.t(:shop_all)),
           Spree::PageSections::ProductGrid.new
         ]
       end
