@@ -26,9 +26,10 @@ describe Spree::Admin::BaseController, type: :controller do
                                                                              persisted?: true, selected_locale: nil))
       end
 
-      it 'redirects back and shows a flash error path' do
+      it 'redirects to forbidden path as fallback and shows a flash error' do
+        request.env['HTTP_REFERER'] = '/admin/products'
         get :index
-        expect(response).to redirect_to('/admin/forbidden')
+        expect(response).to redirect_to('/admin/products')
         expect(flash[:error]).to eq(Spree.t(:authorization_failure))
       end
     end
