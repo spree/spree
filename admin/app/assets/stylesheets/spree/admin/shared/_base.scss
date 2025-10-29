@@ -10,6 +10,12 @@ body {
   overflow-y:scroll;
 }
 
+body * {
+  &:focus {
+    outline-color: theme-color('blue') !important;
+  }
+}
+
 html, body {
   overscroll-behavior: none;
 }

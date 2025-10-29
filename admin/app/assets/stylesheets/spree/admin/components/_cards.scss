@@ -45,8 +45,9 @@
 .card-header {
   display: flex;
   align-items: center;
-  height: 50px;
+  height: 54px;
   border-bottom: 1px solid $gray-50;
+  padding-right: 1rem;
 
   .card-title {
     margin-bottom: 0;
