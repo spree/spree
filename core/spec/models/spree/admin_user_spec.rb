@@ -58,7 +58,7 @@ describe Spree::LegacyUser, type: :model do
     subject(:destroy_admin_user) { admin_user.destroy }
 
     context 'admin user invited other' do
-      let(:other_user) { create(:user, email: 'other_user@example.com') }
+      let(:other_user) { create(:admin_user, email: 'other_user@example.com', without_admin_role: true) }
       let(:invitation) { create(:invitation, email: other_user.email, inviter: admin_user) }
 
       context 'other users accept invitation' do
