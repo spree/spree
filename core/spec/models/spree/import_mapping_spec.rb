@@ -61,7 +61,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
 
   describe '#required?' do
     context 'when schema_field is a required field' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'slug') }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'slug') }
 
       it 'returns true' do
         expect(mapping.required?).to be true
@@ -69,7 +69,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
     end
 
     context 'when schema_field is not a required field' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'description') }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'description') }
 
       it 'returns false' do
         expect(mapping.required?).to be false
@@ -79,7 +79,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
 
   describe '#mapped?' do
     context 'when file_column is present' do
-      let(:mapping) { create(:import_mapping, import: import, file_column: 'product_name') }
+      let(:mapping) { build(:import_mapping, import: import, file_column: 'product_name') }
 
       it 'returns true' do
         expect(mapping.mapped?).to be true
@@ -87,7 +87,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
     end
 
     context 'when file_column is blank' do
-      let(:mapping) { create(:import_mapping, import: import, file_column: nil) }
+      let(:mapping) { build(:import_mapping, import: import, file_column: nil) }
 
       it 'returns false' do
         expect(mapping.mapped?).to be false
@@ -121,7 +121,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
     end
 
     context 'when parameterized match exists' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'product_name', file_column: nil) }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'product_name', file_column: nil) }
       let(:csv_headers) { ['Product Name', 'Slug', 'SKU'] }
 
       it 'assigns the matching file column' do
@@ -140,7 +140,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
     end
 
     context 'when file_column is already set' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'slug', file_column: 'custom_column') }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'slug', file_column: 'custom_column') }
       let(:csv_headers) { ['Slug', 'SKU'] }
 
       it 'overwrites with matching column' do
@@ -152,7 +152,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
 
   describe '#schema_field_label' do
     context 'when schema_field exists in import schema' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'slug') }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'slug') }
 
       it 'returns the label for the schema field' do
         expect(mapping.schema_field_label).to eq('Slug')
@@ -179,7 +179,7 @@ RSpec.describe Spree::ImportMapping, type: :model do
     end
 
     context 'when schema_field does not exist in import schema' do
-      let(:mapping) { create(:import_mapping, import: import, schema_field: 'non_existent_field') }
+      let(:mapping) { build(:import_mapping, import: import, schema_field: 'non_existent_field') }
 
       it 'returns nil' do
         expect(mapping.schema_field_label).to be_nil

@@ -31,7 +31,7 @@ module Spree
     end
 
     def try_to_auto_assign_file_column(csv_headers)
-      self.file_column = csv_headers.find { |header| header.parameterize.downcase.strip == schema_field.parameterize.downcase.strip }
+      self.file_column = csv_headers.find { |header| header.parameterize.underscore.downcase.strip == schema_field.parameterize.underscore.downcase.strip }
     end
 
     # Returns the label for the schema field
