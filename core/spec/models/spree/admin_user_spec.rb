@@ -53,4 +53,23 @@ describe Spree::LegacyUser, type: :model do
       end
     end
   end
+
+  describe '#destroy (regression tests)' do
+    subject(:destroy_admin_user) { admin_user.destroy }
+
+    context 'admin user invited other' do
+      let(:other_user) { create(:admin_user, email: 'other_user@example.com', without_admin_role: true) }
+      let(:invitation) { create(:invitation, email: other_user.email, inviter: admin_user) }
+
+      context 'other users accept invitation' do
+        before do
+          invitation.accept!
+        end
+
+        it 'does not remove other user\'s role' do
+          expect { destroy_admin_user }.not_to change { other_user.role_users.count }
+        end
+      end
+    end
+  end
 end

@@ -15,7 +15,7 @@ module Spree
     belongs_to :inviter, polymorphic: true # User or AdminUser
     belongs_to :invitee, polymorphic: true, optional: true # User or AdminUser
     belongs_to :role, class_name: 'Spree::Role'
-    has_one :role_user, dependent: :destroy, class_name: 'Spree::RoleUser'
+    has_one :role_user, dependent: :nullify, class_name: 'Spree::RoleUser', inverse_of: :invitation
 
     #
     # Validations
