@@ -113,21 +113,19 @@ module Spree
     # If model supports metafields, it will include the metafield definitions for this model
     # @return [Array<Hash>]
     def schema_fields
-      @schema_fields ||= begin
-        base_fields = import_schema.fields
+      base_fields = import_schema.fields
 
-        # Dynamically add metafield definitions if the model supports metafields
-        if model_class_supports_metafields?
-          metafield_fields = metafield_definitions_for_model.map do |definition|
-            {
-              name: definition.csv_header_name,
-              label: definition.name
-            }
-          end
-          base_fields + metafield_fields
-        else
-          base_fields
+      # Dynamically add metafield definitions if the model supports metafields
+      if model_class_supports_metafields?
+        metafield_fields = metafield_definitions_for_model.map do |definition|
+          {
+            name: definition.csv_header_name,
+            label: definition.name
+          }
         end
+        base_fields + metafield_fields
+      else
+        base_fields
       end
     end
 

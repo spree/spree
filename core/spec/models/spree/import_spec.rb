@@ -231,8 +231,8 @@ RSpec.describe Spree::Import, :job, type: :model do
       it 'includes metafield fields' do
         metafield_fields = import.schema_fields.select { |f| f[:name].start_with?('metafield.') }
         expect(metafield_fields).to include(
-          { name: 'metafield.properties.manufacturer', label: 'Manufacturer', required: false },
-          { name: 'metafield.custom.brand', label: 'Brand', required: false }
+          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' },
+          { name: 'metafield.custom.brand', label: 'Brand' }
         )
       end
 
@@ -247,7 +247,7 @@ RSpec.describe Spree::Import, :job, type: :model do
       it 'has correct structure for metafield fields' do
         metafield_field = import.schema_fields.find { |f| f[:name] == 'metafield.properties.manufacturer' }
         expect(metafield_field).to eq(
-          { name: 'metafield.properties.manufacturer', label: 'Manufacturer', required: false }
+          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' }
         )
       end
     end
