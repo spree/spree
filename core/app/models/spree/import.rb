@@ -69,19 +69,26 @@ module Spree
     #
     preference :delimiter, :string, default: ','
 
+    # Returns true if the import is in mapping state
+    # @return [Boolean]
     def mapping?
       status == 'mapping'
     end
 
+    # Returns true if the import is processing or completed mapping
+    # @return [Boolean]
     def processing?
       ['processing', 'completed_mapping'].include?(status)
     end
 
+    # Returns true if the import is complete
+    # @return [Boolean]
     def complete?
       status == 'completed'
     end
 
-    # eg. Spree::Exports::Products => Spree::Product
+    # Returns the model class for the import
+    # @return [Class]
     def model_class
       if type == 'Spree::Imports::Customers'
         Spree.user_class
@@ -90,34 +97,64 @@ module Spree
       end
     end
 
+    # Returns the import schema for the import
+    # @return [Spree::ImportSchema]
     def import_schema
       "Spree::ImportSchemas::#{type.demodulize}".safe_constantize.new
     end
 
+    # Returns the row processor class for the import
+    # @return [Class]
     def row_processor_class
       "Spree::ImportRowProcessors::#{type.demodulize.singularize}".safe_constantize
     end
 
+    # Returns the fields for the import schema
+    # If model supports metafields, it will include the metafield definitions for this model
+    # @return [Array<Hash>]
     def schema_fields
-      import_schema.fields
+      base_fields = import_schema.fields
+
+      # Dynamically add metafield definitions if the model supports metafields
+      if model_class_supports_metafields?
+        metafield_fields = metafield_definitions_for_model.map do |definition|
+          {
+            name: definition.csv_header_name,
+            label: definition.name
+          }
+        end
+        base_fields + metafield_fields
+      else
+        base_fields
+      end
     end
 
+    # Returns the file columns that are not mapped
+    # @return [Array<String>]
     def unmapped_file_columns
       csv_headers.reject { |header| mappings.mapped.exists?(file_column: header) }
     end
 
+    # Returns the required fields for the import schema
+    # @return [Array<String>]
     def required_fields
       import_schema.required_fields
     end
 
+    # Returns the mapped fields for the import schema
+    # @return [Array<String>]
     def mapped_fields
       @mapped_fields ||= mappings.mapped.where(schema_field: required_fields)
     end
 
+    # Returns true if the mapping is done
+    # @return [Boolean]
     def mapping_done?
       mapped_fields.count == required_fields.count
     end
 
+    # Returns the display name for the import
+    # @return [String]
     def display_name
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
     end
@@ -153,10 +190,14 @@ module Spree
       end
     end
 
+    # Creates rows asynchronously
+    # @return [void]
     def create_rows_async
       Spree::Imports::CreateRowsJob.set(wait: 2.seconds).perform_later(id)
     end
 
+    # Processes rows asynchronously
+    # @return [void]
     def process_rows_async
       Spree::Imports::ProcessRowsJob.perform_later(id)
     end
@@ -173,19 +214,27 @@ module Spree
       broadcast_update_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
     end
 
+    # Returns the current ability for the import
+    # @return [Spree::Ability]
     def current_ability
       @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user, { store: store })
     end
 
     class << self
+      # Returns the available types for the import
+      # @return [Array<Class>]
       def available_types
         Rails.application.config.spree.import_types
       end
 
+      # Returns the available models for the import
+      # @return [Array<Class>]
       def available_models
         available_types.map(&:model_class)
       end
 
+      # Returns the type for the model
+      # @return [Class]
       def type_for_model(model)
         available_types.find { |type| type.model_class.to_s == model.to_s }
       end
@@ -213,6 +262,18 @@ module Spree
       return if attachment.blank?
 
       errors.add(:attachment, :content_type) unless attachment.content_type.in?(%w[text/csv])
+    end
+
+    def model_class_supports_metafields?
+      return false unless model_class.present?
+
+      model_class.included_modules.include?(Spree::Metafields)
+    end
+
+    def metafield_definitions_for_model
+      return [] unless model_class.present?
+
+      Spree::MetafieldDefinition.for_resource_type(model_class.name)
     end
   end
 end

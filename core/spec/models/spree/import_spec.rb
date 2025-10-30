@@ -181,7 +181,9 @@ RSpec.describe Spree::Import, :job, type: :model do
         'category3',
         'metafield.properties.fit',
         'metafield.properties.manufacturer',
-        'metafield.properties.material'
+        'metafield.properties.material',
+        'metafield.custom.brand',
+        'metafield.custom.material'
       ])
     end
 
@@ -192,6 +194,92 @@ RSpec.describe Spree::Import, :job, type: :model do
 
       it 'parses headers with custom delimiter' do
         expect(import.csv_headers).to eq(['slug', 'sku', 'name', 'price'])
+      end
+    end
+  end
+
+  describe '#schema_fields' do
+    context 'when model supports metafields' do
+      let!(:metafield_definition1) do
+        create(:metafield_definition,
+               namespace: 'properties',
+               key: 'manufacturer',
+               name: 'Manufacturer',
+               resource_type: 'Spree::Product')
+      end
+      let!(:metafield_definition2) do
+        create(:metafield_definition,
+               namespace: 'custom',
+               key: 'brand',
+               name: 'Brand',
+               resource_type: 'Spree::Product')
+      end
+
+      before do
+        import.type = 'Spree::Imports::Products'
+      end
+
+      it 'returns base fields from schema' do
+        base_fields = import.schema_fields.select { |f| !f[:name].start_with?('metafield.') }
+        expect(base_fields).to include(
+          { name: 'slug', label: 'Slug', required: true },
+          { name: 'sku', label: 'SKU', required: true },
+          { name: 'name', label: 'Name', required: true }
+        )
+      end
+
+      it 'includes metafield fields' do
+        metafield_fields = import.schema_fields.select { |f| f[:name].start_with?('metafield.') }
+        expect(metafield_fields).to include(
+          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' },
+          { name: 'metafield.custom.brand', label: 'Brand' }
+        )
+      end
+
+      it 'combines base fields and metafield fields' do
+        all_fields = import.schema_fields
+        base_field_count = Spree::ImportSchemas::Products::FIELDS.count
+        metafield_count = 2
+
+        expect(all_fields.count).to eq(base_field_count + metafield_count)
+      end
+
+      it 'has correct structure for metafield fields' do
+        metafield_field = import.schema_fields.find { |f| f[:name] == 'metafield.properties.manufacturer' }
+        expect(metafield_field).to eq(
+          { name: 'metafield.properties.manufacturer', label: 'Manufacturer' }
+        )
+      end
+    end
+
+    context 'when model does not support metafields' do
+      before do
+        import.type = 'Spree::Imports::Products'
+        # Mock model_class to return a class that doesn't include Metafields
+        allow(import).to receive(:model_class).and_return(double('ModelClass', included_modules: []))
+      end
+
+      it 'returns only base fields from schema' do
+        fields = import.schema_fields
+        expect(fields).to eq(Spree::ImportSchemas::Products::FIELDS)
+      end
+
+      it 'does not include any metafield fields' do
+        metafield_fields = import.schema_fields.select { |f| f[:name].start_with?('metafield.') }
+        expect(metafield_fields).to be_empty
+      end
+    end
+
+    context 'when model supports metafields but has no metafield definitions' do
+      before do
+        import.type = 'Spree::Imports::Products'
+        # Ensure no metafield definitions exist
+        Spree::MetafieldDefinition.where(resource_type: 'Spree::Product').destroy_all
+      end
+
+      it 'returns only base fields' do
+        fields = import.schema_fields
+        expect(fields).to eq(Spree::ImportSchemas::Products::FIELDS)
       end
     end
   end
