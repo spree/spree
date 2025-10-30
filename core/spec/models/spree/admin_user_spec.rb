@@ -67,7 +67,7 @@ describe Spree::LegacyUser, type: :model do
         end
 
         it 'does not remove other user\'s role' do
-          expect { destroy_admin_user }.to_not change { other_user.role_users.count }
+          expect { destroy_admin_user }.not_to change { other_user.role_users.count }
         end
       end
     end

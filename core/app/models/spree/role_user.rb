@@ -6,7 +6,7 @@ module Spree
     belongs_to :role, class_name: 'Spree::Role', foreign_key: :role_id
     belongs_to :user, polymorphic: true
     belongs_to :resource, polymorphic: true
-    belongs_to :invitation, class_name: 'Spree::Invitation', optional: true
+    belongs_to :invitation, class_name: 'Spree::Invitation', optional: true, inverse_of: :role_user
 
     #
     # Validations
