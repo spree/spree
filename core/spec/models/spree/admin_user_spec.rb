@@ -27,7 +27,7 @@ describe Spree::LegacyUser, type: :model do
 
   context 'Callbacks' do
     describe 'cleans up admin user resources' do
-      let!(:other_user) { create(:admin_user) }
+      let!(:other_admin_user) { create(:admin_user) }
       let!(:cancelled_orders) { create_list(:order, 2, canceler: admin_user, state: 'canceled') }
       let!(:approved_orders) { create_list(:order, 2, approver: admin_user) }
       let!(:gift_card_batches) { create_list(:gift_card_batch, 2, created_by: admin_user, amount: 100, prefix: 'TEST') }
