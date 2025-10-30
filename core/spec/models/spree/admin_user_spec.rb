@@ -27,7 +27,7 @@ describe Spree::LegacyUser, type: :model do
 
   context 'Callbacks' do
     describe 'cleans up admin user resources' do
-      let!(:other_admin_user) { create(:admin_user) }
+      let!(:other_user) { create(:admin_user) }
       let!(:cancelled_orders) { create_list(:order, 2, canceler: admin_user, state: 'canceled') }
       let!(:approved_orders) { create_list(:order, 2, approver: admin_user) }
       let!(:gift_card_batches) { create_list(:gift_card_batch, 2, created_by: admin_user, amount: 100, prefix: 'TEST') }
@@ -50,6 +50,25 @@ describe Spree::LegacyUser, type: :model do
         expect(reimbursements.all? { |reimbursement| reimbursement.reload.performed_by_id.nil? }).to be_truthy
         expect(posts.all? { |post| post.reload.author_id.nil? }).to be_truthy
         expect(store_credits.all? { |store_credit| store_credit.reload.created_by_id.nil? }).to be_truthy
+      end
+    end
+  end
+
+  describe '#destroy (regression tests)' do
+    subject(:destroy_admin_user) { admin_user.destroy }
+
+    context 'admin user invited other' do
+      let(:other_user) { create(:user, email: 'other_user@example.com') }
+      let(:invitation) { create(:invitation, email: other_user.email, inviter: admin_user) }
+
+      context 'other users accept invitation' do
+        before do
+          invitation.accept!
+        end
+
+        it 'does not remove other user\'s role' do
+          expect { destroy_admin_user }.to_not change { other_user.role_users.count }
+        end
       end
     end
   end
