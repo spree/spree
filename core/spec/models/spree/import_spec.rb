@@ -181,7 +181,9 @@ RSpec.describe Spree::Import, :job, type: :model do
         'category3',
         'metafield.properties.fit',
         'metafield.properties.manufacturer',
-        'metafield.properties.material'
+        'metafield.properties.material',
+        'metafield.custom.brand',
+        'metafield.custom.material'
       ])
     end
 
