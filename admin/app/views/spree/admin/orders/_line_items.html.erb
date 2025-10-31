@@ -1,7 +1,6 @@
-
-<%= turbo_frame_tag dom_id(@order, :line_items), class: "card mb-4" do %>
-  <% if @line_items.any? %>
-    <div class="card-header d-flex justify-content-between align-items-center">
+<% if @line_items.any? %>
+  <details class="card mb-4" <% if !@order.completed? || params[:line_item_updated].present? %>open<% end %>>
+    <summary class="card-header d-flex justify-content-between align-items-center list-style-none cursor-pointer border-0 bg-transparent">
       <h5 class="card-title d-flex align-items-center">
         <%= icon('shopping-cart', class: 'mr-2') %>
         <%= Spree.t(:line_items) %>
@@ -11,45 +10,43 @@
         <% if can?(:create, Spree::LineItem.new(order: @order)) %>
           <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary btn-sm" %>
         <% end %>
-        <% if @order.completed? %>
-          <button class="btn btn-light btn-sm" type="button" data-toggle="collapse" data-target="#line-items" aria-expanded="false" aria-controls="collapseExample">
-            <%= Spree.t(:show_details) %>
-            <%= icon('selector', class: 'mr-0 ml-1') %>
-          </button>
-        <% end %>
+        <span class="btn btn-light btn-sm d-inline-flex align-items-center">
+          <%= Spree.t(:show_details) %>
+          <%= icon('selector', class: 'mr-0 ml-1 arrow') %>
+        </span>
       </div>
-    </div>
-    <div class="card-body mb-0 p-0 <% if @order.completed? && params[:line_item_updated].blank? %>collapse<% else %>show<% end %>" id="line-items">
-      <div class="order-line-items">
-        <div class="d-flex align-items-center text-muted border-bottom py-2 px-3 font-size-sm order-line-items__row">
-          <div class="w-35">
-            <%= Spree.t(:item_description) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:price) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:quantity) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:subtotal) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:tax) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:discount) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:total) %>
-          </div>
-          <div class="w-5">
-          </div>
+    </summary>
+    <div class="card-body mb-0 p-0" id="line-items">
+      <div class="d-flex align-items-center text-muted border-bottom py-2 px-3 font-size-sm order-line-items__row bg-light border-top">
+        <div class="w-35">
+          <%= Spree.t(:item_description) %>
         </div>
-        <%= render collection: @line_items, partial: 'spree/admin/orders/line_item', cached: spree_base_cache_scope %>
+        <div class="w-10">
+          <%= Spree.t(:price) %>
+        </div>
+        <div class="w-10">
+          <%= Spree.t(:quantity) %>
+        </div>
+        <div class="w-10">
+          <%= Spree.t(:subtotal) %>
+        </div>
+        <div class="w-10">
+          <%= Spree.t(:tax) %>
+        </div>
+        <div class="w-10">
+          <%= Spree.t(:discount) %>
+        </div>
+        <div class="w-10">
+          <%= Spree.t(:total) %>
+        </div>
+        <div class="w-5">
+        </div>
       </div>
+      <%= render collection: @line_items, partial: 'spree/admin/orders/line_item', cached: spree_base_cache_scope %>
     </div>
-  <% elsif can?(:create, Spree::LineItem.new(order: @order)) %>
+  </details>
+<% elsif can?(:create, Spree::LineItem.new(order: @order)) %>
+  <div class="card mb-4">
     <div class="card-header">
       <h5 class="card-title">
         <%= icon('shopping-cart', class: 'mr-2') %>
@@ -59,6 +56,5 @@
     <div class="card-body">
       <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary w-100 py-3" %>
     </div>
-  <% end %>
+  </div>
 <% end %>
-

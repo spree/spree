@@ -6,19 +6,17 @@
       <% task_in_progress ||= task %>
     <% end %>
 
-    <div class="collapsable-card mb-3">
-      <h5 class="card-header border-0 p-0 h-auto hover-light">
-        <a class="<% if task_in_progress != task %>collapsed<% end %> text-decoration-none d-flex align-items-center p-4 text-dark font-weight-normal w-100 card-title" data-toggle="collapse" href="#collapse<%= index %>-collapsed" aria-expanded="true" aria-controls="collapse<%= index %>-collapsed" id="heading<%= index %>-collapsed">
-          <%= onboarding_check_circle(done) %>
-          <span class="ml-3"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
-          <%= icon('chevron-down', class: 'arrow ml-auto') %>
-        </a>
-      </h5>
-      <div id="collapse<%= index %>-collapsed" class="collapse <% if task_in_progress == task %>show<% end %>" aria-labelledby="heading<%= index %>-collapsed">
+    <details class="collapsable-card mb-3" <% if task_in_progress == task %>open<% end %> id="setup_task_<%= task %>">
+      <summary class="card-header border-0 h-auto text-decoration-none d-flex align-items-center p-3 text-dark font-weight-normal w-100 card-title bg-transparent list-style-none" role="button" tabindex="0">
+        <%= onboarding_check_circle(done) %>
+        <span class="ml-3"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
+        <%= icon('chevron-right', class: 'arrow ml-auto') %>
+      </summary>
+      <div class="animate__animated animate__fadeIn animate__faster">
         <div class="card-body">
           <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
         </div>
       </div>
-    </div>
+    </details>
   <% end %>
 </div>

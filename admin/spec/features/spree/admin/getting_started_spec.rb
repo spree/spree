@@ -6,12 +6,12 @@ RSpec.feature 'Getting Started' do
   let(:us_country) { Spree::Country.find_by(iso: 'US') }
   let!(:ny_state) { create(:state, name: 'New York', abbr: 'NY', country: us_country) }
 
-  describe 'Getting started tasks', js: true do
+  describe 'Getting started tasks' do
     describe 'setup taxes collection' do
       context 'when there are no tax rates' do
         it 'asks to setup taxes' do
           visit spree.admin_getting_started_path
-          click_on Spree.t('admin.store_setup_tasks.setup_taxes_collection')
+          find('#setup_task_setup_taxes_collection summary').click
 
           expect(page).to have_text Spree.t('admin.store_setup_tasks.taxes.copy', link: spree.admin_tax_rates_path)
         end
@@ -24,7 +24,9 @@ RSpec.feature 'Getting Started' do
         end
 
         it 'confirms the setup' do
-          expect(page.find('span', text: Spree.t('admin.store_setup_tasks.setup_taxes_collection')).ancestor('a')).to have_css('i.bg-success')
+          find('#setup_task_setup_taxes_collection summary').click
+
+          expect(page).to have_text("You're all set! You can always manage your taxes")
         end
       end
     end
@@ -34,8 +36,8 @@ RSpec.feature 'Getting Started' do
         visit spree.admin_getting_started_path
       end
 
-      scenario 'Retailer adds and updates the customer support email' do
-        click_on 'Set customer support email'
+      scenario 'adds and updates the customer support email' do
+        find('#setup_task_set_customer_support_email summary').click
         within '#set_customer_support_email' do
           click_on 'Edit'
 
