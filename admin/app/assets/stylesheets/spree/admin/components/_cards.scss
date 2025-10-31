@@ -105,46 +105,9 @@
   .card-body {
     border-top: 1px solid $gray-50;
   }
-
-  // Details/Summary styling
-  summary {
-    cursor: pointer;
-    list-style: none;
-    
-    &::-webkit-details-marker {
-      display: none;
-    }
-    
-    &::marker {
-      display: none;
-    }
-  }
-
-  // Arrow rotation when details is open
-  &[open] .arrow {
-    transform: rotate(90deg) !important;
-  }
-
-  &:not([open]) .arrow {
-    transform: rotate(0deg) !important;
-  }
 }
 
-// Details/Summary styling for cards
-.card details {
-  summary {
-    cursor: pointer;
-    list-style: none;
-    
-    &::-webkit-details-marker {
-      display: none;
-    }
-    
-    &::marker {
-      display: none;
-    }
-  }
-
+.collapsable-card, .card {
   // Arrow rotation when details is open
   &[open] .arrow {
     transform: rotate(90deg) !important;
@@ -152,5 +115,35 @@
 
   &:not([open]) .arrow {
     transform: rotate(0deg) !important;
+  }
+
+  // Details/Summary styling for cards
+  details {
+    summary {
+      cursor: pointer;
+      list-style: none;
+      
+      &::-webkit-details-marker {
+        display: none;
+      }
+      
+      &::marker {
+        display: none;
+      }
+    }
+
+    // Details/Summary styling
+    summary {
+      cursor: pointer;
+      list-style: none;
+      
+      &::-webkit-details-marker {
+        display: none;
+      }
+      
+      &::marker {
+        display: none;
+      }
+    }
   }
 }
