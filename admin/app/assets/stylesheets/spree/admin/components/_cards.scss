@@ -105,9 +105,7 @@
   .card-body {
     border-top: 1px solid $gray-50;
   }
-}
 
-.collapsable-card, .card {
   // Arrow rotation when details is open
   &[open] .arrow {
     transform: rotate(90deg) !important;
@@ -116,23 +114,11 @@
   &:not([open]) .arrow {
     transform: rotate(0deg) !important;
   }
+}
 
+.collapsable-card, .card {
   // Details/Summary styling for cards
   details {
-    summary {
-      cursor: pointer;
-      list-style: none;
-      
-      &::-webkit-details-marker {
-        display: none;
-      }
-      
-      &::marker {
-        display: none;
-      }
-    }
-
-    // Details/Summary styling
     summary {
       cursor: pointer;
       list-style: none;
