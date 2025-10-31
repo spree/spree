@@ -98,33 +98,59 @@
   @extend .overflow-hidden;
 
   .card-header {
-    @extend .p-0;
-  }
-  .card-header a {
-    padding: 0.75rem !important;
-
-    .ti-chevron-down {
-      color: $gray-400;
-    }
-
     &:hover {
-      text-decoration: none !important;
-
-      .ti-chevron-down {
-        color: $gray-900 !important;
-      }
-    }
-  }
-  &:hover {
-    .card-header a {
-      text-decoration: none !important;
-
-      .ti-chevron-down {
-        color: $gray-500;
-      }
+      background-color: $light !important;
     }
   }
   .card-body {
     border-top: 1px solid $gray-50;
+  }
+
+  // Details/Summary styling
+  summary {
+    cursor: pointer;
+    list-style: none;
+    
+    &::-webkit-details-marker {
+      display: none;
+    }
+    
+    &::marker {
+      display: none;
+    }
+  }
+
+  // Arrow rotation when details is open
+  &[open] .arrow {
+    transform: rotate(90deg) !important;
+  }
+
+  &:not([open]) .arrow {
+    transform: rotate(0deg) !important;
+  }
+}
+
+// Details/Summary styling for cards
+.card details {
+  summary {
+    cursor: pointer;
+    list-style: none;
+    
+    &::-webkit-details-marker {
+      display: none;
+    }
+    
+    &::marker {
+      display: none;
+    }
+  }
+
+  // Arrow rotation when details is open
+  &[open] .arrow {
+    transform: rotate(90deg) !important;
+  }
+
+  &:not([open]) .arrow {
+    transform: rotate(0deg) !important;
   }
 }

@@ -70,7 +70,7 @@ button[disabled]        .show-when-enabled { display: none; }
 
 .hover-light {
   &:hover, &:focus {
-    background-color: rgba($light, 0.5);
+    background-color: rgba($light, 0.75);
     text-decoration: none;
   }
 }
