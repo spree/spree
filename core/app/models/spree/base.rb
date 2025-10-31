@@ -40,8 +40,8 @@ class Spree::Base < ApplicationRecord
     where(nil)
   end
 
-  def self.spree_base_uniqueness_scope
-    ApplicationRecord.try(:spree_base_uniqueness_scope) || []
+  def self.spree_base_uniqueness_scope(attribute: nil)
+    Spree.uniqueness_scopes.dig(name.demodulize.underscore, attribute) || ApplicationRecord.try(:spree_base_uniqueness_scope) || []
   end
 
   # FIXME: https://github.com/rails/rails/issues/40943
