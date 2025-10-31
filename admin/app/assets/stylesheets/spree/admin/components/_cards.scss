@@ -122,6 +122,7 @@
     summary {
       cursor: pointer;
       list-style: none;
+      user-select: none;
       
       &::-webkit-details-marker {
         display: none;
@@ -129,6 +130,16 @@
       
       &::marker {
         display: none;
+      }
+
+      // Ensure summary is clickable and accessible
+      &[role="button"] {
+        outline: none;
+        
+        &:focus {
+          outline: 2px solid $primary;
+          outline-offset: -2px;
+        }
       }
     }
   }
