@@ -6,7 +6,7 @@ RSpec.feature 'Getting Started' do
   let(:us_country) { Spree::Country.find_by(iso: 'US') }
   let!(:ny_state) { create(:state, name: 'New York', abbr: 'NY', country: us_country) }
 
-  describe 'Getting started tasks', js: true do
+  describe 'Getting started tasks' do
     describe 'setup taxes collection' do
       context 'when there are no tax rates' do
         it 'asks to setup taxes' do
