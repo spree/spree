@@ -29,24 +29,7 @@
     <% if checkout_available_payment_methods.size > 1 %>
       <ul id="payment-method-fields" class="rounded-md list-group mb-4 border border-default border-b-0 text-sm border-default">
         <% selected_method = params[:payment_method_id].present? ? checkout_available_payment_methods.find { |method| method.id.to_s == params[:payment_method_id].to_s } : checkout_available_payment_methods.first %>
-
-        <% checkout_available_payment_methods.each do |method| %>
-          <li class="list-group-item p-0 m-0 border-b delivery-list-item border-default">
-            <%= link_to spree.checkout_state_path(token: @order.token, state: 'payment', payment_method_id: method.id), class: 'custom-control custom-radio flex items-center px-5 py-4 cursor-pointer w-full' do %>
-              <%= radio_button_tag "order[payments_attributes][][payment_method_id]",
-                    method.id,
-                    selected_method == method,
-                    class: 'mr-3' %>
-              <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
-            <% end %>
-
-            <% if selected_method == method %>
-              <div class="px-5 py-4">
-                <%= render partial: "spree/checkout/payment/#{method.method_type}", locals: { payment_method: method } %>
-              </div>
-            <% end %>
-          </li>
-        <% end %>
+        <%= render collection: checkout_available_payment_methods, partial: 'spree/checkout/payment_method', as: :method, locals: { selected_method: selected_method } %>
       </ul>
     <% elsif checkout_available_payment_methods.any? %>
       <%= hidden_field_tag "order[payments_attributes][][payment_method_id]", checkout_available_payment_methods.first&.id %>
