@@ -1,9 +1,9 @@
-<div class="dropdown">
-  <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
+<%= dropdown do %>
+  <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
     <span class="text-muted font-weight-normal">Show:</span>
     <%= gift_cards_filter_dropdown_value %>
-  </button>
-  <div class="dropdown-menu w-100" style="min-width: 200px">
+  <% end %>
+  <%= dropdown_menu do %>
 
     <%= active_link_to Spree.t('admin.gift_cards.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {active: nil, expired: nil, redeemed: nil, partially_redeemed: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[active expired redeemed partially_redeemed] ).all?(&:blank?) %>
     
@@ -21,5 +21,5 @@
         <%= Spree.t('admin.gift_cards.redeemed') %>
     <% end %>
 
-  </div>
-</div>
+  <% end %>
+<% end %>

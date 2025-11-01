@@ -2,13 +2,8 @@
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render "spree/admin/shared/filters_search_bar", param: :number_cont %>
 
-    <div class="dropdown">
-      <button
-        class="btn btn-light dropdown-toggle"
-        type="button"
-        data-toggle="dropdown"
-        aria-expanded="false"
-      >
+    <%= dropdown do %>
+      <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
         <span class="text-muted font-weight-normal mr-1">
           <%= Spree.t(:show) %>:
         </span>
@@ -17,8 +12,8 @@
         <% else %>
           <%= Spree.t(:all) %>
         <% end %>
-      </button>
-      <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px">
+      <% end %>
+      <%= dropdown_menu class: 'dropdown-menu-right w-100', style: 'min-width: 200px' do %>
         <%= active_link_to Spree.t(:all),
         params.to_unsafe_h.deep_merge({ q: { state_eq: "" } }),
         class: "dropdown-item",
@@ -29,8 +24,8 @@
         <%= link_to Spree.t("return_authorization_states.canceled"),
         params.to_unsafe_h.deep_merge({ q: { state_eq: :canceled } }),
         class: "dropdown-item #{"active" if params.dig(:q, :state_eq) == "canceled"}" %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
 
   <%= render "spree/admin/shared/filter_badge_template" %>

@@ -9,18 +9,20 @@
     <%= spree_time_ago(page.updated_at) %>
   </td>
   <td class="w-10 text-right">
-    <div class="dropdown">
-      <button class="btn btn-sm btn-light" type="button" data-toggle="dropdown" aria-expanded="false">
+    <%= dropdown do %>
+      <%= dropdown_toggle class: 'btn-light btn-sm' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
-      </button>
-      <ul class="dropdown-menu">
-        <li>
-          <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), class: 'dropdown-item', data: { turbo_frame: '_top', turbo_prefetch: false } %>
-        </li>
-        <li>
-          <%= link_to_delete(page, class: 'dropdown-item btn-danger', icon: 'trash') %>
-        </li>
-      </ul>
-    </div>
+      <% end %>
+      <%= dropdown_menu do %>
+        <ul class="list-unstyled mb-0">
+          <li>
+            <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), class: 'dropdown-item', data: { turbo_frame: '_top', turbo_prefetch: false } %>
+          </li>
+          <li>
+            <%= link_to_delete(page, class: 'dropdown-item btn-danger', icon: 'trash') %>
+          </li>
+        </ul>
+      <% end %>
+    <% end %>
   </td>
 </tr>

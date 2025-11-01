@@ -1,11 +1,10 @@
-<div class="store-dropdown" id="store-menu" data-turbo-permanent>
-  <div class="dropdown">
-    <button type="button" class="btn store-dropdown-button dropdown-toggle"
-            data-toggle="dropdown" aria-expanded="false">
+<div class="store-dropdown" id="store-menu">
+  <%= dropdown do %>
+    <%= dropdown_toggle class: 'store-dropdown-button dropdown-toggle' do %>
       <%= store_admin_icon(current_store, height: 32, width: 32) %>
       <%= truncate(current_store.name, length: 10) %>
-    </button>
-    <div class="dropdown-menu ml-2">
+    <% end %>
+    <%= dropdown_menu class: 'ml-2', direction: 'left' do %>
       <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
         <%= icon 'eye' %>
         <%= Spree.t(:view_store) %>
@@ -47,8 +46,8 @@
           <% end %>
         </div>
       <% end %>
-    </div>
-  </div>
+    <% end %>
+  <% end %>
 
   <%= render 'spree/admin/shared/new_item_dropdown' %>
 </div>

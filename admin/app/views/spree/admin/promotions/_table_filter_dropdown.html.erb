@@ -1,11 +1,11 @@
-<div class="dropdown">
-  <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+<%= dropdown do %>
+  <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
     <span class="text-muted font-weight-normal mr-1">
       <%= Spree.t(:status) %>
-    </span> 
+    </span>
     <%= promotion_filter_dropdown_value %>
-  </button>
-  <div class="dropdown-menu dropdown-menu-right w-100" style="min-width: 200px">
+  <% end %>
+  <%= dropdown_menu class: 'dropdown-menu-right w-100', style: 'min-width: 200px' do %>
     <%= active_link_to 'All Promotions', params.to_unsafe_h.deep_merge({page: nil, q: {active: nil, expired: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[expired active] ).all?(&:blank?) %>
     <%= link_to Spree.t(:expired),
       params.to_unsafe_h.deep_merge({page: nil, q: {active: nil, expired: true}}),
@@ -13,5 +13,5 @@
     <%= link_to Spree.t(:active),
       params.to_unsafe_h.deep_merge({page: nil, q: {active: true, expired: false}}),
       class: "dropdown-item #{'active' if params[:q][:active]}" %>
-  </div>
-</div>
+  <% end %>
+<% end %>

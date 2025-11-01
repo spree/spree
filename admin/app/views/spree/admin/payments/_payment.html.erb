@@ -16,11 +16,11 @@
     <strong><%= payment.number.upcase %></strong>
     <%= spree_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
 
-    <div class="dropdown">
-      <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">
+    <%= dropdown do %>
+      <%= dropdown_toggle class: 'btn-sm px-1' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
-      </button>
-      <div class="dropdown-menu">
+      <% end %>
+      <%= dropdown_menu do %>
         <% if payment.try(:gateway_dashboard_payment_url).present? %>
           <%= link_to_with_icon 'eye', Spree.t(:details), payment.gateway_dashboard_payment_url, class: 'dropdown-item', target: '_blank' %>
         <% end %>
@@ -42,8 +42,8 @@
           <div class="dropdown-divider"></div>
           <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_order_payment_path(@order, payment), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
         <% end %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
   <div class="card-body">
     <div class="d-flex">

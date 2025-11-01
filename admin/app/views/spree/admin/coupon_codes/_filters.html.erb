@@ -3,16 +3,16 @@
     <%= render 'spree/admin/shared/filters_search_bar', param: :code_i_cont %>
 
     <div class="d-flex align-items-center justify-content-between">
-      <div class="dropdown">
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
+      <%= dropdown do %>
+        <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
           <span class="text-muted font-weight-normal mr-1">
             <%= Spree.t(:show) %>
           </span>
           <%= Spree.t(:all) if (params[:q] || {}).values_at(:state_eq).all?(&:blank?) %>
           <%= Spree.t('admin.coupon_codes.used') if params.dig(:q, :state_eq) == 'used' %>
           <%= Spree.t('admin.coupon_codes.unused') if params.dig(:q, :state_eq) == 'unused' %>
-        </button>
-        <div class="dropdown-menu w-100 font-size-sm" style="min-width: 200px">
+        <% end %>
+        <%= dropdown_menu do %>
           <%= active_link_to Spree.t(:all),
             spree.admin_promotion_coupon_codes_path(@promotion),
             class: 'dropdown-item',
@@ -23,8 +23,8 @@
           <%= link_to Spree.t('admin.coupon_codes.unused'),
             spree.admin_promotion_coupon_codes_path(@promotion, q: {state_eq: :unused}),
             class: "dropdown-item #{'active' if params.dig(:q, :state_eq) == 'unused'}" %>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
     </div>
 
     <div data-controller="tooltip">

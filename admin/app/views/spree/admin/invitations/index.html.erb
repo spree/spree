@@ -7,21 +7,19 @@
 <%= render_admin_partials(:invitations_header_partials) %>
 
 <div class="card-lg">
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-      <tr>
-        <th scope="col" class="rounded-lg-top-left"><%= Spree.t(:email) %></th>
-        <th scope="col"><%= I18n.t('activerecord.attributes.spree/invitation.inviter') %></th>
-        <th scope="col"><%= Spree.t(:role_id) %></th>
-        <th scope="col"><%= Spree.t(:status) %></th>
-        <th scope="col" class="rounded-lg-top-right"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
-        <th scope="col"></th>
-      </tr>
-      </thead>
-      <tbody id="invitations">
-        <%= render collection: @collection, partial: 'spree/admin/invitations/invitation', as: :invitation %>
-      </tbody>
-    </table>
-  </div>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col" class="rounded-lg-top-left"><%= Spree.t(:email) %></th>
+      <th scope="col"><%= I18n.t('activerecord.attributes.spree/invitation.inviter') %></th>
+      <th scope="col"><%= Spree.t(:role_id) %></th>
+      <th scope="col"><%= Spree.t(:status) %></th>
+      <th scope="col" class="rounded-lg-top-right"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+      <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody id="invitations">
+      <%= render collection: @collection, partial: 'spree/admin/invitations/invitation', as: :invitation %>
+    </tbody>
+  </table>
 </div>

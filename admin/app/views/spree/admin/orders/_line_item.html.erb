@@ -23,16 +23,11 @@
     </div>
     <div class="w-5">
       <% if can?(:edit, line_item) %>
-        <div class="dropdown">
-          <button
-            class="btn btn-sm btn-light"
-            type="button"
-            data-toggle="dropdown"
-            aria-expanded="false"
-          >
+        <%= dropdown do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm' do %>
             <%= icon "dots-vertical", class: "mr-0" %>
-          </button>
-          <div class="dropdown-menu dropdown-menu-right w-100">
+          <% end %>
+          <%= dropdown_menu do %>
             <%= link_to_with_icon "edit",
               Spree.t(:edit),
               spree.edit_admin_order_line_item_path(@order, line_item),
@@ -53,8 +48,8 @@
               <div class="dropdown-divider"></div>
               <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item btn-danger' %>
             <% end %>
-          </div>
-        </div>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   </div>

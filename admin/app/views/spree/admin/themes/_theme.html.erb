@@ -38,17 +38,18 @@
     <% if theme.ready? %>
       <div class="d-flex justify-content-end w-100">
         <%= link_to Spree.t('actions.publish'), publish_admin_theme_path(theme), class: 'btn btn-sm btn-light mr-2', data: { turbo_method: :put } unless theme.default? %>
-        <div class="dropdown">
-          <button class="btn btn-sm btn-light h-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <%= dropdown do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+          <% end %>
+          <%= dropdown_menu do %>
             <%= link_to_edit theme, class: 'dropdown-item', data: { turbo_prefetch: false } %>
             <%= link_to_with_icon 'copy', Spree.t(:clone), spree.clone_admin_theme_path(theme), class: 'dropdown-item', data: { turbo_method: :post } %>
             <% unless theme.default? %>
             <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item btn-danger shadow-none') if can?(:delete, theme) %>
           <% end %>
-        </div>
+          <% end %>
+        <% end %>
       </div>
     <% end %>
   </td>

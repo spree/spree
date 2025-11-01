@@ -5,11 +5,11 @@
   <td class="w-50 cursor-pointer py-0" data-action="click->row-link#openLink">
     <%= link_to taxonomy.name, spree.admin_taxonomy_path(taxonomy), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
-  <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
+  <td class="w-15 cursor-pointer" data-action="click->row-link#openLink">
     <!-- We don't want to include the root taxon -->
     <%= taxonomy.taxons.count - 1 %>
   </td>
-  <td class="w-10 actions">
+  <td class="w-30 actions">
     <%= link_to_with_icon 'list-tree', Spree.t('admin.manage_taxons'), spree.admin_taxonomy_path(taxonomy), class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' } %>
     <%= link_to_edit(taxonomy, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, taxonomy) %>
   </td>

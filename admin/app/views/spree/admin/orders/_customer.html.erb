@@ -4,9 +4,11 @@
       <%= Spree.t(:customer) %>
     </h5>
     <% if can?(:update_customer, @order) || can?(:update_addresses, @order) %>
-      <div class="dropdown ml-auto" id="customer-edit-dropdown">
-        <%= link_to_with_icon 'dots-vertical', nil, '#', class: 'btn btn-light btn-sm px-1', data: { toggle: 'dropdown', test_id: 'dropdown-toggle' } %>
-        <div class="dropdown-menu dropdown-menu-right" >
+      <%= dropdown id: 'customer-edit-dropdown', class: 'ml-auto' do %>
+        <%= dropdown_toggle class: 'btn-sm px-1', data: { test_id: 'dropdown-toggle' } do %>
+          <%= icon 'dots-vertical' %>
+        <% end %>
+        <%= dropdown_menu class: 'dropdown-menu-right' do %>
           <% if can?(:update_customer, @order) && !@order.user.present? %>
             <%= link_to Spree.t('admin.edit_contact_information'), spree.edit_admin_order_contact_information_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>
@@ -21,8 +23,8 @@
               <%= link_to Spree.t('admin.orders.add_user_to_this_order'), spree.new_admin_order_user_path(@order), class: 'dropdown-item' %>
             <% end %>
           <% end %>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
     <% end %>
   </div>
   <div class="card-body">

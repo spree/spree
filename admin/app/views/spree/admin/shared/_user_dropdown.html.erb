@@ -1,11 +1,9 @@
 <% if try_spree_current_user.present? %>
-  <div class="dropdown" id="<%= dom_id(try_spree_current_user, 'account-dropdown') %>" data-turbo-permanent>
-    <button type="button"
-          class="btn d-flex align-items-center justify-content-between text-left w-100 pr-0"
-          data-toggle="dropdown" aria-expanded="false" id="accountNav">
+  <%= dropdown id: dom_id(try_spree_current_user, 'account-dropdown') do %>
+    <%= dropdown_toggle class: 'd-flex align-items-center justify-content-between text-left w-100 pr-0' do %>
       <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
-    </button>
-    <div class="dropdown-menu dropdown-menu-right" style="min-width: 250px;">
+    <% end %>
+    <%= dropdown_menu class: 'dropdown-menu-right', style: 'min-width: 250px;' do %>
       <div class="d-flex align-items-center p-2 bg-light rounded-lg">
         <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
         <span class="d-none d-lg-inline ml-lg-2">
@@ -41,6 +39,6 @@
         <%= icon('logout', class: "icon icon-logout")  %>
         <%= Spree.t(:logout) %>
       <% end if defined?(spree_admin_logout_path) %>
-    </div>
-  </div>
+    <% end %>
+  <% end %>
 <% end %>

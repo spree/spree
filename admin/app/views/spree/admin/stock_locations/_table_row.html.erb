@@ -16,18 +16,19 @@
         <div><%= link_to_edit stock_location, data: { row_link_target: 'link', turbo_frame: '_top' } %></div>
 
         <% if !stock_location.default? && can?(:mark_as_default, Spree::StockLocation) %>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-light h-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <%= dropdown do %>
+            <%= dropdown_toggle class: 'btn-sm h-100' do %>
               <%= icon('dots-vertical', class: 'mr-0') %>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <% end %>
+            <%= dropdown_menu class: 'dropdown-menu-right' do %>
               <%= link_to_with_icon 'check',
                 Spree.t(:mark_as_default),
                 spree.mark_as_default_admin_stock_location_path(stock_location),
                 class: 'dropdown-item',
                 data: { turbo_method: :put } %>
-            </div>
+            <% end %>
           <% end %>
+        <% end %>
         </div>
       </div>
     <% end %>
