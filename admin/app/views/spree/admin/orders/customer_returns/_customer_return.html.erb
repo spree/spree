@@ -28,16 +28,11 @@
     <td data-action="click->row-link#openLink"><%= spree_time(customer_return.created_at) %></td>
     <td class="text-right">
       <% if can_create_reimbursement %>
-        <span class="dropdown">
-          <button
-            class="btn btn-light btn-sm"
-            type="button"
-            data-toggle="dropdown"
-            aria-expanded="false"
-          >
+        <%= dropdown do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm' do %>
             <%= icon('dots-vertical', class: "mr-0") %>
-          </button>
-          <div class="dropdown-menu">
+          <% end %>
+          <%= dropdown_menu do %>
             <%= link_to_edit(
               customer_return,
               data: {
@@ -53,8 +48,8 @@
                 <%= Spree.t(:create_reimbursement) %>
               <% end %>
             <% end %>
-          </div>
-        </span>
+          <% end %>
+        <% end %>
       <% else %>
         <%= link_to_edit(
           customer_return,

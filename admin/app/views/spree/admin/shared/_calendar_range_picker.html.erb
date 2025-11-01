@@ -7,9 +7,8 @@
 
 <% dropdown_direction ||= 'left' %>
 
-<div data-controller="calendar-range" class="dropdown h-100" 
-     data-action="click->calendar-range#open">
-  <div class="<%= css_classes %>" data-toggle="dropdown">
+<%= dropdown data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-100' do %>
+  <%= dropdown_toggle class: css_classes do %>
     <%= icon('calendar', class: 'mr-2') %>
     <div data-calendar-range-target="label">
       <% if date_from_value.present? && date_to_value.present? %>
@@ -18,11 +17,11 @@
         <%= Spree.t(:all_time) %>
       <% end %>
     </div>
-  </div>
-  <div class="dropdown-menu dropdown-menu-<%= dropdown_direction %> pt-2 px-2 pb-1" onclick="event.stopPropagation()">
+  <% end %>
+  <%= dropdown_menu direction: dropdown_direction, class: "pt-2 px-2 pb-1" do %>
     <div data-calendar-range-target="picker" class="d-none"></div>
-  </div>
+  <% end %>
 
   <%= hidden_field_tag date_from_input_name, date_from_value&.to_date, data: { 'calendar-range-target': 'dateFrom' } %>
   <%= hidden_field_tag date_to_input_name, date_to_value&.to_date, data: { 'calendar-range-target': 'dateTo' } %>
-</div>
+<% end %>

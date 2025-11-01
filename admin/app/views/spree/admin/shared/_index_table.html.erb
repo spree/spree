@@ -8,7 +8,7 @@
     <% end %>
 
     <% if paginated_collection.any? %>
-      <div class="table-responsive <% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>with-filters<% end %>" id="listing_<%= controller_name %>">
+      <div class="<% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>with-filters<% end %>" id="listing_<%= controller_name %>">
         <table class="table">
           <thead>
             <%= render 'table_header' %>

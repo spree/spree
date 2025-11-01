@@ -7,9 +7,12 @@
     <%= render_admin_partials(:gift_cards_actions_partials) %>
     <%= link_to_export_modal %>
 
-    <div class="dropdown" id="page_actions_dropdown">
-      <%= link_to_with_icon 'plus', Spree.t(:new_gift_card), '#', class: 'text-nowrap btn btn-primary align-self-center', data: { toggle: 'dropdown' }, id: 'more-actions-link' %>
-      <div class="dropdown-menu dropdown-menu-right">
+    <%= dropdown id: 'page_actions_dropdown' do %>
+      <%= dropdown_toggle class: 'text-nowrap btn-primary align-self-center', id: 'more-actions-link' do %>
+        <%= icon 'plus' %>
+        <%= Spree.t(:new_gift_card) %>
+      <% end %>
+      <%= dropdown_menu class: 'dropdown-menu-right' do %>
         <%= link_to spree.new_admin_gift_card_path,
               class: 'text-left dropdown-item'  do %>
           <%= icon 'add' %>
@@ -21,8 +24,8 @@
           <%= icon 'add' %>
           <%= Spree.t(:gift_card_batch) %>
         <% end %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   <% end %>
 <% end %>
 

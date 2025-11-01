@@ -7,14 +7,12 @@
 
 <% if collection.any? && collection.respond_to?(:current_page) %>
   <div class="pagination-container">
-    <div class="index-pagination-row d-flex align-items-center">
-      <div class="col-6 col-lg-3">
-        <%= per_page_dropdown %>
-      </div>
-      <div class="d-none d-lg-block col-lg-6 text-center text-muted">
+    <div class="index-pagination-row d-flex align-items-center justify-content-between px-2">
+      <%= per_page_dropdown %>
+      <div class="d-none d-lg-block text-center text-muted">
         <%= page_entries_info(collection, entry_name: entry_name) %>
       </div>
-      <div class="col-6 col-lg-3 text-right pr-lg-2">
+      <div class="text-right pr-lg-2">
         <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
       </div>
     </div>

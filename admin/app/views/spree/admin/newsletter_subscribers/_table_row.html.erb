@@ -24,13 +24,13 @@
     <%= spree_date(newsletter_subscriber.created_at) %>
   </td>
   <td class="w-5">
-    <div class="dropdown" data-toggle="dropdown">
-      <button class="btn btn-sm btn-light" type="button" id="newsletter-subscriber-actions-<%= newsletter_subscriber.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <%= dropdown do %>
+      <%= dropdown_toggle class: 'btn-light btn-sm' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
-      </button>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="newsletter-subscriber-actions-<%= newsletter_subscriber.id %>">
+      <% end %>
+      <%= dropdown_menu do %>
         <%= link_to_delete(newsletter_subscriber, icon: 'trash', class: 'dropdown-item text-danger') %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </td>
 </tr>

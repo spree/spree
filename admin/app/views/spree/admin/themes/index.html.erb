@@ -30,20 +30,18 @@
 <%= render_admin_partials(:themes_header_partials) %>
 
 <div class="card-lg">
-  <div class="table-responsive rounded-lg">
-    <table class="table">
-      <thead>
-        <tr>
-          <th><%= Spree.t(:theme) %></th>
-          <th><%= Spree.t(:status) %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'spree/admin/themes/theme', collection: @themes, cached: spree_base_cache_scope %>
-      </tbody>
-    </table>
-  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= Spree.t(:theme) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render partial: 'spree/admin/themes/theme', collection: @themes, cached: spree_base_cache_scope %>
+    </tbody>
+  </table>
 </div>
 
 <% if available_themes.any? %>

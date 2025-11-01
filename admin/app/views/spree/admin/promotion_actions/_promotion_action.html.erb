@@ -4,15 +4,15 @@
       <h5 class="card-title"><%= promotion_action.human_name %></h5>
 
       <% if can?(:update, promotion_action) || can?(:destroy, promotion_action) %>
-        <div class="dropdown">
-          <button class="btn btn-light btn-sm px-1" type="button" data-toggle="dropdown" aria-expanded="false">
+        <%= dropdown do %>
+          <%= dropdown_toggle class: 'btn-sm px-1' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
-        </button>
-        <div class="dropdown-menu">
-            <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item' if can?(:update, promotion_action) %> 
+          <% end %>
+          <%= dropdown_menu do %>
+            <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item' if can?(:update, promotion_action) %>
             <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_action_path(promotion_action.promotion, promotion_action), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, promotion_action) %>
-          </div>
-        </div>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
     <div class="card-body">

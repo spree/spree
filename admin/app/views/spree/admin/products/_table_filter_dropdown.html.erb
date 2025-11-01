@@ -1,5 +1,5 @@
-<div class="dropdown">
-  <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" data-display="static" data-flip="false" aria-expanded="false">
+<%= dropdown do %>
+  <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
     <span class="text-muted font-weight-normal mr-1">
       <%= Spree.t(:show) %>
     </span>
@@ -12,8 +12,8 @@
       <% end %>
       <%= product_filter_stock_dropdown_value if product_filter_stock_dropdown_value != Spree.t('admin.products.any_stock') %>
     <% end %>
-  </button>
-  <div class="dropdown-menu w-100" style="min-width: 200px">
+  <% end %>
+  <%= dropdown_menu class: 'w-100', style: 'min-width: 200px' do %>
     <h6 class="dropdown-header"><%= Spree.t('admin.products.by_status') %>:</h6>
 
     <%= active_link_to Spree.t('admin.products.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock_items out_of_stock_items] ).all?(&:blank?) %>
@@ -38,5 +38,5 @@
       <%= link_to Spree.t('admin.products.out_of_stock'),
         params.to_unsafe_h.deep_merge({page: nil, q: {out_of_stock_items: '1', in_stock_items: nil}}),
         class: "dropdown-item #{'active' if params[:q][:out_of_stock_items] == '1'}" %>
-  </div>
-</div>
+  <% end %>
+<% end %>

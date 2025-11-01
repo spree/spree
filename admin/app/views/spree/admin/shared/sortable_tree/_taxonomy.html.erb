@@ -29,18 +29,18 @@
   <div class="d-flex align-items-center px-3 ml-3 gap-2">
     <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon.id), data: { row_link_target: :link, turbo_frame: '_top' }) if can?(:edit, taxon) %>
 
-    <div class="dropdown h-100">
-      <button class="btn btn-light btn-sm px-1 h-100" type="button" id="dropdownMenuButton-<%= taxon.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <%= dropdown class: 'h-100' do %>
+      <%= dropdown_toggle class: 'btn-sm px-1 h-100' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
-      </button>
-      <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-<%= taxon.id %>">
+      <% end %>
+      <%= dropdown_menu class: 'dropdown-menu-right' do %>
         <% if can?(:create, Spree::Taxon) %>
           <%= link_to_with_icon 'plus', Spree.t(:new_nested_taxon), spree.new_admin_taxonomy_taxon_path(taxonomy, taxon: { parent_id: taxon.id }), class: 'dropdown-item' %>
           <div class="dropdown-divider"></div>
         <% end %>
         <%= link_to_delete(taxon, icon: 'trash', url: spree.admin_taxonomy_taxon_path(taxonomy, taxon.id), class: 'dropdown-item btn-danger') if can?(:destroy, taxon) %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
   </div>
 </div>
 

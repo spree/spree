@@ -18,21 +18,11 @@
       url: spree.bulk_status_update_admin_products_path(status: :draft)
     ) %>
 
-    <div class="dropdown dropup" role="group">
-      <button
-        type="button"
-        data-display="static"
-        class="btn"
-        data-placement="bottom"
-        data-toggle="dropdown"
-        aria-expanded="false"
-      >
+    <%= dropdown do %>
+      <%= dropdown_toggle do %>
         <%= icon('dots-vertical', class: "mr-0") %>
-      </button>
-      <div
-        class="dropdown-menu dropdown-menu-left"
-        aria-labelledby="btnGroupDrop1"
-      >
+      <% end %>
+      <%= dropdown_menu direction: 'top', class: 'mb-2' do %>
         <%= bulk_action_link(
           Spree.t("admin.bulk_ops.products.title.set_status", status: :archived),
           spree.bulk_modal_admin_products_path(kind: :set_status, status: :archived),
@@ -80,8 +70,8 @@
             class: "dropdown-item"
           ) %>
         <% end %>
-      </div>
-    </div>
+      <% end %>
+    <% end %>
 
     <%= bulk_operations_close_button %>
   </div>

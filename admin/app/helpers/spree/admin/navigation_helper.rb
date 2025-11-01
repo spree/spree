@@ -39,17 +39,18 @@ module Spree
           per_page_default * 8
         ]
 
-        selected_option = (params[:per_page].try(:to_i) || per_page_default).to_s
+        selected_option = (params[:per_page].try(:to_i) || per_page_default).to_i
+        selected_option_label = selected_option.to_s + icon('chevron-down', class: 'ml-1 mr-0 arrow')
 
-        selected_option += icon('chevron-down', class: 'ml-1 mr-0 arrow')
-
-        content_tag :div, id: 'per-page-dropdown' do
-          button_tag(raw(selected_option), class: 'btn btn-light btn-sm', data: { toggle: 'dropdown', expanded: false }) +
-            content_tag(:div, class: 'dropdown-menu') do
-              per_page_options.map do |option|
-                link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option.to_i == selected_option.to_i}"
-              end.join.html_safe
-            end
+        dropdown(id: 'per-page-dropdown') do
+          dropdown_toggle(class: 'btn-light btn-sm') do
+            raw(selected_option_label)
+          end +
+          dropdown_menu(direction: 'top-left') do
+            per_page_options.map do |option|
+              link_to option, per_page_dropdown_params(option), class: "dropdown-item #{'active' if option.to_i == selected_option}"
+            end.join.html_safe
+          end
         end
       end
 

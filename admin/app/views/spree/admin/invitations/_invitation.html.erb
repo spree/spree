@@ -29,24 +29,24 @@
   </td>
   <td class="w-10 actions">
     <% if invitation.pending? && !invitation.expired? %>
-      <div class="dropdown" data-controller="clipboard">
-        <%= hidden_field_tag nil, spree.admin_invitation_url(invitation, token: invitation.token),  data: { clipboard_target: "source" } %>
-
-        <button class="btn btn-sm btn-light" type="button" id="dropdownMenuButton-<%= invitation.id %>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <%= dropdown do %>
+        <%= dropdown_toggle class: 'btn-light btn-sm' do %>
           <%= icon('dots-vertical', class: 'mr-0') %>
-        </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton-<%= invitation.id %>">
+        <% end %>
+        <%= dropdown_menu data: { controller: 'clipboard', 'clipboard-success-content-value': icon('check') + ' ' +Spree.t(:copied) } do %>
+          <%= hidden_field_tag nil, spree.admin_invitation_url(invitation, token: invitation.token),  data: { clipboard_target: "source" } %>
+
           <%= link_to_with_icon 'copy', Spree.t(:copy_link), '#', 
               class: "dropdown-item", 
-              data: { action: "clipboard#copy" } %>
+              data: { action: "clipboard#copy", clipboard_target: "button" } %>
           <%= link_to_with_icon 'send', Spree.t('actions.resend'), spree.resend_admin_invitation_path(invitation), 
               class: "dropdown-item", 
               data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
-          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation), 
-              class: "dropdown-item btn-danger", 
+          <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation),
+              class: "dropdown-item btn-danger",
               data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } if can?(:destroy, invitation) %>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
     <% end %>
   </td>
 </tr>
