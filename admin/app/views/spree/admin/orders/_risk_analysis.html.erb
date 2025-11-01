@@ -1,4 +1,4 @@
-<ul class="list-group mt-3 collapse" id="risk-analysis-<%= payment.id %>">
+<ul class="list-group mt-3 hidden" data-reveal-target="item">
   <li class="list-group-item d-flex justify-content-between align-items-center">
     <%= Spree.t(:avs_response) %>
     <span class="badge badge-<%= payment.is_avs_risky? ? 'warning' : 'complete' %>">

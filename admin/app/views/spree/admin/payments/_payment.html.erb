@@ -17,7 +17,7 @@
     <%= spree_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
 
     <%= dropdown do %>
-      <%= dropdown_toggle class: 'btn-sm px-1' do %>
+      <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
       <% end %>
       <%= dropdown_menu do %>
@@ -73,7 +73,7 @@
     </div>
   </div>
   <% if payment.transaction_id.present? && !payment.store_credit? %>
-    <div class="card-footer border-top border-top-dashed">
+    <div class="card-footer border-top border-top-dashed" data-controller="reveal">
       <p class="mb-0 d-flex justify-content-between align-items-center">
         <span>
           <%= Spree.t(:risk_analysis) %>
@@ -84,10 +84,10 @@
             <span class="text-success"><%= icon('shield-check-filled') %> <%= Spree.t(:not_risky) %></span>
           <% end %>
         </span>
-        <%= link_to "#risk-analysis-#{payment.id}", class: 'btn btn-light btn-sm bg-transparent', data: { toggle: 'collapse' } do %>
+        <button type="button" class="btn btn-light btn-sm bg-transparent" data-action="click->reveal#toggle">
           <%= Spree.t(:show_details) %>
           <%= icon('selector', class: 'mr-0 ml-1') %>
-        <% end %>
+        </button>
       </p>
       <%= render 'spree/admin/orders/risk_analysis', payment: payment %>
     </div>

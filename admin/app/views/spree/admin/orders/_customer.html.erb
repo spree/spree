@@ -5,7 +5,7 @@
     </h5>
     <% if can?(:update_customer, @order) || can?(:update_addresses, @order) %>
       <%= dropdown id: 'customer-edit-dropdown', class: 'ml-auto' do %>
-        <%= dropdown_toggle class: 'btn-sm px-1', data: { test_id: 'dropdown-toggle' } do %>
+        <%= dropdown_toggle class: 'btn-light btn-sm px-1', data: { test_id: 'dropdown-toggle' } do %>
           <%= icon 'dots-vertical' %>
         <% end %>
         <%= dropdown_menu class: 'dropdown-menu-right' do %>
