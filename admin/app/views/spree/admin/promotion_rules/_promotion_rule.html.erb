@@ -5,7 +5,7 @@
 
       <% if can?(:update, promotion_rule) || can?(:destroy, promotion_rule) %>
         <%= dropdown do %>
-          <%= dropdown_toggle class: 'btn-sm px-1' do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
           <% end %>
           <%= dropdown_menu do %>

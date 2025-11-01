@@ -1,4 +1,4 @@
-<ul class="list-group mt-3 mb-3 collapse" id="<%= id %>">
+<ul class="list-group mt-3 mb-3 hidden" data-reveal-target="item">
   <% tax_lines.each do |tax_line| %>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <%= tax_line.name %>

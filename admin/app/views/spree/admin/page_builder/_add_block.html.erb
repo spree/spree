@@ -6,7 +6,7 @@
       <%= icon("circle-plus") %>
       Add block
     <% end %>
-    <%= dropdown_menu class: 'p-1' do %>
+    <%= dropdown_menu direction: 'top-left' do %>
     <% section.available_blocks_to_add.each do |block_class| %>
       <a href="#" class="dropdown-item btn-sm"
           data-action="click->block-form#addBlock"

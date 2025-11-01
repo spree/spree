@@ -23,7 +23,7 @@
     </div>
     <% if section.blocks_available?  %>
       <div class="d-flex flex-column ml-1 mb-2">
-        <%= turbo_frame_tag [:blocks, section.id].join('_'), class: 'list-group-flush collapse show' do %>
+        <%= turbo_frame_tag [:blocks, section.id].join('_'), class: 'list-group-flush' do %>
           <% if section.can_sort_blocks? %>
           <div data-controller="sortable"
             data-sortable-handle-value=".handle-block"

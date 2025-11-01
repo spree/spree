@@ -7,7 +7,7 @@
   background-color: $tooltip-bg;
   color: $tooltip-color;
   border: 0 none;
-  box-shadow: 0px 0px 0px 1px $border-color, 0px 3px 6px -1px $gray-100, 0px 3px 6px 0px $gray-100;
+  box-shadow: 0px 0px 0px 1px $border-color, 0px 3px 6px -1px rgba($gray-300, 0.35), 0px 3px 6px 0px rgba($gray-300, 0.35);
   border-radius: $tooltip-border-radius;
   padding: $tooltip-padding-y $tooltip-padding-x;
   font-size: $font-size-base !important;
