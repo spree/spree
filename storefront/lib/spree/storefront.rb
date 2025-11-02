@@ -1,7 +1,5 @@
 require 'spree_core'
 
-require 'sprockets/railtie'
-
 require 'active_link_to'
 require 'canonical-rails'
 require 'heroicon'

@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'local_time', '~> 3.0'
   s.add_dependency 'mail_form'
   s.add_dependency 'payment_icons'
-  s.add_dependency 'sprockets', '>= 4.0'
   s.add_dependency 'stimulus-rails'
   s.add_dependency 'tailwindcss-rails'
   s.add_dependency 'tailwindcss-ruby', '~> 3.4.17' # lock at Tailwind v3 for now, https://github.com/rails/tailwindcss-rails?tab=readme-ov-file#choosing-a-specific-version-of-tailwindcss

@@ -33,7 +33,6 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-keeps \
   --skip-rc \
   --skip-test \
-  --skip-asset-pipeline \
   --skip-docker \
   --skip-rubocop \
   --skip-brakeman \

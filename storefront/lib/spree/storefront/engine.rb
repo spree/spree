@@ -27,9 +27,11 @@ module Spree
       end
 
       initializer 'spree.storefront.assets' do |app|
-        app.config.assets.paths << root.join('app/javascript')
-        app.config.assets.paths << root.join('vendor/javascript')
-        app.config.assets.precompile += %w[spree_storefront_manifest]
+        if app.config.respond_to?(:assets)
+          app.config.assets.paths << root.join('app/javascript')
+          app.config.assets.paths << root.join('vendor/javascript')
+          app.config.assets.precompile += %w[spree_storefront_manifest]
+        end
       end
 
       initializer 'spree.storefront.importmap', before: 'importmap' do |app|
