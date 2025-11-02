@@ -138,10 +138,12 @@ module Spree
       end
 
       initializer 'spree.admin.dartsass_fix' do |app|
-        # we're not using any sass compressors, as we're using dartsass-rails
-        # some gems however like payment_icons still have sassc-rails as a dependency
-        # which sets the css_compressor to :sass and breaks the assets pipeline
-        app.config.assets.css_compressor = nil if app.config.assets.css_compressor == :sass
+        if app.config.respond_to?(:assets)
+          # we're not using any sass compressors, as we're using dartsass-rails
+          # some gems however like payment_icons still have sassc-rails as a dependency
+          # which sets the css_compressor to :sass and breaks the assets pipeline
+          app.config.assets.css_compressor = nil if app.config.assets.css_compressor == :sass
+        end
       end
 
       # Rails 7.1 introduced a new feature that raises an error if a callback action is missing.
@@ -151,11 +153,13 @@ module Spree
       end
 
       initializer 'spree.admin.assets' do |app|
-        app.config.assets.paths << root.join('app/javascript')
-        app.config.assets.paths << root.join('vendor/javascript')
-        app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
-        # fix for TinyMCE-rails gem to work with both propshaft and sprockets
-        app.config.assets.excluded_paths ||= []
+        if app.config.respond_to?(:assets)
+          app.config.assets.paths << root.join('app/javascript')
+          app.config.assets.paths << root.join('vendor/javascript')
+          app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
+          # fix for TinyMCE-rails gem to work with both propshaft and sprockets
+          app.config.assets.excluded_paths ||= []
+        end
       end
 
       initializer 'spree.admin.importmap', after: 'importmap' do |app|

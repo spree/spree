@@ -38,7 +38,6 @@ module Spree
       opts[:skip_spring] = true
       opts[:skip_test] = true
       opts[:skip_bootsnap] = true
-      opts[:skip_asset_pipeline] = true # skip installing propshaft, we're still using sprockets as a dependency
       opts[:skip_docker] = true
       opts[:skip_rubocop] = true
       opts[:skip_brakeman] = true
