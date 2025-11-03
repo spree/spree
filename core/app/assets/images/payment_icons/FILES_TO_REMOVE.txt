@@ -1,9 +1,0 @@
-# FILES TO REMOVE
-# This file contains all payment icon files that should be removed
-# Total files to remove: ~723
-
-# Generate this list with:
-# ls -1 *.svg | grep -v -f KEEP_FILES.txt > FILES_TO_REMOVE_FINAL.txt
-
-# To remove all these files, run:
-# while read file; do rm "$file"; done < FILES_TO_REMOVE_FINAL.txt
