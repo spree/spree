@@ -1,6 +1,6 @@
 <nav id="breadcrumbs" aria-label="breadcrumbs">
   <!-- desktop -->
-  <ul class="hidden md:inline-flex space-x-3 mb-4 lg:mb-5 text-sm">
+  <ul class="hidden md:inline-flex gap-3 mb-4 lg:mb-5 text-sm">
     <% taxons.each_with_index do |taxon, index| %>
       <li class="opacity-50"><%= link_to taxon.name, spree.nested_taxons_path(taxon), title: taxon.name %></li>
       <div class="breadcrumb-square opacity-50"></div>
