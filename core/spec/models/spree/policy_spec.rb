@@ -94,6 +94,19 @@ RSpec.describe Spree::Policy, type: :model do
         expect(result).to include(store1_policy)
         expect(result).not_to include(store2_policy)
       end
+
+      context 'for policies with a different owner type' do
+        let(:user_policy) { create(:policy, owner: create(:user)) }
+
+        it 'returns policies for the store and the user policy' do
+          result = described_class.for_store(store)
+
+          expect(result).to include(store1_policy)
+          expect(result).to include(user_policy)
+
+          expect(result).not_to include(store2_policy)
+        end
+      end
     end
   end
 end

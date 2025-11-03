@@ -7,14 +7,6 @@ module Spree
 
       private
 
-      def collection
-        model_class.accessible_by(current_ability, :manage)
-      end
-
-      def find_resource
-        model_class.accessible_by(current_ability, :manage).find(params[:id])
-      end
-
       def permitted_resource_params
         params.require(:policy).permit(permitted_policy_attributes)
       end

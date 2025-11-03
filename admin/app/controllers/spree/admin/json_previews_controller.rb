@@ -19,10 +19,6 @@ module Spree
           raise ActiveRecord::RecordNotFound
         end
       end
-
-      def find_resource
-        model_class.accessible_by(current_ability, :manage).find(params[:id])
-      end
     end
   end
 end
