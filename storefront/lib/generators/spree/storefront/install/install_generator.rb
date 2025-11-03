@@ -15,7 +15,8 @@ module Spree
         end
 
         def install
-          template 'application.tailwind.css', 'app/assets/stylesheets/application.tailwind.css'
+          empty_directory Rails.root.join('app/assets/tailwind') if Rails.root && !Rails.root.join('app/assets/tailwind').exist?
+          template 'application.css', 'app/assets/tailwind/application.css'
           template 'tailwind.config.js', 'config/tailwind.config.js'
 
           if Rails.root && Rails.root.join("Procfile.dev").exist?

@@ -16,7 +16,7 @@
           <%= link_to line_item.name, spree_storefront_resource_url(line_item.product), class: 'font-semibold text-text', data: { 'turbo-frame': '_top' } %>
 
           <%= form_for line_item, url: spree.line_item_url(line_item, order_token: line_item.order.token), method: :delete, data: { controller: 'turbo-stream-form' } do |item_form| %>
-            <%= button_tag type: :submit, class: 'remove-line-item-button h-100', data: { action: "click->cart#disableCart turbo-stream-form:submit-end->cart#enableCart" } do %>
+            <%= button_tag type: :submit, class: 'remove-line-item-button', data: { action: "click->cart#disableCart turbo-stream-form:submit-end->cart#enableCart" } do %>
               <%= render 'spree/shared/icons/cross', size: 16 %>
             <% end %>
           <% end %>

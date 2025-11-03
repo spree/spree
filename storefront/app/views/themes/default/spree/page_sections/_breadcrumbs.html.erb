@@ -4,7 +4,7 @@
       <% if @product.present? %>
         <% taxons = product_breadcrumb_taxons(@product) %>
 
-        <ul class="inline-flex space-x-3 text-sm">
+        <ul class="inline-flex gap-3 text-sm">
           <% taxons.each_with_index do |taxon, index| %>
             <li class="opacity-50"><%= link_to taxon.name, spree.nested_taxons_path(taxon), title: taxon.name %></li>
             <div class="breadcrumb-square opacity-50 <%= 'hidden md:block' if index == taxons.length - 1 %>"></div>
