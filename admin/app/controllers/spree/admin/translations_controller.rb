@@ -45,6 +45,10 @@ module Spree
         Rails.application.config.spree.translatable_resources
       end
 
+      def find_resource
+        model_class.accessible_by(current_ability, :update).find(params[:id])
+      end
+
       # Determine the translation locale to use
       def set_translation_locale
         raw_locale = params[:translation_locale].presence ||

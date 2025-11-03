@@ -12,7 +12,7 @@ module Spree
       end
 
       def find_resource
-        model_class.accessible_by(current_ability, :manage).friendly.find(params[:id])
+        model_class.accessible_by(current_ability, :manage).find(params[:id])
       end
 
       def permitted_resource_params
@@ -25,6 +25,11 @@ module Spree
 
       def set_policy_owner
         @policy.owner ||= current_store
+      end
+
+      def object_url(object = nil, options = {})
+        target = object || @object
+        spree.admin_policy_url(target&.id, options)
       end
     end
   end

@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id policy %>" data-controller="row-link">
   <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
-    <%= link_to policy.name, spree.edit_admin_policy_path(policy), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to policy.name, spree.edit_admin_policy_path(policy.id), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-25 cursor-pointer" data-action="click->row-link#openLink">
     <code><%= policy.slug %></code>
@@ -15,6 +15,6 @@
     <%= policy.owner.name %>
   </td>
   <td class="w-10 actions">
-    <%= link_to_edit(policy, class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, policy) %>
+    <%= link_to_edit(policy, url: spree.edit_admin_policy_path(policy.id), class: 'btn btn-light btn-sm', data: { turbo_frame: '_top' }) if can?(:edit, policy) %>
   </td>
 </tr>
