@@ -7,7 +7,7 @@
       <div class="bg-light rounded" style="width: 95px; height: 60px;">
         <% if payment_method_icon_tag(payment_method.payment_icon_name).present? %>
           <span data-controller="tooltip">
-            <%= payment_method_icon_tag(payment_method.payment_icon_name, height: 60, title: payment_method.name) %>
+            <%= payment_method_icon_tag(payment_method.payment_icon_name, height: 60, width: 95, title: payment_method.name) %>
             <%= tooltip(payment_method.name) %>
           </span>
         <% end %>

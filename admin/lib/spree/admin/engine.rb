@@ -138,7 +138,7 @@ module Spree
       end
 
       initializer 'spree.admin.dartsass_fix' do |app|
-        if app.config.respond_to?(:assets)
+        if app.config.respond_to?(:assets) && defined?(Sprockets)
           # we're not using any sass compressors, as we're using dartsass-rails
           # some gems however like payment_icons still have sassc-rails as a dependency
           # which sets the css_compressor to :sass and breaks the assets pipeline
@@ -156,9 +156,9 @@ module Spree
         if app.config.respond_to?(:assets)
           app.config.assets.paths << root.join('app/javascript')
           app.config.assets.paths << root.join('vendor/javascript')
-          app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ]
+          app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ] if defined?(Sprockets)
           # fix for TinyMCE-rails gem to work with both propshaft and sprockets
-          app.config.assets.excluded_paths ||= []
+          app.config.assets.excluded_paths ||= [] if defined?(Sprockets)
         end
       end
 
