@@ -251,8 +251,12 @@ module Spree
     end
 
     def payment_method_icon_tag(payment_method, opts = {})
-      image_tag "payment_icons/#{payment_method}.svg", opts
-    rescue Sprockets::Rails::Helper::AssetNotFound
+      return '' unless defined?(inline_svg)
+
+      opts[:width] ||= opts[:height] * 1.5 if opts[:height]
+      opts[:size] = "#{opts[:width]}x#{opts[:height]}" if opts[:width] && opts[:height]
+
+      inline_svg "payment_icons/#{payment_method}.svg", opts
     end
 
     private

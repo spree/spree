@@ -67,6 +67,7 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'awesome_print'
   gem 'letter_opener'
+  gem 'listen'
 end
 RUBY
 
@@ -107,10 +108,12 @@ bin/rails g spree_stripe:install
 bin/rails g spree_google_analytics:install
 bin/rails g spree_klaviyo:install
 bin/rails g spree_paypal_checkout:install
-# setup letter_opener
+# setup letter_opener & listen gem
+# https://github.com/rails/propshaft?tab=readme-ov-file#improving-performance-in-development
 cat <<RUBY >> config/environments/development.rb
 Rails.application.config.action_mailer.delivery_method = :letter_opener
 Rails.application.config.action_mailer.perform_deliveries = true
+Rails.application.config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 RUBY
 
 # add web to Procfile.dev

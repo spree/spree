@@ -9,22 +9,20 @@
 <%= render_admin_partials(:payment_methods_header_partials) %>
 
 <div class="card-lg">
-  <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col"></th>
-          <th scope="col"><%= Spree.t(:payment_method) %></th>
-          <th scope="col"><%= Spree.t(:visibility) %></th>
-          <th class="text-center"><%= Spree.t(:active) %></th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="payment_method" data-sortable-response-kind-value="turbo-stream">
-        <%= render partial: 'spree/admin/payment_methods/payment_method', collection: @payment_methods %>
-      </tbody>
-    </table>
-  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"><%= Spree.t(:payment_method) %></th>
+        <th scope="col"><%= Spree.t(:visibility) %></th>
+        <th class="text-center"><%= Spree.t(:active) %></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody data-controller="sortable" data-sortable-handle-value=".move-handle" data-sortable-resource-name-value="payment_method" data-sortable-response-kind-value="turbo-stream">
+      <%= render partial: 'spree/admin/payment_methods/payment_method', collection: @payment_methods %>
+    </tbody>
+  </table>
 </div>
 
 <% if available_payment_methods.present? && can?(:create, Spree::PaymentMethod) %>
