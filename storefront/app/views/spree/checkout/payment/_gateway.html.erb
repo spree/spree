@@ -65,9 +65,9 @@
         data: { card_validation_target: "ccType" }
     %>
 
-    <% PaymentIcon.credit_cards.each do |card| %>
-      <div id="credit-card-icon-<%= card.name %>" class="hidden">
-        <%= image_tag card.path, style: 'height: 32px;' %>
+    <% credit_card_icons.each do |card| %>
+      <div id="credit-card-icon-<%= card %>" class="hidden">
+        <%= payment_method_icon_tag card %>
       </div>
     <% end %>
   </div>
