@@ -137,7 +137,7 @@ module Spree
     end
 
     # Controls how section turbo-frame is being loaded. Either `:eager` or `:lazy`
-    def loading_stategy
+    def loading_strategy
       :eager
     end
 
