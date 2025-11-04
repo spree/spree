@@ -168,14 +168,46 @@ module Spree
           return unless product.class.included_modules.include?(Spree::Metafields)
 
           metafield_attributes = attributes.select { |key, _value| key.to_s.start_with?('metafield.') }
-          
+          return if metafield_attributes.empty?
+
+          # Build nested attributes for metafields
+          nested_attrs = []
+
           metafield_attributes.each do |attribute_key, value|
-            next if value.blank?
-            
             # Extract namespace.key from "metafield.namespace.key"
             full_key = attribute_key.to_s.sub(/^metafield\./, '')
-            product.set_metafield(full_key, value.to_s.strip)
+            namespace, key = product.extract_namespace_and_key(full_key)
+
+            # Find or initialize metafield definition
+            metafield_definition = Spree::MetafieldDefinition.find_by(
+              namespace: namespace,
+              key: key,
+              resource_type: product.class.name
+            )
+
+            next unless metafield_definition
+
+            # Find existing metafield if product is persisted
+            existing_metafield = product.persisted? ? product.metafields.find_by(metafield_definition: metafield_definition) : nil
+
+            # Skip blank values for new metafields
+            next if value.blank? && existing_metafield.nil?
+
+            # For existing metafields with blank values, we'll mark them for destruction
+            # For new metafields, we skip them (handled above)
+            # For existing or new metafields with values, we create/update them
+            metafield_attrs = {
+              metafield_definition_id: metafield_definition.id,
+              value: value.to_s.strip,
+              type: metafield_definition.metafield_type
+            }
+
+            metafield_attrs[:id] = existing_metafield.id if existing_metafield
+
+            nested_attrs << metafield_attrs
           end
+
+          product.update(metafields_attributes: nested_attrs) unless nested_attrs.empty?
         end
 
         def to_spree_status(status)

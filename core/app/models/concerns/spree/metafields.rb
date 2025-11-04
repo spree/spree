@@ -24,6 +24,22 @@ module Spree
                                                                                      mf[:metafield_definition_id].blank? || (mf[:id].blank? && mf[:value].blank?)
                                                                                    }
 
+      # Override metafields_attributes= to automatically mark existing metafields
+      # with empty values for destruction
+      def metafields_attributes=(attributes)
+        attributes = attributes.values if attributes.is_a?(Hash)
+
+        attributes.each do |attrs|
+          # If this is an existing metafield (has an id) and value is blank,
+          # mark it for destruction
+          if attrs[:id].present? && value_blank?(attrs[:value])
+            attrs[:_destroy] = true
+          end
+        end
+
+        super(attributes)
+      end
+
       scope :with_metafield_key, ->(key_with_namespace) {
         namespace, key = extract_namespace_and_key(key_with_namespace)
         joins(metafields: :metafield_definition).where(spree_metafield_definitions: { namespace: namespace, key: key })
@@ -66,6 +82,12 @@ module Spree
         end
 
         metafields.with_key(namespace, key).exists?
+      end
+
+      private
+
+      def value_blank?(value)
+        value.blank?
       end
     end
   end
