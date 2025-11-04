@@ -15,6 +15,7 @@ en:
       payment:
         credit_over_limit: This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number.
         update_forbidden: This payment cannot be updated because it is %{state}.
+      record_not_found: '%{model} not found'
       resource_not_found: The resource you were looking for could not be found.
       shipment:
         cannot_ready: Cannot ready shipment.
