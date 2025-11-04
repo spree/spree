@@ -52,7 +52,7 @@ module Spree
 
         path = section.lazy_path(variables)
 
-        turbo_frame_tag(css_id, src: path, loading: :lazy, class: css_class, data: { controller: 'prefetch-lazy', turbo_permanent: true }) do
+        turbo_frame_tag(css_id, src: path, loading: section.loading_strategy, class: css_class, data: { controller: 'prefetch-lazy', turbo_permanent: true }) do
           render('/' + section.to_partial_path, **variables)
         end
       else
