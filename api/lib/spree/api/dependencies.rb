@@ -90,6 +90,28 @@ module Spree
         storefront_wished_item_serializer: 'Spree::V2::Storefront::WishedItemSerializer',
         storefront_metafield_serializer: 'Spree::V2::Storefront::MetafieldSerializer',
 
+        # v3 storefront serializers
+        v3_storefront_product_serializer: 'Spree::Api::V3::ProductSerializer',
+        v3_storefront_variant_serializer: 'Spree::Api::V3::VariantSerializer',
+        v3_storefront_image_serializer: 'Spree::Api::V3::ImageSerializer',
+        v3_storefront_taxon_serializer: 'Spree::Api::V3::TaxonSerializer',
+        v3_storefront_option_type_serializer: 'Spree::Api::V3::OptionTypeSerializer',
+        v3_storefront_option_value_serializer: 'Spree::Api::V3::OptionValueSerializer',
+        v3_storefront_order_serializer: 'Spree::Api::V3::OrderSerializer',
+        v3_storefront_line_item_serializer: 'Spree::Api::V3::LineItemSerializer',
+        v3_storefront_payment_serializer: 'Spree::Api::V3::PaymentSerializer',
+        v3_storefront_shipment_serializer: 'Spree::Api::V3::ShipmentSerializer',
+        v3_storefront_address_serializer: 'Spree::Api::V3::AddressSerializer',
+        v3_storefront_user_serializer: 'Spree::Api::V3::UserSerializer',
+        v3_storefront_country_serializer: 'Spree::Api::V3::CountrySerializer',
+        v3_storefront_state_serializer: 'Spree::Api::V3::StateSerializer',
+        v3_storefront_store_serializer: 'Spree::Api::V3::StoreSerializer',
+        v3_storefront_wishlist_serializer: 'Spree::Api::V3::WishlistSerializer',
+        v3_storefront_wished_item_serializer: 'Spree::Api::V3::WishedItemSerializer',
+        v3_storefront_payment_method_serializer: 'Spree::Api::V3::PaymentMethodSerializer',
+        v3_storefront_shipping_method_serializer: 'Spree::Api::V3::ShippingMethodSerializer',
+        v3_storefront_shipping_rate_serializer: 'Spree::Api::V3::ShippingRateSerializer',
+        v3_storefront_taxonomy_serializer: 'Spree::Api::V3::TaxonomySerializer',
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',
 

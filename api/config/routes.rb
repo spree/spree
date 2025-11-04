@@ -217,5 +217,89 @@ Spree::Core::Engine.add_routes do
         get '/google/:slug', to: 'google#rss_feed'
       end
     end
+
+    namespace :v3 do
+      namespace :storefront do
+        # ===== AUTHENTICATION =====
+        # Public endpoints for login/register, JWT required for refresh
+        post 'auth/login', to: 'auth#create'
+        post 'auth/register', to: 'auth#register'
+        post 'auth/refresh', to: 'auth#refresh'
+
+        # ===== STORE & CONFIGURATION (Public) =====
+        get 'store', to: 'stores#current'
+        resources :stores, only: [:show], param: :code
+
+        # Geography
+        resources :countries, only: [:index, :show] do
+          resources :states, only: [:index, :show]
+        end
+
+        # ===== CATALOG (Public) =====
+        # Products with Ransack filtering
+        # GET /products?q[name_cont]=shirt&q[s]=price+asc
+        resources :products, only: [:index, :show] do
+          resources :variants, only: [:index, :show]
+        end
+
+        # Taxons (categories)
+        resources :taxons, only: [:index, :show]
+
+        # ===== ORDERS (Public create, token or JWT for access) =====
+        # POST /orders - Create order (returns order_token for guests)
+        # Access via X-Order-Token header OR JWT
+        resources :orders do
+          # State transitions
+          member do
+            patch :next       # Move to next checkout step
+            patch :advance    # Advance through all steps
+            patch :complete   # Complete the order
+            patch :cancel     # Cancel the order
+          end
+
+          # Nested resources - all require order access
+          resources :line_items, only: [:index, :create, :show, :update, :destroy]
+          resources :payments, only: [:index, :create, :show]
+          resources :shipments, only: [:index, :show, :update]
+          resources :coupon_codes, only: [:create, :destroy]
+
+          # Available methods for order
+          resources :shipping_methods, only: [:index]
+          resources :payment_methods, only: [:index]
+
+          # Addresses as nested resources
+          resource :billing_address, only: [:show, :update], controller: 'order_addresses', defaults: { address_type: 'billing' }
+          resource :shipping_address, only: [:show, :update], controller: 'order_addresses', defaults: { address_type: 'shipping' }
+        end
+
+        # ===== CUSTOMER (JWT Required) =====
+        get 'customers/me', to: 'customers#show'
+        patch 'customers/me', to: 'customers#update'
+
+        resources :addresses, only: [:index, :show, :create, :update, :destroy], path: 'customers/me/addresses'
+        resources :payment_sources, only: [:index, :show, :destroy], path: 'customers/me/payment_sources'
+
+        # ===== WISHLISTS (JWT Required) =====
+        resources :wishlists do
+          get :default, on: :collection  # Get or create default wishlist
+
+          # Wishlist items as nested resource
+          resources :items, only: [:index, :create, :update, :destroy], controller: 'wishlist_items'
+        end
+
+        # ===== CMS & CONTENT (Public) =====
+        resources :posts, only: [:index, :show]
+        resources :policies, only: [:index, :show]
+
+        # Pages (new page builder)
+        resources :pages, only: [:index, :show] do
+          resources :sections, only: [:index, :show]
+        end
+
+        # ===== DIGITAL DOWNLOADS =====
+        # Access via token in URL
+        get 'digitals/:token', to: 'digitals#download', as: :digital_download
+      end
+    end
   end
 end
