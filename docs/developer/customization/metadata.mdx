@@ -40,5 +40,5 @@ Spree::Taxon.where("public_metadata->>'google_category_id' = ?", "123")
 ```
 
 <Warning>
-  For Products it's recommended to use [Properties](/developer/core-concepts/products#product-properties) or [Option Types](/developer/core-concepts/products#option-types-and-option-values) instead of Metadata.
+  For Products it's recommended to use [Metafields](/developer/core-concepts/metafields) or [Option Types](/developer/core-concepts/products#option-types-and-option-values) instead of Metadata. Metafields provide type-safe, validated custom attributes with better admin UI support.
 </Warning>

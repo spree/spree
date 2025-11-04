@@ -137,6 +137,14 @@ Under the hood we use [Rails Active Storage](https://guides.rubyonrails.org/acti
 
 ## Product Properties
 
+<Warning>
+**Product Properties are deprecated as of Spree 5.2.** This feature was the default way to add custom attributes to products prior to Spree 5.2, but has been replaced by [Metafields](/developer/core-concepts/metafields).
+
+For **new projects**, use [Metafields](/developer/core-concepts/metafields) instead. Product Properties will be removed in Spree 6.0.
+
+For **existing projects**, Properties are still supported for backward compatibility but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration instructions.
+</Warning>
+
 Product properties track individual attributes for a product that don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
 
 A `Property` should not be confused with an [`OptionType`](#option-types-and-option-values), which is used when defining [Variants](#variants) for a product.

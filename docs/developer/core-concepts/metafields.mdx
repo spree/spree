@@ -1,0 +1,794 @@
+---
+title: Metafields
+icon: "database"
+---
+
+## Overview
+
+Metafields provide a flexible, type-safe system for adding custom structured data to Spree resources. Unlike [metadata](/developer/customization/metadata) which is simple JSON storage, metafields are schema-defined with strong typing, validation, and visibility controls.
+
+Metafields enable you to extend resources with custom attributes without modifying the database schema, making them ideal for:
+
+- Product specifications (manufacturer, material, dimensions)
+- Custom business logic fields
+- Integration data from external systems
+- User-specific custom attributes
+- Order metadata with validation
+
+<Note>
+Metafields are available from Spree 5.2 onwards. For earlier versions, use [metadata](/developer/customization/metadata) instead.
+</Note>
+
+<Warning>
+**Starting with Spree 5.2**, Metafields are the **recommended default** for storing custom product attributes, replacing the legacy [Product Properties](/developer/core-concepts/products#product-properties) system. For new projects, use Metafields instead of Properties.
+
+Product Properties are still supported for backward compatibility (until Spree 6.0) but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration details.
+</Warning>
+
+## Architecture
+
+The metafields system consists of two main models:
+
+### MetafieldDefinition
+
+Defines the schema and rules for a metafield type. Think of it as a blueprint that specifies:
+
+- What data type the field contains
+- Which resource it can be attached to
+- Where it should be visible (admin, storefront, or both)
+- How it should be organized (namespace)
+
+```ruby
+# Example: Define a manufacturer field for products
+definition = Spree::MetafieldDefinition.create!(
+  namespace: 'properties',
+  key: 'manufacturer',
+  name: 'Manufacturer',
+  metafield_type: 'Spree::Metafields::ShortText',
+  resource_type: 'Spree::Product',
+  display_on: 'both'
+)
+```
+
+### Metafield
+
+Stores the actual data values according to a MetafieldDefinition:
+
+```ruby
+# Create a metafield instance with actual data
+product = Spree::Product.first
+metafield = product.metafields.create!(
+  metafield_definition: definition,
+  type: 'Spree::Metafields::ShortText',
+  value: 'Wilson'
+)
+```
+
+<Info>
+Every model that includes the `Spree::Metafields` concern automatically gets `metafields`, `public_metafields`, and `private_metafields` associations.
+</Info>
+
+## Data Types
+
+Spree supports six data types for metafields:
+
+| Type | Class | Use Case | Example |
+|------|-------|----------|---------|
+| Short Text | `Spree::Metafields::ShortText` | Brief text fields | SKU codes, brand names, tags |
+| Long Text | `Spree::Metafields::LongText` | Longer text content | Care instructions, notes |
+| Rich Text | `Spree::Metafields::RichText` | Formatted HTML content | Product descriptions with formatting |
+| Number | `Spree::Metafields::Number` | Numeric values | Weight, quantity, ratings |
+| Boolean | `Spree::Metafields::Boolean` | True/false flags | Is featured, requires signature |
+| JSON | `Spree::Metafields::Json` | Structured data | Configuration, complex objects |
+
+### Type-Specific Behavior
+
+#### Short Text & Long Text
+
+```ruby
+# Automatically strips whitespace
+product.set_metafield('custom.sku', '  ABC-123  ')
+product.get_metafield('custom.sku').value # => "ABC-123"
+```
+
+#### Rich Text
+
+```ruby
+# Uses ActionText for rich HTML content
+product.set_metafield('custom.description', '<h1>Hello</h1><p>World</p>')
+metafield = product.get_metafield('custom.description')
+metafield.value.to_s # => "<h1>Hello</h1><p>World</p>"
+```
+
+#### Number
+
+```ruby
+# Returns BigDecimal for precision
+product.set_metafield('measurements.weight', '15.75')
+metafield = product.get_metafield('measurements.weight')
+metafield.serialize_value # => BigDecimal("15.75")
+```
+
+#### Boolean
+
+```ruby
+# Converts various inputs to boolean
+product.set_metafield('flags.featured', 'true')
+metafield = product.get_metafield('flags.featured')
+metafield.serialize_value # => true
+metafield.csv_value # => "Yes" (localized)
+```
+
+#### JSON
+
+```ruby
+# Validates JSON structure
+product.set_metafield('custom.config', '{"theme": "dark", "size": 12}')
+metafield = product.get_metafield('custom.config')
+metafield.serialize_value # => {"theme" => "dark", "size" => 12}
+```
+
+## Visibility Control
+
+Metafields support three visibility levels via the `display_on` attribute:
+
+<CardGroup>
+  <Card title="both" icon="eye">
+    Visible in both admin panel and storefront. Use for public product specifications that need management.
+  </Card>
+  <Card title="front_end" icon="store">
+    Visible only in storefront and Storefront API. Use for customer-facing data that shouldn't clutter admin.
+  </Card>
+  <Card title="back_end" icon="lock">
+    Visible only in admin panel and Platform API. Use for internal notes, integration IDs, or sensitive data.
+  </Card>
+</CardGroup>
+
+```ruby
+# Create a public metafield
+Spree::MetafieldDefinition.create!(
+  key: 'brand',
+  namespace: 'product',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::ShortText',
+  display_on: 'both'
+)
+
+# Create an internal-only metafield
+Spree::MetafieldDefinition.create!(
+  key: 'supplier_id',
+  namespace: 'integration',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::ShortText',
+  display_on: 'back_end'
+)
+```
+
+### Scopes for Filtering
+
+```ruby
+# Get only public metafields
+product.public_metafields
+
+# Get only admin metafields
+product.private_metafields
+
+# Query definitions
+Spree::MetafieldDefinition.available_on_front_end
+Spree::MetafieldDefinition.available_on_back_end
+```
+
+## Namespaces
+
+Namespaces organize metafields into logical groups, preventing key conflicts and improving organization:
+
+```ruby
+# Product properties
+product.set_metafield('properties.material', '100% Cotton')
+product.set_metafield('properties.fit', 'Regular')
+
+# Integration data
+product.set_metafield('shopify.product_id', '12345')
+product.set_metafield('google.category_id', '5432')
+
+# Custom business logic
+product.set_metafield('custom.requires_approval', 'true')
+```
+
+<Info>
+Namespace and key are automatically normalized: `'My Custom Namespace'` becomes `'my_custom_namespace'`.
+</Info>
+
+## Supported Resources
+
+The following resources support metafields by default:
+
+<AccordionGroup>
+  <Accordion title="Core Commerce">
+    - `Spree::Product`
+    - `Spree::Variant`
+    - `Spree::Order`
+    - `Spree::LineItem`
+    - `Spree::OptionType`
+    - `Spree::OptionValue`
+  </Accordion>
+
+  <Accordion title="Catalog">
+    - `Spree::Taxon`
+    - `Spree::Taxonomy`
+    - `Spree::Asset`
+    - `Spree::Image`
+  </Accordion>
+
+  <Accordion title="Payments & Shipping">
+    - `Spree::Payment`
+    - `Spree::PaymentMethod`
+    - `Spree::PaymentSource`
+    - `Spree::CreditCard`
+    - `Spree::Shipment`
+    - `Spree::ShippingMethod`
+  </Accordion>
+
+  <Accordion title="Fulfillment">
+    - `Spree::CustomerReturn`
+    - `Spree::Refund`
+    - `Spree::StockItem`
+    - `Spree::StockTransfer`
+  </Accordion>
+
+  <Accordion title="Marketing">
+    - `Spree::Promotion`
+    - `Spree::GiftCard`
+    - `Spree::StoreCredit`
+  </Accordion>
+
+  <Accordion title="Content">
+    - `Spree::Post`
+    - `Spree::PostCategory`
+  </Accordion>
+
+  <Accordion title="Other">
+    - `Spree::Store`
+    - `Spree::CustomDomain`
+    - `Spree::Address`
+    - `Spree::NewsletterSubscriber`
+    - `Spree::TaxRate`
+    - `Spree.user_class`
+  </Accordion>
+</AccordionGroup>
+
+## CRUD Operations
+
+### Creating Metafields
+
+#### Method 1: Using `set_metafield` (Recommended)
+
+The simplest way to create or update metafields:
+
+```ruby
+product = Spree::Product.first
+
+# Creates definition if it doesn't exist, then creates/updates metafield
+product.set_metafield('properties.manufacturer', 'Wilson')
+product.set_metafield('properties.material', '90% Cotton 10% Elastan')
+product.set_metafield('properties.fit', 'Loose')
+```
+
+#### Method 2: Using Nested Attributes
+
+Useful when working with forms:
+
+```ruby
+product.update(
+  metafields_attributes: [
+    {
+      metafield_definition_id: manufacturer_definition.id,
+      type: 'Spree::Metafields::ShortText',
+      value: 'Wilson'
+    },
+    {
+      metafield_definition_id: material_definition.id,
+      type: 'Spree::Metafields::ShortText',
+      value: '100% Cotton'
+    }
+  ]
+)
+```
+
+#### Method 3: Direct Creation
+
+For full control:
+
+```ruby
+# First, create or find the definition
+definition = Spree::MetafieldDefinition.find_or_create_by!(
+  namespace: 'custom',
+  key: 'brand',
+  resource_type: 'Spree::Product'
+) do |d|
+  d.name = 'Brand'
+  d.metafield_type = 'Spree::Metafields::ShortText'
+  d.display_on = 'both'
+end
+
+# Then create the metafield
+product.metafields.create!(
+  metafield_definition: definition,
+  type: definition.metafield_type,
+  value: 'Nike'
+)
+```
+
+### Reading Metafields
+
+```ruby
+# Get a specific metafield
+metafield = product.get_metafield('properties.manufacturer')
+metafield.value # => "Wilson"
+metafield.name  # => "Manufacturer"
+metafield.key   # => "properties.manufacturer"
+
+# Check if metafield exists
+product.has_metafield?('properties.manufacturer') # => true
+product.has_metafield?(definition)                # => true
+
+# Get all metafields
+product.metafields              # All metafields
+product.public_metafields       # Front-end visible only
+product.private_metafields      # Back-end only
+
+# Access serialized value
+metafield = product.get_metafield('properties.is_featured')
+metafield.value          # => "true" (string)
+metafield.serialize_value # => true (boolean)
+```
+
+### Updating Metafields
+
+```ruby
+# Method 1: Using set_metafield (creates or updates)
+product.set_metafield('properties.manufacturer', 'New Brand')
+
+# Method 2: Using nested attributes
+product.update(
+  metafields_attributes: [
+    {
+      id: existing_metafield.id,
+      metafield_definition_id: definition.id,
+      value: 'Updated Value'
+    }
+  ]
+)
+
+# Method 3: Direct update
+metafield = product.get_metafield('properties.manufacturer')
+metafield.update!(value: 'Updated Brand')
+```
+
+### Deleting Metafields
+
+```ruby
+# Method 1: Set value to blank (auto-destroys)
+product.update(
+  metafields_attributes: [
+    {
+      id: metafield.id,
+      value: '' # Automatically marked for destruction
+    }
+  ]
+)
+
+# Method 2: Explicit destroy flag
+product.update(
+  metafields_attributes: [
+    {
+      id: metafield.id,
+      _destroy: true
+    }
+  ]
+)
+
+# Method 3: Direct deletion
+metafield = product.get_metafield('properties.manufacturer')
+metafield.destroy
+```
+
+<Warning>
+When a metafield value is set to blank via nested attributes, it's automatically marked for destruction. This is intentional behavior to prevent empty metafields.
+</Warning>
+
+## Querying by Metafields
+
+Spree provides helpful scopes for querying resources by metafield values:
+
+```ruby
+# Find products with specific metafield key
+products = Spree::Product.with_metafield_key('properties.manufacturer')
+
+# Find products with specific metafield key and value
+products = Spree::Product.with_metafield_key_value('properties.fit', 'Loose')
+
+# Find products with specific metafield (by definition)
+products = Spree::Product.with_metafield(manufacturer_definition)
+
+# Complex queries using joins
+Spree::Product
+  .joins(:metafields)
+  .where(
+    spree_metafields: {
+      metafield_definition_id: definition.id
+    }
+  )
+  .where("spree_metafields.value ILIKE ?", "%cotton%")
+```
+
+## API Integration
+
+### Platform API
+
+Metafields are automatically included in Platform API responses:
+
+```json
+{
+  "data": {
+    "id": "1",
+    "type": "product",
+    "attributes": {
+      "name": "Ruby on Rails T-Shirt",
+      // ... other attributes
+    },
+    "relationships": {
+      "metafields": {
+        "data": [
+          {
+            "id": "1",
+            "type": "metafield"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "1",
+      "type": "metafield",
+      "attributes": {
+        "name": "Manufacturer",
+        "key": "properties.manufacturer",
+        "type": "Spree::Metafields::ShortText",
+        "display_on": "both",
+        "value": "Wilson"
+      }
+    }
+  ]
+}
+```
+
+### Storefront API
+
+Only public metafields (with `display_on` set to `both` or `front_end`) are included:
+
+```json
+{
+  "data": {
+    "id": "1",
+    "type": "product",
+    "attributes": {
+      "name": "Ruby on Rails T-Shirt"
+    },
+    "relationships": {
+      "metafields": {
+        "data": [
+          {
+            "id": "1",
+            "type": "metafield"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "1",
+      "type": "metafield",
+      "attributes": {
+        "name": "Manufacturer",
+        "key": "properties.manufacturer",
+        "type": "Spree::Metafields::ShortText",
+        "value": "Wilson"
+      }
+    }
+  ]
+}
+```
+
+<Note>
+The `display_on` attribute is intentionally excluded from Storefront API responses for security reasons.
+</Note>
+
+## Admin Panel Management
+
+### Managing Definitions
+
+Navigate to **Settings → Metafield Definitions** in the admin panel:
+
+1. Click "New Metafield Definition"
+2. Select the resource type (Product, Variant, Order, etc.)
+3. Enter namespace and key
+4. Choose the data type
+5. Set visibility (both, front_end, back_end)
+6. Save
+
+### Managing Values
+
+When editing a resource (e.g., a product), metafields appear in a dedicated section:
+
+1. Edit any resource that has metafield definitions
+2. Scroll to the "Metafields" section
+3. Fill in values for each defined metafield
+4. Save
+
+<Info>
+The admin panel automatically builds empty metafield forms for all definitions, making it easy to add values.
+</Info>
+
+## Validation
+
+### MetafieldDefinition Validations
+
+```ruby
+validates :namespace, :key, :name, :resource_type, presence: true
+validates :metafield_type, presence: true,
+          inclusion: { in: available_types }
+validates :resource_type,
+          inclusion: { in: available_resources }
+validates :key, uniqueness: {
+  scope: [:resource_type, :namespace],
+  message: 'must be unique per resource type and namespace'
+}
+```
+
+### Metafield Validations
+
+```ruby
+validates :metafield_definition, :type, :resource, :value, presence: true
+validates :metafield_definition_id, uniqueness: {
+  scope: [:resource_type, :resource_id],
+  message: 'already exists for this resource'
+}
+validate :type_must_match_metafield_definition
+```
+
+Type-specific validations are also applied:
+
+```ruby
+# Number metafields
+validates :value, numericality: true
+
+# JSON metafields
+validate :value_must_be_valid_json
+
+# Boolean metafields
+normalizes :value, with: ->(value) { value.to_b.to_s }
+```
+
+## Configuration
+
+### Adding Custom Metafield Types
+
+Create a custom metafield type:
+
+```ruby
+# app/models/my_app/metafields/url.rb
+module MyApp
+  module Metafields
+    class Url < Spree::Metafield
+      validates :value, format: { with: URI::DEFAULT_PARSER.make_regexp }
+
+      normalizes :value, with: ->(value) { value.to_s.strip }
+
+      def serialize_value
+        URI.parse(value)
+      rescue URI::InvalidURIError
+        value
+      end
+    end
+  end
+end
+```
+
+Register it in an initializer:
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.spree.metafield_types << 'MyApp::Metafields::Url'
+```
+
+### Enabling Metafields for Custom Resources
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.spree.metafield_enabled_resources << 'MyApp::CustomResource'
+
+# app/models/my_app/custom_resource.rb
+module MyApp
+  class CustomResource < ApplicationRecord
+    include Spree::Metafields
+  end
+end
+```
+
+## Metafields vs Metadata vs Product Properties
+
+Understanding when to use each:
+
+| Feature | Metafields | Metadata | Product Properties (Legacy) |
+|---------|-----------|----------|----------------------------|
+| **Available Since** | Spree 5.2+ | All versions | Pre-5.2 (deprecated) |
+| **Recommended For** | New projects | Simple key-value | Legacy projects only |
+| **Structure** | Strongly typed, schema-defined | Simple JSON key-value | Product-specific properties |
+| **Validation** | Type-specific validation | None | Name/value pairs |
+| **Visibility** | Configurable (front/back/both) | Fixed (public/private) | Always public |
+| **API Access** | Auto-included in API | Requires manual serialization | Auto-included in API |
+| **Admin UI** | Dedicated management UI | Direct JSON editing | Dedicated UI |
+| **Organization** | Namespaced (namespace.key) | Flat structure | Property-based |
+| **Data Types** | 6 specific types with serialization | Any JSON-serializable data | Text only |
+| **Querying** | Built-in query scopes | Manual JSON queries | Built-in queries |
+| **Resources** | Any enabled resource | Any resource | Products only |
+
+### When to Use Metafields
+
+- **New projects starting with Spree 5.2+**
+- You need type validation (numbers, booleans, URLs)
+- Different visibility for different audiences
+- Data appears in admin UI forms
+- You want query-optimized custom fields
+- You need organized namespacing
+- You want to extend multiple resource types
+
+### When to Use Metadata
+
+- Simple key-value storage without validation
+- Truly dynamic data with unknown structure
+- Integration payloads that change frequently
+- Quick prototyping without schema definition
+
+### When to Use Product Properties (Legacy)
+
+- **Existing projects upgrading from pre-5.2** that aren't ready to migrate
+- You need backward compatibility until Spree 6.0
+- You must enable via `config.product_properties_enabled = true`
+
+<Warning>
+Product Properties are deprecated and will be removed in Spree 6.0. For new projects, always use Metafields. For existing projects, plan to migrate using the [migration rake task](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties).
+</Warning>
+
+## Common Use Cases
+
+### Product Specifications
+
+```ruby
+# Define specifications namespace
+manufacturer_def = Spree::MetafieldDefinition.create!(
+  namespace: 'specifications',
+  key: 'manufacturer',
+  name: 'Manufacturer',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::ShortText',
+  display_on: 'both'
+)
+
+warranty_def = Spree::MetafieldDefinition.create!(
+  namespace: 'specifications',
+  key: 'warranty_years',
+  name: 'Warranty (Years)',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::Number',
+  display_on: 'both'
+)
+
+# Set values
+product.set_metafield('specifications.manufacturer', 'Sony')
+product.set_metafield('specifications.warranty_years', '2')
+```
+
+### Integration with External Systems
+
+```ruby
+# Store Shopify IDs (admin only)
+Spree::MetafieldDefinition.create!(
+  namespace: 'shopify',
+  key: 'product_id',
+  name: 'Shopify Product ID',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::ShortText',
+  display_on: 'back_end'
+)
+
+product.set_metafield('shopify.product_id', '12345678')
+
+# Query products by Shopify ID
+Spree::Product.with_metafield_key_value('shopify.product_id', '12345678')
+```
+
+### Feature Flags
+
+```ruby
+# Create feature flag definitions
+Spree::MetafieldDefinition.create!(
+  namespace: 'flags',
+  key: 'featured',
+  name: 'Featured Product',
+  resource_type: 'Spree::Product',
+  metafield_type: 'Spree::Metafields::Boolean',
+  display_on: 'back_end'
+)
+
+# Set flags
+product.set_metafield('flags.featured', 'true')
+
+# Query featured products
+featured_products = Spree::Product
+  .with_metafield_key('flags.featured')
+  .joins(:metafields)
+  .where(spree_metafields: { value: 'true' })
+```
+
+### Custom Order Data
+
+```ruby
+# Store gift message (visible to admins)
+Spree::MetafieldDefinition.create!(
+  namespace: 'custom',
+  key: 'gift_message',
+  name: 'Gift Message',
+  resource_type: 'Spree::Order',
+  metafield_type: 'Spree::Metafields::LongText',
+  display_on: 'back_end'
+)
+
+order.set_metafield('custom.gift_message', 'Happy Birthday!')
+
+# Store delivery instructions (visible to customers)
+Spree::MetafieldDefinition.create!(
+  namespace: 'delivery',
+  key: 'instructions',
+  name: 'Delivery Instructions',
+  resource_type: 'Spree::Order',
+  metafield_type: 'Spree::Metafields::LongText',
+  display_on: 'both'
+)
+
+order.set_metafield('delivery.instructions', 'Leave at front door')
+```
+
+## Best Practices
+
+1. **Use Descriptive Namespaces**: Group related metafields (e.g., `specifications.*`, `integration.*`, `custom.*`)
+
+2. **Choose Appropriate Visibility**: Don't expose internal data to the storefront
+
+3. **Validate Data Types**: Use the correct metafield type for your data
+
+4. **Keep Keys Consistent**: Use snake_case for keys, they're automatically normalized
+
+5. **Document Custom Types**: If creating custom metafield types, document their behavior
+
+6. **Query Efficiently**: Use the provided scopes instead of custom joins when possible
+
+7. **Handle Missing Values**: Always check if `get_metafield` returns nil
+
+8. **Use Set Metafield for Simplicity**: Prefer `set_metafield` over manual creation
+
+9. **Consider Performance**: Eager load metafields when displaying many resources:
+
+```ruby
+# ✅ Good - eager loads metafields
+products = Spree::Product.includes(:metafields).limit(20)
+
+# ❌ Bad - N+1 queries
+products = Spree::Product.limit(20)
+products.each { |p| p.metafields.to_a }
+```
+
+10. **Migrate from Properties**: If upgrading from pre-5.2, use the [migration rake task](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties)
