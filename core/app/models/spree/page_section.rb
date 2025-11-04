@@ -136,9 +136,9 @@ module Spree
       Spree::Core::Engine.routes.url_helpers.page_section_path(self, **url_options)
     end
 
-    # Controls how section turbo-frame is being loaded. Either `eager` or `lazy`
+    # Controls how section turbo-frame is being loaded. Either `:eager` or `:lazy`
     def loading_stategy
-      "eager"
+      :eager
     end
 
     def rich_text_fields
