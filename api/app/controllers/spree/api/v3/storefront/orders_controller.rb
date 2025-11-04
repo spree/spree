@@ -51,7 +51,7 @@ module Spree
             if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(result.error)
+              render_service_error(result.error)
             end
           end
 
@@ -62,7 +62,7 @@ module Spree
             if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(result.error)
+              render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
             end
           end
 
@@ -73,7 +73,7 @@ module Spree
             if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(result.error)
+              render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
             end
           end
 
@@ -84,7 +84,7 @@ module Spree
             if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(result.error)
+              render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
             end
           end
 
@@ -92,8 +92,6 @@ module Spree
           def cancel
             @order.cancel!
             render json: serialize_resource(@order)
-          rescue StateMachines::InvalidTransition => e
-            render_errors(e.message, :unprocessable_entity)
           end
 
           protected
