@@ -8,7 +8,7 @@ module Spree
           protected
 
           def scope
-            Spree::Page.visible.for_store(current_store).accessible_by(current_ability, :show)
+            super.without_previews.where(pageable: current_store)
           end
 
           def model_class
