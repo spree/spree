@@ -441,5 +441,67 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(product.has_metafield?('custom.material')).to be false
       end
     end
+
+    context 'when updating existing product metafields with blank values' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p.set_metafield('custom.brand', 'Old Brand')
+        p.set_metafield('custom.material', 'Old Material')
+        p
+      end
+
+      let(:row_data) do
+        base_data = csv_row_hash(
+          'slug' => 'denim-shirt',
+          'name' => 'Denim Shirt',
+          'status' => 'active',
+          'price' => '62.99',
+          'currency' => 'USD'
+        )
+        base_data.merge(
+          'metafield.custom.brand' => 'New Brand',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'removes existing metafield when empty value is uploaded' do
+        expect(existing_product.metafields.count).to eq 2
+
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'New Brand'
+        expect(product.has_metafield?('custom.material')).to be false
+        expect(product.metafields.count).to eq 1
+      end
+
+      context 'when all metafields have blank values' do
+        let(:row_data) do
+          base_data = csv_row_hash(
+            'slug' => 'denim-shirt',
+            'name' => 'Denim Shirt',
+            'status' => 'active',
+            'price' => '62.99',
+            'currency' => 'USD'
+          )
+          base_data.merge(
+            'metafield.custom.brand' => '',
+            'metafield.custom.material' => ''
+          )
+        end
+
+        it 'removes all existing metafields' do
+          expect(existing_product.metafields.count).to eq 2
+
+          product = variant.product
+
+          expect(product.id).to eq existing_product.id
+          expect(product.has_metafield?('custom.brand')).to be false
+          expect(product.has_metafield?('custom.material')).to be false
+          expect(product.metafields.count).to eq 0
+        end
+      end
+    end
   end
 end

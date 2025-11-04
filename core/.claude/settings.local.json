@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec rspec:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
