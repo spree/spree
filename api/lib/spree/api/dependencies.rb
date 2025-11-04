@@ -111,6 +111,10 @@ module Spree
         v3_storefront_payment_method_serializer: 'Spree::Api::V3::PaymentMethodSerializer',
         v3_storefront_shipping_method_serializer: 'Spree::Api::V3::ShippingMethodSerializer',
         v3_storefront_shipping_rate_serializer: 'Spree::Api::V3::ShippingRateSerializer',
+        v3_storefront_page_serializer: 'Spree::Api::V3::PageSerializer',
+        v3_storefront_section_serializer: 'Spree::Api::V3::SectionSerializer',
+        v3_storefront_block_serializer: 'Spree::Api::V3::BlockSerializer',
+        v3_storefront_page_link_serializer: 'Spree::Api::V3::PageLinkSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

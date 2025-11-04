@@ -291,8 +291,12 @@ Spree::Core::Engine.add_routes do
 
         # ===== CMS & CONTENT (Public) =====
         resources :posts, only: [:index, :show]
-        resources :pages, only: [:index, :show]
         resources :policies, only: [:index, :show]
+
+        # Pages (new page builder)
+        resources :pages, only: [:index, :show] do
+          resources :sections, only: [:index, :show]
+        end
 
         # ===== DIGITAL DOWNLOADS =====
         # Access via token in URL

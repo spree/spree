@@ -67,7 +67,7 @@ module Spree
           end
 
           def item_params
-            params.require(:item).permit(:variant_id, :quantity)
+            params.require(:item).permit(Spree::PermittedAttributes.wished_item_attributes)
           end
 
           def serialize_collection(collection)

@@ -31,7 +31,7 @@ module Spree
           end
 
           def permitted_params
-            params.require(:wishlist).permit(:name, :is_private, :is_default)
+            params.require(:wishlist).permit(Spree::PermittedAttributes.wishlist_attributes)
           end
         end
       end

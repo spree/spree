@@ -18,16 +18,18 @@ module Spree
 
           # POST /api/v3/storefront/orders/:order_id/line_items
           def create
-            @line_item = @order.contents.add(
-              variant,
-              line_item_params[:quantity] || 1,
-              line_item_params[:options] || {}
+            result = add_item_service.call(
+              order: @order,
+              variant: variant,
+              quantity: line_item_params[:quantity] || 1,
+              options: line_item_params[:options] || {}
             )
 
-            if @line_item.persisted?
+            if result.success?
+              @line_item = result.value
               render json: serialize_resource(@line_item), status: :created
             else
-              render_errors(@line_item.errors)
+              render_errors(result.error)
             end
           end
 
@@ -42,19 +44,31 @@ module Spree
             @line_item = @order.line_items.find(params[:id])
 
             if line_item_params[:quantity].present?
-              @order.contents.update_cart_line_item(
-                @line_item,
+              result = set_item_quantity_service.call(
+                order: @order,
+                line_item: @line_item,
                 quantity: line_item_params[:quantity]
               )
-            end
 
-            render json: serialize_resource(@line_item)
+              if result.success?
+                render json: serialize_resource(@line_item)
+              else
+                render_errors(result.error)
+              end
+            else
+              render json: serialize_resource(@line_item)
+            end
           end
 
           # DELETE /api/v3/storefront/orders/:order_id/line_items/:id
           def destroy
             @line_item = @order.line_items.find(params[:id])
-            @order.contents.remove_line_item(@line_item)
+
+            remove_line_item_service.call(
+              order: @order,
+              line_item: @line_item
+            )
+
             head :no_content
           end
 
@@ -81,7 +95,19 @@ module Spree
           end
 
           def line_item_params
-            params.require(:line_item).permit(:variant_id, :quantity, options: {})
+            params.require(:line_item).permit(Spree::PermittedAttributes.line_item_attributes + [{ options: {} }])
+          end
+
+          def add_item_service
+            Spree::Api::Dependencies.storefront_cart_add_item_service.constantize
+          end
+
+          def set_item_quantity_service
+            Spree::Api::Dependencies.storefront_cart_set_item_quantity_service.constantize
+          end
+
+          def remove_line_item_service
+            Spree::Api::Dependencies.storefront_cart_remove_line_item_service.constantize
           end
         end
       end

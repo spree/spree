@@ -41,37 +41,51 @@ module Spree
 
           # PATCH /api/v3/storefront/orders/:id
           def update
-            if @order.update(permitted_params)
+            result = update_service.call(
+              order: @order,
+              params: params,
+              permitted_attributes: permitted_params,
+              request_env: request.headers.env
+            )
+
+            if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(@order.errors)
+              render_errors(result.error)
             end
           end
 
           # PATCH /api/v3/storefront/orders/:id/next
           def next
-            if @order.next
+            result = next_service.call(order: @order)
+
+            if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(@order.errors)
+              render_errors(result.error)
             end
           end
 
           # PATCH /api/v3/storefront/orders/:id/advance
           def advance
-            if @order.next while @order.can_go_to_state?('complete')
+            result = advance_service.call(order: @order)
+
+            if result.success?
               render json: serialize_resource(@order)
             else
-              render_errors(@order.errors)
+              render_errors(result.error)
             end
           end
 
           # PATCH /api/v3/storefront/orders/:id/complete
           def complete
-            @order.complete!
-            render json: serialize_resource(@order)
-          rescue StateMachines::InvalidTransition => e
-            render_errors(e.message, :unprocessable_entity)
+            result = complete_service.call(order: @order)
+
+            if result.success?
+              render json: serialize_resource(@order)
+            else
+              render_errors(result.error)
+            end
           end
 
           # PATCH /api/v3/storefront/orders/:id/cancel
@@ -103,7 +117,23 @@ module Spree
           end
 
           def permitted_params
-            params.require(:order).permit(:email, :special_instructions)
+            params.require(:order).permit(Spree::PermittedAttributes.checkout_attributes)
+          end
+
+          def update_service
+            Spree::Api::Dependencies.storefront_checkout_update_service.constantize
+          end
+
+          def next_service
+            Spree::Api::Dependencies.storefront_checkout_next_service.constantize
+          end
+
+          def advance_service
+            Spree::Api::Dependencies.storefront_checkout_advance_service.constantize
+          end
+
+          def complete_service
+            Spree::Api::Dependencies.storefront_checkout_complete_service.constantize
           end
         end
       end

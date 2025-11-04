@@ -71,11 +71,7 @@ module Spree
           end
 
           def address_params
-            params.require(:address).permit(
-              :firstname, :lastname, :address1, :address2,
-              :city, :zipcode, :phone, :state_name, :country_id, :state_id,
-              :company
-            )
+            params.require(:address).permit(Spree::PermittedAttributes.address_attributes)
           end
         end
       end

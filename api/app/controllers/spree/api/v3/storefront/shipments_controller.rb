@@ -23,8 +23,8 @@ module Spree
 
           # PATCH /api/v3/storefront/orders/:order_id/shipments/:id
           def update
-            if shipment_params[:selected_shipping_rate_id].present?
-              @shipment.selected_shipping_rate_id = shipment_params[:selected_shipping_rate_id]
+            if permitted_params[:selected_shipping_rate_id].present?
+              @shipment.selected_shipping_rate_id = permitted_params[:selected_shipping_rate_id]
               @shipment.save
             end
 
@@ -50,11 +50,7 @@ module Spree
           end
 
           def permitted_params
-            shipment_params
-          end
-
-          def shipment_params
-            params.require(:shipment).permit(:selected_shipping_rate_id, :tracking)
+            params.require(:shipment).permit(Spree::PermittedAttributes.shipment_attributes)
           end
         end
       end

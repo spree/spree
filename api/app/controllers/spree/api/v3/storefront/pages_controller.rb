@@ -8,35 +8,15 @@ module Spree
           protected
 
           def scope
-            Spree::CmsPage.visible.for_store(current_store).accessible_by(current_ability, :show)
+            Spree::Page.visible.for_store(current_store).accessible_by(current_ability, :show)
           end
 
           def model_class
-            Spree::CmsPage
+            Spree::Page
           end
 
           def serializer_class
-            # Simple inline serializer for pages
-            Class.new do
-              attr_reader :resource
-
-              def initialize(resource, context = {})
-                @resource = resource
-              end
-
-              def as_json
-                {
-                  id: resource.id,
-                  title: resource.title,
-                  slug: resource.slug,
-                  content: resource.content,
-                  meta_title: resource.meta_title,
-                  meta_description: resource.meta_description,
-                  created_at: resource.created_at,
-                  updated_at: resource.updated_at
-                }
-              end
-            end
+            Spree::Api::Dependencies.v3_storefront_page_serializer.constantize
           end
 
           # Not needed for index/show

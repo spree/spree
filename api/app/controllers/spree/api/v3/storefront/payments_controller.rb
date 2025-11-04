@@ -52,11 +52,7 @@ module Spree
           end
 
           def permitted_params
-            payment_params
-          end
-
-          def payment_params
-            params.require(:payment).permit(:payment_method_id, :amount, :source_attributes)
+            params.require(:payment).permit(Spree::PermittedAttributes.payment_attributes)
           end
         end
       end

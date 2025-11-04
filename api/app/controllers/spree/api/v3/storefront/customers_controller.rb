@@ -38,7 +38,7 @@ module Spree
           end
 
           def customer_params
-            params.require(:customer).permit(:email, :first_name, :last_name)
+            params.require(:customer).permit(Spree::PermittedAttributes.user_attributes)
           end
         end
       end
