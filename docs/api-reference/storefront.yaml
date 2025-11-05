@@ -1928,6 +1928,34 @@ paths:
           $ref: '#/components/responses/422UnprocessableEntity'
       security:
         - orderToken: []
+  /api/v2/storefront/adyen/payment_sessions/{id}/complete:
+    post:
+      summary: Complete an Adyen payment session and order
+      description: "Complete an Adyen payment session and order. Adyen support is currently in private beta. [Please contact us](https://spreecommerce.org/contact) to get access."
+      tags:
+        - Adyen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_result:
+                  type: string
+                  description: The Adyen payment session result
+              required:
+                - session_result
+            example:
+              session_result: AdyenResultData
+      operationId: complete-adyen-payment-session
+      responses:
+        '200':
+          $ref: '#/components/responses/AdyenPaymentSession'
+        '422':
+          $ref: '#/components/responses/422UnprocessableEntity'
+      security:
+        - orderToken: []
   "/api/v2/storefront/adyen/payment_sessions/{id}":
     get:
       summary: Get Adyen Payment Session
