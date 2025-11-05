@@ -337,9 +337,10 @@ module Spree
           Spree::Addresses::PhoneValidator
         ]
 
+        # Pre-load authentication strategy classes to avoid reflection at request time
         Rails.application.config.spree.authentication_strategies = {
-          email: 'Spree::Authentication::Strategies::EmailPasswordStrategy',
-          google: 'Spree::Authentication::Strategies::GoogleStrategy'
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy,
+          google: Spree::Authentication::Strategies::GoogleStrategy
         }
       end
 
