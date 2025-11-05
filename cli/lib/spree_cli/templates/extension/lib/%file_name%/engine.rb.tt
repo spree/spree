@@ -14,10 +14,12 @@ module <%= class_name %>
     end
 
     initializer '<%= file_name %>.assets' do |app|
-      app.config.assets.paths << root.join('app/javascript')
-      app.config.assets.paths << root.join('vendor/javascript')
-      app.config.assets.paths << root.join('vendor/stylesheets')
-      app.config.assets.precompile += %w[<%= file_name %>_manifest]
+      if app.config.respond_to?(:assets)
+        app.config.assets.paths << root.join('app/javascript')
+        app.config.assets.paths << root.join('vendor/javascript')
+        app.config.assets.paths << root.join('vendor/stylesheets')
+        app.config.assets.precompile += %w[<%= file_name %>_manifest]
+      end
     end
 
     initializer '<%= file_name %>.importmap', before: 'importmap' do |app|
