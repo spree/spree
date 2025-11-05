@@ -17,8 +17,6 @@ platforms :ruby do
   gem 'sqlite3', '>= 2.0'
 end
 
-gem 'sprockets-rails', '>= 3.5.2'
-
 group :test do
   gem 'capybara'
   gem 'capybara-screenshot'
