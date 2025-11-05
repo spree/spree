@@ -31,6 +31,8 @@
   animation: fadeIn 0.2s ease-in-out;
   width: 100%;
   z-index: $zindex-dropdown;
+  max-height: calc(100vh - #{$header-height} - 4rem);
+  overflow-y: auto;
 
   @include media-breakpoint-up(md) {
     width: 50%;

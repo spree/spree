@@ -2,6 +2,13 @@
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, placeholder: Spree.t('admin.users.filters.search_placeholder') %>
 
+    <%= render "spree/admin/shared/calendar_range_picker",
+          date_from_input_name: "q[created_at_gt]",
+          date_to_input_name: "q[created_at_lt]",
+          date_from_value: params.dig(:q, :created_at_gt),
+          date_to_value: params.dig(:q, :created_at_lt),
+          dropdown_direction: "right" %>
+
     <%= render 'spree/admin/shared/filters_button' %>
   </div>
   <div data-dropdown-target="menu" id="table-filter" class="hidden">
