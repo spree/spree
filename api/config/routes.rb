@@ -225,6 +225,7 @@ Spree::Core::Engine.add_routes do
         post 'auth/login', to: 'auth#create'
         post 'auth/register', to: 'auth#register'
         post 'auth/refresh', to: 'auth#refresh'
+        post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
         # ===== STORE & CONFIGURATION (Public) =====
         get 'store', to: 'stores#current'

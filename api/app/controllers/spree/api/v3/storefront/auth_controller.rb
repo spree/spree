@@ -5,21 +5,33 @@ module Spree
         class AuthController < BaseController
           include Spree::Api::V3::Storefront::Authentication
 
-          skip_before_action :authenticate_user, only: [:create, :register]
+          skip_before_action :authenticate_user, only: [:create, :register, :oauth_callback]
           before_action :require_authentication!, only: [:refresh]
 
           # POST /api/v3/storefront/auth/login
+          # Supports multiple authentication providers via :provider param
+          # Examples:
+          #   { "provider": "email", "email": "...", "password": "..." }
+          #   { "provider": "google", "id_token": "..." }
           def create
-            user = Spree.user_class.find_by(email: params[:email])
+            strategy = authentication_strategy
+            return unless strategy # Error already rendered by determine_strategy
 
-            if user&.valid_password?(params[:password])
+            result = strategy.authenticate
+
+            if result.success?
+              user = result.value
               token = generate_jwt(user)
               render json: {
                 token: token,
                 user: user_serializer.new(user, serializer_context).as_json
               }
             else
-              render json: { error: 'Invalid email or password' }, status: :unauthorized
+              render_error(
+                code: ERROR_CODES[:authentication_failed],
+                message: result.error,
+                status: :unauthorized
+              )
             end
           end
 
@@ -47,6 +59,35 @@ module Spree
             }
           end
 
+          # POST /api/v3/storefront/auth/oauth/callback
+          # OAuth callback endpoint for server-side OAuth flows
+          # Example: { "provider": "google", "code": "authorization_code" }
+          def oauth_callback
+            # This endpoint is designed for OAuth flows where the server
+            # exchanges the authorization code for an access token
+            # For client-side flows, use the regular /login endpoint with id_token
+
+            strategy = authentication_strategy
+            return unless strategy # Error already rendered by determine_strategy
+
+            result = strategy.authenticate
+
+            if result.success?
+              user = result.value
+              token = generate_jwt(user)
+              render json: {
+                token: token,
+                user: user_serializer.new(user, serializer_context).as_json
+              }
+            else
+              render_error(
+                code: ERROR_CODES[:authentication_failed],
+                message: result.error,
+                status: :unauthorized
+              )
+            end
+          end
+
           protected
 
           def serializer_context
@@ -57,6 +98,34 @@ module Spree
           end
 
           private
+
+          def authentication_strategy
+            strategy_class = determine_strategy
+            strategy_class.new(
+              params: params,
+              request_env: request.headers.env,
+              user_class: Spree.user_class
+            )
+          end
+
+          def determine_strategy
+            provider = params[:provider].presence || 'email'
+            provider_key = provider.to_sym
+
+            # Retrieve pre-loaded strategy class from configuration
+            strategy_class = Rails.application.config.spree.authentication_strategies[provider_key]
+
+            unless strategy_class
+              render_error(
+                code: ERROR_CODES[:invalid_provider],
+                message: "Unsupported authentication provider: #{provider}",
+                status: :bad_request
+              )
+              return nil
+            end
+
+            strategy_class
+          end
 
           def registration_params
             params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
