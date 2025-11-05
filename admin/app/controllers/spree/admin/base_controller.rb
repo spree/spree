@@ -14,6 +14,7 @@ module Spree
       helper 'spree/integrations'
 
       before_action :authorize_admin
+      after_action :set_return_to, only: [:index]
 
       protected
 
