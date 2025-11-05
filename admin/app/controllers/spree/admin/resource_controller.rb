@@ -4,7 +4,6 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search_collection, :paginated_collection
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
-  after_action :set_return_to, only: [:index]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
