@@ -10,21 +10,33 @@ module Spree
       def dropdown_toggle(options = {}, &block)
         options[:type] = 'button'
         options[:class] = ['btn'] + Array(options[:class])
-        options[:data] = { action: 'dropdown#toggle click@window->dropdown#hide' }.merge(options[:data] || {})
+        options[:data] = {
+          action: 'dropdown#toggle click@window->dropdown#hide',
+          dropdown_target: 'toggle'
+        }.merge(options[:data] || {})
         button_tag(options, &block)
       end
 
       def dropdown_menu(options = {}, &block)
         options[:class] = ['dropdown-container hidden'] + Array(options[:class])
 
-        if options[:direction] == 'left'
-          options[:class] << 'dropdown-container-left'
-        elsif options[:direction] == 'top'
-          options[:class] << 'dropdown-container-top'
-        elsif options[:direction] == 'top-left'
-          options[:class] << 'dropdown-container-top dropdown-container-left'
+        # Extract direction option for backward compatibility and convert to Floating UI placement
+        placement = case options.delete(:direction)
+        when 'left'
+          'bottom-end'
+        when 'top'
+          'top-start'
+        when 'top-left'
+          'top-end'
+        else
+          options[:placement] || 'bottom-start'
         end
-        options[:data] = { dropdown_target: 'menu' }.merge(options[:data] || {})
+
+        options[:data] = {
+          dropdown_target: 'menu',
+          dropdown_placement_value: placement
+        }.merge(options[:data] || {})
+
         content_tag(:div, options, &block)
       end
     end

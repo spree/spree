@@ -108,20 +108,18 @@
 }
 // new non-bootstrap dropdowns
 .dropdown-container {
+  // Position is handled by Floating UI via inline styles
+  // Keep position: absolute but let Floating UI set top/left/right/bottom
   position: absolute;
-  top: 100%;
-  right: 0;
   animation: fadeIn 0.15s ease-in-out;
-  transform-origin: top right;
 
+  // Legacy classes kept for backward compatibility but no longer apply positioning
+  // Floating UI handles all positioning automatically
   &.dropdown-container-left {
-    left: 0;
-    right: auto;
+    // No longer needed - Floating UI handles placement
   }
   &.dropdown-container-top {
-    top: auto;
-    bottom: 100%;
-    height: auto;
+    // No longer needed - Floating UI handles placement
   }
 }
 

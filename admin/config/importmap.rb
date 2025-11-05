@@ -27,7 +27,6 @@ pin 'hotkeys-js', preload: ['application-spree-admin'] # @3.13.9
 pin 'stimulus-use', preload: ['application-spree-admin'] # @0.51.3
 pin 'stimulus-checkbox-select-all', preload: ['application-spree-admin'] # @5.3.0
 pin 'stimulus-clipboard', preload: ['application-spree-admin'] # @4.0.1
-pin "@stimulus-components/dropdown", to: "@stimulus-components--dropdown.js", preload: ['application-spree-admin'] # @3.0.0
 pin "@stimulus-components/dialog", to: "@stimulus-components--dialog.js", preload: ['application-spree-admin'] # @1.0.1
 
 # We can't vendor some of the javascript libraries
