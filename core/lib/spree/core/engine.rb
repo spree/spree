@@ -28,7 +28,8 @@ module Spree
                                :metafield_enabled_resources,
                                :analytics_events,
                                :analytics_event_handlers,
-                               :integrations)
+                               :integrations,
+                               :authentication_strategies)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
@@ -335,6 +336,11 @@ module Spree
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
+
+        Rails.application.config.spree.authentication_strategies = {
+          email: 'Spree::Authentication::Strategies::EmailPasswordStrategy',
+          google: 'Spree::Authentication::Strategies::GoogleStrategy'
+        }
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

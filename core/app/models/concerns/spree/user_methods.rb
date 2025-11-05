@@ -33,6 +33,7 @@ module Spree
       has_many :wished_items, through: :wishlists, source: :wished_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
       has_many :gift_cards, class_name: 'Spree::GiftCard', foreign_key: :user_id, dependent: :destroy
+      has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
