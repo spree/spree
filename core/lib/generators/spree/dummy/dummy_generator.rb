@@ -45,6 +45,7 @@ module Spree
       opts[:skip_kamal] = true
       opts[:skip_devcontainer] = true
       opts[:skip_solid] = true
+      opts[:skip_sprockets] = true unless defined?(Sprockets)
 
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,
@@ -62,7 +63,8 @@ module Spree
       template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
-      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true
+      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true if defined?(Sprockets)
+      remove_file "#{dummy_path}/config/initializers/assets.rb" unless defined?(Sprockets)
     end
 
     def test_dummy_inject_extension_requirements
