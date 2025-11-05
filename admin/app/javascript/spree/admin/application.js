@@ -35,7 +35,6 @@ if (typeof Stimulus === 'undefined') {
 import AutoSubmit from '@stimulus-components/auto-submit'
 import CheckboxSelectAll from 'stimulus-checkbox-select-all'
 import Dialog from "@stimulus-components/dialog"
-import Dropdown from '@stimulus-components/dropdown'
 import TextareaAutogrow from 'stimulus-textarea-autogrow'
 import Notification from 'stimulus-notification'
 import PasswordVisibility from 'stimulus-password-visibility'
@@ -56,6 +55,7 @@ import Clipboard from 'spree/admin/controllers/clipboard_controller'
 import CodeMirrorController from 'spree/admin/controllers/codemirror_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
+import DropdownController from 'spree/admin/controllers/dropdown_controller'
 import FiltersController from 'spree/admin/controllers/filters_controller'
 import FontPickerController from 'spree/admin/controllers/font_picker_controller'
 import HighlightController from 'spree/admin/controllers/highlight_controller'
@@ -114,7 +114,7 @@ application.register('color-picker', ColorPickerController)
 application.register('dialog', Dialog)
 application.register('drawer', Dialog)
 application.register('disable-submit-button', DisableSubmitButtonController)
-application.register('dropdown', Dropdown)
+application.register('dropdown', DropdownController)
 application.register('enable-button', EnableButtonController)
 application.register('export-dialog', Dialog)
 application.register('filters', FiltersController)
