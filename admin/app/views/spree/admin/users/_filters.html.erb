@@ -62,42 +62,6 @@
         filters_target: "input",
       } %>
     </div>
-    <div class="form-group">
-      <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
-      <%= tom_select_tag "q[spree_roles_name_in]",
-      active_option: params.dig(:q, :spree_roles_name_in),
-      options: user_roles_json_array,
-      multiple: true,
-      value_field: :name,
-      select_class: "w-100",
-      select_data: {
-        filters_target: "input",
-      } %>
-    </div>
-    <div class="form-group">
-      <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
-      <%= tom_select_tag "q[spree_roles_name_in]",
-      active_option: params.dig(:q, :spree_roles_name_in),
-      options: user_roles_json_array,
-      multiple: true,
-      value_field: :name,
-      select_class: "w-100",
-      select_data: {
-        filters_target: "input",
-      } %>
-    </div>
-    <div class="form-group">
-      <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
-      <%= tom_select_tag "q[spree_roles_name_in]",
-      active_option: params.dig(:q, :spree_roles_name_in),
-      options: user_roles_json_array,
-      multiple: true,
-      value_field: :name,
-      select_class: "w-100",
-      select_data: {
-        filters_target: "input",
-      } %>
-    </div>
     <%= render_admin_partials(:users_filters_partials, f: f) %>
     <%= render 'spree/admin/shared/filter_submit' %>
   </div>
