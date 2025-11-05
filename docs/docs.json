@@ -340,6 +340,7 @@
                     "group": "Adyen",
                     "pages": [
                       "api-reference/storefront/adyen/create-an-adyen-payment-session",
+                      "api-reference/storefront/adyen/complete-an-adyen-payment-session",
                       "api-reference/storefront/adyen/get-adyen-payment-session"
                     ]
                   },
@@ -1024,22 +1025,22 @@
           {
             "tab": "Use Cases",
             "groups": [
-               {                
+               {
                 "group": "Overview",
                 "pages": [
-                  "use-case/overview" 
+                  "use-case/overview"
                 ]
               },
-              {    
+              {
                 "group": "B2B Commerce",
                 "pages": [
                   "use-case/b2b/b2b-commerce-model",
                   "use-case/b2b/b2b-capabilities",
-                  "use-case/b2b/b2b-admin-capabilities", 
+                  "use-case/b2b/b2b-admin-capabilities",
                   "use-case/b2b/b2b-buyer-capabilities"
                 ]
               },
-              {    
+              {
                 "group": "Digital Products",
                 "pages": [
                   "use-case/digital-products/model",
@@ -1047,15 +1048,15 @@
                   "use-case/digital-products/admin-capabilities"
                 ]
               },
-              {    
+              {
                 "group": "ChatGPT Integration",
                 "pages": [
-                  "use-case/chatgpt-integration/chatgpt-shopping", 
+                  "use-case/chatgpt-integration/chatgpt-shopping",
                   "use-case/chatgpt-integration/chatgpt-instant-checkout",
-                  "use-case/chatgpt-integration/chatgpt-buyer-experience"  
+                  "use-case/chatgpt-integration/chatgpt-buyer-experience"
                 ]
               },
-              {    
+              {
                 "group": "Multi-Store Platform",
                 "pages": [
                   "use-case/multi-store/model",
@@ -1063,26 +1064,26 @@
                   "use-case/multi-store/admin-capabilities"
                 ]
               },
-              {    
+              {
                 "group": "Multi-Tenant Platform",
                 "pages": [
                   "use-case/multi-tenant/multi-tenant-model",
                   "use-case/multi-tenant/multi-tenant-capabilities",
-                  "use-case/multi-tenant/super-admin-capabilities", 
+                  "use-case/multi-tenant/super-admin-capabilities",
                   "use-case/multi-tenant/tenant-capabilities",
                   "use-case/multi-tenant/franchises-and-reseller-networks",
                   "use-case/multi-tenant/multi-brand-enterprise-model",
                   "use-case/multi-tenant/white-label-saas"
                 ]
               },
-               {    
+               {
                 "group": "Multi-Vendor Marketplace",
                 "pages": [
                   "use-case/marketplace/model",
                   "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard", 
+                  "use-case/marketplace/admin-dashboard",
                   "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"  
+                  "use-case/marketplace/customer-ux"
                 ]
               }
             ]
