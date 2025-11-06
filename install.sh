@@ -147,7 +147,7 @@ get_app_name() {
     print_step "Setting up your Spree application..."
 
     echo -e "\n${BOLD}What would you like to name your application?${NC}"
-    echo -e "This will be used for the directory name and Rails application name."
+    echo -e "This will be used for the directory name and Spree Commerce application name."
     echo -e "Use lowercase letters, numbers, and underscores (e.g., my_store, awesome_shop)"
     echo -e "${BLUE}Press Enter to use default: 'spree'${NC}"
     echo
@@ -323,7 +323,7 @@ install_rails() {
 
 # Create Rails app with Spree template
 create_rails_app() {
-    print_step "Creating new Rails application with Spree Commerce..."
+    print_step "Creating new Spree Commerce application..."
 
     # Ensure rbenv is initialized
     export PATH="$HOME/.rbenv/bin:$PATH"
@@ -336,7 +336,7 @@ create_rails_app() {
         curl -fsSL "$TEMPLATE_URL" -o "$TEMPLATE_FILE"
     fi
 
-    print_info "Creating Rails application '$APP_NAME' with Spree template..."
+    print_info "Creating Spree Commerce application '$APP_NAME'..."
 
     if [ "$VERBOSE" = false ]; then
         echo -e "${YELLOW}This will take several minutes. Please be patient...${NC}\n"
@@ -392,7 +392,7 @@ create_rails_app() {
         local exit_code=$?
 
         if [ $exit_code -ne 0 ]; then
-            print_error "Rails application creation failed!"
+            print_error "Spree Commerce application creation failed!"
             echo -e "\n${YELLOW}Error log:${NC}"
             tail -50 /tmp/spree_install.log
             exit 1
@@ -406,7 +406,7 @@ create_rails_app() {
         rm "$TEMPLATE_FILE"
     fi
 
-    print_success "Rails application created successfully"
+    print_success "Spree Commerce application created successfully"
 }
 
 # Final instructions
@@ -458,7 +458,7 @@ main() {
     echo -e "  • rbenv (Ruby version manager)"
     echo -e "  • Ruby $RUBY_VERSION"
     echo -e "  • Rails $RAILS_VERSION"
-    echo -e "  • Create a new Rails application with Spree Commerce"
+    echo -e "  • Create a new Spree Commerce application"
 
     press_any_key
 
