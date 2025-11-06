@@ -37,8 +37,8 @@ module Spree
 
           JSON.parse(response.body)
         end
-      rescue Net::OpenTimeout, Net::ReadTimeout, SocketError, Errno::ECONNREFUSED, JSON::ParserError => e
-        Rails.logger.error("Failed to fetch Spree updates: #{e.message}")
+      rescue StandardError => e
+        Rails.error.report(e)
         {}
       end
     end
